@@ -1,0 +1,13 @@
+## Current features (in progress)
+
+
+- Flask powered API (using mock data)
+
+- Original js/css/img from ooici-pres
+
+
+
+## Usage (see SETUP before these steps)
+
+- Run flask powered api/webserver 
+    $ python main.py

@@ -1,0 +1,12 @@
+Install Flask with virtualenv
+-----------------------------
+
+1) Create a new, clean virtualenv:
+    $ virtualenv --no-site-packages venv
+
+2) Install Flask into the new virtualenv:
+    $ pip install Flask -E venv/
+
+3) Activate the virtualenv:
+    $ source venv/bin/activate
+
