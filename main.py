@@ -1,13 +1,11 @@
-from flask import Flask
-from flask import request
-from flask import jsonify
+from flask import Flask, request, jsonify, render_template
 
 app = Flask(__name__)
 
 
 @app.route('/')
 def index():
-    return "Landing page test.<br>Test user profile for <a href='/profile/testuser'>testuser</a>"
+    return render_template("index.html")
 
 @app.route('/profile/<name>', methods=["GET", "POST"])
 def userprofile(name):
