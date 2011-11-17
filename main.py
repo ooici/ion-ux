@@ -7,11 +7,9 @@ app = Flask(__name__)
 def index():
     return render_template("index.html")
 
-
 @app.route('/dashboard')
-def index():
+def dashboard():
     return render_template("dashboard.html")
-
 
 @app.route('/profile/<name>', methods=["GET", "POST"])
 def userprofile(name):
