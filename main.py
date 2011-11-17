@@ -3,6 +3,13 @@ from flask import Flask, request, jsonify, render_template
 app = Flask(__name__)
 
 
+PRODUCTION = False #more configurable in the future.
+if PRODUCTION:
+    from service_api import ServiceApi
+else:
+    from dummy_service_api import ServiceApi
+
+
 @app.route('/')
 def index():
     return render_template("index.html")
@@ -11,12 +18,10 @@ def index():
 def dashboard():
     return render_template("dashboard.html")
 
-@app.route('/profile/<name>', methods=["GET", "POST"])
-def userprofile(name):
-    if request.method == "POST":
-        return jsonify({'msg':'Created new profile for %s' % name})
-    else:
-        return "Profile for : %s" % name
+@app.route('/dataResource', methods=["GET", "POST"])
+def data_resource():
+    resp_data = ServiceApi.data_resource(request.args)
+    return jsonify(resp_data)
 
 
 if __name__ == '__main__':

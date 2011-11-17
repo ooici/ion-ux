@@ -354,8 +354,8 @@ OOI.Views.Workflow100 = Backbone.View.extend({
                     self.controller.resource_collection.add(elem);
                     var new_date = new Date(elem.date_registered);
                     var pretty_date = new_date.getFullYear()+"-"+(new_date.getMonth()+1)+"-"+new_date.getDate();
-                    var details_image = "<img class='dataset_details' title='Show details' src='images/I1136-Details-List.png'>";
-                    var notification_check = elem.notificationSet ? "<img class='dataset_details' src='images/G1110-Checkbox-Tick-White.png'>" : "";
+                    var details_image = "<img class='dataset_details' title='Show details' src='/static/img/I1136-Details-List.png'>"; //XXX hardcoded image, change to css class
+                    var notification_check = elem.notificationSet ? "<img class='dataset_details' src='/static/img/G1110-Checkbox-Tick-White.png'>" : ""; //XXX hardcoded image, change to css class
                     self.datatable.fnAddData([elem.datasetMetadata.title, notification_check, elem.datasetMetadata.institution, elem.datasetMetadata.source, pretty_date, details_image]);
                     $($("#datatable_100").dataTable().fnGetNodes(i)).attr("id", elem.datasetMetadata.data_resource_id);
                 });
@@ -924,8 +924,8 @@ OOI.Views.Workflow106 = Backbone.View.extend({
                     var new_date = new Date(elem.date_registered);
                     var pretty_date = new_date.getFullYear()+"-"+(new_date.getMonth()+1)+"-"+new_date.getDate();
                     var active = "";
-                    var details_image = "<img class='dataset_details' title='Show details' src='images/I1136-Details-List.png'>";
-                    if (elem.update_interval_seconds !== 0) active = '<img src="images/G1110-Checkbox-Tick-White.png">';
+                    var details_image = "<img class='dataset_details' title='Show details' src='/static/img/I1136-Details-List.png'>"; //XXX hardcoded image, change to css class
+                    if (elem.update_interval_seconds !== 0) active = '<img src="/static/img/G1110-Checkbox-Tick-White.png">'; //XXX hardcoded image, change to css class
                     self.datatable.fnAddData([cb, active, elem.activation_state, elem.ion_title, elem.title, pretty_date, details_image]);
                     $($("#datatable_106").dataTable().fnGetNodes(i)).attr("id", elem.data_resource_id);
                 });
@@ -1252,7 +1252,7 @@ OOI.Views.Workflow109 = Backbone.View.extend({
             success: function(data){
 				$.each(data.resources, function(i, elem){
                 	// Automatically add all of the columns in the middle
-					var details_image = "<img class='dataset_details' title='Show details' src='images/I1136-Details-List.png'>";
+					var details_image = "<img class='dataset_details' title='Show details' src='/static/img/I1136-Details-List.png'>";  //XXX hardcoded image, change to css class
 					var columns = [details_image];
 					var resourceCols = elem.attribute.slice();
 					while (resourceCols.length < (self.columnCount - columns.length)) resourceCols.push('');
@@ -1535,9 +1535,9 @@ OOI.Views.GeospatialContainer = Backbone.View.extend({
     vertical_extent_direction_toggle: function(e){
         var current_direction = $(e.target).attr("src").indexOf("Above");
         if (current_direction > 0){
-            $(e.target).attr("src", "images/Below-Sea-Level-Simple.png")
+            $(e.target).attr("src", "/static/img/Below-Sea-Level-Simple.png") //XXX hardcoded image, change to css class
         } else {
-            $(e.target).attr("src", "images/Above-Sea-Level-Simple.png")
+            $(e.target).attr("src", "/static/img/Above-Sea-Level-Simple.png") //XXX hardcoded image, change to css class
         }
     },
 
