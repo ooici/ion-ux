@@ -23,6 +23,11 @@ def data_resource():
     resp_data = ServiceApi.data_resource(request.args)
     return jsonify(resp_data)
 
+@app.route('/subscription', methods=["GET", "POST"])
+def subscription():
+    resp_data = ServiceApi.subscription(request.args)
+    return jsonify(resp_data)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
