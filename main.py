@@ -28,6 +28,17 @@ def subscription():
     resp_data = ServiceApi.subscription(request.args)
     return jsonify(resp_data)
 
+# - - - - - - - -
+
+@app.route('/new', methods=["GET"])
+def new_template():
+    return render_template('ux-dashboard.html')
+
+@app.route('/services/<service_name>/<service_action>')
+def service_router(service_name, service_action):
+    userid = "returned from cookie."
+    repl = ServiceApi.parse_request(service_name=service_name, service_action=service_action)
+    return repl
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,0 +1,218 @@
+a:link {
+	text-decoration: none;
+	color: #4F4F77;
+	font-weight:bold;
+}
+a:visited {
+	text-decoration: none;
+	color: #4F4F77;
+	font-weight:bold;
+}
+a:hover {text-decoration: none; color: #FF6600; font-weight:bold;}
+a:active {text-decoration: none;color: #000; font-weight:bold;}
+/*sign in button*/
+a.button:link {text-decoration: none; color:#494949;}
+a.button:visited {text-decoration: none; color:#494949;}
+a.button:hover {text-decoration: none; color:#000;}
+a.button:active {text-decoration: none;color:#E9EEF3;}
+/*create new account / help*/
+a.cnahelp:link {text-decoration:none; font-weight:normal; color:#595959;}
+a.cnahelp:visited {text-decoration:none; font-weight:normal; color:#595959;}
+a.cnahelp:hover {text-decoration:none; font-weight:normal; color:#fff;}
+a.cnahelp:active {text-decoration:none; font-weight:normal;color:#000;}
+/*Enter ION*/
+a.enterion:link {text-decoration:none; font-weight:bold; color:#E9EEF3;}
+a.enterion:visited {text-decoration:none; font-weight:bold; color:#E9EEF3;}
+a.enterion:hover {text-decoration:none; font-weight:bold; color:#fff;}
+a.enterion:active {text-decoration:none; font-weight:bold;color:#000;}
+
+/*a.contact:link {color: #C9C9C9}
+a.contact:visited {color:#C9C9C9}
+a.contact:hover {color: #fff}
+a.contact:active {color: #999999}*/
+a.contact {display: block; float:right; width: 82px; height: 20px; background: transparent url(/static/img/G1113-Script-Contact-Us.png) no-repeat;}
+
+a.contact:hover {background-position:0 -20px;text-decoration: none;}
+a.contact:active {background-position:0 -40px;text-decoration: none}
+a.contact:link {text-decoration: none;}
+a.contact:visited {text-decoration: none;}
+
+a.help {display: block; float:right; width: 82px; height: 20px; background: transparent url(/static/img/G1114-Script-Help.png) no-repeat;}
+
+a img {
+  border:none;
+}
+
+.ion-heading-box	{
+ 	border:1px solid #797979;
+ 	border-radius:10px; 
+	-moz-border-radius:10px; 
+ 	padding:10px; 
+ 	background-color:#BBCEE9; 
+ 	background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#A9BBD4), to(#748091), color-stop(.4,#A7B8D1));
+	background-image:-moz-linear-gradient(top, #A9BBD4, #A7B8D1 60%, #748091);
+}
+
+.ion-heading-box:hover { 	background-color:#E9EEF3; 
+ 	background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#748091), to(#A9BBD4), color-stop(.4,#A7B8D1));
+	background-image:-moz-linear-gradient(top, #748091, #A7B8D1 60%, #A9BBD4);
+}
+.ion-heading-box:active { color:#000000}
+
+.button {
+	display: block;
+	
+	border:1px solid #8F9BA7;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	
+	background-color:#E9EEF3;
+	padding: 3px 10px 0 10px;
+	height: 20px;
+	width: 100px;
+	text-align:center;
+	
+	color: #fff;
+	font-family:Geneva, Arial, Helvetica, sans-serif;
+	font-size:14px;
+	font-weight:bold;
+	letter-spacing:0.1em;
+	white-space:nowrap;
+}
+
+
+.button:hover {background-color:#fff;}
+.button:active {background-color:#748091;}
+
+
+.text-heading {
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	font-size: 14px;
+
+	margin: 0;
+	padding: 0;
+	color:#494949;
+}
+
+.text {
+	font-size: 11px;
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	line-height:19px;
+	font-weight: normal;
+	font-variant: normal;
+	padding: 0px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	color:#494949;
+}
+
+.ion-heading {
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	font-size: 22px;
+	color: #E9EEF3;
+	line-height:25px;
+	font-weight: bold;
+	letter-spacing:0.05em;
+	margin-top:0px;
+	margin-bottom:0px;
+	text-align:center
+}
+
+.bold-text {
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	font-size: 11px;
+	line-height:19px;
+	color:#090909;
+}
+
+.blue-button-inactive {
+	font-size: 14px;
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	letter-spacing: 0.05em;
+	font-weight:bold;
+	color:#383838;}
+
+.disabled-text {
+	color: #797979; 	
+	font-size: 11px;
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	line-height:19px;
+	font-weight: normal;
+	font-variant: normal;
+	padding: 0px;
+	margin-top: 10px;}
+	
+.bigger {font-size: 13px;
+	margin-top: 16px;}
+
+
+
+body {
+margin:0; 
+padding:0;
+padding-bottom:100px;
+background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#000000), to(#A5B6CF));
+background-image:-moz-linear-gradient(top, #000000, #A5B6CF);
+}
+
+
+.button1 { 
+        height:20px; width:70px;
+	font-family:Geneva, Arial, Helvetica, sans-serif;
+	font-size:12px;
+        font-weight:bold;
+float:left;
+	text-align:center; 
+	line-height:18px;
+	letter-spacing:0.1em;
+	vertical-align:top;
+	white-space:nowrap;
+        border:1px solid #DDDDDD; 
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	margin-bottom:0px;
+        margin-right: 10px;
+        padding: 3px 10px 0 10px;
+	background-color:#F5F5F5;
+	background-image:-webkit-gradient(linear, 0% 20%, 0% 100%, from(#fff), to(#E6E6E6)); 
+	background-image:-moz-linear-gradient(0% 50% 270deg,#FFF, #E6E6E6);
+	color:#333333;
+}
+
+
+
+
+.ion-heading-box1 { 	border:1px solid #797979;
+ 	border-radius:10px; 
+	-moz-border-radius:10px; 
+ 	padding:10px; 
+ 	background-color:#BBCEE9; 
+ 	background-image:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#A9BBD4), to(#748091), color-stop(.4,#A7B8D1));
+	background-image:-moz-linear-gradient(top, #A9BBD4, #A7B8D1 60%, #748091);
+}
+
+#enterion {
+}
+
+#enterion-content {
+	background: url("/static/img/EnterION-states.png") no-repeat 0px 0px;
+  height:102px;
+  width:212px;
+}
+#login_button {
+  height:25px;
+  width:100px;
+	background: url("/static/img/Sign-in.png") no-repeat 0px 0px;
+}
+#guest_button {
+  height:25px;
+  width:100px;
+	background: url("/static/img/Guest.png") no-repeat 0px 0px;
+}
+#colorbox {
+    font-family: Arial,sans-serif;
+    font-size: 0.75em;
+}
