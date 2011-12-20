@@ -18,9 +18,14 @@ def index():
 def dashboard():
     return render_template("dashboard.html")
 
-@app.route('/dataResource', methods=["GET", "POST"])
+@app.route('/dataresource', methods=["GET", "POST"])
 def data_resource():
     resp_data = ServiceApi.data_resource(request.args)
+    return jsonify(resp_data)
+
+@app.route('/dataresource/<data_resource_id>', methods=["GET", "POST"])
+def data_resource_details(data_resource_id):
+    resp_data = ServiceApi.data_resource_details(data_resource_id)
     return jsonify(resp_data)
 
 @app.route('/subscription', methods=["GET", "POST"])
