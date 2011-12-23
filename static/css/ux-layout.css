@@ -17,6 +17,11 @@ body { background: #333; }
     top: 50px;
 }
 
+.basic_wrapper_style {
+    background: #ccc;
+    margin-bottom: 10px ;
+}
+
 .height_200 {
     background: #ccc;
     height: 200px;
