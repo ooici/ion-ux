@@ -1,0 +1,150 @@
+body { 
+    background: #333;
+/*    overflow: hidden;*/
+}
+
+#app {
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    position: absolute;
+}
+
+#header {
+    background: black;
+    color: white;
+/*    position: fixed;*/
+    width: 100%;
+}
+
+#header #logo {
+    padding: 10px 10px 5px;
+}
+
+#content {
+    background: #222;
+    color: #ddd;
+/*    left: 206px;*/
+/*    position: absolute;*/
+    height: 100%;
+/*  left: 200px;
+    top: 70px;
+    position: absolute;
+    overflow: none;
+    z-index: 5;
+    width: 1242px;
+    overflow-x: visible;
+    overflow-y: visible;*/
+}
+
+#main {
+    background: red;
+    margin-left: 206px;
+    float: left;
+    overflow: auto;
+}
+
+/* SIDEBAR & NAVIGATION */
+
+
+#sidebar {
+    /*display: none;*/
+    background: #333;
+    height: 100%;
+    min-height: 100%;
+    width: 206px;
+    margin: 0;
+}
+
+.sidebar-section {
+    color: #ddd;
+    display: block;
+    font-size: 9px;
+    font-weight: bold;
+    margin: 12px 0 5px 10px;
+    text-transform: uppercase;
+    text-shadow: 0 -1px #000;
+}
+
+#search-input  {
+    background: #1a1a1a;
+    border: none;
+    border-radius: 5px;
+    color: #e6e6e6;
+    margin: 5px 0 0 20px;
+    padding: 5px;
+}
+
+
+#sidebar ul {
+    margin: 0 20px 10px;
+    padding: 0;
+    list-style-type: none;
+}
+
+#sidebar li { 
+    margin: 0 0 0 0; 
+}
+
+#sidebar a {
+    display: block;
+    font-size: 11px;    
+/*  padding: 5px 10px;*/
+    width: 140px;
+    color: #ccc;
+    padding: 0 0 0 20px;
+    text-decoration: none;
+    text-shadow: 0 -1px #000;
+}
+
+#sidebar a:hover {
+    color: #6cf;
+    text-decoration: none;
+}
+
+#sidebar ul ul li { margin: 0 0 1px 0; }
+
+#sidebar ul ul { margin: 3px 0 3px 20px;}
+
+#sidebar ul ul a {
+    display: block;
+    font-weight: normal;
+    padding: 0 5px 0 10px;
+    width: 125px;
+    color: #ddd;
+    text-decoration: none;
+}
+
+#sidebar ul ul a:hover {
+    color: #6cf;
+    text-decoration: none;
+}
+
+/* List styles */
+
+li.filter { background: transparent url(/static/img/r2/li.filter.png) top left no-repeat }
+li.filter_disabled { 
+    background: transparent url(/static/img/r2/li.filter_disabled.png) top left no-repeat;
+    color: #666;
+    font-size: 11px;
+    padding: 1px 0 0 20px;
+}
+
+li.all_resources { background: transparent url(/static/img/r2/li.all_resources.png) top left no-repeat }
+li.data { background: transparent url(/static/img/r2/li.data.png) top left no-repeat }
+li.observatories { background: transparent url(/static/img/r2/li.observatories.png) top left no-repeat }
+li.facilities { background: transparent url(/static/img/r2/li.facilities.png) top left no-repeat }
+li.platforms { background: transparent url(/static/img/r2/li.platforms.png) top left no-repeat }
+li.instruments { background: transparent url(/static/img/r2/li.instruments.png) top left no-repeat }
+
+li.notifications { background: transparent url(/static/img/r2/li.notifications.png) top left no-repeat }
+li.publications { background: transparent url(/static/img/r2/li.publications.png) top left no-repeat }
+
+li.right { background: transparent url(/static/img/r2/li.right.png) top left no-repeat }
+li.down { background: transparent url(/static/img/r2/li.down.png) top left no-repeat }
+
+
+
+
+
+
