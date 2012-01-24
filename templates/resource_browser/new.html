@@ -1,0 +1,15 @@
+{% extends "resource_browser/base.html" %}
+
+{% block content %}
+	<div id="create-resource">
+		<form action="/resources/create" method="POST">
+			<input type="text" name="name" />
+			<select name="restype">
+				{% for menu_item in data['menu'] %}
+					<option value="{{menu_item}}">{{ menu_item }}</option>
+				{% endfor %}
+			</select>
+			<input type="submit" value="Create">
+		</form>
+	</div>
+{% endblock content %}

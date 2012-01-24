@@ -1,0 +1,31 @@
+{% extends "resource_browser/base.html" %}
+
+{% block content %}
+	
+	{% if data['resource_types'] %}
+		<h1>Listing {{ data['resource_types'][0].type }}</h1>	
+	{% endif %}
+
+	<div class="grid_12 alpha beta basic_wrapper_style rounded_5">
+		{% if data['resource_types'] %}
+			<table>
+				<tr>
+					<th>Name</th>
+					<th>Type</th>
+				</tr>
+				{% for resource in data['resource_types'] %}
+					<tr>
+						<td>{{ resource.name }}</td>
+						<td>{{ resource.type }}</td>
+					</tr>
+				{% endfor %}
+			</table>
+
+		{% else %}
+			<p>Please select a resource type on the right.</p>
+		{% endif %}
+	</div>
+
+	<div class="clear">&nbsp;</div>
+
+{% endblock content %}

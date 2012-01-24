@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify, render_template
-# from restclient import GET
 import requests
+import json
 
 app = Flask(__name__)
 
@@ -35,27 +35,74 @@ def subscription():
     resp_data = ServiceApi.subscription(request.args)
     return jsonify(resp_data)
 
-@app.route('/service-bridge')
-def connect_to_service():
-    # test with request contexts later
-    url = "http://localhost:5000/ion-service/rest/client"
+
+
+
+# RESOURCE BROWSER - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+# Future use
+SERVICE_GATEWAY_HOST = 'localhost/ion-services/' 
+SERVICE_GATEWAY_PORT = 5000
+
+@app.route('/resources/', methods=['GET'])
+def resources_index():
+    '''
+    Hacky Web 1.0 single url resource browser to deal with COI refactoring. 
+    Needs to be Backbone-ized and cleaned up quite a bit. The service gateway 
+    exposes urls that are broken up into concise bits for future Backbone/
+    JavaScript calls, i.e. Backbone.Collection -> menu_items.fetch().
+    '''    
     
+    # List to catch all the returned data.
+    response_data = {}
+    response_data.update(fetch_menu())
+
+    # menu = requests.get('http://localhost:5000/resources/menu')
+    # response_data.update(json.loads(menu.content))
+    # response_data['menu'].sort()
     
+    # Fetch list of a certain type, if specified in request.args
+    if request.args.has_key('type'):
+        resource_type_url = 'http://localhost:5000/resources/list/%s' % request.args.get('type')
+        resource_type_result = requests.get(resource_type_url)
+        response_data.update(json.loads(resource_type_result.content))
+    # return jsonify(data=response_data)
+    return render_template('resource_browser/list.html', data=response_data)
 
-# - - - - - - - -
 
-@app.route('/new', methods=["GET"])
-def new_template():
-    return render_template('ux-dashboard.html')
-
-@app.route('/fake-service')
-def fake_service(methods=["GET"]):
-    resp_data = requests.get('http://localhost:5000/resource/instrument_model/list')
-    return resp_data.content
-
-@app.route('/dynamic-table')
-def dynamic_table(methods=["GET"]):
-    return render_template('ux-dashboard-demo.html')
+@app.route('/resources/new', methods=['GET'])
+def new_resource():
+    response_data = {}
+    response_data.update(fetch_menu())
     
+    return render_template('resource_browser/new.html', data=response_data)
+
+@app.route('/resources/create', methods=['POST'])
+def create_resource():
+    
+    payload = request.form
+    return jsonify(payload=payload)
+    # Grab the payload.
+    # past it service bridge
+    # redirect to /resources with the correct type
+
+
+
+
+def fetch_menu():
+    menu_data = requests.get('http://localhost:5000/resources/menu')
+    menu = json.loads(menu_data.content)
+    menu['menu'].sort()
+
+    return menu
+
+def build_gateway_url(service_name=None, operation=None):
+    gateway_url = 'http://%s:%d' % SERVICE_GATEWAY_HOST, SERVICE_GATEWAY_HOST
+
+    if not service_name and not operation:
+        return 'something'
+    else:
+        return 'http://%s:%d/%s/%s'
+
 if __name__ == '__main__':
     app.run(debug=True, port=3000)
