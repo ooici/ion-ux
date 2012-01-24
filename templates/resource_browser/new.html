@@ -1,8 +1,8 @@
 {% extends "resource_browser/base.html" %}
 
 {% block content %}
-	<div id="create-resource">
-		<form action="/resources/create" method="POST">
+	<div id="create-resource" class="grid_20 alpha beta basic_wrapper_style rounded_5">
+		<form action="/resource_registry/create" method="POST">
 			<input type="text" name="name" />
 			<select name="restype">
 				{% for menu_item in data['menu'] %}

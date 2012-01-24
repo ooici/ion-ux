@@ -40,32 +40,34 @@ def subscription():
 
 # RESOURCE BROWSER - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
-# Future use
-SERVICE_GATEWAY_HOST = 'localhost/ion-services/' 
-SERVICE_GATEWAY_PORT = 5000
+SERVICE_GATEWAY_BASE_URL = 'http://localhost:5000/ion-services'
 
-@app.route('/resources/', methods=['GET'])
+# Reference for intelligent CRUD operations down the line.
+DEFINED_SERVICES_OPERATIONS = {
+    'marine_facilities':
+        {'type_name': 'MarineFacility',
+        'operations': {'create': 'create_marine_facility'}},
+}
+
+@app.route('/resources', methods=['GET'])
 def resources_index():
     '''
-    Hacky Web 1.0 single url resource browser to deal with COI refactoring. 
+    Hacky Web 1.0 resource browser to deal with COI refactoring. 
     Needs to be Backbone-ized and cleaned up quite a bit. The service gateway 
     exposes urls that are broken up into concise bits for future Backbone/
     JavaScript calls, i.e. Backbone.Collection -> menu_items.fetch().
     '''    
     
-    # List to catch all the returned data.
+    # Dict to catch all the response data... And the menu.
     response_data = {}
-    response_data.update(fetch_menu())
-
-    # menu = requests.get('http://localhost:5000/resources/menu')
-    # response_data.update(json.loads(menu.content))
-    # response_data['menu'].sort()
+    response_data['menu'] = fetch_menu()
     
     # Fetch list of a certain type, if specified in request.args
     if request.args.has_key('type'):
         resource_type_url = 'http://localhost:5000/resources/list/%s' % request.args.get('type')
         resource_type_result = requests.get(resource_type_url)
         response_data.update(json.loads(resource_type_result.content))
+
     # return jsonify(data=response_data)
     return render_template('resource_browser/list.html', data=response_data)
 
@@ -73,36 +75,66 @@ def resources_index():
 @app.route('/resources/new', methods=['GET'])
 def new_resource():
     response_data = {}
-    response_data.update(fetch_menu())
+    response_data['menu'] = fetch_menu()
     
     return render_template('resource_browser/new.html', data=response_data)
 
-@app.route('/resources/create', methods=['POST'])
-def create_resource():
+
+@app.route('/<service_name>/create', methods=['POST', 'GET'])
+def create_resource(service_name):
+    '''
+    Create function that defaults to resource_registry#create if a higher
+    level service is not found in DEFINED_SERVICES_OPERATIONS. Here is an
+    example call to the service gateway:
     
-    payload = request.form
-    return jsonify(payload=payload)
-    # Grab the payload.
-    # past it service bridge
-    # redirect to /resources with the correct type
+    payload={"serviceRequest": {    "serviceName": "exchange_management", 
+                                    "serviceOp": "create_exchange_space", 
+                                    "params": { 
+                                        "exchange_space": ["ExchangeSpace", {"lcstate": "DRAFT", "description": "ION test XS", "name": "ioncore2"}], 
+                                        "org_id": "2632d3ec58eb42ca8231bdfd16f1b089" }}}
+    '''
 
 
 
+    service_name = str(service_name)
+    create_operation = 'create'
+    payload = {}
+
+    if service_name is not 'resource_registry':
+        if DEFINED_SERVICES_OPERATIONS.has_key(service_name):
+            create_operation = DEFINED_SERVICES_OPERATIONS.get(service_name).get('operations').get('create')
+        else:
+            # Needs to turn into a 404
+            return "Service name not found."
+    
+    payload['serviceRequest'] = {'serviceName': service_name, 'serviceOp': create_operation}
+    
+    form = request.form
+    return str(form)
+
+    
+@app.route('/resources/edit/<id>', methods=['GET'])
+def edit_reource():
+    pass
+
+@app.route('/service')
+def service_route():
+    s = call_service_gateway('resource_registry', 'create', 'new name', 'Org')
+    return s
+
+def service_gateway_url(operation, service_name='resource_registry'):
+    return "%s/%s/" % (SERVICE_GATEWAY_BASE_URL, service_name)
 
 def fetch_menu():
-    menu_data = requests.get('http://localhost:5000/resources/menu')
+    '''Returns a menu from the Service Gateway'''
+        
+    menu_data = requests.get('http://localhost:5000/ion-service/list_resource_types')
     menu = json.loads(menu_data.content)
-    menu['menu'].sort()
-
-    return menu
+    
+    return menu['data']
 
 def build_gateway_url(service_name=None, operation=None):
-    gateway_url = 'http://%s:%d' % SERVICE_GATEWAY_HOST, SERVICE_GATEWAY_HOST
-
-    if not service_name and not operation:
-        return 'something'
-    else:
-        return 'http://%s:%d/%s/%s'
-
+    pass
+    
 if __name__ == '__main__':
     app.run(debug=True, port=3000)

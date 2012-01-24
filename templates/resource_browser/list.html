@@ -1,12 +1,12 @@
 {% extends "resource_browser/base.html" %}
 
 {% block content %}
-	
-	{% if data['resource_types'] %}
-		<h1>Listing {{ data['resource_types'][0].type }}</h1>	
-	{% endif %}
-
-	<div class="grid_12 alpha beta basic_wrapper_style rounded_5">
+	<div class="grid_20 alpha beta basic_wrapper_style rounded_5">
+		
+		{% if data['resource_types'] %}
+			<h1>Listing {{ data['resource_types'][0].type }}</h1>	
+		{% endif %}
+		
 		{% if data['resource_types'] %}
 			<table>
 				<tr>
@@ -27,5 +27,4 @@
 	</div>
 
 	<div class="clear">&nbsp;</div>
-
 {% endblock content %}
