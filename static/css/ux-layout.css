@@ -22,6 +22,10 @@ body { background: #333; }
     margin-bottom: 10px ;
 }
 
+.basic_wrapper_style h1, h2, h3, p, table, ul, ol, form {
+    margin: 20px;
+}
+
 .height_200 {
     background: #ccc;
     height: 200px;

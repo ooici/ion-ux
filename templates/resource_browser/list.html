@@ -10,19 +10,20 @@
 		{% if data['resource_types'] %}
 			<table>
 				<tr>
+					<th>ID</th>
 					<th>Name</th>
 					<th>Type</th>
 				</tr>
 				{% for resource in data['resource_types'] %}
 					<tr>
+						<td>{{ resource.id }}</td>
 						<td>{{ resource.name }}</td>
 						<td>{{ resource.type }}</td>
 					</tr>
 				{% endfor %}
 			</table>
-
 		{% else %}
-			<p>Please select a resource type on the right.</p>
+			<h1>Please select a resource type on the right...</h1>
 		{% endif %}
 	</div>
 

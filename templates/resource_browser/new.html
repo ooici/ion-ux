@@ -1,15 +1,28 @@
 {% extends "resource_browser/base.html" %}
 
 {% block content %}
-	<div id="create-resource" class="grid_20 alpha beta basic_wrapper_style rounded_5">
-		<form action="/resource_registry/create" method="POST">
-			<input type="text" name="name" />
-			<select name="restype">
-				{% for menu_item in data['menu'] %}
-					<option value="{{menu_item}}">{{ menu_item }}</option>
-				{% endfor %}
-			</select>
-			<input type="submit" value="Create">
-		</form>
-	</div>
+
+	{% if data['service_name'] %}
+		<h1>New {{ data['service_name'][1] }} Object</h1>
+	{% else %}
+		<h1>New Resource</h1>
+	{% endif %}
+
+
+	<form action="/resources/create" method="POST">
+		<label for="name">Name</label>
+		<input type="text" name="name" id="name" /><br />
+		<label for="type">Type</label>
+		<select name="restype">
+			{% for menu_item in data['menu'] %}
+				{% if data['service_name'] %}
+					{% if data['service_name'][1] == menu_item %}
+						<option value="{{menu_item}}" selected="selected">{{ menu_item }}</optionv>
+					{% endif %}
+				{% endif %}
+				<option value="{{menu_item}}">{{ menu_item }}</option>
+			{% endfor %}
+		</select><br />
+		<input type="submit" value="Create">
+	</form>
 {% endblock content %}

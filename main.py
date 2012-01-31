@@ -1,10 +1,11 @@
+
 from flask import Flask, request, jsonify, render_template
 import requests
 import json
+from functools import wraps
 
 app = Flask(__name__)
 
-SERVICE_GATEWAY_HOST = 'http://localhost:5000/test/bank/what'
 
 PRODUCTION = False #more configurable in the future.
 if PRODUCTION:
@@ -36,29 +37,28 @@ def subscription():
     return jsonify(resp_data)
 
 
-
-
 # RESOURCE BROWSER - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 SERVICE_GATEWAY_BASE_URL = 'http://localhost:5000/ion-services'
 
-# Reference for intelligent CRUD operations down the line.
 DEFINED_SERVICES_OPERATIONS = {
     'marine_facilities':
-        {'type_name': 'MarineFacility',
+        {'restype': 'MarineFacility',
         'operations': {'create': 'create_marine_facility'}},
+}
+
+SERVICE_REQUEST_TEMPLATE = {
+    'serviceRequest': {
+        'serviceName': 'resource_registry', 
+        'serviceOp': None,
+        'params': {
+            'object': [] # Ex. [BankObject, {'name': '...'}] 
+        }
+    }
 }
 
 @app.route('/resources', methods=['GET'])
 def resources_index():
-    '''
-    Hacky Web 1.0 resource browser to deal with COI refactoring. 
-    Needs to be Backbone-ized and cleaned up quite a bit. The service gateway 
-    exposes urls that are broken up into concise bits for future Backbone/
-    JavaScript calls, i.e. Backbone.Collection -> menu_items.fetch().
-    '''    
-    
-    # Dict to catch all the response data... And the menu.
     response_data = {}
     response_data['menu'] = fetch_menu()
     
@@ -73,57 +73,41 @@ def resources_index():
 
 
 @app.route('/resources/new', methods=['GET'])
-def new_resource():
+def new_resource():    
     response_data = {}
-    response_data['menu'] = fetch_menu()
-    
+    response_data['menu'] = fetch_menu()    
+
     return render_template('resource_browser/new.html', data=response_data)
 
 
-@app.route('/<service_name>/create', methods=['POST', 'GET'])
-def create_resource(service_name):
-    '''
-    Create function that defaults to resource_registry#create if a higher
-    level service is not found in DEFINED_SERVICES_OPERATIONS. Here is an
-    example call to the service gateway:
+# TEMPORARY CHECK-IN CODE BELOW INCOMPLETE.
+
+
+@app.route('/resources/create', methods=['POST'])
+def create_resource():
+    post_data = SERVICE_REQUEST_TEMPLATE
     
-    payload={"serviceRequest": {    "serviceName": "exchange_management", 
-                                    "serviceOp": "create_exchange_space", 
-                                    "params": { 
-                                        "exchange_space": ["ExchangeSpace", {"lcstate": "DRAFT", "description": "ION test XS", "name": "ioncore2"}], 
-                                        "org_id": "2632d3ec58eb42ca8231bdfd16f1b089" }}}
-    '''
-
-
-
-    service_name = str(service_name)
-    create_operation = 'create'
-    payload = {}
-
-    if service_name is not 'resource_registry':
-        if DEFINED_SERVICES_OPERATIONS.has_key(service_name):
-            create_operation = DEFINED_SERVICES_OPERATIONS.get(service_name).get('operations').get('create')
-        else:
-            # Needs to turn into a 404
-            return "Service name not found."
+    raw_request_data = request.form
+    request_data = json.loads(raw_request_data)
     
-    payload['serviceRequest'] = {'serviceName': service_name, 'serviceOp': create_operation}
+    # Build main object from form values
+    object_dict = {}
+    for (key,value) in request_data.items():
+        object_dict[key] = value
+    post_data['']
     
-    form = request.form
-    return str(form)
+    # Testing output
+    return str(params)
 
-    
+
+@app.route('/render', methods=['GET'])
+def render():
+    return render_template('/partials/new_marine_facility.html')
+
 @app.route('/resources/edit/<id>', methods=['GET'])
 def edit_reource():
     pass
 
-@app.route('/service')
-def service_route():
-    s = call_service_gateway('resource_registry', 'create', 'new name', 'Org')
-    return s
-
-def service_gateway_url(operation, service_name='resource_registry'):
-    return "%s/%s/" % (SERVICE_GATEWAY_BASE_URL, service_name)
 
 def fetch_menu():
     '''Returns a menu from the Service Gateway'''
@@ -133,8 +117,15 @@ def fetch_menu():
     
     return menu['data']
 
-def build_gateway_url(service_name=None, operation=None):
-    pass
+@app.route('/schema/<resource_type>')
+def get_resource_schema(resource_type):
+    resource_type = str(resource_type)
+
+    resource_type_schema_response = requests.get("http://localhost:5000/ion-service/resource_type_schema/%s" % resource_type) 
+    resource_type_schema = json.loads(resource_type_schema_response.content)
+    
+    return str(resource_type_schema)
+    # return jsonify(data=resource_type_schema)
     
 if __name__ == '__main__':
     app.run(debug=True, port=3000)
