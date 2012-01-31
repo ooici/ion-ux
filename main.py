@@ -17,9 +17,9 @@ else:
 def index():
     return render_template("index.html")
 
-@app.route('/dashboard')
+@app.route('/dashboard', methods=["GET"])
 def dashboard():
-    return render_template("dashboard.html")
+    return render_template('ux-dashboard.html')
 
 @app.route('/dataresource', methods=["GET", "POST"])
 def data_resource():

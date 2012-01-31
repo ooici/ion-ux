@@ -3,7 +3,7 @@ IONUX.Router = Backbone.Router.extend({
   routes: {
     "": "init",
     "data_resource_details/:data_resource_id": "data_resource_details",
-    "resource_types/:resource_type_id", "resource_type_details"
+    "resource_types/:resource_type_id": "resource_type_details"
   },
 
   _reset: function(){ //reset the UI
