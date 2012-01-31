@@ -23,6 +23,12 @@ def data_resource():
     resp_data = ServiceApi.data_resource(request.args)
     return jsonify(resp_data)
 
+@app.route('/marine_facilities', methods=["GET", "POST"])
+def marine_facilities():
+    resp_data = ServiceApi.marine_facilities(request.args)
+    return jsonify(data=resp_data)
+
+
 @app.route('/dataresource/<data_resource_id>', methods=["GET", "POST"])
 def data_resource_details(data_resource_id):
     resp_data = ServiceApi.data_resource_details(data_resource_id)

@@ -1,4 +1,18 @@
 
+MARINE_FACILITIES_DATA = [
+
+  {'site_id':'abc123', 'information_resource':{'name':'Blue Whale 55', 'description':'A floating buoy'}, 'institution':{'address':'aaa', 'phone':'555-1212', 'email':'example@example.edu', 'website':'http://www.oceanobservatories.org'}, 'contact_information':{'name':'somename', 'address':'123 Main Street', 'city':'San Diego', 'postalcode':'92014', 'phone':'858-555-1212', 'email':'contact@oceanobservatories.org', 'variables':{'name':'var1', 'value':'val1'}}},
+
+  {'site_id':'def123', 'information_resource':{'name':'White Dolphin 1', 'description':'A floating buoy'}, 'institution':{'address':'aaa', 'phone':'555-1212', 'email':'example@example.edu', 'website':'http://www.oceanobservatories.org'}, 'contact_information':{'name':'somename', 'address':'123 Main Street', 'city':'San Diego', 'postalcode':'92014', 'phone':'858-555-1212', 'email':'contact@oceanobservatories.org', 'variables':{'name':'var1', 'value':'val1'}}},
+
+  {'site_id':'hij123', 'information_resource':{'name':'Spiny Lobster 7', 'description':'A floating buoy'}, 'institution':{'address':'aaa', 'phone':'555-1212', 'email':'example@example.edu', 'website':'http://www.oceanobservatories.org'}, 'contact_information':{'name':'somename', 'address':'123 Main Street', 'city':'San Diego', 'postalcode':'92014', 'phone':'858-555-1212', 'email':'contact@oceanobservatories.org', 'variables':{'name':'var1', 'value':'val1'}}},
+
+  {'site_id':'klm123', 'information_resource':{'name':'Spongy Bob 9001', 'description':'A floating buoy'}, 'institution':{'address':'aaa', 'phone':'555-1212', 'email':'example@example.edu', 'website':'http://www.oceanobservatories.org'}, 'contact_information':{'name':'somename', 'address':'123 Main Street', 'city':'San Diego', 'postalcode':'92014', 'phone':'858-555-1212', 'email':'contact@oceanobservatories.org', 'variables':{'name':'var1', 'value':'val1'}}}
+
+]
+
+
+
 DATA = {
     "data_resource_id": "3319A67F-81F3-424F-8E69-4F28C4E0AAAA",
     "source":{"request_type": "DAP","base_url": "http://geoport.whoi.edu/thredds/dodsC/usgs/data0/rsignell/data/oceansites/OS_NTAS_2010_R_M-1.nc","max_ingest_millis": 6000,"ion_title": "NTAS1 Data Source","ion_description": "Data NTAS1","ion_name": "MyOOICI","ion_email": "myooici@gmail.com","ion_institution": "OOICI"},
