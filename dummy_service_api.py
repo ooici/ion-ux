@@ -21,3 +21,7 @@ class ServiceApi(object):
     @staticmethod
     def subscription(request_args):
         return dummy_data.SUBSCRIPTION_DATA
+
+    @staticmethod
+    def marine_facilities(request_args):
+        return dummy_data.MARINE_FACILITIES_DATA

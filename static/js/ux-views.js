@@ -49,3 +49,58 @@ IONUX.Views.DataResourceDetailView = Backbone.View.extend({
   }
 
 });
+
+
+/* marine facilities */
+
+IONUX.Views.MarineFacilitiesView = Backbone.View.extend({
+
+  el:$("#marine-facilities"),
+
+  initialize: function(){
+    _.bindAll(this, "render");
+    this.collection.bind("reset", this.render);
+  },
+  
+  render: function(){
+    this.el.show();
+    _.each(this.collection.models, function(data) {
+        $(this.el).append(new IONUX.Views.MarineFacilitiesItemView({model:data}).render().el);
+    }, this);
+    return this;
+  },
+
+})
+
+
+IONUX.Views.MarineFacilitiesItemView = Backbone.View.extend({
+
+  tagName:"ul",
+
+  template: _.template($("#marine-facilities-item-tmpl").html()),
+
+  render: function(){
+    $(this.el).html(this.template(this.model.toJSON()));
+    return this;
+  }
+
+});
+
+
+IONUX.Views.MarineFacilitiesDetailView = Backbone.View.extend({
+
+  el: $("#marine-facilities-detail"),
+
+  template: _.template($("#marine-facilities-detail-tmpl").html()),
+
+  initialize: function(){
+    _.bindAll(this, "render");
+    this.model.bind("change", this.render);
+  },
+
+  render: function(){
+    this.el.html(this.template(this.model.toJSON())).show();
+    return this;
+  }
+
+});
