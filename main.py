@@ -26,12 +26,6 @@ def data_resource():
     resp_data = ServiceApi.data_resource(request.args)
     return jsonify(resp_data)
 
-@app.route('/marine_facilities', methods=["GET", "POST"])
-def marine_facilities():
-    resp_data = ServiceApi.marine_facilities(request.args)
-    return jsonify(data=resp_data)
-
-
 @app.route('/dataresource/<data_resource_id>', methods=["GET", "POST"])
 def data_resource_details(data_resource_id):
     resp_data = ServiceApi.data_resource_details(data_resource_id)
@@ -56,7 +50,7 @@ DEFINED_SERVICES_OPERATIONS = {
 SERVICE_REQUEST_TEMPLATE = {
     'serviceRequest': {
         'serviceName': 'resource_registry', 
-        'serviceOp': None,
+        'serviceOp': '',
         'params': {
             'object': [] # Ex. [BankObject, {'name': '...'}] 
         }
@@ -88,22 +82,29 @@ def new_resource():
 
 # TEMPORARY CHECK-IN CODE BELOW INCOMPLETE.
 
-
 @app.route('/resources/create', methods=['POST'])
 def create_resource():
     post_data = SERVICE_REQUEST_TEMPLATE
+    post_data['serviceRequest']['serviceOp'] = 'create'
     
-    raw_request_data = request.form
-    request_data = json.loads(raw_request_data)
+    request_data = request.form
+    resource_type = request.form['restype']
     
-    # Build main object from form values
-    object_dict = {}
+    resource_type_params = {}
     for (key,value) in request_data.items():
-        object_dict[key] = value
-    post_data['']
+        resource_type_params[key] = value
+    
+    post_data['serviceRequest']['params']['object'] = [resource_type, resource_type_params]
+
+    
+    service_gateway_call = requests.post(
+        'http://localhost:5000/ion-service/resource_registry/create', 
+        data={'payload': json.dumps(post_data)}
+    )
+    
     
     # Testing output
-    return str(params)
+    return str(post_data)
 
 
 @app.route('/render', methods=['GET'])
