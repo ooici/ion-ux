@@ -13,6 +13,8 @@ IONUX.Models.DataResourceDetails = Backbone.Model.extend({
 
 IONUX.Models.MarineFacility = Backbone.Model.extend({
 
+  url: "/marine_facilities"
+
 });
 
 

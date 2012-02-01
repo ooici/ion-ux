@@ -3,7 +3,7 @@ IONUX.Router = Backbone.Router.extend({
   routes: {
     "": "init",
     "data_resource_details/:data_resource_id": "data_resource_details",
-    "resource_types/:resource_type_id", "resource_type_details"
+    "resource_types/:resource_type_id": "resource_type_details"
   },
 
   _reset: function(){ //reset the UI
@@ -11,10 +11,15 @@ IONUX.Router = Backbone.Router.extend({
   },
 
   init: function(){
+    this.marine_facilities();
+  },
+
+  marine_facilities: function(){
     this._reset();
     this.marineFacilitiesList = new IONUX.Collections.MarineFacilities();
     this.marineFacilitiesListView = new IONUX.Views.MarineFacilitiesView({collection:this.marineFacilitiesList});
     this.marineFacilitiesList.fetch();
+    new IONUX.Views.MarineFacilitiesCreateNewView();
   },
 
   data_resource: function(){

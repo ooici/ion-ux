@@ -136,3 +136,8 @@ li.publications { background: transparent url(/static/img/r2/li.publications.png
 
 li.right { background: transparent url(/static/img/r2/li.right.png) top left no-repeat }
 li.down { background: transparent url(/static/img/r2/li.down.png) top left no-repeat }
+
+#marine-facilities-create-modal {
+  width:800px;
+}
+

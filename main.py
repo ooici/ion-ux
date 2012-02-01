@@ -17,15 +17,29 @@ else:
 def index():
     return render_template("index.html")
 
-@app.route('/dashboard')
+@app.route('/dashboard', methods=["GET"])
 def dashboard():
-    return render_template("dashboard.html")
+    return render_template('ux-dashboard.html')
 
 @app.route('/dataresource', methods=["GET", "POST"])
 def data_resource():
     resp_data = ServiceApi.data_resource(request.args)
     return jsonify(resp_data)
 
+<<<<<<< HEAD
+=======
+@app.route('/marine_facilities', methods=["GET", "POST"])
+def marine_facilities():
+    if request.method == 'POST':
+        import time; time.sleep(0.7) #mock latency
+        print request.data 
+        resp_data = {"success":True}
+    else:
+        resp_data = ServiceApi.marine_facilities(request.args)
+    return jsonify(data=resp_data)
+
+
+>>>>>>> dce3b5a5e136da8d53eb22e043c14996e751d3d6
 @app.route('/dataresource/<data_resource_id>', methods=["GET", "POST"])
 def data_resource_details(data_resource_id):
     resp_data = ServiceApi.data_resource_details(data_resource_id)
