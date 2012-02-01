@@ -28,7 +28,12 @@ def data_resource():
 
 @app.route('/marine_facilities', methods=["GET", "POST"])
 def marine_facilities():
-    resp_data = ServiceApi.marine_facilities(request.args)
+    if request.method == 'POST':
+        import time; time.sleep(0.7) #mock latency
+        print request.data 
+        resp_data = {"success":True}
+    else:
+        resp_data = ServiceApi.marine_facilities(request.args)
     return jsonify(data=resp_data)
 
 

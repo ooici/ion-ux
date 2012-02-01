@@ -11,10 +11,15 @@ IONUX.Router = Backbone.Router.extend({
   },
 
   init: function(){
+    this.marine_facilities();
+  },
+
+  marine_facilities: function(){
     this._reset();
     this.marineFacilitiesList = new IONUX.Collections.MarineFacilities();
     this.marineFacilitiesListView = new IONUX.Views.MarineFacilitiesView({collection:this.marineFacilitiesList});
     this.marineFacilitiesList.fetch();
+    new IONUX.Views.MarineFacilitiesCreateNewView();
   },
 
   data_resource: function(){
