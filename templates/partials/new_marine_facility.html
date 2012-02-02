@@ -4,81 +4,88 @@
 	<fieldset>
 		<legend>Identification</legend>
 		<div class="clearfix">
-			<label for="picture">Picture</label>
+			<label for="name">Name</label>
 			<div class="input">
-				<input class="input-file" id="picture" name="information_resource[picture]" type="file">
-			</div>
-		</div>
-		<div class="clearfix">
-			<label for="name_input">Name</label>
-			<div class="input">
-				<input class="xlarge" id="information_resource[name]" name="name_input" >
+				<input class="xlarge" id="new-marine-facility-name" name="name" >
 			</div>
 		</div>
 	</fieldset>
 	
-	<fieldset>
-		<legend>Location</legend>
-		<div class="clearfix">
-			<label for="map">Map</label>
-			<div class="input">
-				<input class="input-file" id="map" name="map_input_temp_name" type="file">
-			</div>
-		</div>
-		<p>Locations TBD.</p>
-	</fieldset>
-
 	<fieldset>
 		<legend>Description</legend>
 		<div class="clearfix">
 			<label for="description">Description</label>
 			<div class="input">
-				<textarea class="xxlarge" id="description" name="information_resource[description]" rows="3"></textarea>
+				<textarea class="xxlarge" id="new-marine-facility-description" name="description" rows="3"></textarea>
+			</div>
+		</div>
+	</fieldset>
+
+
+	<fieldset>
+		<legend>Contact</legend>
+		<div class="clearfix">
+			<label for="name">Name</label>
+			<div class="input">
+				<input class="xlarge" id="contact-name" name="contact[name]">
+			</div>
+		</div>
+		<div class="clearfix">
+			<label for="email">Email</label>
+			<div class="input">
+				<input class="xlarge" id="contact-email" name="contact[email]">
+			</div>
+		</div>
+		<div class="clearfix">
+			<label for="phone">Phone</label>
+				<div class="input">
+				<input class="xlarge" id="contact-phone" name="contact[phone]">
+			</div>
+		</div>
+		<div class="clearfix">
+			<label for="address">Address</label>
+			<div class="input">
+				<input class="xlarge" id="contact-address" name="contact[address]">
+			</div>
+		</div>
+		<div class="clearfix">
+			<label for="city">City</label>
+			<div class="input">
+				<input class="xlarge" id="contact-city" name="contact[city]">
 			</div>
 		</div>
 	</fieldset>
 	
 	
 	<fieldset>
-		<legend>Provenance</legend>
+		<legend>Institution</legend>
 		<div class="clearfix">
-			<label for="owner">Owner</label>
+			<label for="website">Website</label>
 			<div class="input">
-				<input class="xlarge" id="owner" name="contact[name]">
+				<input class="xlarge" id="institution-website" name="institution[website]">
 			</div>
 		</div>
 		<div class="clearfix">
 			<label for="email">Email</label>
 			<div class="input">
-				<input class="xlarge" id="email" name="contact[email]">
+				<input class="xlarge" id="institution-email" name="institution[email]">
 			</div>
 		</div>
 		<div class="clearfix">
 			<label for="phone">Phone</label>
 				<div class="input">
-				<input class="xlarge" id="phone" name="contact[phone]">
+				<input class="xlarge" id="institution-phone" name="institution[phone]">
 			</div>
 		</div>
 		<div class="clearfix">
-			<label for="pi">PI</label>
+			<label for="address">Address</label>
 			<div class="input">
-				<input class="xlarge" id="pi" name="contact[pi]">
-			</div>
-		</div>
-		<div class="clearfix">
-			<label for="email_temp">Email</label>
-			<div class="input">
-				<input class="xlarge" id="email_temp" name="email_temp">
-			</div>
-		</div>
-		<div class="clearfix">
-			<label for="phone_temp">Phone</label>
-			<div class="input">
-				<input class="xlarge" id="phone_temp" name="phone_temp">
+				<input class="xlarge" id="institution-address" name="institution[address]">
 			</div>
 		</div>
 	</fieldset>
 	
   <input class="btn" type="submit" value="Create New Marine Facilty" />
+  <input class="cancel btn" type="cancel" value="Cancel" />
 	
 </form>

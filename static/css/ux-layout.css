@@ -141,3 +141,9 @@ li.down { background: transparent url(/static/img/r2/li.down.png) top left no-re
   width:800px;
 }
 
+#marine-facilities-new {
+  background-color:#fff;
+  padding:10px 0px;
+  display:none;
+}
+

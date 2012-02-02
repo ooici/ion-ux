@@ -7,7 +7,7 @@ IONUX.Router = Backbone.Router.extend({
   },
 
   _reset: function(){ //reset the UI
-    $(".viewcontainer").empty().hide();
+    $(".viewcontainer").hide();
   },
 
   init: function(){
@@ -16,10 +16,10 @@ IONUX.Router = Backbone.Router.extend({
 
   marine_facilities: function(){
     this._reset();
+    $("#marine-facilities-container").show();
     this.marineFacilitiesList = new IONUX.Collections.MarineFacilities();
     this.marineFacilitiesListView = new IONUX.Views.MarineFacilitiesView({collection:this.marineFacilitiesList});
     this.marineFacilitiesList.fetch();
-    new IONUX.Views.MarineFacilitiesCreateNewView();
   },
 
   data_resource: function(){
