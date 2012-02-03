@@ -14,11 +14,11 @@
 		<!-- UX Stylesheets -->
 		<link rel="stylesheet" href="/static/css/ux-reset.css" type="text/css" />
 		<link rel="stylesheet" href="/static/css/ux-1240.css" type="text/css" />
-		<!-- <link rel="stylesheet" href="/static/css/ux-text.css" type="text/css" /> -->
+		<link rel="stylesheet" href="/static/css/ux-text.css" type="text/css" />
 		<link rel="stylesheet" href="/static/css/ux-layout.css" type="text/css" />
 		<link rel="stylesheet" href="/static/css/ux-datatable-table-jui.css" type="text/css" />
 		<link rel="stylesheet" href="/static/css/ux-datatable-page.css" type="text/css" />
-		<link rel="stylesheet" href="/static/bootstrap/bootstrap.css" type="text/css" />
+		<!-- <link rel="stylesheet" href="/static/bootstrap/bootstrap.css" type="text/css" /> -->
 
 		<!-- Vendor JavaScripts -->
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.js"></script>
@@ -29,7 +29,7 @@
 		<script type="text/javascript" src="/static/js/jquery.colorbox-1.3.18.min.js"></script>
 		<script type="text/javascript" src="/static/js/jquery.jscrollpane.min.js"></script>
 		<script type="text/javascript" src="/static/js/jquery.mousewheel.js"></script>
-		<script type="text/javascript" src="/static/bootstrap/js/bootstrap-modal.js"></script>
+		// <script type="text/javascript" src="/static/bootstrap/js/bootstrap-modal.js"></script>
 
 		<!-- UX JavaScripts -->	
 		<!-- <script type="text/javascript" src="/static/js/ux-models.js"></script>
@@ -40,6 +40,10 @@
 			$(function() {
 				if ($('form #name')) {
 					$('form #name').focus();
+				};
+				
+				if ($("#resource-table")) {
+					$("#resource-table").dataTable();
 				};
 			});
 		</script>
@@ -69,7 +73,7 @@
 				<input type="text" name="search" id="search-input">			
 				<span class="sidebar-section">Resource Types</span>
 				<ul>
-					{% for menu_item in data['menu'] %}
+					{% for menu_item in menu %}
 						<li class="observatories"><a href="/resources?type={{menu_item}}">{{ menu_item|truncate(20, killwords=True) }}</a></li>
 					{% endfor %}
 				</ul>

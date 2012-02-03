@@ -3,22 +3,28 @@
 {% block content %}
 	<div class="grid_20 alpha beta basic_wrapper_style rounded_5">
 		
-		{% if data['resource_types'] %}
-			<h1>Listing {{ data['resource_types'][0].type }}</h1>	
+		{% if resource_type and resources %}
+			<h1>Listing {{ resource_type }}</h1>	
 		{% endif %}
 		
-		{% if data['resource_types'] %}
-			<table>
-				<tr>
+		{% if resources %}
+			<table id="resource-table" width="100%">
+				<thead>
 					<th>ID</th>
 					<th>Name</th>
-					<th>Type</th>
-				</tr>
-				{% for resource in data['resource_types'] %}
+					<th>Raw Updated</th>
+					<th></th>
+					<th></th>
+					<th></th>
+				</thead>
+				{% for resource in resources %}
 					<tr>
-						<td>{{ resource.id }}</td>
+						<td>{{ resource._id }}</td>
 						<td>{{ resource.name }}</td>
-						<td>{{ resource.type }}</td>
+						<td>{{ resource.ts_updated }}</td>
+						<td><a href="/resources/show/{{resource._id}}?type={{ resource_type }}">Show</a></td>
+						<td><a href="/resources/edit/{{resource._id}}?type={{ resource_type }}">Edit</a></td>
+						<td><a href="/resources/destroy/{{resource._id}}?type={{ resource_type }}">Delete</a></td>
 					</tr>
 				{% endfor %}
 			</table>

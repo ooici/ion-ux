@@ -1,5 +1,5 @@
 
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, redirect, url_for
 import requests
 import json
 from functools import wraps
@@ -26,8 +26,6 @@ def data_resource():
     resp_data = ServiceApi.data_resource(request.args)
     return jsonify(resp_data)
 
-<<<<<<< HEAD
-=======
 @app.route('/marine_facilities', methods=["GET", "POST"])
 def marine_facilities():
     if request.method == 'POST':
@@ -38,8 +36,6 @@ def marine_facilities():
         resp_data = ServiceApi.marine_facilities(request.args)
     return jsonify(data=resp_data)
 
-
->>>>>>> dce3b5a5e136da8d53eb22e043c14996e751d3d6
 @app.route('/dataresource/<data_resource_id>', methods=["GET", "POST"])
 def data_resource_details(data_resource_id):
     resp_data = ServiceApi.data_resource_details(data_resource_id)
@@ -51,9 +47,25 @@ def subscription():
     return jsonify(resp_data)
 
 
-# RESOURCE BROWSER - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
-SERVICE_GATEWAY_BASE_URL = 'http://localhost:5000/ion-services'
+
+# TEMPLATE RENDERER
+# Quick view to dynamically call pages as they are developed. -TB
+
+@app.route('/demo/<page_to_render>')
+def demo(page_to_render=None):
+    if page_to_render == 'facepage':
+        return render_template('facepage.html')
+    elif page_to_render == 'dashboard':
+        return render_template('dashboard.html')
+
+
+
+# RESOURCE BROWSER
+# There could be a lot of refactoring and verbosity clean-up, but
+# for now I am going to leave it as the LCA routes are developed. -TB
+
+RESOURCE_REGISTRY_URL = 'http://localhost:5000/ion-services/resource_registry/'
 
 DEFINED_SERVICES_OPERATIONS = {
     'marine_facilities':
@@ -72,29 +84,50 @@ SERVICE_REQUEST_TEMPLATE = {
 }
 
 @app.route('/resources', methods=['GET'])
-def resources_index():
-    response_data = {}
-    response_data['menu'] = fetch_menu()
-    
-    # Fetch list of a certain type, if specified in request.args
+def resources_index():    
     if request.args.has_key('type'):
-        resource_type_url = 'http://localhost:5000/resources/list/%s' % request.args.get('type')
-        resource_type_result = requests.get(resource_type_url)
-        response_data.update(json.loads(resource_type_result.content))
-
-    # return jsonify(data=response_data)
-    return render_template('resource_browser/list.html', data=response_data)
+        resource_type = request.args['type']
+        
+        get_data = SERVICE_REQUEST_TEMPLATE
+        get_data['serviceRequest']['serviceOp'] = 'find_resources'
+        get_data['serviceRequest']['params']['object'] = [resource_type, {'restype': resource_type}]
+        
+        service_gateway_call = requests.get(
+            'http://localhost:5000/ion-service/resource_registry/find_resources',
+            data={'payload': json.dumps(get_data)}
+        )
+        
+        resources = json.loads(service_gateway_call.content)
+        resources = json.loads(resources['data'])
+        resources = resources[0]
+    else:
+        resource_type=None
+        resources=None
+    
+    return render_template('resource_browser/list.html', resource_type=resource_type, resources=resources, menu=fetch_menu())
+    
+    # if request.args.has_key('type'):
+    #     resource_type = request.args['type']
+    #     
+    #     service_gateway_call = requests.get('http://localhost:5000/resources/list/%s' % resource_type)
+    #     resources = json.loads(service_gateway_call.content)
+    #     resources = resources['resource_types']
+    # else:
+    #     resource_type=None
+    #     resources=None
+    # 
+    # return render_template('resource_browser/list.html', resource_type=resource_type, resources=resources, menu=fetch_menu())
 
 
 @app.route('/resources/new', methods=['GET'])
 def new_resource():    
-    response_data = {}
-    response_data['menu'] = fetch_menu()    
+    if request.args.has_key('type'):
+        resource_type = request.args['type']
+    else:
+        resource_type = None
+        
+    return render_template('resource_browser/new_form.html', resource_type=resource_type, resource=None, menu=fetch_menu())
 
-    return render_template('resource_browser/new.html', data=response_data)
-
-
-# TEMPORARY CHECK-IN CODE BELOW INCOMPLETE.
 
 @app.route('/resources/create', methods=['POST'])
 def create_resource():
@@ -106,33 +139,81 @@ def create_resource():
     
     resource_type_params = {}
     for (key,value) in request_data.items():
+        if key == 'restype': continue
         resource_type_params[key] = value
     
     post_data['serviceRequest']['params']['object'] = [resource_type, resource_type_params]
-
     
     service_gateway_call = requests.post(
         'http://localhost:5000/ion-service/resource_registry/create', 
         data={'payload': json.dumps(post_data)}
     )
     
+    if service_gateway_call.status_code != 200:
+        return "The service gateway returned the following error: %d" % service_gateway_call.status_code
+
+    return redirect("%s?type=%s" % (url_for('resources_index'), resource_type))
+
+
+@app.route('/resources/show/<resource_id>')
+def show_resource(resource_id=None):
     
-    # Testing output
+    resource_type = request.args.get('type')
+    
+    service_gateway_call = requests.get('http://localhost:5000/ion-service/resource_registry/read?object_id=%s' % resource_id)
+    resource = json.loads(service_gateway_call.content)
+    # resource = resource['data']
+    resource = json.loads(resource['data'])
+    
+    # return str(resource)
+    return render_template('resource_browser/show.html', resource_type=resource_type, resource=resource, menu=fetch_menu())
+
+
+@app.route('/resources/edit/<resource_id>', methods=['GET'])
+def edit_reource(resource_id=None):
+    if request.args.has_key('type'):
+        resource_type = request.args['type']
+    else:
+        resource_type = None
+    
+    service_gateway_call = requests.get('http://localhost:5000/ion-service/resource_registry/read?object_id=%s' % resource_id)
+    resource = json.loads(service_gateway_call.content)
+    resource = json.loads(resource['data'])
+
+    # return str(resource)
+    return render_template('resource_browser/edit_form.html', resource_type=resource_type, resource=resource, menu=fetch_menu())
+
+
+@app.route('/resources/update/<resource_id>', methods=['POST'])
+def update_resource(resource_id=None):
+    post_data = SERVICE_REQUEST_TEMPLATE
+    post_data['serviceRequest']['serviceOp'] = 'update'
+    
+    request_data = request.form
+    resource_type = request.form['restype']
+    
+    print "HERE!"
+    
+    resource_type_params = {}
+    for (key,value) in request_data.items():
+        if key == 'restype': continue
+        resource_type_params[key] = value
+
+    post_data['serviceRequest']['params']['object'] = [resource_type, resource_type_params]
+
+    # service_gateway_call = requests.post(
+    #     'http://localhost:5000/ion-service/resource_registry/update', 
+    #     data={'payload': json.dumps(post_data)}
+    # )
+
+    # if service_gateway_call.status_code != 200:
+    #     return "The service gateway returned the following error: %d" % service_gateway_call.status_code
+
     return str(post_data)
+    # return redirect("%s?type=%s" % (url_for('resources_index'), resource_type))
 
 
-@app.route('/render', methods=['GET'])
-def render():
-    return render_template('/partials/new_marine_facility.html')
-
-@app.route('/resources/edit/<id>', methods=['GET'])
-def edit_reource():
-    pass
-
-
-def fetch_menu():
-    '''Returns a menu from the Service Gateway'''
-        
+def fetch_menu():        
     menu_data = requests.get('http://localhost:5000/ion-service/list_resource_types')
     menu = json.loads(menu_data.content)
     

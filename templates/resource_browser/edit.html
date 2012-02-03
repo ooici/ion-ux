@@ -1,0 +1,13 @@
+{% extends "resource_browser/base.html" %}
+
+{% block content %}
+	
+	{% if resource %}
+		<h1>Editing: {{ resource.name }}</h1>
+		{% block form %}
+		{% endblock form %}
+	{% else %}
+		<h1>Resource not found</h1>
+	{% endif %}
+
+{% endblock content %}

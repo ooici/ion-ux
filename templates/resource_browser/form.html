@@ -1,9 +1,15 @@
 {% extends "resource_browser/base.html" %}
 
 {% block content %}
+	{% if resource_type %}
+		<h1>New {{ resource_type }} Object</h1>
+	{% else %}
+		<h1>New Resource</h1>
+	{% endif %}
 	
-	<h1>New Resource</h1>
+	
 	{% block form %}
+		
 	{% endblock form %}
 
 {% endblock content %}

@@ -1,0 +1,24 @@
+{% extends "resource_browser/edit.html" %}
+
+	{% block form %}
+		<form action="/resources/update/{{resource._id}}" method="POST">
+			<label for="name">Name</label>
+			<input type="text" name="name" id="name" value="{{resource.name}}"/><br />
+			<label for="type">Type</label>
+			<select name="restype" disabled>
+				{% for menu_item in menu %}
+					{% if resource_type %}
+						{% if resource_type == menu_item %}
+							<option value="{{menu_item}}" selected="selected">{{ menu_item }}</optionv>
+						{% endif %}
+					{% endif %}
+					<option value="{{menu_item}}">{{ menu_item }}</option>
+				{% endfor %}
+			</select><br />
+			<input type="hidden" name="_id" value="{{ resource._id }}">
+			<input type="hidden" name="_rev" value="{{ resource._rev }}">
+			<!-- Work around disabled select -->
+			<input type="hidden" name="restype" value="selected">
+			<input type="submit" value="Update">
+		</form>
+	{% endblock form %}

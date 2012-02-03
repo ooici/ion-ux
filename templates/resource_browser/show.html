@@ -1,0 +1,11 @@
+{% extends "resource_browser/base.html" %}
+
+{% block content %}
+	<div class="grid_20 alpha beta basic_wrapper_style rounded_5">
+		<h1>Resource Details</h1>
+		<h2>Name: {{ resource.name }}</h2>
+		<h2>Description: {{ resource.description }}</h2>
+		<h2>Type: {{ resource_type }}</h2>
+		<div class="clear">&nbsp;</div>
+	</div>
+{% endblock content %}

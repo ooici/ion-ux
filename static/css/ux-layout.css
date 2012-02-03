@@ -1,4 +1,45 @@
-body { background: #333; }
+h3.top_heading {
+    background: #222;
+    color: #ccc;
+/*    display: inline;*/
+    font-size: 16px;
+    font-weight: normal;
+    margin: 0;
+    padding: 5px 10px 3px 10px;
+    width: 150px;
+}
+
+.map {
+/*    margin-top: -3px;*/
+}
+
+#dashboard_map {
+    margin: 0 10px 10px;
+}
+
+.dashboard.panel {
+    height: 100%;
+    min-height: 100%;
+}
+
+.panel {
+    background: #222;
+    color: #ccc;
+}
+
+.panel h4 {
+    background: #444;
+    font-size: 11px;
+    font-weight: normal;
+    text-transform: uppercase;
+    padding: 5px 10px;
+}
+
+.container_fixed {
+    /* Add fixed height later for application-style scrolling (fixed footer) */
+}
+
+body { background: #000; }
 
 #header {
     background: black;
@@ -19,7 +60,7 @@ body { background: #333; }
 
 .basic_wrapper_style {
     background: #ccc;
-    margin-bottom: 10px ;
+    margin-bottom: 10px;
 }
 
 .basic_wrapper_style h1, h2, h3, p, table, ul, ol, form {
@@ -32,7 +73,11 @@ body { background: #333; }
     margin-bottom: 10px;
 }
 
-.rounded_5 {
+.padding: 10px;
+margin-top: -3px;
+_5 {
+    color: #666;
+    background: #333;
     moz-border-radius: 5px;
     border-radius: 5px;
 }
@@ -42,7 +87,7 @@ body { background: #333; }
 
 
 #sidebar {
-    background: #333;
+    background:;
     float: left;
     height: 100%;
     width: 200px;
@@ -141,3 +186,22 @@ li.down { background: transparent url(/static/img/r2/li.down.png) top left no-re
   width:800px;
 }
 
+table#resource-table {
+    margin: 0;
+}
+
+table#resource-table th {
+    padding: 10px 5px;
+    text-align: left;
+}
+
+tr.even td {
+    border-top: solid 1px #ccc;
+    padding: 5px;
+}
+
+tr.odd td {
+    background: #eee;
+    border-top: solid 1px #ccc;
+    padding: 5px;
+}
