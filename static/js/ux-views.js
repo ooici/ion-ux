@@ -55,7 +55,11 @@ IONUX.Views.DataResourceDetailView = Backbone.View.extend({
 
 IONUX.Views.MarineFacilitiesView = Backbone.View.extend({
 
-  el:$("#marine-facilities"),
+  el:$("#marine-facilities-container"),
+
+  events: {
+    "click .create_new":"show_create_new_form",
+  },
 
   initialize: function(){
     _.bindAll(this, "render");
@@ -63,14 +67,22 @@ IONUX.Views.MarineFacilitiesView = Backbone.View.extend({
   },
   
   render: function(){
-    this.el.show();
+    var list_elem = this.el.find(".data-list");
+    list_elem.empty();
     _.each(this.collection.models, function(data) {
-        $(this.el).append(new IONUX.Views.MarineFacilitiesItemView({model:data}).render().el);
+        $(list_elem).append(new IONUX.Views.MarineFacilitiesItemView({model:data}).render().el);
     }, this);
     return this;
   },
 
-})
+  show_create_new_form: function(){
+    if (_.isUndefined(this.marine_facilities_create_new_view)){
+      this.marine_facilities_create_new_view = new IONUX.Views.MarineFacilitiesCreateNewView(); 
+    }
+    this.marine_facilities_create_new_view.render();
+  }
+  
+});
 
 
 IONUX.Views.MarineFacilitiesItemView = Backbone.View.extend({
@@ -109,38 +121,42 @@ IONUX.Views.MarineFacilitiesDetailView = Backbone.View.extend({
 
 IONUX.Views.MarineFacilitiesCreateNewView = Backbone.View.extend({
 
-  el:$("#marine-facilities-create-modal"),
+  el:$("#marine-facilities-new"),
 
   template: _.template($("#new-marine-facility-tmpl").html()),
 
   events: {
     "click input[type='submit']":"create_new",
-    "submit input[type='submit']":"create_new"
+    "submit input[type='submit']":"create_new",
+    "click .cancel":"cancel"
   },
 
   initialize: function(){
-    _.bindAll(this, "show", "create_new");
-    this.el.bind("show", this.show);
+    _.bindAll(this, "create_new");
   },
 
-  show: function(){
-    this.el.html(this.template({}));
+  render: function(){
+    this.el.empty().html(this.template({})).show();
   },
 
   create_new: function(evt){
     evt.preventDefault();
     this.el.find("input[type='submit']").attr("disabled", true).val("Saving...");
     var mf = new IONUX.Models.MarineFacility();
-    $.each(this.el.find("input,textarea").not("input[type='submit']"), function(i, e){
+    $.each(this.el.find("input,textarea").not("input[type='submit'],input[type='cancel']"), function(i, e){
       var key = $(e).attr("name"), val = $(e).val();
-      var kv = new Object(); //for using strings for both key and val in Object.
+      var kv = {};
       kv[key] = val;
       mf.set(kv);
     });
     var self = this;
     mf.save(null, {success:function(model, resp){
-      self.el.modal("hide");
+      self.el.hide();
     }});
+  },
+
+  cancel: function(){
+    this.el.hide();
   }
 
 });

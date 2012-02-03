@@ -82,10 +82,12 @@
 					<div id="data-resource-detail" class="viewcontainer grid_20 height_200 rounded_5" style="overflow:scroll"> </div>
 					<div class="clear">&nbsp;</div>
 
-					<div id="marine-facilities" class="viewcontainer grid_20 height_200 rounded_5" style="overflow:scroll"> </div>
-          <button data-controls-modal="marine-facilities-create-modal" data-backdrop="true" class="btn">Create New Marine Facility</button>
-          <div id="marine-facilities-create-modal" class="modal hide"></div>
+        <div id="marine-facilities-container" class="viewcontainer">
+					<div class="data-list grid_20 height_200 rounded_5" style="overflow:scroll"> </div>
+          <button class='btn create_new'>New Marine Facility</button>
+          <div id="marine-facilities-new"></div>
 					<div class="clear">&nbsp;</div>
+        </div>
 	
 				</div> <!-- div.container_20 -->
 			</div> <!-- div#main -->
@@ -93,30 +95,10 @@
 
 
 <!-- templates -->
-
-<script type="text/template" id="marine-facilities-item-tmpl">
-    <li class='facility'>
-      <a href='#marine_facilities_facepage/<%= site_id %>'>Marine Facility '<%= information_resource.name %>'</a>
-    </li>
-</script>
-<script type="text/template" id="marine-facilities-detail-tmpl">
-  <p>Details for Marine Facility with id '<%= data_resource_id %>'</p><p><a href='#'>go back</a></p>
-</script>
-
-
-<script type="text/template" id="data-resource-item-tmpl">
-  <% _.each(dataResourceSummary, function(summary) { %> 
-    <li class='data-summary'>
-      <a href='#data_resource_details/<%= summary.datasetMetadata.data_resource_id %>'><%= summary.datasetMetadata.title %></a>
-    </li>
-  <% }); %>
-</script>
-
-<script type="text/template" id="data-resource-detail-tmpl">
-  <p>Details for dataset with id '<%= data_resource_id %>'</p>
-  <p><a href='#'>go back</a></p>
-</script>
-
+<script type="text/template" id="marine-facilities-item-tmpl">{% include 'partials/marine_facilities_item.html' %}</script>
+<script type="text/template" id="marine-facilities-detail-tmpl">{% include 'partials/marine_facilities_detail.html' %} </script>
+<script type="text/template" id="data-resource-item-tmpl">{% include 'partials/data_resource_item.html' %}</script>
+<script type="text/template" id="data-resource-detail-tmpl">{% include 'partials/data_resource_detail.html' %}</script>
 <script type="text/template" id="new-marine-facility-tmpl">{% include 'partials/new_marine_facility.html' %}</script>
 
 
