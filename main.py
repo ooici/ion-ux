@@ -125,6 +125,27 @@ def new_resource():
     return render_template('resource_browser/new_form.html', resource_type=resource_type, resource=None, menu=fetch_menu())
 
 
+
+@app.route('/resources/new2', methods=['GET'])
+def new_resource2():
+    
+    if request.args.has_key('type'):
+        resource_type = request.args['type']
+        form_values = requests.get('http://localhost:5000/ion-service/resource_type_schema/%s' % resource_type)
+        form_values = json.loads(form_values.content)
+        form_values = json.loads(form_values['data'])
+    else:
+        resource_type = None
+
+    # return str(form_values['data'])
+    return render_template('resource_browser/dynamic_form.html', form_values=form_values, resource_type=resource_type, resource=None, menu=fetch_menu())
+
+def build_form(form_values_dict):
+    pass
+    
+
+
+
 @app.route('/resources/create', methods=['POST'])
 def create_resource():
     post_data = SERVICE_REQUEST_TEMPLATE

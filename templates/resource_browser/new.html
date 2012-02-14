@@ -1,9 +1,20 @@
 {% extends "resource_browser/base.html" %}
 
 {% block content %}
-	
-	<h1>New Resource</h1>
+	<h1>
+		{% if resource_type %}
+			New {{ resource_type }}
+		{% else %}
+		 	New Resource
+		{% endif %}
+	</h1>
+
 	{% block form %}
 	{% endblock form %}
 
+
+	<br /><br />
+	<h2>Raw form values</h2>
+	{{ form_values }}
+	
 {% endblock content %}
