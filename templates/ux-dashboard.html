@@ -14,12 +14,13 @@
 		<link rel="stylesheet/less" href="/static/css/lca.css" type="text/css" />
 	</head>
 	<body>
-		<div id="app">
-			<div id="header">
-				<img id="logo" src="/static/img/r2/ooi_logo.png" alt="Ocean Observatories Initiative" />
-			</div> <!-- div#header -->
-			<div class="clear"></div>
-			<div id="sidebar" class="xgrid_3 xalpha">
+
+	 <div id="header" class="navbar navbar-fixed-top">  
+   </div> <!-- div#header -->
+
+   <div id="container" class="container-fluid">
+    <div class="row-fluid">
+			<div id="sidebar" class="span2">
 				<span class="sidebar-section">Search</span>
 
 				<span class="sidebar-section">Filters</span>
@@ -64,27 +65,21 @@
 				</ul>
 			</div> <!-- div#sidebar -->
 			
-			<div id="main" class="xgrid_17 xbeta">
-				
-				<div id="container" class="container_20">
+			<div id="main" class="span10">
+				<div id="main-container">
+					<div id="data-resources" class="viewcontainer grid_20 height_200 rounded_5"></div>
+					<div id="data-resource-detail" class="viewcontainer grid_20 height_200 rounded_5"></div>
 
-					<div id="data-resources" class="viewcontainer grid_20 height_200 rounded_5" style="overflow:scroll"> </div>
-					<div class="clear">&nbsp;</div>
-						
-					<div id="data-resource-detail" class="viewcontainer grid_20 height_200 rounded_5" style="overflow:scroll"> </div>
-					<div class="clear">&nbsp;</div>
-
-        <div id="marine-facilities-container" class="viewcontainer">
-					<div class="data-list grid_20 height_200 rounded_5" style="overflow:scroll"> </div>
-          <button class='btn create_new'>New Marine Facility</button>
-          <div id="marine-facilities-new"></div>
-					<div class="clear">&nbsp;</div>
-        </div>
-	
-				</div> <!-- div.container_20 -->
+          <div id="marine-facilities-container" class="viewcontainer">
+            <div class="data-list grid_20 height_200 rounded_5"></div>
+            <button class='btn create_new'>New Marine Facility</button>
+            <div id="marine-facilities-new"></div>
+          </div>
+				</div> <!-- div#container -->
 			</div> <!-- div#main -->
-		</div> <!-- div#app -->
 
+   </div> <!-- div.row-fluid -->
+  </div> <!-- div.container-fluid -->
 
 <!-- templates -->
 <script type="text/template" id="marine-facilities-item-tmpl">{% include 'partials/marine_facilities_item.html' %}</script>
