@@ -230,6 +230,7 @@ def update_resource(resource_id=None):
 def delete_resource(resource_id=None):
     return str(resource_id)
 
+
 def fetch_menu():        
     menu_data = requests.get('http://localhost:5000/ion-service/list_resource_types')
     menu = json.loads(menu_data.content)
