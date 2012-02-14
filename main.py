@@ -1,7 +1,5 @@
-
 from flask import Flask, request, jsonify, render_template, redirect, url_for
-import requests
-import json
+import requests, json
 from functools import wraps
 
 app = Flask(__name__)
@@ -47,12 +45,10 @@ def subscription():
     return jsonify(resp_data)
 
 
-
-
 # TEMPLATE RENDERER
 # Quick view to dynamically call pages as they are developed. -TB
 
-@app.route('/demo/<page_to_render>')
+@app.route('/lca/<page_to_render>')
 def demo(page_to_render=None):
     if page_to_render == 'facepage':
         return render_template('facepage.html')
@@ -162,7 +158,6 @@ def show_resource(resource_id=None):
     
     service_gateway_call = requests.get('http://localhost:5000/ion-service/resource_registry/read?object_id=%s' % resource_id)
     resource = json.loads(service_gateway_call.content)
-    # resource = resource['data']
     resource = json.loads(resource['data'])
     
     # return str(resource)
@@ -192,8 +187,6 @@ def update_resource(resource_id=None):
     request_data = request.form
     resource_type = request.form['restype']
     
-    print "HERE!"
-    
     resource_type_params = {}
     for (key,value) in request_data.items():
         if key == 'restype': continue
@@ -201,17 +194,20 @@ def update_resource(resource_id=None):
 
     post_data['serviceRequest']['params']['object'] = [resource_type, resource_type_params]
 
-    # service_gateway_call = requests.post(
-    #     'http://localhost:5000/ion-service/resource_registry/update', 
-    #     data={'payload': json.dumps(post_data)}
-    # )
+    service_gateway_call = requests.post(
+        'http://localhost:5000/ion-service/resource_registry/update', 
+        data={'payload': json.dumps(post_data)}
+    )
 
-    # if service_gateway_call.status_code != 200:
-    #     return "The service gateway returned the following error: %d" % service_gateway_call.status_code
+    if service_gateway_call.status_code != 200:
+        return "The service gateway returned the following error: %d" % service_gateway_call.status_code
 
-    return str(post_data)
-    # return redirect("%s?type=%s" % (url_for('resources_index'), resource_type))
+    # return str(post_data)
+    return redirect("%s?type=%s" % (url_for('resources_index'), resource_type))
 
+@app.route('/resources/delete/<resource_id>')
+def delete_resource(resource_id=None):
+    return str(resource_id)
 
 def fetch_menu():        
     menu_data = requests.get('http://localhost:5000/ion-service/list_resource_types')

@@ -1,0 +1,10 @@
+body {
+  background: #eee;
+}
+
+#header {
+  background: #004978 url('/static/img/lca-header.png') no-repeat 0 0;
+  height: 72px;
+}
+
+.test {background: #ccc;}

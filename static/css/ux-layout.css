@@ -186,7 +186,6 @@ li.down { background: transparent url(/static/img/r2/li.down.png) top left no-re
   width:800px;
 }
 
-<<<<<<< HEAD
 table#resource-table {
     margin: 0;
 }
@@ -206,11 +205,9 @@ tr.odd td {
     border-top: solid 1px #ccc;
     padding: 5px;
 }
-=======
 #marine-facilities-new {
   background-color:#fff;
   padding:10px 0px;
   display:none;
 }
 
->>>>>>> 12f0f6abb15f37a04321f478abced6d1c66ff614

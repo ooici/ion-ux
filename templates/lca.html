@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>OOI Integrated Observatory Network</title>
+
+		<link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico" />
+
+		<!-- Vendor Stylesheets -->
+		<link rel="stylesheet" href="/static/css/jquery-ui-1.8.6.custom.css" type="text/css" />
+		<link rel="stylesheet" href="/static/css/jscrollpane.css" type="text/css" />
+		<link rel="stylesheet" href="/static/css/ux-datatable-table-jui.css" type="text/css" />
+		<link rel="stylesheet" href="/static/css/ux-datatable-page.css" type="text/css" />
+		
+
+		<!-- UX Stylesheets -->
+		<link rel="stylesheet/less" href="/static/bootstrap/less/bootstrap.less" type="text/css" />
+		<link rel="stylesheet/less" href="/static/css/lca.css" type="text/css" />
+		
+		
+		<script src="/static/js/less-1.2.1.min.js" type="text/javascript"></script>
+		<!-- <link rel="stylesheet" href="/static/css/lca.css" type="text/css" /> -->
+		
+	</head>
+	<body>
+		<div id="app">
+			<div id="header">
+			</div> <!-- div#header -->
+			<div class="row">
+				<div class="test navigation span2">
+					<span class="sidebar-section">Filters</span>
+					<ul>
+						<li class="filter"><a href="#">This Month</a>
+						<li class="filter"><a href="#">North Atlantic</a></li>
+						<li class="filter_disabled">Weather Instruments</li>
+					</ul>
+
+					<span class="sidebar-section">OOI Resources</span>
+					<ul>
+						<li class="all_resources"><a href="#">All Resources</a>
+						<li class="data"><a href="#">Data</a></li>
+						<li class="observatories"><a href="#">Observatories</a></li>
+						<li class="facilities"><a href="#">Facilities</a></li>
+						<li class="platforms"><a href="#">Platforms</a></li>
+						<li class="instruments"><a href="#">Instruments</a></li>
+					</ul>
+
+					<span class="sidebar-section">My Resources</span>
+					<ul>
+						<li class="notifications"><a href="#">Notifications</a></li>
+						<li class="publications"><a href="#">Publications</a></li>
+					</ul>
+
+
+					<span class="sidebar-section">My Collections</span>
+					<ul>
+						<li class="right"><a href="#">Notifications</a></li>
+						<li class="down"><a href="#">Undeployed Instruments</a>
+							<ul>
+								<li><a href="#">abc instrument</a></li>
+								<li><a href="#">def instrument</a></li>
+							</ul>
+						</li>
+						<li class="down"><a href="#">Available Policies</a>
+							<ul>
+								<li><a href="#">My Class 0101</a></li>
+								<li><a href="#">Police 034956</a></li>
+							</ul>
+						</li>
+					</ul>
+				</div> <!-- navigation.span2 -->
+
+				<div class="test span8">
+					Span 8
+				</div>
+				
+				<div class="test span2">
+					Span 2
+				</div>
+			</div>
+
+
+
+
+
+
+
+
+
+
+
+
+			<div class="clear"></div>
+
+			<div id="sidebar" class="">
+			</div> <!-- div#sidebar -->
+			
+			<div id="main" class="">
+				
+				<div id="container" class="container_20 container_fixed">
+
+					{% block content %}
+						
+					{% endblock content %}
+	
+				</div> <!-- div.container_20 -->
+			</div> <!-- div#main -->
+		</div> <!-- div#app -->
+
+
+		<!-- Vendor JavaScripts -->
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
+		<script type="text/javascript" src="/static/js/json2.js"></script>
+		<script type="text/javascript" src="/static/js/underscore-1.2.2.min.js "></script>
+		<script type="text/javascript" src="/static/js/backbone-0.5.3.min.js"></script>
+		<script type="text/javascript" src="/static/js/jquery.dataTables-1.8.2.min.js"></script>
+		<script type="text/javascript" src="/static/js/jquery.jscrollpane.min.js"></script>
+		<script type="text/javascript" src="/static/js/jquery.mousewheel.js"></script>
+		<script type="text/javascript" src="/static/bootstrap/js/bootstrap.js"></script>
+
+		<!-- UX JavaScripts -->	
+		<script src="/static/js/ion-ux.js" type="text/javascript"></script>
+		<script src="/static/js/ux-models.js" type="text/javascript"></script>
+		<script src="/static/js/ux-collections.js" type="text/javascript"></script>
+		<script src="/static/js/ux-views.js" type="text/javascript"></script>
+		<script src="/static/js/ux-router.js" type="text/javascript"></script>
+
+		<script type="text/javascript">
+		  $(function() {
+	
+		  });
+		</script>
+	</body>
+</html>
