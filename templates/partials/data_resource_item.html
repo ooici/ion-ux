@@ -1,5 +1,5 @@
 <% _.each(dataResourceSummary, function(summary) { %> 
   <li class='data-summary'>
-    <a href='#data_resource_details/<%= summary.datasetMetadata.data_resource_id %>'><%= summary.datasetMetadata.title %></a>
+    <a href='#data/<%= summary.datasetMetadata.data_resource_id %>'><%= summary.datasetMetadata.title %></a>
   </li>
 <% }); %>

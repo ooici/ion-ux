@@ -8,7 +8,7 @@ IONUX.Views.DataResourceView = Backbone.View.extend({
   },
   
   render: function(){
-    this.el.show();
+    this.el.empty().show();
     _.each(this.collection.models, function(dataresource) {
         $(this.el).append(new IONUX.Views.DataResourceItemView({model:dataresource}).render().el);
     }, this);

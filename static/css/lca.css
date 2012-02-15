@@ -11,6 +11,10 @@ body {
   margin-top:100px;
 }
 
+#marine-facilities-container {
+  display:none;
+}
+
 .test {background: #ccc;}
 .test2 {background: #999;}
 

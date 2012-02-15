@@ -1,17 +1,19 @@
 IONUX.Router = Backbone.Router.extend({
 
   routes: {
-    "": "init",
-    "data_resource_details/:data_resource_id": "data_resource_details",
+    "": "dashboard",
+    "data": "data_resource",
+    "data/:data_resource_id": "data_resource_details",
+    "observatories": "observatories",
+    "facilities": "marine_facilities",
+    "platforms":"platforms",
+    "instruments":"instruments",
     "resource_types/:resource_type_id": "resource_type_details"
   },
 
-  _reset: function(){ //reset the UI
-    $(".viewcontainer").hide();
-  },
-
-  init: function(){
-    this.marine_facilities();
+  dashboard: function(){
+    this._reset();
+    $("#dashboard-container").show();
   },
 
   marine_facilities: function(){
@@ -35,10 +37,28 @@ IONUX.Router = Backbone.Router.extend({
     this.dataResourceDetailView = new IONUX.Views.DataResourceDetailView({model:detailsModel});
     detailsModel.fetch();
   },
+
+  observatories: function(){
+    this._reset();
+    $("#observatories-container").show();
+  },
   
+  platforms: function(){
+    this._reset();
+    $("#platforms-container").show();
+  },
+  
+  instruments: function(){
+    this._reset();
+    $("#instruments-container").show();
+  },
   
   resource_type_details: function(resource_type_id) {
       this._reset();
+  },
+
+  _reset: function(){ //reset the UI
+    $(".viewcontainer").hide();
   }
 
 });

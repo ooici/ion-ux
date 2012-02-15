@@ -32,12 +32,12 @@
 
 				<span class="sidebar-section">OOI Resources</span>
 				<ul>
-					<li class="all_resources"><a href="#">All Resources</a>
-					<li class="data"><a href="#">Data</a></li>
-					<li class="observatories"><a href="#">Observatories</a></li>
-					<li class="facilities"><a href="#">Facilities</a></li>
-					<li class="platforms"><a href="#">Platforms</a></li>
-					<li class="instruments"><a href="#">Instruments</a></li>
+					<li class="dashboard"><a href="#">All Resources</a>
+					<li class="data"><a href="#data">Data Products</a></li>
+					<li class="observatories"><a href="#observatories">Observatories</a></li>
+					<li class="platforms"><a href="#platforms">Platforms</a></li>
+					<li class="instruments"><a href="#instruments">Instruments</a></li>
+					<li class="facilities"><a href="#facilities">Facilities</a></li>
 				</ul>
 
 				<span class="sidebar-section">My Resources</span>
@@ -67,14 +67,36 @@
 			
 			<div id="main" class="span10">
 				<div id="main-container">
-					<div id="data-resources" class="viewcontainer grid_20 height_200 rounded_5"></div>
-					<div id="data-resource-detail" class="viewcontainer grid_20 height_200 rounded_5"></div>
+
+        
+          <div id="dashboard-container" class="viewcontainer">
+           <h4>Dashboard</h4>
+          </div>
+
+          <div id="observatories-container" class="viewcontainer">
+           <h4>Observatories</h4>
+          </div>
+
+					<div id="data-resources" class="viewcontainer">
+           <h4>Data</h4><br>
+          </div>
+					<div id="data-resource-detail" class="viewcontainer"></div>
 
           <div id="marine-facilities-container" class="viewcontainer">
-            <div class="data-list grid_20 height_200 rounded_5"></div>
+           <h4>Marine Facilities</h4><br>
+            <div class="data-list"></div>
             <button class='btn create_new'>New Marine Facility</button>
             <div id="marine-facilities-new"></div>
           </div>
+
+          <div id="platforms-container" class="viewcontainer">
+           <h4>Platforms</h4>
+          </div>
+
+          <div id="instruments-container" class="viewcontainer">
+           <h4>Instruments</h4>
+          </div>
+
 				</div> <!-- div#container -->
 			</div> <!-- div#main -->
 
