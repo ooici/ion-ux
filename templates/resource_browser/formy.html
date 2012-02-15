@@ -1,0 +1,12 @@
+{% extends "resource_browser/new.html" %}
+
+{% block form %}
+	<form action="/resources/formy" method="POST">
+		
+		<label for="name">Name</label>
+		<input type="text" name="marine_facility['name']" id="name" value=""/><br />
+		<input type="text" name="marine_facility['contact']['name']" id="name" value=""/><br />
+		<label for="type">Type</label>
+		<input type="submit" value="Create">
+	</form>
+{% endblock form %}

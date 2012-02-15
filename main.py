@@ -58,8 +58,7 @@ def demo(page_to_render=None):
 
 
 # RESOURCE BROWSER
-# There could be a lot of refactoring and verbosity clean-up, but
-# for now I am going to leave it as the LCA routes are developed. -TB
+# Still needs refactoring...
 
 RESOURCE_REGISTRY_URL = 'http://localhost:5000/ion-services/resource_registry/'
 
@@ -94,6 +93,7 @@ def resources_index():
         )
         
         resources = json.loads(service_gateway_call.content)
+        print convert_unicode(resources['data'])
         resources = json.loads(resources['data'])
         resources = resources[0]
     else:
@@ -133,17 +133,12 @@ def new_resource2():
         resource_type = request.args['type']
         form_values = requests.get('http://localhost:5000/ion-service/resource_type_schema/%s' % resource_type)
         form_values = json.loads(form_values.content)
-        form_values = json.loads(form_values['data'])
+        # form_values = json.loads(form_values['data'])
     else:
         resource_type = None
 
     # return str(form_values['data'])
-    return render_template('resource_browser/dynamic_form.html', form_values=form_values, resource_type=resource_type, resource=None, menu=fetch_menu())
-
-def build_form(form_values_dict):
-    pass
-    
-
+    return render_template('resource_browser/create_dynamic_form.html', form_values=form_values, resource_type=resource_type, resource=None, menu=fetch_menu())
 
 
 @app.route('/resources/create', methods=['POST'])
