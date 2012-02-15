@@ -11,9 +11,14 @@ if PRODUCTION:
 else:
     from dummy_service_api import ServiceApi
 
+LOGGED_IN = True
+
 @app.route('/')
 def index():
-    return render_template("index.html")
+    if LOGGED_IN: #XXX for development
+        return render_template("ion-ux.html")
+    else:
+        return render_template("index.html")
 
 @app.route('/dashboard', methods=["GET"])
 def dashboard():
