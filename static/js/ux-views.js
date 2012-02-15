@@ -184,3 +184,26 @@ IONUX.Views.ObservatoriesView = Backbone.View.extend({
 });
 
 
+
+
+/* instrument */
+
+IONUX.Views.InstrumentsView = Backbone.View.extend({
+
+  el:$("#instruments-container"),
+
+  template: _.template($("#instruments-tmpl").html()),
+
+  events: { },
+
+  initialize: function(){
+    _.bindAll(this, "render");
+  },
+  
+  render: function(){
+    $(this.el).html(this.template({}));
+    return this;
+  }
+});
+
+
