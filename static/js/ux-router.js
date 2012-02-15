@@ -41,6 +41,8 @@ IONUX.Router = Backbone.Router.extend({
   observatories: function(){
     this._reset();
     $("#observatories-container").show();
+    var observatories_view = new IONUX.Views.ObservatoriesView();
+    observatories_view.render();
   },
   
   platforms: function(){

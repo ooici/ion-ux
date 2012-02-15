@@ -162,3 +162,25 @@ IONUX.Views.MarineFacilitiesCreateNewView = Backbone.View.extend({
 });
 
 
+
+/* observatories */
+
+IONUX.Views.ObservatoriesView = Backbone.View.extend({
+
+  el:$("#observatories-container"),
+
+  template: _.template($("#observatories-tmpl").html()),
+
+  events: { },
+
+  initialize: function(){
+    _.bindAll(this, "render");
+  },
+  
+  render: function(){
+    $(this.el).html(this.template({}));
+    return this;
+  }
+});
+
+
