@@ -6,125 +6,197 @@
 
 		<link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico" />
 
-		<!-- Vendor Stylesheets -->
 		<link rel="stylesheet" href="/static/css/jquery-ui-1.8.6.custom.css" type="text/css" />
 		<link rel="stylesheet" href="/static/css/jscrollpane.css" type="text/css" />
 		<link rel="stylesheet" href="/static/css/ux-datatable-table-jui.css" type="text/css" />
 		<link rel="stylesheet" href="/static/css/ux-datatable-page.css" type="text/css" />
-		
-
-		<!-- UX Stylesheets -->
 		<link rel="stylesheet/less" href="/static/bootstrap/less/bootstrap.less" type="text/css" />
 		<link rel="stylesheet/less" href="/static/css/lca.css" type="text/css" />
-		
 	</head>
 	<body>
-		<div id="app">
-			<div id="header">
-			</div> <!-- div#header -->
-			<div class="row">
-				<div class="test navigation span2">
-					<span class="sidebar-section">Filters</span>
-					<ul>
-						<li class="filter"><a href="#">This Month</a>
-						<li class="filter"><a href="#">North Atlantic</a></li>
-						<li class="filter_disabled">Weather Instruments</li>
-					</ul>
 
-					<span class="sidebar-section">OOI Resources</span>
-					<ul>
-						<li class="all_resources"><a href="#">All Resources</a>
-						<li class="data"><a href="#">Data</a></li>
-						<li class="observatories"><a href="#">Observatories</a></li>
-						<li class="facilities"><a href="#">Facilities</a></li>
-						<li class="platforms"><a href="#">Platforms</a></li>
-						<li class="instruments"><a href="#">Instruments</a></li>
-					</ul>
+	 <div id="header" class="navbar navbar-fixed-top">  
+   </div> <!-- div#header -->
 
-					<span class="sidebar-section">My Resources</span>
-					<ul>
-						<li class="notifications"><a href="#">Notifications</a></li>
-						<li class="publications"><a href="#">Publications</a></li>
-					</ul>
+   <div id="container" class="container">
+    <div class="row">
+			<div id="sidebar" class="span2">
+				<span class="sidebar-section">Search</span>
 
+				<span class="sidebar-section">Filters</span>
+				<ul>
+					<li class="filter"><a href="#">This Month</a>
+					<li class="filter"><a href="#">North Atlantic</a></li>
+					<li class="filter_disabled">Weather Instruments</li>
+				</ul>
 
-					<span class="sidebar-section">My Collections</span>
-					<ul>
-						<li class="right"><a href="#">Notifications</a></li>
-						<li class="down"><a href="#">Undeployed Instruments</a>
-							<ul>
-								<li><a href="#">abc instrument</a></li>
-								<li><a href="#">def instrument</a></li>
-							</ul>
-						</li>
-						<li class="down"><a href="#">Available Policies</a>
-							<ul>
-								<li><a href="#">My Class 0101</a></li>
-								<li><a href="#">Police 034956</a></li>
-							</ul>
-						</li>
-					</ul>
-				</div> <!-- navigation.span2 -->
+				<span class="sidebar-section">OOI Resources</span>
+				<ul>
+					<li class="all_resources"><a href="#">All Resources</a>
+					<li class="data"><a href="#">Data</a></li>
+					<li class="observatories"><a href="#">Observatories</a></li>
+					<li class="facilities"><a href="#">Facilities</a></li>
+					<li class="platforms"><a href="#">Platforms</a></li>
+					<li class="instruments"><a href="#">Instruments</a></li>
+				</ul>
 
-				<div class="test span8">
-					Span 8
-				</div>
-				
-				<div class="test span2">
-					Span 2
-				</div>
-			</div> <!-- end .row -->
+				<span class="sidebar-section">My Resources</span>
+				<ul>
+					<li class="notifications"><a href="#">Notifications</a></li>
+					<li class="publications"><a href="#">Publications</a></li>
+				</ul>
 
 
-
-
-
-
-
-
-
-
-
-
-			<div class="clear"></div>
-
-			<div id="sidebar" class="">
+				<span class="sidebar-section">My Collections</span>
+				<ul>
+					<li class="right"><a href="#">Notifications</a></li>
+					<li class="down"><a href="#">Undeployed Instruments</a>
+						<ul>
+							<li><a href="#">abc instrument</a></li>
+							<li><a href="#">def instrument</a></li>
+						</ul>
+					</li>
+					<li class="down"><a href="#">Available Policies</a>
+						<ul>
+							<li><a href="#">My Class 0101</a></li>
+							<li><a href="#">Police 034956</a></li>
+						</ul>
+					</li>
+				</ul>
 			</div> <!-- div#sidebar -->
 			
-			<div id="main" class="">
-				
-				<div id="container" class="container_20 container_fixed">
+			<div id="main" class="span10">
+				<div id="main-container">
 
-					{% block content %}
-						
-					{% endblock content %}
-	
-				</div> <!-- div.container_20 -->
+					<!-- Dashboard -->
+					<h2>Dashboard</h2>
+					<div id="lca-dashboard" class="row">
+						<div class="span7 test">
+							<iframe id="dashboard_map" width="700" height="400" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.com/?ie=UTF8&amp;ll=46.243501,-124.042511&amp;spn=0.883279,1.9487&amp;t=h&amp;z=10&amp;output=embed"></iframe>
+
+							<div class="row">
+								<div class="span2 test2">Span2</div>
+								<div class="span1 test2">Span1</div>
+								<div class="span4 test2">One</div>
+							</div>
+						</div>
+						<div class="span3 test">
+							Span 3
+						</div>
+					</div>
+					
+					<br /><br />
+					
+					
+					<!-- Collection w/Datatable -->
+					<h2>Collections</h2>
+					<div id="lca-collections" class="row">
+						<div class="span2 test">
+							<h3>Information</h3>
+							<p>Information placeholder</p>
+							
+							<h3>Coverage</h3>
+							<p>Coverage placeholder</p>
+
+							<h3>Identification</h3>
+							<p>Identification placeholder</p>
+						</div>
+							
+						<div class="span8 test">
+							<h3>Obsevatories</h3>
+							
+							<div class="btn-group">
+								<a class="btn" href="#">Panel Controls</a>
+								<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+								<ul class="dropdown-menu">
+									<li><a href="#">Option One</a></li>
+									<li><a href="#">Option Two</a></li>
+									<li><a href="#">Option Three</a></li>
+								</ul>
+							</div> <!-- div.btn-group -->
+							
+							<table class="table datatable-ize" width="100%">
+								<tr>
+									<th>Observatory</th>
+									<th>ID</th>
+									<th>Region</th>
+									<th>Primary Measurements</th>
+									<th>Data Products</th>
+									<th>Platforms</th>
+									<th>Instruments</th>
+									<th>Participants</th>
+									<th>Registered</th>
+									<th>Uptime (days)</th>
+								</tr>
+								<tr>
+									<td>observatory name</td>
+									<td>id</td>
+									<td>region</td>
+									<td>primary measurements</td>
+									<td>data products</td>
+									<td>platforms</td>
+									<td>instruments</td>
+									<td>participants</td>
+									<td>registered</td>
+									<td>uptime</td>
+								</tr>
+								<tr>
+									<td>observatory name</td>
+									<td>id</td>
+									<td>region</td>
+									<td>primary measurements</td>
+									<td>data products</td>
+									<td>platforms</td>
+									<td>instruments</td>
+									<td>participants</td>
+									<td>registered</td>
+									<td>uptime</td>
+								</tr>
+							</table>
+							
+						</div>
+					</div>
+
+
+				</div> <!-- div#main-container -->
 			</div> <!-- div#main -->
-		</div> <!-- div#app -->
+
+   </div> <!-- div.row-fluid -->
+  </div> <!-- div.container-fluid -->
+
+<!-- templates -->
+<script type="text/template" id="marine-facilities-item-tmpl">{% include 'partials/marine_facilities_item.html' %}</script>
+<script type="text/template" id="marine-facilities-detail-tmpl">{% include 'partials/marine_facilities_detail.html' %} </script>
+<script type="text/template" id="data-resource-item-tmpl">{% include 'partials/data_resource_item.html' %}</script>
+<script type="text/template" id="data-resource-detail-tmpl">{% include 'partials/data_resource_detail.html' %}</script>
+<script type="text/template" id="new-marine-facility-tmpl">{% include 'partials/new_marine_facility.html' %}</script>
 
 
-		<!-- Vendor JavaScripts -->
-		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
-		<script type="text/javascript" src="/static/js/json2.js"></script>
-		<script type="text/javascript" src="/static/js/underscore-1.2.2.min.js "></script>
-		<script type="text/javascript" src="/static/js/backbone-0.5.3.min.js"></script>
-		<script type="text/javascript" src="/static/js/jquery.dataTables-1.8.2.min.js"></script>
-		<script type="text/javascript" src="/static/js/jquery.jscrollpane.min.js"></script>
-		<script type="text/javascript" src="/static/js/jquery.mousewheel.js"></script>
-		<script type="text/javascript" src="/static/bootstrap/js/bootstrap.js"></script>
+<!-- Vendor JavaScripts -->
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+<script type="text/javascript" src="/static/js/json2.js"></script>
+<script type="text/javascript" src="/static/js/underscore-1.2.2.min.js "></script>
+<script type="text/javascript" src="/static/js/backbone-0.5.3.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery.dataTables-1.8.2.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery.jscrollpane.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery.mousewheel.js"></script>
+<script src="/static/js/less-1.2.1.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="/static/bootstrap/js/bootstrap.js"></script>
 
-		<!-- UX JavaScripts -->	
-		<script src="/static/js/ion-ux.js" type="text/javascript"></script>
-		<script src="/static/js/ux-models.js" type="text/javascript"></script>
-		<script src="/static/js/ux-collections.js" type="text/javascript"></script>
-		<script src="/static/js/ux-views.js" type="text/javascript"></script>
-		<script src="/static/js/ux-router.js" type="text/javascript"></script>
 
-		<script type="text/javascript">
-		  $(function() {
-	
-		  });
-		</script>
+<!-- UX JavaScripts -->	
+<script src="/static/js/ion-ux.js" type="text/javascript"></script>
+<script src="/static/js/ux-models.js" type="text/javascript"></script>
+<script src="/static/js/ux-collections.js" type="text/javascript"></script>
+<script src="/static/js/ux-views.js" type="text/javascript"></script>
+<script src="/static/js/ux-router.js" type="text/javascript"></script>
+<script type="text/javascript">
+  $(function() {
+    $('.scrollpane').jScrollPane({autoReinitialise: true});
+    IONUX.init();
+  });
+</script>
+
 	</body>
 </html>

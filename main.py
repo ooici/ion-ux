@@ -45,16 +45,9 @@ def subscription():
     return jsonify(resp_data)
 
 
-# TEMPLATE RENDERER
-# Quick view to dynamically call pages as they are developed. -TB
-
-@app.route('/lca/<page_to_render>')
-def demo(page_to_render=None):
-    if page_to_render == 'facepage':
-        return render_template('facepage.html')
-    elif page_to_render == 'dashboard':
-        return render_template('dashboard.html')
-
+@app.route('/lca')
+def lca():
+    return render_template('lca.html')
 
 
 # RESOURCE BROWSER
