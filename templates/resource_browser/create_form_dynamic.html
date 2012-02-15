@@ -1,0 +1,26 @@
+{% extends "resource_browser/new.html" %}
+
+{% block form %}
+	<form action="/resources/create" method="POST">
+		
+		{% for k in form_values %}
+			<label for="{{ k }}">{{ k }}</label>
+			<input type="text" name="{{ k }}" id="" value="{{ v }}" /><br />
+		{% endfor %}
+
+		<label for="name">Name</label>
+		<input type="text" name="name" id="name" value="{{resource.name}}"/><br />
+		<label for="type">Type</label>
+		<select name="restype">
+			{% for menu_item in menu %}
+				{% if resource_type %}
+					{% if resource_type == menu_item %}
+						<option value="{{menu_item}}" selected="selected">{{ menu_item }}</optionv>
+					{% endif %}
+				{% endif %}
+				<option value="{{menu_item}}">{{ menu_item }}</option>
+			{% endfor %}
+		</select><br />
+		<input type="submit" value="Create">
+	</form>
+{% endblock form %}
