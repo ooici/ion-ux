@@ -1,6 +1,6 @@
 IONUX.Views.DataResourceView = Backbone.View.extend({
 
-  el:$("#data-resources"),
+  el: $("#data-resources"),
 
   initialize: function(){
     _.bindAll(this, "render");
@@ -55,7 +55,7 @@ IONUX.Views.DataResourceDetailView = Backbone.View.extend({
 
 IONUX.Views.MarineFacilitiesView = Backbone.View.extend({
 
-  el:$("#marine-facilities-container"),
+  el: $("#marine-facilities-container"),
 
   events: {
     "click .create_new":"show_create_new_form",
@@ -87,7 +87,7 @@ IONUX.Views.MarineFacilitiesView = Backbone.View.extend({
 
 IONUX.Views.MarineFacilitiesItemView = Backbone.View.extend({
 
-  tagName:"ul",
+  tagName: "ul",
 
   template: _.template($("#marine-facilities-item-tmpl").html()),
 
@@ -121,7 +121,7 @@ IONUX.Views.MarineFacilitiesDetailView = Backbone.View.extend({
 
 IONUX.Views.MarineFacilitiesCreateNewView = Backbone.View.extend({
 
-  el:$("#marine-facilities-new"),
+  el: $("#marine-facilities-new"),
 
   template: _.template($("#new-marine-facility-tmpl").html()),
 

@@ -91,7 +91,7 @@
 					<!-- Lists w/Datatable -->
 					<h2>Lists</h2>
 					<div id="lca-collections" class="row">
-						<div class="span2 test">
+						<div class="span2">
 							<h3>Information</h3>
 							<p>Information placeholder</p>
 							
@@ -102,7 +102,7 @@
 							<p>Identification placeholder</p>
 						</div>
 							
-						<div class="span8 test">
+						<div class="span8">
 							<h3>Obsevatories</h3>
 							
 							<div class="btn-group">
@@ -181,8 +181,8 @@
 							
 							<!-- Data products and processes tabs -->
 							<ul id="data-tabs" class="nav nav-tabs">
-							  <li class="active"><a href="#data-products-tab">Data Products</a></li>
-							  <li><a href="#data-processes-tab">Data Processes</a></li>
+							  <li class="active"><a href="#data-products-tab" data-toggle="tab">Data Products</a></li>
+							  <li><a href="#data-processes-tab" data-toggle="tab">Data Processes</a></li>
 							</ul>
 							<div class="tab-content">
 							  <div class="tab-pane active" id="data-products-tab">Data products placeholder</div>
@@ -193,9 +193,9 @@
 							
 							<!-- Administration, recent and planned events tabs -->
 							<ul id="admin-events-tabs" class="nav nav-tabs">
-							  <li class="active"><a href="#administration-tab">Administration</a></li>
-							  <li><a href="#recent-events-tab">Recent Events</a></li>
-							<li><a href="#planned-events-tab">Planned Events</a></li>
+							  <li class="active"><a href="#administration-tab" data-toggle="tab">Administration</a></li>
+							  <li><a href="#recent-events-tab" data-toggle="tab">Recent Events</a></li>
+							<li><a href="#planned-events-tab" data-toggle="tab">Planned Events</a></li>
 							</ul>
 
 							<div class="tab-content">
@@ -208,9 +208,9 @@
 							
 							<!-- Platforms, instruments and sensors tabs -->
 							<ul id="platforms-instruments-sensors-tabs" class="nav nav-tabs">
-							  <li class="active"><a href="#platforms-tab">Platforms</a></li>
-							  <li><a href="#instruments-tab">Instruments</a></li>
-							<li><a href="#sensors-tab">Sensors</a></li>
+							  <li class="active"><a href="#platforms-tab" data-toggle="tab">Platforms</a></li>
+							  <li><a href="#instruments-tab" data-toggle="tab">Instruments</a></li>
+							<li><a href="#sensors-tab" data-toggle="tab">Sensors</a></li>
 							</ul>
 
 							<div class="tab-content">
@@ -247,7 +247,7 @@
 							
 							<!-- Data products and processes tabs -->
 							<ul id="data-tabs" class="nav nav-tabs">
-							  <li class="active"><a href="#data-tab">Data</a></li>
+							  <li class="active"><a href="#data-tab" data-toggle="tab">Data</a></li>
 							</ul>
 							<div class="tab-content">
 							  <div class="tab-pane active" id="data-tab">Platform data placeholder</div>
@@ -257,9 +257,9 @@
 							
 							<!-- Administration, recent and planned events tabs -->
 							<ul id="admin-events-tabs" class="nav nav-tabs">
-							  <li class="active"><a href="#administration-tab">Administration</a></li>
-							  <li><a href="#recent-events-tab">Recent Events</a></li>
-							<li><a href="#planned-events-tab">Planned Events</a></li>
+							  <li class="active"><a href="#administration-tab" data-toggle="tab">Administration</a></li>
+							  <li><a href="#recent-events-tab" data-toggle="tab">Recent Events</a></li>
+							<li><a href="#planned-events-tab" data-toggle="tab">Planned Events</a></li>
 							</ul>
 
 							<div class="tab-content">
@@ -272,8 +272,8 @@
 							
 							<!-- Platforms, instruments and sensors tabs -->
 							<ul id="instruments-sensors-tabs" class="nav nav-tabs">
-							  	<li class="active"><a href="#instruments-tab">Instruments</a></li>
-								<li><a href="#sensors-tab">Sensors</a></li>
+							  	<li class="active"><a href="#instruments-tab" data-toggle="tab">Instruments</a></li>
+								<li><a href="#sensors-tab" data-toggle="tab">Sensors</a></li>
 							</ul>
 
 							<div class="tab-content">
@@ -309,7 +309,7 @@
 							
 							<!-- Data products and processes tabs -->
 							<ul id="data-tabs" class="nav nav-tabs">
-							  <li class="active"><a href="#data-tab">Data</a></li>
+							  <li class="active"><a href="#data-tab" data-toggle="tab">Data</a></li>
 							</ul>
 							<div class="tab-content">
 							  <div class="tab-pane active" id="data-tab">Instrument data placeholder</div>
@@ -319,9 +319,9 @@
 							
 							<!-- Administration, recent and planned events tabs -->
 							<ul id="admin-events-tabs" class="nav nav-tabs">
-							  <li class="active"><a href="#administration-tab">Administration</a></li>
-							  <li><a href="#recent-events-tab">Recent Events</a></li>
-							<li><a href="#planned-events-tab">Planned Events</a></li>
+							  <li class="active"><a href="#administration-tab" data-toggle="tab">Administration</a></li>
+							  <li><a href="#recent-events-tab" data-toggle="tab">Recent Events</a></li>
+							<li><a href="#planned-events-tab" data-toggle="tab">Planned Events</a></li>
 							</ul>
 
 							<div class="tab-content">
@@ -334,7 +334,7 @@
 							
 							<!-- Platforms, instruments and sensors tabs -->
 							<ul id="instruments-sensors-tabs" class="nav nav-tabs">
-								<li class="active"><a href="#sensors-tab">Sensors</a></li>
+								<li class="active" data-toggle="tab"><a href="#sensors-tab">Sensors</a></li>
 							</ul>
 
 							<div class="tab-content">
@@ -363,11 +363,10 @@
 
 
 <!-- Vendor JavaScripts -->
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.js"></script>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery-1.7.1.min.js"></script>
 <script type="text/javascript" src="/static/js/json2.js"></script>
-<script type="text/javascript" src="/static/js/underscore-1.2.2.min.js "></script>
-<script type="text/javascript" src="/static/js/backbone-0.5.3.min.js"></script>
+<script type="text/javascript" src="/static/js/underscore-1.3.1.min.js "></script>
+<script type="text/javascript" src="/static/js/backbone-0.9.1.min.js"></script>
 <script type="text/javascript" src="/static/js/jquery.dataTables-1.8.2.min.js"></script>
 <script type="text/javascript" src="/static/js/jquery.jscrollpane.min.js"></script>
 <script type="text/javascript" src="/static/js/jquery.mousewheel.js"></script>
