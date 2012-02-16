@@ -48,6 +48,8 @@ IONUX.Router = Backbone.Router.extend({
   platforms: function(){
     this._reset();
     $("#platforms-container").show();
+    var platforms_view = new IONUX.Views.PlatformsView();
+    platforms_view.render();
   },
   
   instruments: function(){

@@ -163,7 +163,7 @@ IONUX.Views.MarineFacilitiesCreateNewView = Backbone.View.extend({
 
 
 
-/* observatories */
+/* Observatories */
 
 IONUX.Views.ObservatoriesView = Backbone.View.extend({
 
@@ -186,7 +186,7 @@ IONUX.Views.ObservatoriesView = Backbone.View.extend({
 
 
 
-/* instrument */
+/* Instruments */
 
 IONUX.Views.InstrumentsView = Backbone.View.extend({
 
@@ -205,5 +205,29 @@ IONUX.Views.InstrumentsView = Backbone.View.extend({
     return this;
   }
 });
+
+
+
+/* Platforms */
+
+IONUX.Views.PlatformsView = Backbone.View.extend({
+
+  el:$("#platforms-container"),
+
+  template: _.template($("#platforms-tmpl").html()),
+
+  events: { },
+
+  initialize: function(){
+    _.bindAll(this, "render");
+  },
+  
+  render: function(){
+    $(this.el).html(this.template({}));
+    return this;
+  }
+});
+
+
 
 
