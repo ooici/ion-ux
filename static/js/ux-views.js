@@ -162,3 +162,72 @@ IONUX.Views.MarineFacilitiesCreateNewView = Backbone.View.extend({
 });
 
 
+
+/* Observatories */
+
+IONUX.Views.ObservatoriesView = Backbone.View.extend({
+
+  el:$("#observatories-container"),
+
+  template: _.template($("#observatories-tmpl").html()),
+
+  events: { },
+
+  initialize: function(){
+    _.bindAll(this, "render");
+  },
+  
+  render: function(){
+    $(this.el).html(this.template({}));
+    return this;
+  }
+});
+
+
+
+
+/* Instruments */
+
+IONUX.Views.InstrumentsView = Backbone.View.extend({
+
+  el:$("#instruments-container"),
+
+  template: _.template($("#instruments-tmpl").html()),
+
+  events: { },
+
+  initialize: function(){
+    _.bindAll(this, "render");
+  },
+  
+  render: function(){
+    $(this.el).html(this.template({}));
+    return this;
+  }
+});
+
+
+
+/* Platforms */
+
+IONUX.Views.PlatformsView = Backbone.View.extend({
+
+  el:$("#platforms-container"),
+
+  template: _.template($("#platforms-tmpl").html()),
+
+  events: { },
+
+  initialize: function(){
+    _.bindAll(this, "render");
+  },
+  
+  render: function(){
+    $(this.el).html(this.template({}));
+    return this;
+  }
+});
+
+
+
+
