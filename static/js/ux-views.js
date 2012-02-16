@@ -1,6 +1,6 @@
 IONUX.Views.DataResourceView = Backbone.View.extend({
 
-  el: $("#data-resources"),
+  el: "#data-resources",
 
   initialize: function(){
     _.bindAll(this, "render");
@@ -8,9 +8,9 @@ IONUX.Views.DataResourceView = Backbone.View.extend({
   },
   
   render: function(){
-    this.el.empty().show();
+    this.$el.empty().show();
     _.each(this.collection.models, function(dataresource) {
-        $(this.el).append(new IONUX.Views.DataResourceItemView({model:dataresource}).render().el);
+        this.$el.append(new IONUX.Views.DataResourceItemView({model:dataresource}).render().el);
     }, this);
     return this;
   },
@@ -25,7 +25,7 @@ IONUX.Views.DataResourceItemView = Backbone.View.extend({
   template: _.template($("#data-resource-item-tmpl").html()),
 
   render: function(){
-    $(this.el).html(this.template(this.model.toJSON()));
+    this.$el.html(this.template(this.model.toJSON()));
     return this;
   }
 
@@ -34,7 +34,7 @@ IONUX.Views.DataResourceItemView = Backbone.View.extend({
 
 IONUX.Views.DataResourceDetailView = Backbone.View.extend({
 
-  el: $("#data-resource-detail"),
+  el: "#data-resource-detail",
 
   template: _.template($("#data-resource-detail-tmpl").html()),
 
@@ -44,7 +44,7 @@ IONUX.Views.DataResourceDetailView = Backbone.View.extend({
   },
 
   render: function(){
-    this.el.html(this.template(this.model.toJSON())).show();
+    this.$el.html(this.template(this.model.toJSON())).show();
     return this;
   }
 
@@ -55,7 +55,7 @@ IONUX.Views.DataResourceDetailView = Backbone.View.extend({
 
 IONUX.Views.MarineFacilitiesView = Backbone.View.extend({
 
-  el: $("#marine-facilities-container"),
+  el: "#marine-facilities-container",
 
   events: {
     "click .create_new":"show_create_new_form",
@@ -67,7 +67,7 @@ IONUX.Views.MarineFacilitiesView = Backbone.View.extend({
   },
   
   render: function(){
-    var list_elem = this.el.find(".data-list");
+    var list_elem = this.$el.find(".data-list");
     list_elem.empty();
     _.each(this.collection.models, function(data) {
         $(list_elem).append(new IONUX.Views.MarineFacilitiesItemView({model:data}).render().el);
@@ -92,7 +92,7 @@ IONUX.Views.MarineFacilitiesItemView = Backbone.View.extend({
   template: _.template($("#marine-facilities-item-tmpl").html()),
 
   render: function(){
-    $(this.el).html(this.template(this.model.toJSON()));
+    this.$el.html(this.template(this.model.toJSON()));
     return this;
   }
 
@@ -101,7 +101,7 @@ IONUX.Views.MarineFacilitiesItemView = Backbone.View.extend({
 
 IONUX.Views.MarineFacilitiesDetailView = Backbone.View.extend({
 
-  el: $("#marine-facilities-detail"),
+  el: "#marine-facilities-detail",
 
   template: _.template($("#marine-facilities-detail-tmpl").html()),
 
@@ -111,7 +111,7 @@ IONUX.Views.MarineFacilitiesDetailView = Backbone.View.extend({
   },
 
   render: function(){
-    this.el.html(this.template(this.model.toJSON())).show();
+    this.$el.html(this.template(this.model.toJSON())).show();
     return this;
   }
 
@@ -121,7 +121,7 @@ IONUX.Views.MarineFacilitiesDetailView = Backbone.View.extend({
 
 IONUX.Views.MarineFacilitiesCreateNewView = Backbone.View.extend({
 
-  el: $("#marine-facilities-new"),
+  el: "#marine-facilities-new",
 
   template: _.template($("#new-marine-facility-tmpl").html()),
 
@@ -136,14 +136,14 @@ IONUX.Views.MarineFacilitiesCreateNewView = Backbone.View.extend({
   },
 
   render: function(){
-    this.el.empty().html(this.template({})).show();
+    this.$el.empty().html(this.template({})).show();
   },
 
   create_new: function(evt){
     evt.preventDefault();
-    this.el.find("input[type='submit']").attr("disabled", true).val("Saving...");
+    this.$el.find("input[type='submit']").attr("disabled", true).val("Saving...");
     var mf = new IONUX.Models.MarineFacility();
-    $.each(this.el.find("input,textarea").not("input[type='submit'],input[type='cancel']"), function(i, e){
+    $.each(this.$el.find("input,textarea").not("input[type='submit'],input[type='cancel']"), function(i, e){
       var key = $(e).attr("name"), val = $(e).val();
       var kv = {};
       kv[key] = val;
@@ -151,12 +151,12 @@ IONUX.Views.MarineFacilitiesCreateNewView = Backbone.View.extend({
     });
     var self = this;
     mf.save(null, {success:function(model, resp){
-      self.el.hide();
+      self.$el.hide();
     }});
   },
 
   cancel: function(){
-    this.el.hide();
+    this.$el.hide();
   }
 
 });
@@ -167,7 +167,7 @@ IONUX.Views.MarineFacilitiesCreateNewView = Backbone.View.extend({
 
 IONUX.Views.ObservatoriesView = Backbone.View.extend({
 
-  el:$("#observatories-container"),
+  el:"#observatories-container",
 
   template: _.template($("#observatories-tmpl").html()),
 
@@ -178,7 +178,7 @@ IONUX.Views.ObservatoriesView = Backbone.View.extend({
   },
   
   render: function(){
-    $(this.el).html(this.template({}));
+    this.$el.html(this.template({}));
     return this;
   }
 });
@@ -190,7 +190,7 @@ IONUX.Views.ObservatoriesView = Backbone.View.extend({
 
 IONUX.Views.InstrumentsView = Backbone.View.extend({
 
-  el:$("#instruments-container"),
+  el:"#instruments-container",
 
   template: _.template($("#instruments-tmpl").html()),
 
@@ -201,7 +201,7 @@ IONUX.Views.InstrumentsView = Backbone.View.extend({
   },
   
   render: function(){
-    $(this.el).html(this.template({}));
+    this.$el.html(this.template({}));
     return this;
   }
 });
@@ -212,7 +212,7 @@ IONUX.Views.InstrumentsView = Backbone.View.extend({
 
 IONUX.Views.PlatformsView = Backbone.View.extend({
 
-  el:$("#platforms-container"),
+  el:"#platforms-container",
 
   template: _.template($("#platforms-tmpl").html()),
 
@@ -223,7 +223,7 @@ IONUX.Views.PlatformsView = Backbone.View.extend({
   },
   
   render: function(){
-    $(this.el).html(this.template({}));
+    this.$el.html(this.template({}));
     return this;
   }
 });
