@@ -14,10 +14,10 @@ IONUX.Router = Backbone.Router.extend({
   dashboard: function(){
     this._reset();
     $("#dashboard-container").show();
-    if (_.isUndefined(this.dashboard_modal)){
-      this.dashboard_modal = new IONUX.Views.DashboardModalView();
+    if (_.isUndefined(this.observatory_modal)){
+      this.observatory_modal = new IONUX.Views.ObservatoryModalView();
     }
-    this.dashboard_modal.render();
+    this.observatory_modal.render();
   },
 
   marine_facilities: function(){

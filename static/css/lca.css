@@ -20,3 +20,9 @@ body {
 .test {background: #ccc;}
 .test2 {background: #999;}
 
+
+#observatory-modal {
+  width:900px;
+  margin-left:-450px;
+  padding:20px;
+}

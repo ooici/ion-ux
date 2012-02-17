@@ -230,11 +230,11 @@ IONUX.Views.PlatformsView = Backbone.View.extend({
 
 
 
-IONUX.Views.DashboardModalView = Backbone.View.extend({
+IONUX.Views.ObservatoryModalView = Backbone.View.extend({
 
-  el: "#dashboard-modal",
+  el: "#observatory-modal",
 
-  template: _.template($("#modal-tmpl").html()),
+  template: _.template($("#observatory-modal-tmpl").html()),
 
   events: {
     "click .modal-body":"clicked",
@@ -252,16 +252,16 @@ IONUX.Views.DashboardModalView = Backbone.View.extend({
   },
 
   clicked: function(){
-    console.log("DashboardModalView clicked");
+    console.log("ObservatoryModalView clicked");
   },
 
   save: function(){
-    console.log("DashboardModalView save");
+    console.log("ObservatoryModalView save");
     this.$el.modal("hide");
   },
 
   close: function(){
-    console.log("DashboardModalView close");
+    console.log("ObservatoryModalView close");
     this.$el.modal("hide");
   }
 });

@@ -71,7 +71,7 @@
         
           <div id="dashboard-container" class="viewcontainer">
            <h4>Dashboard</h4>
-           <div id='dashboard-modal-open' class="btn" data-toggle='modal' href="#dashboard-modal">modal open</div>
+           <div id='observatory-modal-open' class="btn" data-toggle='modal' href="#observatory-modal">Open Observatory Modal</div>
           </div>
 
           <div id="observatories-container" class="viewcontainer">
@@ -104,12 +104,12 @@
    </div> <!-- div.row -->
   </div> <!-- div.container -->
 
-<div id="dashboard-modal" class="modal" style='display:none'></div>
+<div id="observatory-modal" class="modal" style='display:none'></div>
 
 <script type="text/template" id="modal-tmpl">
   <div class="modal-header">
     <a class="close" data-dismiss="modal">×</a>
-    <h3>Dashboard Modal</h3>
+    <h3>Observatory Modal</h3>
   </div>
   <div class="modal-body">
     <p>modal body</p>
@@ -129,6 +129,7 @@
 <script type="text/template" id="platforms-tmpl">{% include 'partials/platforms_list.html' %}</script>
 <script type="text/template" id="observatories-tmpl">{% include 'partials/observatories_list.html' %}</script>
 <script type="text/template" id="instruments-tmpl">{% include 'partials/instruments_list.html' %}</script>
+<script type="text/template" id="observatory-modal-tmpl">{% include 'partials/observatory_modal.html' %}</script>
 
 
 <!-- Vendor JavaScripts -->
