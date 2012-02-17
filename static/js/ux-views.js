@@ -230,4 +230,39 @@ IONUX.Views.PlatformsView = Backbone.View.extend({
 
 
 
+IONUX.Views.DashboardModalView = Backbone.View.extend({
 
+  el: "#dashboard-modal",
+
+  template: _.template($("#modal-tmpl").html()),
+
+  events: {
+    "click .modal-body":"clicked",
+    "click .btn-save":"save",
+    "click .btn-close":"close"
+  },
+
+  initialize: function(){
+    _.bindAll(this, "render", "clicked", "save", "close");
+  },
+  
+  render: function(){
+    this.$el.html(this.template({}));
+    return this;
+  },
+
+  clicked: function(){
+    console.log("DashboardModalView clicked");
+  },
+
+  save: function(){
+    console.log("DashboardModalView save");
+    this.$el.modal("hide");
+  },
+
+  close: function(){
+    console.log("DashboardModalView close");
+    this.$el.modal("hide");
+  }
+});
+ 
