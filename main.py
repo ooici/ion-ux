@@ -33,7 +33,9 @@ def data_resource():
 def marine_facilities():
     if request.method == 'POST':
         import time; time.sleep(0.7) #mock latency
-        print request.data 
+        #print request.data 
+        form_data = json.loads(request.data)
+        print build_schema_from_form(form_data, service="marine_facilities")
         resp_data = {"success":True}
     else:
         resp_data = ServiceApi.marine_facilities(request.args)
@@ -76,6 +78,28 @@ SERVICE_REQUEST_TEMPLATE = {
         }
     }
 }
+
+def build_schema_from_form(form_data, service="marine_facilities"):
+    resource_type = DEFINED_SERVICES_OPERATIONS[service]["restype"]
+    result_dict = SERVICE_REQUEST_TEMPLATE
+    result_dict["serviceRequest"]["params"]["object"].append(resource_type)
+    sub_result_dict = {}
+    for (k, v) in form_data.iteritems():
+        elems = k.split("__")
+        if len(elems) == 1:
+            sub_result_dict[elems[0]] = v
+        if len(elems) == 2:
+            sub_k, sub_v = elems
+            if sub_k in result_dict:
+                sub_result_dict[sub_k].update({sub_v:v})
+            else:
+                sub_result_dict[sub_k] = {sub_v:v}
+    result_dict["serviceRequest"]["params"]["object"].append(sub_result_dict)
+    return result_dict
+            
+
+
+
 
 @app.route('/resources', methods=['GET'])
 def resources_index():    
