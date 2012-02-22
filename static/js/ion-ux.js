@@ -4,7 +4,9 @@ IONUX = {
     Views: {},
     Router: {},
     init: function() {
-        new IONUX.Router();
-        Backbone.history.start();
+        var router = new IONUX.Router();
+        Backbone.history.start({pushState:true});
+        router.handle_navigation();
+        return router;
     }
 }
