@@ -13,6 +13,8 @@ else:
 
 LOGGED_IN = True
 
+
+
 @app.route('/')
 def index():
     if LOGGED_IN: #XXX for development
@@ -33,9 +35,17 @@ def data_resource():
 def marine_facilities():
     if request.method == 'POST':
         import time; time.sleep(0.7) #mock latency
-        #print request.data 
+
         form_data = json.loads(request.data)
-        print build_schema_from_form(form_data, service="marine_facilities")
+        object_schema = build_schema_from_form2(form_data, service="marine_facilities")
+
+        print object_schema
+        print "- - - - - - - - - - - - - "
+
+        post_request = requests.post('http://localhost:5000/ion-service/marine_facility_management/create_marine_facility', data={'payload': json.dumps(object_schema)})
+        
+        print post_request.content
+        
         resp_data = {"success":True}
     else:
         resp_data = ServiceApi.marine_facilities(request.args)
@@ -65,24 +75,35 @@ RESOURCE_REGISTRY_URL = 'http://localhost:5000/ion-services/resource_registry/'
 
 DEFINED_SERVICES_OPERATIONS = {
     'marine_facilities':
-        {'restype': 'MarineFacility',
-        'operations': {'create': 'create_marine_facility'}},
+        {
+            'restype': 'MarineFacility',
+            'service_name': 'marine_facility_management',
+            'object_name': 'marine_facility',
+            'operation_names': {'create': 'create_marine_facility'}
+        },
 }
 
 SERVICE_REQUEST_TEMPLATE = {
     'serviceRequest': {
-        'serviceName': 'resource_registry', 
+        'serviceName': '', 
         'serviceOp': '',
         'params': {
-            'object': [] # Ex. [BankObject, {'name': '...'}] 
+            # 'object': [] # Ex. [BankObject, {'name': '...'}] 
+            # Example -> 'object_name': ['restype', {}]
         }
     }
 }
 
-def build_schema_from_form(form_data, service="marine_facilities"):
+
+
+def build_schema_from_form2(form_data, service="marine_facilities", object_name="marine_facility"):
+    service_name = DEFINED_SERVICES_OPERATIONS[service]['service_name']
+    service_op = DEFINED_SERVICES_OPERATIONS[service]['operation_names']['create']
     resource_type = DEFINED_SERVICES_OPERATIONS[service]["restype"]
     result_dict = SERVICE_REQUEST_TEMPLATE
-    result_dict["serviceRequest"]["params"]["object"].append(resource_type)
+    result_dict['serviceRequest']['serviceName'] = service_name
+    result_dict['serviceRequest']['serviceOp'] = service_op
+    result_dict["serviceRequest"]["params"][object_name] = [resource_type]
     sub_result_dict = {}
     for (k, v) in form_data.iteritems():
         elems = k.split("__")
@@ -94,49 +115,43 @@ def build_schema_from_form(form_data, service="marine_facilities"):
                 sub_result_dict[sub_k].update({sub_v:v})
             else:
                 sub_result_dict[sub_k] = {sub_v:v}
-    result_dict["serviceRequest"]["params"]["object"].append(sub_result_dict)
+    result_dict["serviceRequest"]["params"][object_name].append(sub_result_dict)
     return result_dict
-            
 
 
+
+# def build_schema_from_form(form_data, service="marine_facilities"):
+#     resource_type = DEFINED_SERVICES_OPERATIONS[service]["restype"]
+#     result_dict = SERVICE_REQUEST_TEMPLATE
+#     result_dict["serviceRequest"]["params"]["object"].append(resource_type)
+#     sub_result_dict = {}
+#     for (k, v) in form_data.iteritems():
+#         elems = k.split("__")
+#         if len(elems) == 1:
+#             sub_result_dict[elems[0]] = v
+#         if len(elems) == 2:
+#             sub_k, sub_v = elems
+#             if sub_k in result_dict:
+#                 sub_result_dict[sub_k].update({sub_v:v})
+#             else:
+#                 sub_result_dict[sub_k] = {sub_v:v}
+#     result_dict["serviceRequest"]["params"]["object"].append(sub_result_dict)
+#     return result_dict
 
 
 @app.route('/resources', methods=['GET'])
 def resources_index():    
     if request.args.has_key('type'):
-        resource_type = request.args['type']
-        
-        get_data = SERVICE_REQUEST_TEMPLATE
-        get_data['serviceRequest']['serviceOp'] = 'find_resources'
-        get_data['serviceRequest']['params']['object'] = [resource_type, {'restype': resource_type}]
-        
-        service_gateway_call = requests.get(
-            'http://localhost:5000/ion-service/resource_registry/find_resources',
-            data={'payload': json.dumps(get_data)}
-        )
-        
+        resource_type = request.args['type']        
+        service_gateway_call = requests.get('http://localhost:5000/ion-service/resource_registry/find_resources?restype=%s' % resource_type)
         resources = json.loads(service_gateway_call.content)
-        print convert_unicode(resources['data'])
-        resources = json.loads(resources['data'])
-        resources = resources[0]
+        resources = resources['data']['GatewayResponse'][0]
     else:
         resource_type=None
         resources=None
     
     return render_template('resource_browser/list.html', resource_type=resource_type, resources=resources, menu=fetch_menu())
     
-    # if request.args.has_key('type'):
-    #     resource_type = request.args['type']
-    #     
-    #     service_gateway_call = requests.get('http://localhost:5000/resources/list/%s' % resource_type)
-    #     resources = json.loads(service_gateway_call.content)
-    #     resources = resources['resource_types']
-    # else:
-    #     resource_type=None
-    #     resources=None
-    # 
-    # return render_template('resource_browser/list.html', resource_type=resource_type, resources=resources, menu=fetch_menu())
-
 
 @app.route('/resources/new', methods=['GET'])
 def new_resource():    
@@ -149,46 +164,27 @@ def new_resource():
 
 
 
-@app.route('/resources/new2', methods=['GET'])
-def new_resource2():
-    
-    if request.args.has_key('type'):
-        resource_type = request.args['type']
-        form_values = requests.get('http://localhost:5000/ion-service/resource_type_schema/%s' % resource_type)
-        form_values = json.loads(form_values.content)
-        # form_values = json.loads(form_values['data'])
-    else:
-        resource_type = None
-
-    # return str(form_values['data'])
-    return render_template('resource_browser/create_dynamic_form.html', form_values=form_values, resource_type=resource_type, resource=None, menu=fetch_menu())
-
-
 @app.route('/resources/create', methods=['POST'])
 def create_resource():
-    post_data = SERVICE_REQUEST_TEMPLATE
-    post_data['serviceRequest']['serviceOp'] = 'create'
+    sg_data = SERVICE_REQUEST_TEMPLATE
+    sg_data['serviceRequest']['serviceOp'] = 'create'
     
     request_data = request.form
     resource_type = request.form['restype']
-    
+
     resource_type_params = {}
     for (key,value) in request_data.items():
         if key == 'restype': continue
         resource_type_params[key] = value
     
-    post_data['serviceRequest']['params']['object'] = [resource_type, resource_type_params]
-    
+    sg_data['serviceRequest']['params']['object'] = [resource_type, resource_type_params]
+        
     service_gateway_call = requests.post(
         'http://localhost:5000/ion-service/resource_registry/create', 
-        data={'payload': json.dumps(post_data)}
+        data={'payload': json.dumps(sg_data)}
     )
-    
-    if service_gateway_call.status_code != 200:
-        return "The service gateway returned the following error: %d" % service_gateway_call.status_code
-
+        
     return redirect("%s?type=%s" % (url_for('resources_index'), resource_type))
-
 
 @app.route('/resources/show/<resource_id>')
 def show_resource(resource_id=None):
@@ -197,9 +193,8 @@ def show_resource(resource_id=None):
     
     service_gateway_call = requests.get('http://localhost:5000/ion-service/resource_registry/read?object_id=%s' % resource_id)
     resource = json.loads(service_gateway_call.content)
-    resource = json.loads(resource['data'])
+    resource = resource['data']['GatewayResponse']
     
-    # return str(resource)
     return render_template('resource_browser/show.html', resource_type=resource_type, resource=resource, menu=fetch_menu())
 
 
@@ -212,9 +207,8 @@ def edit_reource(resource_id=None):
     
     service_gateway_call = requests.get('http://localhost:5000/ion-service/resource_registry/read?object_id=%s' % resource_id)
     resource = json.loads(service_gateway_call.content)
-    resource = json.loads(resource['data'])
+    resource = resource['data']['GatewayResponse']
 
-    # return str(resource)
     return render_template('resource_browser/edit_form.html', resource_type=resource_type, resource=resource, menu=fetch_menu())
 
 
@@ -241,19 +235,20 @@ def update_resource(resource_id=None):
     if service_gateway_call.status_code != 200:
         return "The service gateway returned the following error: %d" % service_gateway_call.status_code
 
-    # return str(post_data)
+
     return redirect("%s?type=%s" % (url_for('resources_index'), resource_type))
+
 
 @app.route('/resources/delete/<resource_id>')
 def delete_resource(resource_id=None):
-    return str(resource_id)
+    pass
 
 
 def fetch_menu():        
     menu_data = requests.get('http://localhost:5000/ion-service/list_resource_types')
     menu = json.loads(menu_data.content)
     
-    return menu['data']
+    return menu['data']['GatewayResponse']
 
 @app.route('/schema/<resource_type>')
 def get_resource_schema(resource_type):
@@ -263,7 +258,11 @@ def get_resource_schema(resource_type):
     resource_type_schema = json.loads(resource_type_schema_response.content)
     
     return str(resource_type_schema)
-    # return jsonify(data=resource_type_schema)
+
+@app.route('/<catchall>')
+def catchall(catchall):
+    return render_template('index.html')
+    
     
 if __name__ == '__main__':
     app.run(debug=True, port=3000)

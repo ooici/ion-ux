@@ -1,7 +1,7 @@
 {% extends "resource_browser/create.html" %}
 
 	{% block form %}
-		<form action="/resources/create" method="POST">
+		<form action="/resources/create/" method="POST">
 			<label for="name">Name</label>
 			<input type="text" name="name" id="name" value="{{resource.name}}"/><br />
 			<label for="type">Type</label>
