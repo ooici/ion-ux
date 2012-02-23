@@ -67,6 +67,21 @@ IONUX.Router = Backbone.Router.extend({
       this._reset();
   },
 
+  handle_navigation: function(){
+    var self = this;
+    $('a').click(function (e) {
+        self.navigate($(this).attr('href'), {trigger:true});
+        return false;
+    });
+  },
+
+  handle_url: function(current_url){
+    // graceful Backbone handling of full page refresh on non '/' url.
+    if (current_url != "/"){
+      this.navigate(current_url, {trigger:true});
+    }
+  },
+
   _reset: function(){ //reset the UI
     $(".viewcontainer").hide();
   }

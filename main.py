@@ -18,7 +18,7 @@ LOGGED_IN = True
 @app.route('/')
 def index():
     if LOGGED_IN: #XXX for development
-        return render_template("ion-ux.html")
+        return render_template("ion-ux.html", **{"current_url":"/"})
     else:
         return render_template("index.html")
 
@@ -258,10 +258,18 @@ def get_resource_schema(resource_type):
     resource_type_schema = json.loads(resource_type_schema_response.content)
     
     return str(resource_type_schema)
+<<<<<<< HEAD
 
 @app.route('/<catchall>')
 def catchall(catchall):
     return render_template('index.html')
+=======
+    # return jsonify(data=resource_type_schema)
+
+@app.route("/<catchall>")
+def catchall(catchall):
+    return render_template("ion-ux.html", **{"current_url":catchall})
+>>>>>>> 157d5d4621f12add7018fd8dd19596f415543f1b
     
     
 if __name__ == '__main__':
