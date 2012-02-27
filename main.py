@@ -37,10 +37,9 @@ def marine_facilities():
         import time; time.sleep(0.7) #mock latency
 
         form_data = json.loads(request.data)
-        object_schema = build_schema_from_form2(form_data, service="marine_facilities")
+        object_schema = build_schema_from_form(form_data, service="marine_facilities")
 
         print object_schema
-        print "- - - - - - - - - - - - - "
 
         post_request = requests.post('http://localhost:5000/ion-service/marine_facility_management/create_marine_facility', data={'payload': json.dumps(object_schema)})
         
@@ -68,8 +67,6 @@ def lca():
 
 
 
-# RESOURCE BROWSER
-# Still needs refactoring...
 
 RESOURCE_REGISTRY_URL = 'http://localhost:5000/ion-services/resource_registry/'
 
@@ -87,16 +84,13 @@ SERVICE_REQUEST_TEMPLATE = {
     'serviceRequest': {
         'serviceName': '', 
         'serviceOp': '',
-        'params': {
-            # 'object': [] # Ex. [BankObject, {'name': '...'}] 
-            # Example -> 'object_name': ['restype', {}]
-        }
+        'params': {} # Example -> 'object_name': ['restype', {}] }
     }
 }
 
 
 
-def build_schema_from_form2(form_data, service="marine_facilities", object_name="marine_facility"):
+def build_schema_from_form(form_data, service="marine_facilities", object_name="marine_facility"):
     service_name = DEFINED_SERVICES_OPERATIONS[service]['service_name']
     service_op = DEFINED_SERVICES_OPERATIONS[service]['operation_names']['create']
     resource_type = DEFINED_SERVICES_OPERATIONS[service]["restype"]
@@ -138,6 +132,9 @@ def build_schema_from_form2(form_data, service="marine_facilities", object_name=
 #     result_dict["serviceRequest"]["params"]["object"].append(sub_result_dict)
 #     return result_dict
 
+
+# RESOURCE BROWSER
+# Still needs refactoring...
 
 @app.route('/resources', methods=['GET'])
 def resources_index():    
@@ -258,19 +255,10 @@ def get_resource_schema(resource_type):
     resource_type_schema = json.loads(resource_type_schema_response.content)
     
     return str(resource_type_schema)
-<<<<<<< HEAD
-
-@app.route('/<catchall>')
-def catchall(catchall):
-    return render_template('index.html')
-=======
-    # return jsonify(data=resource_type_schema)
 
 @app.route("/<catchall>")
 def catchall(catchall):
-    return render_template("ion-ux.html", **{"current_url":catchall})
->>>>>>> 157d5d4621f12add7018fd8dd19596f415543f1b
-    
+    return render_template("ion-ux.html", **{"current_url":catchall})    
     
 if __name__ == '__main__':
     app.run(debug=True, port=3000)
