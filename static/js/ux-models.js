@@ -11,9 +11,10 @@ IONUX.Models.DataResourceDetails = Backbone.Model.extend({
 });
 
 
-IONUX.Models.MarineFacility = Backbone.Model.extend({
+IONUX.Models.Observatory = Backbone.Model.extend({
 
-  url: "/marine_facilities"
+  url: "/observatories",
+  idAttribute: "_id"
 
 });
 

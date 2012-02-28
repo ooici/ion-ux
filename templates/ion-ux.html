@@ -35,9 +35,8 @@
 					<li class="dashboard"><a href="">All Resources</a>
 					<li class="data"><a href="data">Data Products</a></li>
 					<li class="observatories"><a href="observatories">Observatories</a></li>
-					<li class="platforms"><a href="#platforms">Platforms</a></li>
-					<li class="instruments"><a href="#instruments">Instruments</a></li>
-					<li class="facilities"><a href="#facilities">Facilities</a></li>
+					<li class="platforms"><a href="platforms">Platforms</a></li>
+					<li class="instruments"><a href="instruments">Instruments</a></li>
 				</ul>
 
 				<span class="sidebar-section">My Resources</span>
@@ -71,11 +70,7 @@
         
           <div id="dashboard-container" class="viewcontainer">
            <h4>Dashboard</h4>
-           <div id='observatory-modal-open' class="btn" data-toggle='modal' href="#observatory-modal">Open Observatory Modal</div>
-          </div>
-
-          <div id="observatories-container" class="viewcontainer">
-           <h4>Observatories</h4>
+           <div id='observatory-modal-open' class="btn" data-toggle='modal' href="#observatory-modal">Test Observatory Modal</div>
           </div>
 
 					<div id="data-resources" class="viewcontainer">
@@ -83,12 +78,7 @@
           </div>
 					<div id="data-resource-detail" class="viewcontainer"></div>
 
-          <div id="marine-facilities-container" class="viewcontainer">
-           <h4>Marine Facilities</h4><br>
-            <div class="data-list"></div>
-            <button class='btn create_new'>New Marine Facility</button>
-            <div id="marine-facilities-new"></div>
-          </div>
+          <div id="observatories-container" class="viewcontainer"> </div>
 
           <div id="platforms-container" class="viewcontainer">
            <h4>Platforms</h4>
@@ -121,13 +111,13 @@
 </script>
 
 <!-- templates -->
-<script type="text/template" id="marine-facilities-item-tmpl">{% include 'partials/marine_facilities_item.html' %}</script>
-<script type="text/template" id="marine-facilities-detail-tmpl">{% include 'partials/marine_facilities_detail.html' %} </script>
+<script type="text/template" id="observatories-item-tmpl">{% include 'partials/observatories_item.html' %}</script>
+<script type="text/template" id="observatories-detail-tmpl">{% include 'partials/observatories_detail.html' %} </script>
 <script type="text/template" id="data-resource-item-tmpl">{% include 'partials/data_resource_item.html' %}</script>
 <script type="text/template" id="data-resource-detail-tmpl">{% include 'partials/data_resource_detail.html' %}</script>
-<script type="text/template" id="new-marine-facility-tmpl">{% include 'partials/new_marine_facility.html' %}</script>
+<script type="text/template" id="new-observatory-tmpl">{% include 'partials/new_marine_facility.html' %}</script>
 <script type="text/template" id="platforms-tmpl">{% include 'partials/platforms_list.html' %}</script>
-<script type="text/template" id="observatories-tmpl">{% include 'partials/observatories_list.html' %}</script>
+<script type="text/template" id="observatories-tmpl">{% include 'partials/observatories_index.html' %}</script>
 <script type="text/template" id="instruments-tmpl">{% include 'partials/instruments_list.html' %}</script>
 <script type="text/template" id="observatory-modal-tmpl">{% include 'partials/observatory_modal.html' %}</script>
 
@@ -155,6 +145,7 @@
     var ionux_router = IONUX.init();
     ionux_router.handle_url("{{ current_url }}");
   });
+
 </script>
 
 	</body>

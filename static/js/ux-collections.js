@@ -6,10 +6,10 @@ IONUX.Collections.DataResources = Backbone.Collection.extend({
 });
 
 
-IONUX.Collections.MarineFacilities = Backbone.Collection.extend({
+IONUX.Collections.ObservatoryCollection = Backbone.Collection.extend({
 
-  model: IONUX.Models.MarineFacility,
-  url: "/marine_facilities",
+  model: IONUX.Models.Observatory,
+  url: "/observatories",
 
   parse: function(resp) {
     return resp.data;

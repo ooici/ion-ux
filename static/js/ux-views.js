@@ -51,45 +51,48 @@ IONUX.Views.DataResourceDetailView = Backbone.View.extend({
 });
 
 
-/* marine facilities */
+/* Observatories */
 
-IONUX.Views.MarineFacilitiesView = Backbone.View.extend({
+IONUX.Views.ObservatoriesView = Backbone.View.extend({
 
-  el: "#marine-facilities-container",
+  el: "#observatories-container",
+
+  template: _.template($("#observatories-tmpl").html()),
 
   events: {
     "click .create_new":"show_create_new_form",
+    "click table tr":"show_facepage"
   },
 
   initialize: function(){
-    _.bindAll(this, "render");
+    _.bindAll(this, "render", "show_create_new_form");
     this.collection.bind("reset", this.render);
   },
   
   render: function(){
-    var list_elem = this.$el.find(".data-list");
-    list_elem.empty();
-    _.each(this.collection.models, function(data) {
-        $(list_elem).append(new IONUX.Views.MarineFacilitiesItemView({model:data}).render().el);
-    }, this);
+    this.$el.html(this.template({"collection":this.collection.toJSON()})).show();
     return this;
   },
 
+  show_facepage: function(){
+    console.log("show_facepage");
+  },
+
   show_create_new_form: function(){
-    if (_.isUndefined(this.marine_facilities_create_new_view)){
-      this.marine_facilities_create_new_view = new IONUX.Views.MarineFacilitiesCreateNewView(); 
+    if (_.isUndefined(this.observatories_create_new_view)){
+      this.observatories_create_new_view = new IONUX.Views.ObservatoryCreateNewView(); 
     }
-    this.marine_facilities_create_new_view.render();
+    this.observatories_create_new_view.render();
   }
   
 });
 
 
-IONUX.Views.MarineFacilitiesItemView = Backbone.View.extend({
+IONUX.Views.ObservatoriesItemView = Backbone.View.extend({
 
   tagName: "ul",
 
-  template: _.template($("#marine-facilities-item-tmpl").html()),
+  template: _.template($("#observatories-item-tmpl").html()),
 
   render: function(){
     this.$el.html(this.template(this.model.toJSON()));
@@ -99,11 +102,11 @@ IONUX.Views.MarineFacilitiesItemView = Backbone.View.extend({
 });
 
 
-IONUX.Views.MarineFacilitiesDetailView = Backbone.View.extend({
+IONUX.Views.ObservatoriesDetailView = Backbone.View.extend({
 
-  el: "#marine-facilities-detail",
+  el: "#observatories-detail",
 
-  template: _.template($("#marine-facilities-detail-tmpl").html()),
+  template: _.template($("#observatories-detail-tmpl").html()),
 
   initialize: function(){
     _.bindAll(this, "render");
@@ -119,11 +122,11 @@ IONUX.Views.MarineFacilitiesDetailView = Backbone.View.extend({
 
 
 
-IONUX.Views.MarineFacilitiesCreateNewView = Backbone.View.extend({
+IONUX.Views.ObservatoryCreateNewView = Backbone.View.extend({
 
-  el: "#marine-facilities-new",
+  el: "#observatories-new",
 
-  template: _.template($("#new-marine-facility-tmpl").html()),
+  template: _.template($("#new-observatory-tmpl").html()),
 
   events: {
     "click input[type='submit']":"create_new",
@@ -142,7 +145,7 @@ IONUX.Views.MarineFacilitiesCreateNewView = Backbone.View.extend({
   create_new: function(evt){
     evt.preventDefault();
     this.$el.find("input[type='submit']").attr("disabled", true).val("Saving...");
-    var mf = new IONUX.Models.MarineFacility();
+    var mf = new IONUX.Models.Observatory();
     $.each(this.$el.find("input,textarea").not("input[type='submit'],input[type='cancel']"), function(i, e){
       var key = $(e).attr("name"), val = $(e).val();
       var kv = {};
@@ -159,28 +162,6 @@ IONUX.Views.MarineFacilitiesCreateNewView = Backbone.View.extend({
     this.$el.hide();
   }
 
-});
-
-
-
-/* Observatories */
-
-IONUX.Views.ObservatoriesView = Backbone.View.extend({
-
-  el:"#observatories-container",
-
-  template: _.template($("#observatories-tmpl").html()),
-
-  events: { },
-
-  initialize: function(){
-    _.bindAll(this, "render");
-  },
-  
-  render: function(){
-    this.$el.html(this.template({}));
-    return this;
-  }
 });
 
 

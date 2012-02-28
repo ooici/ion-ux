@@ -5,6 +5,8 @@ from functools import wraps
 app = Flask(__name__)
 
 
+GATEWAY_HOST = "67.58.49.196:5000"
+
 PRODUCTION = False #more configurable in the future.
 if PRODUCTION:
     from service_api import ServiceApi
@@ -31,8 +33,8 @@ def data_resource():
     resp_data = ServiceApi.data_resource(request.args)
     return jsonify(resp_data)
 
-@app.route('/marine_facilities', methods=["GET", "POST"])
-def marine_facilities():
+@app.route('/observatories', methods=["GET", "POST"])
+def observatories():
     if request.method == 'POST':
         import time; time.sleep(0.7) #mock latency
 
@@ -41,7 +43,9 @@ def marine_facilities():
 
         print object_schema
 
-        post_request = requests.post('http://localhost:5000/ion-service/marine_facility_management/create_marine_facility', data={'payload': json.dumps(object_schema)})
+        host = 'http://%s/ion-service/marine_facility_management/create_marine_facility' % GATEWAY_HOST
+        print "!!!!!!!!   ", host
+        post_request = requests.post(host, data={'payload': json.dumps(object_schema)})
         
         print post_request.content
         
