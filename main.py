@@ -4,16 +4,15 @@ from functools import wraps
 
 app = Flask(__name__)
 
+HOST = ''
+PORT = 3000
+LOGGED_IN = True
+PRODUCTION = False
 
-PRODUCTION = False #more configurable in the future.
 if PRODUCTION:
     from service_api import ServiceApi
 else:
     from dummy_service_api import ServiceApi
-
-LOGGED_IN = True
-
-
 
 @app.route('/')
 def index():
@@ -22,6 +21,17 @@ def index():
     else:
         return render_template("index.html")
 
+@app.route('/signon', methods=['POST'])
+def signon():
+    form_data = json.loads(request.data)
+    certificate = form_data['cert']
+    
+    print SERVICE_REQUEST_TEMPLATE
+    
+    # build request
+    # make request
+    # handle response and set cookie if successful
+    
 @app.route('/dashboard', methods=["GET"])
 def dashboard():
     return render_template('ux-dashboard.html')
@@ -39,9 +49,8 @@ def marine_facilities():
         form_data = json.loads(request.data)
         object_schema = build_schema_from_form(form_data, service="marine_facilities")
 
-        print object_schema
 
-        post_request = requests.post('http://localhost:5000/ion-service/marine_facility_management/create_marine_facility', data={'payload': json.dumps(object_schema)})
+        post_request = requests.post('http://67.58.49.196:5000/ion-service/marine_facility_management/create_marine_facility', data={'payload': json.dumps(object_schema)})
         
         print post_request.content
         
@@ -61,15 +70,9 @@ def subscription():
     return jsonify(resp_data)
 
 
-@app.route('/lca')
-def lca():
-    return render_template('lca.html')
 
 
-
-
-RESOURCE_REGISTRY_URL = 'http://localhost:5000/ion-services/resource_registry/'
-
+SERVICE_GATEWAY_BASE_URL = 'http://67.58.49.196:5000/ion-service'
 DEFINED_SERVICES_OPERATIONS = {
     'marine_facilities':
         {
@@ -79,7 +82,6 @@ DEFINED_SERVICES_OPERATIONS = {
             'operation_names': {'create': 'create_marine_facility'}
         },
 }
-
 SERVICE_REQUEST_TEMPLATE = {
     'serviceRequest': {
         'serviceName': '', 
@@ -89,7 +91,6 @@ SERVICE_REQUEST_TEMPLATE = {
 }
 
 
-
 def build_schema_from_form(form_data, service="marine_facilities", object_name="marine_facility"):
     service_name = DEFINED_SERVICES_OPERATIONS[service]['service_name']
     service_op = DEFINED_SERVICES_OPERATIONS[service]['operation_names']['create']
@@ -97,7 +98,6 @@ def build_schema_from_form(form_data, service="marine_facilities", object_name="
     result_dict = SERVICE_REQUEST_TEMPLATE
     result_dict['serviceRequest']['serviceName'] = service_name
     result_dict['serviceRequest']['serviceOp'] = service_op
-    result_dict["serviceRequest"]["params"][object_name] = [resource_type]
     sub_result_dict = {}
     for (k, v) in form_data.iteritems():
         elems = k.split("__")
@@ -109,7 +109,13 @@ def build_schema_from_form(form_data, service="marine_facilities", object_name="
                 sub_result_dict[sub_k].update({sub_v:v})
             else:
                 sub_result_dict[sub_k] = {sub_v:v}
-    result_dict["serviceRequest"]["params"][object_name].append(sub_result_dict)
+    
+    if object_name:
+        result_dict["serviceRequest"]["params"][object_name] = [resource_type]                
+        result_dict["serviceRequest"]["params"][object_name].append(sub_result_dict)
+    else:
+        result_dict["serviceRequest"]["params"].append(sub_result_dict)
+
     return result_dict
 
 
@@ -140,7 +146,7 @@ def build_schema_from_form(form_data, service="marine_facilities", object_name="
 def resources_index():    
     if request.args.has_key('type'):
         resource_type = request.args['type']        
-        service_gateway_call = requests.get('http://localhost:5000/ion-service/resource_registry/find_resources?restype=%s' % resource_type)
+        service_gateway_call = requests.get('%s/resource_registry/find_resources?restype=%s' % (SERVICE_GATEWAY_BASE_URL, resource_type))
         resources = json.loads(service_gateway_call.content)
         resources = resources['data']['GatewayResponse'][0]
     else:
@@ -177,7 +183,7 @@ def create_resource():
     sg_data['serviceRequest']['params']['object'] = [resource_type, resource_type_params]
         
     service_gateway_call = requests.post(
-        'http://localhost:5000/ion-service/resource_registry/create', 
+        'http://67.58.49.196:5000/ion-service/resource_registry/create', 
         data={'payload': json.dumps(sg_data)}
     )
         
@@ -188,7 +194,7 @@ def show_resource(resource_id=None):
     
     resource_type = request.args.get('type')
     
-    service_gateway_call = requests.get('http://localhost:5000/ion-service/resource_registry/read?object_id=%s' % resource_id)
+    service_gateway_call = requests.get('http://67.58.49.196:5000/ion-service/resource_registry/read?object_id=%s' % resource_id)
     resource = json.loads(service_gateway_call.content)
     resource = resource['data']['GatewayResponse']
     
@@ -202,7 +208,7 @@ def edit_reource(resource_id=None):
     else:
         resource_type = None
     
-    service_gateway_call = requests.get('http://localhost:5000/ion-service/resource_registry/read?object_id=%s' % resource_id)
+    service_gateway_call = requests.get('http://67.58.49.196:5000/ion-service/resource_registry/read?object_id=%s' % resource_id)
     resource = json.loads(service_gateway_call.content)
     resource = resource['data']['GatewayResponse']
 
@@ -225,7 +231,7 @@ def update_resource(resource_id=None):
     post_data['serviceRequest']['params']['object'] = [resource_type, resource_type_params]
 
     service_gateway_call = requests.post(
-        'http://localhost:5000/ion-service/resource_registry/update', 
+        'http://67.58.49.196:5000/ion-service/resource_registry/update', 
         data={'payload': json.dumps(post_data)}
     )
 
@@ -242,7 +248,7 @@ def delete_resource(resource_id=None):
 
 
 def fetch_menu():        
-    menu_data = requests.get('http://localhost:5000/ion-service/list_resource_types')
+    menu_data = requests.get('%s/list_resource_types' % SERVICE_GATEWAY_BASE_URL)
     menu = json.loads(menu_data.content)
     
     return menu['data']['GatewayResponse']
@@ -251,7 +257,7 @@ def fetch_menu():
 def get_resource_schema(resource_type):
     resource_type = str(resource_type)
 
-    resource_type_schema_response = requests.get("http://localhost:5000/ion-service/resource_type_schema/%s" % resource_type) 
+    resource_type_schema_response = requests.get("http://67.58.49.196:5000/ion-service/resource_type_schema/%s" % resource_type)
     resource_type_schema = json.loads(resource_type_schema_response.content)
     
     return str(resource_type_schema)
@@ -261,4 +267,4 @@ def catchall(catchall):
     return render_template("ion-ux.html", **{"current_url":catchall})    
     
 if __name__ == '__main__':
-    app.run(debug=True, port=3000)
+    app.run(debug=True, host=HOST, port=PORT)
