@@ -5,7 +5,7 @@ IONUX.Router = Backbone.Router.extend({
     "data": "data_resource",
     "data/:data_resource_id": "data_resource_details",
     "observatories": "observatories",
-    "facilities": "marine_facilities",
+    "observatory/:o_id": "observatory",
     "platforms":"platforms",
     "instruments":"instruments",
     "resource_types/:resource_type_id": "resource_type_details"
@@ -18,14 +18,6 @@ IONUX.Router = Backbone.Router.extend({
       this.observatory_modal = new IONUX.Views.ObservatoryModalView();
     }
     this.observatory_modal.render();
-  },
-
-  marine_facilities: function(){
-    this._reset();
-    $("#marine-facilities-container").show();
-    this.marineFacilitiesList = new IONUX.Collections.MarineFacilities();
-    this.marineFacilitiesListView = new IONUX.Views.MarineFacilitiesView({collection:this.marineFacilitiesList});
-    this.marineFacilitiesList.fetch();
   },
 
   data_resource: function(){
@@ -45,8 +37,17 @@ IONUX.Router = Backbone.Router.extend({
   observatories: function(){
     this._reset();
     $("#observatories-container").show();
-    var observatories_view = new IONUX.Views.ObservatoriesView();
-    observatories_view.render();
+    this.observatoriesList = new IONUX.Collections.ObservatoryCollection();
+    this.observatoriesListView = new IONUX.Views.ObservatoriesView({collection:this.observatoriesList});
+    this.observatoriesList.fetch();
+  },
+
+  observatory: function(o_id){
+    this._reset();
+    console.log("observatory  o_id:", o_id);
+    //$("#observatories-container").show();
+    //var observatories_view = new IONUX.Views.ObservatoriesView();
+    //observatories_view.render();
   },
   
   platforms: function(){
@@ -69,7 +70,7 @@ IONUX.Router = Backbone.Router.extend({
 
   handle_navigation: function(){
     var self = this;
-    $('a').click(function (e) {
+    $(document).on("click", "a", function(e) {
         self.navigate($(this).attr('href'), {trigger:true});
         return false;
     });
