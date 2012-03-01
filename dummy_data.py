@@ -1,3 +1,7 @@
+import datetime
+
+timestamp_created = str(datetime.datetime(2012, 01, 01))
+timestamp_updated = str(datetime.datetime.now())
 
 MARINE_FACILITIES_DATA = [
 
@@ -10,6 +14,77 @@ MARINE_FACILITIES_DATA = [
   {'site_id':'klm123', 'information_resource':{'name':'Spongy Bob 9001', 'description':'A floating buoy'}, 'institution':{'address':'aaa', 'phone':'555-1212', 'email':'example@example.edu', 'website':'http://www.oceanobservatories.org'}, 'contact_information':{'name':'somename', 'address':'123 Main Street', 'city':'San Diego', 'postalcode':'92014', 'phone':'858-555-1212', 'email':'contact@oceanobservatories.org', 'variables':{'name':'var1', 'value':'val1'}}}
 
 ]
+
+
+MARINE_FACILITY_FACEPAGE_DATA = {
+    'abc123': {
+        'data_products': [
+            {'_id': '9028302985', 'name': 'Data Product Alpha', 'dataset_id': '029384023', 'data_product_level': 'High', 'CDM_data_type': 'CDM Data Type', 'ts_updated': timestamp_updated},
+            {'_id': '2982309482', 'name': 'Data Product Bravo', 'dataset_id': '029384023', 'data_product_level': 'Low', 'CDM_data_type': 'CDM Data Type', 'ts_updated': timestamp_updated},
+            {'_id': '7859827523', 'name': 'Data Product Charlie', 'dataset_id': '029384023', 'data_product_level': 'Medium', 'CDM_data_type': 'CDM Data Type', 'ts_updated': timestamp_updated},
+            {'_id': '7501985100', 'name': 'Data Product Delta', 'dataset_id': '029384023', 'data_product_level': 'Insane', 'CDM_data_type': 'CDM Data Type', 'ts_updated': timestamp_updated}
+        ],
+        'platforms' : [
+            {'name': 'Zulu Platform', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
+            {'name': 'Yankee Plaform', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
+            {'name': 'X-Ray Platform', 'description': 'Description goes here...', 'ts_updated': timestamp_updated}
+        ],
+        'instruments': [
+            {'name': 'Instrument Whiskey', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
+            {'name': 'Instrument Whiskey', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
+            {'name': 'Instrument Whiskey', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
+            {'name': 'Instrument Whiskey', 'description': 'Description goes here...', 'ts_updated': timestamp_updated}
+        ],
+        'participants': [
+            {'name': 'Mike November', 'email': 'mike@november.org', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
+            {'name': 'Oscar Papa', 'email': 'oscar@papa.org', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
+            {'name': 'Quebec Romeo', 'email': 'quebec@romeo.org', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
+            {'name': 'Uniform Victor', 'email': 'uniform@victor.org', 'description': 'Description goes here...', 'ts_updated': timestamp_updated}
+        ],
+        'events': [
+            {'origin': 'Alpha Origin', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
+            {'origin': 'Bravo Origin', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
+            {'origin': 'Charlie Origin', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
+            {'origin': 'Delta Origin', 'description': 'Description goes here...', 'ts_updated': timestamp_updated}
+        ],
+        'user_requests': [
+            {'origin': 'Echo User Request', 'description': 'Description goes here...', 'status': 'Status', 'status_description': 'Status Description', 'user_id': 'User ID', 'type': 'Type', 'ts_updated': timestamp_updated},
+            {'origin': 'Foxtrot User Request', 'description': 'Description goes here...', 'status': 'Status', 'status_description': 'Status Description', 'user_id': 'User ID', 'type': 'Type', 'ts_updated': timestamp_updated},
+            {'origin': 'Golf User Request', 'description': 'Description goes here...', 'status': 'Status', 'status_description': 'Status Description', 'user_id': 'User ID', 'type': 'Type', 'ts_updated': timestamp_updated},
+            {'origin': 'Hotel User Request', 'description': 'Description goes here...', 'status': 'Status', 'status_description': 'Status Description', 'user_id': 'User ID', 'type': 'Type', 'ts_updated': timestamp_updated}
+        ],
+        'policies': [
+            {'name': 'Echo Policy', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
+            {'name': 'Foxtrot Policy', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
+            {'name': 'Golf Policy', 'description': 'Description goes here...', 'ts_updated': timestamp_updated}],
+        'instrument_agents': [
+            {'name': 'Hotel Instrument Agent', 'description': 'Description goes here...', 'driver_model': 'Driver Model', 'client_module': 'Client Module', 'driver_class': 'Driver Class', 'driver_class_client': 'Driver Class Client', 'connection_method': 'Connection Method', 'agent_version': 'Agent Version', 'ts_updated': timestamp_updated},
+            {'name': 'India Instrument Agent', 'description': 'Description goes here...', 'driver_model': 'Driver Model', 'client_module': 'Client Module', 'driver_class': 'Driver Class', 'driver_class_client': 'Driver Class Client', 'connection_method': 'Connection Method', 'agent_version': 'Agent Version', 'ts_updated': timestamp_updated},
+            {'name': 'Juliet Instrument Agent', 'description': 'Description goes here...', 'driver_model': 'Driver Model', 'client_module': 'Client Module', 'driver_class': 'Driver Class', 'driver_class_client': 'Driver Class Client', 'connection_method': 'Connection Method', 'agent_version': 'Agent Version', 'ts_updated': timestamp_updated},
+            {'name': 'Kilo Instrument Agent', 'description': 'Description goes here...', 'driver_model': 'Driver Model', 'client_module': 'Client Module', 'driver_class': 'Driver Class', 'driver_class_client': 'Driver Class Client', 'connection_method': 'Connection Method', 'agent_version': 'Agent Version', 'ts_updated': timestamp_updated}
+        ],
+        'data_process_defintions': [
+            {'name': 'Lima Data Process', 'description': 'Description goes here...', 'module': 'Module', 'class_name': 'Class Name', 'process_source': 'Process Source', 'ts_updated': timestamp_updated},
+            {'name': 'Mike Data Process', 'description': 'Description goes here...', 'module': 'Module', 'class_name': 'Class Name', 'process_source': 'Process Source', 'ts_updated': timestamp_updated},
+            {'name': 'November Data Process', 'description': 'Description goes here...', 'module': 'Module', 'class_name': 'Class Name', 'process_source': 'Process Source', 'ts_updated': timestamp_updated},
+            {'name': 'Oscar Data Process', 'description': 'Description goes here...', 'module': 'Module', 'class_name': 'Class Name', 'process_source': 'Process Source', 'ts_updated': timestamp_updated},
+        ],
+        'platform_models': [
+            {'name': 'Whiskey Platform Model', 'description': 'Description goes here...', 'manufacturer': 'Manufacturer', 'platform_type': 'Platform Type', 'ooi_node_type': 'OOI Node Type', 'ts_updated': timestamp_updated},
+            {'name': 'X-Ray Platform Model', 'description': 'Description goes here...', 'manufacturer': 'Manufacturer', 'platform_type': 'Platform Type', 'ooi_node_type': 'OOI Node Type', 'ts_updated': timestamp_updated},
+            {'name': 'Yankee Platform Model', 'description': 'Description goes here...', 'manufacturer': 'Manufacturer', 'platform_type': 'Platform Type', 'ooi_node_type': 'OOI Node Type', 'ts_updated': timestamp_updated},
+            {'name': 'Zulu Platform Model', 'description': 'Description goes here...', 'manufacturer': 'Manufacturer', 'platform_type': 'Platform Type', 'ooi_node_type': 'OOI Node Type', 'ts_updated': timestamp_updated},
+        ],
+        'instrument_models': [
+            {'name': 'Alpha Bravo Instrument Model', 'description': 'Description goes here...', 'model_label': 'Model Label', 'manufacturer': 'Manufacturer', 'instrument_family': 'Instrument Family', 'instrument_class': 'Instrument Class', 'primary_interface': 'Primary Interface', 'ts_updated': timestamp_updated},
+            {'name': 'Charle Delta Instrument Model', 'description': 'Description goes here...', 'model_label': 'Model Label', 'manufacturer': 'Manufacturer', 'instrument_family': 'Instrument Family', 'instrument_class': 'Instrument Class', 'primary_interface': 'Primary Interface', 'ts_updated': timestamp_updated},
+            {'name': 'Echo Foxtrot Instrument Model', 'description': 'Description goes here...', 'model_label': 'Model Label', 'manufacturer': 'Manufacturer', 'instrument_family': 'Instrument Family', 'instrument_class': 'Instrument Class', 'primary_interface': 'Primary Interface', 'ts_updated': timestamp_updated},
+            {'name': 'Golf Hotel Instrument Model', 'description': 'Description goes here...', 'model_label': 'Model Label', 'manufacturer': 'Manufacturer', 'instrument_family': 'Instrument Family', 'instrument_class': 'Instrument Class', 'primary_interface': 'Primary Interface', 'ts_updated': timestamp_updated}
+        ]
+    },
+    
+    
+}
 
 
 
@@ -43,4 +118,7 @@ SUBSCRIPTION_DATA = {"subscriptionListResults": [ {"subscriptionInfo": {"user_oo
 
 
 FINDBYUSER = {"datasetByOwnerMetadata": [{"data_resource_id": "3319A67F-81F3-424F-8E69-4F28C4E04802","title": "NTAS 10 Real-time Mooring Data, System 1","date_registered": 1304696743406,"ion_title": "NTAS1 Data Source","activation_state": "Public","update_interval_seconds": 60},{"data_resource_id": "3319A67F-81F3-424F-8E69-4F28C4E04805","title": "WHOTS 7 near-real-time Mooring Data, System 2","date_registered": 1304696743328,"ion_title": "WHOTS2 Data Source","activation_state": "Private","update_interval_seconds": 0},{"data_resource_id": "3319A67F-81F3-424F-8E69-4F28C4E04806","title": "7723 Moanalua RG No 1 at alt 1000 ft Oahu HI (212359157502601) - Instantaneous Value","date_registered": 1304696743377,"ion_title": "Moana Loa Data Source","activation_state": "Public","update_interval_seconds": 60},{"data_resource_id": "3319A67F-81F3-424F-8E69-4F28C4E04808","title": "CONNECTICUT RIVER AT THOMPSONVILLE CT (01184000) - Instantaneous Value","date_registered": 1304696743367,"ion_title": "Connecticut River Data Source","activation_state": "Private","update_interval_seconds": 0},{"data_resource_id": "3319A67F-81F3-424F-8E69-4F28C4E04803","title": "NTAS 10 Real-time Mooring Data, System 2","date_registered": 1304696743426,"ion_title": "NTAS2 Data Source","activation_state": "Private","update_interval_seconds": 0},{"data_resource_id": "3319A67F-81F3-424F-8E69-4F28C4E04807","title": "CHOPTANK RIVER NEAR GREENSBORO MD (01491000) - Instantaneous Value","date_registered": 1304696743397,"ion_title": "Choptank River Data Source","activation_state": "Private","update_interval_seconds": 0},{"data_resource_id": "3319A67F-81F3-424F-8E69-4F28C4E04804","title": "WHOTS 7 near-real-time Mooring Data, System 1","date_registered": 1304696743348,"ion_title": "WHOTS1 Data Source","activation_state": "Private","update_interval_seconds": 0},{"data_resource_id": "3319A67F-81F3-424F-8E69-4F28C4E04801","title": "HYCOM","date_registered": 1304696743358,"ion_title": "HyCom Data Source","activation_state": "Private","update_interval_seconds": 0}]}
+
+
+
 

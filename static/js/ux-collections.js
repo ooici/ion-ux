@@ -16,3 +16,17 @@ IONUX.Collections.ObservatoryCollection = Backbone.Collection.extend({
   }
 
 });
+
+
+IONUX.Collections.ObservatoryDataProductCollection = Backbone.Collection.extend({
+
+  model: IONUX.Models.ObservatoryDataProduct,
+  url: function() {
+    return '/observatories/' + this.observatory_id
+  }
+
+  // parse: function(resp) {
+  //   return resp['data'];
+  // }
+
+});

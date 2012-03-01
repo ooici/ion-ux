@@ -18,4 +18,7 @@ IONUX.Models.Observatory = Backbone.Model.extend({
 
 });
 
+IONUX.Models.ObservatoryDataProduct = Backbone.Model.extend();
+IONUX.Models.ObservatoryPlatform = Backbone.Model.extend();
+IONUX.Models.ObservatoryInstrument = Backbone.Model.extend();
 

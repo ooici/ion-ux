@@ -25,3 +25,7 @@ class ServiceApi(object):
     @staticmethod
     def marine_facilities(request_args):
         return dummy_data.MARINE_FACILITIES_DATA
+
+    @staticmethod
+    def observatories(marine_facility_id):
+        return dummy_data.MARINE_FACILITY_FACEPAGE_DATA[marine_facility_id]

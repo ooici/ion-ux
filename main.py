@@ -9,12 +9,10 @@ PORT = 3000
 LOGGED_IN = True
 PRODUCTION = False
 
-<<<<<<< HEAD
-=======
 GATEWAY_HOST = "67.58.49.196:5000"
 
 PRODUCTION = False #more configurable in the future.
->>>>>>> f88d1e89ffe96778f5dd63657e4633e1f9f0b2a0
+
 if PRODUCTION:
     from service_api import ServiceApi
 else:
@@ -47,6 +45,7 @@ def data_resource():
     resp_data = ServiceApi.data_resource(request.args)
     return jsonify(resp_data)
 
+
 @app.route('/observatories', methods=["GET", "POST"])
 def observatories():
     if request.method == 'POST':
@@ -55,21 +54,25 @@ def observatories():
         form_data = json.loads(request.data)
         object_schema = build_schema_from_form(form_data, service="marine_facilities")
 
-
-<<<<<<< HEAD
         post_request = requests.post('http://67.58.49.196:5000/ion-service/marine_facility_management/create_marine_facility', data={'payload': json.dumps(object_schema)})
-=======
         host = 'http://%s/ion-service/marine_facility_management/create_marine_facility' % GATEWAY_HOST
-        print "!!!!!!!!   ", host
+
         post_request = requests.post(host, data={'payload': json.dumps(object_schema)})
->>>>>>> f88d1e89ffe96778f5dd63657e4633e1f9f0b2a0
         
         print post_request.content
         
         resp_data = {"success":True}
     else:
-        resp_data = ServiceApi.marine_facilities(request.args)
+        resp_data = ServiceApi.marine_facilities(request.args)        
+        
     return jsonify(data=resp_data)
+        
+
+@app.route('/observatories/<marine_facility_id>', methods=['GET'])
+def observatory_facepage(marine_facility_id):
+    resp_data = ServiceApi.observatories(marine_facility_id)
+    return jsonify(data=resp_data)
+    
 
 @app.route('/dataresource/<data_resource_id>', methods=["GET", "POST"])
 def data_resource_details(data_resource_id):
