@@ -261,7 +261,7 @@ IONUX.Views.ObservatoryFacepage = Backbone.View.extend({
   },
 
   render: function(){
-    console.log(this.template(this.model.toJSON()));
+    console.log(this.model.toJSON());
     this.$el.html(this.template(this.model.toJSON())).show();
   }
 
