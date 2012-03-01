@@ -73,12 +73,13 @@
            <div id='observatory-modal-open' class="btn" data-toggle='modal' href="#observatory-modal">Test Observatory Modal</div>
           </div>
 
-					<div id="data-resources" class="viewcontainer">
+         <div id="data-resources" class="viewcontainer">
            <h4>Data</h4><br>
           </div>
-					<div id="data-resource-detail" class="viewcontainer"></div>
+         <div id="data-resource-detail" class="viewcontainer"></div>
 
           <div id="observatories-container" class="viewcontainer"> </div>
+          <div id="observatories-facepage-container" class="viewcontainer"> </div>
 
           <div id="platforms-container" class="viewcontainer">
            <h4>Platforms</h4>
@@ -111,13 +112,14 @@
 </script>
 
 <!-- templates -->
+<script type="text/template" id="observatories-tmpl">{% include 'partials/observatories_index.html' %}</script>
 <script type="text/template" id="observatories-item-tmpl">{% include 'partials/observatories_item.html' %}</script>
 <script type="text/template" id="observatories-detail-tmpl">{% include 'partials/observatories_detail.html' %} </script>
+<script type="text/template" id="observatories-facepage-tmpl">{% include 'partials/observatory_facepage.html' %} </script>
 <script type="text/template" id="data-resource-item-tmpl">{% include 'partials/data_resource_item.html' %}</script>
 <script type="text/template" id="data-resource-detail-tmpl">{% include 'partials/data_resource_detail.html' %}</script>
 <script type="text/template" id="new-observatory-tmpl">{% include 'partials/new_marine_facility.html' %}</script>
 <script type="text/template" id="platforms-tmpl">{% include 'partials/platforms_list.html' %}</script>
-<script type="text/template" id="observatories-tmpl">{% include 'partials/observatories_index.html' %}</script>
 <script type="text/template" id="instruments-tmpl">{% include 'partials/instruments_list.html' %}</script>
 <script type="text/template" id="observatory-modal-tmpl">{% include 'partials/observatory_modal.html' %}</script>
 

@@ -60,8 +60,8 @@ IONUX.Views.ObservatoriesView = Backbone.View.extend({
   template: _.template($("#observatories-tmpl").html()),
 
   events: {
-    "click .create_new":"show_create_new_form",
-    "click table tr":"show_facepage"
+    "click .create_new":"show_create_new_form"
+    //"click table tr":"show_facepage"
   },
 
   initialize: function(){
@@ -74,9 +74,7 @@ IONUX.Views.ObservatoriesView = Backbone.View.extend({
     return this;
   },
 
-  show_facepage: function(){
-    console.log("show_facepage");
-  },
+  //show_facepage: function(){ console.log("show_facepage"); },
 
   show_create_new_form: function(){
     if (_.isUndefined(this.observatories_create_new_view)){
@@ -247,3 +245,26 @@ IONUX.Views.ObservatoryModalView = Backbone.View.extend({
   }
 });
  
+
+
+IONUX.Views.ObservatoryFacepage = Backbone.View.extend({
+
+  el: "#observatories-facepage-container",
+
+  template: _.template($("#observatories-facepage-tmpl").html()),
+
+  //events: { },
+
+  initialize: function(){
+    _.bindAll(this, "render");
+    this.model.bind("change", this.render);
+  },
+
+  render: function(){
+    console.log(this.template(this.model.toJSON()));
+    this.$el.html(this.template(this.model.toJSON())).show();
+  }
+
+});
+
+

@@ -42,7 +42,7 @@
     <% _.each(collection, function(obj) { %>
 			<tr>
 				<td>observatory name</td>
-				<td><%= obj.site_id %></td>
+				<td><a href="/observatories/<%= obj.site_id %>"><%= obj.site_id %></a></td>
 				<td>region</td>
 				<td>primary measurements</td>
 				<td>data products</td>

@@ -5,7 +5,7 @@ IONUX.Router = Backbone.Router.extend({
     "data": "data_resource",
     "data/:data_resource_id": "data_resource_details",
     "observatories": "observatories",
-    "observatory/:o_id": "observatory",
+    "observatories/:id": "observatory_facepage",
     "platforms":"platforms",
     "instruments":"instruments",
     "resource_types/:resource_type_id": "resource_type_details"
@@ -42,12 +42,11 @@ IONUX.Router = Backbone.Router.extend({
     this.observatoriesList.fetch();
   },
 
-  observatory: function(o_id){
+  observatory_facepage: function(id){
     this._reset();
-    console.log("observatory  o_id:", o_id);
-    //$("#observatories-container").show();
-    //var observatories_view = new IONUX.Views.ObservatoriesView();
-    //observatories_view.render();
+    var fpModel = new IONUX.Models.ObservatoryFacepageModel({marine_facility_id:id});
+    new IONUX.Views.ObservatoryFacepage({model:fpModel});
+    fpModel.fetch();
   },
   
   platforms: function(){
