@@ -70,9 +70,11 @@ def observatories():
 
 @app.route('/observatories/<marine_facility_id>', methods=['GET'])
 def observatory_facepage(marine_facility_id):
-    resp_data = ServiceApi.observatories(marine_facility_id)
-    return jsonify(data=resp_data)
-    
+    if request.is_xhr: #XXX put into decorator logic
+        resp_data = ServiceApi.observatories(marine_facility_id)
+        return jsonify(data=resp_data)
+    else:
+        return render_template("ion-ux.html", **{"current_url":request.path}) #XXX put into decorator logic
 
 @app.route('/dataresource/<data_resource_id>', methods=["GET", "POST"])
 def data_resource_details(data_resource_id):
