@@ -26,3 +26,20 @@ body {
   margin-left:-450px;
   padding:20px;
 }
+
+.e-borders {
+  background: white;
+  border: solid 1px #ddd;
+}
+
+.e-borders table {
+}
+
+.e-border h3 {
+  font-size: 14px;
+  font-weight: normal;
+}
+
+table tr:nth-child(odd) td, .table-striped tbody tr:nth-child(odd) th {
+  background-color: #eee  ;
+}

@@ -1,11 +1,12 @@
 <a href="/observatories">Back to Observatories</a>
 
-<h2>Observatory Facepage</h2>
+{{request.path }}
 
-
+<h1>Observatory Facepage</h1>
 
 <div id="obsevatory-facepage" class="row">
 	<div class="span2">
+
 		<!-- Observatory Identification -->
 		
 		{% include 'partials/observatory_identification.html' %}
@@ -21,8 +22,21 @@
 	</div>
 	
 	<div class="span8">
-		<h1>Data Products</h1>
+
+		<div class="e-borders">
+
+		<h3>Data Products</h3>
 		<table class="table">
+			<tr>
+				<th>ID</th>
+				<th>Name</th>
+				<th>Description</th>
+				<th>Dataset ID</th>
+				<th>Data Product Level</th>
+				<th>Update</th>
+				<th>CDM</th>
+			</tr>
+			
 			<% _.each(data_products, function(obj) { %>
 				<tr>
 					<td><%= obj._id %></td>
@@ -36,12 +50,14 @@
 			<% }); %>
 		</table>
 		
+		</div>
 		
-		<h1>Platforms</h1>
+		
+		<h3>Platforms</h3>
 		<table class="table">
 			<% _.each(platforms, function(obj) { %>
 				<tr>
-					<td><%= obj._id %></td>
+					<td><a href="/observatories/<%= marine_facility_id %>/platforms/<%= obj._id %>"><%= obj._id %></a></td>
 					<td><%= obj.name %></td>
 					<td><%= obj.description %></td>
 					<td><%= obj.ts_updated %></td>
@@ -50,7 +66,7 @@
 		</table>
 		
 		
-		<h1>Instruments</h1>
+		<h3>Instruments</h3>
 		<table class="table">
 			<% _.each(instruments, function(obj) { %>
 				<tr>
@@ -62,9 +78,9 @@
 			<% }); %>
 		</table>
 		
-		<h1>Events</h1>
+		<h3>Events</h3>
 		
-		<h2>Recent Events</h2>
+		<h3>Recent Events</h3>
 		<table class="table">
 			<% _.each(events, function(obj) { %>
 				<tr>
@@ -75,7 +91,7 @@
 			<% }); %>
 		</table>
 		
-		<h2>User Requests</h2>
+		<h3>User Requests</h3>
 		
 		<table class="table">
 			<% _.each(user_requests, function(obj) { %>
@@ -95,7 +111,7 @@
 		
 		
 		<h1>Administration</h1>
-		<h2>Participants</h2>
+		<h3>Participants</h3>
 		<table class="table">
 			<% _.each(participants, function(obj) { %>
 				<tr>
@@ -109,7 +125,7 @@
 		</table>
 		
 		
-		<h2>Policies</h2>
+		<h3>Policies</h3>
 		<table class="table">
 			<% _.each(policies, function(obj) { %>
 				<tr>
@@ -122,7 +138,7 @@
 		
 		
 		<h1>Software</h1>
-		<h2>Instrument Agents</h2>
+		<h3>Instrument Agents</h3>
 		<table class="table">
 			<% _.each(instrument_agents, function(obj) { %>
 				<tr>
@@ -140,7 +156,7 @@
 			<% }); %>
 		</table>
 
-		<h2>Data Process Definitions</h2>
+		<h3>Data Process Definitions</h3>
 		<table class="table">
 			<% _.each(data_process_defintions, function(obj) { %>
 				<tr>
@@ -157,7 +173,7 @@
 		
 		<h1>Definition</h1>
 		
-		<h2>Platform Models</h2>
+		<h3>Platform Models</h3>
 		<table class="table">
 			<% _.each(platform_models, function(obj) { %>
 				<tr>
@@ -172,7 +188,7 @@
 			<% }); %>
 		</table>
 
-		<h2>Instrument Models</h2>
+		<h3>Instrument Models</h3>
 		<table class="table">
 			<% _.each(instrument_models, function(obj) { %>
 				<tr>

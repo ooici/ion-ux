@@ -17,6 +17,8 @@ MARINE_FACILITIES_DATA = [
 
 
 MARINE_FACILITY_FACEPAGE_DATA = {
+    '_id': 'abc123',
+    'name': 'Blue Whale 55',
     'abc123': {
         'data_products': [
             {'_id': '9028302985', 'name': 'Data Product Alpha', 'dataset_id': '029384023', 'data_product_level': 'High', 'CDM_data_type': 'CDM Data Type', 'ts_updated': timestamp_updated},
@@ -25,15 +27,15 @@ MARINE_FACILITY_FACEPAGE_DATA = {
             {'_id': '7501985100', 'name': 'Data Product Delta', 'dataset_id': '029384023', 'data_product_level': 'Insane', 'CDM_data_type': 'CDM Data Type', 'ts_updated': timestamp_updated}
         ],
         'platforms' : [
-            {'name': 'Zulu Platform', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
-            {'name': 'Yankee Plaform', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
-            {'name': 'X-Ray Platform', 'description': 'Description goes here...', 'ts_updated': timestamp_updated}
+            {'_id': '1982731982', 'name': 'Zulu Platform', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
+            {'_id': '3456236236', 'name': 'Yankee Plaform', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
+            {'_id': '2474834575', 'name': 'X-Ray Platform', 'description': 'Description goes here...', 'ts_updated': timestamp_updated}
         ],
         'instruments': [
-            {'name': 'Instrument Whiskey', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
-            {'name': 'Instrument Whiskey', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
-            {'name': 'Instrument Whiskey', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
-            {'name': 'Instrument Whiskey', 'description': 'Description goes here...', 'ts_updated': timestamp_updated}
+            {'_id': '2891751924','name': 'Instrument Whiskey', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
+            {'_id': '9172435345','name': 'Instrument Whiskey', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
+            {'_id': '2983479837', 'name': 'Instrument Whiskey', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
+            {'_id': '2394578259','name': 'Instrument Whiskey', 'description': 'Description goes here...', 'ts_updated': timestamp_updated}
         ],
         'participants': [
             {'name': 'Mike November', 'email': 'mike@november.org', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
@@ -81,9 +83,7 @@ MARINE_FACILITY_FACEPAGE_DATA = {
             {'name': 'Echo Foxtrot Instrument Model', 'description': 'Description goes here...', 'model_label': 'Model Label', 'manufacturer': 'Manufacturer', 'instrument_family': 'Instrument Family', 'instrument_class': 'Instrument Class', 'primary_interface': 'Primary Interface', 'ts_updated': timestamp_updated},
             {'name': 'Golf Hotel Instrument Model', 'description': 'Description goes here...', 'model_label': 'Model Label', 'manufacturer': 'Manufacturer', 'instrument_family': 'Instrument Family', 'instrument_class': 'Instrument Class', 'primary_interface': 'Primary Interface', 'ts_updated': timestamp_updated}
         ]
-    },
-    
-    
+    }, 
 }
 
 
