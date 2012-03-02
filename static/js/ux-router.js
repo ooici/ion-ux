@@ -51,7 +51,11 @@ IONUX.Router = Backbone.Router.extend({
   },
   
   observatory_platform_facepage: function(marine_facility_id, platform_id) {
-    alert("Yo!");
+    this._reset();
+    var fpModel = new IONUX.Models.ObservatoryPlatformFacepageModel({marine_facility_id: marine_facility_id, platform_id: platform_id});
+    new IONUX.Views.ObservatoryPlatformFacepage({model:fpModel});
+    console.log('You are here.');
+    fpModel.fetch();
   },
   
   platforms: function(){

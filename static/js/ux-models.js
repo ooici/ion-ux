@@ -28,5 +28,16 @@ IONUX.Models.ObservatoryFacepageModel = Backbone.Model.extend({
     return resp.data;
   }
 
+});
+
+IONUX.Models.ObservatoryPlatformFacepageModel = Backbone.Model.extend({
+
+  url: function(){
+    return "/observatories/"+this.get("marine_facility_id")+"/platforms/"+this.get("platform_id");
+  },
+  
+  parse: function(resp) {
+    return resp.data;
+  }
 
 });

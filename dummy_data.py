@@ -15,11 +15,12 @@ MARINE_FACILITIES_DATA = [
 
 ]
 
-
 MARINE_FACILITY_FACEPAGE_DATA = {
-    '_id': 'abc123',
-    'name': 'Blue Whale 55',
-    'abc123': {
+    'abc123': {    
+        '_id': 'abc123',
+        'thumbnail': '/static/img/thumbnail.png',
+        'name': 'Blue Whale 55',
+        'description': 'Description goes here...',
         'data_products': [
             {'_id': '9028302985', 'name': 'Data Product Alpha', 'dataset_id': '029384023', 'data_product_level': 'High', 'CDM_data_type': 'CDM Data Type', 'ts_updated': timestamp_updated},
             {'_id': '2982309482', 'name': 'Data Product Bravo', 'dataset_id': '029384023', 'data_product_level': 'Low', 'CDM_data_type': 'CDM Data Type', 'ts_updated': timestamp_updated},
@@ -32,16 +33,16 @@ MARINE_FACILITY_FACEPAGE_DATA = {
             {'_id': '2474834575', 'name': 'X-Ray Platform', 'description': 'Description goes here...', 'ts_updated': timestamp_updated}
         ],
         'instruments': [
-            {'_id': '2891751924','name': 'Instrument Whiskey', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
-            {'_id': '9172435345','name': 'Instrument Whiskey', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
+            {'_id': '2891751924', 'name': 'Instrument Whiskey', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
+            {'_id': '9172435345', 'name': 'Instrument Whiskey', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
             {'_id': '2983479837', 'name': 'Instrument Whiskey', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
-            {'_id': '2394578259','name': 'Instrument Whiskey', 'description': 'Description goes here...', 'ts_updated': timestamp_updated}
+            {'_id': '2394578259', 'name': 'Instrument Whiskey', 'description': 'Description goes here...', 'ts_updated': timestamp_updated}
         ],
         'participants': [
-            {'name': 'Mike November', 'email': 'mike@november.org', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
-            {'name': 'Oscar Papa', 'email': 'oscar@papa.org', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
-            {'name': 'Quebec Romeo', 'email': 'quebec@romeo.org', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
-            {'name': 'Uniform Victor', 'email': 'uniform@victor.org', 'description': 'Description goes here...', 'ts_updated': timestamp_updated}
+            {'_id': '0298409182', 'name': 'Mike November', 'email': 'mike@november.org', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
+            {'_id': '2394203948', 'name': 'Oscar Papa', 'email': 'oscar@papa.org', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
+            {'_id': '2938429008', 'name': 'Quebec Romeo', 'email': 'quebec@romeo.org', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
+            {'_id': '5569827492', 'name': 'Uniform Victor', 'email': 'uniform@victor.org', 'description': 'Description goes here...', 'ts_updated': timestamp_updated}
         ],
         'events': [
             {'origin': 'Alpha Origin', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
@@ -58,34 +59,78 @@ MARINE_FACILITY_FACEPAGE_DATA = {
         'policies': [
             {'name': 'Echo Policy', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
             {'name': 'Foxtrot Policy', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
-            {'name': 'Golf Policy', 'description': 'Description goes here...', 'ts_updated': timestamp_updated}],
+            {'name': 'Golf Policy', 'description': 'Description goes here...', 'ts_updated': timestamp_updated}
+        ],
         'instrument_agents': [
-            {'name': 'Hotel Instrument Agent', 'description': 'Description goes here...', 'driver_model': 'Driver Model', 'client_module': 'Client Module', 'driver_class': 'Driver Class', 'driver_class_client': 'Driver Class Client', 'connection_method': 'Connection Method', 'agent_version': 'Agent Version', 'ts_updated': timestamp_updated},
-            {'name': 'India Instrument Agent', 'description': 'Description goes here...', 'driver_model': 'Driver Model', 'client_module': 'Client Module', 'driver_class': 'Driver Class', 'driver_class_client': 'Driver Class Client', 'connection_method': 'Connection Method', 'agent_version': 'Agent Version', 'ts_updated': timestamp_updated},
-            {'name': 'Juliet Instrument Agent', 'description': 'Description goes here...', 'driver_model': 'Driver Model', 'client_module': 'Client Module', 'driver_class': 'Driver Class', 'driver_class_client': 'Driver Class Client', 'connection_method': 'Connection Method', 'agent_version': 'Agent Version', 'ts_updated': timestamp_updated},
-            {'name': 'Kilo Instrument Agent', 'description': 'Description goes here...', 'driver_model': 'Driver Model', 'client_module': 'Client Module', 'driver_class': 'Driver Class', 'driver_class_client': 'Driver Class Client', 'connection_method': 'Connection Method', 'agent_version': 'Agent Version', 'ts_updated': timestamp_updated}
+            {'_id': '9998409182', 'name': 'Hotel Instrument Agent', 'description': 'Description goes here...', 'driver_model': 'Driver Model', 'client_module': 'Client Module', 'driver_class': 'Driver Class', 'driver_class_client': 'Driver Class Client', 'connection_method': 'Connection Method', 'agent_version': 'Agent Version', 'ts_updated': timestamp_updated},
+            {'_id': '2983789274', 'name': 'India Instrument Agent', 'description': 'Description goes here...', 'driver_model': 'Driver Model', 'client_module': 'Client Module', 'driver_class': 'Driver Class', 'driver_class_client': 'Driver Class Client', 'connection_method': 'Connection Method', 'agent_version': 'Agent Version', 'ts_updated': timestamp_updated},
+            {'_id': '0981257992', 'name': 'Juliet Instrument Agent', 'description': 'Description goes here...', 'driver_model': 'Driver Model', 'client_module': 'Client Module', 'driver_class': 'Driver Class', 'driver_class_client': 'Driver Class Client', 'connection_method': 'Connection Method', 'agent_version': 'Agent Version', 'ts_updated': timestamp_updated},
+            {'_id': '9236289357', 'name': 'Kilo Instrument Agent', 'description': 'Description goes here...', 'driver_model': 'Driver Model', 'client_module': 'Client Module', 'driver_class': 'Driver Class', 'driver_class_client': 'Driver Class Client', 'connection_method': 'Connection Method', 'agent_version': 'Agent Version', 'ts_updated': timestamp_updated}
         ],
         'data_process_defintions': [
-            {'name': 'Lima Data Process', 'description': 'Description goes here...', 'module': 'Module', 'class_name': 'Class Name', 'process_source': 'Process Source', 'ts_updated': timestamp_updated},
-            {'name': 'Mike Data Process', 'description': 'Description goes here...', 'module': 'Module', 'class_name': 'Class Name', 'process_source': 'Process Source', 'ts_updated': timestamp_updated},
-            {'name': 'November Data Process', 'description': 'Description goes here...', 'module': 'Module', 'class_name': 'Class Name', 'process_source': 'Process Source', 'ts_updated': timestamp_updated},
-            {'name': 'Oscar Data Process', 'description': 'Description goes here...', 'module': 'Module', 'class_name': 'Class Name', 'process_source': 'Process Source', 'ts_updated': timestamp_updated},
+            {'_id': '5278293479', 'name': 'Lima Data Process', 'description': 'Description goes here...', 'module': 'Module', 'class_name': 'Class Name', 'process_source': 'Process Source', 'ts_updated': timestamp_updated},
+            {'_id': '5289572983', 'name': 'Mike Data Process', 'description': 'Description goes here...', 'module': 'Module', 'class_name': 'Class Name', 'process_source': 'Process Source', 'ts_updated': timestamp_updated},
+            {'_id': '2558902959', 'name': 'November Data Process', 'description': 'Description goes here...', 'module': 'Module', 'class_name': 'Class Name', 'process_source': 'Process Source', 'ts_updated': timestamp_updated},
+            {'_id': '5235789238', 'name': 'Oscar Data Process', 'description': 'Description goes here...', 'module': 'Module', 'class_name': 'Class Name', 'process_source': 'Process Source', 'ts_updated': timestamp_updated},
         ],
         'platform_models': [
-            {'name': 'Whiskey Platform Model', 'description': 'Description goes here...', 'manufacturer': 'Manufacturer', 'platform_type': 'Platform Type', 'ooi_node_type': 'OOI Node Type', 'ts_updated': timestamp_updated},
-            {'name': 'X-Ray Platform Model', 'description': 'Description goes here...', 'manufacturer': 'Manufacturer', 'platform_type': 'Platform Type', 'ooi_node_type': 'OOI Node Type', 'ts_updated': timestamp_updated},
-            {'name': 'Yankee Platform Model', 'description': 'Description goes here...', 'manufacturer': 'Manufacturer', 'platform_type': 'Platform Type', 'ooi_node_type': 'OOI Node Type', 'ts_updated': timestamp_updated},
-            {'name': 'Zulu Platform Model', 'description': 'Description goes here...', 'manufacturer': 'Manufacturer', 'platform_type': 'Platform Type', 'ooi_node_type': 'OOI Node Type', 'ts_updated': timestamp_updated},
+            {'_id': '2375892983', 'name': 'Whiskey Platform Model', 'description': 'Description goes here...', 'manufacturer': 'Manufacturer', 'platform_type': 'Platform Type', 'ooi_node_type': 'OOI Node Type', 'ts_updated': timestamp_updated},
+            {'_id': '5892735982', 'name': 'X-Ray Platform Model', 'description': 'Description goes here...', 'manufacturer': 'Manufacturer', 'platform_type': 'Platform Type', 'ooi_node_type': 'OOI Node Type', 'ts_updated': timestamp_updated},
+            {'_id': '2837587293', 'name': 'Yankee Platform Model', 'description': 'Description goes here...', 'manufacturer': 'Manufacturer', 'platform_type': 'Platform Type', 'ooi_node_type': 'OOI Node Type', 'ts_updated': timestamp_updated},
+            {'_id': '5789234922', 'name': 'Zulu Platform Model', 'description': 'Description goes here...', 'manufacturer': 'Manufacturer', 'platform_type': 'Platform Type', 'ooi_node_type': 'OOI Node Type', 'ts_updated': timestamp_updated},
         ],
         'instrument_models': [
-            {'name': 'Alpha Bravo Instrument Model', 'description': 'Description goes here...', 'model_label': 'Model Label', 'manufacturer': 'Manufacturer', 'instrument_family': 'Instrument Family', 'instrument_class': 'Instrument Class', 'primary_interface': 'Primary Interface', 'ts_updated': timestamp_updated},
-            {'name': 'Charle Delta Instrument Model', 'description': 'Description goes here...', 'model_label': 'Model Label', 'manufacturer': 'Manufacturer', 'instrument_family': 'Instrument Family', 'instrument_class': 'Instrument Class', 'primary_interface': 'Primary Interface', 'ts_updated': timestamp_updated},
-            {'name': 'Echo Foxtrot Instrument Model', 'description': 'Description goes here...', 'model_label': 'Model Label', 'manufacturer': 'Manufacturer', 'instrument_family': 'Instrument Family', 'instrument_class': 'Instrument Class', 'primary_interface': 'Primary Interface', 'ts_updated': timestamp_updated},
-            {'name': 'Golf Hotel Instrument Model', 'description': 'Description goes here...', 'model_label': 'Model Label', 'manufacturer': 'Manufacturer', 'instrument_family': 'Instrument Family', 'instrument_class': 'Instrument Class', 'primary_interface': 'Primary Interface', 'ts_updated': timestamp_updated}
+            {'_id': '4592038490', 'name': 'Alpha Bravo Instrument Model', 'description': 'Description goes here...', 'model_label': 'Model Label', 'manufacturer': 'Manufacturer', 'instrument_family': 'Instrument Family', 'instrument_class': 'Instrument Class', 'primary_interface': 'Primary Interface', 'ts_updated': timestamp_updated},
+            {'_id': '7589273493', 'name': 'Charle Delta Instrument Model', 'description': 'Description goes here...', 'model_label': 'Model Label', 'manufacturer': 'Manufacturer', 'instrument_family': 'Instrument Family', 'instrument_class': 'Instrument Class', 'primary_interface': 'Primary Interface', 'ts_updated': timestamp_updated},
+            {'_id': '5678969843', 'name': 'Echo Foxtrot Instrument Model', 'description': 'Description goes here...', 'model_label': 'Model Label', 'manufacturer': 'Manufacturer', 'instrument_family': 'Instrument Family', 'instrument_class': 'Instrument Class', 'primary_interface': 'Primary Interface', 'ts_updated': timestamp_updated},
+            {'_id': '1812739873', 'name': 'Golf Hotel Instrument Model', 'description': 'Description goes here...', 'model_label': 'Model Label', 'manufacturer': 'Manufacturer', 'instrument_family': 'Instrument Family', 'instrument_class': 'Instrument Class', 'primary_interface': 'Primary Interface', 'ts_updated': timestamp_updated}
         ]
     }, 
 }
 
+
+MARINE_FACILITY_PLATFORM_FACEPAGE_DATA = {
+    '1982731982': { 
+        '_id': '1982731982',
+        'thumbnail': '/static/img/thumbnail.png',
+        'name': 'North by Northwest',
+        'model': 'Model',
+        'serial': '1234567890',
+        'manufacture_date': timestamp_updated,
+        'description': 'Description goes here...',
+        'manufacturer': 'Manufacturer',
+        'owner': 'Owner',
+        'agents': [
+            {'_id': '769872987', 'name': 'Alpha Agent', 'description': 'Description goes here...', 'configuration': 'Configuration goes here...'},
+            {'_id': '769872987', 'name': 'Bravo Agent', 'description': 'Description goes here...', 'configuration': 'Configuration goes here...'},
+            {'_id': '769872987', 'name': 'Charlie Agent', 'description': 'Description goes here...', 'configuration': 'Configuration goes here...'},
+            {'_id': '769872987', 'name': 'Delta Agent', 'description': 'Description goes here...', 'configuration': 'Configuration goes here...'}
+        ],
+        'policies': [
+            {'name': 'Echo Policy', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
+            {'name': 'Foxtrot Policy', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
+            {'name': 'Golf Policy', 'description': 'Description goes here...', 'ts_updated': timestamp_updated}
+        ],
+        'instruments': [
+            {'_id': '2891751924', 'name': 'Instrument Whiskey', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
+            {'_id': '9172435345', 'name': 'Instrument Whiskey', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
+            {'_id': '2983479837', 'name': 'Instrument Whiskey', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
+            {'_id': '2394578259', 'name': 'Instrument Whiskey', 'description': 'Description goes here...', 'ts_updated': timestamp_updated}
+        ],
+        'events': [
+            {'origin': 'Alpha Origin', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
+            {'origin': 'Bravo Origin', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
+            {'origin': 'Charlie Origin', 'description': 'Description goes here...', 'ts_updated': timestamp_updated},
+            {'origin': 'Delta Origin', 'description': 'Description goes here...', 'ts_updated': timestamp_updated}
+        ],
+        'user_requests': [
+            {'origin': 'Echo User Request', 'description': 'Description goes here...', 'status': 'Status', 'status_description': 'Status Description', 'user_id': 'User ID', 'type': 'Type', 'ts_updated': timestamp_updated},
+            {'origin': 'Foxtrot User Request', 'description': 'Description goes here...', 'status': 'Status', 'status_description': 'Status Description', 'user_id': 'User ID', 'type': 'Type', 'ts_updated': timestamp_updated},
+            {'origin': 'Golf User Request', 'description': 'Description goes here...', 'status': 'Status', 'status_description': 'Status Description', 'user_id': 'User ID', 'type': 'Type', 'ts_updated': timestamp_updated},
+            {'origin': 'Hotel User Request', 'description': 'Description goes here...', 'status': 'Status', 'status_description': 'Status Description', 'user_id': 'User ID', 'type': 'Type', 'ts_updated': timestamp_updated}
+        ]
+    },
+}
 
 
 DATA = {

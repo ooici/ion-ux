@@ -1,31 +1,22 @@
 <a href="/observatories">Back to Observatories</a>
 
-{{request.path }}
-
-<h1>Observatory Facepage</h1>
+<h1>Observatory: <%= name %></h1>
 
 <div id="obsevatory-facepage" class="row">
-	<div class="span2">
-
-		<!-- Observatory Identification -->
+	<div class="span2">		
+		<p><image src="<%= thumbnail %>"/></p>
 		
-		{% include 'partials/observatory_identification.html' %}
-		
-		<h4>Location</h4>
-		<p>Location placeholder</p>
-		
-		<h4>Description</h4>
-		<p>Description placeholder</p>
-		
-		<h4>Provenance</h4>
-		<p>Provenance placeholder</p>
+		<p>
+			<strong>Name: </strong><%= name %><br />
+			<strong>ID: </strong><%= _id %>
+		</p>
 	</div>
 	
 	<div class="span8">
 
 		<div class="e-borders">
 
-		<h3>Data Products</h3>
+		<h4>Data Products</h4>
 		<table class="table">
 			<tr>
 				<th>ID</th>
@@ -33,8 +24,8 @@
 				<th>Description</th>
 				<th>Dataset ID</th>
 				<th>Data Product Level</th>
-				<th>Update</th>
-				<th>CDM</th>
+				<th>CDM Data Type</th>
+				<th>Updated</th>
 			</tr>
 			
 			<% _.each(data_products, function(obj) { %>
@@ -44,8 +35,8 @@
 					<td><%= obj.description %></td>
 					<td><%= obj.dataset_id %></td>
 					<td><%= obj.data_product_level %></td>
-					<td><%= obj.ts_updated %></td>
 					<td><%= obj.CDM_data_type %></td>
+					<td><%= obj.ts_updated %></td>
 				</tr>
 			<% }); %>
 		</table>
@@ -53,8 +44,14 @@
 		</div>
 		
 		
-		<h3>Platforms</h3>
+		<h4>Platforms</h4>
 		<table class="table">
+			<tr>
+				<th>ID</th>
+				<th>Name</th>
+				<th>Description</th>
+				<th>Updated</th>
+			</tr>
 			<% _.each(platforms, function(obj) { %>
 				<tr>
 					<td><a href="/observatories/<%= marine_facility_id %>/platforms/<%= obj._id %>"><%= obj._id %></a></td>
@@ -66,8 +63,15 @@
 		</table>
 		
 		
-		<h3>Instruments</h3>
+		<h4>Instruments</h4>
 		<table class="table">
+			<tr>
+				<th>ID</th>
+				<th>Name</th>
+				<th>Description</th>
+				<th>Updated</th>
+			</tr>
+			
 			<% _.each(instruments, function(obj) { %>
 				<tr>
 					<td><%= obj._id %></td>
@@ -78,10 +82,15 @@
 			<% }); %>
 		</table>
 		
-		<h3>Events</h3>
+		<h4>Events</h4>
 		
-		<h3>Recent Events</h3>
+		<h4>Recent Events</h4>
 		<table class="table">
+			<tr>
+				<th>Origin</th>
+				<th>Description</th>
+				<th>Updated</th>
+			</tr>
 			<% _.each(events, function(obj) { %>
 				<tr>
 					<td><%= obj.origin %></td>
@@ -91,9 +100,18 @@
 			<% }); %>
 		</table>
 		
-		<h3>User Requests</h3>
+		<h4>User Requests</h4>
 		
 		<table class="table">
+			<tr>
+				<th>Origin</th>
+				<th>Description</th>
+				<th>Status</th>
+				<th>Status Description</th>
+				<th>Type</th>
+				<th>User ID</th>
+				<th>Updated</th>
+			</tr>
 			<% _.each(user_requests, function(obj) { %>
 				<tr>
 					<td><%= obj.origin %></td>
@@ -111,8 +129,15 @@
 		
 		
 		<h1>Administration</h1>
-		<h3>Participants</h3>
+		<h4>Participants</h4>
 		<table class="table">
+			<tr>
+				<th>ID</th>
+				<th>Name</th>
+				<th>Description</th>
+				<th>Email</th>
+				<th>Updated</th>
+			</tr>
 			<% _.each(participants, function(obj) { %>
 				<tr>
 					<td><%= obj._id %></td>
@@ -125,8 +150,13 @@
 		</table>
 		
 		
-		<h3>Policies</h3>
+		<h4>Policies</h4>
 		<table class="table">
+			<tr>
+				<th>Name</th>
+				<th>Description</th>
+				<th>Updated</th>
+			</tr>
 			<% _.each(policies, function(obj) { %>
 				<tr>
 					<td><%= obj.name %></td>
@@ -136,10 +166,20 @@
 			<% }); %>
 		</table>
 		
-		
-		<h1>Software</h1>
-		<h3>Instrument Agents</h3>
+		<h4>Instrument Agents</h4>
 		<table class="table">
+			<tr>
+				<th>ID</th>
+				<th>Name</th>
+				<th>Description</th>
+				<th>Agent Version</th>
+				<th>Client Module</th>
+				<th>Connection Method</th>
+				<th>Driver Class</th>
+				<th>Driver Class Client</th>
+				<th>Driver Class Model</th>
+				<th>Updated</th>
+			</tr>
 			<% _.each(instrument_agents, function(obj) { %>
 				<tr>
 					<td><%= obj._id %></td>
@@ -156,8 +196,17 @@
 			<% }); %>
 		</table>
 
-		<h3>Data Process Definitions</h3>
+		<h4>Data Process Definitions</h4>
 		<table class="table">
+			<tr>
+				<th>ID</th>
+				<th>Name</th>
+				<th>Description</th>
+				<th>Class Name</th>
+				<th>Module</th>
+				<th>Process Source</th>
+				<th>Updated</th>
+			</tr>
 			<% _.each(data_process_defintions, function(obj) { %>
 				<tr>
 					<td><%= obj._id %></td>
@@ -171,10 +220,17 @@
 			<% }); %>
 		</table>
 		
-		<h1>Definition</h1>
-		
-		<h3>Platform Models</h3>
+		<h4>Platform Models</h4>
 		<table class="table">
+			<tr>
+				<th>ID</th>
+				<th>Name</th>
+				<th>Description</th>
+				<th>Manufacturer</th>
+				<th>OOI Node Type</th>
+				<th>Platform Type</th>
+				<th>Updated</th>
+			</tr>
 			<% _.each(platform_models, function(obj) { %>
 				<tr>
 					<td><%= obj._id %></td>
@@ -188,8 +244,19 @@
 			<% }); %>
 		</table>
 
-		<h3>Instrument Models</h3>
+		<h4>Instrument Models</h4>
 		<table class="table">
+			<tr>
+				<th>ID</th>
+				<th>Name</th>
+				<th>Description</th>
+				<th>Manufacturer</th>
+				<th>Instrument Class</th>
+				<th>Instrument Family</th>
+				<th>Model Label</th>
+				<th>Primary Interface</th>
+				<th>Updated</th>
+			</tr>
 			<% _.each(instrument_models, function(obj) { %>
 				<tr>
 					<td><%= obj._id %></td>
@@ -204,46 +271,6 @@
 				</tr>
 			<% }); %>
 		</table>
-		
-		
-		
-		
-		
-		<!-- Data products and processes tabs -->
-		<ul id="data-tabs" class="nav nav-tabs">
-			<li class="active"><a href="#data-products-tab" data-toggle="tab">Data Products</a></li>
-			<li><a href="#data-processes-tab" data-toggle="tab">Data Processes</a></li>
-		</ul>
-		<div class="tab-content">
-			<div class="tab-pane active" id="data-products-tab">Data products placeholder</div>
-			<div class="tab-pane" id="data-processes-tab">Data processes placeholder</div>
-		</div>	
-		
-		<br /><br /> <!-- TODO: Remove these layout hacks -->
-		
-		<!-- Administration, recent and planned events tabs -->
-		<ul id="admin-events-tabs" class="nav nav-tabs">
-			<li class="active"><a href="#administration-tab" data-toggle="tab">Administration</a></li>
-			<li><a href="#recent-events-tab" data-toggle="tab">Recent Events</a></li>
-			<li><a href="#planned-events-tab" data-toggle="tab">Planned Events</a></li>
-		</ul>
-
-		<div class="tab-content">
-			<div class="tab-pane active" id="administration-tab">Administration placeholder</div>
-			
-			<div class="tab-pane" id="recent-events-tab">
-				{% include 'partials/recent_events.html' %}
-			</div>
-			
-			<div class="tab-pane" id="planned-events-tab">
-				{% include 'partials/planned_events.html' %}
-			</div>
-		</div>
-		
-		<!-- Observatory physical resources -->
-		
-		{% include 'partials/observatory_physical_resources.html' %}
-		
 	</div>
 	
 </div> <!-- div#obsevatory-facepage -->

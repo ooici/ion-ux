@@ -27,5 +27,13 @@ class ServiceApi(object):
         return dummy_data.MARINE_FACILITIES_DATA
 
     @staticmethod
-    def observatories(marine_facility_id):
+    def find_observatory(marine_facility_id):
         return dummy_data.MARINE_FACILITY_FACEPAGE_DATA[marine_facility_id]
+    
+    @staticmethod
+    def find_platform(platform_id):
+        return dummy_data.MARINE_FACILITY_PLATFORM_FACEPAGE_DATA[platform_id]
+    
+    @staticmethod
+    def find_instrument(instrument_id):
+        pass
