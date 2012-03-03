@@ -89,7 +89,7 @@ MARINE_FACILITY_FACEPAGE_DATA = {
 }
 
 
-MARINE_FACILITY_PLATFORM_FACEPAGE_DATA = {
+PLATFORM_FACEPAGE_DATA = {
     '1982731982': { 
         '_id': '1982731982',
         'thumbnail': '/static/img/thumbnail.png',

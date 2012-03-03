@@ -30,10 +30,10 @@ IONUX.Models.ObservatoryFacepageModel = Backbone.Model.extend({
 
 });
 
-IONUX.Models.ObservatoryPlatformFacepageModel = Backbone.Model.extend({
+IONUX.Models.PlatformFacepageModel = Backbone.Model.extend({
 
   url: function(){
-    return "/observatories/"+this.get("marine_facility_id")+"/platforms/"+this.get("platform_id");
+    return "/platforms/"+this.get("platform_id");
   },
   
   parse: function(resp) {

@@ -76,8 +76,8 @@ def observatory_facepage(marine_facility_id):
     else:
         return render_template("ion-ux.html", **{"current_url":request.path}) #XXX put into decorator logic
         
-@app.route('/observatories/<marine_facility_id>/platforms/<platform_id>', methods=['GET'])
-def observatory_platform_facepage(marine_facility_id, platform_id):
+@app.route('/platforms/<platform_id>', methods=['GET'])
+def observatory_platform_facepage(platform_id):
     if request.is_xhr: #XXX put into decorator logic
         resp_data = ServiceApi.find_platform(platform_id)
         return jsonify(data=resp_data)

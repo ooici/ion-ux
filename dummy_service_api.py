@@ -32,7 +32,7 @@ class ServiceApi(object):
     
     @staticmethod
     def find_platform(platform_id):
-        return dummy_data.MARINE_FACILITY_PLATFORM_FACEPAGE_DATA[platform_id]
+        return dummy_data.PLATFORM_FACEPAGE_DATA[platform_id]
     
     @staticmethod
     def find_instrument(instrument_id):

@@ -6,8 +6,8 @@ IONUX.Router = Backbone.Router.extend({
     "data/:data_resource_id": "data_resource_details",
     "observatories": "observatories",
     "observatories/:marine_facility_id": "observatory_facepage",
-    "observatories/:marine_facility_id/platforms/:platform_id": "observatory_platform_facepage",
     "platforms":"platforms",
+    "platforms/:platform_id": "platform_facepage",
     "instruments":"instruments",
     "resource_types/:resource_type_id": "resource_type_details"
   },
@@ -50,21 +50,21 @@ IONUX.Router = Backbone.Router.extend({
     fpModel.fetch();
   },
   
-  observatory_platform_facepage: function(marine_facility_id, platform_id) {
-    this._reset();
-    var fpModel = new IONUX.Models.ObservatoryPlatformFacepageModel({marine_facility_id: marine_facility_id, platform_id: platform_id});
-    new IONUX.Views.ObservatoryPlatformFacepage({model:fpModel});
-    console.log('You are here.');
-    fpModel.fetch();
-  },
-  
   platforms: function(){
     this._reset();
     $("#platforms-container").show();
     var platforms_view = new IONUX.Views.PlatformsView();
     platforms_view.render();
-  },
+  },  
   
+  platform_facepage: function(platform_id) {
+    this._reset();
+    var fpModel = new IONUX.Models.PlatformFacepageModel({platform_id: platform_id});
+    new IONUX.Views.PlatformFacepage({model:fpModel});
+    console.log('You are here.');
+    fpModel.fetch();
+  },
+
   instruments: function(){
     this._reset();
     $("#instruments-container").show();

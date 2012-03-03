@@ -54,7 +54,7 @@
 			</tr>
 			<% _.each(platforms, function(obj) { %>
 				<tr>
-					<td><a href="/observatories/<%= marine_facility_id %>/platforms/<%= obj._id %>"><%= obj._id %></a></td>
+					<td><a href="/platforms/<%= obj._id %>"><%= obj._id %></a></td>
 					<td><%= obj.name %></td>
 					<td><%= obj.description %></td>
 					<td><%= obj.ts_updated %></td>

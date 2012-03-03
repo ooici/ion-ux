@@ -268,7 +268,7 @@ IONUX.Views.ObservatoryFacepage = Backbone.View.extend({
 });
 
 
-IONUX.Views.ObservatoryPlatformFacepage = Backbone.View.extend({
+IONUX.Views.PlatformFacepage = Backbone.View.extend({
 
   el: "#observatories-platform-facepage-container",
 
