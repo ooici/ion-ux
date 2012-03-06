@@ -1,0 +1,53 @@
+<form action="" method="post" enctype="multipart/form-data">
+	<fieldset>
+		<legend>Identification</legend>
+		<div class="clearfix">
+			<label for="name">Name</label>
+			<div class="input">
+				<input class="xlarge" id="name" name="name" >
+			</div>
+		</div>		
+		<fieldset>
+			<legend>Description</legend>
+			<div class="clearfix">
+				<label for="description">Description</label>
+				<div class="input">
+					<textarea class="xlarge" id="description" name="description" rows="3"></textarea>
+				</div>
+			</div>
+		</fieldset>
+		
+		<fieldset>
+			<legend>Location</legend>
+			<div class="clearfix">
+				<label for="description">Nominal Location</label>
+				<div class="input">
+					<input class="xlarge" id="latitude" name="nominal_location__lat" />
+					<input class="xlarge" id="longitude" name="nominal_location__lon" />
+				</div>
+			</div>
+		</fieldset>
+		<fieldset>
+			<legend>Platform Device Details</legend>
+			<div class="clearfix">
+				<label for="description">Serial Number</label>
+				<div class="input">
+					<input class="xlarge" id="serial_number" name="serial_number" />
+				</div>
+				<label for="description">Model</label>
+				<div class="input">
+					<input class="xlarge" id="model" name="model" />
+				</div>
+				<label for="description">Manufacture Date</label>
+				<div class="input">
+					<input class="xlarge" id="manufacture_date" name="manufacture_date" />
+				</div>
+				
+			</div>
+		</fieldset>
+	</fieldset>
+	
+	
+	<input class="btn" type="submit" value="Create Platform Device" />
+  <input class="cancel btn" type="cancel" value="Cancel" />
+</form>

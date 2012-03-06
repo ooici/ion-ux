@@ -1,3 +1,36 @@
+IONUX.Views.CreateNewView = Backbone.View.extend({
+  events: {
+    "click input[type='submit']":"create_new",
+    "submit input[type='submit']":"create_new",
+    "click .cancel":"cancel"
+  },
+  
+  create_new: function(evt){
+    evt.preventDefault();
+    this.$el.find("input[type='submit']").attr("disabled", true).val("Saving...");
+    // var mf = new IONUX.Models.Observatory();
+    
+    // var newModel = this.model; //lkajsdflskdf
+    var self = this;
+    $.each(this.$el.find("input,textarea").not("input[type='submit'],input[type='cancel']"), function(i, e){
+      var key = $(e).attr("name"), val = $(e).val();
+      var kv = {};
+      kv[key] = val;
+      self.model.set(kv);
+    });
+    
+    self.model.save(null, {success:function(model, resp){
+      self.$el.hide();
+    }});
+  },
+  
+  cancel: function(){
+    this.$el.hide();
+  }
+});
+
+
+
 IONUX.Views.DataResourceView = Backbone.View.extend({
 
   el: "#data-resources",
@@ -119,18 +152,11 @@ IONUX.Views.ObservatoriesDetailView = Backbone.View.extend({
 });
 
 
-
-IONUX.Views.ObservatoryCreateNewView = Backbone.View.extend({
+IONUX.Views.ObservatoryCreateNewView = IONUX.Views.CreateNewView.extend({
 
   el: "#observatories-new",
 
   template: _.template($("#new-observatory-tmpl").html()),
-
-  events: {
-    "click input[type='submit']":"create_new",
-    "submit input[type='submit']":"create_new",
-    "click .cancel":"cancel"
-  },
 
   initialize: function(){
     _.bindAll(this, "create_new");
@@ -139,27 +165,6 @@ IONUX.Views.ObservatoryCreateNewView = Backbone.View.extend({
   render: function(){
     this.$el.empty().html(this.template({})).show();
   },
-
-  create_new: function(evt){
-    evt.preventDefault();
-    this.$el.find("input[type='submit']").attr("disabled", true).val("Saving...");
-    var mf = new IONUX.Models.Observatory();
-    $.each(this.$el.find("input,textarea").not("input[type='submit'],input[type='cancel']"), function(i, e){
-      var key = $(e).attr("name"), val = $(e).val();
-      var kv = {};
-      kv[key] = val;
-      mf.set(kv);
-    });
-    var self = this;
-    mf.save(null, {success:function(model, resp){
-      self.$el.hide();
-    }});
-  },
-
-  cancel: function(){
-    this.$el.hide();
-  }
-
 });
 
 
@@ -173,7 +178,10 @@ IONUX.Views.InstrumentsView = Backbone.View.extend({
 
   template: _.template($("#instruments-tmpl").html()),
 
-  events: { },
+  events: {
+    "click .create_new":"show_create_new_form"
+    //"click table tr":"show_facepage"
+  },
 
   initialize: function(){
     _.bindAll(this, "render");
@@ -182,8 +190,33 @@ IONUX.Views.InstrumentsView = Backbone.View.extend({
   render: function(){
     this.$el.html(this.template({}));
     return this;
+  },
+  
+  show_create_new_form: function(){
+    if (_.isUndefined(this.platforms_create_new_view)){
+      this.platforms_create_new_view = new IONUX.Views.InstrumentCreateNewView({model: new IONUX.Models.Instrument()}); 
+    }
+    this.platforms_create_new_view.render();
   }
 });
+
+
+
+IONUX.Views.InstrumentCreateNewView = IONUX.Views.CreateNewView.extend({
+
+  el: "#instrument-new",
+
+  template: _.template($("#new-instrument-tmpl").html()),
+
+  initialize: function(){
+    _.bindAll(this, "create_new");
+  },
+
+  render: function(){
+    this.$el.empty().html(this.template({})).show();
+  },
+});
+
 
 
 
@@ -195,7 +228,9 @@ IONUX.Views.PlatformsView = Backbone.View.extend({
 
   template: _.template($("#platforms-tmpl").html()),
 
-  events: { },
+  events: {
+    "click .create_new":"show_create_new_form"
+  },
 
   initialize: function(){
     _.bindAll(this, "render");
@@ -204,8 +239,41 @@ IONUX.Views.PlatformsView = Backbone.View.extend({
   render: function(){
     this.$el.html(this.template({}));
     return this;
+  },
+  
+  show_create_new_form: function(){
+
+    if (_.isUndefined(this.platforms_new_view)){
+      // var new_model = new IONUX.Models.Platform();
+      // console.log("show or create.", new_model);
+      this.platforms_new_view = new IONUX.Views.PlatformCreateNewView({model: new IONUX.Models.Platform()}); 
+    }
+    this.platforms_new_view.render();
   }
 });
+
+
+IONUX.Views.PlatformCreateNewView = IONUX.Views.CreateNewView.extend({
+
+  el: "#platform-new",
+
+  template: _.template($("#new-platform-tmpl").html()),
+
+  initialize: function(){
+    _.bindAll(this, "create_new");
+  },
+
+  render: function(){
+    this.$el.empty().html(this.template({})).show();
+  },
+
+  // cancel: function(){
+  //   this.$el.hide();
+  // }
+
+});
+
+
 
 
 

@@ -4,12 +4,31 @@ from functools import wraps
 
 app = Flask(__name__)
 
+
 HOST = ''
 PORT = 3000
 LOGGED_IN = True
 PRODUCTION = False
 
 GATEWAY_HOST = "67.58.49.196:5000"
+SERVICE_GATEWAY_BASE_URL = 'http://%s/ion-service' % GATEWAY_HOST
+
+DEFINED_SERVICES_OPERATIONS = {
+    'marine_facilities':
+        {
+            'restype': 'MarineFacility',
+            'service_name': 'marine_facility_management',
+            'object_name': 'marine_facility',
+            'operation_names': {'create': 'create_marine_facility'}
+        },
+}
+SERVICE_REQUEST_TEMPLATE = {
+    'serviceRequest': {
+        'serviceName': '', 
+        'serviceOp': '',
+        'params': {} # Example -> 'object_name': ['restype', {}] }
+    }
+}
 
 PRODUCTION = False #more configurable in the future.
 
@@ -17,6 +36,8 @@ if PRODUCTION:
     from service_api import ServiceApi
 else:
     from dummy_service_api import ServiceApi
+
+
 
 @app.route('/')
 def index():
@@ -72,7 +93,10 @@ def observatory_facepage(marine_facility_id):
         return jsonify(data=resp_data)
     else:
         return create_html_response(request.path)
-        
+
+@app.route('/platforms/', methods=['GET'])
+def platforms():
+    return create_html_response(request.path)
 
 @app.route('/platforms/<platform_id>/', methods=['GET'])
 def platform_facepage(platform_id):
@@ -81,6 +105,10 @@ def platform_facepage(platform_id):
         return jsonify(data=resp_data)
     else:
         return render_template("ion-ux.html", **{"current_url":request.path}) #XXX put into decorator logic
+
+@app.route('/instruments/', methods=['GET', 'POST'])
+def instruments():
+    return create_html_response(request.path)
 
 @app.route('/instruments/<instrument_id>/', methods=['GET'])
 def instrument_facepage(instrument_id):
@@ -229,24 +257,6 @@ def catchall(catchall):
 #
 
 
-
-SERVICE_GATEWAY_BASE_URL = 'http://67.58.49.196:5000/ion-service'
-DEFINED_SERVICES_OPERATIONS = {
-    'marine_facilities':
-        {
-            'restype': 'MarineFacility',
-            'service_name': 'marine_facility_management',
-            'object_name': 'marine_facility',
-            'operation_names': {'create': 'create_marine_facility'}
-        },
-}
-SERVICE_REQUEST_TEMPLATE = {
-    'serviceRequest': {
-        'serviceName': '', 
-        'serviceOp': '',
-        'params': {} # Example -> 'object_name': ['restype', {}] }
-    }
-}
 
 
 

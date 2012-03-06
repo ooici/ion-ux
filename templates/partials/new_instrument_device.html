@@ -1,0 +1,43 @@
+<form>
+	<h1>New Instrument Device</h1>
+
+	<legend>Identification</legend>
+	<div class="clearfix">
+		<label for="name">Name</label>
+		<div class="input">
+			<input class="xlarge" id="facility-name" name="name" />
+		</div>
+	</div>		
+	<fieldset>
+		<legend>Description</legend>
+		<div class="clearfix">
+			<label for="description">Description</label>
+			<div class="input">
+				<textarea class="xlarge" id="description" name="description" rows="3"></textarea>
+			</div>
+		</div>
+	</fieldset>
+	
+	<legend>Instrument Details</legend>
+	<div class="clearfix">
+		<label for="name">Lot Number</label>
+		<div class="input">
+			<input class="xlarge" id="lot_number" name="lot_number" />
+		</div>
+		<label for="name">Datum Characterization</label>
+		<div class="input">
+			<input class="xlarge" id="datum_characterization" name="datum_characterization" />
+		</div>
+		<label for="description">Manufacture Date</label>
+		<div class="input">
+			<input class="xlarge" id="manufacture_date" name="manufacture_date" />
+		</div>
+		<label for="description">Firmware Version</label>
+		<div class="input">
+			<input class="xlarge" id="firmware_version" name="firmware_version" />
+		</div>
+	</div>
+
+	<input class="btn" type="submit" value="Create Platform Device" />
+	<input class="cancel btn" type="cancel" value="Cancel" />
+</form>
