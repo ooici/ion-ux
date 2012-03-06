@@ -1,58 +1,108 @@
-<h2>Platform Facepage</h2>
+<h1>Platform: <%= name %></h1>
 
 <div id="platform-facepage" class="row">
 	<div class="span2">
-		<h3>Information</h3>
+		<p><image src="<%= thumbnail %>"/></p>
 		
-		<h4>Identification</h4>
-		<p>Identification placeholder</p>
+		<p>
+			<strong>Name: </strong><%= name %><br />
+			<strong>ID: </strong><%= _id %><br />
+		</p>
 		
-		<h4>Location</h4>
-		<p>Location placeholder</p>
+		<p>
+			<strong>Model: </strong><%= model %><br />
+			<strong>SN#: </strong><%= serial %><br />
+			<strong>Manufacturer: </strong><%= manufacturer %><br />
+			<strong>Manufacture Date: </strong><%= manufacture_date %><br />
+		</p>
 		
 		<h4>Description</h4>
-		<p>Description placeholder</p>
-		
-		<h4>Provenance</h4>
-		<p>Provenance placeholder</p>
+		<p><%= description %></p>
 	</div>
+	
 	
 	<div class="span8">
 		
-		<!-- Data products and processes tabs -->
-		<ul id="data-tabs" class="nav nav-tabs">
-		  <li class="active"><a href="#data-tab" data-toggle="tab">Data</a></li>
-		</ul>
-		<div class="tab-content">
-		  <div class="tab-pane active" id="data-tab">Platform data placeholder</div>
-		</div>	
-		
-		<br /><br /> <!-- TODO: Remove these layout hacks -->
-		
-		<!-- Administration, recent and planned events tabs -->
-		<ul id="admin-events-tabs" class="nav nav-tabs">
-		  <li class="active"><a href="#administration-tab" data-toggle="tab">Administration</a></li>
-		  <li><a href="#recent-events-tab" data-toggle="tab">Recent Events</a></li>
-		<li><a href="#planned-events-tab" data-toggle="tab">Planned Events</a></li>
-		</ul>
-
-		<div class="tab-content">
-		  <div class="tab-pane active" id="administration-tab">Administration placeholder</div>
-		  <div class="tab-pane" id="recent-events-tab">partials/recent_events.html goes here</div>
-		<div class="tab-pane" id="planned-events-tab">partials/planned_events.html goes here</div>
+		<div>
+			<h4>Deployments</h4>
+			<p>Placeholder...</p>
 		</div>
 		
-		<br /><br /> <!-- TODO: Remove these layout hacks -->
+		<h4>Agents</h4>
+		<table class="table">
+			<tr>
+				<th>ID</th>
+				<th>Name</th>
+				<th>Description</th>
+				<th>Configuration</th>
+			</tr>
+			<% _.each(agents, function(obj) { %>
+				<tr>
+					<td><%= obj._id %></td>
+					<td><%= obj.name %></td>
+					<td><%= obj.description %></td>
+					<td><%= obj.configuration %></td>
+				</tr>
+			<% }); %>
+		</table>
 		
-		<!-- Platforms, instruments and sensors tabs -->
-		<ul id="instruments-sensors-tabs" class="nav nav-tabs">
-		  	<li class="active"><a href="#instruments-tab" data-toggle="tab">Instruments</a></li>
-			<li><a href="#sensors-tab" data-toggle="tab">Sensors</a></li>
-		</ul>
+		
+		<h4>Instruments</h4>
+		<table class="table">
+			<tr>
+				<th>ID</th>
+				<th>Name</th>
+				<th>Description</th>
+				<th>Updated</th>
+			</tr>
+			<% _.each(instruments, function(obj) { %>
+				<tr>
+					<td><%= obj._id %></td>
+					<td><%= obj.name %></td>
+					<td><%= obj.description %></td>
+					<td><%= obj.ts_updated %></td>
+				</tr>
+			<% }); %>
+		</table>
 
-		<div class="tab-content">
-		  <div class="tab-pane active" id="instruments-tab">Instruments placeholder</div>
-		<div class="tab-pane" id="sensors-tab">Sensors placeholder</div>
-		</div>
+		<h4>Recent Events</h4>
+		<table class="table">
+			<tr>
+				<th>Origin</th>
+				<th>Description</th>
+				<th>Updated</th>
+			</tr>
+			<% _.each(events, function(obj) { %>
+				<tr>
+					<td><%= obj.origin %></td>
+					<td><%= obj.description %></td>
+					<td><%= obj.ts_updated %></td>
+				</tr>
+			<% }); %>
+		</table>
+		
+		<h4>User Requests</h4>
+		<table class="table">
+			<tr>
+				<th>Origin</th>
+				<th>Description</th>
+				<th>Status</th>
+				<th>Status Description</th>
+				<th>Type</th>
+				<th>User ID</th>
+				<th>Updated</th>
+			</tr>
+			<% _.each(user_requests, function(obj) { %>
+				<tr>
+					<td><%= obj.origin %></td>
+					<td><%= obj.description %></td>
+					<td><%= obj.status %></td>
+					<td><%= obj.status_description %></td>
+					<td><%= obj.type %></td>
+					<td><%= obj.user_id %></td>
+					<td><%= obj.ts_updated %></td>
+				</tr>
+			<% }); %>
+		</table>
 	</div>
-</div> <!-- div#platform-facepage -->
+</div>

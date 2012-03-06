@@ -74,7 +74,7 @@
 			
 			<% _.each(instruments, function(obj) { %>
 				<tr>
-					<td><%= obj._id %></td>
+					<td><a href="/instruments/<%= obj._id %>"><%= obj._id %></a></td>
 					<td><%= obj.name %></td>
 					<td><%= obj.description %></td>
 					<td><%= obj.ts_updated %></td>

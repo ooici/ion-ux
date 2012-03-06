@@ -41,3 +41,15 @@ IONUX.Models.PlatformFacepageModel = Backbone.Model.extend({
   }
 
 });
+
+IONUX.Models.InstrumentFacepageModel = Backbone.Model.extend({
+
+  url: function(){
+    return "/instruments/"+this.get("instrument_id");
+  },
+  
+  parse: function(resp) {
+    return resp.data;
+  }
+
+});

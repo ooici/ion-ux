@@ -249,9 +249,9 @@ IONUX.Views.ObservatoryModalView = Backbone.View.extend({
 
 IONUX.Views.ObservatoryFacepage = Backbone.View.extend({
 
-  el: "#observatories-facepage-container",
+  el: "#observatory-facepage-container",
 
-  template: _.template($("#observatories-facepage-tmpl").html()),
+  template: _.template($("#observatory-facepage-tmpl").html()),
 
   //events: { },
 
@@ -270,9 +270,9 @@ IONUX.Views.ObservatoryFacepage = Backbone.View.extend({
 
 IONUX.Views.PlatformFacepage = Backbone.View.extend({
 
-  el: "#observatories-platform-facepage-container",
+  el: "#platform-facepage-container",
 
-  template: _.template($("#observatories-platform-facepage-tmpl").html()),
+  template: _.template($("#platform-facepage-tmpl").html()),
 
   //events: { },
 
@@ -288,4 +288,23 @@ IONUX.Views.PlatformFacepage = Backbone.View.extend({
 
 });
 
+IONUX.Views.InstrumentFacepage = Backbone.View.extend({
+
+  el: "#instrument-facepage-container",
+
+  template: _.template($("#instrument-facepage-tmpl").html()),
+
+  //events: { },
+
+  initialize: function(){
+    _.bindAll(this, "render");
+    this.model.bind("change", this.render);
+  },
+
+  render: function(){
+    console.log(this.model.toJSON());
+    this.$el.html(this.template(this.model.toJSON())).show();
+  }
+
+});
 

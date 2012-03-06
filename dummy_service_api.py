@@ -36,4 +36,4 @@ class ServiceApi(object):
     
     @staticmethod
     def find_instrument(instrument_id):
-        pass
+        return dummy_data.INSTRUMENT_FACEPAGE_DATA[instrument_id]

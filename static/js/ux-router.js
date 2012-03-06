@@ -9,6 +9,7 @@ IONUX.Router = Backbone.Router.extend({
     "platforms":"platforms",
     "platforms/:platform_id": "platform_facepage",
     "instruments":"instruments",
+    "instruments/:instrument_id" : 'instrument_facepage',
     "resource_types/:resource_type_id": "resource_type_details"
   },
 
@@ -61,7 +62,6 @@ IONUX.Router = Backbone.Router.extend({
     this._reset();
     var fpModel = new IONUX.Models.PlatformFacepageModel({platform_id: platform_id});
     new IONUX.Views.PlatformFacepage({model:fpModel});
-    console.log('You are here.');
     fpModel.fetch();
   },
 
@@ -70,6 +70,14 @@ IONUX.Router = Backbone.Router.extend({
     $("#instruments-container").show();
     var instruments_view = new IONUX.Views.InstrumentsView();
     instruments_view.render();
+  },
+  
+  
+  instrument_facepage: function(instrument_id) {
+    this._reset();
+    var fpModel = new IONUX.Models.InstrumentFacepageModel({instrument_id: instrument_id});
+    new IONUX.Views.InstrumentFacepage({model:fpModel});
+    fpModel.fetch();
   },
   
   resource_type_details: function(resource_type_id) {

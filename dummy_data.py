@@ -84,6 +84,12 @@ MARINE_FACILITY_FACEPAGE_DATA = {
             {'_id': '7589273493', 'name': 'Charle Delta Instrument Model', 'description': 'Description goes here...', 'model_label': 'Model Label', 'manufacturer': 'Manufacturer', 'instrument_family': 'Instrument Family', 'instrument_class': 'Instrument Class', 'primary_interface': 'Primary Interface', 'ts_updated': timestamp_updated},
             {'_id': '5678969843', 'name': 'Echo Foxtrot Instrument Model', 'description': 'Description goes here...', 'model_label': 'Model Label', 'manufacturer': 'Manufacturer', 'instrument_family': 'Instrument Family', 'instrument_class': 'Instrument Class', 'primary_interface': 'Primary Interface', 'ts_updated': timestamp_updated},
             {'_id': '1812739873', 'name': 'Golf Hotel Instrument Model', 'description': 'Description goes here...', 'model_label': 'Model Label', 'manufacturer': 'Manufacturer', 'instrument_family': 'Instrument Family', 'instrument_class': 'Instrument Class', 'primary_interface': 'Primary Interface', 'ts_updated': timestamp_updated}
+        ],
+        'frames_of_reference': [
+            {'_id': '2987594835', 'name': 'Site Bravo', 'owner': 'John Doe', 'type': 'Type','ts_updated': timestamp_updated},
+            {'_id': '5346466644', 'name': 'Site Alpha', 'owner': 'Jane Doe', 'type': 'Type','ts_updated': timestamp_updated},
+            {'_id': '3463636777', 'name': 'Site Charlie', 'owner': 'John Doe', 'type': 'Type', 'ts_updated': timestamp_updated},
+            {'_id': '3453454366', 'name': 'Site Delta', 'description': 'Jane Doe', 'type': 'Type', 'ts_updated': timestamp_updated},        
         ]
     }, 
 }
@@ -131,6 +137,15 @@ PLATFORM_FACEPAGE_DATA = {
         ]
     },
 }
+
+INSTRUMENT_FACEPAGE_DATA = {
+    '2891751924': { 
+        '_id': '769872987',
+        'thumbnail': '/static/img/thumbnail.png',
+        'name': 'Alpha Instrument Data',
+    },
+}
+
 
 
 DATA = {

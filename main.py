@@ -27,14 +27,13 @@ def index():
 
 @app.route('/signon', methods=['POST'])
 def signon():
+    # take 
     form_data = json.loads(request.data)
     certificate = form_data['cert']
     
-    print SERVICE_REQUEST_TEMPLATE
-    
-    # build request
-    # make request
-    # handle response and set cookie if successful
+    # build service gateway request
+    # make service gateway request
+    # handle response and set cookie if successful (redirect to user registration)
     
 @app.route('/dashboard', methods=["GET"])
 def dashboard():
@@ -76,13 +75,25 @@ def observatory_facepage(marine_facility_id):
     else:
         return render_template("ion-ux.html", **{"current_url":request.path}) #XXX put into decorator logic
         
+
 @app.route('/platforms/<platform_id>', methods=['GET'])
-def observatory_platform_facepage(platform_id):
+def platform_facepage(platform_id):
     if request.is_xhr: #XXX put into decorator logic
         resp_data = ServiceApi.find_platform(platform_id)
         return jsonify(data=resp_data)
     else:
         return render_template("ion-ux.html", **{"current_url":request.path}) #XXX put into decorator logic
+
+@app.route('/instruments/<instrument_id>', methods=['GET'])
+def instrument_facepage(instrument_id):
+    if request.is_xhr: #XXX put into decorator logic
+        resp_data = ServiceApi.find_instrument(instrument_id)
+        return jsonify(data=resp_data)
+    else:
+        return render_template("ion-ux.html", **{"current_url":request.path}) #XXX put into decorator logic
+
+
+
 
 @app.route('/dataresource/<data_resource_id>', methods=["GET", "POST"])
 def data_resource_details(data_resource_id):
