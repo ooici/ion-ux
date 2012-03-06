@@ -1,4 +1,4 @@
-<a href="/observatories">Back to Observatories</a>
+<a href="/observatories/">Back to Observatories</a>
 
 <h1>Observatory: <%= name %></h1>
 
@@ -54,7 +54,7 @@
 			</tr>
 			<% _.each(platforms, function(obj) { %>
 				<tr>
-					<td><a href="/platforms/<%= obj._id %>"><%= obj._id %></a></td>
+					<td><a href="/platforms/<%= obj._id %>/"><%= obj._id %></a></td>
 					<td><%= obj.name %></td>
 					<td><%= obj.description %></td>
 					<td><%= obj.ts_updated %></td>
@@ -74,7 +74,7 @@
 			
 			<% _.each(instruments, function(obj) { %>
 				<tr>
-					<td><a href="/instruments/<%= obj._id %>"><%= obj._id %></a></td>
+					<td><a href="/instruments/<%= obj._id %>/"><%= obj._id %></a></td>
 					<td><%= obj.name %></td>
 					<td><%= obj.description %></td>
 					<td><%= obj.ts_updated %></td>

@@ -2,15 +2,15 @@ IONUX.Router = Backbone.Router.extend({
 
   routes: {
     "": "dashboard",
-    "data": "data_resource",
+    "data/": "data_resource",
     "data/:data_resource_id": "data_resource_details",
-    "observatories": "observatories",
-    "observatories/:marine_facility_id": "observatory_facepage",
-    "platforms":"platforms",
-    "platforms/:platform_id": "platform_facepage",
-    "instruments":"instruments",
-    "instruments/:instrument_id" : 'instrument_facepage',
-    "resource_types/:resource_type_id": "resource_type_details"
+    "observatories/": "observatories",
+    "observatories/:marine_facility_id/": "observatory_facepage",
+    "platforms/":"platforms",
+    "platforms/:platform_id/": "platform_facepage",
+    "instruments/":"instruments",
+    "instruments/:instrument_id/" : 'instrument_facepage',
+    "resource_types/:resource_type_id/": "resource_type_details"
   },
 
   dashboard: function(){

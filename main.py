@@ -45,38 +45,36 @@ def data_resource():
     return jsonify(resp_data)
 
 
-@app.route('/observatories', methods=["GET", "POST"])
+@app.route('/observatories/', methods=["GET", "POST"])
 def observatories():
-    if request.method == 'POST':
-        import time; time.sleep(0.7) #mock latency
-
-        form_data = json.loads(request.data)
-        object_schema = build_schema_from_form(form_data, service="marine_facilities")
-
-        post_request = requests.post('http://67.58.49.196:5000/ion-service/marine_facility_management/create_marine_facility', data={'payload': json.dumps(object_schema)})
-        host = 'http://%s/ion-service/marine_facility_management/create_marine_facility' % GATEWAY_HOST
-
-        post_request = requests.post(host, data={'payload': json.dumps(object_schema)})
-        
-        print post_request.content
-        
-        resp_data = {"success":True}
+    if request.is_xhr:
+        if request.method == 'POST':
+            import time; time.sleep(0.7) #mock latency
+            form_data = json.loads(request.data)
+            object_schema = build_schema_from_form(form_data, service="marine_facilities")
+            url = 'http://67.58.49.196:5000/ion-service/marine_facility_management/create_marine_facility'
+            post_request = requests.post(url, data={'payload': json.dumps(object_schema)})
+            host = 'http://%s/ion-service/marine_facility_management/create_marine_facility' % GATEWAY_HOST
+            post_request = requests.post(host, data={'payload': json.dumps(object_schema)})
+            print post_request.content
+            resp_data = {"success":True}
+        else:
+            resp_data = ServiceApi.marine_facilities(request.args)        
+        return jsonify(data=resp_data)
     else:
-        resp_data = ServiceApi.marine_facilities(request.args)        
-        
-    return jsonify(data=resp_data)
+        return create_html_response(request.path)
         
 
 @app.route('/observatories/<marine_facility_id>/', methods=['GET'])
 def observatory_facepage(marine_facility_id):
-    if request.is_xhr: #XXX put into decorator logic
+    if request.is_xhr:
         resp_data = ServiceApi.find_observatory(marine_facility_id)
         return jsonify(data=resp_data)
     else:
-        return render_template("ion-ux.html", **{"current_url":request.path}) #XXX put into decorator logic
+        return create_html_response(request.path)
         
 
-@app.route('/platforms/<platform_id>', methods=['GET'])
+@app.route('/platforms/<platform_id>/', methods=['GET'])
 def platform_facepage(platform_id):
     if request.is_xhr: #XXX put into decorator logic
         resp_data = ServiceApi.find_platform(platform_id)
@@ -84,7 +82,7 @@ def platform_facepage(platform_id):
     else:
         return render_template("ion-ux.html", **{"current_url":request.path}) #XXX put into decorator logic
 
-@app.route('/instruments/<instrument_id>', methods=['GET'])
+@app.route('/instruments/<instrument_id>/', methods=['GET'])
 def instrument_facepage(instrument_id):
     if request.is_xhr: #XXX put into decorator logic
         resp_data = ServiceApi.find_instrument(instrument_id)
@@ -94,92 +92,19 @@ def instrument_facepage(instrument_id):
 
 
 
-
-@app.route('/dataresource/<data_resource_id>', methods=["GET", "POST"])
+@app.route('/dataresource/<data_resource_id>/', methods=["GET", "POST"])
 def data_resource_details(data_resource_id):
     resp_data = ServiceApi.data_resource_details(data_resource_id)
     return jsonify(resp_data)
 
-@app.route('/subscription', methods=["GET", "POST"])
+@app.route('/subscription/', methods=["GET", "POST"])
 def subscription():
     resp_data = ServiceApi.subscription(request.args)
     return jsonify(resp_data)
 
 
-
-
-SERVICE_GATEWAY_BASE_URL = 'http://67.58.49.196:5000/ion-service'
-DEFINED_SERVICES_OPERATIONS = {
-    'marine_facilities':
-        {
-            'restype': 'MarineFacility',
-            'service_name': 'marine_facility_management',
-            'object_name': 'marine_facility',
-            'operation_names': {'create': 'create_marine_facility'}
-        },
-}
-SERVICE_REQUEST_TEMPLATE = {
-    'serviceRequest': {
-        'serviceName': '', 
-        'serviceOp': '',
-        'params': {} # Example -> 'object_name': ['restype', {}] }
-    }
-}
-
-
-
-
-def build_schema_from_form(form_data, service="marine_facilities", object_name="marine_facility"):
-    service_name = DEFINED_SERVICES_OPERATIONS[service]['service_name']
-    service_op = DEFINED_SERVICES_OPERATIONS[service]['operation_names']['create']
-    resource_type = DEFINED_SERVICES_OPERATIONS[service]["restype"]
-    result_dict = SERVICE_REQUEST_TEMPLATE
-    result_dict['serviceRequest']['serviceName'] = service_name
-    result_dict['serviceRequest']['serviceOp'] = service_op
-    sub_result_dict = {}
-    for (k, v) in form_data.iteritems():
-        elems = k.split("__")
-        if len(elems) == 1:
-            sub_result_dict[elems[0]] = v
-        if len(elems) == 2:
-            sub_k, sub_v = elems
-            if sub_k in result_dict:
-                sub_result_dict[sub_k].update({sub_v:v})
-            else:
-                sub_result_dict[sub_k] = {sub_v:v}
-    
-    if object_name:
-        result_dict["serviceRequest"]["params"][object_name] = [resource_type]                
-        result_dict["serviceRequest"]["params"][object_name].append(sub_result_dict)
-    else:
-        result_dict["serviceRequest"]["params"].append(sub_result_dict)
-
-    return result_dict
-
-
-
-# def build_schema_from_form(form_data, service="marine_facilities"):
-#     resource_type = DEFINED_SERVICES_OPERATIONS[service]["restype"]
-#     result_dict = SERVICE_REQUEST_TEMPLATE
-#     result_dict["serviceRequest"]["params"]["object"].append(resource_type)
-#     sub_result_dict = {}
-#     for (k, v) in form_data.iteritems():
-#         elems = k.split("__")
-#         if len(elems) == 1:
-#             sub_result_dict[elems[0]] = v
-#         if len(elems) == 2:
-#             sub_k, sub_v = elems
-#             if sub_k in result_dict:
-#                 sub_result_dict[sub_k].update({sub_v:v})
-#             else:
-#                 sub_result_dict[sub_k] = {sub_v:v}
-#     result_dict["serviceRequest"]["params"]["object"].append(sub_result_dict)
-#     return result_dict
-
-
 # RESOURCE BROWSER
 # Still needs refactoring...
-
 @app.route('/resources', methods=['GET'])
 def resources_index():    
     if request.args.has_key('type'):
@@ -285,12 +210,6 @@ def delete_resource(resource_id=None):
     pass
 
 
-def fetch_menu():        
-    menu_data = requests.get('%s/list_resource_types' % SERVICE_GATEWAY_BASE_URL)
-    menu = json.loads(menu_data.content)
-    
-    return menu['data']['GatewayResponse']
-
 @app.route('/schema/<resource_type>')
 def get_resource_schema(resource_type):
     resource_type = str(resource_type)
@@ -303,6 +222,74 @@ def get_resource_schema(resource_type):
 @app.route("/<catchall>")
 def catchall(catchall):
     return render_template("ion-ux.html", **{"current_url":catchall})    
+
+
+#
+#non route code below
+#
+
+
+
+SERVICE_GATEWAY_BASE_URL = 'http://67.58.49.196:5000/ion-service'
+DEFINED_SERVICES_OPERATIONS = {
+    'marine_facilities':
+        {
+            'restype': 'MarineFacility',
+            'service_name': 'marine_facility_management',
+            'object_name': 'marine_facility',
+            'operation_names': {'create': 'create_marine_facility'}
+        },
+}
+SERVICE_REQUEST_TEMPLATE = {
+    'serviceRequest': {
+        'serviceName': '', 
+        'serviceOp': '',
+        'params': {} # Example -> 'object_name': ['restype', {}] }
+    }
+}
+
+
+
+
+def build_schema_from_form(form_data, service="marine_facilities", object_name="marine_facility"):
+    service_name = DEFINED_SERVICES_OPERATIONS[service]['service_name']
+    service_op = DEFINED_SERVICES_OPERATIONS[service]['operation_names']['create']
+    resource_type = DEFINED_SERVICES_OPERATIONS[service]["restype"]
+    result_dict = SERVICE_REQUEST_TEMPLATE
+    result_dict['serviceRequest']['serviceName'] = service_name
+    result_dict['serviceRequest']['serviceOp'] = service_op
+    sub_result_dict = {}
+    for (k, v) in form_data.iteritems():
+        elems = k.split("__")
+        if len(elems) == 1:
+            sub_result_dict[elems[0]] = v
+        if len(elems) == 2:
+            sub_k, sub_v = elems
+            if sub_k in result_dict:
+                sub_result_dict[sub_k].update({sub_v:v})
+            else:
+                sub_result_dict[sub_k] = {sub_v:v}
+    
+    if object_name:
+        result_dict["serviceRequest"]["params"][object_name] = [resource_type]                
+        result_dict["serviceRequest"]["params"][object_name].append(sub_result_dict)
+    else:
+        result_dict["serviceRequest"]["params"].append(sub_result_dict)
+
+    return result_dict
+
+
+def fetch_menu():        
+    menu_data = requests.get('%s/list_resource_types' % SERVICE_GATEWAY_BASE_URL)
+    menu = json.loads(menu_data.content)
+    
+    return menu['data']['GatewayResponse']
+
+
+def create_html_response(request_path, template_name="ion-ux.html"):
+    return render_template(template_name, **{"current_url":request_path})
+
+
     
 if __name__ == '__main__':
     app.run(debug=True, host=HOST, port=PORT)

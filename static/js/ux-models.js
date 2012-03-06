@@ -5,7 +5,7 @@ IONUX.Models.DataResource = Backbone.Model.extend({
 IONUX.Models.DataResourceDetails = Backbone.Model.extend({
 
   url: function(){
-    return "/dataresource/"+this.get("data_resource_id");
+    return "/dataresource/"+this.get("data_resource_id")+"/";
   }
 
 });
@@ -13,7 +13,7 @@ IONUX.Models.DataResourceDetails = Backbone.Model.extend({
 
 IONUX.Models.Observatory = Backbone.Model.extend({
 
-  url: "/observatories",
+  url: "/observatories/",
   idAttribute: "_id"
 
 });
@@ -21,7 +21,7 @@ IONUX.Models.Observatory = Backbone.Model.extend({
 IONUX.Models.ObservatoryFacepageModel = Backbone.Model.extend({
 
   url: function(){
-    return "/observatories/"+this.get("marine_facility_id");
+    return "/observatories/"+this.get("marine_facility_id")+"/";
   },
   
   parse: function(resp) {
@@ -33,7 +33,7 @@ IONUX.Models.ObservatoryFacepageModel = Backbone.Model.extend({
 IONUX.Models.PlatformFacepageModel = Backbone.Model.extend({
 
   url: function(){
-    return "/platforms/"+this.get("platform_id");
+    return "/platforms/"+this.get("platform_id")+"/";
   },
   
   parse: function(resp) {
@@ -45,7 +45,7 @@ IONUX.Models.PlatformFacepageModel = Backbone.Model.extend({
 IONUX.Models.InstrumentFacepageModel = Backbone.Model.extend({
 
   url: function(){
-    return "/instruments/"+this.get("instrument_id");
+    return "/instruments/"+this.get("instrument_id")+"/";
   },
   
   parse: function(resp) {
