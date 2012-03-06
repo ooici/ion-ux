@@ -72,3 +72,6 @@ IONUX.Models.InstrumentFacepageModel = Backbone.Model.extend({
   }
 
 });
+
+
+IONUX.Models.ResourceType = Backbone.Model.extend({})

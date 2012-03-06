@@ -376,3 +376,28 @@ IONUX.Views.InstrumentFacepage = Backbone.View.extend({
 
 });
 
+IONUX.Views.Search = Backbone.View.extend({
+  el: "#search",
+  
+  initialize: function() {
+    
+  },
+  
+  render: function() {
+    var collection = new IONUX.Collections.ResourceTypes();
+    var select_elem = $("#search-select");
+    console.log('lkjasfd');
+    
+    collection.fetch({
+      success: function(resp) {
+        console.log('success', resp);
+        _.each(resp.models, function(e, i) {
+          select_elem.append($('<option>').text(e.get('name')));
+        })
+      }
+    })
+    
+    
+  }
+});
+

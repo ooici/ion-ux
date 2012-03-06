@@ -38,7 +38,6 @@ else:
     from dummy_service_api import ServiceApi
 
 
-
 @app.route('/')
 def index():
     if LOGGED_IN: #XXX for development
@@ -246,6 +245,13 @@ def get_resource_schema(resource_type):
     resource_type_schema = json.loads(resource_type_schema_response.content)
     
     return str(resource_type_schema)
+
+
+@app.route('/resource_types', methods=['GET'])
+def resource_types():
+    res = fetch_menu()
+    return jsonify(data=res)
+
 
 @app.route("/<catchall>")
 def catchall(catchall):

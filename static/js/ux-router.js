@@ -15,6 +15,9 @@ IONUX.Router = Backbone.Router.extend({
 
   dashboard: function(){
     this._reset();
+    var search = new IONUX.Views.Search();
+    search.render();
+    
     $("#dashboard-container").show();
     if (_.isUndefined(this.observatory_modal)){
       this.observatory_modal = new IONUX.Views.ObservatoryModalView();

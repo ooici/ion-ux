@@ -30,3 +30,17 @@ IONUX.Collections.ObservatoryDataProductCollection = Backbone.Collection.extend(
   // }
 
 });
+
+IONUX.Collections.ResourceTypes = Backbone.Collection.extend({
+
+  model: IONUX.Models.ResourceType,
+  url: "/resource_types",
+  
+  parse: function(resp) {
+
+    return _.map(resp.data, function(resource_type) {return {"name": resource_type}});
+  
+  },
+  
+  
+});
