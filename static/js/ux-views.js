@@ -274,9 +274,6 @@ IONUX.Views.PlatformCreateNewView = IONUX.Views.CreateNewView.extend({
 });
 
 
-
-
-
 IONUX.Views.ObservatoryModalView = Backbone.View.extend({
 
   el: "#observatory-modal",
@@ -350,7 +347,6 @@ IONUX.Views.PlatformFacepage = Backbone.View.extend({
   },
 
   render: function(){
-    console.log(this.model.toJSON());
     this.$el.html(this.template(this.model.toJSON())).show();
   }
 
@@ -370,11 +366,29 @@ IONUX.Views.InstrumentFacepage = Backbone.View.extend({
   },
 
   render: function(){
-    console.log(this.model.toJSON());
     this.$el.html(this.template(this.model.toJSON())).show();
   }
 
 });
+
+IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
+
+  el: "#instrument-command-facepage-container",
+
+  template: _.template($("#instrument-command-facepage-tmpl").html()),
+
+  initialize: function(){
+    _.bindAll(this, "render");
+  },
+
+  render: function(){
+    this.$el.empty().html(this.template({})).show();
+  }
+});
+
+
+
+
 
 IONUX.Views.Search = Backbone.View.extend({
   el: "#search",

@@ -9,7 +9,9 @@ IONUX.Router = Backbone.Router.extend({
     "platforms/":"platforms",
     "platforms/:platform_id/": "platform_facepage",
     "instruments/":"instruments",
-    "instruments/:instrument_id/" : 'instrument_facepage',
+    "instruments/:instrument_id/" : "instrument_facepage",
+    // "todd": "instrument_command_facepage",
+    "instruments/:instrument_id/command/": "instrument_command_facepage",
     "resource_types/:resource_type_id/": "resource_type_details"
   },
 
@@ -85,6 +87,13 @@ IONUX.Router = Backbone.Router.extend({
   
   resource_type_details: function(resource_type_id) {
       this._reset();
+  },
+  
+  instrument_command_facepage : function() {
+    console.log("Command facepage.");
+    this._reset();
+    var instrumentCommandFacepageView = new IONUX.Views.InstrumentCommandFacepage();
+    instrumentCommandFacepageView.render();
   },
 
   handle_navigation: function(){
