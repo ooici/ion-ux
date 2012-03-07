@@ -10,7 +10,8 @@ PORT = 3000
 LOGGED_IN = True
 PRODUCTION = False
 
-GATEWAY_HOST = "67.58.49.196:5000"
+GATEWAY_HOST = "67.58.49.196:5000"   # Todd's machine
+#GATEWAY_HOST = "localhost:5000"
 SERVICE_GATEWAY_BASE_URL = 'http://%s/ion-service' % GATEWAY_HOST
 
 DEFINED_SERVICES_OPERATIONS = {
@@ -72,7 +73,7 @@ def observatories():
             import time; time.sleep(0.7) #mock latency
             form_data = json.loads(request.data)
             object_schema = build_schema_from_form(form_data, service="marine_facilities")
-            url = 'http://67.58.49.196:5000/ion-service/marine_facility_management/create_marine_facility'
+            url = 'http://%s/ion-service/marine_facility_management/create_marine_facility' % GATEWAY_HOST
             post_request = requests.post(url, data={'payload': json.dumps(object_schema)})
             host = 'http://%s/ion-service/marine_facility_management/create_marine_facility' % GATEWAY_HOST
             post_request = requests.post(host, data={'payload': json.dumps(object_schema)})
@@ -173,7 +174,7 @@ def create_resource():
     sg_data['serviceRequest']['params']['object'] = [resource_type, resource_type_params]
         
     service_gateway_call = requests.post(
-        'http://67.58.49.196:5000/ion-service/resource_registry/create', 
+        'http://%/ion-service/resource_registry/create' % GATEWAY_HOST, 
         data={'payload': json.dumps(sg_data)}
     )
         
@@ -184,7 +185,7 @@ def show_resource(resource_id=None):
     
     resource_type = request.args.get('type')
     
-    service_gateway_call = requests.get('http://67.58.49.196:5000/ion-service/resource_registry/read?object_id=%s' % resource_id)
+    service_gateway_call = requests.get('http://%s/ion-service/resource_registry/read?object_id=%s' % (GATEWAY_HOST,resource_id))
     resource = json.loads(service_gateway_call.content)
     resource = resource['data']['GatewayResponse']
     
@@ -198,7 +199,7 @@ def edit_reource(resource_id=None):
     else:
         resource_type = None
     
-    service_gateway_call = requests.get('http://67.58.49.196:5000/ion-service/resource_registry/read?object_id=%s' % resource_id)
+    service_gateway_call = requests.get('http://%s/ion-service/resource_registry/read?object_id=%s' % (GATEWAY_HOST,resource_id))
     resource = json.loads(service_gateway_call.content)
     resource = resource['data']['GatewayResponse']
 
@@ -221,7 +222,7 @@ def update_resource(resource_id=None):
     post_data['serviceRequest']['params']['object'] = [resource_type, resource_type_params]
 
     service_gateway_call = requests.post(
-        'http://67.58.49.196:5000/ion-service/resource_registry/update', 
+        'http://%s/ion-service/resource_registry/update' % GATEWAY_HOST, 
         data={'payload': json.dumps(post_data)}
     )
 
@@ -241,7 +242,7 @@ def delete_resource(resource_id=None):
 def get_resource_schema(resource_type):
     resource_type = str(resource_type)
 
-    resource_type_schema_response = requests.get("http://67.58.49.196:5000/ion-service/resource_type_schema/%s" % resource_type)
+    resource_type_schema_response = requests.get("http://%s/ion-service/resource_type_schema/%s" % (GATEWAY_HOST,resource_type))
     resource_type_schema = json.loads(resource_type_schema_response.content)
     
     return str(resource_type_schema)
