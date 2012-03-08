@@ -389,6 +389,35 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
 
 
 
+// Data views
+
+IONUX.Views.DataProcessDefinitionFacepage = Backbone.View.extend({
+  el: "#data-process-definition-facepage-container",
+  template: _.template($("#data-process-definition-facepage-tmpl").html()),
+  
+  initialize: function(){
+    _.bindAll(this, "render");
+  },
+  
+  render: function(){
+    this.$el.empty().html(this.template({})).show();
+  }
+});
+
+IONUX.Views.DataProductFacepage = Backbone.View.extend({
+  el: "#data-product-facepage-container",
+  template: _.template($("#data-product-facepage-tmpl").html()),
+  
+  initialize: function(){
+    _.bindAll(this, "render");
+  },
+  
+  render: function(){
+    this.$el.empty().html(this.template({})).show();
+  }
+});
+
+
 
 IONUX.Views.Search = Backbone.View.extend({
   el: "#search",

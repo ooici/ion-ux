@@ -46,8 +46,14 @@
 					<li class="platforms"><a href="/platforms/">Platforms</a></li>
 					<li class="instruments"><a href="/instruments/">Instruments</a></li>
 				</ul>
+				
+				
+				<span class="sidebar-section">Development Links</span>
+				<ul>
+					<li class=""><a href="/data_process_definitions/abc123/">Data Process Definition</a>
+				</ul>
 
-				<span class="sidebar-section">My Resources</span>
+				<!-- <span class="sidebar-section">My Resources</span>
 				<ul>
 					<li class="notifications"><a href="#">Notifications</a></li>
 					<li class="publications"><a href="#">Publications</a></li>
@@ -69,7 +75,7 @@
 							<li><a href="#">Police 034956</a></li>
 						</ul>
 					</li>
-				</ul>
+				</ul> -->
 			</div> <!-- div#sidebar -->
 			
 			<div id="main" class="span10">
@@ -91,8 +97,9 @@
           <div id="platform-facepage-container" class="viewcontainer"></div>
           <div id="instrument-facepage-container" class="viewcontainer"></div>
 		  <div id="instrument-command-facepage-container" class="viewcontainer"></div>
-
-
+		  <div id="data-process-definition-facepage-container" class="viewcontainer"></div>
+		  <div id="data-product-facepage-container" class="viewcontainer"></div>
+		
           <div id="platforms-container" class="viewcontainer">
            <h4>Platforms</h4>
           </div>
@@ -128,11 +135,16 @@
 <script type="text/template" id="observatories-item-tmpl">{% include 'partials/observatories_item.html' %}</script>
 <script type="text/template" id="observatories-detail-tmpl">{% include 'partials/observatories_detail.html' %} </script>
 <script type="text/template" id="observatory-facepage-tmpl">{% include 'partials/observatory_facepage.html' %} </script>
+
 <script type="text/template" id="platforms-tmpl">{% include 'partials/platforms_list.html' %}</script>
 <script type="text/template" id="platform-facepage-tmpl">{% include 'partials/platform_facepage.html' %} </script>
+
 <script type="text/template" id="instruments-tmpl">{% include 'partials/instruments_list.html' %}</script>
 <script type="text/template" id="instrument-facepage-tmpl">{% include 'partials/instrument_facepage.html' %}</script>
 <script type="text/template" id="instrument-command-facepage-tmpl">{% include 'partials/instrument_command_facepage.html' %}</script>
+
+<script type="text/template" id="data-process-definition-facepage-tmpl">{% include 'partials/data_process_definition_facepage.html' %}</script>
+<script type="text/template" id="data-product-facepage-tmpl">{% include 'partials/data_product_facepage.html' %}</script>
 
 <script type="text/template" id="data-resource-item-tmpl">{% include 'partials/data_resource_item.html' %}</script>
 <script type="text/template" id="data-resource-detail-tmpl">{% include 'partials/data_resource_detail.html' %}</script>

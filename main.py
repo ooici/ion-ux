@@ -10,19 +10,27 @@ PORT = 3000
 LOGGED_IN = True
 PRODUCTION = False
 
-GATEWAY_HOST = "67.58.49.196:5000"   # Todd's machine
+GATEWAY_HOST = "localhost:5000"   # Todd's machine
 #GATEWAY_HOST = "localhost:5000"
 SERVICE_GATEWAY_BASE_URL = 'http://%s/ion-service' % GATEWAY_HOST
 
 DEFINED_SERVICES_OPERATIONS = {
-    'marine_facilities':
-        {
+    'observatories': {
             'restype': 'MarineFacility',
             'service_name': 'marine_facility_management',
             'object_name': 'marine_facility',
             'operation_names': {'create': 'create_marine_facility'}
         },
+  
+    'platforms': {
+            'restype': 'PlatformDevice'
+        },
+
+    'instruments': {
+            'restype': 'InstrumentDevice'
+        },
 }
+
 SERVICE_REQUEST_TEMPLATE = {
     'serviceRequest': {
         'serviceName': '', 
@@ -46,6 +54,7 @@ def index():
     else:
         return render_template("index.html")
 
+
 @app.route('/signon', methods=['POST'])
 def signon():
     # take 
@@ -56,14 +65,25 @@ def signon():
     # make service gateway request
     # handle response and set cookie if successful (redirect to user registration)
     
+
 @app.route('/dashboard', methods=["GET"])
 def dashboard():
     return render_template('ux-dashboard.html')
 
-@app.route('/dataresource', methods=["GET", "POST"])
-def data_resource():
-    resp_data = ServiceApi.data_resource(request.args)
-    return jsonify(resp_data)
+
+# Generic index to view any resource type
+@app.route('/list/<resource_type>/', methods=['GET'])
+def list(resource_type=None):
+    if DEFINED_SERVICES_OPERATIONS.has_key(resource_type):
+        resource = DEFINED_SERVICES_OPERATIONS[resource_type]
+        resource_type = resource['restype']
+        service_gateway_call = requests.get('%s/resource_registry/find_resources?restype=%s' % (SERVICE_GATEWAY_BASE_URL, resource_type))
+        resources = json.loads(service_gateway_call.content)
+        resources = resources['data']['GatewayResponse'][0]
+    
+    return jsonify(data=json.dumps(resources))
+    
+    
 
 
 @app.route('/observatories/', methods=["GET", "POST"])
@@ -94,9 +114,11 @@ def observatory_facepage(marine_facility_id):
     else:
         return create_html_response(request.path)
 
+
 @app.route('/platforms/', methods=['GET'])
 def platforms():
     return create_html_response(request.path)
+
 
 @app.route('/platforms/<platform_id>/', methods=['GET'])
 def platform_facepage(platform_id):
@@ -106,9 +128,11 @@ def platform_facepage(platform_id):
     else:
         return render_template("ion-ux.html", **{"current_url":request.path}) #XXX put into decorator logic
 
+
 @app.route('/instruments/', methods=['GET', 'POST'])
 def instruments():
     return create_html_response(request.path)
+
 
 @app.route('/instruments/<instrument_id>/', methods=['GET'])
 def instrument_facepage(instrument_id):
@@ -119,11 +143,17 @@ def instrument_facepage(instrument_id):
         return render_template("ion-ux.html", **{"current_url":request.path}) #XXX put into decorator logic
 
 
+@app.route('/dataresource', methods=["GET", "POST"])
+def data_resource():
+    resp_data = ServiceApi.data_resource(request.args)
+    return jsonify(resp_data)
+
 
 @app.route('/dataresource/<data_resource_id>/', methods=["GET", "POST"])
 def data_resource_details(data_resource_id):
     resp_data = ServiceApi.data_resource_details(data_resource_id)
     return jsonify(resp_data)
+
 
 @app.route('/subscription/', methods=["GET", "POST"])
 def subscription():
