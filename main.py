@@ -10,8 +10,7 @@ PORT = 3000
 LOGGED_IN = True
 PRODUCTION = False
 
-GATEWAY_HOST = "localhost:5000"   # Todd's machine
-#GATEWAY_HOST = "localhost:5000"
+GATEWAY_HOST = "localhost:5000"
 SERVICE_GATEWAY_BASE_URL = 'http://%s/ion-service' % GATEWAY_HOST
 
 DEFINED_SERVICES_OPERATIONS = {
@@ -74,16 +73,19 @@ def dashboard():
 # Generic index to view any resource type
 @app.route('/list/<resource_type>/', methods=['GET'])
 def list(resource_type=None):
-    if DEFINED_SERVICES_OPERATIONS.has_key(resource_type):
-        resource = DEFINED_SERVICES_OPERATIONS[resource_type]
-        resource_type = resource['restype']
-        service_gateway_call = requests.get('%s/resource_registry/find_resources?restype=%s' % (SERVICE_GATEWAY_BASE_URL, resource_type))
-        resources = json.loads(service_gateway_call.content)
-        resources = resources['data']['GatewayResponse'][0]
+
+    for k, v in DEFINED_SERVICES_OPERATIONS.iteritems():
+        if v['restype'] == resource_type:
+        # if DEFINED_SERVICES_OPERATIONS.has_key(resource_type):
+            print "YES!"
+            resource = DEFINED_SERVICES_OPERATIONS[resource_type]
+            resource_type = resource['restype']
+            service_gateway_call = requests.get('%s/resource_registry/find_resources?restype=%s' % (SERVICE_GATEWAY_BASE_URL, resource_type))
+
+            resources = json.loads(service_gateway_call.content)
+            resources = resources['data']['GatewayResponse'][0]
     
     return jsonify(data=json.dumps(resources))
-    
-    
 
 
 @app.route('/observatories/', methods=["GET", "POST"])
@@ -95,24 +97,66 @@ def observatories():
             object_schema = build_schema_from_form(form_data, service="marine_facilities")
             url = 'http://%s/ion-service/marine_facility_management/create_marine_facility' % GATEWAY_HOST
             post_request = requests.post(url, data={'payload': json.dumps(object_schema)})
-            host = 'http://%s/ion-service/marine_facility_management/create_marine_facility' % GATEWAY_HOST
-            post_request = requests.post(host, data={'payload': json.dumps(object_schema)})
-            print post_request.content
             resp_data = {"success":True}
         else:
-            resp_data = ServiceApi.marine_facilities(request.args)        
+            resource = DEFINED_SERVICES_OPERATIONS['observatories']
+            resource_type = resource['restype']
+            service_gateway_call = requests.get('%s/resource_registry/find_resources?restype=%s' % (SERVICE_GATEWAY_BASE_URL, 'MarineFacility'))
+            resp_data = json.loads(service_gateway_call.content)
+            resp_data = resp_data['data']['GatewayResponse'][0]
+            
         return jsonify(data=resp_data)
     else:
         return create_html_response(request.path)
-        
+
 
 @app.route('/observatories/<marine_facility_id>/', methods=['GET'])
 def observatory_facepage(marine_facility_id):
     if request.is_xhr:
-        resp_data = ServiceApi.find_observatory(marine_facility_id)
-        return jsonify(data=resp_data)
+        
+        # Marine Facility
+        mf = service_gateway_get('marine_facility_management', 'read_marine_facility', params={'marine_facility_id': marine_facility_id})
+        
+        # Make remaining calls if marine facility found.
+        if mf.has_key('_id'):
+            
+        return jsonify(data=mf)
     else:
         return create_html_response(request.path)
+
+
+def build_get_request(service_name, operation_name, params={}):
+    url = '%s/%s/%s' % (SERVICE_GATEWAY_BASE_URL, service_name, operation_name)
+
+    if len(params) > 0:
+        param_string = '?'
+        for (k, v) in params.iteritems():
+            param_string += '%s=%s&' % (k,v)
+        url += param_string[:-1]
+
+    return url
+
+
+def service_gateway_get(service_name, operation_name, params={}):    
+    resp = requests.get(build_get_request(service_name, operation_name, params))
+    
+    if resp.status_code == 200:
+        resp = json.loads(resp.content)
+        if type(resp) == dict:
+            return resp['data']['GatewayResponse']
+        elif type(resp) == list:
+            return resp['data']['GatewayResponse'][0]
+
+
+
+
+# @app.route('/observatories/<marine_facility_id>/', methods=['GET'])
+# def observatory_facepage(marine_facility_id):
+#     if request.is_xhr:
+#         resp_data = ServiceApi.find_observatory(marine_facility_id)
+#         return jsonify(data=resp_data)
+#     else:
+#         return create_html_response(request.path)
 
 
 @app.route('/platforms/', methods=['GET'])

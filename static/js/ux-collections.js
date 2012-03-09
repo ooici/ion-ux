@@ -14,7 +14,6 @@ IONUX.Collections.ObservatoryCollection = Backbone.Collection.extend({
   parse: function(resp) {
     return resp.data;
   }
-
 });
 
 

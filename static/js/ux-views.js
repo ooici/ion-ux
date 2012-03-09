@@ -29,6 +29,11 @@ IONUX.Views.CreateNewView = Backbone.View.extend({
   }
 });
 
+IONUX.Views.List = Backbone.View.extend({
+  
+});
+
+
 
 
 IONUX.Views.DataResourceView = Backbone.View.extend({

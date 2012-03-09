@@ -13,7 +13,7 @@
 	</div>
 		
 	<div class="span8 test">
-		<h3>Obsevatories</h3>
+		<h3>Observatories</h3>
 		
 		<div class="btn-group">
 			<a class="btn" href="#">Panel Controls</a>
@@ -28,31 +28,19 @@
 		<table id="observatories-container" class="table datatable-ize" width="100%">
 			<tr>
 				<th>Observatory</th>
-				<th>ID</th>
-				<th>Region</th>
-				<th>Primary Measurements</th>
-				<th>Data Products</th>
-				<th>Platforms</th>
-				<th>Instruments</th>
-				<th>Participants</th>
-				<th>Registered</th>
-				<th>Uptime (days)</th>
+				<th>Institution</th>
+				<th>Description</th>
+				<th>Contact</th>
 			</tr>
 
-    <% _.each(collection, function(obj) { %>
-			<tr>
-				<td>observatory name</td>
-				<td><a href="/observatories/<%= obj.site_id %>/"><%= obj.site_id %></a></td>
-				<td>region</td>
-				<td>primary measurements</td>
-				<td>data products</td>
-				<td>platforms</td>
-				<td>instruments</td>
-				<td>participants</td>
-				<td>registered</td>
-				<td>uptime</td>
-			</tr>
-    <% }); %>
+		    <% _.each(collection, function(obj) { %>
+					<tr>
+						<td><a href="/observatories/<%= obj._id %>/"><%= obj.name %></a></td>
+						<td><%= obj.institution.name %></td>
+						<td><%= obj.description %></td>
+						<td><%= obj.contact.name %></td>
+					</tr>
+		    <% }); %>
 		</table>
 		
 	</div>
