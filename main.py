@@ -1,17 +1,17 @@
-from flask import Flask, request, jsonify, render_template, redirect, url_for
+from flask import Flask, request, session, jsonify, render_template, redirect, url_for
 import requests, json
 from functools import wraps
 
 app = Flask(__name__)
 
 
-HOST = ''
+HOST = '67.58.49.208'
 PORT = 3000
 LOGGED_IN = True
 PRODUCTION = False
 
-GATEWAY_HOST = "67.58.49.196:5000"   # Todd's machine
-#GATEWAY_HOST = "localhost:5000"
+#GATEWAY_HOST = "67.58.49.196:5000"   # Todd's machine
+GATEWAY_HOST = "localhost:5000"
 SERVICE_GATEWAY_BASE_URL = 'http://%s/ion-service' % GATEWAY_HOST
 
 DEFINED_SERVICES_OPERATIONS = {
@@ -46,15 +46,44 @@ def index():
     else:
         return render_template("index.html")
 
-@app.route('/signon', methods=['POST'])
+@app.route('/signon/', methods=['GET'])
 def signon():
-    # take 
-    form_data = json.loads(request.data)
-    certificate = form_data['cert']
+    # carriage returns were removed on the cilogon portal side,
+    # restore them before processing
+    raw_cert = request.args.get("cert")
+    certificate = raw_cert.replace('\\n','\n')
+
+    # TODO is this the right url to go to post signon?
+    redirect_url = '/'
     
-    # build service gateway request
+    # build signon service gateway request
+    sg_data = SERVICE_REQUEST_TEMPLATE
+    sg_data['serviceRequest']['serviceOp'] = 'signon'   
+    sg_data['serviceRequest']['params']['certificate'] = certificate
+        
     # make service gateway request
-    # handle response and set cookie if successful (redirect to user registration)
+    service_gateway_call = gateway_post_request(
+        '%s/identity_management/signon' % SERVICE_GATEWAY_BASE_URL, 
+        sg_data
+    )
+        
+    # handle response and set cookie if successful
+    user_id, valid_until, is_registered  = json.loads(service_gateway_call.data)
+    
+    # set user id, valid until and is registered info in session
+    # TODO might need to address issues that arise with using
+    # session to set cookie when web server ends up being a pool
+    # of web servers?
+    session['user_id'] = user_id
+    session['valid_until'] = valid_until
+    session['is_registered'] = is_registered
+
+    # conditionally display user registration dialog
+    if not is_registered:
+        update_user_info()
+
+    # TODO redirect to url they were displaying before hitting the login button?
+    return redirect(redirect_url)
     
 @app.route('/dashboard', methods=["GET"])
 def dashboard():
@@ -73,10 +102,10 @@ def observatories():
             import time; time.sleep(0.7) #mock latency
             form_data = json.loads(request.data)
             object_schema = build_schema_from_form(form_data, service="marine_facilities")
-            url = 'http://%s/ion-service/marine_facility_management/create_marine_facility' % GATEWAY_HOST
-            post_request = requests.post(url, data={'payload': json.dumps(object_schema)})
-            host = 'http://%s/ion-service/marine_facility_management/create_marine_facility' % GATEWAY_HOST
-            post_request = requests.post(host, data={'payload': json.dumps(object_schema)})
+            post_request = gateway_post_request(
+                '%s/marine_facility_management/create_marine_facility' % SERVICE_GATEWAY_BASE_URL,
+                object_schema
+            )
             print post_request.content
             resp_data = {"success":True}
         else:
@@ -84,7 +113,6 @@ def observatories():
         return jsonify(data=resp_data)
     else:
         return create_html_response(request.path)
-        
 
 @app.route('/observatories/<marine_facility_id>/', methods=['GET'])
 def observatory_facepage(marine_facility_id):
@@ -174,8 +202,8 @@ def create_resource():
     sg_data['serviceRequest']['params']['object'] = [resource_type, resource_type_params]
         
     service_gateway_call = requests.post(
-        'http://%/ion-service/resource_registry/create' % GATEWAY_HOST, 
-        data={'payload': json.dumps(sg_data)}
+        '%s/resource_registry/create' % SERVICE_GATEWAY_BASE_URL, 
+        sg_data
     )
         
     return redirect("%s?type=%s" % (url_for('resources_index'), resource_type))
@@ -185,7 +213,9 @@ def show_resource(resource_id=None):
     
     resource_type = request.args.get('type')
     
-    service_gateway_call = requests.get('http://%s/ion-service/resource_registry/read?object_id=%s' % (GATEWAY_HOST,resource_id))
+    service_gateway_call = requests.get(
+        '%s/resource_registry/read?object_id=%s' % (SERVICE_GATEWAY_BASE_URL,resource_id)
+    )
     resource = json.loads(service_gateway_call.content)
     resource = resource['data']['GatewayResponse']
     
@@ -199,7 +229,9 @@ def edit_reource(resource_id=None):
     else:
         resource_type = None
     
-    service_gateway_call = requests.get('http://%s/ion-service/resource_registry/read?object_id=%s' % (GATEWAY_HOST,resource_id))
+    service_gateway_call = requests.get(
+        '%s/resource_registry/read?object_id=%s' % (SERVICE_GATEWAY_BASE_URL,resource_id)
+    )
     resource = json.loads(service_gateway_call.content)
     resource = resource['data']['GatewayResponse']
 
@@ -221,14 +253,10 @@ def update_resource(resource_id=None):
 
     post_data['serviceRequest']['params']['object'] = [resource_type, resource_type_params]
 
-    service_gateway_call = requests.post(
-        'http://%s/ion-service/resource_registry/update' % GATEWAY_HOST, 
-        data={'payload': json.dumps(post_data)}
+    service_gateway_call = gateway_post_request(
+        '%s/resource_registry/update' % SERVICE_GATEWAY_BASE_URL, 
+        post_data
     )
-
-    if service_gateway_call.status_code != 200:
-        return "The service gateway returned the following error: %d" % service_gateway_call.status_code
-
 
     return redirect("%s?type=%s" % (url_for('resources_index'), resource_type))
 
@@ -242,7 +270,9 @@ def delete_resource(resource_id=None):
 def get_resource_schema(resource_type):
     resource_type = str(resource_type)
 
-    resource_type_schema_response = requests.get("http://%s/ion-service/resource_type_schema/%s" % (GATEWAY_HOST,resource_type))
+    resource_type_schema_response = requests.get(
+        "http://%s/ion-service/resource_type_schema/%s" % (SERVICE_GATEWAY_BASE_URL,resource_type)
+    )
     resource_type_schema = json.loads(resource_type_schema_response.content)
     
     return str(resource_type_schema)
@@ -263,9 +293,77 @@ def catchall(catchall):
 #non route code below
 #
 
+# common service gateway post request method.
+# handles including user id and expiry in request
+# payload if cookies found in session.
+def gateway_post_request(url, payload):
+    # conditionally add user id and expiry to request
+    if "user_id" in session:
+        payload['serviceRequest']['params']['requestor'] = session['user_id']
+        payload['serviceRequest']['params']['expiry'] = session['valid_until']
 
+    data={'payload': json.dumps(payload)}
+    print "POST request\n  url: %s\n  data: %s" % (url,data)    
+        
+    service_gateway_call = requests.post(url,data)
 
+    print "POST response\n  url: %s\n  content: %s" % (url,service_gateway_call)    
 
+    if service_gateway_call.status_code != 200:
+        # TODO figure out how (if at all) we want to handle 401
+        return "The service gateway returned the following error: %d" % service_gateway_call.status_code
+
+    return service_gateway_call
+
+def update_user_info():
+    is_registered = session['is_registered']
+    user_id = session['user_id']
+
+    # determine if this is an update or a new registration
+    if is_registered:
+        # make service call to retrieve existing user info
+        sg_data = SERVICE_REQUEST_TEMPLATE
+        sg_data['serviceRequest']['serviceOp'] = 'find_user_info_by_id'   
+        sg_data['serviceRequest']['params']['user_id'] = user_id
+
+        service_gateway_call = requests.get(
+            '%s/identity_management/find_user_info_by_id' % SERVICE_GATEWAY_BASE_URL, 
+            data={'payload': json.dumps(sg_data)}
+        )
+        
+        # handle response
+        user_info  = json.loads(service_gateway_call.content)
+
+        # populate user info dialog
+        # TODO
+
+    # on successful return from user info dialog,
+    # make service gateway request
+    if is_registered:
+        # make service call to retrieve existing user info
+        sg_data = SERVICE_REQUEST_TEMPLATE
+        sg_data['serviceRequest']['serviceOp'] = 'update_user_info'   
+        sg_data['serviceRequest']['params']['user_info'] = user_info
+
+        service_gateway_call = gateway_post_request(
+            '%s/identity_management/update_user_info' % SERVICE_GATEWAY_BASE_URL, 
+            sg_data
+        )
+    else:
+        # make service call to retrieve existing user info
+        sg_data = SERVICE_REQUEST_TEMPLATE
+        sg_data['serviceRequest']['serviceOp'] = 'create_user_info'   
+        sg_data['serviceRequest']['params']['user_id'] = user_id
+        sg_data['serviceRequest']['params']['user_info'] = user_info
+
+        service_gateway_call = gateway_post_request(
+            '%s/identity_management/create_user_info' % SERVICE_GATEWAY_BASE_URL, 
+            sg_data
+        )
+        
+        # indicate user is registered
+        session['is_registered'] = True
+        
 
 
 def build_schema_from_form(form_data, service="marine_facilities", object_name="marine_facility"):
