@@ -44,6 +44,7 @@ if PRODUCTION:
     from service_api import ServiceApi
 else:
     from dummy_service_api import ServiceApi
+    from service_api import ServiceApi
 
 
 @app.route('/')
@@ -112,36 +113,158 @@ def observatories():
 
 @app.route('/observatories/<marine_facility_id>/', methods=['GET'])
 def observatory_facepage(marine_facility_id):
-    if request.is_xhr:
+    if request.is_xhr:        
+        marine_facility = service_gateway_get('marine_facility_management', 'read_marine_facility', params={'marine_facility_id': marine_facility_id})
         
-        # Marine Facility
-        mf = service_gateway_get('marine_facility_management', 'read_marine_facility', params={'marine_facility_id': marine_facility_id})
-        
-        # Make remaining calls if marine facility found.
-        if mf.has_key('_id'):
+        if marine_facility.has_key('_id'):
+            # GENERAL
+            marine_facility['data_products'] = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'DataProduct', 'id_only': 'False'})[0]
+            marine_facility['platforms'] = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'PlatformDevice', 'id_only': 'False'})[0]
+            marine_facility['instruments'] = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'InstrumentDevice', 'id_only': 'False'})[0]
+
+            # ADMINISTRATION
+            org_id = service_gateway_get('marine_facility_management', 'find_marine_facility_org', params={'marine_facility_id': marine_facility_id})
+            marine_facility['users'] = service_gateway_get('org_management', 'find_enrolled_users', params={'org_id': org_id})
+            marine_facility['policies'] = service_gateway_get('org_management', 'find_org_roles', params={'org_id': org_id})
             
-        return jsonify(data=mf)
+            # SOFTWARE
+            marine_facility['instrument_agents'] = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'InstrumentAgent', 'id_only': 'False'})[0]
+            marine_facility['data_process_definitions'] = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'DataProcessDefinition', 'id_only': 'False'})[0]
+            
+            # EVENTS
+            marine_facility['recent_events'] = []
+            marine_facility['user_requests'] = service_gateway_get('org_management', 'find_requests', params={'org_id': org_id})
+            
+            # DEFINITIONS
+            marine_facility['platform_models'] = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'PlatformModel', 'id_only': 'False'})[0]
+            marine_facility['instrument_models'] = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'InstrumentModel', 'id_only': 'False'})[0]
+             
+            print '\n\n\n'
+            print '----------------------------'
+            print 'FINAL RESULT: ', str(marine_facility)
+            print '----------------------------'
+            
+        return jsonify(data=marine_facility)
     else:
         return create_html_response(request.path)
 
 
-def build_get_request(service_name, operation_name, params={}):
-    url = '%s/%s/%s' % (SERVICE_GATEWAY_BASE_URL, service_name, operation_name)
+@app.route('/platforms/', methods=['GET'])
+def platforms():
+    return create_html_response(request.path)
 
+
+@app.route('/platforms/<platform_device_id>/', methods=['GET'])
+def platform_facepage(platform_device_id):
+    if request.is_xhr:        
+        platform = service_gateway_get('instrument_management', 'read_platform_device', params={'platform_device_id': platform_device_id})
+        
+        # DEPLOYMENTS
+        platform['deployments'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': platform_device_id, 'predicate': 'hasDeployment', 'object_type': 'LogicalPlatform', 'id_only': False})[0]
+        
+        # ADMINISTRATION        
+        platform['instrument_agents'] = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'InstrumentAgent'})
+        platform['policies'] = service_gateway_get('policy_management', 'find_resource_policies', params={'resource_id': platform_device_id})
+        
+        # INSTRUMENTS - ERROR WITH PRELOAD DATA
+        # logical_platform_id = platform['deployments'][0]['_id']
+        # logical_instruments = service_gateway_get('resource_registry', 'find_objects', params={'subject': logical_platform_id, 'predicate': 'hasInstrument', 'id_only': False})[0]
+        # platform['instruments'] = service_gateway_get('instrument_management', 'find_instrument_device_by_platform_device', params={'platform_device_id': platform_device_id})
+        
+        # EVENTS
+        platform['recent_events'] = []
+        platform['user_requests'] = []
+        
+        # DEFINITIONS TBD
+        
+        # FRAMES OF REFERENCE TBD
+        
+        
+        print '\n\n\n'
+        print '----------------------------'
+        print 'FINAL RESULT: ', str(platform)
+        print '----------------------------'
+        
+        return jsonify(data=platform)
+    else:
+        return render_template("ion-ux.html", **{"current_url":request.path})
+        
+
+@app.route('/instruments/', methods=['GET', 'POST'])
+def instruments():
+    return create_html_response(request.path)
+
+
+@app.route('/instruments/<instrument_device_id>/', methods=['GET'])
+def instrument_facepage(instrument_device_id):
+    if request.is_xhr:
+        instrument = service_gateway_get('instrument_management', 'read_instrument_device', params={'instrument_device_id': instrument_device_id})
+        
+        # DATA
+        instrument['data'] = []
+        
+        # DEPLOYMENTS
+        instrument['deployments'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate': 'hasDeployment', 'object_type': 'LogicalInstrument', 'id_only': False})[0]
+        
+        # ADMINISTRATION
+        instrument['instrument_agent'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate': 'hasAgentInstance', 'object_type': 'InstrumentAgentInstance', 'id_only': False})[0]
+        
+        # POLICIES
+        instrument['policies'] = service_gateway_get('policy_management', 'find_resource_policies', params={'resource_id': instrument_device_id})
+        
+        # FRAME OF REFERENCES TBD
+        
+        return jsonify(data=instrument)
+    else:
+        return render_template("ion-ux.html", **{"current_url":request.path})
+
+
+@app.route('/data_process_definition/<data_process_definition_id>/')
+def data_process_definition_facepage(data_process_definition_id):
+    dpd = service_gateway_get('resource_registry', 'read', params={'object_id': data_process_definition_id})
+    dpd['input_stream_definitions'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': data_process_definition_id, 'predicate': 'hasInputStreamDefinition', 'object_type': 'StreamDefinition', 'id_only': False})
+    dpd['output_stream_definitions'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': data_process_definition_id, 'predicate': 'hasStreamDefinition', 'object_type': 'StreamDefinition', 'id_only': False})
+
+    # USED IN
+    dpd['data_process'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': data_process_definition_id, 'predicate': 'hasInstance', 'object_type': 'DataProcess', 'id_only': False})
+    
+    # POLICIES
+    dpd['policies'] = service_gateway_get('policy_management', 'find_resource_policies', params={'resource_id': data_process_definition_id})
+    
+    return jsonify(data=dpd)
+
+
+@app.route('/')
+
+
+def build_get_request(service_name, operation_name, params={}):
+    url = '%s/%s/%s' % (SERVICE_GATEWAY_BASE_URL, service_name, operation_name)    
     if len(params) > 0:
         param_string = '?'
         for (k, v) in params.iteritems():
             param_string += '%s=%s&' % (k,v)
         url += param_string[:-1]
+        
+    print '---------------------------------------'
+    print url
+    print '---------------------------------------'
 
     return url
 
 
 def service_gateway_get(service_name, operation_name, params={}):    
     resp = requests.get(build_get_request(service_name, operation_name, params))
+    print '---------------------------------------'
+    print str(resp.content)
+    print '---------------------------------------'
     
     if resp.status_code == 200:
         resp = json.loads(resp.content)
+        
+        print '---------------------------------------'
+        print 'URL: ', type(resp['data']['GatewayResponse'])
+        print '---------------------------------------'
+        
         if type(resp) == dict:
             return resp['data']['GatewayResponse']
         elif type(resp) == list:
@@ -150,41 +273,7 @@ def service_gateway_get(service_name, operation_name, params={}):
 
 
 
-# @app.route('/observatories/<marine_facility_id>/', methods=['GET'])
-# def observatory_facepage(marine_facility_id):
-#     if request.is_xhr:
-#         resp_data = ServiceApi.find_observatory(marine_facility_id)
-#         return jsonify(data=resp_data)
-#     else:
-#         return create_html_response(request.path)
 
-
-@app.route('/platforms/', methods=['GET'])
-def platforms():
-    return create_html_response(request.path)
-
-
-@app.route('/platforms/<platform_id>/', methods=['GET'])
-def platform_facepage(platform_id):
-    if request.is_xhr: #XXX put into decorator logic
-        resp_data = ServiceApi.find_platform(platform_id)
-        return jsonify(data=resp_data)
-    else:
-        return render_template("ion-ux.html", **{"current_url":request.path}) #XXX put into decorator logic
-
-
-@app.route('/instruments/', methods=['GET', 'POST'])
-def instruments():
-    return create_html_response(request.path)
-
-
-@app.route('/instruments/<instrument_id>/', methods=['GET'])
-def instrument_facepage(instrument_id):
-    if request.is_xhr: #XXX put into decorator logic
-        resp_data = ServiceApi.find_instrument(instrument_id)
-        return jsonify(data=resp_data)
-    else:
-        return render_template("ion-ux.html", **{"current_url":request.path}) #XXX put into decorator logic
 
 
 @app.route('/dataresource', methods=["GET", "POST"])

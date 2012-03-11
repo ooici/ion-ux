@@ -14,47 +14,35 @@
 	
 	<div class="span8">
 
-			<h4>Data Products</h4>
-			<table class="table">
-				<tr>
-					<th>ID</th>
-					<th>Name</th>
-					<th>Description</th>
-					<th>Dataset ID</th>
-					<th>Data Product Level</th>
-					<th>CDM Data Type</th>
-					<th>Updated</th>
-				</tr>
+		<div class="e-borders">
 
-				<% _.each(data_products, function(obj) { %>
-					<tr>
-						<td><%= obj._id %></td>
-						<td><%= obj.name %></td>
-						<td><%= obj.description %></td>
-						<td><%= obj.dataset_id %></td>
-						<td><%= obj.data_product_level %></td>
-						<td><%= obj.CDM_data_type %></td>
-						<td><%= obj.ts_updated %></td>
-					</tr>
-				<% }); %>
-			</table>
-
-
-		<h4>Policies</h4>
+		<h4>Data Products</h4>
 		<table class="table">
 			<tr>
+				<th>ID</th>
 				<th>Name</th>
 				<th>Description</th>
+				<th>Dataset ID</th>
+				<th>Data Product Level</th>
+				<th>CDM Data Type</th>
 				<th>Updated</th>
 			</tr>
-			<% _.each(policies, function(obj) { %>
+			
+			<% _.each(data_products, function(obj) { %>
 				<tr>
+					<td><%= obj._id %></td>
 					<td><%= obj.name %></td>
 					<td><%= obj.description %></td>
+					<td><%= obj.dataset_id %></td>
+					<td><%= obj.data_product_level %></td>
+					<td><%= obj.CDM_data_type %></td>
 					<td><%= obj.ts_updated %></td>
 				</tr>
 			<% }); %>
 		</table>
+		
+		</div>
+		
 		
 		<h4>Platforms</h4>
 		<table class="table">
@@ -74,6 +62,7 @@
 			<% }); %>
 		</table>
 		
+		
 		<h4>Instruments</h4>
 		<table class="table">
 			<tr>
@@ -87,6 +76,24 @@
 				<tr>
 					<td><a href="/instruments/<%= obj._id %>/"><%= obj._id %></a></td>
 					<td><%= obj.name %></td>
+					<td><%= obj.description %></td>
+					<td><%= obj.ts_updated %></td>
+				</tr>
+			<% }); %>
+		</table>
+		
+		<h4>Events</h4>
+		
+		<h4>Recent Events</h4>
+		<table class="table">
+			<tr>
+				<th>Origin</th>
+				<th>Description</th>
+				<th>Updated</th>
+			</tr>
+			<% _.each(events, function(obj) { %>
+				<tr>
+					<td><%= obj.origin %></td>
 					<td><%= obj.description %></td>
 					<td><%= obj.ts_updated %></td>
 				</tr>
@@ -119,6 +126,46 @@
 		</table>
 		
 		
+		
+		
+		<h1>Administration</h1>
+		<h4>Participants</h4>
+		<table class="table">
+			<tr>
+				<th>ID</th>
+				<th>Name</th>
+				<th>Description</th>
+				<th>Email</th>
+				<th>Updated</th>
+			</tr>
+			<% _.each(participants, function(obj) { %>
+				<tr>
+					<td><%= obj._id %></td>
+					<td><%= obj.name %></td>
+					<td><%= obj.description %></td>
+					<td><%= obj.email %></td>
+					<td><%= obj.ts_updated %></td>
+				</tr>
+			<% }); %>
+		</table>
+		
+		
+		<h4>Policies</h4>
+		<table class="table">
+			<tr>
+				<th>Name</th>
+				<th>Description</th>
+				<th>Updated</th>
+			</tr>
+			<% _.each(policies, function(obj) { %>
+				<tr>
+					<td><%= obj.name %></td>
+					<td><%= obj.description %></td>
+					<td><%= obj.ts_updated %></td>
+				</tr>
+			<% }); %>
+		</table>
+		
 		<h4>Instrument Agents</h4>
 		<table class="table">
 			<tr>
@@ -148,7 +195,7 @@
 				</tr>
 			<% }); %>
 		</table>
-		
+
 		<h4>Data Process Definitions</h4>
 		<table class="table">
 			<tr>
@@ -173,7 +220,6 @@
 			<% }); %>
 		</table>
 		
-		
 		<h4>Platform Models</h4>
 		<table class="table">
 			<tr>
@@ -197,8 +243,7 @@
 				</tr>
 			<% }); %>
 		</table>
-		
-		
+
 		<h4>Instrument Models</h4>
 		<table class="table">
 			<tr>
@@ -226,7 +271,6 @@
 				</tr>
 			<% }); %>
 		</table>
-		
 	</div>
 	
 </div> <!-- div#obsevatory-facepage -->

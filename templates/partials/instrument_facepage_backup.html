@@ -1,0 +1,52 @@
+<h2>Instrument: <%= name %> </h2>
+
+
+<div class="btn-group">
+	<a class="btn" href="#">Instrument Controls</a>
+	<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+	<ul class="dropdown-menu">
+		<li><a href="/instruments/<%= instrument_id %>/command/">Command Instrument</a></li>
+		<li><a href="#">Start Direct Access</a></li>
+	</ul>
+</div> <!-- div.btn-group -->
+
+<div id="instrument-facepage" class="row">
+	<div class="span2">
+		<h3>Information</h3>
+		
+		<h4>Identification</h4>
+		<p>Identification placeholder</p>
+		
+		<h4>Location</h4>
+		<p>Location placeholder</p>
+		
+		<h4>Description</h4>
+		<p>Description placeholder</p>
+		
+		<h4>Contact</h4>
+		<p>Contact placeholder</p>
+	</div>
+	
+	<div class="span8">
+		<h3>Data</h3>
+		<p>Latest readings, visualization, etc...</p>
+		
+		<h3>Deployment</h3>
+		<p>Deployments, once it's determined what it is...</p>
+		
+		<h3>Administration</h3>
+
+		<h4>Agent Information</h4>
+		<p>instrument_agent_instance...</p>
+		
+		<h3>Policies</h3>
+		<p>Policy information...</p>
+
+		<h3>Recent Events</h3>
+		<h3>User Requests</h3>
+
+		<h3>Frame of Reference</h3>
+	</div>
+			
+</div> <!-- div#instrument-facepage -->
+
