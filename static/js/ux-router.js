@@ -60,12 +60,20 @@ IONUX.Router = Backbone.Router.extend({
     fpModel.fetch();
   },
   
+  // platforms: function(){
+  //   this._reset();
+  //   $("#platforms-container").show();
+  //   var platforms_view = new IONUX.Views.PlatformsView();
+  //   platforms_view.render();
+  // },
+  
   platforms: function(){
     this._reset();
     $("#platforms-container").show();
-    var platforms_view = new IONUX.Views.PlatformsView();
-    platforms_view.render();
-  },  
+    this.platformsList = new IONUX.Collections.Platforms();
+    var platformsView = new IONUX.Views.PlatformsView({collection:this.platformsList});
+    this.platformsList.fetch();
+  },
   
   platform_facepage: function(platform_id) {
     this._reset();

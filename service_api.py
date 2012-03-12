@@ -10,6 +10,7 @@ class ServiceApi(object):
         marine_facility = service_gateway_get('marine_facility_management', 'read_marine_facility', params={'marine_facility_id': marine_facility_id})
         
         if marine_facility.has_key('_id'):
+
             # GENERAL
             marine_facility['data_products'] = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'DataProduct', 'id_only': 'False'})[0]
             marine_facility['platforms'] = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'PlatformDevice', 'id_only': 'False'})[0]
@@ -137,7 +138,6 @@ def build_get_request(service_name, operation_name, params={}):
 
     return url
 
-
 def service_gateway_get(service_name, operation_name, params={}):    
     resp = requests.get(build_get_request(service_name, operation_name, params))
     pretty_console_log('SERVICE GATEWAY RESPONSE', resp.content)
@@ -149,7 +149,6 @@ def service_gateway_get(service_name, operation_name, params={}):
             return resp['data']['GatewayResponse']
         elif type(resp) == list:
             return resp['data']['GatewayResponse'][0]
-
 
 def pretty_console_log(label, content):
     print '\n\n\n'

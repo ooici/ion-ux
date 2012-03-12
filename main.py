@@ -103,7 +103,11 @@ def observatory_facepage(marine_facility_id):
 
 @app.route('/platforms/', methods=['GET'])
 def platforms():
-    return create_html_response(request.path)
+    if request.is_xhr:
+        platforms = ServiceApi.find_by_resource_type('PlatformDevice')
+        return jsonify(data=platforms)
+    else:
+        return create_html_response(request.path)
 
 
 @app.route('/platforms/<platform_device_id>/', methods=['GET'])

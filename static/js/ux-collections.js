@@ -17,6 +17,19 @@ IONUX.Collections.ObservatoryCollection = Backbone.Collection.extend({
 });
 
 
+IONUX.Collections.Platforms = Backbone.Collection.extend({
+
+  model: IONUX.Models.Platform,
+  url: "/platforms/",
+
+  parse: function(resp) {
+    return resp.data;
+  }
+});
+
+
+
+
 IONUX.Collections.ObservatoryDataProductCollection = Backbone.Collection.extend({
 
   model: IONUX.Models.ObservatoryDataProduct,
