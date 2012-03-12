@@ -23,14 +23,14 @@
     <div class="row">
 			<div id="sidebar" class="span2">
 				
-				<div id="search">
-					<select id="search-select">
-						<!-- resource types -->
-					</select>
-				</div>
-				
 				<span class="sidebar-section">Search</span>
-
+				<div id="search">
+					<select id="search-select"></select>
+				</div>
+				<span class="sidebar-section">Register</span>
+				<ul>
+					<li class="filter"><a href="/register/">Register</a></li>
+				</ul>
 				<span class="sidebar-section">Filters</span>
 				<ul>
 					<li class="filter"><a href="#">This Month</a>
@@ -82,6 +82,7 @@
 		  <div id="data-process-definition-facepage-container" class="viewcontainer"></div>
 		  <div id="data-product-facepage-container" class="viewcontainer"></div>
 		  <div id="user-facepage-container" class="viewcontainer"></div>
+		  <div id="user-registration-container" class="viewcontainer"></div>
 		
           <div id="platforms-container" class="viewcontainer">
            <h4>Platforms</h4>
@@ -142,6 +143,7 @@
 <script type="text/template" id="data-resource-detail-tmpl">{% include 'partials/data_resource_detail.html' %}</script>
 
 <script type="text/template" id="user-facepage-tmpl">{% include 'partials/user_facepage.html' %}</script>
+<script type="text/template" id="user-registration-tmpl">{% include 'partials/new_user.html' %}</script>
 
 
 <!-- Vendor JavaScripts -->

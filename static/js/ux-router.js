@@ -2,6 +2,7 @@ IONUX.Router = Backbone.Router.extend({
 
   routes: {
     "": "dashboard",
+    "register/": "user_registration",
     "observatories/": "observatories",
     "observatories/:marine_facility_id/": "observatory_facepage",
     "platforms/":"platforms",
@@ -18,7 +19,13 @@ IONUX.Router = Backbone.Router.extend({
     "users/": "user_facepage",
     "resource_types/:resource_type_id/": "resource_type_details",
   },
-
+  
+  user_registration: function() {
+    this._reset();
+    var userRegistration = new IONUX.Views.UserRegistration();
+    userRegistration.render();
+  },
+  
   dashboard: function(){
     this._reset();
     var search = new IONUX.Views.Search();
@@ -31,7 +38,8 @@ IONUX.Router = Backbone.Router.extend({
     this.observatory_modal.render();
   },
 
-  // data_resource: function(){
+  //   LEFT FOR REFERENCE -- VIEWS NO LONGER NEEDED
+  //   data_resource: function(){
   //   this._reset();
   //   this.dataResourceList = new IONUX.Collections.DataResources();
   //   this.dataResourceListView = new IONUX.Views.DataResourceView({collection:this.dataResourceList});
@@ -59,13 +67,6 @@ IONUX.Router = Backbone.Router.extend({
     new IONUX.Views.ObservatoryFacepage({model:fpModel});
     fpModel.fetch();
   },
-  
-  // platforms: function(){
-  //   this._reset();
-  //   $("#platforms-container").show();
-  //   var platforms_view = new IONUX.Views.PlatformsView();
-  //   platforms_view.render();
-  // },
   
   platforms: function(){
     this._reset();

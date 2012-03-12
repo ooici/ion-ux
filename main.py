@@ -66,6 +66,21 @@ def signon():
     # handle response and set cookie if successful (redirect to user registration)
 
 
+@app.route('/register/', methods=['GET', 'POST'])
+def register():
+    if request.is_xhr:
+        if request.method == 'POST':
+            
+            
+            # Handle post
+            resp_data = {"success":True}
+        else:
+            resp_data = {}            
+        return jsonify(data=resp_data)
+    else:
+        return create_html_response(request.path)
+
+
 # Generic index to view any resource type
 @app.route('/list/<resource_type>/', methods=['GET'])
 def list(resource_type=None):

@@ -29,9 +29,6 @@ IONUX.Views.CreateNewView = Backbone.View.extend({
   }
 });
 
-IONUX.Views.List = Backbone.View.extend({
-  
-});
 
 
 
@@ -120,7 +117,22 @@ IONUX.Views.ObservatoriesView = Backbone.View.extend({
     }
     this.observatories_create_new_view.render();
   }
+});
+
+
+IONUX.Views.UserRegistration = IONUX.Views.CreateNewView.extend({
+  el: "#user-registration-container",
+  template: _.template($("#user-registration-tmpl").html()),
   
+  initialize: function() {
+    _.bindAll(this, "render");
+  },
+  
+  render: function() {
+   this.$el.html(this.template()).show();
+   $('#contact__name').focus();
+   return this; 
+  }
 });
 
 
