@@ -1,9 +1,13 @@
 from flask import Flask, request, session, jsonify, render_template, redirect, url_for
 import requests, json
 from functools import wraps
+import base64
+import hashlib
+import time
 
 app = Flask(__name__)
 
+app.secret_key = hashlib.sha1(str(time.time()))
 
 HOST = '67.58.49.208'
 PORT = 3000
@@ -51,13 +55,18 @@ def signon():
     # carriage returns were removed on the cilogon portal side,
     # restore them before processing
     raw_cert = request.args.get("cert")
-    certificate = raw_cert.replace('\\n','\n')
+    print "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    print "encoded cert:\n%s" % raw_cert
+    certificate = base64.b64decode(raw_cert)
+    print "YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY"
+    print "cert:\n%s" % certificate
 
     # TODO is this the right url to go to post signon?
     redirect_url = '/'
     
     # build signon service gateway request
     sg_data = SERVICE_REQUEST_TEMPLATE
+    sg_data['serviceRequest']['serviceName'] = 'identity_management'   
     sg_data['serviceRequest']['serviceOp'] = 'signon'   
     sg_data['serviceRequest']['params']['certificate'] = certificate
         
@@ -66,9 +75,12 @@ def signon():
         '%s/identity_management/signon' % SERVICE_GATEWAY_BASE_URL, 
         sg_data
     )
-        
+
+    print "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ"
+    print "service_gateway_call.content: %s" % str(service_gateway_call.content)        
     # handle response and set cookie if successful
-    user_id, valid_until, is_registered  = json.loads(service_gateway_call.data)
+    res = json.loads(service_gateway_call.content)
+    user_id, valid_until, is_registered = res["data"]["GatewayResponse"]
     
     # set user id, valid until and is registered info in session
     # TODO might need to address issues that arise with using
@@ -84,6 +96,63 @@ def signon():
 
     # TODO redirect to url they were displaying before hitting the login button?
     return redirect(redirect_url)
+
+@app.route('/register/', methods=['GET','POST'])
+def register():
+    if 
+    is_registered = session['is_registered']
+    user_id = session['user_id']
+
+    # determine if this is an update or a new registration
+    if is_registered:
+        # make service call to retrieve existing user info
+        sg_data = SERVICE_REQUEST_TEMPLATE
+        sg_data['serviceRequest']['serviceName'] = 'identity_management'   
+        sg_data['serviceRequest']['serviceOp'] = 'find_user_info_by_id'   
+        sg_data['serviceRequest']['params']['user_id'] = user_id
+
+        service_gateway_call = requests.get(
+            '%s/identity_management/find_user_info_by_id' % SERVICE_GATEWAY_BASE_URL, 
+            data={'payload': json.dumps(sg_data)}
+        )
+        
+        # handle response
+        user_info  = json.loads(service_gateway_call.content)
+
+        # populate user info dialog
+        # TODO
+
+    # TODO display user info dialog
+    # TODO scrape content into user_info object
+
+    # on successful return from user info dialog,
+    # make service gateway request
+    if is_registered:
+        # make service call to retrieve existing user info
+        sg_data = SERVICE_REQUEST_TEMPLATE
+        sg_data['serviceRequest']['serviceName'] = 'identity_management'   
+        sg_data['serviceRequest']['serviceOp'] = 'update_user_info'   
+        sg_data['serviceRequest']['params']['user_info'] = user_info
+
+        service_gateway_call = gateway_post_request(
+            '%s/identity_management/update_user_info' % SERVICE_GATEWAY_BASE_URL, 
+            sg_data
+        )
+    else:
+        # make service call to retrieve existing user info
+        sg_data = SERVICE_REQUEST_TEMPLATE
+        sg_data['serviceRequest']['serviceName'] = 'identity_management'   
+        sg_data['serviceRequest']['serviceOp'] = 'create_user_info'   
+        sg_data['serviceRequest']['params']['user_id'] = user_id
+        sg_data['serviceRequest']['params']['user_info'] = user_info
+
+        service_gateway_call = gateway_post_request(
+            '%s/identity_management/create_user_info' % SERVICE_GATEWAY_BASE_URL, 
+            sg_data
+        )
+        
+        # indicate user is registered
+        session['is_registered'] = True
     
 @app.route('/dashboard', methods=["GET"])
 def dashboard():
@@ -314,55 +383,6 @@ def gateway_post_request(url, payload):
         return "The service gateway returned the following error: %d" % service_gateway_call.status_code
 
     return service_gateway_call
-
-def update_user_info():
-    is_registered = session['is_registered']
-    user_id = session['user_id']
-
-    # determine if this is an update or a new registration
-    if is_registered:
-        # make service call to retrieve existing user info
-        sg_data = SERVICE_REQUEST_TEMPLATE
-        sg_data['serviceRequest']['serviceOp'] = 'find_user_info_by_id'   
-        sg_data['serviceRequest']['params']['user_id'] = user_id
-
-        service_gateway_call = requests.get(
-            '%s/identity_management/find_user_info_by_id' % SERVICE_GATEWAY_BASE_URL, 
-            data={'payload': json.dumps(sg_data)}
-        )
-        
-        # handle response
-        user_info  = json.loads(service_gateway_call.content)
-
-        # populate user info dialog
-        # TODO
-
-    # on successful return from user info dialog,
-    # make service gateway request
-    if is_registered:
-        # make service call to retrieve existing user info
-        sg_data = SERVICE_REQUEST_TEMPLATE
-        sg_data['serviceRequest']['serviceOp'] = 'update_user_info'   
-        sg_data['serviceRequest']['params']['user_info'] = user_info
-
-        service_gateway_call = gateway_post_request(
-            '%s/identity_management/update_user_info' % SERVICE_GATEWAY_BASE_URL, 
-            sg_data
-        )
-    else:
-        # make service call to retrieve existing user info
-        sg_data = SERVICE_REQUEST_TEMPLATE
-        sg_data['serviceRequest']['serviceOp'] = 'create_user_info'   
-        sg_data['serviceRequest']['params']['user_id'] = user_id
-        sg_data['serviceRequest']['params']['user_info'] = user_info
-
-        service_gateway_call = gateway_post_request(
-            '%s/identity_management/create_user_info' % SERVICE_GATEWAY_BASE_URL, 
-            sg_data
-        )
-        
-        # indicate user is registered
-        session['is_registered'] = True
         
 
 
