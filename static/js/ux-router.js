@@ -2,18 +2,21 @@ IONUX.Router = Backbone.Router.extend({
 
   routes: {
     "": "dashboard",
-    "data/": "data_resource",
-    "data/:data_resource_id": "data_resource_details",
     "observatories/": "observatories",
     "observatories/:marine_facility_id/": "observatory_facepage",
     "platforms/":"platforms",
     "platforms/:platform_id/": "platform_facepage",
+    "platform_models/:platform_model_id/": "platform_model_facepage",
     "instruments/":"instruments",
     "instruments/:instrument_id/" : "instrument_facepage",
-    "data_process_definitions/:data_process_definition_id/": "data_process_definition_facepage",
-    "data_product/:data_product_id": "",
     "instruments/:instrument_id/command/": "instrument_command_facepage",
-    "resource_types/:resource_type_id/": "resource_type_details"
+    "instrument_models/:instrument_model_id/": "instrument_model_facepage",
+    "instrument_agents/:instrument_agent_id/": "instrument_agent_facepage",
+    "frames_of_references/": "frames_of_reference_facepage",
+    "data_process_definitions/:data_process_definition_id/": "data_process_definition_facepage",
+    "data_products/:data_product_id/": "data_product_facepage",
+    "users/": "user_facepage",
+    "resource_types/:resource_type_id/": "resource_type_details",
   },
 
   dashboard: function(){
@@ -28,19 +31,19 @@ IONUX.Router = Backbone.Router.extend({
     this.observatory_modal.render();
   },
 
-  data_resource: function(){
-    this._reset();
-    this.dataResourceList = new IONUX.Collections.DataResources();
-    this.dataResourceListView = new IONUX.Views.DataResourceView({collection:this.dataResourceList});
-    this.dataResourceList.fetch();
-  },
-
-  data_resource_details: function(data_resource_id){
-    this._reset();
-    var detailsModel = new IONUX.Models.DataResourceDetails({data_resource_id:data_resource_id});
-    this.dataResourceDetailView = new IONUX.Views.DataResourceDetailView({model:detailsModel});
-    detailsModel.fetch();
-  },
+  // data_resource: function(){
+  //   this._reset();
+  //   this.dataResourceList = new IONUX.Collections.DataResources();
+  //   this.dataResourceListView = new IONUX.Views.DataResourceView({collection:this.dataResourceList});
+  //   this.dataResourceList.fetch();
+  // },
+  // 
+  // data_resource_details: function(data_resource_id){
+  //   this._reset();
+  //   var detailsModel = new IONUX.Models.DataResourceDetails({data_resource_id:data_resource_id});
+  //   this.dataResourceDetailView = new IONUX.Views.DataResourceDetailView({model:detailsModel});
+  //   detailsModel.fetch();
+  // },
 
   observatories: function(){
     this._reset();
@@ -70,6 +73,14 @@ IONUX.Router = Backbone.Router.extend({
     new IONUX.Views.PlatformFacepage({model:fpModel});
     fpModel.fetch();
   },
+  
+  platform_model_facepage: function(platform_model_id) {
+    console.log(platform_model_id);
+    this._reset();
+    var fpModel = new IONUX.Models.PlatformModelFacepageModel({platform_model_id: platform_model_id});
+    new IONUX.Views.PlatformModelFacepage({model: fpModel});
+    fpModel.fetch();
+  },
 
   instruments: function(){
     this._reset();
@@ -78,16 +89,11 @@ IONUX.Router = Backbone.Router.extend({
     instruments_view.render();
   },
   
-  
   instrument_facepage: function(instrument_id) {
     this._reset();
     var fpModel = new IONUX.Models.InstrumentFacepageModel({instrument_id: instrument_id});
     new IONUX.Views.InstrumentFacepage({model:fpModel});
     fpModel.fetch();
-  },
-  
-  resource_type_details: function(resource_type_id) {
-      this._reset();
   },
   
   instrument_command_facepage : function() {
@@ -96,11 +102,52 @@ IONUX.Router = Backbone.Router.extend({
     instrumentCommandFacepageView.render();
   },
   
-  
-  data_process_definition_facepage: function() {
+  instrument_model_facepage: function(instrument_model_id) {
     this._reset();
-    var dataProcessDefinitionFacepage = new IONUX.Views.DataProcessDefinitionFacepage();
-    dataProcessDefinitionFacepage.render();
+    var fpModel = new IONUX.Models.InstrumentModelFacepageModel({instrument_model_id: instrument_model_id});
+    new IONUX.Views.InstrumentModelFacepage({model: fpModel});
+    fpModel.fetch();
+  },
+  
+  instrument_agent_facepage: function(instrument_agent_id) {
+    this._reset();
+    var fpModel = new IONUX.Models.InstrumentAgentFacepageModel({instrument_agent_id: instrument_agent_id});
+    new IONUX.Views.InstrumentAgentFacepage({model: fpModel});
+    console.log("instrument_agent_facepage");
+    fpModel.fetch();
+    console.log(fpModel);
+  },
+  
+  data_process_definition_facepage: function(data_process_definition_id) {
+    this._reset();
+    var fpModel = new IONUX.Models.DataProcessDefinitionFacepageModel({data_process_definition_id: data_process_definition_id});
+    new IONUX.Views.DataProcessDefinitionFacepage({model: fpModel});
+    fpModel.fetch();
+  },
+  
+  data_product_facepage: function(data_product_id) {
+    console.log("DataProduct!")
+    this._reset();
+    var fpModel = new IONUX.Models.DataProductFacepageModel({data_product_id: data_product_id});
+    new IONUX.Views.DataProductFacepage({model: fpModel});
+    fpModel.fetch();
+  },
+  
+  frames_of_reference_facepage : function() {
+    this._reset();
+    var framesOfReferenceFacepage = new IONUX.Views.FramesOfReferenceFacepage();
+    framesOfReferenceFacepage.render();
+  },
+  
+  user_facepage : function() {
+    this._reset();
+    var userFacepage = new IONUX.Views.UserFacepage();
+    userFacepage.render();
+  },
+  
+
+  resource_type_details: function(resource_type_id) {
+      this._reset();
   },
 
   handle_navigation: function(){

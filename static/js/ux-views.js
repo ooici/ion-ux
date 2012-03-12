@@ -275,7 +275,6 @@ IONUX.Views.PlatformCreateNewView = IONUX.Views.CreateNewView.extend({
   // cancel: function(){
   //   this.$el.hide();
   // }
-
 });
 
 
@@ -344,8 +343,6 @@ IONUX.Views.PlatformFacepage = Backbone.View.extend({
 
   template: _.template($("#platform-facepage-tmpl").html()),
 
-  //events: { },
-
   initialize: function(){
     _.bindAll(this, "render");
     this.model.bind("change", this.render);
@@ -356,6 +353,24 @@ IONUX.Views.PlatformFacepage = Backbone.View.extend({
   }
 
 });
+
+IONUX.Views.PlatformModelFacepage = Backbone.View.extend({
+
+  el: "#platform-model-facepage-container",
+
+  template: _.template($("#platform-model-facepage-tmpl").html()),
+
+  initialize: function(){
+    _.bindAll(this, "render");
+    this.model.bind("change", this.render);
+  },
+
+  render: function(){
+    console.log('PlatformModelFacepage');
+    this.$el.html(this.template(this.model.toJSON())).show();
+  }
+});
+
 
 IONUX.Views.InstrumentFacepage = Backbone.View.extend({
 
@@ -373,7 +388,6 @@ IONUX.Views.InstrumentFacepage = Backbone.View.extend({
   render: function(){
     this.$el.html(this.template(this.model.toJSON())).show();
   }
-
 });
 
 IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
@@ -391,10 +405,37 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
   }
 });
 
+IONUX.Views.InstrumentModelFacepage = Backbone.View.extend({
 
+  el: "#instrument-model-facepage-container",
 
+  template: _.template($("#instrument-model-facepage-tmpl").html()),
 
-// Data views
+  initialize: function(){
+    _.bindAll(this, "render");
+    this.model.bind("change", this.render);
+  },
+
+  render: function(){
+    this.$el.html(this.template(this.model.toJSON())).show();
+  }
+});
+
+IONUX.Views.InstrumentAgentFacepage = Backbone.View.extend({
+
+  el: "#instrument-agent-facepage-container",
+
+  template: _.template($("#instrument-agent-facepage-tmpl").html()),
+
+  initialize: function(){
+    _.bindAll(this, "render");
+    this.model.bind("change", this.render);
+  },
+
+  render: function(){
+    this.$el.html(this.template(this.model.toJSON())).show();
+  }
+});
 
 IONUX.Views.DataProcessDefinitionFacepage = Backbone.View.extend({
   el: "#data-process-definition-facepage-container",
@@ -402,12 +443,14 @@ IONUX.Views.DataProcessDefinitionFacepage = Backbone.View.extend({
   
   initialize: function(){
     _.bindAll(this, "render");
+    this.model.bind("change", this.render);
   },
   
   render: function(){
-    this.$el.empty().html(this.template({})).show();
+    this.$el.empty().html(this.template(this.model.toJSON())).show();
   }
 });
+
 
 IONUX.Views.DataProductFacepage = Backbone.View.extend({
   el: "#data-product-facepage-container",
@@ -415,13 +458,42 @@ IONUX.Views.DataProductFacepage = Backbone.View.extend({
   
   initialize: function(){
     _.bindAll(this, "render");
+    this.model.bind("change", this.render);
   },
   
+  render: function(){
+    this.$el.empty().html(this.template(this.model.toJSON())).show();
+  }
+});
+
+
+IONUX.Views.FramesOfReferenceFacepage = Backbone.View.extend({
+  el: "#frames-of-reference-facepage-container",
+
+  template: _.template($("#frames-of-reference-facepage-tmpl").html()),
+
+  initialize: function(){
+    _.bindAll(this, "render");
+  },
+
   render: function(){
     this.$el.empty().html(this.template({})).show();
   }
 });
 
+IONUX.Views.UserFacepage = Backbone.View.extend({
+  el: "#user-facepage-container",
+
+  template: _.template($("#user-facepage-tmpl").html()),
+
+  initialize: function(){
+    _.bindAll(this, "render");
+  },
+
+  render: function(){
+    this.$el.empty().html(this.template({})).show();
+  }
+});
 
 
 IONUX.Views.Search = Backbone.View.extend({
@@ -444,8 +516,6 @@ IONUX.Views.Search = Backbone.View.extend({
         })
       }
     })
-    
-    
   }
 });
 

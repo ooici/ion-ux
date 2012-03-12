@@ -1,45 +1,54 @@
-<h1>Data Product: (name of data product)</h1>
+<h1>Data Product: <%= name %></h1>
 
 <div class="row">
 	<div class="span2">
-		<h3>Information</h3>
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Information</h3>
+					
+			<h4>Identification</h4>
+			<p>Identification placeholder</p>
 		
-		<h4>Identification</h4>
-		<p>Identification placeholder</p>
+			<h4>Location</h4>
+			<p>Location placeholder</p>
 		
-		<h4>Location</h4>
-		<p>Location placeholder</p>
+			<h4>Description</h4>
+			<p>Description placeholder</p>
 		
-		<h4>Description</h4>
-		<p>Description placeholder</p>
+			<h4>Contact</h4>
+			<p>Contact placeholder</p>
 		
-		<h4>Contact</h4>
-		<p>Contact placeholder</p>
-		
-		<h4>Additional Informtion</h4>
-		<p>
-			Data Product Level:<br />
-			Data Product Quality Control Level: <br />
-			Data Product Version Status:<br />
-			CDM Data Type:
-		</p>
+			<h4>Additional Informtion</h4>
+			<p>
+				Data Product Level:<br />
+				Data Product Quality Control Level: <br />
+				Data Product Version Status:<br />
+				CDM Data Type:
+			</p>
+		</section>
 	</div>	
 	
 	<div class="span8">
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Data</h3>
+			<p>Placeholder...</p>
 
-		<h3>Data</h3>
-		<h5>Data Information</h5>
-		<input type="checkbox" name="Persistant" value="" id="">
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Data Information</h3>
+				<input type="checkbox" name="Persistant" value="" id=""> Persistent
+				<p>Placeholder...</p>
+			</section>
+		</section>
 		
 		<!-- end data -->
-
-		<h3>Variables</h3>
-		<p>List of variable names</p>
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Variables</h3>
+			<p>List of variable names</p>
+		</section>
 		
-		<h3>Processes</h3>
-		<p>DataTable - Processes used to produce data product.</p>
-		<p>DataTable - Processes that use this data product.</p>
-		
-		<h3></h3>
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Processes</h3>
+			<p>DataTable - Processes used to produce data product.</p>
+			<p>DataTable - Processes that use this data product.</p>
+		</section>
 	</div>
 </div>

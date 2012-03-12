@@ -2,50 +2,39 @@
 
 <div id="lca-collections" class="row">
 	<div class="span2 test">
-		<h3>Information</h3>
-		<p>Information placeholder</p>
-		
-		<h3>Coverage</h3>
-		<p>Coverage placeholder</p>
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Information</h3>
+			<p>Placeholder</p>
 
-		<h3>Identification</h3>
-		<p>Identification placeholder</p>
+			<h3>Coverage</h3>
+			<p>Placeholder</p>
+
+			<h3>Identification</h3>
+			<p>Placeholder...</p>
+		</section>
 	</div>
 		
 	<div class="span8 test">
-		<h3>Observatories</h3>
-		
-		<div class="btn-group">
-			<a class="btn" href="#">Panel Controls</a>
-			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
-			<ul class="dropdown-menu">
-				<li><a href="#">Option One</a></li>
-				<li><a href="#">Option Two</a></li>
-				<li><a href="#">Option Three</a></li>
-			</ul>
-		</div> <!-- div.btn-group -->
-		
-		<table id="observatories-container" class="table datatable-ize" width="100%">
-			<tr>
-				<th>Observatory</th>
-				<th>Institution</th>
-				<th>Description</th>
-				<th>Contact</th>
-			</tr>
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Observatories</h3>
+			<table id="observatories-container" class="table datatable-ize" width="100%">
+				<tr>
+					<th>Observatory</th>
+					<th>Institution</th>
+					<th>Description</th>
+					<th>Contact</th>
+				</tr>
 
-		    <% _.each(collection, function(obj) { %>
-					<tr>
-						<td><a href="/observatories/<%= obj._id %>/"><%= obj.name %></a></td>
-						<td><%= obj.institution.name %></td>
-						<td><%= obj.description %></td>
-						<td><%= obj.contact.name %></td>
-					</tr>
-		    <% }); %>
-		</table>
-		
-
-		</table>
-		
+			    <% _.each(collection, function(obj) { %>
+						<tr>
+							<td><a href="/observatories/<%= obj._id %>/"><%= obj.name %></a></td>
+							<td><%= obj.institution.name %></td>
+							<td><%= obj.description %></td>
+							<td><%= obj.contact.name %></td>
+						</tr>
+			    <% }); %>
+			</table>		
+		</section>
 	</div>
 </div>
 

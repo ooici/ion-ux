@@ -50,32 +50,10 @@
 				
 				<span class="sidebar-section">Development Links</span>
 				<ul>
-					<li class=""><a href="/data_process_definitions/abc123/">Data Process Definition</a>
+					<li class=""><a href="/frames_of_references/">frames of reference</a>
+					<li class=""><a href="/users/">user</a>
 				</ul>
 
-				<!-- <span class="sidebar-section">My Resources</span>
-				<ul>
-					<li class="notifications"><a href="#">Notifications</a></li>
-					<li class="publications"><a href="#">Publications</a></li>
-				</ul>
-
-
-				<span class="sidebar-section">My Collections</span>
-				<ul>
-					<li class="right"><a href="#">Notifications</a></li>
-					<li class="down"><a href="#">Undeployed Instruments</a>
-						<ul>
-							<li><a href="#">abc instrument</a></li>
-							<li><a href="#">def instrument</a></li>
-						</ul>
-					</li>
-					<li class="down"><a href="#">Available Policies</a>
-						<ul>
-							<li><a href="#">My Class 0101</a></li>
-							<li><a href="#">Police 034956</a></li>
-						</ul>
-					</li>
-				</ul> -->
 			</div> <!-- div#sidebar -->
 			
 			<div id="main" class="span10">
@@ -95,10 +73,15 @@
           <div id="observatories-container" class="viewcontainer"></div>
           <div id="observatory-facepage-container" class="viewcontainer"></div>
           <div id="platform-facepage-container" class="viewcontainer"></div>
+		  <div id="platform-model-facepage-container" class="viewcontainer"></div>
           <div id="instrument-facepage-container" class="viewcontainer"></div>
 		  <div id="instrument-command-facepage-container" class="viewcontainer"></div>
+		  <div id="instrument-model-facepage-container" class="viewcontainer"></div>
+		  <div id="instrument-agent-facepage-container" class="viewcontainer"></div>
+		  <div id="frames-of-reference-facepage-container" class="viewcontainer"></div>
 		  <div id="data-process-definition-facepage-container" class="viewcontainer"></div>
 		  <div id="data-product-facepage-container" class="viewcontainer"></div>
+		  <div id="user-facepage-container" class="viewcontainer"></div>
 		
           <div id="platforms-container" class="viewcontainer">
            <h4>Platforms</h4>
@@ -108,7 +91,7 @@
            <h4>Instruments</h4>
           </div>
 
-				</div> <!-- div#container -->
+			</div> <!-- div#container -->
 			</div> <!-- div#main -->
 
    </div> <!-- div.row -->
@@ -135,25 +118,30 @@
 <script type="text/template" id="observatories-item-tmpl">{% include 'partials/observatories_item.html' %}</script>
 <script type="text/template" id="observatories-detail-tmpl">{% include 'partials/observatories_detail.html' %} </script>
 <script type="text/template" id="observatory-facepage-tmpl">{% include 'partials/observatory_facepage.html' %} </script>
+<script type="text/template" id="new-observatory-tmpl">{% include 'partials/new_marine_facility.html' %}</script>
+<script type="text/template" id="observatory-modal-tmpl">{% include 'partials/observatory_modal.html' %}</script>
 
 <script type="text/template" id="platforms-tmpl">{% include 'partials/platforms_list.html' %}</script>
 <script type="text/template" id="platform-facepage-tmpl">{% include 'partials/platform_facepage.html' %} </script>
+<script type="text/template" id="new-platform-tmpl">{% include 'partials/new_platform_device.html' %}</script>
+<script type="text/template" id="platform-model-facepage-tmpl">{% include 'partials/platform_model_facepage.html' %}</script>
 
 <script type="text/template" id="instruments-tmpl">{% include 'partials/instruments_list.html' %}</script>
 <script type="text/template" id="instrument-facepage-tmpl">{% include 'partials/instrument_facepage.html' %}</script>
 <script type="text/template" id="instrument-command-facepage-tmpl">{% include 'partials/instrument_command_facepage.html' %}</script>
+<script type="text/template" id="new-instrument-tmpl">{% include 'partials/new_instrument_device.html' %}</script>
+<script type="text/template" id="instrument-model-facepage-tmpl">{% include 'partials/instrument_model_facepage.html' %}</script>
+<script type="text/template" id="instrument-agent-facepage-tmpl">{% include 'partials/instrument_agent_facepage.html' %}</script>
+
+<script type="text/template" id="frames-of-reference-facepage-tmpl">{% include 'partials/frames_of_reference_facepage.html' %}</script>
 
 <script type="text/template" id="data-process-definition-facepage-tmpl">{% include 'partials/data_process_definition_facepage.html' %}</script>
 <script type="text/template" id="data-product-facepage-tmpl">{% include 'partials/data_product_facepage.html' %}</script>
 
 <script type="text/template" id="data-resource-item-tmpl">{% include 'partials/data_resource_item.html' %}</script>
 <script type="text/template" id="data-resource-detail-tmpl">{% include 'partials/data_resource_detail.html' %}</script>
-<script type="text/template" id="new-observatory-tmpl">{% include 'partials/new_marine_facility.html' %}</script>
-<script type="text/template" id="new-platform-tmpl">{% include 'partials/new_platform_device.html' %}</script>
-<script type="text/template" id="new-instrument-tmpl">{% include 'partials/new_instrument_device.html' %}</script>
 
-
-<script type="text/template" id="observatory-modal-tmpl">{% include 'partials/observatory_modal.html' %}</script>
+<script type="text/template" id="user-facepage-tmpl">{% include 'partials/user_facepage.html' %}</script>
 
 
 <!-- Vendor JavaScripts -->
@@ -178,6 +166,9 @@
     $('.scrollpane').jScrollPane({autoReinitialise: true});
     var ionux_router = IONUX.init();
     ionux_router.handle_url("{{ current_url }}");
+	
+	// Temporary hack to set background
+	$('body').css('background-color', '#eee');
   });
 
 </script>

@@ -2,29 +2,47 @@
 
 <div id="platform-facepage" class="row">
 	<div class="span2">
-		<p>
-			<strong>Name: </strong><%= name %><br />
-			<strong>ID: </strong><%= _id %><br />
-		</p>
-		
-		<p>
-			<strong>Model: </strong><%= model %><br />
-			<strong>SN#: </strong><%= serial_number %><br />
-			<strong>Manufacture Date: </strong><%= manufacture_date %><br />
-		</p>
-		
-		<h4>Description</h4>
-		<p><%= description %></p>
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Information</h3>
+			<p>
+				<strong>Name: </strong><%= name %><br />
+				<strong>ID: </strong><%= _id %><br />
+			</p>
+			<p>
+				<strong>Model: </strong><%= model %><br />
+				<strong>SN#: </strong><%= serial_number %><br />
+				<strong>Manufacture Date: </strong><%= manufacture_date %><br />
+			</p>
+
+			<h4>Description</h4>
+			<p><%= description %></p>
+		</section>
 	</div>
 	
-	
 	<div class="span8">
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Deployments</h3>
+			<p>...</p>
+		</section>
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Administration</h3>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Agent</h3>
+				<p>...</p>
+			</section>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Policies</h3>
+				<p>...</p>
+			</section>
+		</section>
 		
-		<div>
-			<h4>Deployments</h4>
-			<p>Placeholder...</p>
-		</div>
-		
-		
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Instruments</h3>
+			<p>...</p>
+		</section>
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Frames of Reference</h3>
+			<p>...</p>
+		</section>
 	</div>
 </div>
