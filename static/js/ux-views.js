@@ -506,7 +506,6 @@ IONUX.Views.Search = Backbone.View.extend({
   render: function() {
     var collection = new IONUX.Collections.ResourceTypes();
     var select_elem = $("#search-select");
-    console.log('lkjasfd');
     
     collection.fetch({
       success: function(resp) {

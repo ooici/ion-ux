@@ -113,9 +113,7 @@ IONUX.Router = Backbone.Router.extend({
     this._reset();
     var fpModel = new IONUX.Models.InstrumentAgentFacepageModel({instrument_agent_id: instrument_agent_id});
     new IONUX.Views.InstrumentAgentFacepage({model: fpModel});
-    console.log("instrument_agent_facepage");
     fpModel.fetch();
-    console.log(fpModel);
   },
   
   data_process_definition_facepage: function(data_process_definition_id) {
@@ -144,7 +142,6 @@ IONUX.Router = Backbone.Router.extend({
     var userFacepage = new IONUX.Views.UserFacepage();
     userFacepage.render();
   },
-  
 
   resource_type_details: function(resource_type_id) {
       this._reset();
