@@ -91,12 +91,13 @@ IONUX.Router = Backbone.Router.extend({
     new IONUX.Views.PlatformModelFacepage({model: fpModel});
     fpModel.fetch();
   },
-
+  
   instruments: function(){
     this._reset();
     $("#instruments-container").show();
-    var instruments_view = new IONUX.Views.InstrumentsView();
-    instruments_view.render();
+    this.instrumentsList = new IONUX.Collections.Instruments();
+    var instrumentsView = new IONUX.Views.InstrumentsView({collection: this.instrumentsList});
+    this.instrumentsList.fetch();
   },
   
   instrument_facepage: function(instrument_id) {

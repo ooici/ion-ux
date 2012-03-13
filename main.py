@@ -5,6 +5,8 @@ import base64
 import hashlib
 import time
 
+from config import GATEWAY_HOST
+
 app = Flask(__name__)
 
 #app.secret_key = hashlib.sha1(str(time.time()))
@@ -16,7 +18,7 @@ PORT = 3000
 LOGGED_IN = True
 PRODUCTION = False
 
-GATEWAY_HOST = "localhost:5000"
+
 SERVICE_GATEWAY_BASE_URL = 'http://%s/ion-service' % GATEWAY_HOST
 
 if PRODUCTION:
@@ -26,7 +28,7 @@ else:
     from service_api import ServiceApi
 
 DEFINED_SERVICES_OPERATIONS = {
-    'observatories': {
+    'marine_facilities': {
             'restype': 'MarineFacility',
             'service_name': 'marine_facility_management',
             'object_name': 'marine_facility',
@@ -180,7 +182,11 @@ def platform_model_facepage(platform_model_id):
 
 @app.route('/instruments/', methods=['GET', 'POST'])
 def instruments():
-    return create_html_response(request.path)
+    if request.is_xhr:
+        instruments = ServiceApi.find_by_resource_type('InstrumentDevice')
+        return jsonify(data=instruments)
+    else:
+        return create_html_response(request.path)
 
 
 @app.route('/instruments/<instrument_device_id>/', methods=['GET'])
@@ -190,6 +196,20 @@ def instrument_facepage(instrument_device_id):
         return jsonify(data=instrument)
     else:
         return render_template("ion-ux.html", **{"current_url":request.path})
+        
+        
+@app.route('/instruments/<instrument_device_id>/command/', methods=['GET'])
+def instrument_facepage(instrument_device_id):
+    if request.is_xhr:
+        instrument = ServiceApi.find_instrument(instrument_device_id)
+        return jsonify(data=instrument)
+    else:
+        return render_template("ion-ux.html", **{"current_url":request.path})
+
+@app.route('/instruments/<instrument_device_id>/command/start_agent/')
+def start_instrument_agent(instrument_device_id):
+    instrument = ServiceApi.start_instrument_agent(instrument_device_id)
+    return jsonify(data=True)
 
 
 @app.route('/instrument_models/<instrument_model_id>/', methods=['GET'])
@@ -433,7 +453,7 @@ def build_schema_from_form(form_data, service="marine_facilities", object_name="
 def fetch_menu():        
     menu_data = requests.get('%s/list_resource_types' % SERVICE_GATEWAY_BASE_URL)
     menu = json.loads(menu_data.content)
-    
+    print menu
     return menu['data']['GatewayResponse']
 
 

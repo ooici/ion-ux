@@ -11,6 +11,11 @@
 				<strong>Name: </strong><%= name %><br />
 				<strong>ID: </strong><%= _id %>
 			</p>
+			<h3>Owner</h3>
+			<p>
+				<strong>Name:</strong> <%= owner.contact.name %><br />
+				<strong>Email:</strong> <a href="mailto:<%= owner.contact.mail %>"><%= owner.contact.email %></a>
+			</p>
 		</section>
 	</div>
 	
