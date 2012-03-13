@@ -7,7 +7,6 @@ IONUX.Collections.DataResources = Backbone.Collection.extend({
 
 
 IONUX.Collections.ObservatoryCollection = Backbone.Collection.extend({
-
   model: IONUX.Models.Observatory,
   url: "/observatories",
 
@@ -18,7 +17,6 @@ IONUX.Collections.ObservatoryCollection = Backbone.Collection.extend({
 
 
 IONUX.Collections.Platforms = Backbone.Collection.extend({
-
   model: IONUX.Models.Platform,
   url: "/platforms/",
 
@@ -28,10 +26,17 @@ IONUX.Collections.Platforms = Backbone.Collection.extend({
 });
 
 
+IONUX.Collections.Instruments = Backbone.Collection.extend({
+  model: IONUX.Models.Instrument,
+  url: "/instruments/",
+
+  parse: function(resp) {
+    return resp.data;
+  }
+});
 
 
 IONUX.Collections.ObservatoryDataProductCollection = Backbone.Collection.extend({
-
   model: IONUX.Models.ObservatoryDataProduct,
   url: function() {
     return '/observatories/' + this.observatory_id
@@ -40,19 +45,13 @@ IONUX.Collections.ObservatoryDataProductCollection = Backbone.Collection.extend(
   // parse: function(resp) {
   //   return resp['data'];
   // }
-
 });
 
 IONUX.Collections.ResourceTypes = Backbone.Collection.extend({
-
   model: IONUX.Models.ResourceType,
   url: "/resource_types",
   
   parse: function(resp) {
-
     return _.map(resp.data, function(resource_type) {return {"name": resource_type}});
-  
-  },
-  
-  
+  }
 });

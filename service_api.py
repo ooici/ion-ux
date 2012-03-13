@@ -1,9 +1,16 @@
 import requests, json
 
-GATEWAY_HOST = "localhost:5000"
+GATEWAY_HOST = "67.58.49.196:5000"
 SERVICE_GATEWAY_BASE_URL = 'http://%s/ion-service' % GATEWAY_HOST
 
 class ServiceApi(object):
+
+    @staticmethod
+    def start_instrument_agent(instrument_device_id):
+        instrument_agent_instance_id = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate':'hasAgentInstance'})[0][0]['_id']
+        start_agent_request = service_gateway_get('instrument_management', 'start_instrument_agent_instance', params={'instrument_agent_instance_id': str(instrument_agent_instance_id)})
+        
+        return start_agent_request
     
     @staticmethod
     def find_observatory(marine_facility_id):
@@ -32,6 +39,10 @@ class ServiceApi(object):
             # DEFINITIONS
             marine_facility['platform_models'] = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'PlatformModel', 'id_only': 'False'})[0]
             marine_facility['instrument_models'] = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'InstrumentModel', 'id_only': 'False'})[0]
+            
+            # USER
+            owner_id = service_gateway_get('resource_registry', 'find_objects', params={'subject': marine_facility_id, 'predicate': 'hasOwner'})[0][0]['_id']
+            marine_facility['owner'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': owner_id, 'predicate': 'hasInfo'})[0][0]
         
         return marine_facility
     
@@ -124,8 +135,6 @@ class ServiceApi(object):
         return resources
 
 
-
-
 def build_get_request(service_name, operation_name, params={}):
     url = '%s/%s/%s' % (SERVICE_GATEWAY_BASE_URL, service_name, operation_name)    
     if len(params) > 0:
@@ -149,6 +158,7 @@ def service_gateway_get(service_name, operation_name, params={}):
             return resp['data']['GatewayResponse']
         elif type(resp) == list:
             return resp['data']['GatewayResponse'][0]
+
 
 def pretty_console_log(label, content):
     print '\n\n\n'

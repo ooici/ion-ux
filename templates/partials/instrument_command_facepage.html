@@ -21,16 +21,17 @@
 		
 		<div class="btn-group">
 			<a class="btn" href="#">Instrument Command</a>
-			<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+			<a class="btn dropdown-toggle" data-toggle="dropdown" href=""><span class="caret"></span></a>
 			<ul class="dropdown-menu">
 				<li><a href="#">Start Direct Access</a></li>
-				<li><a href="#">Activate Instrument</a></li>
+				<li><a id="start-instrument-agent-instance" href="#">Start Instrument Agent Instance</a></li>
 			</ul>
 		</div> <!-- div.btn-group -->
 
 
 
-		<form>
+		<div class="instrument-commands" style="display: none;">
+			<form>
 			<div class="command">
 				<label>Command</label>
 				<select>
@@ -49,10 +50,7 @@
 			<div class="command">
 				Command results
 			</div>
-
-	
-		
-		
+		</div>
 	</div>
 	
 	
