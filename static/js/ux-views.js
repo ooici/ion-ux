@@ -378,7 +378,8 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
   
   events: {
     'click #start-instrument-agent-instance': 'start_agent',
-    'click a#stop-instrument-agent-instace': 'stop_agent'
+    'click a#stop-instrument-agent-instace': 'stop_agent',
+    'click input[type=submit]': 'issue_command'
   },
 
   initialize: function(){
@@ -389,9 +390,12 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
     this.$el.empty().html(this.template({})).show();
   },
   
+  issue_command: function() {
+    
+  },
+  
   start_agent: function(evt) {
     $(evt.target).closest('div').removeClass('open');
-    
     $.ajax({
               url: 'start_agent/',
               success: function() {
