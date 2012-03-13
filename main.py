@@ -171,9 +171,16 @@ def instrument_facepage(instrument_device_id):
     else:
         return render_template("ion-ux.html", **{"current_url":request.path})
 
-@app.route('/instruments/<instrument_device_id>/command/start_agent/')
-def start_instrument_agent(instrument_device_id):
-    instrument = ServiceApi.start_instrument_agent(instrument_device_id)
+@app.route('/instruments/<instrument_device_id>/command/<agent_command>/')
+def start_instrument_agent(instrument_device_id, agent_command):
+    if agent_command == 'start':
+        instrument = ServiceApi.instrument_agent_start(instrument_device_id)
+    elif agent_command == 'initialize':
+        instrument = ServiceApi.instrument_agent_initialize(instrument_device_id)
+    elif agent_command == 'capabilities':
+        instrument = ServiceApi.instrument_agent_capabilities(instrument_device_id)        
+    elif agent_command == 'activate':
+        instrument = ServiceApi.instrument_agent_activate(instrument_devide_id)
     return jsonify(data=True)
 
 

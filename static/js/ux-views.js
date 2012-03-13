@@ -397,14 +397,13 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
   start_agent: function(evt) {
     $(evt.target).closest('div').removeClass('open');
     $.ajax({
-              url: 'start_agent/',
-              success: function() {
-                $('.instrument-commands').show();
-              },
-              
-              error: function() {
-                
-              }
+        url: 'start_agent/',
+        success: function() {
+          $('.instrument-commands').show();
+        },
+        
+        error: function() {
+        }
     });
     // render the command panel with form for submit...
     // replace #start-instrument-agent-instance with #stop-instrument-agent-instance...
