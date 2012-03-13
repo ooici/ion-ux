@@ -12,8 +12,7 @@ app = Flask(__name__)
 #app.secret_key = hashlib.sha1(str(time.time()))
 app.secret_key = "Foo"
 
-HOST = '67.58.49.208' # Tom's Machine
-#HOST = 'localhost'
+HOST = 'localhost'
 PORT = 3000
 LOGGED_IN = True
 PRODUCTION = False
