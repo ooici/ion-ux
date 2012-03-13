@@ -24,7 +24,6 @@ class ServiceApi(object):
 
     @staticmethod
     def instrument_agent_initialize(instrument_device_id):
-        # instrument_agent_instance_id = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate':'hasAgentInstance'})[0][0]['_id']
         agent_command = 'initialize_instrument_agent_instance'
         
         payload = AGENT_PAYLOAD
