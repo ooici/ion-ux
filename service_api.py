@@ -1,6 +1,11 @@
 import requests, json
 
+<<<<<<< HEAD
 GATEWAY_HOST = "67.58.49.196:5000"
+=======
+from config import GATEWAY_HOST
+
+>>>>>>> 95d31e6bf99b3876eed35e7854d28c5ceac65fcb
 SERVICE_GATEWAY_BASE_URL = 'http://%s/ion-service' % GATEWAY_HOST
 
 class ServiceApi(object):
