@@ -23,17 +23,17 @@ class ServiceApi(object):
     @staticmethod
     def find_user_info(user_id):
         user_info = service_gateway_post('identity_management', 'find_user_info_by_id', params={'user_id': user_id})
-        return user_info['contact']
+        return user_info
     
     @staticmethod
-    def create_user_info(user_id, contact):
-        user_info = ['UserInfo', {'contact': contact}]
+    def create_user_info(user_id, user_info):
+        user_info = ['UserInfo', user_info]
         res = service_gateway_post('identity_management', 'create_user_info', params={'user_id': user_id, 'user_info': user_info})
         return res
     
     @staticmethod
-    def update_user_info(contact):
-        user_info = ['UserInfo', {'contact': contact}]
+    def update_user_info(user_info):
+        user_info = ['UserInfo', user_info]
         res = service_gateway_get('identity_management', 'update_user_info', params={'user_info': user_info})
         return res
     

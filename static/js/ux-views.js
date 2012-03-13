@@ -129,6 +129,25 @@ IONUX.Views.UserRegistration = IONUX.Views.CreateNewView.extend({
     this.model.bind("change", this.render);
   },
   
+  create_new: function(evt){
+    evt.preventDefault();
+    this.$el.find("input[type='submit']").attr("disabled", true).val("Saving...");
+    
+    var self = this;
+    var contact = {}
+    $.each(this.$el.find("input,textarea").not("input[type='submit'],input[type='cancel']"), function(i, e){
+      var key = $(e).attr("name"), val = $(e).val();
+      contact[key] = val;
+    });
+    self.model.set("contact", contact);
+    
+    self.model.save(null, {success:function(model, resp){
+      self.$el.hide();
+      var router = new Backbone.Router();
+      router.navigate("");
+    }});
+  },
+  
   render: function() {
    console.log(this.model.toJSON());
    this.$el.html(this.template(this.model.toJSON())).show();

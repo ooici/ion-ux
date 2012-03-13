@@ -10,8 +10,8 @@ app = Flask(__name__)
 #app.secret_key = hashlib.sha1(str(time.time()))
 app.secret_key = "Foo"
 
-#HOST = '67.58.49.208' Tom's Machine
-HOST = 'localhost'
+HOST = '67.58.49.208' # Tom's Machine
+#HOST = 'localhost'
 PORT = 3000
 LOGGED_IN = True
 PRODUCTION = False
@@ -93,7 +93,6 @@ def register():
     if request.is_xhr:
         if request.method == 'POST':
             form_data = json.loads(request.data)
-            print "FORM DATA: " + str(form_data)
             if is_registered:
                 ServiceApi.update_user_info(form_data)
             else:
@@ -101,14 +100,15 @@ def register():
         
             # indicate user is registered
             session['is_registered'] = True
-            
-            return redirect('/')
+
+            resp_data = {"success":True}            
+            return jsonify(data=resp_data)
         else:
             # determine if this is an update or a new registration
             if is_registered:
                 resp_data = ServiceApi.find_user_info(user_id)
             else:
-                resp_data = {'name': ''}   
+                resp_data = {'contact': {'name': '', 'email': '', 'phone': '', 'address': '', 'city': '', 'postalcode': ''}}
             return jsonify(data=resp_data)
     else:
         return create_html_response(request.path)
