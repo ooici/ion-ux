@@ -1,38 +1,74 @@
 <h2>Instrument: <%= name %> </h2>
 
+<div class="btn-group">
+	<a class="btn" href="#">Instrument Controls</a>
+	<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
+	<ul class="dropdown-menu">
+		<li><a href="/instruments/<%= instrument_id %>/command/">Command Instrument</a></li>
+		<li><a href="#">Start Direct Access</a></li>
+	</ul>
+</div> <!-- div.btn-group -->
+
 <div id="instrument-facepage" class="row">
 	<div class="span2">
-		<h3>Information</h3>
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Information</h3>
+			<p>Placeholder...</p>
+					
+			<h3>Identification</h3>
+			<p>Identification placeholder</p>
 		
-		<h4>Identification</h4>
-		<p>Identification placeholder</p>
+			<h3>Location</h3>
+			<p>Location placeholder</p>
 		
-		<h4>Location</h4>
-		<p>Location placeholder</p>
+			<h3>Description</h3>
+			<p>Description placeholder</p>
 		
-		<h4>Description</h4>
-		<p>Description placeholder</p>
-		
-		<h4>Provenance</h4>
-		<p>Provenance placeholder</p>
+			<h3>Contact</h3>
+			<p>Contact placeholder</p>
+		</section>
 	</div>
 	
 	<div class="span8">
-		<h3>Data</h3>
-		<p>Latest readings, visualization, etc...</p>
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Data</h3>
+			<p>Latest readings, visualization, etc...</p>
+		</section>
 		
-		<h3>Deployment</h3>
-		<p>Deployments, once it's determined what it is...</p>
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Deployment</h3>
+			<p>Deployments, once it's determined what it is...</p>
+		</section>
 		
-		<h3>Administration</h3>
-		<h4>Agent Information</h4>
-		<p>Agent information...</p>
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Administration</h3>
+			
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Agent Information</h3>
+				<p>instrument_agent_instance...</p>
+			</section>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Policies</h3>
+				<p>Policies...</p>
+			</section>
+		</section>
 		
-		<h3>Policies</h3>
-		<p>Policy information...</p>
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Notifications</h3>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Recent Events</h3>
+				<p>...</p>
+			</section>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">User Request</h3>
+				<p>...</p>
+			</section>
+		</section>
 		
-		
-		
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Frame of Reference</h3>
+			<p>...</p>
+		</section>
 	</div>
 			
 </div> <!-- div#instrument-facepage -->

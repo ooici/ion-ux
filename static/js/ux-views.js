@@ -31,57 +31,59 @@ IONUX.Views.CreateNewView = Backbone.View.extend({
 
 
 
-IONUX.Views.DataResourceView = Backbone.View.extend({
 
-  el: "#data-resources",
+// 
+// IONUX.Views.DataResourceView = Backbone.View.extend({
+// 
+//   el: "#data-resources",
+// 
+//   initialize: function(){
+//     _.bindAll(this, "render");
+//     this.collection.bind("reset", this.render);
+//   },
+//   
+//   render: function(){
+//     this.$el.empty().show();
+//     _.each(this.collection.models, function(dataresource) {
+//         this.$el.append(new IONUX.Views.DataResourceItemView({model:dataresource}).render().el);
+//     }, this);
+//     return this;
+//   },
+// 
+// })
+// 
+// 
+// IONUX.Views.DataResourceItemView = Backbone.View.extend({
+// 
+//   tagName:"ul",
+// 
+//   template: _.template($("#data-resource-item-tmpl").html()),
+// 
+//   render: function(){
+//     this.$el.html(this.template(this.model.toJSON()));
+//     return this;
+//   }
+// 
+// });
 
-  initialize: function(){
-    _.bindAll(this, "render");
-    this.collection.bind("reset", this.render);
-  },
-  
-  render: function(){
-    this.$el.empty().show();
-    _.each(this.collection.models, function(dataresource) {
-        this.$el.append(new IONUX.Views.DataResourceItemView({model:dataresource}).render().el);
-    }, this);
-    return this;
-  },
 
-})
-
-
-IONUX.Views.DataResourceItemView = Backbone.View.extend({
-
-  tagName:"ul",
-
-  template: _.template($("#data-resource-item-tmpl").html()),
-
-  render: function(){
-    this.$el.html(this.template(this.model.toJSON()));
-    return this;
-  }
-
-});
-
-
-IONUX.Views.DataResourceDetailView = Backbone.View.extend({
-
-  el: "#data-resource-detail",
-
-  template: _.template($("#data-resource-detail-tmpl").html()),
-
-  initialize: function(){
-    _.bindAll(this, "render");
-    this.model.bind("change", this.render);
-  },
-
-  render: function(){
-    this.$el.html(this.template(this.model.toJSON())).show();
-    return this;
-  }
-
-});
+// IONUX.Views.DataResourceDetailView = Backbone.View.extend({
+// 
+//   el: "#data-resource-detail",
+// 
+//   template: _.template($("#data-resource-detail-tmpl").html()),
+// 
+//   initialize: function(){
+//     _.bindAll(this, "render");
+//     this.model.bind("change", this.render);
+//   },
+// 
+//   render: function(){
+//     this.$el.html(this.template(this.model.toJSON())).show();
+//     return this;
+//   }
+// 
+// });
 
 
 /* Observatories */
@@ -115,7 +117,24 @@ IONUX.Views.ObservatoriesView = Backbone.View.extend({
     }
     this.observatories_create_new_view.render();
   }
+});
+
+
+IONUX.Views.UserRegistration = IONUX.Views.CreateNewView.extend({
+  el: "#user-registration-container",
+  template: _.template($("#user-registration-tmpl").html()),
   
+  initialize: function() {
+    _.bindAll(this, "render");
+    this.model.bind("change", this.render);
+  },
+  
+  render: function() {
+   console.log(this.model.toJSON());
+   this.$el.html(this.template(this.model.toJSON())).show();
+   $('#name').focus();
+   return this; 
+  }
 });
 
 
@@ -234,15 +253,15 @@ IONUX.Views.PlatformsView = Backbone.View.extend({
 
   initialize: function(){
     _.bindAll(this, "render");
+    this.collection.bind("reset", this.render);
   },
   
   render: function(){
-    this.$el.html(this.template({}));
+    this.$el.html(this.template({"collection":this.collection.toJSON()}));
     return this;
   },
   
   show_create_new_form: function(){
-
     if (_.isUndefined(this.platforms_new_view)){
       // var new_model = new IONUX.Models.Platform();
       // console.log("show or create.", new_model);
@@ -270,11 +289,7 @@ IONUX.Views.PlatformCreateNewView = IONUX.Views.CreateNewView.extend({
   // cancel: function(){
   //   this.$el.hide();
   // }
-
 });
-
-
-
 
 
 IONUX.Views.ObservatoryModalView = Backbone.View.extend({
@@ -342,7 +357,22 @@ IONUX.Views.PlatformFacepage = Backbone.View.extend({
 
   template: _.template($("#platform-facepage-tmpl").html()),
 
-  //events: { },
+  initialize: function(){
+    _.bindAll(this, "render");
+    this.model.bind("change", this.render);
+  },
+
+  render: function(){
+    this.$el.html(this.template(this.model.toJSON())).show();
+  }
+
+});
+
+IONUX.Views.PlatformModelFacepage = Backbone.View.extend({
+
+  el: "#platform-model-facepage-container",
+
+  template: _.template($("#platform-model-facepage-tmpl").html()),
 
   initialize: function(){
     _.bindAll(this, "render");
@@ -350,11 +380,11 @@ IONUX.Views.PlatformFacepage = Backbone.View.extend({
   },
 
   render: function(){
-    console.log(this.model.toJSON());
+    console.log('PlatformModelFacepage');
     this.$el.html(this.template(this.model.toJSON())).show();
   }
-
 });
+
 
 IONUX.Views.InstrumentFacepage = Backbone.View.extend({
 
@@ -370,11 +400,115 @@ IONUX.Views.InstrumentFacepage = Backbone.View.extend({
   },
 
   render: function(){
-    console.log(this.model.toJSON());
     this.$el.html(this.template(this.model.toJSON())).show();
   }
-
 });
+
+IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
+
+  el: "#instrument-command-facepage-container",
+
+  template: _.template($("#instrument-command-facepage-tmpl").html()),
+
+  initialize: function(){
+    _.bindAll(this, "render");
+  },
+
+  render: function(){
+    this.$el.empty().html(this.template({})).show();
+  }
+});
+
+IONUX.Views.InstrumentModelFacepage = Backbone.View.extend({
+
+  el: "#instrument-model-facepage-container",
+
+  template: _.template($("#instrument-model-facepage-tmpl").html()),
+
+  initialize: function(){
+    _.bindAll(this, "render");
+    this.model.bind("change", this.render);
+  },
+
+  render: function(){
+    this.$el.html(this.template(this.model.toJSON())).show();
+  }
+});
+
+IONUX.Views.InstrumentAgentFacepage = Backbone.View.extend({
+
+  el: "#instrument-agent-facepage-container",
+
+  template: _.template($("#instrument-agent-facepage-tmpl").html()),
+
+  initialize: function(){
+    _.bindAll(this, "render");
+    this.model.bind("change", this.render);
+  },
+
+  render: function(){
+    this.$el.html(this.template(this.model.toJSON())).show();
+  }
+});
+
+IONUX.Views.DataProcessDefinitionFacepage = Backbone.View.extend({
+  el: "#data-process-definition-facepage-container",
+  template: _.template($("#data-process-definition-facepage-tmpl").html()),
+  
+  initialize: function(){
+    _.bindAll(this, "render");
+    this.model.bind("change", this.render);
+  },
+  
+  render: function(){
+    this.$el.empty().html(this.template(this.model.toJSON())).show();
+  }
+});
+
+
+IONUX.Views.DataProductFacepage = Backbone.View.extend({
+  el: "#data-product-facepage-container",
+  template: _.template($("#data-product-facepage-tmpl").html()),
+  
+  initialize: function(){
+    _.bindAll(this, "render");
+    this.model.bind("change", this.render);
+  },
+  
+  render: function(){
+    this.$el.empty().html(this.template(this.model.toJSON())).show();
+  }
+});
+
+
+IONUX.Views.FramesOfReferenceFacepage = Backbone.View.extend({
+  el: "#frames-of-reference-facepage-container",
+
+  template: _.template($("#frames-of-reference-facepage-tmpl").html()),
+
+  initialize: function(){
+    _.bindAll(this, "render");
+  },
+
+  render: function(){
+    this.$el.empty().html(this.template({})).show();
+  }
+});
+
+IONUX.Views.UserFacepage = Backbone.View.extend({
+  el: "#user-facepage-container",
+
+  template: _.template($("#user-facepage-tmpl").html()),
+
+  initialize: function(){
+    _.bindAll(this, "render");
+  },
+
+  render: function(){
+    this.$el.empty().html(this.template({})).show();
+  }
+});
+
 
 IONUX.Views.Search = Backbone.View.extend({
   el: "#search",
@@ -386,7 +520,6 @@ IONUX.Views.Search = Backbone.View.extend({
   render: function() {
     var collection = new IONUX.Collections.ResourceTypes();
     var select_elem = $("#search-select");
-    console.log('lkjasfd');
     
     collection.fetch({
       success: function(resp) {
@@ -396,8 +529,6 @@ IONUX.Views.Search = Backbone.View.extend({
         })
       }
     })
-    
-    
   }
 });
 

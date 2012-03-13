@@ -1,5 +1,5 @@
 body {
-  background: #eee;
+  background-color: #ccc;
 }
 
 #header {
@@ -27,6 +27,31 @@ body {
   padding:20px;
 }
 
+.viewcontainer h1 {
+  font-size: 24px;
+}
+
+section.wrapper {
+  border: solid 1px #ccc;
+  background: #fff;
+  padding: 10px;
+  margin: 30px 0 0;
+}
+
+section.wrapper h3.wrapper-heading {
+  background: #ccc;
+  font-size: 11px;
+  margin: -25px 0 10px 0;
+  padding: 0 15px;
+/*  position: relative;*/
+  height: 24px;
+  line-height: 24px;
+/*  display: inline;*/
+  text-transform: uppercase;
+}
+
+
+
 .e-borders {
   background: white;
   border: solid 1px #ddd;
@@ -42,4 +67,13 @@ body {
 
 table tr:nth-child(odd) td, .table-striped tbody tr:nth-child(odd) th {
   background-color: #eee  ;
+}
+
+
+
+.command {
+  border: solid 1px #ccc;
+  background: white;
+  margin: 15px 0;
+  padding: 15px;
 }

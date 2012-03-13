@@ -7,26 +7,41 @@ import time
 
 app = Flask(__name__)
 
-app.secret_key = hashlib.sha1(str(time.time()))
+#app.secret_key = hashlib.sha1(str(time.time()))
+app.secret_key = "Foo"
 
-HOST = '67.58.49.208'
+#HOST = '67.58.49.208' Tom's Machine
+HOST = 'localhost'
 PORT = 3000
 LOGGED_IN = True
 PRODUCTION = False
 
-#GATEWAY_HOST = "67.58.49.196:5000"   # Todd's machine
 GATEWAY_HOST = "localhost:5000"
 SERVICE_GATEWAY_BASE_URL = 'http://%s/ion-service' % GATEWAY_HOST
 
+if PRODUCTION:
+    from service_api import ServiceApi
+else:
+    # from dummy_service_api import ServiceApi
+    from service_api import ServiceApi
+
 DEFINED_SERVICES_OPERATIONS = {
-    'marine_facilities':
-        {
+    'observatories': {
             'restype': 'MarineFacility',
             'service_name': 'marine_facility_management',
             'object_name': 'marine_facility',
             'operation_names': {'create': 'create_marine_facility'}
         },
+  
+    'platforms': {
+            'restype': 'PlatformDevice'
+        },
+
+    'instruments': {
+            'restype': 'InstrumentDevice'
+        },
 }
+
 SERVICE_REQUEST_TEMPLATE = {
     'serviceRequest': {
         'serviceName': '', 
@@ -34,13 +49,6 @@ SERVICE_REQUEST_TEMPLATE = {
         'params': {} # Example -> 'object_name': ['restype', {}] }
     }
 }
-
-PRODUCTION = False #more configurable in the future.
-
-if PRODUCTION:
-    from service_api import ServiceApi
-else:
-    from dummy_service_api import ServiceApi
 
 
 @app.route('/')
@@ -50,37 +58,16 @@ def index():
     else:
         return render_template("index.html")
 
+# TODO fix this to be a post
 @app.route('/signon/', methods=['GET'])
 def signon():
     # carriage returns were removed on the cilogon portal side,
     # restore them before processing
     raw_cert = request.args.get("cert")
-    print "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-    print "encoded cert:\n%s" % raw_cert
     certificate = base64.b64decode(raw_cert)
-    print "YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY"
-    print "cert:\n%s" % certificate
 
-    # TODO is this the right url to go to post signon?
-    redirect_url = '/'
-    
-    # build signon service gateway request
-    sg_data = SERVICE_REQUEST_TEMPLATE
-    sg_data['serviceRequest']['serviceName'] = 'identity_management'   
-    sg_data['serviceRequest']['serviceOp'] = 'signon'   
-    sg_data['serviceRequest']['params']['certificate'] = certificate
-        
-    # make service gateway request
-    service_gateway_call = gateway_post_request(
-        '%s/identity_management/signon' % SERVICE_GATEWAY_BASE_URL, 
-        sg_data
-    )
-
-    print "ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ"
-    print "service_gateway_call.content: %s" % str(service_gateway_call.content)        
-    # handle response and set cookie if successful
-    res = json.loads(service_gateway_call.content)
-    user_id, valid_until, is_registered = res["data"]["GatewayResponse"]
+    # call backend to signon user
+    user_id, valid_until, is_registered = ServiceApi.signon_user(certificate)    
     
     # set user id, valid until and is registered info in session
     # TODO might need to address issues that arise with using
@@ -90,84 +77,55 @@ def signon():
     session['valid_until'] = valid_until
     session['is_registered'] = is_registered
 
-    # conditionally display user registration dialog
     if not is_registered:
-        update_user_info()
+        # redirect to registration screen
+        return redirect('/register')
+    else:
+        return redirect('/')
 
-    # TODO redirect to url they were displaying before hitting the login button?
-    return redirect(redirect_url)
 
-@app.route('/register/', methods=['GET','POST'])
+@app.route('/register/', methods=['GET', 'POST'])
 def register():
-    if 
+
     is_registered = session['is_registered']
     user_id = session['user_id']
 
-    # determine if this is an update or a new registration
-    if is_registered:
-        # make service call to retrieve existing user info
-        sg_data = SERVICE_REQUEST_TEMPLATE
-        sg_data['serviceRequest']['serviceName'] = 'identity_management'   
-        sg_data['serviceRequest']['serviceOp'] = 'find_user_info_by_id'   
-        sg_data['serviceRequest']['params']['user_id'] = user_id
-
-        service_gateway_call = requests.get(
-            '%s/identity_management/find_user_info_by_id' % SERVICE_GATEWAY_BASE_URL, 
-            data={'payload': json.dumps(sg_data)}
-        )
+    if request.is_xhr:
+        if request.method == 'POST':
+            form_data = json.loads(request.data)
+            print "FORM DATA: " + str(form_data)
+            if is_registered:
+                ServiceApi.update_user_info(form_data)
+            else:
+                ServiceApi.create_user_info(user_id, form_data)
         
-        # handle response
-        user_info  = json.loads(service_gateway_call.content)
-
-        # populate user info dialog
-        # TODO
-
-    # TODO display user info dialog
-    # TODO scrape content into user_info object
-
-    # on successful return from user info dialog,
-    # make service gateway request
-    if is_registered:
-        # make service call to retrieve existing user info
-        sg_data = SERVICE_REQUEST_TEMPLATE
-        sg_data['serviceRequest']['serviceName'] = 'identity_management'   
-        sg_data['serviceRequest']['serviceOp'] = 'update_user_info'   
-        sg_data['serviceRequest']['params']['user_info'] = user_info
-
-        service_gateway_call = gateway_post_request(
-            '%s/identity_management/update_user_info' % SERVICE_GATEWAY_BASE_URL, 
-            sg_data
-        )
+            # indicate user is registered
+            session['is_registered'] = True
+            
+            return redirect('/')
+        else:
+            # determine if this is an update or a new registration
+            if is_registered:
+                resp_data = ServiceApi.find_user_info(user_id)
+            else:
+                resp_data = {'name': ''}   
+            return jsonify(data=resp_data)
     else:
-        # make service call to retrieve existing user info
-        sg_data = SERVICE_REQUEST_TEMPLATE
-        sg_data['serviceRequest']['serviceName'] = 'identity_management'   
-        sg_data['serviceRequest']['serviceOp'] = 'create_user_info'   
-        sg_data['serviceRequest']['params']['user_id'] = user_id
-        sg_data['serviceRequest']['params']['user_info'] = user_info
+        return create_html_response(request.path)
 
-        service_gateway_call = gateway_post_request(
-            '%s/identity_management/create_user_info' % SERVICE_GATEWAY_BASE_URL, 
-            sg_data
-        )
-        
-        # indicate user is registered
-        session['is_registered'] = True
-    
-@app.route('/dashboard', methods=["GET"])
-def dashboard():
-    return render_template('ux-dashboard.html')
 
-@app.route('/dataresource', methods=["GET", "POST"])
-def data_resource():
-    resp_data = ServiceApi.data_resource(request.args)
-    return jsonify(resp_data)
+# Generic index to view any resource type
+@app.route('/list/<resource_type>/', methods=['GET'])
+def list(resource_type=None):
+    resources = ServiceApi.find_by_resource_type(resource_type)
+    return jsonify(data=json.dumps(resources))
 
 
 @app.route('/observatories/', methods=["GET", "POST"])
 def observatories():
     if request.is_xhr:
         if request.method == 'POST':
+            # TODO - NEEDS TO BE MOVED INTO SERVICEAPI
             import time; time.sleep(0.7) #mock latency
             form_data = json.loads(request.data)
             object_schema = build_schema_from_form(form_data, service="marine_facilities")
@@ -175,61 +133,116 @@ def observatories():
                 '%s/marine_facility_management/create_marine_facility' % SERVICE_GATEWAY_BASE_URL,
                 object_schema
             )
-            print post_request.content
             resp_data = {"success":True}
         else:
-            resp_data = ServiceApi.marine_facilities(request.args)        
+            resp_data = ServiceApi.find_by_resource_type('MarineFacility')
+            
         return jsonify(data=resp_data)
     else:
         return create_html_response(request.path)
+
 
 @app.route('/observatories/<marine_facility_id>/', methods=['GET'])
 def observatory_facepage(marine_facility_id):
     if request.is_xhr:
-        resp_data = ServiceApi.find_observatory(marine_facility_id)
-        return jsonify(data=resp_data)
+        marine_facility = ServiceApi.find_observatory(marine_facility_id)
+        return jsonify(data=marine_facility)
     else:
         return create_html_response(request.path)
 
+
 @app.route('/platforms/', methods=['GET'])
 def platforms():
-    return create_html_response(request.path)
-
-@app.route('/platforms/<platform_id>/', methods=['GET'])
-def platform_facepage(platform_id):
-    if request.is_xhr: #XXX put into decorator logic
-        resp_data = ServiceApi.find_platform(platform_id)
-        return jsonify(data=resp_data)
+    if request.is_xhr:
+        platforms = ServiceApi.find_by_resource_type('PlatformDevice')
+        return jsonify(data=platforms)
     else:
-        return render_template("ion-ux.html", **{"current_url":request.path}) #XXX put into decorator logic
+        return create_html_response(request.path)
+
+
+@app.route('/platforms/<platform_device_id>/', methods=['GET'])
+def platform_facepage(platform_device_id):
+    if request.is_xhr:
+        platform = ServiceApi.find_platform(platform_device_id)
+        return jsonify(data=platform)
+    else:
+        return render_template("ion-ux.html", **{"current_url":request.path})
+
+
+@app.route('/platform_models/<platform_model_id>/', methods=['GET'])
+def platform_model_facepage(platform_model_id):
+    if request.is_xhr:
+        platform_model = ServiceApi.find_platform_model(platform_model_id)
+        return jsonify(data=platform_model)
+    else:
+        return render_template("ion-ux.html", **{"current_url":request.path})
+
 
 @app.route('/instruments/', methods=['GET', 'POST'])
 def instruments():
     return create_html_response(request.path)
 
-@app.route('/instruments/<instrument_id>/', methods=['GET'])
-def instrument_facepage(instrument_id):
-    if request.is_xhr: #XXX put into decorator logic
-        resp_data = ServiceApi.find_instrument(instrument_id)
-        return jsonify(data=resp_data)
+
+@app.route('/instruments/<instrument_device_id>/', methods=['GET'])
+def instrument_facepage(instrument_device_id):
+    if request.is_xhr:
+        instrument = ServiceApi.find_instrument(instrument_device_id)
+        return jsonify(data=instrument)
     else:
-        return render_template("ion-ux.html", **{"current_url":request.path}) #XXX put into decorator logic
+        return render_template("ion-ux.html", **{"current_url":request.path})
+
+
+@app.route('/instrument_models/<instrument_model_id>/', methods=['GET'])
+def instrument_model_facepage(instrument_model_id):
+    if request.is_xhr:
+        instrument_model = ServiceApi.find_instrument_model(instrument_model_id)
+        return jsonify(data=instrument_model)
+    else:
+        return render_template("ion-ux.html", **{"current_url":request.path})
+
+
+@app.route('/instrument_agents/')
+def instrument_agents():
+    pass
+
+
+@app.route('/instrument_agents/<instrument_agent_id>/', methods=['GET'])
+def instrument_agent_facepage(instrument_agent_id):
+    if request.is_xhr:
+        instrument = ServiceApi.find_instrument_agent(instrument_agent_id)
+        return jsonify(data=instrument)
+    else:
+        return render_template("ion-ux.html", **{"current_url":request.path})
+
+
+@app.route('/data_process_definitions/<data_process_definition_id>/')
+def data_process_definition_facepage(data_process_definition_id):
+    if request.is_xhr:    
+        data_process_definition = ServiceApi.find_data_process_definition(data_process_definition_id)
+        return jsonify(data=data_process_definition)
+    else:
+        return render_template("ion-ux.html", **{"current_url":request.path})
+
+
+@app.route('/data_products/', methods=['GET'])
+def data_products():
+    pass
+
+@app.route('/data_products/<data_product_id>/', methods=['GET'])
+def data_product_facepage(data_product_id): 
+    if request.is_xhr:
+        data_product = ServiceApi.find_data_product(data_product_id)
+        return jsonify(data=data_product)
+    else:
+        return render_template("ion-ux.html", **{"current_url":request.path})
 
 
 
-@app.route('/dataresource/<data_resource_id>/', methods=["GET", "POST"])
-def data_resource_details(data_resource_id):
-    resp_data = ServiceApi.data_resource_details(data_resource_id)
-    return jsonify(resp_data)
 
-@app.route('/subscription/', methods=["GET", "POST"])
-def subscription():
-    resp_data = ServiceApi.subscription(request.args)
-    return jsonify(resp_data)
+# -------------------------------------------------------------------------
+# RESOURCE BROWSER - MUCH REFACTORING NEEDED
+# -------------------------------------------------------------------------
 
-
-# RESOURCE BROWSER
-# Still needs refactoring...
 @app.route('/resources', methods=['GET'])
 def resources_index():    
     if request.args.has_key('type'):
@@ -254,7 +267,6 @@ def new_resource():
     return render_template('resource_browser/new_form.html', resource_type=resource_type, resource=None, menu=fetch_menu())
 
 
-
 @app.route('/resources/create', methods=['POST'])
 def create_resource():
     sg_data = SERVICE_REQUEST_TEMPLATE
@@ -276,6 +288,7 @@ def create_resource():
     )
         
     return redirect("%s?type=%s" % (url_for('resources_index'), resource_type))
+
 
 @app.route('/resources/show/<resource_id>')
 def show_resource(resource_id=None):
@@ -346,21 +359,25 @@ def get_resource_schema(resource_type):
     
     return str(resource_type_schema)
 
-
 @app.route('/resource_types', methods=['GET'])
 def resource_types():
     res = fetch_menu()
     return jsonify(data=res)
 
 
+
+# -------------------------------------------------------------------------
+# CATCHALL ROUTE
+# -------------------------------------------------------------------------
+
 @app.route("/<catchall>")
 def catchall(catchall):
     return render_template("ion-ux.html", **{"current_url":catchall})    
 
 
-#
-#non route code below
-#
+# -------------------------------------------------------------------------
+# NON-ROUTE CODE BELOW
+# -------------------------------------------------------------------------
 
 # common service gateway post request method.
 # handles including user id and expiry in request
@@ -383,7 +400,6 @@ def gateway_post_request(url, payload):
         return "The service gateway returned the following error: %d" % service_gateway_call.status_code
 
     return service_gateway_call
-        
 
 
 def build_schema_from_form(form_data, service="marine_facilities", object_name="marine_facility"):

@@ -25,6 +25,7 @@ from CILogonService import CILogonService
 import random
 import cgi
 import OAuthUtilities
+import base64
 from string import strip
 
 flask_url_base='http://67.58.49.208:3000'
@@ -80,8 +81,8 @@ def success(environ, start_response):
     logging.info('id = ' + id + ', cert = ' + cred.certificate)
     # Until we find out the right way to send cert on redirect,
     # we pass it on the url, so line breaks need to get removed.
-    cert = cred.certificate.replace('\n','\\n')
-    redirecturl = flask_url_base + /signon?' + cert
+    cert = base64.b64encode(cred.certificate)
+    redirecturl = flask_url_base + '/signon?cert=' + cert
     headers = [('Content-Type', 'text/html'),
        ('Location', redirecturl)]
     start_response('302 Redirect', headers)

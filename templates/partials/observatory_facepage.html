@@ -4,273 +4,230 @@
 
 <div id="obsevatory-facepage" class="row">
 	<div class="span2">		
-		<p><image src="<%= thumbnail %>"/></p>
-		
-		<p>
-			<strong>Name: </strong><%= name %><br />
-			<strong>ID: </strong><%= _id %>
-		</p>
+
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Information</h3>
+			<p>
+				<strong>Name: </strong><%= name %><br />
+				<strong>ID: </strong><%= _id %>
+			</p>
+		</section>
 	</div>
 	
 	<div class="span8">
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Data Products</h3>
+			<table class="table">
+				<tr>
+					<th>Name</th>
+					<th>Description</th>
+					<th>Dataset ID</th>
+					<th>Data Product Level</th>
+					<th>CDM Data Type</th>
+					<th>Updated</th>
+				</tr>
 
-		<div class="e-borders">
+				<% _.each(data_products, function(obj) { %>
+					<tr>
+						<td><a href="/data_products/<%= obj._id %>/"><%= obj.name %></a></td>
+						<td><%= obj.description %></td>
+						<td><%= obj.dataset_id %></td>
+						<td><%= obj.data_product_level %></td>
+						<td><%= obj.CDM_data_type %></td>
+						<td><%= obj.ts_updated %></td>
+					</tr>
+				<% }); %>
+			</table>
+		</section>
 
-		<h4>Data Products</h4>
-		<table class="table">
-			<tr>
-				<th>ID</th>
-				<th>Name</th>
-				<th>Description</th>
-				<th>Dataset ID</th>
-				<th>Data Product Level</th>
-				<th>CDM Data Type</th>
-				<th>Updated</th>
-			</tr>
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Policies</h3>
+			<table class="table">
+				<tr>
+					<th>Name</th>
+					<th>Description</th>
+					<th>Updated</th>
+				</tr>
+				<% _.each(policies, function(obj) { %>
+					<tr>
+						<td><%= obj.name %></td>
+						<td><%= obj.description %></td>
+						<td><%= obj.ts_updated %></td>
+					</tr>
+				<% }); %>
+			</table>
+		</section>
+		
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Platforms</h3>
+			<table class="table">
+				<tr>
+					<th>Name</th>
+					<th>Description</th>
+					<th>Updated</th>
+				</tr>
+				<% _.each(platforms, function(obj) { %>
+					<tr>
+						<td><a href="/platforms/<%= obj._id %>/"><%= obj.name %></a></td>
+						<td><%= obj.description %></td>
+						<td><%= obj.ts_updated %></td>
+					</tr>
+				<% }); %>
+			</table>
+		</section>
+		
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Instruments</h3>
+			<table class="table">
+				<tr>
+					<th>Name</th>
+					<th>Description</th>
+					<th>Updated</th>
+				</tr>
 			
-			<% _.each(data_products, function(obj) { %>
+				<% _.each(instruments, function(obj) { %>
+					<tr>
+						<td><a href="/instruments/<%= obj._id %>/"><%= obj.name %></a></td>
+						<td><%= obj.description %></td>
+						<td><%= obj.ts_updated %></td>
+					</tr>
+				<% }); %>
+			</table>
+		</section>
+		
+		
+		<section class="wrapper">
+			<h3 class="wrapper-heading">User Requests</h3>
+			<table class="table">
 				<tr>
-					<td><%= obj._id %></td>
-					<td><%= obj.name %></td>
-					<td><%= obj.description %></td>
-					<td><%= obj.dataset_id %></td>
-					<td><%= obj.data_product_level %></td>
-					<td><%= obj.CDM_data_type %></td>
-					<td><%= obj.ts_updated %></td>
+					<th>Origin</th>
+					<th>Description</th>
+					<th>Status</th>
+					<th>Status Description</th>
+					<th>Type</th>
+					<th>User ID</th>
+					<th>Updated</th>
 				</tr>
-			<% }); %>
-		</table>
+				<% _.each(user_requests, function(obj) { %>
+					<tr>
+						<td><%= obj.origin %></td>
+						<td><%= obj.description %></td>
+						<td><%= obj.status %></td>
+						<td><%= obj.status_description %></td>
+						<td><%= obj.type %></td>
+						<td><%= obj.user_id %></td>
+						<td><%= obj.ts_updated %></td>
+					</tr>
+				<% }); %>
+			</table>
+		</section>
 		
-		</div>
-		
-		
-		<h4>Platforms</h4>
-		<table class="table">
-			<tr>
-				<th>ID</th>
-				<th>Name</th>
-				<th>Description</th>
-				<th>Updated</th>
-			</tr>
-			<% _.each(platforms, function(obj) { %>
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Instrument Agents</h3>
+			<table class="table">
 				<tr>
-					<td><a href="/platforms/<%= obj._id %>/"><%= obj._id %></a></td>
-					<td><%= obj.name %></td>
-					<td><%= obj.description %></td>
-					<td><%= obj.ts_updated %></td>
+					<th>Name</th>
+					<th>Description</th>
+					<th>Agent Version</th>
+					<th>Client Module</th>
+					<th>Connection Method</th>
+					<th>Driver Class</th>
+					<th>Driver Class Client</th>
+					<th>Driver Class Model</th>
+					<th>Updated</th>
 				</tr>
-			<% }); %>
-		</table>
+				<% _.each(instrument_agents, function(obj) { %>
+					<tr>
+						<td><a href="/instrument_agents/<%= obj._id %>/"><%= obj.name %></a></td>
+						<td><%= obj.description %></td>
+						<td><%= obj.agent_version %></td>
+						<td><%= obj.client_module %></td>
+						<td><%= obj.connection_method %></td>
+						<td><%= obj.driver_class %></td>
+						<td><%= obj.driver_class_client %></td>
+						<td><%= obj.driver_class_model %></td>
+						<td><%= obj.ts_updated %></td>
+					</tr>
+				<% }); %>
+			</table>
+		</section>
 		
-		
-		<h4>Instruments</h4>
-		<table class="table">
-			<tr>
-				<th>ID</th>
-				<th>Name</th>
-				<th>Description</th>
-				<th>Updated</th>
-			</tr>
-			
-			<% _.each(instruments, function(obj) { %>
-				<tr>
-					<td><a href="/instruments/<%= obj._id %>/"><%= obj._id %></a></td>
-					<td><%= obj.name %></td>
-					<td><%= obj.description %></td>
-					<td><%= obj.ts_updated %></td>
-				</tr>
-			<% }); %>
-		</table>
-		
-		<h4>Events</h4>
-		
-		<h4>Recent Events</h4>
-		<table class="table">
-			<tr>
-				<th>Origin</th>
-				<th>Description</th>
-				<th>Updated</th>
-			</tr>
-			<% _.each(events, function(obj) { %>
-				<tr>
-					<td><%= obj.origin %></td>
-					<td><%= obj.description %></td>
-					<td><%= obj.ts_updated %></td>
-				</tr>
-			<% }); %>
-		</table>
-		
-		<h4>User Requests</h4>
-		
-		<table class="table">
-			<tr>
-				<th>Origin</th>
-				<th>Description</th>
-				<th>Status</th>
-				<th>Status Description</th>
-				<th>Type</th>
-				<th>User ID</th>
-				<th>Updated</th>
-			</tr>
-			<% _.each(user_requests, function(obj) { %>
-				<tr>
-					<td><%= obj.origin %></td>
-					<td><%= obj.description %></td>
-					<td><%= obj.status %></td>
-					<td><%= obj.status_description %></td>
-					<td><%= obj.type %></td>
-					<td><%= obj.user_id %></td>
-					<td><%= obj.ts_updated %></td>
-				</tr>
-			<% }); %>
-		</table>
-		
-		
-		
-		
-		<h1>Administration</h1>
-		<h4>Participants</h4>
-		<table class="table">
-			<tr>
-				<th>ID</th>
-				<th>Name</th>
-				<th>Description</th>
-				<th>Email</th>
-				<th>Updated</th>
-			</tr>
-			<% _.each(participants, function(obj) { %>
-				<tr>
-					<td><%= obj._id %></td>
-					<td><%= obj.name %></td>
-					<td><%= obj.description %></td>
-					<td><%= obj.email %></td>
-					<td><%= obj.ts_updated %></td>
-				</tr>
-			<% }); %>
-		</table>
-		
-		
-		<h4>Policies</h4>
-		<table class="table">
-			<tr>
-				<th>Name</th>
-				<th>Description</th>
-				<th>Updated</th>
-			</tr>
-			<% _.each(policies, function(obj) { %>
-				<tr>
-					<td><%= obj.name %></td>
-					<td><%= obj.description %></td>
-					<td><%= obj.ts_updated %></td>
-				</tr>
-			<% }); %>
-		</table>
-		
-		<h4>Instrument Agents</h4>
-		<table class="table">
-			<tr>
-				<th>ID</th>
-				<th>Name</th>
-				<th>Description</th>
-				<th>Agent Version</th>
-				<th>Client Module</th>
-				<th>Connection Method</th>
-				<th>Driver Class</th>
-				<th>Driver Class Client</th>
-				<th>Driver Class Model</th>
-				<th>Updated</th>
-			</tr>
-			<% _.each(instrument_agents, function(obj) { %>
-				<tr>
-					<td><%= obj._id %></td>
-					<td><%= obj.name %></td>
-					<td><%= obj.description %></td>
-					<td><%= obj.agent_version %></td>
-					<td><%= obj.client_module %></td>
-					<td><%= obj.connection_method %></td>
-					<td><%= obj.driver_class %></td>
-					<td><%= obj.driver_class_client %></td>
-					<td><%= obj.driver_class_model %></td>
-					<td><%= obj.ts_updated %></td>
-				</tr>
-			<% }); %>
-		</table>
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Data Process Definitions</h3>
 
-		<h4>Data Process Definitions</h4>
-		<table class="table">
-			<tr>
-				<th>ID</th>
-				<th>Name</th>
-				<th>Description</th>
-				<th>Class Name</th>
-				<th>Module</th>
-				<th>Process Source</th>
-				<th>Updated</th>
-			</tr>
-			<% _.each(data_process_defintions, function(obj) { %>
+			<table class="table">
 				<tr>
-					<td><%= obj._id %></td>
-					<td><%= obj.name %></td>
-					<td><%= obj.description %></td>
-					<td><%= obj.class_name %></td>
-					<td><%= obj.module %></td>
-					<td><%= obj.process_source %></td>
-					<td><%= obj.ts_updated %></td>
+					<th>Name</th>
+					<th>Description</th>
+					<th>Class Name</th>
+					<th>Module</th>
+					<th>Process Source</th>
+					<th>Updated</th>
 				</tr>
-			<% }); %>
-		</table>
+				<% _.each(data_process_definitions, function(obj) { %>
+					<tr>
+						<td><a href="/data_process_definitions/<%= obj._id %>/"><%= obj.name %></a></td>
+						<td><%= obj.description %></td>
+						<td><%= obj.class_name %></td>
+						<td><%= obj.module %></td>
+						<td><%= obj.process_source %></td>
+						<td><%= obj.ts_updated %></td>
+					</tr>
+				<% }); %>
+			</table>
+		</section>
+				
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Platform Models</h3>
+			<table class="table">
+				<tr>
+					<th>Name</th>
+					<th>Description</th>
+					<th>Manufacturer</th>
+					<th>OOI Node Type</th>
+					<th>Platform Type</th>
+					<th>Updated</th>
+				</tr>
+				<% _.each(platform_models, function(obj) { %>
+					<tr>
+						<td><a href="platform_models/<%= obj._id %>/"><%= obj.name %></a></td>
+						<td><%= obj.description %></td>
+						<td><%= obj.manufacturer %></td>
+						<td><%= obj.ooi_node_type %></td>
+						<td><%= obj.platform_type %></td>
+						<td><%= obj.ts_updated %></td>
+					</tr>
+				<% }); %>
+			</table>			
+		</section>
 		
-		<h4>Platform Models</h4>
-		<table class="table">
-			<tr>
-				<th>ID</th>
-				<th>Name</th>
-				<th>Description</th>
-				<th>Manufacturer</th>
-				<th>OOI Node Type</th>
-				<th>Platform Type</th>
-				<th>Updated</th>
-			</tr>
-			<% _.each(platform_models, function(obj) { %>
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Instrument Models</h3>
+			<table class="table">
 				<tr>
-					<td><%= obj._id %></td>
-					<td><%= obj.name %></td>
-					<td><%= obj.description %></td>
-					<td><%= obj.manufacturer %></td>
-					<td><%= obj.ooi_node_type %></td>
-					<td><%= obj.platform_type %></td>
-					<td><%= obj.ts_updated %></td>
+					<th>Name</th>
+					<th>Description</th>
+					<th>Manufacturer</th>
+					<th>Instrument Class</th>
+					<th>Instrument Family</th>
+					<th>Model Label</th>
+					<th>Primary Interface</th>
+					<th>Updated</th>
 				</tr>
-			<% }); %>
-		</table>
-
-		<h4>Instrument Models</h4>
-		<table class="table">
-			<tr>
-				<th>ID</th>
-				<th>Name</th>
-				<th>Description</th>
-				<th>Manufacturer</th>
-				<th>Instrument Class</th>
-				<th>Instrument Family</th>
-				<th>Model Label</th>
-				<th>Primary Interface</th>
-				<th>Updated</th>
-			</tr>
-			<% _.each(instrument_models, function(obj) { %>
-				<tr>
-					<td><%= obj._id %></td>
-					<td><%= obj.name %></td>
-					<td><%= obj.description %></td>
-					<td><%= obj.manufacturer %></td>
-					<td><%= obj.instrument_class %></td>
-					<td><%= obj.instrument_family %></td>
-					<td><%= obj.model_label %></td>
-					<td><%= obj.primary_interface %></td>
-					<td><%= obj.ts_updated %></td>
-				</tr>
-			<% }); %>
-		</table>
+				<% _.each(instrument_models, function(obj) { %>
+					<tr>
+						<td><a href="/instrument_models/<%= obj._id %>/"><%= obj.name %></a></td>
+						<td><%= obj.description %></td>
+						<td><%= obj.manufacturer %></td>
+						<td><%= obj.instrument_class %></td>
+						<td><%= obj.instrument_family %></td>
+						<td><%= obj.model_label %></td>
+						<td><%= obj.primary_interface %></td>
+						<td><%= obj.ts_updated %></td>
+					</tr>
+				<% }); %>
+			</table>			
+		</section>
 	</div>
 	
 </div> <!-- div#obsevatory-facepage -->
