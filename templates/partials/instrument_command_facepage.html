@@ -35,14 +35,15 @@
 			<div class="command">
 				<label>Command</label>
 				<select>
-					<option>Initialize (start driver)</option>
-					<option>Activate (start logger and connect to instrument)</option>
-					<option>Deactivate (stop logger and disconnect from instrument)</option>
-					<option>Run (enter observatory-mode)</option>
-					<option>Get parameters (get all configurable parameters)</option>
-					<option>Set parameters (save changes to parameters)</option>
-					<option>Start sampling (start auto-sample of data collection)</option>
-					<option>Stop sampling (stop auto-sample of data collection)</option>
+					<option value='initialize'>Initialize (start driver)</option>
+					<option value='capabilities'>Capabilities</option>
+					<option value='activate'>Activate (start logger and connect to instrument)</option>
+					<option value='deactivate'>Deactivate (stop logger and disconnect from instrument)</option>
+					<option value='run'>Run (enter observatory-mode)</option>
+					<option value='get'>Get parameters (get all configurable parameters)</option>
+					<option value='set'>Set parameters (save changes to parameters)</option>
+					<option value='start'>Start sampling (start auto-sample of data collection)</option>
+					<option value='stop'>Stop sampling (stop auto-sample of data collection)</option>
 				</select>
 				
 				<input type="submit" name="Send Command" class="btn btn-primary"/>
