@@ -1,6 +1,7 @@
 import requests, json
 
-GATEWAY_HOST = "localhost:5000"
+from config import GATEWAY_HOST
+
 SERVICE_GATEWAY_BASE_URL = 'http://%s/ion-service' % GATEWAY_HOST
 
 class ServiceApi(object):

@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify, render_template, redirect, url_for
 import requests, json
 from functools import wraps
 
+from config import GATEWAY_HOST
+
 app = Flask(__name__)
 
 
@@ -10,7 +12,6 @@ PORT = 3000
 LOGGED_IN = True
 PRODUCTION = False
 
-GATEWAY_HOST = "localhost:5000"
 SERVICE_GATEWAY_BASE_URL = 'http://%s/ion-service' % GATEWAY_HOST
 
 PRODUCTION = False #more configurable in the future.
