@@ -544,21 +544,6 @@ IONUX.Views.FramesOfReferenceFacepage = Backbone.View.extend({
   }
 });
 
-IONUX.Views.UserRegistration = IONUX.Views.CreateNewView.extend({
-  el: "#user-registration-container",
-  template: _.template($("#user-registration-tmpl").html()),
-  
-  initialize: function() {
-    _.bindAll(this, "render");
-  },
-  
-  render: function() {
-   this.$el.html(this.template()).show();
-   $('#contact__name').focus();
-   return this; 
-  }
-});
-
 IONUX.Views.UserFacepage = Backbone.View.extend({
   el: "#user-facepage-container",
 
