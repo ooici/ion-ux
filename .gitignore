@@ -2,3 +2,5 @@ config.py
 *.pyc
 venv/*
 *.swp
+.project
+.pydevproject

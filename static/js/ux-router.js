@@ -22,8 +22,9 @@ IONUX.Router = Backbone.Router.extend({
   
   user_registration: function() {
     this._reset();
-    var userRegistration = new IONUX.Views.UserRegistration();
-    userRegistration.render();
+    var fpModel = new IONUX.Models.UserFacepageModel();
+    new IONUX.Views.UserRegistration({model:fpModel});
+    fpModel.fetch();
   },
   
   dashboard: function(){
