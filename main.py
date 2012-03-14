@@ -5,11 +5,11 @@ import base64
 import hashlib
 import time
 
-from config import FLASK_HOST, FLASK_PORT, GATEWAY_HOST, GATEWAY_PORT, LOGGED_IN, PRODUCTION
+from config import FLASK_HOST, FLASK_PORT, GATEWAY_HOST, GATEWAY_PORT, LOGGED_IN, PRODUCTION, SECRET_KEY
 
 app = Flask(__name__)
 
-app.secret_key = hashlib.sha1(str(time.time()))
+app.secret_key = SECRET_KEY
 
 SERVICE_GATEWAY_BASE_URL = 'http://%s:%d/ion-service' % (GATEWAY_HOST, GATEWAY_PORT)
 

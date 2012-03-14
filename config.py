@@ -11,3 +11,6 @@ GATEWAY_PORT=5000
 LOGGED_IN = True
 PRODUCTION = False
 
+# Be sure to define a secret key to enable session cookies
+SECRET_KEY = 'foo'
+
