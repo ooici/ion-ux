@@ -1,9 +1,9 @@
 import requests, json
 from flask import session
 
-from config import GATEWAY_HOST
+from config import GATEWAY_HOST, GATEWAY_PORT
 
-SERVICE_GATEWAY_BASE_URL = 'http://%s/ion-service' % GATEWAY_HOST
+SERVICE_GATEWAY_BASE_URL = 'http://%s:%d/ion-service' % (GATEWAY_HOST, GATEWAY_PORT)
 
 
 SERVICE_REQUEST_TEMPLATE = {
