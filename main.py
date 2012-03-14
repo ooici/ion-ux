@@ -117,6 +117,32 @@ def observatory_facepage(marine_facility_id):
     else:
         return create_html_response(request.path)
 
+@app.route('/observatories/<marine_facility_id>/enroll_user/', methods=['GET'])
+def enroll_user(marine_facility_id):
+    org_request = requests.get('http://67.58.49.196:5000/ion-service/marine_facility_management/find_marine_facility_org?marine_facility_id=7812a996aed546a5aaeeafdef1b09160')
+    org_id = json.loads(org_request.content)
+    org_id = org_id['data']['GatewayResponse']
+    
+    
+    enrollment = {
+        'serviceRequest': {
+            'serviceName': 'org_management', 
+            'serviceOp': 'request_enroll',
+            'params': {'org_id': org_id, 'user_id': 'aae8f2620068493885c822e27ceabdf3'} # Example -> 'object_name': ['restype', {}] }
+        }
+    }
+    
+    enroll_user = requests.post('http://67.58.49.196:5000/ion-service/org_management/request_enroll', data={'payload':json.dumps(enrollment)})
+    
+    find_requests = requests.get('http://67.58.49.196:5000/ion-service/org_management/find_requests?org_id=%s' % org_id)
+    
+    print str(find_requests.content)
+    
+    return find_requests.content
+
+
+@app.route('/')
+
 
 @app.route('/platforms/', methods=['GET'])
 def platforms():
@@ -170,6 +196,7 @@ def instrument_facepage(instrument_device_id):
         return jsonify(data=instrument)
     else:
         return render_template("ion-ux.html", **{"current_url":request.path})
+
 
 @app.route('/instruments/<instrument_device_id>/command/<agent_command>/')
 def start_instrument_agent(instrument_device_id, agent_command):

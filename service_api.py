@@ -7,16 +7,20 @@ AGENT_GATEWAY_BASE_URL = 'http://%s/ion-agent' % GATEWAY_HOST
 
 AGENT_PAYLOAD =   {"agentRequest":  
                     { "agentId": "", 
-                      "agentOp": "execute_agent", 
+                      "agentOp": "", 
                       "requester": "a43b44c366a46ff64630c", 
-                      "params": { "command": ["AgentCommand", { "commmand": "" }]}
+                      "params": { "command": ["AgentCommand", { "command": "" }]}
                 }
             }    
 
 class ServiceApi(object):
 
     @staticmethod
-    def instrument_agent_start(instrument_device_id, agent_command):
+    def enroll_user(marine_facility_id):
+        org_id = service_gateway_get('marine_facility_management', 'find_marine_facility_org', params={'marine_facility_id': marine_facility_id})
+    
+    @staticmethod
+    def instrument_agent_start(instrument_device_id):
         instrument_agent_instance_id = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate':'hasAgentInstance'})[0][0]['_id']
         agent_request = service_gateway_get('instrument_management', 'start_instrument_agent_instance', params={'instrument_agent_instance_id': str(instrument_agent_instance_id)})
         
@@ -24,13 +28,28 @@ class ServiceApi(object):
 
     @staticmethod
     def instrument_agent_initialize(instrument_device_id):
-        agent_command = 'initialize_instrument_agent_instance'
+        # instrument_agent_instance_id = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate':'hasAgentInstance'})[0][0]['_id']
+        
+        agent_command = 'initialize'
         
         payload = AGENT_PAYLOAD
         payload['agentRequest']['agentId'] = instrument_device_id
+        payload['agentRequest']['agentOp'] = 'execute'
         payload['agentRequest']['params']['command'][1]['command'] = agent_command
         
-        agent_request = requests.post('%s/%s/%s' % (AGENT_GATEWAY_BASE_URL, instrument_device_id, agent_command), data={'payload': json.dumps(payload)})
+        url = '%s/%s/%s' % (AGENT_GATEWAY_BASE_URL, instrument_device_id, 'execute')
+        
+        print '===================================='
+        print url
+        print '===================================='
+        
+        print '===================================='
+        print payload
+        print '===================================='
+        
+        
+        
+        agent_request = requests.post(url, data={'payload': json.dumps(payload)})
         
         print '===================================='
         print str(agent_request.content)

@@ -304,11 +304,19 @@ IONUX.Views.ObservatoryFacepage = Backbone.View.extend({
 
   template: _.template($("#observatory-facepage-tmpl").html()),
 
-  //events: { },
+  events: {
+    'click .enroll': 'enroll_user',
+  },
 
   initialize: function(){
     _.bindAll(this, "render");
     this.model.bind("change", this.render);
+  },
+
+  enroll_user: function() {
+    $.ajax({
+      url: 'org/'
+    })
   },
 
   render: function(){
@@ -407,7 +415,7 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
   start_agent: function(evt) {
     $(evt.target).closest('div').removeClass('open');
     $.ajax({
-        url: 'start_agent/',
+        url: 'start/',
         success: function() {
           $('.instrument-commands').show();
         },
