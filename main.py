@@ -239,9 +239,9 @@ def start_instrument_agent(instrument_device_id, agent_command):
     elif agent_command == 'initialize':
         instrument = ServiceApi.instrument_agent_initialize(instrument_device_id)
     elif agent_command == 'capabilities':
-        instrument = ServiceApi.instrument_agent_capabilities(instrument_device_id)        
-    elif agent_command == 'activate':
-        instrument = ServiceApi.instrument_agent_activate(instrument_devide_id)
+        instrument = ServiceApi.instrument_agent_get_capabilities(instrument_device_id)        
+    elif agent_command == 'reset':
+        instrument = ServiceApi.instrument_agent_reset(instrument_devide_id)
     return jsonify(data=True)
 
 

@@ -7,20 +7,46 @@
 
 		<section class="wrapper">
 			<h3 class="wrapper-heading">Information</h3>
-			<p>
-				<strong>Name: </strong><%= name %><br />
-				<strong>ID: </strong><%= _id %>
-			</p>
-			<h3>Owner</h3>
-			<p>
-				<strong>Name:</strong> <%= owner.contact.name %><br />
-				<strong>Email:</strong> <a href="mailto:<%= owner.contact.mail %>"><%= owner.contact.email %></a>
-			</p>
 			
-			<div>
-				<input type="submit" class="btn btn-primary enroll" value="Enroll Me"/>
-			</div>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Identification</h3>
+				<p>
+					<strong>Name: </strong><%= name %><br />
+					<span style="word-wrap: break-word"><strong>ID: </strong><%= _id %></span>
+				</p>
+			</section>
+			
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Location</h3>
+					<%= geospatial_constraint.geospatiallatmin %>
+					<%= geospatial_constraint.geospatiallatmax %>
+					<%= geospatial_constraint.geospatiallonmin %>
+					<%= geospatial_constraint.geospatiallonmax %>
+				</p>
+			</section>
+			
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Description</h3>
+				<p>
+					<%= description %>
+				</p>
+			</section>
+
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Contact</h3>
+				<p>
+					<strong>Owner:</strong> <%= owner.contact.name %><br />
+					<strong>Email:</strong> <a href="mailto:<%= owner.contact.mail %>"><%= owner.contact.email %></a>
+				</p>
+			</section>
+
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Enroll</h3>
+				<input type="submit" class="btn btn-success enroll" value="Enroll Me"/>
+			</section>
+
 		</section>
+
 	</div>
 	
 	<div class="span8">
@@ -30,7 +56,6 @@
 				<tr>
 					<th>Name</th>
 					<th>Description</th>
-					<th>Dataset ID</th>
 					<th>Data Product Level</th>
 					<th>CDM Data Type</th>
 					<th>Updated</th>
@@ -40,27 +65,8 @@
 					<tr>
 						<td><a href="/data_products/<%= obj._id %>/"><%= obj.name %></a></td>
 						<td><%= obj.description %></td>
-						<td><%= obj.dataset_id %></td>
 						<td><%= obj.data_product_level %></td>
 						<td><%= obj.CDM_data_type %></td>
-						<td><%= obj.ts_updated %></td>
-					</tr>
-				<% }); %>
-			</table>
-		</section>
-
-		<section class="wrapper">
-			<h3 class="wrapper-heading">Policies</h3>
-			<table class="table">
-				<tr>
-					<th>Name</th>
-					<th>Description</th>
-					<th>Updated</th>
-				</tr>
-				<% _.each(policies, function(obj) { %>
-					<tr>
-						<td><%= obj.name %></td>
-						<td><%= obj.description %></td>
 						<td><%= obj.ts_updated %></td>
 					</tr>
 				<% }); %>
@@ -104,26 +110,65 @@
 			</table>
 		</section>
 		
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Administration</h3>
+
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Participants</h3>
+				<p></p>
+				<table class="table">
+					<tr>
+						<th>Name</th>
+						<th>Email</th>
+						<th>Updated</th>
+					</tr>
+					<% _.each(participants, function(obj) { %>
+						<tr>
+							<td><a href="/users/<%= obj._id %>/"><%= obj.contact.name %></a></td>
+							<td><%= obj.contact.email %></td>
+							<td><%= obj.ts_updated %></td>
+						</tr>
+					<% }); %>
+					</table>
+			</section>
+			
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Roles</h3>
+				<table class="table">
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+						<th>Updated</th>
+					</tr>
+					<% _.each(policies, function(obj) { %>
+						<tr>
+							<td><%= obj.name %></td>
+							<td><%= obj.description %></td>
+							<td><%= obj.ts_updated %></td>
+						</tr>
+					<% }); %>
+				</table>
+			</section>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Policies</h3>
+			</section>
+		</section>
 		
 		<section class="wrapper">
 			<h3 class="wrapper-heading">User Requests</h3>
 			<table class="table">
 				<tr>
-					<th>Origin</th>
+					<th>Name</th>
 					<th>Description</th>
 					<th>Status</th>
-					<th>Status Description</th>
-					<th>Type</th>
 					<th>User ID</th>
 					<th>Updated</th>
 				</tr>
 				<% _.each(user_requests, function(obj) { %>
 					<tr>
-						<td><%= obj.origin %></td>
+						<td><%= obj.name %></td>
 						<td><%= obj.description %></td>
 						<td><%= obj.status %></td>
-						<td><%= obj.status_description %></td>
-						<td><%= obj.type %></td>
 						<td><%= obj.user_id %></td>
 						<td><%= obj.ts_updated %></td>
 					</tr>
@@ -131,111 +176,119 @@
 			</table>
 		</section>
 		
-		<section class="wrapper">
-			<h3 class="wrapper-heading">Instrument Agents</h3>
-			<table class="table">
-				<tr>
-					<th>Name</th>
-					<th>Description</th>
-					<th>Agent Version</th>
-					<th>Client Module</th>
-					<th>Connection Method</th>
-					<th>Driver Class</th>
-					<th>Driver Class Client</th>
-					<th>Driver Class Model</th>
-					<th>Updated</th>
-				</tr>
-				<% _.each(instrument_agents, function(obj) { %>
-					<tr>
-						<td><a href="/instrument_agents/<%= obj._id %>/"><%= obj.name %></a></td>
-						<td><%= obj.description %></td>
-						<td><%= obj.agent_version %></td>
-						<td><%= obj.client_module %></td>
-						<td><%= obj.connection_method %></td>
-						<td><%= obj.driver_class %></td>
-						<td><%= obj.driver_class_client %></td>
-						<td><%= obj.driver_class_model %></td>
-						<td><%= obj.ts_updated %></td>
-					</tr>
-				<% }); %>
-			</table>
-		</section>
 		
 		<section class="wrapper">
-			<h3 class="wrapper-heading">Data Process Definitions</h3>
+			<h3 class="wrapper-heading">Software</h3>
 
-			<table class="table">
-				<tr>
-					<th>Name</th>
-					<th>Description</th>
-					<th>Class Name</th>
-					<th>Module</th>
-					<th>Process Source</th>
-					<th>Updated</th>
-				</tr>
-				<% _.each(data_process_definitions, function(obj) { %>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Instrument Agents</h3>
+				<table class="table">
 					<tr>
-						<td><a href="/data_process_definitions/<%= obj._id %>/"><%= obj.name %></a></td>
-						<td><%= obj.description %></td>
-						<td><%= obj.class_name %></td>
-						<td><%= obj.module %></td>
-						<td><%= obj.process_source %></td>
-						<td><%= obj.ts_updated %></td>
+						<th>Name</th>
+						<th>Description</th>
+						<th>Agent Version</th>
+						<th>Drive Module</th>
+						<th>Connection Method</th>
+						<th>Driver Class</th>
+						<th>Driver Class Client</th>
+						<th>Driver Class Model</th>
+						<th>Updated</th>
 					</tr>
-				<% }); %>
-			</table>
-		</section>
-				
-		<section class="wrapper">
-			<h3 class="wrapper-heading">Platform Models</h3>
-			<table class="table">
-				<tr>
-					<th>Name</th>
-					<th>Description</th>
-					<th>Manufacturer</th>
-					<th>OOI Node Type</th>
-					<th>Platform Type</th>
-					<th>Updated</th>
-				</tr>
-				<% _.each(platform_models, function(obj) { %>
-					<tr>
-						<td><a href="platform_models/<%= obj._id %>/"><%= obj.name %></a></td>
-						<td><%= obj.description %></td>
-						<td><%= obj.manufacturer %></td>
-						<td><%= obj.ooi_node_type %></td>
-						<td><%= obj.platform_type %></td>
-						<td><%= obj.ts_updated %></td>
-					</tr>
-				<% }); %>
-			</table>			
-		</section>
+					<% _.each(instrument_agents, function(obj) { %>
+						<tr>
+							<td><a href="/instrument_agents/<%= obj._id %>/"><%= obj.name %></a></td>
+							<td><%= obj.description %></td>
+							<td><%= obj.agent_version %></td>
+							<td><%= obj.driver_module %></td>
+							<td><%= obj.connection_method %></td>
+							<td><%= obj.driver_class %></td>
+							<td><%= obj.driver_class_client %></td>
+							<td><%= obj.driver_class_model %></td>
+							<td><%= obj.ts_updated %></td>
+						</tr>
+					<% }); %>
+				</table>
+			</section>
 		
-		<section class="wrapper">
-			<h3 class="wrapper-heading">Instrument Models</h3>
-			<table class="table">
-				<tr>
-					<th>Name</th>
-					<th>Description</th>
-					<th>Manufacturer</th>
-					<th>Instrument Class</th>
-					<th>Instrument Family</th>
-					<th>Model Label</th>
-					<th>Primary Interface</th>
-					<th>Updated</th>
-				</tr>
-				<% _.each(instrument_models, function(obj) { %>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Data Process Definitions</h3>
+
+				<table class="table">
 					<tr>
-						<td><a href="/instrument_models/<%= obj._id %>/"><%= obj.name %></a></td>
-						<td><%= obj.description %></td>
-						<td><%= obj.manufacturer %></td>
-						<td><%= obj.instrument_class %></td>
-						<td><%= obj.instrument_family %></td>
-						<td><%= obj.model_label %></td>
-						<td><%= obj.primary_interface %></td>
-						<td><%= obj.ts_updated %></td>
+						<th>Name</th>
+						<th>Description</th>
+						<th>Class Name</th>
+						<th>Module</th>
+						<th>Updated</th>
 					</tr>
-				<% }); %>
-			</table>			
+					<% _.each(data_process_definitions, function(obj) { %>
+						<tr>
+							<td><a href="/data_process_definitions/<%= obj._id %>/"><%= obj.name %></a></td>
+							<td><%= obj.description %></td>
+							<td><%= obj.class_name %></td>
+							<td><%= obj.module %></td>
+							<td><%= obj.ts_updated %></td>
+							<!-- <td><%= obj.process_source %></td> -->
+						</tr>
+					<% }); %>
+				</table>
+			</section>
+		</section>
+
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Definitions</h3>
+
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Platform Models</h3>
+				<table class="table">
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+						<th>Manufacturer</th>
+						<th>OOI Node Type</th>
+						<th>Platform Type</th>
+						<th>Updated</th>
+					</tr>
+					<% _.each(platform_models, function(obj) { %>
+						<tr>
+							<td><a href="platform_models/<%= obj._id %>/"><%= obj.name %></a></td>
+							<td><%= obj.description %></td>
+							<td><%= obj.manufacturer.name %></td>
+							<td><%= obj.OOI_node_type %></td>
+							<td><%= obj.platform_type %></td>
+							<td><%= obj.ts_updated %></td>
+						</tr>
+					<% }); %>
+				</table>			
+			</section>
+		
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Instrument Models</h3>
+				<table class="table">
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+						<th>Manufacturer</th>
+						<th>Instrument Class</th>
+						<th>Instrument Family</th>
+						<th>Model Label</th>
+						<th>Primary Interface</th>
+						<th>Updated</th>
+					</tr>
+					<% _.each(instrument_models, function(obj) { %>
+						<tr>
+							<td><a href="/instrument_models/<%= obj._id %>/"><%= obj.name %></a></td>
+							<td><%= obj.description %></td>
+							<td><%= obj.manufacturer.name %></td>
+							<td><%= obj.instrument_class %></td>
+							<td><%= obj.instrument_family %></td>
+							<td><%= obj.model_label %></td>
+							<td><%= obj.primary_interface %></td>
+							<td><%= obj.ts_updated %></td>
+						</tr>
+					<% }); %>
+				</table>			
+			</section>
 		</section>
 	</div>
 	

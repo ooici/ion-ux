@@ -8,12 +8,12 @@ AGENT_GATEWAY_BASE_URL = 'http://%s/ion-agent' % GATEWAY_HOST
 
 AGENT_PAYLOAD =   {"agentRequest":  
                     { "agentId": "", 
-                      "agentOp": "", 
-                      "requester": "a43b44c366a46ff64630c", 
+                      "agentOp": "",
+                      "expiry": "2342323",
+                      "requester": "397fecb3bade49ebbf6a415b2f62f83a",
                       "params": { "command": ["AgentCommand", { "command": "" }]}
                 }
-            }    
-
+            }
 
 SERVICE_REQUEST_TEMPLATE = {
     'serviceRequest': {
@@ -24,6 +24,15 @@ SERVICE_REQUEST_TEMPLATE = {
 }
 
 class ServiceApi(object):
+
+    @staticmethod
+    def find_resources_by_resource_type(resource_type, user_indentity_id=None):
+        if user_indentity_id:
+            resources = service_gateway_get('resource_registry', 'find_subject', pamars={'subject_type': resource_type , 'predicate': 'hasOwner', 'object_id': user_indentity_id})
+            return resources
+        
+        resources = service_gateway_get('resource_type', 'find_resources', params={'restype': resource_type})
+        return resources
 
     @staticmethod
     def enroll_user(marine_facility_id):
@@ -40,14 +49,14 @@ class ServiceApi(object):
     def instrument_agent_initialize(instrument_device_id):
         # instrument_agent_instance_id = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate':'hasAgentInstance'})[0][0]['_id']
         
-        agent_command = 'initialize'
+        agent_command = "initialize"
         
         payload = AGENT_PAYLOAD
-        payload['agentRequest']['agentId'] = instrument_device_id
-        payload['agentRequest']['agentOp'] = 'execute'
-        payload['agentRequest']['params']['command'][1]['command'] = agent_command
+        payload["agentRequest"]["agentId"] = instrument_device_id
+        payload["agentRequest"]["agentOp"] = "execute_agent"
+        payload["agentRequest"]["params"]["command"][1]["command"] = agent_command
         
-        url = '%s/%s/%s' % (AGENT_GATEWAY_BASE_URL, instrument_device_id, 'execute')
+        url = '%s/%s/%s' % (AGENT_GATEWAY_BASE_URL, instrument_device_id, "execute_agent")
         
         print '===================================='
         print url
@@ -59,12 +68,67 @@ class ServiceApi(object):
         
         
         
-        agent_request = requests.post(url, data={'payload': json.dumps(payload)})
+        agent_request = requests.post(url, data={"payload": json.dumps(payload)})
         
         print '===================================='
         print str(agent_request.content)
         print '===================================='
         
+        return str(agent_request.content)
+    
+    @staticmethod
+    def instrument_agent_get_capabilities(instrument_device_id):        
+        agent_command = "get_capabilities"
+        
+        payload = AGENT_PAYLOAD
+        payload["agentRequest"]["agentId"] = instrument_device_id
+        payload["agentRequest"]["agentOp"] = agent_command
+        payload["agentRequest"]["params"] = {} #["command"][1]["command"] = agent_command
+        
+        url = '%s/%s/%s' % (AGENT_GATEWAY_BASE_URL, instrument_device_id, agent_command)
+        
+        print '===================================='
+        print url
+        print '===================================='
+        
+        print '===================================='
+        print payload
+        print '===================================='
+        
+        
+        
+        agent_request = requests.post(url, data={"payload": json.dumps(payload)})
+        
+        print '===================================='
+        print str(agent_request.content)
+        print '===================================='
+        
+        return str(agent_request.content)
+        
+    
+    @staticmethod
+    def instrument_agent_reset(instrument_device_id):        
+        agent_command = "execute_agent"
+
+        payload = AGENT_PAYLOAD
+        payload["agentRequest"]["agentId"] = instrument_device_id
+        payload["agentRequest"]["agentOp"] = agent_command
+        payload["agentRequest"]["params"]["command"][1]["command"] = 'reset'
+
+        url = '%s/%s/%s' % (AGENT_GATEWAY_BASE_URL, instrument_device_id, agent_command)
+
+        print '===================================='
+        print url
+
+
+        print '===================================='
+        print payload
+
+        agent_request = requests.post(url, data={"payload": json.dumps(payload)})
+
+        print '===================================='
+        print str(agent_request.content)
+
         return str(agent_request.content)
 
 
@@ -120,27 +184,34 @@ class ServiceApi(object):
         
         if marine_facility.has_key('_id'):
 
-            # GENERAL
-            marine_facility['data_products'] = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'DataProduct', 'id_only': 'False'})[0]
-            marine_facility['platforms'] = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'PlatformDevice', 'id_only': 'False'})[0]
-            marine_facility['instruments'] = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'InstrumentDevice', 'id_only': 'False'})[0]
-
-            # ADMINISTRATION
             org_id = service_gateway_get('marine_facility_management', 'find_marine_facility_org', params={'marine_facility_id': marine_facility_id})
-            marine_facility['users'] = service_gateway_get('org_management', 'find_enrolled_users', params={'org_id': org_id})
+
+            # GENERAL
+            marine_facility['data_products'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': org_id, 'predicate': 'hasResource', 'object_type': 'DataProduct'})[0]
+            marine_facility['platforms'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': org_id, 'predicate': 'hasResource', 'object_type': 'PlatformDevice'})[0]
+            marine_facility['instruments'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': org_id, 'predicate': 'hasResource', 'object_type': 'InstrumentDevice'})[0]
+
+            # ADMINISTRATION            
+            marine_facility['participants'] = []
+            participants = service_gateway_get('resource_registry', 'find_objects', params={'subject': org_id, 'predicate': 'hasMembership'})[0]
+            
+            for participant in participants:
+                user_info = service_gateway_get('resource_registry', 'find_objects', params={'subject': participant.get('_id'), 'predicate': 'hasInfo'})[0][0]
+                marine_facility['participants'].append(user_info)
+
             marine_facility['policies'] = service_gateway_get('org_management', 'find_org_roles', params={'org_id': org_id})
             
             # SOFTWARE
-            marine_facility['instrument_agents'] = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'InstrumentAgent', 'id_only': 'False'})[0]
-            marine_facility['data_process_definitions'] = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'DataProcessDefinition', 'id_only': 'False'})[0]
+            marine_facility['instrument_agents'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': org_id, 'predicate': 'hasResource', 'object_type': 'InstrumentAgent'})[0]
+            marine_facility['data_process_definitions'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': org_id, 'predicate': 'hasResource', 'object_type': 'DataProcessDefinition'})[0]
             
             # EVENTS
             marine_facility['recent_events'] = []
             marine_facility['user_requests'] = service_gateway_get('org_management', 'find_requests', params={'org_id': org_id})
             
             # DEFINITIONS
-            marine_facility['platform_models'] = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'PlatformModel', 'id_only': 'False'})[0]
-            marine_facility['instrument_models'] = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'InstrumentModel', 'id_only': 'False'})[0]
+            marine_facility['platform_models'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': org_id, 'predicate': 'hasResource', 'object_type': 'PlatformModel'})[0]
+            marine_facility['instrument_models'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': org_id, 'predicate': 'hasResource', 'object_type': 'InstrumentModel'})[0]
             
             # USER
             owner_id = service_gateway_get('resource_registry', 'find_objects', params={'subject': marine_facility_id, 'predicate': 'hasOwner'})[0][0]['_id']
