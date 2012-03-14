@@ -1,25 +1,26 @@
 import requests, json
 from flask import session
 
-from config import GATEWAY_HOST
+from config import GATEWAY_HOST, GATEWAY_PORT
 
-SERVICE_GATEWAY_BASE_URL = 'http://%s/ion-service' % GATEWAY_HOST
-AGENT_GATEWAY_BASE_URL = 'http://%s/ion-agent' % GATEWAY_HOST
-
-AGENT_PAYLOAD =   {"agentRequest":  
-                    { "agentId": "", 
-                      "agentOp": "",
-                      "expiry": "2342323",
-                      "requester": "397fecb3bade49ebbf6a415b2f62f83a",
-                      "params": { "command": ["AgentCommand", { "command": "" }]}
-                }
-            }
+SERVICE_GATEWAY_BASE_URL = 'http://%s:%d/ion-service' % (GATEWAY_HOST, GATEWAY_PORT)
+AGENT_GATEWAY_BASE_URL = 'http://%s:%d/ion-agent' % (GATEWAY_HOST, GATEWAY_PORT)
 
 SERVICE_REQUEST_TEMPLATE = {
     'serviceRequest': {
         'serviceName': '', 
         'serviceOp': '',
         'params': {} # Example -> 'object_name': ['restype', {}] }
+    }
+}
+
+AGENT_REQUEST_TEMPLATE = {
+    "agentRequest": { 
+        "agentId": "",
+        "agentOp": "",
+        "expiry": "2342323",
+        "requester": "63a5d079a63e483d9fb5d4e1ed2e131d",
+        "params": { "command": ["AgentCommand", { "command": "" }]}
     }
 }
 
@@ -51,7 +52,7 @@ class ServiceApi(object):
         
         agent_command = "initialize"
         
-        payload = AGENT_PAYLOAD
+        payload = AGENT_REQUEST_TEMPLATE
         payload["agentRequest"]["agentId"] = instrument_device_id
         payload["agentRequest"]["agentOp"] = "execute_agent"
         payload["agentRequest"]["params"]["command"][1]["command"] = agent_command
@@ -80,7 +81,7 @@ class ServiceApi(object):
     def instrument_agent_get_capabilities(instrument_device_id):        
         agent_command = "get_capabilities"
         
-        payload = AGENT_PAYLOAD
+        payload = AGENT_REQUEST_TEMPLATE
         payload["agentRequest"]["agentId"] = instrument_device_id
         payload["agentRequest"]["agentOp"] = agent_command
         payload["agentRequest"]["params"] = {} #["command"][1]["command"] = agent_command
@@ -110,7 +111,7 @@ class ServiceApi(object):
     def instrument_agent_reset(instrument_device_id):        
         agent_command = "execute_agent"
 
-        payload = AGENT_PAYLOAD
+        payload = AGENT_REQUEST_TEMPLATE
         payload["agentRequest"]["agentId"] = instrument_device_id
         payload["agentRequest"]["agentOp"] = agent_command
         payload["agentRequest"]["params"]["command"][1]["command"] = 'reset'

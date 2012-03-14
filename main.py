@@ -5,20 +5,13 @@ import base64
 import hashlib
 import time
 
-from config import GATEWAY_HOST
+from config import FLASK_HOST, FLASK_PORT, GATEWAY_HOST, GATEWAY_PORT, LOGGED_IN, PRODUCTION, SECRET_KEY
 
 app = Flask(__name__)
 
-#app.secret_key = hashlib.sha1(str(time.time()))
-app.secret_key = "Foo"
+app.secret_key = SECRET_KEY
 
-HOST = 'localhost'
-PORT = 3000
-LOGGED_IN = True
-PRODUCTION = False
-
-
-SERVICE_GATEWAY_BASE_URL = 'http://%s/ion-service' % GATEWAY_HOST
+SERVICE_GATEWAY_BASE_URL = 'http://%s:%d/ion-service' % (GATEWAY_HOST, GATEWAY_PORT)
 
 if PRODUCTION:
     from service_api import ServiceApi
@@ -496,4 +489,4 @@ def create_html_response(request_path, template_name="ion-ux.html"):
 
     
 if __name__ == '__main__':
-    app.run(debug=True, host=HOST, port=PORT)
+    app.run(debug=True, host=FLASK_HOST, port=FLASK_PORT)
