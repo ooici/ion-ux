@@ -116,6 +116,44 @@ IONUX.Views.ObservatoriesView = Backbone.View.extend({
   }
 });
 
+
+IONUX.Views.UserRegistration = IONUX.Views.CreateNewView.extend({
+  el: "#user-registration-container",
+  template: _.template($("#user-registration-tmpl").html()),
+  
+  initialize: function() {
+    _.bindAll(this, "render");
+    this.model.bind("change", this.render);
+  },
+  
+  create_new: function(evt){
+    evt.preventDefault();
+    this.$el.find("input[type='submit']").attr("disabled", true).val("Saving...");
+    
+    var self = this;
+    var contact = {}
+    $.each(this.$el.find("input,textarea").not("input[type='submit'],input[type='cancel']"), function(i, e){
+      var key = $(e).attr("name"), val = $(e).val();
+      contact[key] = val;
+    });
+    self.model.set("contact", contact);
+    
+    self.model.save(null, {success:function(model, resp){
+      self.$el.hide();
+      var router = new Backbone.Router();
+      router.navigate("");
+    }});
+  },
+  
+  render: function() {
+   console.log(this.model.toJSON());
+   this.$el.html(this.template(this.model.toJSON())).show();
+   $('#name').focus();
+   return this; 
+  }
+});
+
+
 IONUX.Views.ObservatoriesItemView = Backbone.View.extend({
 
   tagName: "ul",

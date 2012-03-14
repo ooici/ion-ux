@@ -1,4 +1,5 @@
 import requests, json
+from flask import session
 
 from config import GATEWAY_HOST
 
@@ -12,6 +13,15 @@ AGENT_PAYLOAD =   {"agentRequest":
                       "params": { "command": ["AgentCommand", { "command": "" }]}
                 }
             }    
+
+
+SERVICE_REQUEST_TEMPLATE = {
+    'serviceRequest': {
+        'serviceName': '', 
+        'serviceOp': '',
+        'params': {} # Example -> 'object_name': ['restype', {}] }
+    }
+}
 
 class ServiceApi(object):
 
@@ -69,6 +79,41 @@ class ServiceApi(object):
         return
     
     
+    @staticmethod
+    def signon_user(certificate):
+        res = service_gateway_post('identity_management', 'signon', params={'certificate': certificate})
+        return res
+    
+    @staticmethod
+    def find_user_info(user_id):
+        user_info = service_gateway_post('identity_management', 'find_user_info_by_id', params={'user_id': user_id})
+        return user_info
+    
+    @staticmethod
+    def create_user_info(user_id, user_info):
+        user_info = ['UserInfo', user_info]
+        res = service_gateway_post('identity_management', 'create_user_info', params={'user_id': user_id, 'user_info': user_info})
+        return res
+    
+    @staticmethod
+    def update_user_info(user_info):
+        user_info = ['UserInfo', user_info]
+        res = service_gateway_get('identity_management', 'update_user_info', params={'user_info': user_info})
+        return res
+    
+    @staticmethod
+    def find_user_details(user_id):
+        user_details = service_gateway_get('identity_management', 'read_user_identity', params={'user_id': user_id})
+        
+        if user_details.has_key('_id'):
+
+            # CREDENTIALS
+            user_details['credentials'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': user_details['_id'], 'predicate': 'hasCredentials', 'object_type': 'UserCredentials'})
+
+            # USER INFO
+            user_details['user_info'] = service_gateway_get('identity_management', 'find_user_info_by_id', params={'user_id':user_details['_id']})
+        return user_details
+
     @staticmethod
     def find_observatory(marine_facility_id):
         marine_facility = service_gateway_get('marine_facility_management', 'read_marine_facility', params={'marine_facility_id': marine_facility_id})
@@ -200,13 +245,13 @@ def build_get_request(service_name, operation_name, params={}):
             param_string += '%s=%s&' % (k,v)
         url += param_string[:-1]
 
-    pretty_console_log('SERVICE GATEWAY URL', url)
+    pretty_console_log('SERVICE GATEWAY GET URL', url)
 
     return url
 
 def service_gateway_get(service_name, operation_name, params={}):    
     resp = requests.get(build_get_request(service_name, operation_name, params))
-    pretty_console_log('SERVICE GATEWAY RESPONSE', resp.content)
+    pretty_console_log('SERVICE GATEWAY GET RESPONSE', resp.content)
 
     if resp.status_code == 200:
         resp = json.loads(resp.content)
@@ -216,9 +261,43 @@ def service_gateway_get(service_name, operation_name, params={}):
         elif type(resp) == list:
             return resp['data']['GatewayResponse'][0]
 
+def build_post_request(service_name, operation_name, params={}):
+    url = '%s/%s/%s' % (SERVICE_GATEWAY_BASE_URL, service_name, operation_name)    
 
-def pretty_console_log(label, content):
+    post_data = SERVICE_REQUEST_TEMPLATE
+    post_data['serviceRequest']['serviceName'] = service_name   
+    post_data['serviceRequest']['serviceOp'] = operation_name   
+    if len(params) > 0:
+        post_data['serviceRequest']['params'] = params
+
+    # conditionally add user id and expiry to request
+    if "user_id" in session:
+        post_data['serviceRequest']['requester'] = session['user_id']
+        post_data['serviceRequest']['expiry'] = session['valid_until']
+
+    data={'payload': json.dumps(post_data)}
+
+    pretty_console_log('SERVICE GATEWAY POST URL/DATA', url, data)
+
+    return url, data
+
+def service_gateway_post(service_name, operation_name, params={}):
+    url, data = build_post_request(service_name, operation_name, params)
+    resp = requests.post(url, data)
+    pretty_console_log('SERVICE GATEWAY POST RESPONSE', resp.content)
+
+    if resp.status_code == 200:
+        resp = json.loads(resp.content)
+
+        if type(resp) == dict:
+            return resp['data']['GatewayResponse']
+        elif type(resp) == list:
+            return resp['data']['GatewayResponse'][0]
+
+def pretty_console_log(label, content, data=None):
     print '\n\n\n'
     print '-------------------------------------------'
     print '%s : %s' % (label, content)
+    if data:
+        print 'data : %s' % data
     print '-------------------------------------------'
