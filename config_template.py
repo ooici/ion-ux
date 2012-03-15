@@ -1,3 +1,7 @@
+##
+# IMPORTANT: Copy this file into 'config.py' and change values as needed.
+##
+
 # flask server machine name
 FLASK_HOST = 'localhost'
 # flask server port number
