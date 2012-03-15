@@ -428,10 +428,11 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
 
   initialize: function(){
     _.bindAll(this, "render", "start_agent", "stop_agent", "issue_command");
+    this.model.bind("change", this.render);
   },
 
   render: function(){
-    this.$el.empty().html(this.template({})).show();
+    this.$el.empty().html(this.template(this.model.toJSON())).show();
   },
   
   issue_command: function(evt) {
@@ -439,7 +440,9 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
     $.ajax({url:command,
       success: function() {
         $('.instrument-commands').show();
-        this.$el.find(".command").append($("<p>").text("The command '"+command+"' was issued!!1!"));
+        // this.$el.find(".command").append($("<p>").text("The command '"+command+"' was issued!!1!"));
+        $(".command-output").append($("<p>").text("The command '"+command+"' was issued!!1!"));
+        
       },
       error: function() {
         alert("SORRY, BUT... FAIL");   
@@ -454,6 +457,8 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
         url: 'start/',
         success: function() {
           $('.instrument-commands').show();
+          $('#start-instrument-agent-instance').hide();
+          $('#stop-instrument-agent-instance').show();
         },
         
         error: function() {
@@ -468,8 +473,8 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
   stop_agent: function(evt) {
     evt.preventDefault();
     console.log("stop instrument agent instance");
-    $(this).text("Start Instrument Agent Instance");
-    $(this).attr('id', 'start-instrument-agent-instance');
+    $('#stop-instrument-agent-instance').hide();
+    $('#start-instrument-agent-instance').show();
     
     // hide the command panel
     // replace #stop-instrument-agent-instance

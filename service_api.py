@@ -19,8 +19,8 @@ AGENT_REQUEST_TEMPLATE = {
         "agentId": "",
         "agentOp": "",
         "expiry": "0",
-        "requester": "53f9ab4a3c3347cbb07c868e9f102374",
-        "params": { "command": ["AgentCommand", { "command": "" }]}
+        "requester": "8ca30e9012424b289193135e4f4c3831",
+        "params": { "command": ["AgentCommand", { "command": "placeholder" }]}
     }
 }
 
@@ -45,6 +45,37 @@ class ServiceApi(object):
         agent_request = service_gateway_get('instrument_management', 'start_instrument_agent_instance', params={'instrument_agent_instance_id': str(instrument_agent_instance_id)})
         
         return agent_request
+
+    @staticmethod
+    def instrument_execute_agent(instrument_device_id, agent_command):
+       # instrument_agent_instance_id = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate':'hasAgentInstance'})[0][0]['_id']
+
+       # command = agent_command
+       print '===================================='
+       print 'DEVICE_ID: %s' % instrument_device_id
+       print 'AGENT_COMMAND: %s' % agent_command
+
+
+
+       payload = AGENT_REQUEST_TEMPLATE
+       payload["agentRequest"]["agentId"] = instrument_device_id
+       payload["agentRequest"]["agentOp"] = "execute_agent"
+       payload["agentRequest"]["params"]["command"][1]["command"] = agent_command
+
+       url = '%s/%s/%s' % (AGENT_GATEWAY_BASE_URL, instrument_device_id, "execute_agent")
+
+       print '===================================='
+       print url
+
+       print '===================================='
+       print payload
+
+       agent_request = requests.post(url, data={"payload": json.dumps(payload)})
+
+       print '===================================='
+       print str(agent_request.content)
+
+       return str(agent_request.content)
 
     @staticmethod
     def instrument_agent_initialize(instrument_device_id):
