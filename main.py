@@ -130,6 +130,7 @@ def observatories():
             resp_data = {"success":True}
         else:
             resp_data = ServiceApi.find_by_resource_type('MarineFacility')
+            available_users = ServiceApi.find_all_user_infos()
             
         return jsonify(data=resp_data)
     else:
@@ -231,7 +232,7 @@ def start_instrument_agent(instrument_device_id, agent_command):
         instrument = ServiceApi.instrument_agent_start(instrument_device_id)
     elif agent_command == 'initialize':
         instrument = ServiceApi.instrument_agent_initialize(instrument_device_id)
-    elif agent_command == 'capabilities':
+    elif agent_command == 'get_capabilities':
         instrument = ServiceApi.instrument_agent_get_capabilities(instrument_device_id)        
     elif agent_command == 'reset':
         instrument = ServiceApi.instrument_agent_reset(instrument_devide_id)

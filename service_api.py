@@ -18,8 +18,8 @@ AGENT_REQUEST_TEMPLATE = {
     "agentRequest": { 
         "agentId": "",
         "agentOp": "",
-        "expiry": "2342323",
-        "requester": "63a5d079a63e483d9fb5d4e1ed2e131d",
+        "expiry": "0",
+        "requester": "53f9ab4a3c3347cbb07c868e9f102374",
         "params": { "command": ["AgentCommand", { "command": "" }]}
     }
 }
@@ -219,6 +219,11 @@ class ServiceApi(object):
             marine_facility['owner'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': owner_id, 'predicate': 'hasInfo'})[0][0]
         
         return marine_facility
+    
+    @staticmethod
+    def find_all_user_infos():
+        '''Used for create_observatory'''
+        pass
     
     @staticmethod
     def find_platform(platform_device_id):

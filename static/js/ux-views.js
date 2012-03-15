@@ -105,9 +105,7 @@ IONUX.Views.ObservatoriesView = Backbone.View.extend({
     this.$el.html(this.template({"collection":this.collection.toJSON()})).show();
     return this;
   },
-
-  //show_facepage: function(){ console.log("show_facepage"); },
-
+  
   show_create_new_form: function(){
     if (_.isUndefined(this.observatories_create_new_view)){
       this.observatories_create_new_view = new IONUX.Views.ObservatoryCreateNewView({model: new IONUX.Models.Observatory()}); 
