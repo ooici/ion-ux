@@ -61,16 +61,8 @@ def signon():
     certificate = base64.b64decode(raw_cert)
 
     # call backend to signon user
-    user_id, valid_until, is_registered = ServiceApi.signon_user(certificate)    
+    ServiceApi.signon_user(certificate)    
     
-    # set user id, valid until and is registered info in session
-    # TODO might need to address issues that arise with using
-    # session to set cookie when web server ends up being a pool
-    # of web servers?
-    session['user_id'] = user_id
-    session['valid_until'] = valid_until
-    session['is_registered'] = is_registered
-
     if not is_registered:
         # redirect to registration screen
         return redirect('/register')
@@ -230,8 +222,10 @@ def instrument_facepage(instrument_device_id):
 def start_instrument_agent(instrument_device_id, agent_command):
     if agent_command == 'start':
         instrument = ServiceApi.instrument_agent_start(instrument_device_id)
+        return jsonify(data=True)
     elif agent_command == 'get_capabilities':
         instrument = ServiceApi.instrument_agent_get_capabilities(instrument_device_id)
+        return jsonify(data=True)
     else:
         instrument = ServiceApi.instrument_execute_agent(instrument_device_id, agent_command)
     

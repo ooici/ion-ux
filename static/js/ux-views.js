@@ -423,11 +423,11 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
   events: {
     'click #start-instrument-agent-instance': 'start_agent',
     'click a#stop-instrument-agent-instace': 'stop_agent',
-    'click input[type=submit]': 'issue_command'
+    'click .issue_command': 'issue_command'
   },
 
   initialize: function(){
-    _.bindAll(this, "render", "start_agent", "stop_agent", "issue_command");
+    _.bindAll(this, "render", "start_agent", "stop_agent"); // "issue_command"
     this.model.bind("change", this.render);
   },
 

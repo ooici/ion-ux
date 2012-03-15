@@ -4,7 +4,7 @@ FLASK_HOST = 'localhost'
 FLASK_PORT = 3000
 
 # Service gateway machine name
-GATEWAY_HOST='localhost'
+GATEWAY_HOST='67.58.49.196'
 # Service gateway port number
 GATEWAY_PORT=5000
 
