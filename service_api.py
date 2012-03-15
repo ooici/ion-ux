@@ -395,13 +395,13 @@ def build_get_request(service_name, operation_name, params={}):
             param_string += '%s=%s&' % (k,v)
         url += param_string[:-1]
 
-    pretty_console_log('SERVICE GATEWAY GET URL', url)
+    #pretty_console_log('SERVICE GATEWAY GET URL', url)
 
     return url
 
 def service_gateway_get(service_name, operation_name, params={}):    
     resp = requests.get(build_get_request(service_name, operation_name, params))
-    pretty_console_log('SERVICE GATEWAY GET RESPONSE', resp.content)
+    #pretty_console_log('SERVICE GATEWAY GET RESPONSE', resp.content)
 
     if resp.status_code == 200:
         resp = json.loads(resp.content)
@@ -427,14 +427,14 @@ def build_post_request(service_name, operation_name, params={}):
 
     data={'payload': json.dumps(post_data)}
 
-    pretty_console_log('SERVICE GATEWAY POST URL/DATA', url, data)
+    #pretty_console_log('SERVICE GATEWAY POST URL/DATA', url, data)
 
     return url, data
 
 def service_gateway_post(service_name, operation_name, params={}):
     url, data = build_post_request(service_name, operation_name, params)
     resp = requests.post(url, data)
-    pretty_console_log('SERVICE GATEWAY POST RESPONSE', resp.content)
+    #pretty_console_log('SERVICE GATEWAY POST RESPONSE', resp.content)
 
     if resp.status_code == 200:
         resp = json.loads(resp.content)

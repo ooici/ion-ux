@@ -356,7 +356,9 @@ IONUX.Views.ObservatoryFacepage = Backbone.View.extend({
   },
 
   render: function(){
-    this.$el.html(this.template(this.model.toJSON())).show();
+    var visibility = _.any(IONUX.ROLES, function(role){return role === "ORG_MANAGER"})?"invisible":"";
+    var tmpl_vars = _.extend(this.model.toJSON(), {"visibility":visibility});
+    this.$el.html(this.template(tmpl_vars)).show();
   }
 
 });
