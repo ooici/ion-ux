@@ -61,15 +61,8 @@ def signon():
     certificate = base64.b64decode(raw_cert)
 
     # call backend to signon user
-    user_id, valid_until, is_registered = ServiceApi.signon_user(certificate)    
-    
-    # set user id, valid until and is registered info in session
-    # TODO might need to address issues that arise with using
-    # session to set cookie when web server ends up being a pool
-    # of web servers?
-    session['user_id'] = user_id
-    session['valid_until'] = valid_until
-    session['is_registered'] = is_registered
+    # will stash user id, expiry, is_registered and roles in session
+    ServiceApi.signon_user(certificate)    
 
     if not is_registered:
         # redirect to registration screen
@@ -80,7 +73,6 @@ def signon():
 
 @app.route('/register/', methods=['GET', 'POST'])
 def register():
-
     is_registered = session['is_registered']
     user_id = session['user_id']
 
