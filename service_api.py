@@ -1,4 +1,4 @@
-import requests, json
+import requests, json, time
 from flask import session
 
 from config import GATEWAY_HOST, GATEWAY_PORT
@@ -196,6 +196,31 @@ class ServiceApi(object):
 
        # get roles and stash
         session['roles'] = service_gateway_get('org_management', 'find_all_roles_by_user', params={'user_id': user_id})
+
+
+    @staticmethod
+    def signon_user_testmode(user_name):
+        user_identities = ServiceApi.find_by_resource_type("UserIdentity")
+        for user_identity in user_identities:
+            if user_name in user_identity['name']:
+                user_id = user_identity['_id']
+                session['user_id'] = user_id
+                session['valid_until'] = int(time.time()) * 100000
+                session['is_registered'] = True
+
+             # get roles and stash
+                roles = service_gateway_get('org_management', 'find_all_roles_by_user', params={'user_id': user_id})
+                roles_str = ""
+                first_time = True
+                for role in roles['RSN_Demo_org']:
+                    if not first_time:
+                        roles_str = roles_str + ","
+                    else:
+                        first_time = False
+                    roles_str = roles_str + str(role["name"])
+                    session['roles'] = roles_str
+        return
+
     
     @staticmethod
     def find_user_info(user_id):

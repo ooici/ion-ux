@@ -55,15 +55,24 @@ def index():
 # TODO fix this to be a post
 @app.route('/signon/', methods=['GET'])
 def signon():
+    user_name = request.args.get('user')
+    if user_name:
+        ServiceApi.signon_user_testmode(user_name)
+        return redirect('/')
+
     # carriage returns were removed on the cilogon portal side,
     # restore them before processing
-    raw_cert = request.args.get("cert")
+    raw_cert = request.args.get('cert')
+    if not raw_cert:
+        return redirect('/')
+
     certificate = base64.b64decode(raw_cert)
 
     # call backend to signon user
+    # will stash user id, expiry, is_registered and roles in session
     ServiceApi.signon_user(certificate)    
-    
-    if not is_registered:
+
+    if not session['is_registered']:
         # redirect to registration screen
         return redirect('/register')
     else:
