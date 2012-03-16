@@ -408,7 +408,9 @@ IONUX.Views.InstrumentFacepage = Backbone.View.extend({
 
   template: _.template($("#instrument-facepage-tmpl").html()),
 
-  //events: { },
+  events: {
+    'click #deployment-checkbox': 'handle_deployment'
+  },
 
   initialize: function(){
     _.bindAll(this, "render");
@@ -417,6 +419,22 @@ IONUX.Views.InstrumentFacepage = Backbone.View.extend({
 
   render: function(){
     this.$el.html(this.template(this.model.toJSON())).show();
+  },
+  
+  handle_deployment: function(e) {
+    e.preventDefault();
+    confirm('You are changing primary deployment; are you sure?');
+
+    // Grab the logical platform id from the tr id
+    var _id = $(e.target).parents('tr').attr('id');
+    console.log(_id);
+    
+    $.ajax({
+      url: 'primary_deployment_on/' + _id + '/',
+      success: function() {
+          // this.model.fetch();
+      },
+    })
   }
 });
 

@@ -1,5 +1,5 @@
 <h2>Instrument: <%= name %> </h2>
-
+<%= this.model %>
 <div class="btn-group">
 	<a class="btn" href="#">Instrument Controls</a>
 	<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
@@ -13,8 +13,11 @@
 	<div class="span2">
 		<section class="wrapper">
 			<h3 class="wrapper-heading">Information</h3>
-			<p>Placeholder...</p>
-					
+			<p>
+				<strong>Name: </strong><%= name %><br />
+				<strong>ID: </strong><span style="word-wrap: break-word"><%= _id %></span><br />
+			</p>
+			<p><strong>Model:</strong> <%= related_model.name %></p>
 			<h3>Identification</h3>
 			<p>Identification placeholder</p>
 		
@@ -32,12 +35,34 @@
 	<div class="span8">
 		<section class="wrapper">
 			<h3 class="wrapper-heading">Data</h3>
-			<p>Latest readings, visualization, etc...</p>
+			<h4>Data: TO-DO handle empty last_update...</h4>
 		</section>
 		
 		<section class="wrapper">
 			<h3 class="wrapper-heading">Deployment</h3>
-			<p>Deployments, once it's determined what it is...</p>
+			<table class="table">
+				<tr>
+					<th>Name</th>
+					<th>Description</th>
+					<th>Type</th>
+					<th>Updated</th>
+					<th>&nbsp;</th>
+				</tr>
+				<% _.each(deployments, function(obj) { %>
+					<tr id="<%= obj._id %>">
+						<td><%= obj.name %></td>
+						<td><%= obj.description %></td>
+						<th style="font-weight: normal;"><%= obj.type_ %></th>
+						<td><%= obj.ts_updated %></td>
+						<!-- Hack ;) -->
+						<% if ($.isEmptyObject(window.view.model.get('primary_deployment'))) { %>
+							<td><input type="checkbox" id="deployment-checkbox" value="deployed" /> Primary</td>
+						<% } else { %>
+							<td><input type="checkbox" id="deployment-checkbox" value="deployed" checked="checked" /> Primary</td>
+						<% } %>
+					</tr>
+				<% }); %>
+			</table>
 		</section>
 		
 		<section class="wrapper">
@@ -45,29 +70,48 @@
 			
 			<section class="wrapper">
 				<h3 class="wrapper-heading">Agent Information</h3>
-				<p>instrument_agent_instance...</p>
+
+				
+				<p><strong>Name:</strong> <%= instrument_agent.name %></p>
+				<p><strong>Description:</strong> <%= instrument_agent.description %></p>
+				<p><strong>Status: </strong>
+				<% if (instrument_agent.agent_process_id) {  %>
+					<%= instrument_agent.agent_process_id %>
+				<% } else { %>
+					Not running.
+				<% } %>
+				</p>
+				<p><strong>Description:</strong> <%= instrument_agent.description %></p>
+				<p><strong>Updated:</strong> <%= instrument_agent.ts_updated %></p>
 			</section>
 			<section class="wrapper">
 				<h3 class="wrapper-heading">Policies</h3>
 				<p>Policies...</p>
 			</section>
 		</section>
-		
-		<section class="wrapper">
-			<h3 class="wrapper-heading">Notifications</h3>
-			<section class="wrapper">
-				<h3 class="wrapper-heading">Recent Events</h3>
-				<p>...</p>
-			</section>
-			<section class="wrapper">
-				<h3 class="wrapper-heading">User Request</h3>
-				<p>...</p>
-			</section>
-		</section>
-		
+				
 		<section class="wrapper">
 			<h3 class="wrapper-heading">Frame of Reference</h3>
-			<p>...</p>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Parents</h3>
+				<table class="table">
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+						<th>Type</th>
+						<th>Updated</th>
+					</tr>
+					<% _.each(superiors, function(key) { %>
+						<% _.each(key, function(obj) { %>
+							<tr>
+								<td><%= obj.name %></td>
+								<td><%= obj.description %></td>
+								<td><%= obj.type_ %></td>
+								<td><%= obj.ts_updated %></td>
+							</tr>
+						<% }); %>
+					<% }); %>
+			</section>
 		</section>
 	</div>
 			

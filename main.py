@@ -218,6 +218,16 @@ def instrument_facepage(instrument_device_id):
     else:
         return render_app_template(request.path)
 
+
+@app.route('/instruments/<instrument_device_id>/primary_deployment_off/<logical_instrument_id>/', methods=['GET'])
+def primary_deployment_off(instrument_device_id, logical_instrument_id):
+    deployment_off = ServiceApi.instrument_primary_deployment_off(instrument_device_id, logical_instrument_id)
+    return jsonify(data=True)
+
+@app.route('/instruments/<instrument_device_id>/primary_deployment_on/<logical_instrument_id>/', methods=['GET'])
+def primary_deployment_off(instrument_device_id, logical_instrument_id):
+    deployment_off = ServiceApi.instrument_primary_deployment_on(instrument_device_id, logical_instrument_id)
+    return jsonify(data=True)
         
         
 @app.route('/instruments/<instrument_device_id>/command/', methods=['GET'])
