@@ -52,19 +52,32 @@ def index():
     else:
         return render_template("index.html")
 
+@app.route('/testfacepages/', methods=['GET'])
+def testfacepages():
+    ServiceApi.test_facepages()
+    return redirect('/')
+
 # TODO fix this to be a post
 @app.route('/signon/', methods=['GET'])
 def signon():
+    user_name = request.args.get('user')
+    if user_name:
+        ServiceApi.signon_user_testmode(user_name)
+        return redirect('/')
+
     # carriage returns were removed on the cilogon portal side,
     # restore them before processing
-    raw_cert = request.args.get("cert")
+    raw_cert = request.args.get('cert')
+    if not raw_cert:
+        return redirect('/')
+
     certificate = base64.b64decode(raw_cert)
 
     # call backend to signon user
     # will stash user id, expiry, is_registered and roles in session
     ServiceApi.signon_user(certificate)    
 
-    if not is_registered:
+    if not session['is_registered']:
         # redirect to registration screen
         return redirect('/register')
     else:
@@ -122,6 +135,7 @@ def observatories():
             resp_data = {"success":True}
         else:
             resp_data = ServiceApi.find_by_resource_type('MarineFacility')
+            available_users = ServiceApi.find_all_user_infos()
             
         return jsonify(data=resp_data)
     else:
@@ -221,12 +235,11 @@ def instrument_facepage(instrument_device_id):
 def start_instrument_agent(instrument_device_id, agent_command):
     if agent_command == 'start':
         instrument = ServiceApi.instrument_agent_start(instrument_device_id)
-    elif agent_command == 'initialize':
-        instrument = ServiceApi.instrument_agent_initialize(instrument_device_id)
-    elif agent_command == 'capabilities':
-        instrument = ServiceApi.instrument_agent_get_capabilities(instrument_device_id)        
-    elif agent_command == 'reset':
-        instrument = ServiceApi.instrument_agent_reset(instrument_devide_id)
+    elif agent_command == 'get_capabilities':
+        instrument = ServiceApi.instrument_agent_get_capabilities(instrument_device_id)
+    else:
+        instrument = ServiceApi.instrument_execute_agent(instrument_device_id, agent_command)
+    
     return jsonify(data=True)
 
 

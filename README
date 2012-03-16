@@ -4,6 +4,10 @@ pip install Flask -E venv/
 source venv/bin/activate
 pip install requests
 
+## Configure
+cp config_template.py config.py
+<Edit as necessary.  Defaults should work on your local machine hosting the capability container.>
+
 ## Run
 python main.py
 

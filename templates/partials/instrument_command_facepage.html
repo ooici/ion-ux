@@ -1,4 +1,4 @@
-<h1>Instrument: (instrument name)</h1>
+<h1>Instrument: <%= name %></h1>
 
 <div class="row">
 	<div class="span2">
@@ -19,14 +19,9 @@
 	
 	<div class="span8">
 		
-		<div class="btn-group">
-			<a class="btn" href="#">Instrument Command</a>
-			<a class="btn dropdown-toggle" data-toggle="dropdown" href=""><span class="caret"></span></a>
-			<ul class="dropdown-menu">
-				<li><a id="start-instrument-agent-instance" href="#">Start Instrument Agent Instance</a></li>
-				<li><a href="#">Start Direct Access</a></li>
-			</ul>
-		</div> <!-- div.btn-group -->
+		
+		<input type="submit" id="start-instrument-agent-instance" value="Start Instrument Agent" class="btn"/>
+		<input type="submit" id="stop-instrument-agent-instance" value="Stop Instrument Agent" class="btn" style="display:none;"/>
 		
 		<div class="instrument-commands" style="display: none;">
 			<form>
@@ -42,17 +37,17 @@
 					<option value='go_streaming'>Go Streaming (being streaming data)</option>
 					<option value='go_direct_access'>Direct Access (enter direct access mode)</option>
 					<option value='go_observatory'>Go Observatory (enter observatory mode from streaming or direct access)</option>
-					<option value='get_param'>Get parameters (get all configurable parameters)</option>
-					<option value='set_param'>Set parameters (save changes to parameters)</option>
+					<!-- <option value='get_param'>Get parameters (get all configurable parameters)</option>
+					<option value='set_param'>Set parameters (save changes to parameters)</option> 
 					<option value='start'>Start sampling (start auto-sample of data collection)</option>
-					<option value='stop'>Stop sampling (stop auto-sample of data collection)</option>
+					<option value='stop'>Stop sampling (stop auto-sample of data collection)</option> -->
 				</select>
 				
 				<input type="submit" name="Send Command" class="btn btn-primary"/>
 			</form>	
 			</div>
 
-			<div class="command">
+			<div class="command-output">
 				Command results
 			</div>
 		</div>
