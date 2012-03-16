@@ -25,6 +25,19 @@ AGENT_REQUEST_TEMPLATE = {
 class ServiceApi(object):
     
     @staticmethod
+    def instrument_primary_deployment_off(instrument_device_id, logical_instrument_id):
+        primary_deployment = service_gateway_get('instrument_management', 'undeploy_primary_instrument_device_from_logical_instrument', params={'instrument_device_id': instrument_device_id, 'logical_instrument_id': logical_instrument_id})
+        print '<3-------------------------------------------', str(primary_deployment)
+        return str(primary_deployment)
+
+    @staticmethod
+    def instrument_primary_deployment_on(instrument_device_id, logical_instrument_id):
+        primary_deployment = service_gateway_get('instrument_management', 'deploy_as_primary_instrument_device_to_logical_instrument', params={'instrument_device_id': instrument_device_id, 'logical_instrument_id': logical_instrument_id})
+        print '<3-------------------------------------------', str(primary_deployment)
+        return str(primary_deployment)
+
+
+    @staticmethod
     def find_org_user_requests(marine_facility_id, user_id=None):
         org_id = service_gateway_get('marine_facility_management', 'find_marine_facility_org', params={'marine_facility_id': marine_facility_id})
         if user_id:
@@ -217,13 +230,13 @@ class ServiceApi(object):
             platform['deployments'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': platform_device_id, 'predicate': 'hasDeployment', 'object_type': 'LogicalPlatform', 'id_only': False})[0]
         
             # ADMINISTRATION        
-            platform['instrument_agents'] = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'InstrumentAgent'})
             platform['policies'] = service_gateway_get('policy_management', 'find_resource_policies', params={'resource_id': platform_device_id})
+            # platform['instrument_agents'] = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'InstrumentAgent'})[0]
         
             # INSTRUMENTS - ERROR WITH PRELOAD DATA
             # logical_platform_id = platform['deployments'][0]['_id']
             # logical_instruments = service_gateway_get('resource_registry', 'find_objects', params={'subject': logical_platform_id, 'predicate': 'hasInstrument', 'id_only': False})[0]
-            # platform['instruments'] = service_gateway_get('instrument_management', 'find_instrument_device_by_platform_device', params={'platform_device_id': platform_device_id})
+            platform['instruments'] = service_gateway_get('instrument_management', 'find_instrument_device_by_platform_device', params={'platform_device_id': platform_device_id})
         
             # EVENTS
             platform['recent_events'] = []
@@ -281,14 +294,14 @@ class ServiceApi(object):
                 # instrument['visualization'] = service_gateway_get('visualization', 'get_google_dt', params={'data_product_id': instrument['parsed_data_product']['_id']})
 
             # RELATED MODEL
-            instrument['related_model'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate': 'hasModel', 'object_type': 'InstrumentModel', 'id_only': False})[0]
+            instrument['related_model'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate': 'hasModel', 'object_type': 'InstrumentModel', 'id_only': False})[0][0]
         
             # DEPLOYMENTS
             instrument['primary_deployment'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate': 'hasPrimaryDeployment', 'object_type': 'LogicalInstrument', 'id_only': False})[0]
             instrument['deployments'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate': 'hasDeployment', 'object_type': 'LogicalInstrument', 'id_only': False})[0]
         
             # ADMINISTRATION
-            instrument['instrument_agent'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate': 'hasAgentInstance', 'object_type': 'InstrumentAgentInstance', 'id_only': False})[0]
+            instrument['instrument_agent'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate': 'hasAgentInstance', 'object_type': 'InstrumentAgentInstance', 'id_only': False})[0][0]
         
             # FRAME OF REFERENCES
             instrument['superiors'] = service_gateway_get('marine_facility_management', 'find_superior_frames_of_reference', params={'input_resource_id': instrument['deployments'][0]["_id"]})

@@ -6,7 +6,7 @@
 			<h3 class="wrapper-heading">Information</h3>
 			<p>
 				<strong>Name: </strong><%= name %><br />
-				<strong>ID: </strong><%= _id %><br />
+				<strong><span class="word-wrap">ID: </strong><%= _id %></span><br />
 			</p>
 			<p>
 				<strong>Model: </strong><%= model %><br />
@@ -22,27 +22,114 @@
 	<div class="span8">
 		<section class="wrapper">
 			<h3 class="wrapper-heading">Deployments</h3>
-			<p>...</p>
+			<table class="table">
+				<tr>
+					<th>Name</th>
+					<th>Description</th>
+					<th>Type</th>
+					<th>Updated</th>
+				</tr>
+				<% _.each(deployments, function(obj) { %>
+					<tr>
+						<td><%= obj.name %></td>
+						<td><%= obj.description %></td>
+						<td><%= obj.type_ %></td>
+						<td><%= obj.ts_updated %></td>
+					</tr>
+				<% }); %>
+			</table>
 		</section>
 		<section class="wrapper">
 			<h3 class="wrapper-heading">Administration</h3>
 			<section class="wrapper">
-				<h3 class="wrapper-heading">Agent</h3>
-				<p>...</p>
+				<h3 class="wrapper-heading">Platform Agent</h3>
+				<!-- <table class="table">
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+						<th>Type</th>
+						<th>Updated</th>
+					</tr>
+						<tr>
+							<td><%= obj.name %></td>
+							<td><%= obj.description %></td>
+							<td><%= obj.type_ %></td>
+							<td><%= obj.ts_updated %></td>
+						</tr>
+				</table> -->
 			</section>
-			<section class="wrapper">
+
+
+			<!-- <section class="wrapper">
 				<h3 class="wrapper-heading">Policies</h3>
 				<p>...</p>
-			</section>
+			</section> -->
 		</section>
 		
 		<section class="wrapper">
 			<h3 class="wrapper-heading">Instruments</h3>
-			<p>...</p>
+			<table class="table">
+				<tr>
+					<th>Name</th>
+					<th>Description</th>
+					<th>Type</th>
+					<th>Updated</th>
+				</tr>
+				<% _.each(instruments, function(obj) { %>
+					<tr>
+						<td><%= obj.name %></td>
+						<td><%= obj.description %></td>
+						<td><%= obj.type_ %></td>
+						<td><%= obj.ts_updated %></td>
+					</tr>
+				<% }); %>
+			</table>
 		</section>
+		
 		<section class="wrapper">
 			<h3 class="wrapper-heading">Frames of Reference</h3>
-			<p>...</p>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Children</h3>
+				<table class="table">
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+						<th>Type</th>
+						<th>Updated</th>
+					</tr>
+					<% _.each(subordinates, function(key) { %>
+						<% _.each(key, function(obj) { %>
+							<tr>
+								<td><%= obj.name %></td>
+								<td><%= obj.description %></td>
+								<td><%= obj.type_ %></td>
+								<td><%= obj.ts_updated %></td>
+							</tr>
+						<% }); %>
+					<% }); %>
+				</table>
+			</section>
+		
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Parents</h3>
+				<table class="table">
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+						<th>Type</th>
+						<th>Updated</th>
+					</tr>
+					<% _.each(superiors, function(key) { %>
+						<% _.each(key, function(obj) { %>
+							<tr>
+								<td><%= obj.name %></td>
+								<td><%= obj.description %></td>
+								<td><%= obj.type_ %></td>
+								<td><%= obj.ts_updated %></td>
+							</tr>
+						<% }); %>
+					<% }); %>
+			</section>
 		</section>
 	</div>
 </div>
