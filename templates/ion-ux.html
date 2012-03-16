@@ -168,6 +168,7 @@
     $('.scrollpane').jScrollPane({autoReinitialise: true});
     var ionux_router = IONUX.init();
     ionux_router.handle_url("{{ current_url }}");
+    IONUX.set_roles("{{ roles }}");
 	
 	// Temporary hack to set background
 	$('body').css('background-color', '#eee');

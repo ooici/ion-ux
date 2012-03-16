@@ -23,25 +23,43 @@ AGENT_REQUEST_TEMPLATE = {
 }
 
 class ServiceApi(object):
+    
+    @staticmethod
+    def find_org_user_requests(marine_facility_id, user_id=None):
+        org_id = service_gateway_get('marine_facility_management', 'find_marine_facility_org', params={'marine_facility_id': marine_facility_id})
+        if user_id:
+            user_requests = service_gateway_get('org_management', 'find_user_requests', params={'org_id': org_id, 'user_id': user_id})
+        else:
+            user_requests = service_gateway_get('org_management', 'find_requests', params={'org_id': org_id})
+        return user_requests
+        
+        #requests.get('http://67.58.49.196:5000/ion-service/org_management/find_requests?org_id=%s' % org_id)
+        
+    
+    
+    @staticmethod
+    def request_enrollment_in_org(marine_facility_id, user_id):
+        org_id = service_gateway_get('marine_facility_management', 'find_marine_facility_org', params={'marine_facility_id': marine_facility_id})
+        enrollment = SERVICE_REQUEST_TEMPLATE
+        enrollment['serviceRequest']['serviceName'] = 'org_management'
+        enrollment['serviceRequest']['serviceOp'] = 'request_enroll'
+        enrollment['serviceRequest']['params'] = {'org_id': org_id, 'user_id': user_id}
+        url = '%s/org_management/request_enroll' % SERVICE_GATEWAY_BASE_URL
+        enroll_user = requests.post(url, data={'payload': json.dumps(enrollment)})        
+        return enroll_user
 
     @staticmethod
     def find_resources_by_resource_type(resource_type, user_identity_id=None):
         if user_identity_id:
             resources = service_gateway_get('resource_registry', 'find_subject', params={'subject_type': resource_type , 'predicate': 'hasOwner', 'object_id': user_identity_id})
             return resources
-        
         resources = service_gateway_get('resource_type', 'find_resources', params={'restype': resource_type})
         return resources
-
-    @staticmethod
-    def enroll_user(marine_facility_id):
-        org_id = service_gateway_get('marine_facility_management', 'find_marine_facility_org', params={'marine_facility_id': marine_facility_id})
     
     @staticmethod
     def instrument_agent_start(instrument_device_id):
         instrument_agent_instance_id = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate':'hasAgentInstance'})[0][0]['_id']
         agent_request = service_gateway_get('instrument_management', 'start_instrument_agent_instance', params={'instrument_agent_instance_id': str(instrument_agent_instance_id)})
-        
         return agent_request
 
     @staticmethod
@@ -52,13 +70,6 @@ class ServiceApi(object):
         return str(agent_request.content)
 
     @staticmethod
-    def instrument_agent_initialize(instrument_device_id):
-        agent_command = "execute_agent"
-        params = {"command": ["AgentCommand", {"command": "initialize"}]}
-        agent_request = service_gateway_agent_request(instrument_device_id, agent_command, params)
-        return str(agent_request.content)
-    
-    @staticmethod
     def instrument_agent_get_capabilities(instrument_device_id):        
         agent_command = "get_capabilities"
         params = {}
@@ -66,29 +77,10 @@ class ServiceApi(object):
         return str(agent_request.content)
     
     @staticmethod
-    def instrument_agent_reset(instrument_device_id):        
-        agent_command = "execute_agent"
-        params = {"command": ["AgentCommand", {"command": "reset"}]}
-        agent_request = service_gateway_agent_request(instrument_device_id, agent_command, params)
-        return str(agent_request.content)
-
-    @staticmethod
-    def instrument_agent_capabilities(instrument_device_id):
-        params={'subject': instrument_device_id, 'predicate':'hasAgentInstance'}
-        instrument_agent_instance_id = service_gateway_get('resource_registry', 'find_objects', params)[0][0]['_id']
-        return
-
-    @staticmethod
-    def instrument_agent_activate(instrument_device_id):
-        params={'subject': instrument_device_id, 'predicate':'hasAgentInstance'}
-        instrument_agent_instance_id = service_gateway_get('resource_registry', 'find_objects', params)[0][0]['_id']
-        return   
-    
-    @staticmethod
     def signon_user(certificate):
         params={'certificate': certificate}
         user_id, valid_until, is_registered = service_gateway_post('identity_management', 'signon', params)
-    
+
         # set user id, valid until and is registered info in session
         # TODO might need to address issues that arise with using
         # session to set cookie when web server ends up being a pool
@@ -96,7 +88,7 @@ class ServiceApi(object):
         session['user_id'] = user_id
         session['valid_until'] = valid_until
         session['is_registered'] = is_registered
-    
+
         # get roles and stash
         session['roles'] = service_gateway_get('org_management', 'find_all_roles_by_user', params={'user_id': user_id})
 
@@ -122,7 +114,7 @@ class ServiceApi(object):
                     roles_str = roles_str + str(role["name"])
                 session['roles'] = roles_str
                 return
-    
+
     @staticmethod
     def find_user_info(user_id):
         params={'user_id': user_id}
@@ -507,13 +499,13 @@ def build_get_request(service_name, operation_name, params={}):
             param_string += '%s=%s&' % (k,v)
         url += param_string[:-1]
 
-    pretty_console_log('SERVICE GATEWAY GET URL', url)
+    #pretty_console_log('SERVICE GATEWAY GET URL', url)
 
     return url
 
 def service_gateway_get(service_name, operation_name, params={}):    
     resp = requests.get(build_get_request(service_name, operation_name, params))
-    pretty_console_log('SERVICE GATEWAY GET RESPONSE', resp.content)
+    #pretty_console_log('SERVICE GATEWAY GET RESPONSE', resp.content)
 
     if resp.status_code == 200:
         resp = json.loads(resp.content)
@@ -539,14 +531,14 @@ def build_post_request(service_name, operation_name, params={}):
 
     data={'payload': json.dumps(post_data)}
 
-    pretty_console_log('SERVICE GATEWAY POST URL/DATA', url, data)
+    #pretty_console_log('SERVICE GATEWAY POST URL/DATA', url, data)
 
     return url, data
 
 def service_gateway_post(service_name, operation_name, params={}):
     url, data = build_post_request(service_name, operation_name, params)
     resp = requests.post(url, data)
-    pretty_console_log('SERVICE GATEWAY POST RESPONSE', resp.content)
+    #pretty_console_log('SERVICE GATEWAY POST RESPONSE', resp.content)
 
     if resp.status_code == 200:
         resp = json.loads(resp.content)

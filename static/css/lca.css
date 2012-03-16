@@ -75,3 +75,7 @@ table tr:nth-child(odd) td, .table-striped tbody tr:nth-child(odd) th {
   margin: 15px 0;
   padding: 15px;
 }
+
+.invisible {
+    display:none;
+}

@@ -45,10 +45,19 @@ SERVICE_REQUEST_TEMPLATE = {
 }
 
 
+def render_app_template(current_url):
+    """Renders base template for full app, with needed template params"""
+    if session.has_key("roles"):
+        roles = session["roles"]
+    else:
+        roles = ""
+    return render_template("ion-ux.html", **{"current_url":"/", "roles":roles})
+
+
 @app.route('/')
 def index():
     if LOGGED_IN: #XXX for development
-        return render_template("ion-ux.html", **{"current_url":"/"})
+        return render_app_template(request.path)
     else:
         return render_template("index.html")
 
@@ -148,33 +157,21 @@ def observatory_facepage(marine_facility_id):
         marine_facility = ServiceApi.find_observatory(marine_facility_id)
         return jsonify(data=marine_facility)
     else:
-        return create_html_response(request.path)
+        return render_app_template(request.path)
 
 @app.route('/observatories/<marine_facility_id>/enroll_user/', methods=['GET'])
 def enroll_user(marine_facility_id):
-    org_request = requests.get('http://67.58.49.196:5000/ion-service/marine_facility_management/find_marine_facility_org?marine_facility_id=7812a996aed546a5aaeeafdef1b09160')
-    org_id = json.loads(org_request.content)
-    org_id = org_id['data']['GatewayResponse']
-    
-    
-    enrollment = {
-        'serviceRequest': {
-            'serviceName': 'org_management', 
-            'serviceOp': 'request_enroll',
-            'params': {'org_id': org_id, 'user_id': 'aae8f2620068493885c822e27ceabdf3'} # Example -> 'object_name': ['restype', {}] }
-        }
-    }
-    
-    enroll_user = requests.post('http://67.58.49.196:5000/ion-service/org_management/request_enroll', data={'payload':json.dumps(enrollment)})
-    
-    find_requests = requests.get('http://67.58.49.196:5000/ion-service/org_management/find_requests?org_id=%s' % org_id)
-    
-    print str(find_requests.content)
-    
-    return find_requests.content
+    request_enrollment = ServiceApi.request_enrollment_in_org(marine_facility_id, session['user_id'])
+    return str(request_enrollment)
 
 
-@app.route('/')
+@app.route('/observatories/<marine_facility_id>/user_requests/', methods=['GET'])
+def observatory_user_requests(marine_facility_id):
+    if 'ORG_MANAGER' in session['roles']:
+        user_requests = ServiceApi.find_org_user_requests(marine_facility_id)
+    else:
+        user_requests = ServiceApi.find_org_user_requests(marine_facility_id, session['user_id'])
+    return jsonify(data=user_requests)
 
 
 @app.route('/platforms/', methods=['GET'])
@@ -192,7 +189,7 @@ def platform_facepage(platform_device_id):
         platform = ServiceApi.find_platform(platform_device_id)
         return jsonify(data=platform)
     else:
-        return render_template("ion-ux.html", **{"current_url":request.path})
+        return render_app_template(request.path)
 
 
 @app.route('/platform_models/<platform_model_id>/', methods=['GET'])
@@ -201,7 +198,7 @@ def platform_model_facepage(platform_model_id):
         platform_model = ServiceApi.find_platform_model(platform_model_id)
         return jsonify(data=platform_model)
     else:
-        return render_template("ion-ux.html", **{"current_url":request.path})
+        return render_app_template(request.path)
 
 
 @app.route('/instruments/', methods=['GET', 'POST'])
@@ -219,7 +216,8 @@ def instrument_facepage(instrument_device_id):
         instrument = ServiceApi.find_instrument(instrument_device_id)
         return jsonify(data=instrument)
     else:
-        return render_template("ion-ux.html", **{"current_url":request.path})
+        return render_app_template(request.path)
+
         
         
 @app.route('/instruments/<instrument_device_id>/command/', methods=['GET'])
@@ -228,15 +226,17 @@ def instrument_facepage(instrument_device_id):
         instrument = ServiceApi.find_instrument(instrument_device_id)
         return jsonify(data=instrument)
     else:
-        return render_template("ion-ux.html", **{"current_url":request.path})
+        return render_app_template(request.path)
 
 
 @app.route('/instruments/<instrument_device_id>/command/<agent_command>/')
 def start_instrument_agent(instrument_device_id, agent_command):
     if agent_command == 'start':
         instrument = ServiceApi.instrument_agent_start(instrument_device_id)
+        return jsonify(data=True)
     elif agent_command == 'get_capabilities':
         instrument = ServiceApi.instrument_agent_get_capabilities(instrument_device_id)
+        return jsonify(data=True)
     else:
         instrument = ServiceApi.instrument_execute_agent(instrument_device_id, agent_command)
     
@@ -249,7 +249,7 @@ def instrument_model_facepage(instrument_model_id):
         instrument_model = ServiceApi.find_instrument_model(instrument_model_id)
         return jsonify(data=instrument_model)
     else:
-        return render_template("ion-ux.html", **{"current_url":request.path})
+        return render_app_template(request.path)
 
 
 @app.route('/instrument_agents/')
@@ -263,7 +263,7 @@ def instrument_agent_facepage(instrument_agent_id):
         instrument = ServiceApi.find_instrument_agent(instrument_agent_id)
         return jsonify(data=instrument)
     else:
-        return render_template("ion-ux.html", **{"current_url":request.path})
+        return render_app_template(request.path)
 
 
 @app.route('/data_process_definitions/<data_process_definition_id>/')
@@ -272,7 +272,7 @@ def data_process_definition_facepage(data_process_definition_id):
         data_process_definition = ServiceApi.find_data_process_definition(data_process_definition_id)
         return jsonify(data=data_process_definition)
     else:
-        return render_template("ion-ux.html", **{"current_url":request.path})
+        return render_app_template(request.path)
 
 
 @app.route('/data_products/', methods=['GET'])
@@ -285,7 +285,7 @@ def data_product_facepage(data_product_id):
         data_product = ServiceApi.find_data_product(data_product_id)
         return jsonify(data=data_product)
     else:
-        return render_template("ion-ux.html", **{"current_url":request.path})
+        return render_app_template(request.path)
 
 
 
@@ -423,7 +423,7 @@ def resource_types():
 
 @app.route("/<catchall>")
 def catchall(catchall):
-    return render_template("ion-ux.html", **{"current_url":catchall})    
+    return render_app_template(catchall)
 
 
 # -------------------------------------------------------------------------

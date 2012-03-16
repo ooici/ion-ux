@@ -351,12 +351,17 @@ IONUX.Views.ObservatoryFacepage = Backbone.View.extend({
 
   enroll_user: function() {
     $.ajax({
-      url: 'org/'
+      url: 'enroll_user/',
+      success: function(){
+        alert("Yay!");
+      },
     })
   },
 
   render: function(){
-    this.$el.html(this.template(this.model.toJSON())).show();
+    var visibility = _.any(IONUX.ROLES, function(role){return role === "ORG_MANAGER"})?"invisible":"";
+    var tmpl_vars = _.extend(this.model.toJSON(), {"visibility":visibility});
+    this.$el.html(this.template(tmpl_vars)).show();
   }
 
 });
@@ -423,11 +428,11 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
   events: {
     'click #start-instrument-agent-instance': 'start_agent',
     'click a#stop-instrument-agent-instace': 'stop_agent',
-    'click input[type=submit]': 'issue_command'
+    'click .issue_command': 'issue_command'
   },
 
   initialize: function(){
-    _.bindAll(this, "render", "start_agent", "stop_agent", "issue_command");
+    _.bindAll(this, "render", "start_agent", "stop_agent"); // "issue_command"
     this.model.bind("change", this.render);
   },
 
