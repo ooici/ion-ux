@@ -403,6 +403,248 @@ class ServiceApi(object):
 
             # OWNER
             frame_of_reference['owner'] = ServiceApi.find_owner(frame_of_reference_id)
+
+#    @staticmethod
+#    def test_find_breadcrumb():
+#        print "\n\n\n\n\n\n\n\n"
+#        print "USER ==============================================================================================="
+#        resources = ServiceApi.find_by_resource_type("UserIdentity")
+#        for resource in resources:
+#            bc_str, bc_dict = ServiceApi.find_breadcrumb(resource['_id'])
+#            print "User breadcrumb str <%s> breadcrumb dict <%s>" % (bc_str, str(bc_dict))
+#        
+#        print "OBSERVATORY ==============================================================================================="
+#        resources = ServiceApi.find_by_resource_type("MarineFacility")
+#        for resource in resources:
+#            bc_str, bc_dict = ServiceApi.find_breadcrumb(resource['_id'])
+#            print "Observatory breadcrumb str <%s> breadcrumb dict <%s>" % (bc_str, str(bc_dict))
+#        
+#        print "PLATFORM ==============================================================================================="
+#        resources = ServiceApi.find_by_resource_type("PlatformDevice")
+#        for resource in resources:
+#            bc_str, bc_dict = ServiceApi.find_breadcrumb(resource['_id'])
+#            print "Platform breadcrumb str <%s> breadcrumb dict <%s>" % (bc_str, str(bc_dict))
+#        
+#        print "PLATFORM MODEL ==============================================================================================="
+#        resources = ServiceApi.find_by_resource_type("PlatformModel")
+#        for resource in resources:
+#            bc_str, bc_dict = ServiceApi.find_breadcrumb(resource['_id'])
+#            print "Platform Model breadcrumb str <%s> breadcrumb dict <%s>" % (bc_str, str(bc_dict))
+#        
+#        print "INSTRUMENT ==============================================================================================="
+#        resources = ServiceApi.find_by_resource_type("InstrumentDevice")
+#        for resource in resources:
+#            bc_str, bc_dict = ServiceApi.find_breadcrumb(resource['_id'])
+#            print "Instrument breadcrumb str <%s> breadcrumb dict <%s>" % (bc_str, str(bc_dict))
+#        
+#        print "INSTRUMENT MODEL ==============================================================================================="
+#        resources = ServiceApi.find_by_resource_type("InstrumentModel")
+#        for resource in resources:
+#            bc_str, bc_dict = ServiceApi.find_breadcrumb(resource['_id'])
+#            print "Instrument Model breadcrumb str <%s> breadcrumb dict <%s>" % (bc_str, str(bc_dict))
+#        
+#        print "INSTRUMENT AGENT ==============================================================================================="
+#        resources = ServiceApi.find_by_resource_type("InstrumentAgent")
+#        for resource in resources:
+#            bc_str, bc_dict = ServiceApi.find_breadcrumb(resource['_id'])
+#            print "Instrument Agent breadcrumb str <%s> breadcrumb dict <%s>" % (bc_str, str(bc_dict))
+#        
+#        print "DATA PROCESS ==============================================================================================="
+#        resources = ServiceApi.find_by_resource_type("DataProcessDefinition")
+#        for resource in resources:
+#            bc_str, bc_dict = ServiceApi.find_breadcrumb(resource['_id'])
+#            print "Data Process breadcrumb str <%s> breadcrumb dict <%s>" % (bc_str, str(bc_dict))
+#
+#        print "DATA PRODUCT ==============================================================================================="
+#        resources = ServiceApi.find_by_resource_type("DataProduct")
+#        for resource in resources:
+#            bc_str, bc_dict = ServiceApi.find_breadcrumb(resource['_id'])
+#            print "Data Product breadcrumb str <%s> breadcrumb dict <%s>" % (bc_str, str(bc_dict))
+
+    @staticmethod
+    def find_qualified_deploy_path(resource_id):
+        # Only works for objects that satisfy the 'hasDeployment' association check
+        resource = [service_gateway_get('resource_registry', 'read', params={'object_id': root})]
+        deployment = service_gateway_get('resource_registry', 'find_objects', params={'subject': resource_id, 'predicate': 'hasDeployment', 'id_only': False})[0]
+        if len(deployment) == 0:
+            return resource['type_'] + '::' + resource['name'], [{'name': resource['name'], 'id': resource['_id'], 'type': resource['type_']}]
+
+        superior_dict = service_gateway_get('marine_facility_management', 'find_superior_frames_of_reference', params={'input_resource_id': deployment[0]['_id']})
+        breadcrumb_str = ""
+        breadcrumb_list = []
+        if 'MarineFacility' in superior_dict:
+            for marine_facility in superior_dict['MarineFacility']:
+                breadcrumb_str = breadcrumb_str + '/Observatory::' + marine_facility['name']
+                entity_dict = {'name': marine_facility['name'], 'id': marine_facility['_id'], 'type': 'MarineFacility'}
+                breadcrumb_list.append(entity_dict)
+        if 'Site' in superior_dict:
+            for site in superior_dict['Site']:
+                breadcrumb_str = breadcrumb_str + '/Site::' + site['name']
+                entity_dict = {'name': site['name'], 'id': site['_id'], 'type': 'Site'}
+                breadcrumb_list.append(entity_dict)
+        if 'LogicalPlatform' in superior_dict:
+            for logical_platform in superior_dict['LogicalPlatform']:
+                breadcrumb_str = breadcrumb_str + '/Platform::' + logical_platform['name']
+                entity_dict = {'name': logical_platform['name'], 'id': logical_platform['_id'], 'type': 'LogicalPlatform'}
+                breadcrumb_list.append(entity_dict)
+        breadcrumb_str = breadcrumb_str + '/' + resource['type_'] + '::' + resource['name']
+        breadcrumb_list.append({'name': resource['name'], 'id': resource['_id'], 'type': resource['type_']})
+        return breadcrumb_str, breadcrumb_list
+
+#    @staticmethod
+#    def test_find_install_locations():
+#        print "MARINE FACILITY TO MARINE FACILITY ==============================================================================================="
+#        ret = ServiceApi.find_leaves('MarineFacility', 'MarineFacility')
+#        print "AAAAAAAAAAAAAAAA All ret <%s>" % str(ret)
+#        resources = ServiceApi.find_by_resource_type("MarineFacility")
+#        for resource in resources:
+#            ret = ServiceApi.find_leaves(resource['_id'], 'MarineFacility')
+#            print "SSSSSSSSSSSSSSSSS Single ret <%s>" % str(ret)
+#        print "MARINE FACILITY TO SITE ==============================================================================================="
+#        ret = ServiceApi.find_leaves('MarineFacility', 'Site')
+#        print "AAAAAAAAAAAAAAAA All ret <%s>" % str(ret)
+#        resources = ServiceApi.find_by_resource_type("MarineFacility")
+#        for resource in resources:
+#            ret = ServiceApi.find_leaves(resource['_id'], 'Site')
+#            print "SSSSSSSSSSSSSSSSS Single ret <%s>" % str(ret)
+#        print "MARINE FACILITY TO LOGICAL PLATFORM ==============================================================================================="
+#        ret = ServiceApi.find_leaves('MarineFacility', 'LogicalPlatform')
+#        print "AAAAAAAAAAAAAAAA All ret <%s>" % str(ret)
+#        resources = ServiceApi.find_by_resource_type("MarineFacility")
+#        for resource in resources:
+#            ret = ServiceApi.find_leaves(resource['_id'], 'LogicalPlatform')
+#            print "SSSSSSSSSSSSSSSSS Single ret <%s>" % str(ret)
+#        print "MARINE FACILITY TO LOGICAL INSTRUMENT ==============================================================================================="
+#        ret = ServiceApi.find_leaves('MarineFacility', 'LogicalInstrument')
+#        print "AAAAAAAAAAAAAAAA All ret <%s>" % str(ret)
+#        resources = ServiceApi.find_by_resource_type("MarineFacility")
+#        for resource in resources:
+#            ret = ServiceApi.find_leaves(resource['_id'], 'LogicalInstrument')
+#            print "SSSSSSSSSSSSSSSSS Single ret <%s>" % str(ret)
+#
+#        print "SITE TO SITE ==============================================================================================="
+#        ret = ServiceApi.find_leaves('Site', 'Site')
+#        print "AAAAAAAAAAAAAAAA All ret <%s>" % str(ret)
+#        resources = ServiceApi.find_by_resource_type("Site")
+#        for resource in resources:
+#            ret = ServiceApi.find_leaves(resource['_id'], 'Site')
+#            print "SSSSSSSSSSSSSSSSS Single ret <%s>" % str(ret)
+#        print "SITE TO LOGICAL PLATFORM ==============================================================================================="
+#        ret = ServiceApi.find_leaves('Site', 'LogicalPlatform')
+#        print "AAAAAAAAAAAAAAAA All ret <%s>" % str(ret)
+#        resources = ServiceApi.find_by_resource_type("Site")
+#        for resource in resources:
+#            ret = ServiceApi.find_leaves(resource['_id'], 'LogicalPlatform')
+#            print "SSSSSSSSSSSSSSSSS Single ret <%s>" % str(ret)
+#        print "SITE TO LOGICAL INSTRUMENT ==============================================================================================="
+#        ret = ServiceApi.find_leaves('Site', 'LogicalInstrument')
+#        print "AAAAAAAAAAAAAAAA All ret <%s>" % str(ret)
+#        resources = ServiceApi.find_by_resource_type("Site")
+#        for resource in resources:
+#            ret = ServiceApi.find_leaves(resource['_id'], 'LogicalInstrument')
+#            print "SSSSSSSSSSSSSSSSS Single ret <%s>" % str(ret)
+#
+#        print "LOGICAL PLATFORM TO LOGICAL PLATFORM ==============================================================================================="
+#        ret = ServiceApi.find_leaves('LogicalPlatform', 'LogicalPlatform')
+#        print "AAAAAAAAAAAAAAAA All ret <%s>" % str(ret)
+#        resources = ServiceApi.find_by_resource_type("LogicalPlatform")
+#        for resource in resources:
+#            ret = ServiceApi.find_leaves(resource['_id'], 'LogicalPlatform')
+#            print "SSSSSSSSSSSSSSSSS Single ret <%s>" % str(ret)
+#        print "LOGICAL PLATFORM TO LOGICAL INSTRUMENT ==============================================================================================="
+#        ret = ServiceApi.find_leaves('LogicalPlatform', 'LogicalInstrument')
+#        print "AAAAAAAAAAAAAAAA All ret <%s>" % str(ret)
+#        resources = ServiceApi.find_by_resource_type("LogicalPlatform")
+#        for resource in resources:
+#            ret = ServiceApi.find_leaves(resource['_id'], 'LogicalInstrument')
+#            print "SSSSSSSSSSSSSSSSS Single ret <%s>" % str(ret)
+#        
+#        print "LOGICAL INSTRUMENT TO LOGICAL INSTRUMENT ==============================================================================================="
+#        ret = ServiceApi.find_leaves('LogicalInstrument', 'LogicalInstrument')
+#        print "AAAAAAAAAAAAAAAA All ret <%s>" % str(ret)
+#        resources = ServiceApi.find_by_resource_type("LogicalInstrument")
+#        for resource in resources:
+#            ret = ServiceApi.find_leaves(resource['_id'], 'LogicalInstrument')
+#            print "SSSSSSSSSSSSSSSSS Single ret <%s>" % str(ret)
+        
+    @staticmethod
+    def find_leaves(root, leaf_type):
+        valid_types = ["MarineFacility", "Site", "LogicalPlatform", "LogicalInstrument"]
+       
+        if leaf_type not in valid_types:
+            return []
+
+        if root in valid_types:
+            resources = ServiceApi.find_by_resource_type(root)
+        else:
+            resources = [service_gateway_get('resource_registry', 'read', params={'object_id': root})]
+        ret_list = []
+        for resource in resources:
+            if resource['type_'] == 'MarineFacility':
+                marine_facility = resource
+                marine_facility_dict = {'name': marine_facility['name'], 'id': marine_facility['_id'], 'type': 'MarineFacility'}
+                if leaf_type == 'MarineFacility':
+                    ret_list.append([marine_facility_dict])
+                else:
+                    sites = service_gateway_get('resource_registry', 'find_objects', params={'subject': marine_facility['_id'], 'predicate': 'hasSite', 'id_only': False})[0]
+                    if len(sites) > 0:
+                        for site in sites:
+                            site_dict = {'name': site['name'], 'id': site['_id'], 'type': 'Site'}
+                            if leaf_type == 'Site':
+                                ret_list.append([marine_facility_dict, site_dict])
+                            else:
+                                logical_platforms = service_gateway_get('resource_registry', 'find_objects', params={'subject': site['_id'], 'predicate': 'hasPlatform', 'id_only': False})[0]
+                                if len(logical_platforms) > 0:
+                                    for logical_platform in logical_platforms:
+                                        logical_platform_dict = {'name': logical_platform['name'], 'id': logical_platform['_id'], 'type': 'LogicalPlatform'}
+                                        if leaf_type == 'LogicalPlatform':
+                                            ret_list.append([marine_facility_dict, site_dict, logical_platform_dict])
+                                        else:
+                                            logical_instruments = service_gateway_get('resource_registry', 'find_objects', params={'subject': logical_platform['_id'], 'predicate': 'hasInstrument', 'id_only': False})[0]
+                                            if len(logical_instruments) > 0:
+                                                for logical_instrument in logical_instruments:
+                                                    logical_instrument_dict = {'name': logical_instrument['name'], 'id': logical_instrument['_id'], 'type': 'LogicalInstrument'}
+                                                    ret_list.append([marine_facility_dict, site_dict, logical_platform_dict, logical_instrument_dict])
+                                else:
+                                    ret_list.append([marine_facility_dict, site_dict])
+                    else:
+                        ret_list.append([marine_facility_dict])
+            elif resource['type_'] == 'Site':
+                site = resource
+                site_dict = {'name': site['name'], 'id': site['_id'], 'type': 'Site'}
+                if leaf_type == 'Site':
+                    ret_list.append([site_dict])
+                else:
+                    logical_platforms = service_gateway_get('resource_registry', 'find_objects', params={'subject': site['_id'], 'predicate': 'hasPlatform', 'id_only': False})[0]
+                    if len(logical_platforms) > 0:
+                        for logical_platform in logical_platforms:
+                            logical_platform_dict = {'name': logical_platform['name'], 'id': logical_platform['_id'], 'type': 'LogicalPlatform'}
+                            if leaf_type == 'LogicalPlatform':
+                                ret_list.append([site_dict, logical_platform_dict])
+                            else:
+                                logical_instruments = service_gateway_get('resource_registry', 'find_objects', params={'subject': logical_platform['_id'], 'predicate': 'hasInstrument', 'id_only': False})[0]
+                                if len(logical_instruments) > 0:
+                                    for logical_instrument in logical_instruments:
+                                        logical_instrument_dict = {'name': logical_instrument['name'], 'id': logical_instrument['_id'], 'type': 'LogicalInstrument'}
+                                        ret_list.append([site_dict, logical_platform_dict, logical_instrument_dict])
+                    else:
+                        ret_list.append([marine_facility_dict, site_dict])
+            elif resource['type_'] == 'LogicalPlatform':
+                logical_platform = resource
+                logical_platform_dict = {'name': logical_platform['name'], 'id': logical_platform['_id'], 'type': 'LogicalPlatform'}
+                if leaf_type == 'LogicalPlatform':
+                    ret_list.append([logical_platform_dict])
+                else:
+                    logical_instruments = service_gateway_get('resource_registry', 'find_objects', params={'subject': logical_platform['_id'], 'predicate': 'hasInstrument', 'id_only': False})[0]
+                    if len(logical_instruments) > 0:
+                        for logical_instrument in logical_instruments:
+                            logical_instrument_dict = {'name': logical_instrument['name'], 'id': logical_instrument['_id'], 'type': 'LogicalInstrument'}
+                            ret_list.append([logical_platform_dict, logical_instrument_dict])
+            else:
+                logical_instrument = resource
+                logical_instrument_dict = {'name': logical_instrument['name'], 'id': logical_instrument['_id'], 'type': 'LogicalInstrument'}
+                ret_list.append([logical_instrument_dict])
+        return ret_list
     
     @staticmethod
     def find_by_resource_type(resource_type):
@@ -413,81 +655,81 @@ class ServiceApi(object):
         owner_id = service_gateway_get('resource_registry', 'find_objects', params={'subject': resource_id, 'predicate': 'hasOwner'})[0][0]['_id']
         return service_gateway_get('resource_registry', 'find_objects', params={'subject': owner_id, 'predicate': 'hasInfo', 'id_only': False})[0][0]
 
-    @staticmethod
-    def test_facepages():
-        # User facepage
-        user_fps = []
-        user_identities = ServiceApi.find_by_resource_type("UserIdentity")
-        for user_identity in user_identities:
-            user_fps.append(ServiceApi.find_user(user_identity['_id']))
-        obs_fps = []
-        # Observatory facepage
-        observatories = ServiceApi.find_by_resource_type("MarineFacility")
-        for observatory in observatories:
-            obs_fps.append(ServiceApi.find_observatory(observatory['_id']))
-        # Platform facepage
-        plat_fps = []
-        platforms = ServiceApi.find_by_resource_type("PlatformDevice")
-        for platform in platforms:
-            plat_fps.append(ServiceApi.find_platform(platform['_id']))
-        # PlatformModel facepage
-        plat_mdl_fps = []
-        platform_models = ServiceApi.find_by_resource_type("PlatformModel")
-        for platform_model in platform_models:
-            plat_mdl_fps.append(ServiceApi.find_platform_model(platform_model['_id']))
-        # Instrument facepage
-        instr_fps = []
-        instruments = ServiceApi.find_by_resource_type("InstrumentDevice")
-        for instrument in instruments:
-            instr_fps.append(ServiceApi.find_instrument(instrument['_id']))
-        # InstrumentModel facepage
-        instr_mdl_fps = []
-        instrument_models = ServiceApi.find_by_resource_type("InstrumentModel")
-        for instrument_model in instrument_models:
-            instr_mdl_fps.append(ServiceApi.find_instrument_model(instrument_model['_id']))
-        # InstrumentAgent facepage
-        instr_agnt_fps = []
-        instrument_agents = ServiceApi.find_by_resource_type("InstrumentAgent")
-        for instrument_agent in instrument_agents:
-            instr_agnt_fps.append(ServiceApi.find_instrument_agent(instrument_agent['_id']))
-        # DataProcessDefinition facepage
-        data_proc_fps = []
-        data_processes = ServiceApi.find_by_resource_type("DataProcessDefinition")
-        for data_process in data_processes:
-            data_proc_fps.append(ServiceApi.find_data_process_definition(data_process['_id']))
-        # DataProduct facepage
-        data_prod_fps = []
-        data_products = ServiceApi.find_by_resource_type("DataProduct")
-        for data_product in data_products:
-            data_prod_fps.append(ServiceApi.find_data_product(data_product['_id']))
-        print "\n\n\n\n\n\n\n\n"
-        print "USER ==============================================================================================="
-        for user_fp in user_fps:
-            print "\n====== User:\n%s\n\n" % pprint.pprint(user_fp)
-        print "OBSERVATORY ==============================================================================================="
-        for obs_fp in obs_fps:
-            print "\n====== Observatory:\n%s\n\n" % pprint.pprint(obs_fp)
-        print "PLATFORM ==============================================================================================="
-        for plat_fp in plat_fps:
-            print "\n====== Platform:\n%s\n\n" % pprint.pprint(plat_fp)
-        print "PLATFORM MODEL ==============================================================================================="
-        for plat_mdl_fp in plat_mdl_fps:
-            print "\n====== Platform Model:\n%s\n\n" % pprint.pprint(plat_mdl_fp)
-        print "INSTRUMENT ==============================================================================================="
-        for instr_fp in instr_fps:
-            print "\n====== Instrument:\n%s\n\n" % pprint.pprint(instr_fp)
-        print "INSTRUMENT MODEL ==============================================================================================="
-        for instr_mdl_fp in instr_mdl_fps:
-            print "\n====== Instrument Model:\n%s\n\n" % pprint.pprint(instr_mdl_fp)
-        print "INSTRUMENT AGENT ==============================================================================================="
-        for instr_agnt_fp in instr_agnt_fps:
-            print "\n====== Instrument Agent:\n%s\n\n" % pprint.pprint(instr_agnt_fp)
-        print "DATA PROCESS ==============================================================================================="
-        for data_proc_fp in data_proc_fps:
-            print "\n====== Data Process:\n%s\n\n" % pprint.pprint(data_proc_fp)
-        print "DATA PRODUCT ==============================================================================================="
-        for data_prod_fp in data_prod_fps:
-            print "\n====== Data Product:\n%s\n\n" % pprint.pprint(data_prod_fp)
+#    @staticmethod
+#    def test_facepages():
+#        # User facepage
+#        user_fps = []
+#        user_identities = ServiceApi.find_by_resource_type("UserIdentity")
+#        for user_identity in user_identities:
+#            user_fps.append(ServiceApi.find_user(user_identity['_id']))
+#        obs_fps = []
+#        # Observatory facepage
+#        observatories = ServiceApi.find_by_resource_type("MarineFacility")
+#        for observatory in observatories:
+#            obs_fps.append(ServiceApi.find_observatory(observatory['_id']))
+#        # Platform facepage
+#        plat_fps = []
+#        platforms = ServiceApi.find_by_resource_type("PlatformDevice")
+#        for platform in platforms:
+#            plat_fps.append(ServiceApi.find_platform(platform['_id']))
+#        # PlatformModel facepage
+#        plat_mdl_fps = []
+#        platform_models = ServiceApi.find_by_resource_type("PlatformModel")
+#        for platform_model in platform_models:
+#            plat_mdl_fps.append(ServiceApi.find_platform_model(platform_model['_id']))
+#        # Instrument facepage
+#        instr_fps = []
+#        instruments = ServiceApi.find_by_resource_type("InstrumentDevice")
+#        for instrument in instruments:
+#            instr_fps.append(ServiceApi.find_instrument(instrument['_id']))
+#        # InstrumentModel facepage
+#        instr_mdl_fps = []
+#        instrument_models = ServiceApi.find_by_resource_type("InstrumentModel")
+#        for instrument_model in instrument_models:
+#            instr_mdl_fps.append(ServiceApi.find_instrument_model(instrument_model['_id']))
+#        # InstrumentAgent facepage
+#        instr_agnt_fps = []
+#        instrument_agents = ServiceApi.find_by_resource_type("InstrumentAgent")
+#        for instrument_agent in instrument_agents:
+#            instr_agnt_fps.append(ServiceApi.find_instrument_agent(instrument_agent['_id']))
+#        # DataProcessDefinition facepage
+#        data_proc_fps = []
+#        data_processes = ServiceApi.find_by_resource_type("DataProcessDefinition")
+#        for data_process in data_processes:
+#            data_proc_fps.append(ServiceApi.find_data_process_definition(data_process['_id']))
+#        # DataProduct facepage
+#        data_prod_fps = []
+#        data_products = ServiceApi.find_by_resource_type("DataProduct")
+#        for data_product in data_products:
+#            data_prod_fps.append(ServiceApi.find_data_product(data_product['_id']))
+#        print "\n\n\n\n\n\n\n\n"
+#        print "USER ==============================================================================================="
+#        for user_fp in user_fps:
+#            print "\n====== User:\n%s\n\n" % pprint.pprint(user_fp)
+#        print "OBSERVATORY ==============================================================================================="
+#        for obs_fp in obs_fps:
+#            print "\n====== Observatory:\n%s\n\n" % pprint.pprint(obs_fp)
+#        print "PLATFORM ==============================================================================================="
+#        for plat_fp in plat_fps:
+#            print "\n====== Platform:\n%s\n\n" % pprint.pprint(plat_fp)
+#        print "PLATFORM MODEL ==============================================================================================="
+#        for plat_mdl_fp in plat_mdl_fps:
+#            print "\n====== Platform Model:\n%s\n\n" % pprint.pprint(plat_mdl_fp)
+#        print "INSTRUMENT ==============================================================================================="
+#        for instr_fp in instr_fps:
+#            print "\n====== Instrument:\n%s\n\n" % pprint.pprint(instr_fp)
+#        print "INSTRUMENT MODEL ==============================================================================================="
+#        for instr_mdl_fp in instr_mdl_fps:
+#            print "\n====== Instrument Model:\n%s\n\n" % pprint.pprint(instr_mdl_fp)
+#        print "INSTRUMENT AGENT ==============================================================================================="
+#        for instr_agnt_fp in instr_agnt_fps:
+#            print "\n====== Instrument Agent:\n%s\n\n" % pprint.pprint(instr_agnt_fp)
+#        print "DATA PROCESS ==============================================================================================="
+#        for data_proc_fp in data_proc_fps:
+#            print "\n====== Data Process:\n%s\n\n" % pprint.pprint(data_proc_fp)
+#        print "DATA PRODUCT ==============================================================================================="
+#        for data_prod_fp in data_prod_fps:
+#            print "\n====== Data Product:\n%s\n\n" % pprint.pprint(data_prod_fp)
 
         
 
