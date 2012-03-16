@@ -157,29 +157,17 @@ def observatory_facepage(marine_facility_id):
 
 @app.route('/observatories/<marine_facility_id>/enroll_user/', methods=['GET'])
 def enroll_user(marine_facility_id):
-    org_request = requests.get('http://67.58.49.196:5000/ion-service/marine_facility_management/find_marine_facility_org?marine_facility_id=7812a996aed546a5aaeeafdef1b09160')
-    org_id = json.loads(org_request.content)
-    org_id = org_id['data']['GatewayResponse']
-    
-    
-    enrollment = {
-        'serviceRequest': {
-            'serviceName': 'org_management', 
-            'serviceOp': 'request_enroll',
-            'params': {'org_id': org_id, 'user_id': 'aae8f2620068493885c822e27ceabdf3'} # Example -> 'object_name': ['restype', {}] }
-        }
-    }
-    
-    enroll_user = requests.post('http://67.58.49.196:5000/ion-service/org_management/request_enroll', data={'payload':json.dumps(enrollment)})
-    
-    find_requests = requests.get('http://67.58.49.196:5000/ion-service/org_management/find_requests?org_id=%s' % org_id)
-    
-    print str(find_requests.content)
-    
-    return find_requests.content
+    request_enrollment = ServiceApi.request_enrollment_in_org(marine_facility_id, session['user_id'])
+    return str(request_enrollment)
 
 
-@app.route('/')
+@app.route('/observatories/<marine_facility_id>/user_requests/', methods=['GET'])
+def observatory_user_requests(marine_facility_id):
+    if 'ORG_MANAGER' in session['roles']:
+        user_requests = ServiceApi.find_org_user_requests(marine_facility_id)
+    else:
+        user_requests = ServiceApi.find_org_user_requests(marine_facility_id, session['user_id'])
+    return jsonify(data=user_requests)
 
 
 @app.route('/platforms/', methods=['GET'])

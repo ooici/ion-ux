@@ -25,88 +25,64 @@ AGENT_REQUEST_TEMPLATE = {
 }
 
 class ServiceApi(object):
+    
+    @staticmethod
+    def find_org_user_requests(marine_facility_id, user_id=None):
+        org_id = service_gateway_get('marine_facility_management', 'find_marine_facility_org', params={'marine_facility_id': marine_facility_id})
+        if user_id:
+            user_requests = service_gateway_get('org_management', 'find_user_requests', params={'org_id': org_id, 'user_id': user_id})
+        else:
+            user_requests = service_gateway_get('org_management', 'find_requests', params={'org_id': org_id})
+        return user_requests
+        
+        #requests.get('http://67.58.49.196:5000/ion-service/org_management/find_requests?org_id=%s' % org_id)
+        
+    
+    
+    @staticmethod
+    def request_enrollment_in_org(marine_facility_id, user_id):
+        org_id = service_gateway_get('marine_facility_management', 'find_marine_facility_org', params={'marine_facility_id': marine_facility_id})
+        enrollment = SERVICE_REQUEST_TEMPLATE
+        enrollment['serviceRequest']['serviceName'] = 'org_management'
+        enrollment['serviceRequest']['serviceOp'] = 'request_enroll'
+        enrollment['serviceRequest']['params'] = {'org_id': org_id, 'user_id': user_id}
+        url = '%s/org_management/request_enroll' % SERVICE_GATEWAY_BASE_URL
+        enroll_user = requests.post(url, data={'payload': json.dumps(enrollment)})        
+        return enroll_user
 
     @staticmethod
     def find_resources_by_resource_type(resource_type, user_indentity_id=None):
         if user_indentity_id:
             resources = service_gateway_get('resource_registry', 'find_subject', pamars={'subject_type': resource_type , 'predicate': 'hasOwner', 'object_id': user_indentity_id})
             return resources
-        
         resources = service_gateway_get('resource_type', 'find_resources', params={'restype': resource_type})
         return resources
-
-    @staticmethod
-    def enroll_user(marine_facility_id):
-        org_id = service_gateway_get('marine_facility_management', 'find_marine_facility_org', params={'marine_facility_id': marine_facility_id})
     
     @staticmethod
     def instrument_agent_start(instrument_device_id):
         instrument_agent_instance_id = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate':'hasAgentInstance'})[0][0]['_id']
         agent_request = service_gateway_get('instrument_management', 'start_instrument_agent_instance', params={'instrument_agent_instance_id': str(instrument_agent_instance_id)})
-        
         return agent_request
 
     @staticmethod
     def instrument_execute_agent(instrument_device_id, agent_command):
-       # instrument_agent_instance_id = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate':'hasAgentInstance'})[0][0]['_id']
-
-       # command = agent_command
        print '===================================='
        print 'DEVICE_ID: %s' % instrument_device_id
        print 'AGENT_COMMAND: %s' % agent_command
-
-
 
        payload = AGENT_REQUEST_TEMPLATE
        payload["agentRequest"]["agentId"] = instrument_device_id
        payload["agentRequest"]["agentOp"] = "execute_agent"
        payload["agentRequest"]["params"]["command"][1]["command"] = agent_command
+       print '====================================', payload
 
        url = '%s/%s/%s' % (AGENT_GATEWAY_BASE_URL, instrument_device_id, "execute_agent")
-
-       print '===================================='
-       print url
-
-       print '===================================='
-       print payload
+       print '====================================', url
 
        agent_request = requests.post(url, data={"payload": json.dumps(payload)})
-
-       print '===================================='
-       print str(agent_request.content)
-
+       print '====================================', str(agent_request.content)
        return str(agent_request.content)
 
-    # @staticmethod
-    # def instrument_agent_initialize(instrument_device_id):
-    #     # instrument_agent_instance_id = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate':'hasAgentInstance'})[0][0]['_id']
-    #     
-    #     agent_command = "initialize"
-    #     
-    #     payload = AGENT_REQUEST_TEMPLATE
-    #     payload["agentRequest"]["agentId"] = instrument_device_id
-    #     payload["agentRequest"]["agentOp"] = "execute_agent"
-    #     payload["agentRequest"]["params"]["command"][1]["command"] = agent_command
-    #     
-    #     url = '%s/%s/%s' % (AGENT_GATEWAY_BASE_URL, instrument_device_id, "execute_agent")
-    #     
-    #     print '===================================='
-    #     print url
-    #     print '===================================='
-    #     
-    #     print '===================================='
-    #     print payload
-    #     print '===================================='
-    #     
-    #     
-    #     
-    #     agent_request = requests.post(url, data={"payload": json.dumps(payload)})
-    #     
-    #     print '===================================='
-    #     print str(agent_request.content)
-    #     print '===================================='
-    #     
-    #     return str(agent_request.content)
     
     @staticmethod
     def instrument_agent_get_capabilities(instrument_device_id):        
@@ -116,70 +92,15 @@ class ServiceApi(object):
         payload["agentRequest"]["agentId"] = instrument_device_id
         payload["agentRequest"]["agentOp"] = agent_command
         payload["agentRequest"]["params"] = {} #["command"][1]["command"] = agent_command
+        print '====================================', payload
         
-        url = '%s/%s/%s' % (AGENT_GATEWAY_BASE_URL, instrument_device_id, agent_command)
+        url = '%s/%s/%s' % (AGENT_GATEWAY_BASE_URL, instrument_device_id, agent_command)        
+        print '====================================', url
         
-        print '===================================='
-        print url
-        print '===================================='
+        agent_request = requests.post(url, data={"payload": json.dumps(payload)})        
+        print '====================================', str(agent_request.content)
         
-        print '===================================='
-        print payload
-        print '===================================='
-        
-        
-        
-        agent_request = requests.post(url, data={"payload": json.dumps(payload)})
-        
-        print '===================================='
-        print str(agent_request.content)
-        print '===================================='
-        
-        return str(agent_request.content)
-        
-    
-    # @staticmethod
-    # def instrument_agent_reset(instrument_device_id):        
-    #     agent_command = "execute_agent"
-    # 
-    #     payload = AGENT_REQUEST_TEMPLATE
-    #     payload["agentRequest"]["agentId"] = instrument_device_id
-    #     payload["agentRequest"]["agentOp"] = agent_command
-    #     payload["agentRequest"]["params"]["command"][1]["command"] = 'reset'
-    # 
-    #     url = '%s/%s/%s' % (AGENT_GATEWAY_BASE_URL, instrument_device_id, agent_command)
-    # 
-    #     print '===================================='
-    #     print url
-    # 
-    # 
-    #     print '===================================='
-    #     print payload
-    # 
-    #     agent_request = requests.post(url, data={"payload": json.dumps(payload)})
-    # 
-    #     print '===================================='
-    #     print str(agent_request.content)
-    # 
-    #     return str(agent_request.content)
-
-    # 
-    # @staticmethod
-    # def instrument_agent_capabilities(instrument_device_id):
-    #     instrument_agent_instance_id = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate':'hasAgentInstance'})[0][0]['_id']
-    #     return
-    # 
-    # @staticmethod
-    # def instrument_agent_activate(instrument_device_id):
-    #     instrument_agent_instance_id = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate':'hasAgentInstance'})[0][0]['_id']
-    #     return
-    
-    # 
-    # @staticmethod
-    # def signon_user(certificate):
-    #     res = service_gateway_post('identity_management', 'signon', params={'certificate': certificate})
-    #     return res
-    
+        return str(agent_request.content)    
     
     @staticmethod
     def signon_user(certificate):

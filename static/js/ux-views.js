@@ -351,7 +351,10 @@ IONUX.Views.ObservatoryFacepage = Backbone.View.extend({
 
   enroll_user: function() {
     $.ajax({
-      url: 'org/'
+      url: 'enroll_user/',
+      success: function(){
+        alert("Yay!");
+      },
     })
   },
 
