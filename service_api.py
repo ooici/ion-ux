@@ -66,15 +66,15 @@ class ServiceApi(object):
     def instrument_execute_agent(instrument_device_id, agent_command):
         agent_op = "execute_agent"
         params = {"command": ["AgentCommand", {"command": agent_command}]}
-        agent_request = service_gateway_agent_request(instrument_device_id, agent_op, params)
-        return str(agent_request.content)
+        agent_response = service_gateway_agent_request(instrument_device_id, agent_op, params)
+        return agent_response
 
     @staticmethod
     def instrument_agent_get_capabilities(instrument_device_id):        
         agent_command = "get_capabilities"
         params = {}
-        agent_request = service_gateway_agent_request(instrument_device_id, agent_command, params)
-        return str(agent_request.content)
+        agent_response = service_gateway_agent_request(instrument_device_id, agent_command, params)
+        return agent_response
     
     @staticmethod
     def signon_user(certificate):
@@ -555,7 +555,7 @@ def build_agent_request(agent_id, operation_name, params={}):
     post_data['agentRequest']['agentId'] = agent_id   
     post_data['agentRequest']['agentOp'] = operation_name   
     if len(params) > 0:
-        post_data['serviceRequest']['params'] = params
+        post_data['agentRequest']['params'] = params
 
     # conditionally add user id and expiry to request
     if "user_id" in session:
@@ -568,10 +568,10 @@ def build_agent_request(agent_id, operation_name, params={}):
 
     return url, data
 
-def service_gateway_post(service_name, operation_name, params={}):
-    url, data = build_post_request(service_name, operation_name, params)
+def service_gateway_agent_request(agent_id, operation_name, params={}):
+    url, data = build_agent_request(agent_id, operation_name, params)
     resp = requests.post(url, data)
-    pretty_console_log('SERVICE GATEWAY POST RESPONSE', resp.content)
+    pretty_console_log('SERVICE GATEWAY AGENT REQUEST POST RESPONSE', resp.content)
 
     if resp.status_code == 200:
         resp = json.loads(resp.content)
