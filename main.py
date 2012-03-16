@@ -150,7 +150,6 @@ def observatories():
     else:
         return create_html_response(request.path)
 
-
 @app.route('/observatories/<marine_facility_id>/', methods=['GET'])
 def observatory_facepage(marine_facility_id):
     if request.is_xhr:
@@ -159,7 +158,7 @@ def observatory_facepage(marine_facility_id):
     else:
         return render_app_template(request.path)
 
-@app.route('/observatories/<marine_facility_id>/enroll_user/', methods=['GET'])
+@app.route('/observatories/<marine_facility_id>/request_enrollment/', methods=['GET'])
 def enroll_user(marine_facility_id):
     request_enrollment = ServiceApi.request_enrollment_in_org(marine_facility_id, session['user_id'])
     return str(request_enrollment)
@@ -182,7 +181,6 @@ def platforms():
     else:
         return create_html_response(request.path)
 
-
 @app.route('/platforms/<platform_device_id>/', methods=['GET'])
 def platform_facepage(platform_device_id):
     if request.is_xhr:
@@ -190,7 +188,6 @@ def platform_facepage(platform_device_id):
         return jsonify(data=platform)
     else:
         return render_app_template(request.path)
-
 
 @app.route('/platform_models/<platform_model_id>/', methods=['GET'])
 def platform_model_facepage(platform_model_id):
@@ -200,7 +197,6 @@ def platform_model_facepage(platform_model_id):
     else:
         return render_app_template(request.path)
 
-
 @app.route('/instruments/', methods=['GET', 'POST'])
 def instruments():
     if request.is_xhr:
@@ -209,7 +205,6 @@ def instruments():
     else:
         return create_html_response(request.path)
 
-
 @app.route('/instruments/<instrument_device_id>/', methods=['GET'])
 def instrument_facepage(instrument_device_id):
     if request.is_xhr:
@@ -217,7 +212,6 @@ def instrument_facepage(instrument_device_id):
         return jsonify(data=instrument)
     else:
         return render_app_template(request.path)
-
 
 @app.route('/instruments/<instrument_device_id>/primary_deployment_off/<logical_instrument_id>/', methods=['GET'])
 def primary_deployment_off(instrument_device_id, logical_instrument_id):
@@ -298,7 +292,13 @@ def data_product_facepage(data_product_id):
         return render_app_template(request.path)
 
 
-
+# New routes
+@app.route('/<resource_type>/new/', methods=['GET'])
+def new_resource_router(resource_type):
+    if request.is_xhr:
+        return jsonify(data=True)
+    else:
+        return render_app_template(request.path)
 
 # -------------------------------------------------------------------------
 # RESOURCE BROWSER - MUCH REFACTORING NEEDED

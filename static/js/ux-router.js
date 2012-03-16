@@ -4,11 +4,14 @@ IONUX.Router = Backbone.Router.extend({
     "": "dashboard",
     "register/": "user_registration",
     "observatories/": "observatories",
+    "observatories/new/": "observatory_new",
     "observatories/:marine_facility_id/": "observatory_facepage",
     "platforms/":"platforms",
+    "platforms/new/": "platform_new",
     "platforms/:platform_id/": "platform_facepage",
     "platform_models/:platform_model_id/": "platform_model_facepage",
     "instruments/":"instruments",
+    "instruments/new/":"instrument_new",
     "instruments/:instrument_id/" : "instrument_facepage",
     "instruments/:instrument_id/command/": "instrument_command_facepage",
     "instrument_models/:instrument_model_id/": "instrument_model_facepage",
@@ -39,27 +42,18 @@ IONUX.Router = Backbone.Router.extend({
     this.observatory_modal.render();
   },
 
-  //   LEFT FOR REFERENCE -- VIEWS NO LONGER NEEDED
-  //   data_resource: function(){
-  //   this._reset();
-  //   this.dataResourceList = new IONUX.Collections.DataResources();
-  //   this.dataResourceListView = new IONUX.Views.DataResourceView({collection:this.dataResourceList});
-  //   this.dataResourceList.fetch();
-  // },
-  // 
-  // data_resource_details: function(data_resource_id){
-  //   this._reset();
-  //   var detailsModel = new IONUX.Models.DataResourceDetails({data_resource_id:data_resource_id});
-  //   this.dataResourceDetailView = new IONUX.Views.DataResourceDetailView({model:detailsModel});
-  //   detailsModel.fetch();
-  // },
-
   observatories: function(){
     this._reset();
     $("#observatories-container").show();
     this.observatoriesList = new IONUX.Collections.ObservatoryCollection();
     this.observatoriesListView = new IONUX.Views.ObservatoriesView({collection:this.observatoriesList});
     this.observatoriesList.fetch();
+  },
+  
+  observatory_new: function() {
+    this._reset();
+    this.newObservatoryView = new IONUX.Views.NewObservatoryView({model: new IONUX.Models.Observatory()});
+    this.newObservatoryView.render();
   },
 
   observatory_facepage: function(marine_facility_id){
@@ -76,6 +70,12 @@ IONUX.Router = Backbone.Router.extend({
     var platformsView = new IONUX.Views.PlatformsView({collection:this.platformsList});
     this.platformsList.fetch();
   },
+
+  platform_new: function() {
+    this._reset();
+    this.newPlatformView = new IONUX.Views.NewPlatformView({model: new IONUX.Models.Platform()});
+    this.newPlatformView.render();    
+  },
   
   platform_facepage: function(platform_id) {
     this._reset();
@@ -83,7 +83,7 @@ IONUX.Router = Backbone.Router.extend({
     new IONUX.Views.PlatformFacepage({model:fpModel});
     fpModel.fetch();
   },
-  
+
   platform_model_facepage: function(platform_model_id) {
     console.log(platform_model_id);
     this._reset();
@@ -98,6 +98,13 @@ IONUX.Router = Backbone.Router.extend({
     this.instrumentsList = new IONUX.Collections.Instruments();
     var instrumentsView = new IONUX.Views.InstrumentsView({collection: this.instrumentsList});
     this.instrumentsList.fetch();
+  },
+  
+  instrument_new: function() {
+    console.log('instrument new');
+    this._reset();
+    this.instrumentNewView = new IONUX.Views.NewInstrumentView({model: new IONUX.Models.Instrument()});
+    this.instrumentNewView.render();
   },
   
   instrument_facepage: function(instrument_id) {

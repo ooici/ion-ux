@@ -183,6 +183,58 @@ IONUX.Views.ObservatoriesDetailView = Backbone.View.extend({
 
 });
 
+
+IONUX.Views.NewObservatoryView = IONUX.Views.CreateNewView.extend({
+  el: "#observatory-new-container",
+
+  template: _.template($("#new-observatory-tmpl").html()),
+
+  initialize: function(){
+    _.bindAll(this, "create_new", "render");
+    this.model.bind("change", this.render)
+  },
+
+  render: function(){
+    this.$el.empty().html(this.template(this.model.toJSON())).show();
+    return this;
+  },
+});
+
+
+IONUX.Views.NewPlatformView = IONUX.Views.CreateNewView.extend({
+  el: "#platform-new-container",
+
+  template: _.template($("#new-platform-tmpl").html()),
+
+  initialize: function(){
+    _.bindAll(this, "create_new", "render");
+    this.model.bind("change", this.render)
+  },
+
+  render: function(){
+    this.$el.empty().html(this.template(this.model.toJSON())).show();
+    return this;
+  },
+});
+
+
+IONUX.Views.NewInstrumentView = IONUX.Views.CreateNewView.extend({
+  el: "#instrument-new-container",
+
+  template: _.template($("#new-instrument-tmpl").html()),
+
+  initialize: function(){
+    _.bindAll(this, "create_new", "render");
+    this.model.bind("change", this.render)
+  },
+
+  render: function(){
+    this.$el.empty().html(this.template(this.model.toJSON())).show();
+    return this;
+  },
+});
+
+
 IONUX.Views.ObservatoryCreateNewView = IONUX.Views.CreateNewView.extend({
 
   el: "#observatories-new",
@@ -351,9 +403,9 @@ IONUX.Views.ObservatoryFacepage = Backbone.View.extend({
 
   enroll_user: function() {
     $.ajax({
-      url: 'enroll_user/',
+      url: 'request_enrollment/',
       success: function(){
-        alert("Yay!");
+        alert("Your enrollment request was sent.");
       },
     })
   },
@@ -427,12 +479,11 @@ IONUX.Views.InstrumentFacepage = Backbone.View.extend({
 
     // Grab the logical platform id from the tr id
     var _id = $(e.target).parents('tr').attr('id');
-    console.log(_id);
     
     $.ajax({
       url: 'primary_deployment_on/' + _id + '/',
       success: function() {
-          // this.model.fetch();
+        // set checkbox to check
       },
     })
   }
