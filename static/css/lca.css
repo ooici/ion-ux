@@ -27,6 +27,15 @@ body {
   padding:20px;
 }
 
+#user-requests-container table {
+    display:none;
+}
+#user-requests-container .loading {
+    display:block;
+    text-align:center;
+    margin:15px 0px 10px 0px;
+}
+
 .viewcontainer h1 {
   font-size: 24px;
 }

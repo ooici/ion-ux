@@ -99,6 +99,51 @@ IONUX.Views.UserRegistration = IONUX.Views.CreateNewView.extend({
 });
 
 
+
+
+IONUX.Views.UserRequestItemView = Backbone.View.extend({
+
+  tagName: "tr",
+
+  template: _.template("<td><%= name %></td><td><%= description %></td><td><%= status %></td><td><%= user_id %></td><td><%= ts_updated %></td><td><button>Approve</button></td><td><button>Deny</button></td>"),
+
+  render: function(){
+    this.$el.html(this.template(this.model.toJSON()));
+    return this;
+  }
+
+});
+
+
+
+IONUX.Views.UserRequestsView = Backbone.View.extend({
+
+  el:"#user-requests-container", //XXX issue with being child of another 'el'
+
+
+  //events: { },
+
+  initialize: function(){
+    _.bindAll(this, "render");
+    this.collection.on("reset", this.render);
+  },
+  
+  render: function(){
+    var table_elem = $("#user-requests-container").find("table");
+    var self = this;
+    _.each(this.collection.models, function(user_request) {
+        table_elem.append(new IONUX.Views.UserRequestItemView({model:user_request}).render().el);
+    }, this);
+    $("#user-requests-container").find(".loading").hide();
+    table_elem.show()
+    return this;
+  },
+  
+});
+
+
+
+
 IONUX.Views.ObservatoriesItemView = Backbone.View.extend({
 
   tagName: "ul",

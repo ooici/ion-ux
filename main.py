@@ -134,7 +134,6 @@ def observatories():
     if request.is_xhr:
         if request.method == 'POST':
             # TODO - NEEDS TO BE MOVED INTO SERVICEAPI
-            import time; time.sleep(0.7) #mock latency
             form_data = json.loads(request.data)
             object_schema = build_schema_from_form(form_data, service="marine_facilities")
             post_request = gateway_post_request(
