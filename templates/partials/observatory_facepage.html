@@ -140,7 +140,7 @@
 						<th>Description</th>
 						<th>Updated</th>
 					</tr>
-					<% _.each(policies, function(obj) { %>
+					<% _.each(roles, function(obj) { %>
 						<tr>
 							<td><%= obj.name %></td>
 							<td><%= obj.description %></td>
@@ -151,6 +151,21 @@
 			</section>
 			<section class="wrapper">
 				<h3 class="wrapper-heading">Policies</h3>
+				<table class="table">
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+						<th>Updated</th>
+					</tr>
+					<% _.each(policies, function(obj) { %>
+						<tr>
+							<td><%= obj.name %></td>
+							<td><%= obj.description %></td>
+							<td><%= obj.ts_updated %></td>
+						</tr>
+					<% }); %>
+				</table>
+				
 			</section>
 		</section>
 		

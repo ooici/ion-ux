@@ -239,7 +239,7 @@ def start_instrument_agent(instrument_device_id, agent_command):
         return jsonify(data=True)
     else:
         command_response = ServiceApi.instrument_execute_agent(instrument_device_id, agent_command)
-    return jsonify(data=command_reponse)
+    return jsonify(data=command_response)
 
 @app.route('/instrument_models/<instrument_model_id>/', methods=['GET'])
 def instrument_model_facepage(instrument_model_id):
@@ -276,6 +276,7 @@ def data_products():
 @app.route('/data_products/<data_product_id>/', methods=['GET'])
 def data_product_facepage(data_product_id): 
     if request.is_xhr:
+        # Add start and stop to data processes
         data_product = ServiceApi.find_data_product(data_product_id)
         return jsonify(data=data_product)
     else:

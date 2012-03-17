@@ -49,14 +49,41 @@
 		
 		<!-- end data -->
 		<section class="wrapper">
-			<h3 class="wrapper-heading">Variables</h3>
-			<p>List of variable names</p>
-		</section>
-		
-		<section class="wrapper">
-			<h3 class="wrapper-heading">Processes</h3>
-			<p>DataTable - Processes used to produce data product.</p>
-			<p>DataTable - Processes that use this data product.</p>
+			<h3 class="wrapper-heading">Processing</h3>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Processes used to produce data product</h3>
+				<table class="table">
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+						<th>Updated</th>
+					</tr>
+					<% _.each(input_process, function(obj) { %>
+						<tr>
+							<td><%= obj.name %></a></td>
+							<td><%= obj.description %></td>
+							<td><%= obj.ts_updated %></td>
+						</tr>
+					<% }); %>
+				</table>
+			</section>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Processes that use this data product</h3>
+				<table class="table">
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+						<th>Updated</th>
+					</tr>
+					<% _.each(output_process, function(obj) { %>
+						<tr>
+							<td><%= obj.name %></a></td>
+							<td><%= obj.description %></td>
+							<td><%= obj.ts_updated %></td>
+						</tr>
+					<% }); %>
+				</table>
+			</section>
 		</section>
 	</div>
 </div>
