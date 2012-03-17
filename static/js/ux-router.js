@@ -61,6 +61,11 @@ IONUX.Router = Backbone.Router.extend({
     var fpModel = new IONUX.Models.ObservatoryFacepageModel({marine_facility_id:marine_facility_id});
     new IONUX.Views.ObservatoryFacepage({model:fpModel});
     fpModel.fetch();
+
+    var urCollection = new IONUX.Collections.UserRequestCollection();
+    urCollection.marine_facility_id = marine_facility_id; //XXX better way to set this?
+    var userRequestsView = new IONUX.Views.UserRequestsView({collection:urCollection});
+    urCollection.fetch();
   },
   
   platforms: function(){

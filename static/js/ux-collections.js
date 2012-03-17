@@ -42,9 +42,6 @@ IONUX.Collections.ObservatoryDataProductCollection = Backbone.Collection.extend(
     return '/observatories/' + this.observatory_id
   }
 
-  // parse: function(resp) {
-  //   return resp['data'];
-  // }
 });
 
 IONUX.Collections.ResourceTypes = Backbone.Collection.extend({
@@ -53,5 +50,19 @@ IONUX.Collections.ResourceTypes = Backbone.Collection.extend({
   
   parse: function(resp) {
     return _.map(resp.data, function(resource_type) {return {"name": resource_type}});
+  }
+});
+
+
+IONUX.Collections.UserRequestCollection = Backbone.Collection.extend({
+  model: IONUX.Models.UserRequest,
+
+  url: function() {
+    console.log(this);
+    return "/observatories/" + this.marine_facility_id + "/user_requests/";
+  },
+  
+  parse: function(resp) {
+    return resp.data;
   }
 });

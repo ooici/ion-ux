@@ -154,26 +154,12 @@
 			</section>
 		</section>
 		
-		<section class="wrapper">
+		<section id="user-requests-container" class="wrapper">
 			<h3 class="wrapper-heading">User Requests</h3>
 			<table class="table">
-				<tr>
-					<th>Name</th>
-					<th>Description</th>
-					<th>Status</th>
-					<th>User ID</th>
-					<th>Updated</th>
-				</tr>
-				<% _.each(user_requests, function(obj) { %>
-					<tr>
-						<td><%= obj.name %></td>
-						<td><%= obj.description %></td>
-						<td><%= obj.status %></td>
-						<td><%= obj.user_id %></td>
-						<td><%= obj.ts_updated %></td>
-					</tr>
-				<% }); %>
+			  <tr><th>Name</th><th>Description</th><th>Status</th><th>User ID</th><th>Updated</th><th></th><th></th></tr>
 			</table>
+            <p class="loading">Loading...</p>
 		</section>
 		
 		

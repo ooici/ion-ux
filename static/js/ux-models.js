@@ -36,6 +36,7 @@ IONUX.Models.ObservatoryFacepageModel = Backbone.Model.extend({
   }
 });
 
+IONUX.Models.UserRequest = Backbone.Model.extend({});
 
 IONUX.Models.Platform = Backbone.Model.extend({
   url: "/platforms/",
