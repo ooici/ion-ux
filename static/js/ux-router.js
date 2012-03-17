@@ -14,6 +14,7 @@ IONUX.Router = Backbone.Router.extend({
     "instruments/new/":"instrument_new",
     "instruments/:instrument_id/" : "instrument_facepage",
     "instruments/:instrument_id/command/": "instrument_command_facepage",
+    "instrument_models/new/": "instrument_model_new",
     "instrument_models/:instrument_model_id/": "instrument_model_facepage",
     "instrument_agents/:instrument_agent_id/": "instrument_agent_facepage",
     "frames_of_references/": "frames_of_reference_facepage",
@@ -31,10 +32,7 @@ IONUX.Router = Backbone.Router.extend({
   },
   
   dashboard: function(){
-    this._reset();
-    var search = new IONUX.Views.Search();
-    search.render();
-    
+    this._reset();    
     $("#dashboard-container").show();
     if (_.isUndefined(this.observatory_modal)){
       this.observatory_modal = new IONUX.Views.ObservatoryModalView();
@@ -101,7 +99,6 @@ IONUX.Router = Backbone.Router.extend({
   },
   
   instrument_new: function() {
-    console.log('instrument new');
     this._reset();
     this.instrumentNewView = new IONUX.Views.NewInstrumentView({model: new IONUX.Models.Instrument()});
     this.instrumentNewView.render();
@@ -115,10 +112,6 @@ IONUX.Router = Backbone.Router.extend({
   },
   
   instrument_command_facepage : function(instrument_id) {
-    // this._reset();
-    // var instrumentCommandFacepageView = new IONUX.Views.InstrumentCommandFacepage();
-    // instrumentCommandFacepageView.render();
-    
     this._reset();
     var fpModel = new IONUX.Models.InstrumentFacepageModel({instrument_id: instrument_id});
     new IONUX.Views.InstrumentCommandFacepage({model: fpModel});
@@ -130,6 +123,12 @@ IONUX.Router = Backbone.Router.extend({
     var fpModel = new IONUX.Models.InstrumentModelFacepageModel({instrument_model_id: instrument_model_id});
     new IONUX.Views.InstrumentModelFacepage({model: fpModel});
     fpModel.fetch();
+  },
+  
+  instrument_model_new: function() {
+    this._reset();
+    this.instrumentModelView = new IONUX.Views.NewInstrumentModelView({model: new IONUX.Models.InstrumentModel()});
+    this.instrumentModelView.render();
   },
   
   instrument_agent_facepage: function(instrument_agent_id) {
@@ -147,7 +146,6 @@ IONUX.Router = Backbone.Router.extend({
   },
   
   data_product_facepage: function(data_product_id) {
-    console.log("DataProduct!")
     this._reset();
     var fpModel = new IONUX.Models.DataProductFacepageModel({data_product_id: data_product_id});
     new IONUX.Views.DataProductFacepage({model: fpModel});

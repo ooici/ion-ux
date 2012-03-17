@@ -380,26 +380,26 @@ class ServiceApi(object):
     def find_data_product(data_product_id):
         data_product = service_gateway_get('resource_registry', 'read', params={'object_id': data_product_id})
         
-        if data_product.has_key('_id'):            
-            # LAST UPDATE
-            data_product['last_update'] = service_gateway_get('data_product_management', 'get_last_update', params={'data_product_id': data_product_id})
-            # TODO use last update to populate 'Latest Readings'
-            # TODO get visualization
-            # instrument['visualization'] = service_gateway_get('visualization', 'get_google_dt', params={'data_product_id': data_product_id})
-        
-            # INPUT PROCESS
-            data_product['input_process'] = service_gateway_get('resource_registry', 'find_subjects', params={'predicate': 'hasInputProduct', 'object': data_product_id, 'id_only': False})[0]
-        
-            # OUTPUT PROCESS
-            data_product['output_process'] = service_gateway_get('resource_registry', 'find_subjects', params={'predicate': 'hasOutputProduct', 'object': data_product_id, 'id_only': False})[0]
-        
-            # FRAME OF REFERENCES TBD
-
-            # OWNER
-            data_product['owner'] = ServiceApi.find_owner(data_product_id)
-
-            # POLICY
-            data_product['policies'] = service_gateway_get('policy_management', 'find_resource_policies', params={'resource_id': data_product_id})
+        # if data_product.has_key('_id'):            
+        #     # LAST UPDATE
+        #     data_product['last_update'] = service_gateway_get('data_product_management', 'get_last_update', params={'data_product_id': data_product_id})
+        #     # TODO use last update to populate 'Latest Readings'
+        #     # TODO get visualization
+        #     # instrument['visualization'] = service_gateway_get('visualization', 'get_google_dt', params={'data_product_id': data_product_id})
+        # 
+        #     # INPUT PROCESS
+        #     data_product['input_process'] = service_gateway_get('resource_registry', 'find_subjects', params={'predicate': 'hasInputProduct', 'object': data_product_id, 'id_only': False})[0]
+        # 
+        #     # OUTPUT PROCESS
+        #     data_product['output_process'] = service_gateway_get('resource_registry', 'find_subjects', params={'predicate': 'hasOutputProduct', 'object': data_product_id, 'id_only': False})[0]
+        # 
+        #     # FRAME OF REFERENCES TBD
+        # 
+        #     # OWNER
+        #     data_product['owner'] = ServiceApi.find_owner(data_product_id)
+        # 
+        #     # POLICY
+        #     data_product['policies'] = service_gateway_get('policy_management', 'find_resource_policies', params={'resource_id': data_product_id})
 
         return data_product
     

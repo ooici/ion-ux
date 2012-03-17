@@ -163,7 +163,6 @@ def enroll_user(marine_facility_id):
     request_enrollment = ServiceApi.request_enrollment_in_org(marine_facility_id, session['user_id'])
     return str(request_enrollment)
 
-
 @app.route('/observatories/<marine_facility_id>/user_requests/', methods=['GET'])
 def observatory_user_requests(marine_facility_id):
     if 'ORG_MANAGER' in session['roles']:
@@ -171,7 +170,6 @@ def observatory_user_requests(marine_facility_id):
     else:
         user_requests = ServiceApi.find_org_user_requests(marine_facility_id, session['user_id'])
     return jsonify(data=user_requests)
-
 
 @app.route('/platforms/', methods=['GET'])
 def platforms():
@@ -232,20 +230,17 @@ def instrument_facepage(instrument_device_id):
     else:
         return render_app_template(request.path)
 
-
 @app.route('/instruments/<instrument_device_id>/command/<agent_command>/')
 def start_instrument_agent(instrument_device_id, agent_command):
     if agent_command == 'start':
-        instrument = ServiceApi.instrument_agent_start(instrument_device_id)
-        return jsonify(data=True)
+        command_response = ServiceApi.instrument_agent_start(instrument_device_id)
+        return jsonify(data=command_response)
     elif agent_command == 'get_capabilities':
-        instrument = ServiceApi.instrument_agent_get_capabilities(instrument_device_id)
+        command_response = ServiceApi.instrument_agent_get_capabilities(instrument_device_id)
         return jsonify(data=True)
     else:
-        instrument = ServiceApi.instrument_execute_agent(instrument_device_id, agent_command)
-    
-    return jsonify(data=True)
-
+        command_response = ServiceApi.instrument_execute_agent(instrument_device_id, agent_command)
+    return jsonify(data=command_reponse)
 
 @app.route('/instrument_models/<instrument_model_id>/', methods=['GET'])
 def instrument_model_facepage(instrument_model_id):
@@ -255,11 +250,9 @@ def instrument_model_facepage(instrument_model_id):
     else:
         return render_app_template(request.path)
 
-
 @app.route('/instrument_agents/')
 def instrument_agents():
     pass
-
 
 @app.route('/instrument_agents/<instrument_agent_id>/', methods=['GET'])
 def instrument_agent_facepage(instrument_agent_id):
@@ -269,7 +262,6 @@ def instrument_agent_facepage(instrument_agent_id):
     else:
         return render_app_template(request.path)
 
-
 @app.route('/data_process_definitions/<data_process_definition_id>/')
 def data_process_definition_facepage(data_process_definition_id):
     if request.is_xhr:    
@@ -277,7 +269,6 @@ def data_process_definition_facepage(data_process_definition_id):
         return jsonify(data=data_process_definition)
     else:
         return render_app_template(request.path)
-
 
 @app.route('/data_products/', methods=['GET'])
 def data_products():
@@ -291,6 +282,10 @@ def data_product_facepage(data_product_id):
     else:
         return render_app_template(request.path)
 
+# Request actions
+@app.route('/<resource_type>/request/<request_id>/<request_action>', methods=['GET', 'POST'])
+def take_action_on_request(resource_type, resource_id, request_action):
+    return jsonify(data=True)
 
 # New routes
 @app.route('/<resource_type>/new/', methods=['GET'])
@@ -411,7 +406,7 @@ def delete_resource(resource_id=None):
 
 @app.route('/schema/<resource_type>')
 def get_resource_schema(resource_type):
-    resource_type = str(resource_type)
+    # resource_type = str(resource_type)
 
     resource_type_schema_response = requests.get(
         "http://%s/ion-service/resource_type_schema/%s" % (SERVICE_GATEWAY_BASE_URL,resource_type)

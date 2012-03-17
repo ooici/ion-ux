@@ -29,59 +29,6 @@ IONUX.Views.CreateNewView = Backbone.View.extend({
   }
 });
 
-// 
-// IONUX.Views.DataResourceView = Backbone.View.extend({
-// 
-//   el: "#data-resources",
-// 
-//   initialize: function(){
-//     _.bindAll(this, "render");
-//     this.collection.bind("reset", this.render);
-//   },
-//   
-//   render: function(){
-//     this.$el.empty().show();
-//     _.each(this.collection.models, function(dataresource) {
-//         this.$el.append(new IONUX.Views.DataResourceItemView({model:dataresource}).render().el);
-//     }, this);
-//     return this;
-//   },
-// 
-// })
-// 
-// 
-// IONUX.Views.DataResourceItemView = Backbone.View.extend({
-// 
-//   tagName:"ul",
-// 
-//   template: _.template($("#data-resource-item-tmpl").html()),
-// 
-//   render: function(){
-//     this.$el.html(this.template(this.model.toJSON()));
-//     return this;
-//   }
-// 
-// });
-
-
-// IONUX.Views.DataResourceDetailView = Backbone.View.extend({
-// 
-//   el: "#data-resource-detail",
-// 
-//   template: _.template($("#data-resource-detail-tmpl").html()),
-// 
-//   initialize: function(){
-//     _.bindAll(this, "render");
-//     this.model.bind("change", this.render);
-//   },
-// 
-//   render: function(){
-//     this.$el.html(this.template(this.model.toJSON())).show();
-//     return this;
-//   }
-// 
-// });
-
 
 /* Observatories */
 
@@ -233,6 +180,26 @@ IONUX.Views.NewInstrumentView = IONUX.Views.CreateNewView.extend({
     return this;
   },
 });
+
+
+IONUX.Views.NewInstrumentModelView = IONUX.Views.CreateNewView.extend({
+  el: "#instrument-model-new-container",
+
+  template: _.template($("#new-instrument-model-tmpl").html()),
+
+  initialize: function(){
+    _.bindAll(this, "create_new", "render");
+    this.model.bind("change", this.render)
+  },
+
+  render: function(){
+    this.$el.empty().html(this.template(this.model.toJSON())).show();
+    return this;
+  },
+});
+
+
+
 
 
 IONUX.Views.ObservatoryCreateNewView = IONUX.Views.CreateNewView.extend({
@@ -512,14 +479,13 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
   issue_command: function(evt) {
     var command = this.$el.find("option:selected").attr("value");
     $.ajax({url:command,
-      success: function() {
+      success: function(data) {
         $('.instrument-commands').show();
-        // this.$el.find(".command").append($("<p>").text("The command '"+command+"' was issued!!1!"));
         $(".command-output").append($("<p>").text("The command '"+command+"' was issued!!1!"));
-        
+        console.log(data);
       },
       error: function() {
-        alert("SORRY, BUT... FAIL");   
+        alert("An error occurred.");   
       }
     });
     return false;
@@ -611,6 +577,8 @@ IONUX.Views.DataProductFacepage = Backbone.View.extend({
   
   render: function(){
     this.$el.empty().html(this.template(this.model.toJSON())).show();
+    var data_product_id = this.model.get('_id');
+    drawChart(data_product_id)
   }
 });
 
