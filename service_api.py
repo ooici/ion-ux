@@ -377,6 +377,11 @@ class ServiceApi(object):
         return data_process_definition
     
     @staticmethod
+    def find_data_products():
+        data_products = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'DataProduct'})[0]
+        return data_products
+
+    @staticmethod
     def find_data_product(data_product_id):
         data_product = service_gateway_get('resource_registry', 'read', params={'object_id': data_product_id})
         

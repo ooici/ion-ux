@@ -1,8 +1,15 @@
-IONUX.Collections.DataResources = Backbone.Collection.extend({
+IONUX.Collections.DataProducts = Backbone.Collection.extend({
+  model: IONUX.Models.DataProduct,
+  url: "/data_products/",
+    
+  parse: function(resp) {
+    return resp.data;
+  } 
+});
 
+IONUX.Collections.DataResources = Backbone.Collection.extend({
   model: IONUX.Models.DataResource,
   url: "/dataresource"
-
 });
 
 

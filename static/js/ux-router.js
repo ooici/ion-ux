@@ -9,6 +9,7 @@ IONUX.Router = Backbone.Router.extend({
     "platforms/":"platforms",
     "platforms/new/": "platform_new",
     "platforms/:platform_id/": "platform_facepage",
+    "platform_models/new/": "platform_model_new",
     "platform_models/:platform_model_id/": "platform_model_facepage",
     "instruments/":"instruments",
     "instruments/new/":"instrument_new",
@@ -19,9 +20,17 @@ IONUX.Router = Backbone.Router.extend({
     "instrument_agents/:instrument_agent_id/": "instrument_agent_facepage",
     "frames_of_references/": "frames_of_reference_facepage",
     "data_process_definitions/:data_process_definition_id/": "data_process_definition_facepage",
+    "data_products/": "data_products",
     "data_products/:data_product_id/": "data_product_facepage",
     "users/": "user_facepage",
     "resource_types/:resource_type_id/": "resource_type_details",
+  },
+  
+  data_products: function() {
+    this._reset();
+    this.dataProductsList = new IONUX.Collections.DataProducts();
+    this.dataProductsListView = new IONUX.Views.DataProducts({collection: this.dataProductsList});
+    this.dataProductsList.fetch();
   },
   
   user_registration: function() {
@@ -60,10 +69,10 @@ IONUX.Router = Backbone.Router.extend({
     new IONUX.Views.ObservatoryFacepage({model:fpModel});
     fpModel.fetch();
 
-    var urCollection = new IONUX.Collections.UserRequestCollection();
-    urCollection.marine_facility_id = marine_facility_id; //XXX better way to set this?
-    var userRequestsView = new IONUX.Views.UserRequestsView({collection:urCollection});
-    urCollection.fetch();
+    // var urCollection = new IONUX.Collections.UserRequestCollection();
+    // urCollection.marine_facility_id = marine_facility_id; //XXX better way to set this?
+    // var userRequestsView = new IONUX.Views.UserRequestsView({collection:urCollection});
+    // urCollection.fetch();
   },
   
   platforms: function(){
@@ -87,13 +96,18 @@ IONUX.Router = Backbone.Router.extend({
     fpModel.fetch();
   },
 
+  platform_model_new: function() {
+    this._reset();
+    this.platformModelNewView = new IONUX.Views.NewPlatformModel({model: new IONUX.Models.PlatformModel()});
+    this.platformModelNewView.render();
+  },
+
   platform_model_facepage: function(platform_model_id) {
-    console.log(platform_model_id);
     this._reset();
     var fpModel = new IONUX.Models.PlatformModelFacepageModel({platform_model_id: platform_model_id});
     new IONUX.Views.PlatformModelFacepage({model: fpModel});
     fpModel.fetch();
-  },
+  }, 
   
   instruments: function(){
     this._reset();
@@ -123,13 +137,20 @@ IONUX.Router = Backbone.Router.extend({
     fpModel.fetch();
   },
   
+  instrument_model_new: function() {
+    this._reset();
+    this.instrumentModelView = new IONUX.Views.NewInstrumentModel({model: new IONUX.Models.PlatformModel()});
+    this.instrumentModelView.render();
+  },
+
   instrument_model_facepage: function(instrument_model_id) {
     this._reset();
     var fpModel = new IONUX.Models.InstrumentModelFacepageModel({instrument_model_id: instrument_model_id});
     new IONUX.Views.InstrumentModelFacepage({model: fpModel});
     fpModel.fetch();
   },
-    
+  
+  
   instrument_agent_facepage: function(instrument_agent_id) {
     this._reset();
     var fpModel = new IONUX.Models.InstrumentAgentFacepageModel({instrument_agent_id: instrument_agent_id});

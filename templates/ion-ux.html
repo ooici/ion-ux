@@ -38,19 +38,18 @@
 				</div>
 				<span class="sidebar-section">Register</span>
 				<ul>
-					<li class="filter"><a href="/register/">Register</a></li>
+					<li class="filter"><a href="https://ux.oceanobservatories.org/login/">Login</a></li>
 				</ul>
-				<span class="sidebar-section">Filters</span>
+				<!-- <span class="sidebar-section">Filters</span>
 				<ul>
 					<li class="filter"><a href="#">This Month</a>
 					<li class="filter"><a href="#">North Atlantic</a></li>
 					<li class="filter_disabled">Weather Instruments</li>
-				</ul>
+				</ul> -->
 
 				<span class="sidebar-section">OOI Resources</span>
 				<ul>
-					<li class="dashboard"><a href="/">All Resources</a>
-					<li class="data"><a href="/data/">Data Products</a></li>
+					<li class="data"><a href="/data_products/">Data Products</a></li>
 					<li class="observatories"><a href="/observatories/">Observatories</a></li>
 					<li class="platforms"><a href="/platforms/">Platforms</a></li>
 					<li class="instruments"><a href="/instruments/">Instruments</a></li>
@@ -59,9 +58,10 @@
 				<span class="sidebar-section">Create Resources</span>
 				<ul>
 					<li class=""><a href="/observatories/new/">Observatory</a>
-					<li class=""><a href="/platforms/new/">Platform</a>
 				    <li class=""><a href="/platform_models/new/">Platform Model</a></li>
-				    <li class=""><a href="/instruments/new/">Instrument</a></li>
+					<li class=""><a href="/platforms/new/">Platform Device</a>
+					<li class=""><a href="/instrument_models/new/">Intrument Model</a>
+				    <li class=""><a href="/instruments/new/">Instrument Device</a></li>
 				</ul>
 				
 				
@@ -92,13 +92,16 @@
           <div id="platform-facepage-container" class="viewcontainer"></div>
 		  <div id="platform-new-container" class="viewcontainer"></div>
 		  <div id="platform-model-facepage-container" class="viewcontainer"></div>
+		  <div id="platform-model-new-container" class="viewcontainer"></div>
           <div id="instrument-facepage-container" class="viewcontainer"></div>
 		  <div id="instrument-new-container" class="viewcontainer"></div>
 		  <div id="instrument-command-facepage-container" class="viewcontainer"></div>
 		  <div id="instrument-model-facepage-container" class="viewcontainer"></div>
+		  <div id="instrument-model-new-container" class="viewcontainer"></div>
 		  <div id="instrument-agent-facepage-container" class="viewcontainer"></div>
 		  <div id="frames-of-reference-facepage-container" class="viewcontainer"></div>
 		  <div id="data-process-definition-facepage-container" class="viewcontainer"></div>
+		  <div id="data-products-container" class="viewcontainer"></div>
 		  <div id="data-product-facepage-container" class="viewcontainer"></div>
 		  <div id="user-facepage-container" class="viewcontainer"></div>
 		  <div id="user-registration-container" class="viewcontainer"></div>
@@ -146,19 +149,22 @@
 <script type="text/template" id="new-platform-tmpl">{% include 'partials/new_platform_device.html' %}</script>
 
 <script type="text/template" id="platform-model-facepage-tmpl">{% include 'partials/platform_model_facepage.html' %}</script>
-<script type="text/template" id="new-platform-model-tmpl">{% include 'partials/new_platform_model.html' %}</script>
+<script type="text/template" id="platform-model-new-tmpl">{% include 'partials/new_platform_model.html' %}</script>
 
 <script type="text/template" id="instruments-tmpl">{% include 'partials/instruments_list.html' %}</script>
 <script type="text/template" id="instrument-facepage-tmpl">{% include 'partials/instrument_facepage.html' %}</script>
 <script type="text/template" id="instrument-command-facepage-tmpl">{% include 'partials/instrument_command_facepage.html' %}</script>
 <script type="text/template" id="new-instrument-tmpl">{% include 'partials/new_instrument_device.html' %}</script>
-<script type="text/template" id="instrument-model-facepage-tmpl">{% include 'partials/instrument_model_facepage.html' %}</script>
 <script type="text/template" id="instrument-agent-facepage-tmpl">{% include 'partials/instrument_agent_facepage.html' %}</script>
+
+<script type="text/template" id="instrument-model-facepage-tmpl">{% include 'partials/instrument_model_facepage.html' %}</script>
+<script type="text/template" id="instrument-model-new-tmpl">{% include 'partials/new_instrument_model.html' %}</script>
 
 <script type="text/template" id="frames-of-reference-facepage-tmpl">{% include 'partials/frames_of_reference_facepage.html' %}</script>
 
 <script type="text/template" id="data-process-definition-facepage-tmpl">{% include 'partials/data_process_definition_facepage.html' %}</script>
 <script type="text/template" id="data-product-facepage-tmpl">{% include 'partials/data_product_facepage.html' %}</script>
+<script type="text/template" id="data-products-tmpl">{% include 'partials/data_products_list.html' %}</script>
 
 <script type="text/template" id="data-resource-item-tmpl">{% include 'partials/data_resource_item.html' %}</script>
 <script type="text/template" id="data-resource-detail-tmpl">{% include 'partials/data_resource_detail.html' %}</script>
@@ -192,7 +198,7 @@
     IONUX.set_roles("{{ roles }}");
 	
 	var search = new IONUX.Views.Search();
-    search.render();
+	search.render();
 	// Temporary hack to set background
 	$('body').css('background-color', '#eee');
   });

@@ -1,3 +1,19 @@
+IONUX.Views.DataProducts = Backbone.View.extend({
+  el: "#data-products-container",
+  template: _.template($("#data-products-tmpl").html()),
+
+  initialize: function(){
+    _.bindAll(this, "render");
+    this.collection.bind("reset", this.render);
+  },
+  render: function(){
+    this.$el.html(this.template({"collection":this.collection.toJSON()})).show();
+    return this;
+  }
+});
+
+
+
 IONUX.Views.CreateNewView = Backbone.View.extend({
   events: {
     "click input[type='submit']":"create_new",
@@ -227,6 +243,24 @@ IONUX.Views.NewInstrumentView = IONUX.Views.CreateNewView.extend({
 });
 
 
+// IONUX.Views.NewInstrumentModelView = IONUX.Views.CreateNewView.extend({
+//   el: "#instrument-model-new-container",
+// 
+//   template: _.template($("#new-instrument-model-tmpl").html()),
+// 
+//   initialize: function(){
+//     _.bindAll(this, "create_new", "render");
+//     this.model.bind("change", this.render)
+//   },
+// 
+//   render: function(){
+//     this.$el.empty().html(this.template(this.model.toJSON())).show();
+//     return this;
+//   },
+// });
+// 
+// 
+
 
 
 IONUX.Views.ObservatoryCreateNewView = IONUX.Views.CreateNewView.extend({
@@ -447,6 +481,22 @@ IONUX.Views.PlatformModelFacepage = Backbone.View.extend({
   }
 });
 
+IONUX.Views.NewPlatformModel = IONUX.Views.CreateNewView.extend({
+  el: "#platform-model-new-container",
+
+  template: _.template($("#platform-model-new-tmpl").html()),
+
+  initialize: function(){
+    _.bindAll(this, "create_new", "render");
+    this.model.bind("change", this.render)
+  },
+
+  render: function(){
+    this.$el.empty().html(this.template(this.model.toJSON())).show();
+    return this;
+  },
+});
+
 
 IONUX.Views.InstrumentFacepage = Backbone.View.extend({
 
@@ -563,6 +613,24 @@ IONUX.Views.InstrumentModelFacepage = Backbone.View.extend({
   }
 });
 
+
+IONUX.Views.NewInstrumentModel = IONUX.Views.CreateNewView.extend({
+  el: "#instrument-model-new-container",
+
+  template: _.template($("#instrument-model-new-tmpl").html()),
+
+  initialize: function(){
+    _.bindAll(this, "create_new", "render");
+    this.model.bind("change", this.render)
+  },
+
+  render: function(){
+    this.$el.empty().html(this.template(this.model.toJSON())).show();
+    return this;
+  },
+});
+
+
 IONUX.Views.InstrumentAgentFacepage = Backbone.View.extend({
 
   el: "#instrument-agent-facepage-container",
@@ -605,7 +673,7 @@ IONUX.Views.DataProductFacepage = Backbone.View.extend({
   render: function(){
     this.$el.empty().html(this.template(this.model.toJSON())).show();
     var data_product_id = this.model.get('_id');
-    // drawChart(data_product_id)
+    drawChart(data_product_id)
   }
 });
 

@@ -271,7 +271,11 @@ def data_process_definition_facepage(data_process_definition_id):
 
 @app.route('/data_products/', methods=['GET'])
 def data_products():
-    pass
+    if request.is_xhr:
+        data_products = ServiceApi.find_data_products()
+        return jsonify(data=data_products)
+    else:
+        return create_html_response(request.path)
 
 @app.route('/data_products/<data_product_id>/', methods=['GET'])
 def data_product_facepage(data_product_id): 

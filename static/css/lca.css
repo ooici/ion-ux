@@ -76,8 +76,6 @@ table tr:nth-child(odd) td, .table-striped tbody tr:nth-child(odd) th {
   background-color: #eee  ;
 }
 
-
-
 .command, .command-output {
   border: solid 1px #ccc;
   background: white;
@@ -87,4 +85,9 @@ table tr:nth-child(odd) td, .table-striped tbody tr:nth-child(odd) th {
 
 .invisible {
     display:none;
+}
+
+form fieldset legend {
+  font-size: 14px;
+  font-weight: bold;
 }
