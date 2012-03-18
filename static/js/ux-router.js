@@ -201,6 +201,10 @@ IONUX.Router = Backbone.Router.extend({
   handle_navigation: function(){
     var self = this;
     $(document).on("click", "a", function(e) {
+      var link = $(e.target).attr('href');
+      if (link.startsWith('http')) {
+        return true;
+      };
         self.navigate($(this).attr('href'), {trigger:true});
         return false;
     });

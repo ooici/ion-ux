@@ -550,14 +550,15 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
   
   issue_command: function(evt) {
     var command = this.$el.find("option:selected").attr("value");
-    $.ajax({url:command,
+    $.ajax({
+      url:command,
+      dataType: 'json',
       success: function(data) {
         $('.instrument-commands').show();
-        $(".command-output").append($("<p>").text("The command '"+command+"' was issued!!1!"));
-        console.log(data);
+        $(".command-output").append($('<p class="command-success">').text("OK: '" + command + "' was successful."));
       },
       error: function() {
-        alert("An error occurred.");   
+        $(".command-output").append($('<p class="command-failure">').text("ALERT: '" + command + "' was unsuccessful."));
       }
     });
     return false;

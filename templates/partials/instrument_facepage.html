@@ -16,7 +16,7 @@
 				<p>
 					<strong>Name: </strong><%= name %><br />
 					<strong>ID: </strong><span style="word-wrap: break-word"><%= _id %></span><br />
-					<strong>Model:</strong> <%= related_model.name %>
+					<strong>Model:</strong> <a href="/instrument_models/<%= related_model._id %>/"><%= related_model.name %></a>
 				</p>
 			</section>
 			<section class="wrapper">

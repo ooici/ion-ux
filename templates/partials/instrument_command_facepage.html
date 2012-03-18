@@ -1,5 +1,4 @@
 <h1>Instrument: <%= name %></h1>
-
 <div class="row">
 	<div class="span2">
 		<section class="wrapper">
@@ -57,13 +56,14 @@
 					<option value='stop'>Stop sampling (stop auto-sample of data collection)</option> -->
 				</select>
 				
-				<input type="submit" name="Send Command" class="btn btn-primary issue_command"/>
+				<input type="submit" name="Send Command" class="btn issue_command"/>
 			</form>	
 			</div>
 
-			<div class="command-output">
-				Command results
-			</div>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Command Results</h3>
+				<div class="command-output"></div>
+			</section>
 		</div>
 	</div>	
 </div>

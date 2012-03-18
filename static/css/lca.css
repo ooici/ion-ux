@@ -76,12 +76,27 @@ table tr:nth-child(odd) td, .table-striped tbody tr:nth-child(odd) th {
   background-color: #eee  ;
 }
 
-.command, .command-output {
+.command {
   border: solid 1px #ccc;
   background: white;
   margin: 15px 0;
   padding: 15px;
 }
+
+.command-success {
+  background: #000;
+  color: #cf9;
+  padding: 10px;
+  margin: 0 10px;
+}
+
+.command-failure {
+  background: #000;
+  color: #f93;
+  padding: 10px;
+  margin: 0 10px;
+}
+
 
 .invisible {
     display:none;
