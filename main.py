@@ -241,6 +241,7 @@ def start_instrument_agent(instrument_device_id, agent_command):
         command_response = ServiceApi.instrument_execute_agent(instrument_device_id, agent_command)
     return jsonify(data=command_response)
 
+
 @app.route('/instrument_models/<instrument_model_id>/', methods=['GET'])
 def instrument_model_facepage(instrument_model_id):
     if request.is_xhr:
@@ -283,6 +284,22 @@ def data_product_facepage(data_product_id):
         # Add start and stop to data processes
         data_product = ServiceApi.find_data_product(data_product_id)
         return jsonify(data=data_product)
+    else:
+        return render_app_template(request.path)
+
+@app.route('/users/<user_id>/', methods=['GET'])
+def user_facepage(user_id):
+    if request.is_xhr:
+        user = ServiceApi.find_user(user_id)
+        return jsonify(data=user)
+    else:
+        return render_app_template(request.path)
+
+@app.route('/frame_of_references/<frame_of_reference_id>/', methods=['GET'])
+def frame_of_reference_facepage(frame_of_reference_id):
+    if request.is_xhr:
+        frame_of_reference = ServiceApi.find_frame_of_reference(frame_of_reference_id)
+        return jsonify(data=frame_of_reference)
     else:
         return render_app_template(request.path)
 

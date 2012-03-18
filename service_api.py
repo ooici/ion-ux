@@ -418,9 +418,13 @@ class ServiceApi(object):
 
             # SUPERIORS
             frame_of_reference['superiors'] = service_gateway_get('marine_facility_management', 'find_superior_frames_of_reference', params={'input_resource_id': frame_of_reference_id})
+            
+            print "SUPERIORS", frame_of_reference['superiors']
 
             # OWNER
             frame_of_reference['owner'] = ServiceApi.find_owner(frame_of_reference_id)
+        
+        return frame_of_reference
 
 #    @staticmethod
 #    def test_find_breadcrumb():

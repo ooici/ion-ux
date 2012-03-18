@@ -18,11 +18,13 @@ IONUX.Router = Backbone.Router.extend({
     "instrument_models/new/": "instrument_model_new",
     "instrument_models/:instrument_model_id/": "instrument_model_facepage",
     "instrument_agents/:instrument_agent_id/": "instrument_agent_facepage",
-    "frames_of_references/": "frames_of_reference_facepage",
+    "frame_of_references/new/": "frame_of_reference_new",
+    "frame_of_references/:frame_of_reference_id/": "frame_of_reference_facepage",
     "data_process_definitions/:data_process_definition_id/": "data_process_definition_facepage",
     "data_products/": "data_products",
     "data_products/:data_product_id/": "data_product_facepage",
-    "users/": "user_facepage",
+    // "users/": "user_facepage",
+    "users/:user_id/": "user_facepage",
     "resource_types/:resource_type_id/": "resource_type_details",
   },
   
@@ -144,12 +146,12 @@ IONUX.Router = Backbone.Router.extend({
   },
 
   instrument_model_facepage: function(instrument_model_id) {
+    console.log('instrumet_model_facepage');
     this._reset();
     var fpModel = new IONUX.Models.InstrumentModelFacepageModel({instrument_model_id: instrument_model_id});
     new IONUX.Views.InstrumentModelFacepage({model: fpModel});
     fpModel.fetch();
   },
-  
   
   instrument_agent_facepage: function(instrument_agent_id) {
     this._reset();
@@ -172,16 +174,24 @@ IONUX.Router = Backbone.Router.extend({
     fpModel.fetch();
   },
   
-  frames_of_reference_facepage : function() {
+  frame_of_reference_new: function() {
     this._reset();
-    var framesOfReferenceFacepage = new IONUX.Views.FramesOfReferenceFacepage();
-    framesOfReferenceFacepage.render();
+    this.frameOfReferenceView = new IONUX.Views.NewFrameOfReferenceView({model: new IONUX.Models.FrameOfReference()})
+    this.frameOfReferenceView.render();
   },
   
-  user_facepage : function() {
+  frame_of_reference_facepage : function(frame_of_reference_id) {
     this._reset();
-    var userFacepage = new IONUX.Views.UserFacepage();
-    userFacepage.render();
+    var fpModel = new IONUX.Models.FrameOfReferenceFacepage({frame_of_reference_id: frame_of_reference_id});
+    this.forView = new IONUX.Views.FramesOfReferenceFacepage({model: fpModel});
+    fpModel.fetch();
+  },
+  
+  user_facepage : function(user_id) {
+    this._reset();
+    var fpModel = new IONUX.Models.UserFacepageModel({user_id: user_id});
+    new IONUX.Views.UserFacepage({model: fpModel});
+    fpModel.fetch();
   },
 
   resource_type_details: function(resource_type_id) {
