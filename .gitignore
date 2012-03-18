@@ -1,4 +1,5 @@
 config.py
+ion-ux.wsgi
 *.pyc
 venv/*
 *.swp

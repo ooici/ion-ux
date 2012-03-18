@@ -1,0 +1,8 @@
+README
+SETUP
+cilogon_wsgi
+fabfile.py
+*.pyc
+*.tar
+*.template
+tarexcludes.txt
