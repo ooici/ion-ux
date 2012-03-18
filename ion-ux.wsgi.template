@@ -1,0 +1,6 @@
+import os, sys
+os.environ['PORTAL_ROOT']='DEPLOY_DIR_VALUE/'
+sys.path.insert(0, os.environ['PORTAL_ROOT'] )
+sys.path.append('DEPLOY_DIR_VALUE')
+
+from main import app as application
