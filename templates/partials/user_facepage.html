@@ -1,10 +1,29 @@
-<h1>User: </h1>
+<h1>User: <%= contact.name %></h1>
 
 <div class="row">
 	<div class="span2">
 		<section class="wrapper">
 			<h3 class="wrapper-heading">Information</h3>
-			<p>...</p>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Identification</h3>
+				<p>
+					<strong>Name:</strong> <%= contact.name %><br />
+					<strong>ID:</strong> <span style="word-wrap:break-word;"><%= _id %></span><br />
+				</p>
+			</section>
+		</section>
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Description</h3>
+			<p>
+				<%= description %>
+			</p>
+		</section>
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Contact</h3>
+			<p>
+				<strong>Email:</strong> <%= contact.email %><br />
+				<strong>Phone:</strong> <%= contact.phone %><br />
+			</p>
 		</section>
 	</div>
 	<div class="span8">
@@ -12,18 +31,58 @@
 			<h3 class="wrapper-heading">Resource Access</h3>
 			<section class="wrapper">
 				<h3 class="wrapper-heading">Resources</h3>
-				<p>...</p>
+				<p>Owned resources?</p>
+				<table class="table">
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+						<th>Updated</th>
+					</tr>
+					<% _.each(owned_resources, function(obj) { %>
+						<tr>
+							<td><%= obj.name %></td>
+							<td><%= obj.description %></td>
+							<td><%= obj.ts_updated %></td>
+						</tr>
+					<% }); %>
+				</table>
 			</section>
 		</section>
 		<section class="wrapper">
 			<h3 class="wrapper-heading">Administration</h3>
 			<section class="wrapper">
 				<h3 class="wrapper-heading">Roles</h3>
-				<p>...</p>
+				<table class="table">
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+						<th>Updated</th>
+					</tr>
+					<% _.each(roles['ION'], function(obj) { %>
+						<tr>
+							<td><%= obj.name %></td>
+							<td><%= obj.description %></td>
+							<td><%= obj.ts_updated %></td>
+						</tr>
+					<% }); %>
+				</table>
 			</section>
 			<section class="wrapper">
 				<h3 class="wrapper-heading">Policies</h3>
-				<p>...</p>
+				<table class="table">
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+						<th>Updated</th>
+					</tr>
+					<% _.each(policies, function(obj) { %>
+						<tr>
+							<td><%= obj.name %></td>
+							<td><%= obj.description %></td>
+							<td><%= obj.ts_updated %></td>
+						</tr>
+					<% }); %>
+				</table>
 			</section>
 		</section>
 	</div>

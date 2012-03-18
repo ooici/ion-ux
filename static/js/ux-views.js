@@ -698,10 +698,11 @@ IONUX.Views.UserFacepage = Backbone.View.extend({
 
   initialize: function(){
     _.bindAll(this, "render");
+    this.model.bind("change", this.render);
   },
 
   render: function(){
-    this.$el.empty().html(this.template({})).show();
+    this.$el.empty().html(this.template(this.model.toJSON())).show();
   }
 });
 

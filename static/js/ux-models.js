@@ -8,17 +8,24 @@ IONUX.Models.DataResourceDetails = Backbone.Model.extend({
 });
 
 
-IONUX.Models.UserFacepageModel = Backbone.Model.extend({
+// IONUX.Models.UserFacepageModel = Backbone.Model.extend({
+//   url: "/register/",
+//   idAttribute: "_id",
+//   
+//   parse: function(resp) {
+//     return resp.data;
+//   }
+// });
 
-  url: "/register/",
-  idAttribute: "_id",
-  
+
+IONUX.Models.UserFacepageModel = Backbone.Model.extend({
+  url: function() {
+    return "/users/"+this.get("user_id")+"/";
+  },
   parse: function(resp) {
     return resp.data;
   }
-
 });
-
 
 IONUX.Models.Observatory = Backbone.Model.extend({
   url: "/observatories/",
