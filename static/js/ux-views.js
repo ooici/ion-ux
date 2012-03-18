@@ -174,27 +174,22 @@ IONUX.Views.ObservatoriesItemView = Backbone.View.extend({
 });
 
 IONUX.Views.ObservatoriesDetailView = Backbone.View.extend({
-
   el: "#observatories-detail",
-
   template: _.template($("#observatories-detail-tmpl").html()),
 
   initialize: function(){
     _.bindAll(this, "render");
     this.model.bind("change", this.render);
   },
-
   render: function(){
     this.$el.html(this.template(this.model.toJSON())).show();
     return this;
   }
-
 });
 
 
 IONUX.Views.NewObservatoryView = IONUX.Views.CreateNewView.extend({
   el: "#observatory-new-container",
-
   template: _.template($("#new-observatory-tmpl").html()),
 
   initialize: function(){
@@ -678,18 +673,36 @@ IONUX.Views.DataProductFacepage = Backbone.View.extend({
 });
 
 IONUX.Views.FramesOfReferenceFacepage = Backbone.View.extend({
-  el: "#frames-of-reference-facepage-container",
+  el: "#frame-of-reference-facepage-container",
 
-  template: _.template($("#frames-of-reference-facepage-tmpl").html()),
+  template: _.template($("#frame-of-reference-facepage-tmpl").html()),
 
   initialize: function(){
     _.bindAll(this, "render");
+    this.model.bind("change", this.render);
   },
 
   render: function(){
-    this.$el.empty().html(this.template({})).show();
+    this.$el.empty().html(this.template(this.model.toJSON())).show();
   }
 });
+
+IONUX.Views.NewFrameOfReferenceView = IONUX.Views.CreateNewView.extend({
+  el: "#frame-of-reference-new-container",
+
+  template: _.template($("#frame-of-reference-new-tmpl").html()),
+
+  initialize: function(){
+    _.bindAll(this, "create_new", "render");
+    this.model.bind("change", this.render)
+  },
+
+  render: function(){
+    this.$el.empty().html(this.template(this.model.toJSON())).show();
+    return this;
+  },
+});
+
 
 IONUX.Views.UserFacepage = Backbone.View.extend({
   el: "#user-facepage-container",

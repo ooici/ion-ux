@@ -295,6 +295,14 @@ def user_facepage(user_id):
     else:
         return render_app_template(request.path)
 
+@app.route('/frame_of_references/<frame_of_reference_id>/', methods=['GET'])
+def frame_of_reference_facepage(frame_of_reference_id):
+    if request.is_xhr:
+        frame_of_reference = ServiceApi.find_frame_of_reference(frame_of_reference_id)
+        return jsonify(data=frame_of_reference)
+    else:
+        return render_app_template(request.path)
+
 # Request actions
 @app.route('/<resource_type>/request/<request_id>/<request_action>', methods=['GET', 'POST'])
 def take_action_on_request(resource_type, resource_id, request_action):

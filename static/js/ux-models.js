@@ -8,25 +8,6 @@ IONUX.Models.DataResourceDetails = Backbone.Model.extend({
 });
 
 
-// IONUX.Models.UserFacepageModel = Backbone.Model.extend({
-//   url: "/register/",
-//   idAttribute: "_id",
-//   
-//   parse: function(resp) {
-//     return resp.data;
-//   }
-// });
-
-
-IONUX.Models.UserFacepageModel = Backbone.Model.extend({
-  url: function() {
-    return "/users/"+this.get("user_id")+"/";
-  },
-  parse: function(resp) {
-    return resp.data;
-  }
-});
-
 IONUX.Models.Observatory = Backbone.Model.extend({
   url: "/observatories/",
   idAttribute: "_id"
@@ -154,15 +135,44 @@ IONUX.Models.DataProduct = Backbone.Model.extend({
 
 
 IONUX.Models.DataProductFacepageModel = Backbone.Model.extend({
-
   url: function(){
     return "/data_products/"+this.get("data_product_id")+"/";
   },
-  
   parse: function(resp) {
     return resp.data;
   }
+});
 
+IONUX.Models.FrameOfReferenceFacepage = Backbone.Model.extend({
+  url: function() {
+    return "/frame_of_references/"+this.get("frame_of_reference_id")+"/";
+  },
+  parse: function(resp) {
+    return resp.data;
+  }
+});
+
+IONUX.Models.FrameOfReference = Backbone.Model.extend({
+  url: "/frame_of_references/",
+  idAttribute: "_id"
+});
+
+
+// IONUX.Models.UserFacepageModel = Backbone.Model.extend({
+//   url: "/register/",
+//   idAttribute: "_id",
+//   
+//   parse: function(resp) {
+//     return resp.data;
+//   }
+// });
+IONUX.Models.UserFacepageModel = Backbone.Model.extend({
+  url: function() {
+    return "/users/"+this.get("user_id")+"/";
+  },
+  parse: function(resp) {
+    return resp.data;
+  }
 });
 
 

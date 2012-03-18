@@ -102,7 +102,7 @@
 					<% _.each(superiors, function(key) { %>
 						<% _.each(key, function(obj) { %>
 							<tr>
-								<td><%= obj.name %></td>
+								<td><a href="/frame_of_references/<%= obj._id %>/"><%= obj.name %></a></td>
 								<td><%= obj.description %></td>
 								<td><%= obj.type_ %></td>
 								<td><%= obj.ts_updated %></td>
