@@ -2,19 +2,34 @@
 
 <div class="row">
 	<div class="span2">
-		<h3>Information</h3>
-		
-		<h4>Identification</h4>
-		<p>Identification placeholder</p>
-		
-		<h4>Location</h4>
-		<p>Location placeholder</p>
-		
-		<h4>Description</h4>
-		<p>Description placeholder</p>
-		
-		<h4>Provenance</h4>
-		<p>Provenance placeholder</p>
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Information</h3>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Identification</h3>
+				<p>
+					<strong>Name: </strong><%= name %><br />
+					<strong>ID: </strong><span style="word-wrap: break-word"><%= _id %></span><br />
+					<strong>Model:</strong> <a href="/instrument_models/<%= obj._id %>/"><%= related_model.name %></a>
+				</p>
+			</section>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Location</h3>
+				<p>...</p>
+			</section>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Description</h3>
+				<p>
+					<%= description %>
+				</p>
+			</section>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Contact</h3>
+				<p>
+					<strong>Owner:</strong> <%= owner.contact.name %><br />
+					<strong>Email:</strong> <a href="mailto:<%= owner.contact.mail %>"><%= owner.contact.email %></a>
+				</p>
+			</section>
+		</section>
 	</div>	
 	
 	<div class="span8">

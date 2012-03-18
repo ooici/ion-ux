@@ -4,16 +4,47 @@
 	<div class="span2">
 		<section class="wrapper">
 			<h3 class="wrapper-heading">Information</h3>
-			<p>Placeholder...</p>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Identification</h3>
+				<p>
+					<strong>Name: </strong><%= name %><br />
+					<span style="word-wrap: break-word"><strong>ID: </strong><%= _id %></span>
+				</p>
+			</section>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Description</h3>
+				<p>
+					<%= description %>
+				</p>
+			</section>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Contact</h3>
+				<p>
+					<strong>Owner:</strong> <%= owner.contact.name %><br />
+					<strong>Email:</strong> <a href="mailto:<%= owner.contact.mail %>"><%= owner.contact.email %></a>
+				</p>
+			</section>
 		</section>
 	</div>
 	<div class="span8">
 		<section class="wrapper">
 			<h3 class="wrapper-heading">Instrument Models</h3>
-			
 			<section class="wrapper">
-				<h3 class="wrapper-heading">Models</h3>
-				<p>Placeholder...</p>
+				<h3 class="wrapper-heading">Related Models</h3>
+				<table class="table">
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+						<th>Updated</th>
+					</tr>
+					<% _.each(related_models, function(obj) { %>
+						<tr>
+							<td><a href="/instrument_models/<%= obj._id %>/"><%= obj.name %></a></td>
+							<td><%= obj.description %></td>
+							<td><%= obj.ts_updated %></td>
+						</tr>
+					<% }); %>
+				</table>
 			</section>
 		</section>
 		
@@ -22,13 +53,21 @@
 			
 			<section class="wrapper">
 				<h3 class="wrapper-heading">Policies</h3>
-				<p>Placeholder...</p>
+				<table class="table">
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+						<th>Updated</th>
+					</tr>
+					<% _.each(policies, function(obj) { %>
+						<tr>
+							<td><%= obj.name %></td>
+							<td><%= obj.description %></td>
+							<td><%= obj.ts_updated %></td>
+						</tr>
+					<% }); %>
+				</table>
 			</section>
-		</section>
-		
-		<section class="wrapper">
-			<h3 class="wrapper-heading">Frames  of Reference</h3>
-				<p>Placeholder...</p>
 		</section>
 	</div>
 </div>

@@ -4,25 +4,42 @@
 		<section class="wrapper">
 			<h3 class="wrapper-heading">Information</h3>
 					
-			<h4>Identification</h4>
-			<p>Identification placeholder</p>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Identification</h3>
+				<p>
+					<strong>Name: </strong><%= name %><br />
+					<span style="word-wrap: break-word"><strong>ID: </strong><%= _id %></span>
+				</p>
+			</section>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Location</h3>
+				<p>
+					<span style="word-wrap: break-word"><strong>Location: </strong><%= location %></span>
+				</p>
+			</section>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Description</h3>
+				<p>
+					<%= description %>
+				</p>
+			</section>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Contact</h3>
+				<p>
+					<strong>Owner:</strong> <%= owner.contact.name %><br />
+					<strong>Email:</strong> <a href="mailto:<%= owner.contact.mail %>"><%= owner.contact.email %></a>
+				</p>
+			</section>
 		
-			<h4>Location</h4>
-			<p>Location placeholder</p>
-		
-			<h4>Description</h4>
-			<p>Description placeholder</p>
-		
-			<h4>Contact</h4>
-			<p>Contact placeholder</p>
-		
-			<h4>Additional Informtion</h4>
-			<p>
-				Data Product Level:<br />
-				Data Product Quality Control Level: <br />
-				Data Product Version Status:<br />
-				CDM Data Type:
-			</p>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Additional Info</h3>
+				<p>
+					<strong>Data Product Level</strong>: <%= data_product_level %><br />
+					<strong>Data Product Quality Control Level:</strong> <%= data_quality_control_level %><br />
+					<strong>Data Product Version Status:</strong> <%= version_status %><br />
+					<strong>CDM Data Type:</strong> <%= CDM_data_type %>
+				</p>
+			</section>
 		</section>
 	</div>	
 	

@@ -11,22 +11,31 @@
 	<div class="span2">
 		<section class="wrapper">
 			<h3 class="wrapper-heading">Information</h3>
-			<p>
-				<strong>Name: </strong><%= name %><br />
-				<strong>ID: </strong><span style="word-wrap: break-word"><%= _id %></span><br />
-			</p>
-			<p><strong>Model:</strong> <%= related_model.name %></p>
-			<h3>Identification</h3>
-			<p>Identification placeholder</p>
-		
-			<h3>Location</h3>
-			<p>Location placeholder</p>
-		
-			<h3>Description</h3>
-			<p>Description placeholder</p>
-		
-			<h3>Contact</h3>
-			<p>Contact placeholder</p>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Identification</h3>
+				<p>
+					<strong>Name: </strong><%= name %><br />
+					<strong>ID: </strong><span style="word-wrap: break-word"><%= _id %></span><br />
+					<strong>Model:</strong> <%= related_model.name %>
+				</p>
+			</section>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Location</h3>
+				<p>...</p>
+			</section>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Description</h3>
+				<p>
+					<%= description %>
+				</p>
+			</section>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Contact</h3>
+				<p>
+					<strong>Owner:</strong> <%= owner.contact.name %><br />
+					<strong>Email:</strong> <a href="mailto:<%= owner.contact.mail %>"><%= owner.contact.email %></a>
+				</p>
+			</section>
 		</section>
 	</div>
 	
@@ -67,11 +76,9 @@
 			<h3 class="wrapper-heading">Administration</h3>
 			
 			<section class="wrapper">
-				<h3 class="wrapper-heading">Agent Information</h3>
-
-				
-				<p><strong>Name:</strong> <%= instrument_agent.name %></p>
-				<p><strong>Description:</strong> <%= instrument_agent.description %></p>
+				<h3 class="wrapper-heading">Agent Information</h3>				
+				<p><strong>Name: </strong><a href="/instrument_agents/<%= obj._id %>/"><%= instrument_agent.name %></a></p>
+				<p><strong>Description: </strong><%= instrument_agent.description %></p>
 				<p><strong>Status: </strong>
 				<% if (instrument_agent.agent_process_id) {  %>
 					<%= instrument_agent.agent_process_id %>

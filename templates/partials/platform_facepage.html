@@ -4,18 +4,36 @@
 	<div class="span2">
 		<section class="wrapper">
 			<h3 class="wrapper-heading">Information</h3>
-			<p>
-				<strong>Name: </strong><%= name %><br />
-				<strong><span class="word-wrap">ID: </strong><%= _id %></span><br />
-			</p>
-			<p>
-				<strong>Model: </strong><%= model %><br />
-				<strong>SN#: </strong><%= serial_number %><br />
-				<strong>Manufacture Date: </strong><%= manufacture_date %><br />
-			</p>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Identification</h3>
+				<p>
+					<strong>Name: </strong><%= name %><br />
+					<span style="word-wrap: break-word"><strong>ID: </strong><%= _id %></span><br />
+				</p>
+			</section>
+			
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Model Info</h3>
+				<p>
+					<strong>Model: </strong><%= model %><br />
+					<strong>SN#: </strong><%= serial_number %><br />
+					<strong>Manufacture Date: </strong><%= manufacture_date %><br />
+				</p>
+			</section>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Description</h3>
+				<p>
+					<%= description %>
+				</p>
+			</section>
 
-			<h4>Description</h4>
-			<p><%= description %></p>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Contact</h3>
+				<p>
+					<strong>Owner:</strong> <%= owner.contact.name %><br />
+					<strong>Email:</strong> <a href="mailto:<%= owner.contact.mail %>"><%= owner.contact.email %></a>
+				</p>
+			</section>
 		</section>
 	</div>
 	
@@ -77,7 +95,7 @@
 				</tr>
 				<% _.each(instruments, function(obj) { %>
 					<tr>
-						<td><%= obj.name %></td>
+						<td><a href="/instruments/<%= obj._id %>/"><%= obj.name %></a></td>
 						<td><%= obj.description %></td>
 						<td><%= obj.type_ %></td>
 						<td><%= obj.ts_updated %></td>
@@ -122,7 +140,7 @@
 					<% _.each(superiors, function(key) { %>
 						<% _.each(key, function(obj) { %>
 							<tr>
-								<td><%= obj.name %></td>
+								<td><a href="/frame_of_references/<%= obj._id %>/"><%= obj.name %></a></td>
 								<td><%= obj.description %></td>
 								<td><%= obj.type_ %></td>
 								<td><%= obj.ts_updated %></td>
