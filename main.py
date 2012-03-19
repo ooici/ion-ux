@@ -51,7 +51,17 @@ def render_app_template(current_url):
         roles = session["roles"]
     else:
         roles = ""
-    return render_template("ion-ux.html", **{"current_url":"/", "roles":roles})
+    if session.has_key("user_id"):
+        logged_in = "True"
+    else:
+        logged_in = "False"
+    is_registered = "False"
+    if session.has_key("is_registered"):
+        if session["is_registered"] == True:
+            is_registered = "True"
+        else:
+            is_registered = "False"
+    return render_template("ion-ux.html", **{"current_url":"/", "roles":roles, "logged_in":logged_in,"is_registered": is_registered})
 
 
 @app.route('/')
@@ -61,10 +71,10 @@ def index():
     else:
         return render_template("index.html")
 
-@app.route('/testfacepages/', methods=['GET'])
-def testfacepages():
-    ServiceApi.test_facepages()
-    return redirect('/')
+#@app.route('/testfacepages/', methods=['GET'])
+#def testfacepages():
+#    ServiceApi.test_facepages()
+#    return redirect('/')
 
 # TODO fix this to be a post
 @app.route('/signon/', methods=['GET'])
@@ -88,14 +98,18 @@ def signon():
 
     if not session['is_registered']:
         # redirect to registration screen
-        return redirect('/register')
+        return redirect('/userprofile')
     else:
         return redirect('/')
 
 
-@app.route('/register/', methods=['GET', 'POST'])
-def register():
-    is_registered = session['is_registered']
+@app.route('/userprofile/', methods=['GET', 'POST'])
+def userprofile():
+    if not session.has_key('user_id'):
+        return redirect('/')
+    is_registered = False
+    if session.has_key('is_registered'):
+        is_registered = session['is_registered']
     user_id = session['user_id']
 
     if request.is_xhr:
@@ -121,6 +135,12 @@ def register():
     else:
         return create_html_response(request.path)
 
+@app.route('/logout/', methods=['GET'])
+def logout():
+    session.pop('roles', None)
+    session.pop('user_id', None)
+    session.pop('is_registered', None)
+    return redirect('/')
 
 # Generic index to view any resource type
 @app.route('/list/<resource_type>/', methods=['GET'])

@@ -36,9 +36,11 @@
 				<div id="search">
 					<select id="search-select"></select>
 				</div>
-				<span class="sidebar-section">Register</span>
+				<span class="sidebar-section">User</span>
 				<ul>
-					<li class="filter"><a href="https://ux.oceanobservatories.org/login/">Login</a></li>
+					<li class="filter" id="login"><a href="https://ux.oceanobservatories.org/login/">Login</a></li>
+					<li class="filter" id="userprofile"><a href="/userprofile/">User Profile</a></li>
+					<li class="filter" id="logout"><a href="/logout/">Logout</a></li>
 				</ul>
 				<!-- <span class="sidebar-section">Filters</span>
 				<ul>
@@ -193,6 +195,18 @@
     var ionux_router = IONUX.init();
     ionux_router.handle_url("{{ current_url }}");
     IONUX.set_roles("{{ roles }}");
+    // Handle conditionally displaying login, user profile and logout links
+    IONUX.set_logged_in("{{ logged_in }}");
+    if (IONUX.LOGGED_IN == "True") {
+    	$("#login").hide();
+    }
+    else {
+    	$("#logout").hide();
+    }
+    IONUX.set_is_registered("{{ is_registered }}");
+    if (IONUX.IS_REGISTERED != "True") {
+    	$("#userprofile").hide();
+    }
 	
 	var search = new IONUX.Views.Search();
 	search.render();

@@ -28,7 +28,7 @@ import OAuthUtilities
 import base64
 from string import strip
 
-flask_url_base='http://67.58.49.208:3000'
+flask_url_base='http://ux.oceanobservatories.org'
 
 def startRequest(environ, start_response):
     # get the name from the url if it was specified there.
@@ -66,7 +66,7 @@ def success(environ, start_response):
     # Redirect to non-logged in "index" page.
     # TODO get proper error case redirect url
     if id is None:
-        redirecturl = 'http://ux.oceanobservatories.org:3000'
+        redirecturl = 'http://ux.oceanobservatories.org'
         headers = [('Content-Type', 'text/html'), ('Location', redirecturl)]
         start_response('302 ERROR', headers)
         return '<html><body><h2>Error, no session cookie found</h2></body></html>'
@@ -85,12 +85,12 @@ def success(environ, start_response):
     redirecturl = flask_url_base + '/signon?cert=' + cert
     headers = [('Content-Type', 'text/html'),
        ('Location', redirecturl)]
-    start_response('302 Redirect', headers)
+    start_response('302 FOUND', headers)
     return "<html><body>Please follow this <a href=\""+ redirecturl +"\">link</a>!</body></html>\n"
 
 
 def failure(environ, start_response):
-    redirecturl = 'http://ux.oceanobservatories.org:3000'
+    redirecturl = 'http://ux.oceanobservatories.org'
     headers = [('Content-Type', 'text/html'), ('Location', redirecturl)]
     start_response('302 ERROR', headers)
     return '<html><body><h2>CILogon failed.</h2></body></html>'
@@ -124,7 +124,7 @@ def doCallback(environ, start_response):
 
 def not_found(environ, start_response):
     """Called if no URL matches."""
-    redirecturl = 'http://ux.oceanobservatories.org:3000'
+    redirecturl = 'http://ux.oceanobservatories.org'
     headers = [('Content-Type', 'text/html'), ('Location', redirecturl)]
     start_response('302 ERROR', headers)
     return '<html><body><h2>Bad URL</h2></body></html>'
@@ -133,6 +133,7 @@ def not_found(environ, start_response):
 # map urls to functions
 urls = [
     (r'^$', startRequest),
+    (r'login', startRequest),
     (r'startRequest', startRequest),
     (r'ready', doCallback),
     (r'success', success),
