@@ -96,14 +96,14 @@ def signon():
     # will stash user id, expiry, is_registered and roles in session
     ServiceApi.signon_user(certificate)    
 
-    if not session['is_registered']:
+    if session['is_registered'] == False:
         # redirect to registration screen
         return redirect('/userprofile')
     else:
         return redirect('/')
 
 
-@app.route('/userprofile/', methods=['GET', 'POST'])
+@app.route('/userprofile/', methods=['GET', 'POST', 'PUT'])
 def userprofile():
     if not session.has_key('user_id'):
         return redirect('/')
@@ -113,7 +113,14 @@ def userprofile():
     user_id = session['user_id']
 
     if request.is_xhr:
-        if request.method == 'POST':
+        if request.method == 'GET':
+            # determine if this is an update or a new registration
+            if is_registered:
+                resp_data = ServiceApi.find_user_info(user_id)
+            else:
+                resp_data = {'contact': {'name': '', 'email': '', 'phone': '', 'address': '', 'city': '', 'postalcode': ''}}
+            return jsonify(data=resp_data)
+        else:
             form_data = json.loads(request.data)
             if is_registered:
                 ServiceApi.update_user_info(form_data)
@@ -125,15 +132,8 @@ def userprofile():
 
             resp_data = {"success":True}            
             return jsonify(data=resp_data)
-        else:
-            # determine if this is an update or a new registration
-            if is_registered:
-                resp_data = ServiceApi.find_user_info(user_id)
-            else:
-                resp_data = {'contact': {'name': '', 'email': '', 'phone': '', 'address': '', 'city': '', 'postalcode': ''}}
-            return jsonify(data=resp_data)
     else:
-        return create_html_response(request.path)
+        return render_app_template(request.path)
 
 @app.route('/logout/', methods=['GET'])
 def logout():
@@ -167,7 +167,7 @@ def observatories():
             
         return jsonify(data=resp_data)
     else:
-        return create_html_response(request.path)
+        return render_app_template(request.path)
 
 @app.route('/observatories/all_users/', methods=['GET'])
 def observatories_all_users():
@@ -205,7 +205,7 @@ def platforms():
         platforms = ServiceApi.find_by_resource_type('PlatformDevice')
         return jsonify(data=platforms)
     else:
-        return create_html_response(request.path)
+        return render_app_template(request.path)
 
 
 @app.route('/platforms/<platform_device_id>/', methods=['GET'])
@@ -230,7 +230,7 @@ def instruments():
         instruments = ServiceApi.find_by_resource_type('InstrumentDevice')
         return jsonify(data=instruments)
     else:
-        return create_html_response(request.path)
+        return render_app_template(request.path)
 
 @app.route('/instruments/<instrument_device_id>/', methods=['GET'])
 def instrument_facepage(instrument_device_id):
@@ -309,7 +309,7 @@ def data_products():
         data_products = ServiceApi.find_data_products()
         return jsonify(data=data_products)
     else:
-        return create_html_response(request.path)
+        return render_app_template(request.path)
 
 @app.route('/data_products/<data_product_id>/', methods=['GET'])
 def data_product_facepage(data_product_id): 
@@ -327,6 +327,11 @@ def user_facepage(user_id):
         return jsonify(data=user)
     else:
         return render_app_template(request.path)
+
+@app.route('/user_request/<org_id>/<request_id>/<reason>/<action>/', methods=['GET'])
+def user_request(org_id, request_id, reason, action):
+    resp = ServiceApi.handle_user_request(org_id, request_id, reason, action)
+    return jsonify(resp)
 
 @app.route('/frame_of_references/<frame_of_reference_id>/', methods=['GET'])
 def frame_of_reference_facepage(frame_of_reference_id):
@@ -556,10 +561,6 @@ def fetch_menu():
     menu = json.loads(menu_data.content)
     print menu
     return menu['data']['GatewayResponse']
-
-
-def create_html_response(request_path, template_name="ion-ux.html"):
-    return render_template(template_name, **{"current_url":request_path})
 
 
     

@@ -196,23 +196,22 @@
     var ionux_router = IONUX.init();
     ionux_router.handle_url("{{ current_url }}");
     IONUX.set_roles("{{ roles }}");
+
     // Handle conditionally displaying login, user profile and logout links
-    IONUX.set_logged_in("{{ logged_in }}");
-    if (IONUX.LOGGED_IN == "True") {
+    if ("{{ logged_in }}" == "True") {
     	$("#login").hide();
     }
     else {
     	$("#logout").hide();
     }
-    IONUX.set_is_registered("{{ is_registered }}");
-    if (IONUX.IS_REGISTERED != "True") {
+    if ("{{ is_registered }}" != "True") {
     	$("#userprofile").hide();
     }
 	
-	var search = new IONUX.Views.Search();
-	search.render();
-	// Temporary hack to set background
-	$('body').css('background-color', '#eee');
+    var search = new IONUX.Views.Search();
+    search.render();
+    // Temporary hack to set background
+    $('body').css('background-color', '#eee');
   });
 </script>
 
