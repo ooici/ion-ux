@@ -25,17 +25,24 @@ AGENT_REQUEST_TEMPLATE = {
 class ServiceApi(object):
     
     @staticmethod
+    def find_all_users():
+        all_users = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'UserInfo'})[0]
+        return all_users
+    
+    @staticmethod
+    def find_platform_models():
+        platform_models = service_gateway_get('instrument_management', 'find_platform_models', params={})
+        return platform_models
+
+    @staticmethod
     def instrument_primary_deployment_off(instrument_device_id, logical_instrument_id):
         primary_deployment = service_gateway_get('instrument_management', 'undeploy_primary_instrument_device_from_logical_instrument', params={'instrument_device_id': instrument_device_id, 'logical_instrument_id': logical_instrument_id})
-        print '<3-------------------------------------------', str(primary_deployment)
         return str(primary_deployment)
 
     @staticmethod
     def instrument_primary_deployment_on(instrument_device_id, logical_instrument_id):
         primary_deployment = service_gateway_get('instrument_management', 'deploy_as_primary_instrument_device_to_logical_instrument', params={'instrument_device_id': instrument_device_id, 'logical_instrument_id': logical_instrument_id})
-        print '<3-------------------------------------------', str(primary_deployment)
         return str(primary_deployment)
-
 
     @staticmethod
     def find_org_user_requests(marine_facility_id, user_id=None):
@@ -44,12 +51,16 @@ class ServiceApi(object):
             user_requests = service_gateway_get('org_management', 'find_user_requests', params={'org_id': org_id, 'user_id': user_id})
         else:
             user_requests = service_gateway_get('org_management', 'find_requests', params={'org_id': org_id})
-        return user_requests
         
-        #requests.get('http://67.58.49.196:5000/ion-service/org_management/find_requests?org_id=%s' % org_id)
+        keepers = []
         
-    
-    
+        for e in user_requests:
+            user_id = e['user_id']
+            if not any([k["user_id"] == user_id for k in keepers]):
+                keepers.append(e)
+
+        return keepers
+        
     @staticmethod
     def request_enrollment_in_org(marine_facility_id, user_id):
         org_id = service_gateway_get('marine_facility_management', 'find_marine_facility_org', params={'marine_facility_id': marine_facility_id})

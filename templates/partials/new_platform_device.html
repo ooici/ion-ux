@@ -21,10 +21,19 @@
 			<fieldset>
 				<legend>Location</legend>
 				<div class="control-group">
-					<label for="description">Nominal Location</label>
+					<label for="description">Location</label>
 					<div class="controls">
-						<input class="xlarge" id="latitude" name="nominal_location__lat" />
-						<input class="xlarge" id="longitude" name="nominal_location__lon" />
+						<select id="marine_facility_id"></select>
+						<select id="logical_platform_id" style="display: none;"></select>
+					</div>
+				</div>
+			</fieldset>
+			<fieldset>
+				<legend>Platform Models</legend>
+				<div class="control-group">
+					<label for="description">Platform Model</label>
+					<div class="controls">
+						<select id="platform_model_id"></select>
 					</div>
 				</div>
 			</fieldset>

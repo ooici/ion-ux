@@ -71,10 +71,10 @@ IONUX.Router = Backbone.Router.extend({
     new IONUX.Views.ObservatoryFacepage({model:fpModel});
     fpModel.fetch();
 
-    // var urCollection = new IONUX.Collections.UserRequestCollection();
-    // urCollection.marine_facility_id = marine_facility_id; //XXX better way to set this?
-    // var userRequestsView = new IONUX.Views.UserRequestsView({collection:urCollection});
-    // urCollection.fetch();
+    var urCollection = new IONUX.Collections.UserRequestCollection();
+    urCollection.marine_facility_id = marine_facility_id; //XXX better way to set this?
+    var userRequestsView = new IONUX.Views.UserRequestsView({collection:urCollection});
+    urCollection.fetch();
   },
   
   platforms: function(){
@@ -201,14 +201,16 @@ IONUX.Router = Backbone.Router.extend({
   handle_navigation: function(){
     var self = this;
     $(document).on("click", "a", function(e) {
-        hrefattr = $(this).attr('href');
-        if (hrefattr.startsWith('https://ux.oceanobservatories.org/login')) {
-          return true;
-        }
-        else {
-          self.navigate($(this).attr('href'), {trigger:true});
-          return false;
-        }
+      self.navigate($(this).attr('href'), {trigger:true});
+      return false;
+        // hrefattr = $(this).attr('href');
+        // if (hrefattr.startsWith('https://ux.oceanobservatories.org/login')) {
+        //   return true;
+        // }
+        // else {
+        //   self.navigate($(this).attr('href'), {trigger:true});
+        //   return false;
+        // }
     });
   },
 

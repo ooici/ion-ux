@@ -169,6 +169,11 @@ def observatories():
     else:
         return render_app_template(request.path)
 
+@app.route('/observatories/all_users/', methods=['GET'])
+def observatories_all_users():
+    all_users = ServiceApi.find_all_users()
+    return jsonify(data=all_users)
+
 @app.route('/observatories/<marine_facility_id>/', methods=['GET'])
 def observatory_facepage(marine_facility_id):
     if request.is_xhr:
@@ -184,10 +189,14 @@ def enroll_user(marine_facility_id):
 
 @app.route('/observatories/<marine_facility_id>/user_requests/', methods=['GET'])
 def observatory_user_requests(marine_facility_id):
-    if 'ORG_MANAGER' in session['roles']:
-        user_requests = ServiceApi.find_org_user_requests(marine_facility_id)
+    if session.has_key('roles'):
+        if 'ORG_MANAGER' in session['roles']:
+            user_requests = ServiceApi.find_org_user_requests(marine_facility_id)
+        else:
+            user_requests = ServiceApi.find_org_user_requests(marine_facility_id, session['user_id'])
     else:
-        user_requests = ServiceApi.find_org_user_requests(marine_facility_id, session['user_id'])
+        users_requests = []
+
     return jsonify(data=user_requests)
 
 @app.route('/platforms/', methods=['GET'])
@@ -197,6 +206,7 @@ def platforms():
         return jsonify(data=platforms)
     else:
         return render_app_template(request.path)
+
 
 @app.route('/platforms/<platform_device_id>/', methods=['GET'])
 def platform_facepage(platform_device_id):
@@ -339,10 +349,21 @@ def take_action_on_request(resource_type, resource_id, request_action):
 # New routes
 @app.route('/<resource_type>/new/', methods=['GET'])
 def new_resource_router(resource_type):
-    if request.is_xhr:
+    if request.is_xhr:        
         return jsonify(data=True)
     else:
         return render_app_template(request.path)
+
+@app.route('/find_tree/<root_type>/<leaf_type>/', methods=['GET'])
+def find_leaves(root_type, leaf_type):
+    tree_list = ServiceApi.find_leaves(root_type, leaf_type)
+    return jsonify(data=tree_list)
+
+@app.route('/find_platform_models/', methods=['GET'])
+def find_platform_models():
+    platform_models = ServiceApi.find_platform_models()
+    return jsonify(data=platform_models)
+
 
 # -------------------------------------------------------------------------
 # RESOURCE BROWSER - MUCH REFACTORING NEEDED

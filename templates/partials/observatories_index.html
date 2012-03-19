@@ -1,16 +1,10 @@
-<h2>Observatories List</h2>
+<h2>Collection: Observatories</h2>
 
 <div id="lca-collections" class="row">
 	<div class="span2 test">
 		<section class="wrapper">
 			<h3 class="wrapper-heading">Information</h3>
-			<p>Placeholder</p>
-
-			<h3>Coverage</h3>
-			<p>Placeholder</p>
-
-			<h3>Identification</h3>
-			<p>Placeholder...</p>
+			<strong>Resources in List: </strong><span id="row-count"></span>
 		</section>
 	</div>
 		
@@ -18,13 +12,13 @@
 		<section class="wrapper">
 			<h3 class="wrapper-heading">Observatories</h3>
 			<table id="observatories-container" class="table datatable-ize" width="100%">
-				<tr>
+				<thead>
 					<th>Observatory</th>
 					<th>Institution</th>
 					<th>Description</th>
 					<th>Contact</th>
-				</tr>
-
+				</thead>
+				<tbody>
 			    <% _.each(collection, function(obj) { %>
 						<tr>
 							<td><a href="/observatories/<%= obj._id %>/"><%= obj.name %></a></td>
@@ -33,11 +27,9 @@
 							<td><%= obj.contact.name %></td>
 						</tr>
 			    <% }); %>
+			</tbody>
 			</table>		
 		</section>
 	</div>
 </div>
 
-
-<button class='btn create_new'>New Observatory</button>
-<div id="observatories-new"></div>
