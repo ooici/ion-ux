@@ -2,7 +2,7 @@ IONUX.Router = Backbone.Router.extend({
 
   routes: {
     "": "dashboard",
-    "register/": "user_registration",
+    "userprofile/": "user_profile",
     "observatories/": "observatories",
     "observatories/new/": "observatory_new",
     "observatories/:marine_facility_id/": "observatory_facepage",
@@ -35,9 +35,9 @@ IONUX.Router = Backbone.Router.extend({
     this.dataProductsList.fetch();
   },
   
-  user_registration: function() {
+  user_profile: function() {
     this._reset();
-    var fpModel = new IONUX.Models.UserFacepageModel();
+    var fpModel = new IONUX.Models.UserRegistrationModel();
     new IONUX.Views.UserRegistration({model:fpModel});
     fpModel.fetch();
   },
@@ -146,7 +146,7 @@ IONUX.Router = Backbone.Router.extend({
   },
 
   instrument_model_facepage: function(instrument_model_id) {
-    console.log('instrumet_model_facepage');
+    console.log('instrument_model_facepage');
     this._reset();
     var fpModel = new IONUX.Models.InstrumentModelFacepageModel({instrument_model_id: instrument_model_id});
     new IONUX.Views.InstrumentModelFacepage({model: fpModel});
@@ -201,12 +201,14 @@ IONUX.Router = Backbone.Router.extend({
   handle_navigation: function(){
     var self = this;
     $(document).on("click", "a", function(e) {
-      var link = $(e.target).attr('href');
-      if (link.startsWith('http')) {
-        return true;
-      };
-        self.navigate($(this).attr('href'), {trigger:true});
-        return false;
+        hrefattr = $(this).attr('href');
+        if (hrefattr.startsWith('https://ux.oceanobservatories.org/login')) {
+          return true;
+        }
+        else {
+          self.navigate($(this).attr('href'), {trigger:true});
+          return false;
+        }
     });
   },
 

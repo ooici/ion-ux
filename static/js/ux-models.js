@@ -158,14 +158,15 @@ IONUX.Models.FrameOfReference = Backbone.Model.extend({
 });
 
 
-// IONUX.Models.UserFacepageModel = Backbone.Model.extend({
-//   url: "/register/",
-//   idAttribute: "_id",
-//   
-//   parse: function(resp) {
-//     return resp.data;
-//   }
-// });
+IONUX.Models.UserRegistrationModel = Backbone.Model.extend({
+  url: "/userprofile/",
+  idAttribute: "_id",
+   
+  parse: function(resp) {
+    return resp.data;
+  }
+});
+
 IONUX.Models.UserFacepageModel = Backbone.Model.extend({
   url: function() {
     return "/users/"+this.get("user_id")+"/";
