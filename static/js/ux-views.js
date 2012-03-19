@@ -26,7 +26,6 @@ IONUX.Views.CreateNewView = Backbone.View.extend({
     this.$el.find("input[type='submit']").attr("disabled", true).val("Saving...");
     // var mf = new IONUX.Models.Observatory();
     
-    // var newModel = this.model; //lkajsdflskdf
     var self = this;
     $.each(this.$el.find("input,textarea").not("input[type='submit'],input[type='cancel']"), function(i, e){
       var key = $(e).attr("name"), val = $(e).val();
@@ -198,7 +197,7 @@ IONUX.Views.NewObservatoryView = IONUX.Views.CreateNewView.extend({
   },
 
   render: function(){
-    this.$el.empty().html(this.template(this.model.toJSON())).show();
+    this.$el.empty().html(this.template(this.model.toJSON())).show();    
     return this;
   },
 });
@@ -206,8 +205,10 @@ IONUX.Views.NewObservatoryView = IONUX.Views.CreateNewView.extend({
 
 IONUX.Views.NewPlatformView = IONUX.Views.CreateNewView.extend({
   el: "#platform-new-container",
-
   template: _.template($("#new-platform-tmpl").html()),
+  events: {
+    "change #marine_facility_id": "get_related_logical_platforms",
+  },
 
   initialize: function(){
     _.bindAll(this, "create_new", "render");
@@ -215,9 +216,55 @@ IONUX.Views.NewPlatformView = IONUX.Views.CreateNewView.extend({
   },
 
   render: function(){
-    this.$el.empty().html(this.template(this.model.toJSON())).show();
+    this.$el.empty().html(this.template(this.model.toJSON())).show();    
+    this.get_marine_facilities();
+    this.get_platform_models();
+    
     return this;
   },
+  
+  get_marine_facilities: function() {
+    $.ajax({
+      url: '/find_tree/MarineFacility/MarineFacility/',
+      dataType: 'json',
+      success: function(resp) {
+        _.each(resp.data, function(e, i) {
+          $('#marine_facility_id').append($('<option>').text(e[0].name).val(e[0].id).addClass('mf'));
+        });
+      }
+    });
+  },
+  
+  get_related_logical_platforms: function(evt) {
+    var marine_facility_id = $("option:selected", evt.target).val();
+    $.ajax({
+      url: '/find_tree/' + marine_facility_id + '/LogicalPlatform/',
+      dataType: 'json',
+      success: function(resp) {
+        $('#logical_platform_id').empty().show();
+      
+        _.each(resp.data, function(e, i) {
+            if (e.length > 1) {
+                $('#logical_platform_id').append($('<option>').text(e[1].name + '/' + e[2].name).val(e[2].id));
+            } else {
+              $('#logical_platform').append($('<option>').text('Not found.'));
+            }
+        });
+      }
+    });
+  },
+  
+  get_platform_models: function() {
+    $.ajax({
+      url: '/find_platform_models/',
+      dataType: 'json',
+      success: function(resp) {
+        _.each(resp.data, function(e, i) {
+          $('#platform_model_id').append($('<option>').text(e.name).val(e._id));
+        });
+      }
+    });
+  }
 });
 
 
@@ -582,13 +629,12 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
     $.ajax({
       url: 'stop/',
       success: function() {
-        console.log('stop_agent');
         $('#stop-instrument-agent-instance').hide();
         $('#start-instrument-agent-instance').show();
         $('.instrument-commands').hide();
       },
       error: function() {
-        alert("ERror");
+        alert("An error occured.");
       }
     });
     return false;

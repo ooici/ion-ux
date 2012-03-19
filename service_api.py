@@ -25,6 +25,11 @@ AGENT_REQUEST_TEMPLATE = {
 class ServiceApi(object):
     
     @staticmethod
+    def find_platform_models():
+        platform_models = service_gateway_get('instrument_management', 'find_platform_models', params={})
+        return platform_models
+
+    @staticmethod
     def instrument_primary_deployment_off(instrument_device_id, logical_instrument_id):
         primary_deployment = service_gateway_get('instrument_management', 'undeploy_primary_instrument_device_from_logical_instrument', params={'instrument_device_id': instrument_device_id, 'logical_instrument_id': logical_instrument_id})
         print '<3-------------------------------------------', str(primary_deployment)

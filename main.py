@@ -319,6 +319,17 @@ def new_resource_router(resource_type):
     else:
         return render_app_template(request.path)
 
+@app.route('/find_tree/<root_type>/<leaf_type>/', methods=['GET'])
+def find_leaves(root_type, leaf_type):
+    tree_list = ServiceApi.find_leaves(root_type, leaf_type)
+    return jsonify(data=tree_list)
+
+@app.route('/find_platform_models/', methods=['GET'])
+def find_platform_models():
+    platform_models = ServiceApi.find_platform_models()
+    return jsonify(data=platform_models)
+
+
 # -------------------------------------------------------------------------
 # RESOURCE BROWSER - MUCH REFACTORING NEEDED
 # -------------------------------------------------------------------------

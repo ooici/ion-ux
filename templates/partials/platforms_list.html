@@ -1,16 +1,10 @@
-<h1>Platforms List</h1>
+<h1>Collections: Platforms</h1>
 
 <div id="lca-collections" class="row">
 	<div class="span2 test">
 		<section class="wrapper">
 			<h3 class="wrapper-heading">Information</h3>
-			<p>Information placeholder</p>
-
-			<h3>Coverage</h3>
-			<p>Coverage placeholder</p>
-
-			<h3>Identification</h3>
-			<p>Identification placeholder</p>
+			<strong>Resources in List: </strong><span id="row-count"></span>
 		</section>
 	</div>
 		
@@ -20,6 +14,8 @@
 			<table class="table datatable-ize" width="100%">
 				<tr>
 					<th>Name</th>
+					<th>Description</th>
+					<th>Updated</th>
 					<!-- <th>Primary Measurements</th>
 					<th>Data Products</th>
 					<th>Platforms</th>
@@ -31,6 +27,8 @@
 				<% _.each(collection, function(obj) { %>
 					<tr>
 						<td><a href="/platforms/<%= obj._id %>/"><%= obj.name %></a></td>
+						<td><%= obj.description %></td>
+						<td><%= obj.ts_updated %></td>
 					</tr>
 			    <% }); %>
 			</table>
@@ -38,7 +36,5 @@
 	</div>
 </div>
 
-<button class='btn create_new'>New Platform</button>
-<div id="platform-new"></div>
 
 

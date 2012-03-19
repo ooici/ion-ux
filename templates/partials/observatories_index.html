@@ -1,16 +1,10 @@
-<h2>Observatories List</h2>
+<h2>Collection: Observatories</h2>
 
 <div id="lca-collections" class="row">
 	<div class="span2 test">
 		<section class="wrapper">
 			<h3 class="wrapper-heading">Information</h3>
-			<p>Placeholder</p>
-
-			<h3>Coverage</h3>
-			<p>Placeholder</p>
-
-			<h3>Identification</h3>
-			<p>Placeholder...</p>
+			<strong>Resources in List: </strong><span id="row-count"></span>
 		</section>
 	</div>
 		
@@ -24,7 +18,6 @@
 					<th>Description</th>
 					<th>Contact</th>
 				</tr>
-
 			    <% _.each(collection, function(obj) { %>
 						<tr>
 							<td><a href="/observatories/<%= obj._id %>/"><%= obj.name %></a></td>
@@ -38,6 +31,3 @@
 	</div>
 </div>
 
-
-<button class='btn create_new'>New Observatory</button>
-<div id="observatories-new"></div>
