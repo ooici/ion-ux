@@ -140,6 +140,12 @@ class ServiceApi(object):
         return service_gateway_post('identity_management', 'find_user_info_by_id', params)
     
     @staticmethod
+    def find_all_user_infos():
+        # TODO is this what we want here?
+        user_infos = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'UserInfo'})[0]
+        return user_infos
+    
+    @staticmethod
     def create_user_info(user_id, user_info):
         params={'user_id': user_id, 'user_info': ['UserInfo', user_info]}
         return service_gateway_post('identity_management', 'create_user_info', params)
@@ -147,7 +153,7 @@ class ServiceApi(object):
     @staticmethod
     def update_user_info(user_info):
         params={'user_info': ['UserInfo', user_info]}
-        return service_gateway_get('identity_management', 'update_user_info', params)
+        return service_gateway_post('identity_management', 'update_user_info', params)
     
     @staticmethod
     def find_user(user_id):
@@ -174,6 +180,22 @@ class ServiceApi(object):
             user['user_requests'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': user_id, 'predicate': 'hasRequest'})[0]
 
         return user
+
+    @staticmethod
+    def handle_user_request(org_id, request_id, reason, action):
+        actions = ['APPROVE', 'DENY', 'ACCEPT', 'REJECT']
+        if action not in actions:
+            return "False"
+
+        if action == 'APPROVE':
+            res = service_gateway_get('org_management', 'approve_request', params={'org_id': org_id, 'request_id': request_id})
+        elif action == 'DENY':
+            res = service_gateway_get('org_management', 'deny_request', params={'org_id': org_id, 'request_id': request_id})
+        elif action == 'ACCEPT':
+            res = service_gateway_get('org_management', 'accept_request', params={'org_id': org_id, 'request_id': request_id})
+        else:
+            res = service_gateway_get('org_management', 'deny_request', params={'org_id': org_id, 'request_id': request_id, 'reason': reason})
+        return res
 
     @staticmethod
     def find_observatory(marine_facility_id):
@@ -220,11 +242,6 @@ class ServiceApi(object):
             marine_facility['policies'] = service_gateway_get('policy_management', 'find_resource_policies', params={'resource_id': org_id})
         
         return marine_facility
-    
-    @staticmethod
-    def find_all_user_infos():
-        '''Used for create_observatory'''
-        pass
     
     @staticmethod
     def find_platform(platform_device_id):
@@ -834,14 +851,14 @@ def build_agent_request(agent_id, operation_name, params={}):
 
     data={'payload': json.dumps(post_data)}
 
-    pretty_console_log('SERVICE GATEWAY AGENT REQUEST POST URL/DATA', url, data)
+    #pretty_console_log('SERVICE GATEWAY AGENT REQUEST POST URL/DATA', url, data)
 
     return url, data
 
 def service_gateway_agent_request(agent_id, operation_name, params={}):
     url, data = build_agent_request(agent_id, operation_name, params)
     resp = requests.post(url, data)
-    pretty_console_log('SERVICE GATEWAY AGENT REQUEST POST RESPONSE', resp.content)
+    #pretty_console_log('SERVICE GATEWAY AGENT REQUEST POST RESPONSE', resp.content)
 
     if resp.status_code == 200:
         resp = json.loads(resp.content)
