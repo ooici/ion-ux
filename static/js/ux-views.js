@@ -18,6 +18,7 @@ IONUX.Views.CreateNewView = Backbone.View.extend({
   events: {
     "click input[type='submit']":"create_new",
     "submit input[type='submit']":"create_new",
+    "click .create": "create_new",
     "click .cancel":"cancel"
   },
   
@@ -206,20 +207,21 @@ IONUX.Views.NewObservatoryView = IONUX.Views.CreateNewView.extend({
 IONUX.Views.NewPlatformView = IONUX.Views.CreateNewView.extend({
   el: "#platform-new-container",
   template: _.template($("#new-platform-tmpl").html()),
-  events: {
-    "change #marine_facility_id": "get_related_logical_platforms",
+  events: function() {
+    // extend parent events to avoid overwriting them.
+    return _.extend({}, IONUX.Views.CreateNewView.prototype.events, {
+      'change #marine_facility_id' : 'get_related_logical_platforms'
+    });
   },
 
   initialize: function(){
-    _.bindAll(this, "create_new", "render");
-    this.model.bind("change", this.render)
+    console.log(this.events());
   },
 
   render: function(){
     this.$el.empty().html(this.template(this.model.toJSON())).show();    
     this.get_marine_facilities();
     this.get_platform_models();
-    
     return this;
   },
   
@@ -247,7 +249,7 @@ IONUX.Views.NewPlatformView = IONUX.Views.CreateNewView.extend({
             if (e.length > 1) {
                 $('#logical_platform_id').append($('<option>').text(e[1].name + '/' + e[2].name).val(e[2].id));
             } else {
-              $('#logical_platform').append($('<option>').text('Not found.'));
+              $('#logical_platform_id').append($('<option>').text('Not found.'));
             }
         });
       }
