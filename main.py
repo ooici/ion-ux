@@ -233,15 +233,15 @@ def instrument_facepage(instrument_device_id):
 def start_instrument_agent(instrument_device_id, agent_command):
     if agent_command == 'start':
         command_response = ServiceApi.instrument_agent_start(instrument_device_id)
-        print 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', command_response
+        return jsonify(data=command_response)
+    elif agent_command == 'stop':
+        command_response = ServiceApi.instrument_agent_stop(instrument_device_id)
         return jsonify(data=command_response)
     elif agent_command == 'get_capabilities':
         command_response = ServiceApi.instrument_agent_get_capabilities(instrument_device_id)
-        print 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', command_response
         return jsonify(data=True)
     else:
         command_response = ServiceApi.instrument_execute_agent(instrument_device_id, agent_command)
-    print 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', command_response
     return jsonify(data=command_response)
 
 

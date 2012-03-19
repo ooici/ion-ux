@@ -1,11 +1,12 @@
-<h2>Instrument: <%= name %> </h2>
-<div class="btn-group">
-	<a class="btn" href="#">Instrument Controls</a>
-	<a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
-	<ul class="dropdown-menu">
-		<li><a href="/instruments/<%= instrument_id %>/command/">Command Instrument</a></li>
-	</ul>
-</div> <!-- div.btn-group -->
+
+<div class="row">
+	<div class="span8">
+		<h2>Instrument: <%= name %> </h2>
+	</div>
+	<div class="span2" style="text-align: right;">
+		<a href="/instruments/<%= instrument_id %>/command/" class="btn">Command Instrument</a>	
+	</div>
+</div>
 
 <div id="instrument-facepage" class="row">
 	<div class="span2">
@@ -21,7 +22,13 @@
 			</section>
 			<section class="wrapper">
 				<h3 class="wrapper-heading">Location</h3>
-				<p>...</p>
+				<p>
+					<strong>Name: </strong><%= deployments[0].name %><br />
+					<strong>North: </strong><%= deployments[0].geospatial_constraint.geospatiallatmin %><br />
+					<strong>South: </strong><%= deployments[0].geospatial_constraint.geospatiallatmax %><br />
+					<strong>East: </strong><%= deployments[0].geospatial_constraint.geospatiallonmax %><br />
+					<strong>West: </strong><%= deployments[0].geospatial_constraint.geospatiallonmin %>
+				</p>
 			</section>
 			<section class="wrapper">
 				<h3 class="wrapper-heading">Description</h3>
