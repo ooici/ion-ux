@@ -1,54 +1,105 @@
 <h1>Data Definition Process: <%= name %> </h1>
 
 <div class="row">
-	<div class="span3">
+	<div class="span2">
 		<section class="wrapper">
 			<h3 class="wrapper-heading">Information</h3>
-			<h4>Identification</h4>
-			<p>
-				Name: <%= name %><br />
-				ID: <%= _id %><br />
-				Registered:
-			</p>
-		
-			<h4>Description</h4>
-			<p><%= description %></p>
-		
-			<h4>Contact Information</h4>
-			<p>placeholder</p>
-
-			<h4>Additional Information</h4>
-			<p>
-				Module: <%= module %><br />
-				Class name: <%= class_name %>
-			</p>
-		<section>
-	</div>	
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Identification</h3>
+				<p>
+					<strong>Name: </strong><%= name %><br />
+					<strong>ID: </strong><span style="word-wrap: break-word"><%= _id %></span><br />
+				</p>
+			</section>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Description</h3>
+				<p>
+					<%= description %>
+				</p>
+			</section>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Contact</h3>
+				<p>
+					<strong>Owner:</strong> <%= owner.contact.name %><br />
+					<strong>Email:</strong> <a href="mailto:<%= owner.contact.mail %>"><%= owner.contact.email %></a>
+				</p>
+			</section>
+		</section>
+	</div>
 	
-	<div class="span7">
+	<div class="span8">
 		<section class="wrapper">
-			<h3 class="wrapper-heading">Algorithm</h3>
-			<p>Placeholder...</p>
-		</section>
-		
-		<section class="wrapper">
-			<h3 class="wrapper-heading">Stream Definition Inputs</h3>
-			<p>Placeholder...</p>
-		</section>
-		
-		<section class="wrapper">
-			<h3 class="wrapper-heading">Stream Definition Outputs</h3>
-			<p>Placeholder...</p>
+			<h3 class="wrapper-heading">Algorithm</h3>		
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Stream Definition Inputs</h3>
+				<table class="table">
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+						<th>Updated</th>
+					</tr>
+					<% _.each(input_stream_definitions, function(obj) { %>
+						<tr>
+							<td><%= obj.name %></td>
+							<td><%= obj.description %></td>
+							<td><%= obj.ts_updated %></td>
+						</tr>
+					<% }); %>
+				</table>
+			</section>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Stream Definition Outputs</h3>
+				<table class="table">
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+						<th>Updated</th>
+					</tr>
+					<% _.each(output_stream_definitions, function(obj) { %>
+						<tr>
+							<td><%= obj.name %></td>
+							<td><%= obj.description %></td>
+							<td><%= obj.ts_updated %></td>
+						</tr>
+					<% }); %>
+				</table>
+			</section>
 		</section>
 		
 		<section class="wrapper">
 			<h3 class="wrapper-heading">Used-In</h3>
-			<p>Placeholder...</p>
+			<table class="table">
+				<tr>
+					<th>Name</th>
+					<th>Description</th>
+					<th>Updated</th>
+				</tr>
+				<% _.each(data_process, function(obj) { %>
+					<tr>
+						<td><%= obj.name %></td>
+						<td><%= obj.description %></td>
+						<td><%= obj.ts_updated %></td>
+					</tr>
+				<% }); %>
+			</table>
 		</section>
 		
 		<section class="wrapper">
 			<h3 class="wrapper-heading">Policies</h3>
-			<p>Placeholder...</p>
+			<table class="table">
+				<tr>
+					<th>Name</th>
+					<th>Description</th>
+					<th>Updated</th>
+				</tr>
+				<% _.each(policies, function(obj) { %>
+					<tr>
+						<td><%= obj.name %></td>
+						<td><%= obj.description %></td>
+						<td><%= obj.ts_updated %></td>
+					</tr>
+				<% }); %>
+			</table>
 		</section>
 	</div>
 </div>

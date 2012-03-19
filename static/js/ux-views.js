@@ -535,12 +535,12 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
   
   events: {
     'click #start-instrument-agent-instance': 'start_agent',
-    'click a#stop-instrument-agent-instace': 'stop_agent',
+    'click #stop-instrument-agent-instance': 'stop_agent',
     'click .issue_command': 'issue_command'
   },
 
   initialize: function(){
-    _.bindAll(this, "render", "start_agent", "stop_agent"); // "issue_command"
+    _.bindAll(this, "render", "start_agent" ); // "stop_agent""issue_command"
     this.model.bind("change", this.render);
   },
 
@@ -550,21 +550,21 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
   
   issue_command: function(evt) {
     var command = this.$el.find("option:selected").attr("value");
-    $.ajax({url:command,
-      success: function(data) {
-        $('.instrument-commands').show();
-        $(".command-output").append($("<p>").text("The command '"+command+"' was issued!!1!"));
-        console.log(data);
+    $.ajax({
+      url:command,
+      dataType: 'json',
+      success: function(resp) {
+        var data = resp.data;
+        $(".command-output").append($('<p class="command-success">').html("OK: '" + command + "' was successful. <br />" + JSON.stringify(data.result)));
       },
       error: function() {
-        alert("An error occurred.");   
+        $(".command-output").append($('<p class="command-failure">').text("ALERT: '" + command + "' was unsuccessful."));
       }
     });
     return false;
   },
   
   start_agent: function(evt) {
-    $(evt.target).closest('div').removeClass('open');
     $.ajax({
         url: 'start/',
         success: function() {
@@ -572,24 +572,26 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
           $('#start-instrument-agent-instance').hide();
           $('#stop-instrument-agent-instance').show();
         },
-        
         error: function() {
         }
-    });
-    // render the command panel with form for submit...
-    // replace #start-instrument-agent-instance with #stop-instrument-agent-instance...
-    
+    });    
     return false;
   },
   
   stop_agent: function(evt) {
-    evt.preventDefault();
-    console.log("stop instrument agent instance");
-    $('#stop-instrument-agent-instance').hide();
-    $('#start-instrument-agent-instance').show();
-    
-    // hide the command panel
-    // replace #stop-instrument-agent-instance
+    $.ajax({
+      url: 'stop/',
+      success: function() {
+        console.log('stop_agent');
+        $('#stop-instrument-agent-instance').hide();
+        $('#start-instrument-agent-instance').show();
+        $('.instrument-commands').hide();
+      },
+      error: function() {
+        alert("ERror");
+      }
+    });
+    return false;
   }
 });
 

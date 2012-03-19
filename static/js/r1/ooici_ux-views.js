@@ -2155,6 +2155,3 @@ OOI.Views.SessionMgr = Backbone.View.extend({
     	}
     }
 });
-
-
-

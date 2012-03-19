@@ -76,6 +76,12 @@ class ServiceApi(object):
         return agent_request
 
     @staticmethod
+    def instrument_agent_stop(instrument_device_id):
+        instrument_agent_instance_id = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate':'hasAgentInstance'})[0][0]['_id']
+        agent_request = service_gateway_get('instrument_management', 'stop_instrument_agent_instance', params={'instrument_agent_instance_id': str(instrument_agent_instance_id)})
+        return agent_request
+
+    @staticmethod
     def instrument_execute_agent(instrument_device_id, agent_command):
         agent_op = "execute_agent"
         params = {"command": ["AgentCommand", {"command": agent_command}]}

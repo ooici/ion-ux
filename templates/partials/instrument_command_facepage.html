@@ -1,30 +1,56 @@
 <h1>Instrument: <%= name %></h1>
-
 <div class="row">
 	<div class="span2">
-		<h3>Information</h3>
-		
-		<h4>Identification</h4>
-		<p>Identification placeholder</p>
-		
-		<h4>Location</h4>
-		<p>Location placeholder</p>
-		
-		<h4>Description</h4>
-		<p>Description placeholder</p>
-		
-		<h4>Provenance</h4>
-		<p>Provenance placeholder</p>
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Information</h3>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Identification</h3>
+				<p>
+					<strong>Name: </strong><%= name %><br />
+					<strong>ID: </strong><span style="word-wrap: break-word"><%= _id %></span><br />
+					<strong>Model:</strong> <a href="/instrument_models/<%= obj._id %>/"><%= related_model.name %></a>
+				</p>
+			</section>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Location</h3>
+				<p>
+					<strong>Name: </strong><%= deployments[0].name %><br />
+					<strong>North: </strong><%= deployments[0].geospatial_constraint.geospatiallatmin %><br />
+					<strong>South: </strong><%= deployments[0].geospatial_constraint.geospatiallatmax %><br />
+					<strong>East: </strong><%= deployments[0].geospatial_constraint.geospatiallonmax %><br />
+					<strong>West: </strong><%= deployments[0].geospatial_constraint.geospatiallonmin %>
+				</p>
+			</section>
+
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Description</h3>
+				<p>
+					<%= description %>
+				</p>
+			</section>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Contact</h3>
+				<p>
+					<strong>Owner:</strong> <%= owner.contact.name %><br />
+					<strong>Email:</strong> <a href="mailto:<%= owner.contact.mail %>"><%= owner.contact.email %></a>
+				</p>
+			</section>
+		</section>
 	</div>	
 	
 	<div class="span8">
 		
-		<input type="submit" id="start-instrument-agent-instance" value="Start Instrument Agent" class="btn"/>
-		<input type="submit" id="stop-instrument-agent-instance" value="Stop Instrument Agent" class="btn" style="display:none;"/>
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Start/Stop Instance</h3>
+			<input type="submit" id="start-instrument-agent-instance" value="Start Instrument Agent" class="btn btn-success"/>
+			<input type="submit" id="stop-instrument-agent-instance" value="Stop Instrument Agent" class="btn btn-danger stop-instrument-agent-instance" style="display:none;"/>
+		</section>
 		
 		<div class="instrument-commands" style="display: none;">
-			<form>
-			<div class="command">
+			<div class="xcommand">
+				<section class="wrapper">
+					<h3 class="wrapper-heading">Instrument Instance Agent Commands</h3>
+				<form>
 				<label>Command</label>
 				<select>
 					<option value='initialize'>Initialize (start driver)</option>
@@ -42,13 +68,15 @@
 					<option value='stop'>Stop sampling (stop auto-sample of data collection)</option> -->
 				</select>
 				
-				<input type="submit" name="Send Command" class="btn btn-primary issue_command"/>
-			</form>	
+				<input type="submit" name="Send Command" class="btn issue_command"/>
+			</form>
+			</section>
 			</div>
 
-			<div class="command-output">
-				Command results
-			</div>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Command Results</h3>
+				<div class="command-output"></div>
+			</section>
 		</div>
 	</div>	
 </div>
