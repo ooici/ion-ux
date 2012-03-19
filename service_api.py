@@ -26,8 +26,8 @@ class ServiceApi(object):
     
     @staticmethod
     def find_all_users():
-        all_users = service_gateway_get('resource_registry', 'find_subjects', parmas={'restype': 'UserInfo'})
-        return jsonify(data=all_users)
+        all_users = service_gateway_get('resource_registry', 'find_subjects', params={'restype': 'UserInfo'})[0]
+        return all_users
     
     @staticmethod
     def find_platform_models():

@@ -66,6 +66,7 @@ IONUX.Views.ObservatoriesView = Backbone.View.extend({
   
   render: function(){
     this.$el.html(this.template({"collection":this.collection.toJSON()})).show();
+    $('.datatable-ize').dataTable();
     return this;
   },
   

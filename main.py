@@ -169,6 +169,11 @@ def observatories():
     else:
         return create_html_response(request.path)
 
+@app.route('/observatories/all_users/', methods=['GET'])
+def observatories_all_users():
+    all_users = ServiceApi.find_all_users()
+    return jsonify(data=all_users)
+
 @app.route('/observatories/<marine_facility_id>/', methods=['GET'])
 def observatory_facepage(marine_facility_id):
     if request.is_xhr:
