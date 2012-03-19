@@ -26,7 +26,7 @@ class ServiceApi(object):
     
     @staticmethod
     def find_all_users():
-        all_users = service_gateway_get('resource_registry', 'find_subjects', params={'restype': 'UserInfo'})[0]
+        all_users = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'UserInfo'})[0]
         return all_users
     
     @staticmethod
@@ -51,12 +51,16 @@ class ServiceApi(object):
             user_requests = service_gateway_get('org_management', 'find_user_requests', params={'org_id': org_id, 'user_id': user_id})
         else:
             user_requests = service_gateway_get('org_management', 'find_requests', params={'org_id': org_id})
-        return user_requests
         
-        #requests.get('http://67.58.49.196:5000/ion-service/org_management/find_requests?org_id=%s' % org_id)
+        keepers = []
         
-    
-    
+        for e in user_requests:
+            user_id = e['user_id']
+            if not any([k["user_id"] == user_id for k in keepers]):
+                keepers.append(e)
+
+        return keepers
+        
     @staticmethod
     def request_enrollment_in_org(marine_facility_id, user_id):
         org_id = service_gateway_get('marine_facility_management', 'find_marine_facility_org', params={'marine_facility_id': marine_facility_id})
