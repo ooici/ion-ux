@@ -1,0 +1,15 @@
+<td><%= name %></td>
+<td><%= description %></td>
+<td><%= status %></td>
+<td><%= user_id %></td>
+<td><%= ts_updated %></td>
+
+<% if (org_manager && status == 'Open') { %>
+<td><a href="approve" class="btn">Approve</a></td>
+<td><a href="deny" class="btn">Deny</a></td>
+<% } %>
+
+<% if (org_member && status == 'Approved') { %>
+<td><a href="accept" class="btn">Accept</a></td>
+<td><a href="reject" class="btn">Reject</a></td>
+<% } %>
