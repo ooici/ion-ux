@@ -7,6 +7,7 @@ IONUX.Router = Backbone.Router.extend({
     "observatories/": "observatories",
     "observatories/new/": "observatory_new",
     "observatories/:marine_facility_id/": "observatory_facepage",
+    "observatories/:marine_facility_id/edit/": "observatory_edit",
     "platforms/":"platforms",
     "platforms/new/": "platform_new",
     "platforms/:platform_id/": "platform_facepage",
@@ -76,6 +77,13 @@ IONUX.Router = Backbone.Router.extend({
     urCollection.marine_facility_id = marine_facility_id; //XXX better way to set this?
     var userRequestsView = new IONUX.Views.UserRequestsView({collection:urCollection, facepage_model: fpModel});
     urCollection.fetch();
+  },
+
+  observatory_edit: function(marine_facility_id){
+    this._reset();    
+    var oModel = new IONUX.Models.ObservatoryFacepageModel({marine_facility_id:marine_facility_id});
+    var editView = new IONUX.Views.ObservatoryEditView({model:oModel});
+    oModel.fetch();
   },
   
   platforms: function(){
@@ -147,7 +155,6 @@ IONUX.Router = Backbone.Router.extend({
   },
 
   instrument_model_facepage: function(instrument_model_id) {
-    console.log('instrument_model_facepage');
     this._reset();
     var fpModel = new IONUX.Models.InstrumentModelFacepageModel({instrument_model_id: instrument_model_id});
     new IONUX.Views.InstrumentModelFacepage({model: fpModel});
