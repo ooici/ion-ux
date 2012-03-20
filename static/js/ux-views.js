@@ -8,6 +8,7 @@ IONUX.Views.DataProducts = Backbone.View.extend({
   },
   render: function(){
     this.$el.html(this.template({"collection":this.collection.toJSON()})).show();
+    $('.datatable-ize').dataTable();
     return this;
   }
 });
@@ -341,6 +342,7 @@ IONUX.Views.InstrumentsView = Backbone.View.extend({
   
   render: function(){
     this.$el.html(this.template({"collection":this.collection.toJSON()}));
+    $('.datatable-ize').dataTable();
     return this;
   },
   
@@ -390,6 +392,7 @@ IONUX.Views.PlatformsView = Backbone.View.extend({
   
   render: function(){
     this.$el.html(this.template({"collection":this.collection.toJSON()}));
+    $('.datatable-ize').dataTable();
     return this;
   },
   
