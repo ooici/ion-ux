@@ -123,10 +123,14 @@ IONUX.Views.UserRequestItemView = Backbone.View.extend({
 
   tagName: "tr",
 
-  template: _.template("<td><%= name %></td><td><%= description %></td><td><%= status %></td><td><%= user_id %></td><td><%= ts_updated %></td><td><button>Approve</button></td><td><button>Deny</button></td>"),
+  template: _.template($("#user-request-item-tmpl").html()),
 
   render: function(){
-    this.$el.html(this.template(this.model.toJSON()));
+
+    var org_manager = _.any(IONUX.ROLES, function(role){return role === "ORG_MANAGER"});
+    var org_member = _.any(IONUX.ROLES, function(role){return role === "ORG_MEMBER"});
+    var tmpl_vars = _.extend(this.model.toJSON(), {'org_manager':org_manager, 'org_member':org_member});
+    this.$el.html(this.template(tmpl_vars));
     return this;
   }
 
@@ -137,7 +141,6 @@ IONUX.Views.UserRequestItemView = Backbone.View.extend({
 IONUX.Views.UserRequestsView = Backbone.View.extend({
 
   el:"#user-requests-container", //XXX issue with being child of another 'el'
-
 
   //events: { },
 
@@ -154,9 +157,29 @@ IONUX.Views.UserRequestsView = Backbone.View.extend({
     }, this);
     $("#user-requests-container").find(".loading").hide();
     table_elem.show()
+    this.button_events();
     return this;
   },
-  
+
+  button_events:function(){
+    $("#user-requests-container a").on("click", function(evt){
+        evt.preventDefault();
+        var target = $(evt.target);
+        var action = "user_requests/" + target.attr("href");
+        var button_txt = target.text();
+        target.text("Saving...");
+        $.ajax({
+          url :action,
+          dataType: 'json',
+          success: function(resp) {
+            target.text(button_txt);
+          },
+          error: function(resp) {
+            target.text(button_txt);
+          }
+        });
+    });
+  }
 });
 
 
