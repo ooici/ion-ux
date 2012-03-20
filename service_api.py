@@ -193,7 +193,9 @@ class ServiceApi(object):
         return user
 
     @staticmethod
-    def handle_user_request(org_id, request_id, reason, action):
+    def handle_user_request(marine_facility_id, request_id, reason, action):
+        org_id = service_gateway_get('marine_facility_management', 'find_marine_facility_org', params={'marine_facility_id': marine_facility_id})
+        
         actions = ['APPROVE', 'DENY', 'ACCEPT', 'REJECT']
         if action not in actions:
             return "False"
@@ -213,8 +215,10 @@ class ServiceApi(object):
         marine_facility = service_gateway_get('marine_facility_management', 'read_marine_facility', params={'marine_facility_id': marine_facility_id})
         
         if marine_facility.has_key('_id'):
-
             org_id = service_gateway_get('marine_facility_management', 'find_marine_facility_org', params={'marine_facility_id': marine_facility_id})
+
+            if org_id:
+                marine_facility['org_id'] = org_id
 
             # GENERAL
             marine_facility['data_products'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': org_id, 'predicate': 'hasResource', 'object_type': 'DataProduct'})[0]

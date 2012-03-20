@@ -198,6 +198,12 @@ def observatory_user_requests(marine_facility_id):
         users_requests = []
 
     return jsonify(data=user_requests)
+    
+@app.route('/observatories/<marine_facility_id>/user_requests/<request_id>/<action>/', methods=['GET'])
+def user_request(marine_facility_id, request_id, reason=None, action=None):
+    resp = ServiceApi.handle_user_request(marine_facility_id, request_id, reason, action)
+    return jsonify(resp)
+
 
 @app.route('/platforms/', methods=['GET'])
 def platforms():
@@ -327,11 +333,6 @@ def user_facepage(user_id):
         return jsonify(data=user)
     else:
         return render_app_template(request.path)
-
-@app.route('/user_request/<org_id>/<request_id>/<reason>/<action>/', methods=['GET'])
-def user_request(org_id, request_id, reason, action):
-    resp = ServiceApi.handle_user_request(org_id, request_id, reason, action)
-    return jsonify(resp)
 
 @app.route('/frame_of_references/<frame_of_reference_id>/', methods=['GET'])
 def frame_of_reference_facepage(frame_of_reference_id):

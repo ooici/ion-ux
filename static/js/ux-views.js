@@ -460,7 +460,6 @@ IONUX.Views.ObservatoryModalView = Backbone.View.extend({
 });
 
 IONUX.Views.ObservatoryFacepage = Backbone.View.extend({
-
   el: "#observatory-facepage-container",
 
   template: _.template($("#observatory-facepage-tmpl").html()),
@@ -472,6 +471,7 @@ IONUX.Views.ObservatoryFacepage = Backbone.View.extend({
   initialize: function(){
     _.bindAll(this, "render");
     this.model.bind("change", this.render);
+    this.model.on("change:org_id", this.render);
   },
 
   enroll_user: function() {
