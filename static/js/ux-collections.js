@@ -33,6 +33,16 @@ IONUX.Collections.Platforms = Backbone.Collection.extend({
 });
 
 
+IONUX.Collections.PlatformModels = Backbone.Collection.extend({
+  model: IONUX.Models.PlatformModel,
+  url: "/platforms_models/",
+
+  parse: function(resp) {
+    return resp.data;
+  }
+});
+
+
 IONUX.Collections.Instruments = Backbone.Collection.extend({
   model: IONUX.Models.Instrument,
   url: "/instruments/",

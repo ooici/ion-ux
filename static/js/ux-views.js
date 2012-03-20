@@ -125,11 +125,10 @@ IONUX.Views.UserRequestItemView = Backbone.View.extend({
   template: _.template($("#user-request-item-tmpl").html()),
 
   render: function(){
-
     var org_manager = _.any(IONUX.ROLES, function(role){return role === "ORG_MANAGER"});
     var org_member = _.any(IONUX.ROLES, function(role){return role === "ORG_MEMBER"});
     var tmpl_vars = _.extend(this.model.toJSON(), {'org_manager':org_manager, 'org_member':org_member});
-    this.$el.html(this.template(tmpl_vars));
+    this.$el.attr('id', tmpl_vars._id).html(this.template(tmpl_vars));
     return this;
   }
 
@@ -164,7 +163,8 @@ IONUX.Views.UserRequestsView = Backbone.View.extend({
     $("#user-requests-container a").on("click", function(evt){
         evt.preventDefault();
         var target = $(evt.target);
-        var action = "user_requests/" + target.attr("href");
+        var request_id = $(evt.target).closest('tr').attr('id');
+        var action = "user_requests/" + request_id + '/' + target.attr("href");
         var button_txt = target.text();
         target.text("Saving...");
         $.ajax({
@@ -177,6 +177,7 @@ IONUX.Views.UserRequestsView = Backbone.View.extend({
             target.text(button_txt);
           }
         });
+        return false;
     });
   }
 });
@@ -216,10 +217,10 @@ IONUX.Views.NewObservatoryView = IONUX.Views.CreateNewView.extend({
   el: "#observatory-new-container",
   template: _.template($("#new-observatory-tmpl").html()),
 
-  initialize: function(){
-    _.bindAll(this, "create_new", "render");
-    this.model.bind("change", this.render)
-  },
+  // initialize: function(){
+  //   _.bindAll(this, "create_new", "render");
+  //   this.model.bind("change", this.render)
+  // },
 
   render: function(){
     this.$el.empty().html(this.template(this.model.toJSON())).show();    
@@ -742,7 +743,7 @@ IONUX.Views.DataProductFacepage = Backbone.View.extend({
   render: function(){
     this.$el.empty().html(this.template(this.model.toJSON())).show();
     var data_product_id = this.model.get('_id');
-    drawChart(data_product_id)
+    drawChart(data_product_id);
   }
 });
 

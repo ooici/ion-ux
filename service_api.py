@@ -25,6 +25,42 @@ AGENT_REQUEST_TEMPLATE = {
 class ServiceApi(object):
     
     @staticmethod
+    def test_create_marine_facility():
+        marine_facility_template = {"serviceRequest": {
+            "serviceName": "marine_facility_management",
+            "serviceOp": "create_marine_facility",
+            "params": {
+                "object": ["MarineFacility", {
+                    "name": "NewMF",
+                    "description": "A new marine facility.",
+                    "contact": {
+                        "name": "Test User",
+                        "phone": "858-555-1212",
+                        "emeil": "test@user.com",
+                        "city": "San Diego",
+                        "postalcode": "92093"
+                    },
+                    "institution": {
+                        "name": "Test Institution",
+                        "website": "ti.edu",
+                        "email": "ti@ti.edu",
+                        "phone": "858-555-1212"
+                        }}]}}}
+        
+        
+        marine_facilty = service_gateway_post("marine_facility_management", "create_marine_facility", params=marine_facility_management)
+        return marine_facility
+                    
+        # owner = form_data['owner']
+        # del form_data['owner']
+        # 
+        # marine_facility = service_gateway_post('marine_facility_management', 'create_marine_facility', params=form_data)
+        # marine_facility_id = marine_facility_id['_id']
+        # 
+        # # Make call to assign user.
+    
+    
+    @staticmethod
     def find_all_users():
         all_users = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'UserInfo'})[0]
         return all_users
@@ -183,8 +219,8 @@ class ServiceApi(object):
             # POLICIES
             user['policies'] = service_gateway_get('policy_management', 'find_resource_policies', params={'resource_id': user_id})
 
-            # OWNED RESOURCES
-            user['owned_resources'] = service_gateway_get('resource_registry', 'find_subjects', params={'predicate': 'hasOwner', 'object': user_id, 'id_only': False})[0]
+            # OWNED RESOURCES , 'id_only': False
+            user['owned_resources'] = service_gateway_get('resource_registry', 'find_subjects', params={'predicate': 'hasOwner', 'object': user_id})#[0]
             
             # EVENTS
             user['recent_events'] = []
@@ -193,18 +229,18 @@ class ServiceApi(object):
         return user
 
     @staticmethod
-    def handle_user_request(marine_facility_id, request_id, reason, action):
+    def handle_user_request(marine_facility_id, request_id, action, reason=None):
         org_id = service_gateway_get('marine_facility_management', 'find_marine_facility_org', params={'marine_facility_id': marine_facility_id})
         
-        actions = ['APPROVE', 'DENY', 'ACCEPT', 'REJECT']
+        actions = ['approve', 'deny', 'accept', 'reject']
         if action not in actions:
             return "False"
 
-        if action == 'APPROVE':
+        if action == 'approve':
             res = service_gateway_get('org_management', 'approve_request', params={'org_id': org_id, 'request_id': request_id})
-        elif action == 'DENY':
+        elif action == 'deny':
             res = service_gateway_get('org_management', 'deny_request', params={'org_id': org_id, 'request_id': request_id})
-        elif action == 'ACCEPT':
+        elif action == 'accept':
             res = service_gateway_get('org_management', 'accept_request', params={'org_id': org_id, 'request_id': request_id})
         else:
             res = service_gateway_get('org_management', 'deny_request', params={'org_id': org_id, 'request_id': request_id, 'reason': reason})
@@ -231,6 +267,8 @@ class ServiceApi(object):
             
             for participant in participants:
                 user_info = service_gateway_get('resource_registry', 'find_objects', params={'subject': participant.get('_id'), 'predicate': 'hasInfo'})[0][0]
+
+                # Remove user_info id or just add name.
                 marine_facility['participants'].append(user_info)
 
             marine_facility['roles'] = service_gateway_get('org_management', 'find_org_roles', params={'org_id': org_id})
@@ -801,14 +839,14 @@ def build_get_request(service_name, operation_name, params={}):
             param_string += '%s=%s&' % (k,v)
         url += param_string[:-1]
 
-    #pretty_console_log('SERVICE GATEWAY GET URL', url)
+    pretty_console_log('SERVICE GATEWAY GET URL', url)
 
     return url
 
 def service_gateway_get(service_name, operation_name, params={}):    
     resp = requests.get(build_get_request(service_name, operation_name, params))
-    #pretty_console_log('SERVICE GATEWAY GET RESPONSE', resp.content)
-
+    # pretty_console_log('SERVICE GATEWAY GET RESPONSE', resp.request)
+    
     if resp.status_code == 200:
         resp = json.loads(resp.content)
 
@@ -840,7 +878,7 @@ def build_post_request(service_name, operation_name, params={}):
 def service_gateway_post(service_name, operation_name, params={}):
     url, data = build_post_request(service_name, operation_name, params)
     resp = requests.post(url, data)
-    #pretty_console_log('SERVICE GATEWAY POST RESPONSE', resp.content)
+    pretty_console_log('SERVICE GATEWAY POST RESPONSE', resp.content)
 
     if resp.status_code == 200:
         resp = json.loads(resp.content)

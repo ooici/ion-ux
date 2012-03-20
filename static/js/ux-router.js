@@ -1,7 +1,8 @@
 IONUX.Router = Backbone.Router.extend({
 
   routes: {
-    "": "dashboard",
+    // "": "dashboard",
+    "": "data_products",
     "userprofile/": "user_profile",
     "observatories/": "observatories",
     "observatories/new/": "observatory_new",

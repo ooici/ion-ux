@@ -71,11 +71,6 @@ def index():
     else:
         return render_template("index.html")
 
-#@app.route('/testfacepages/', methods=['GET'])
-#def testfacepages():
-#    ServiceApi.test_facepages()
-#    return redirect('/')
-
 # TODO fix this to be a post
 @app.route('/signon/', methods=['GET'])
 def signon():
@@ -149,13 +144,19 @@ def list(resource_type=None):
     return jsonify(data=json.dumps(resources))
 
 
+@app.route('/obs/create', methods=['GET'])
+def observatory_create():
+    observatory = {}
+
 @app.route('/observatories/', methods=["GET", "POST"])
 def observatories():
     if request.is_xhr:
         if request.method == 'POST':
             # TODO - NEEDS TO BE MOVED INTO SERVICEAPI
             form_data = json.loads(request.data)
+            print 'FORMDATA-------------------------\n\n', str(form_data), '\n\nENDFORMDATA----------------------'
             object_schema = build_schema_from_form(form_data, service="marine_facilities")
+            print 'OBJECTSCHEMA-------------------------\n\n', str(object_schema), '\n\nENDOBJECTSCHEMA-------------------'
             post_request = gateway_post_request(
                 '%s/marine_facility_management/create_marine_facility' % SERVICE_GATEWAY_BASE_URL,
                 object_schema
@@ -175,12 +176,21 @@ def observatories_all_users():
     return jsonify(data=all_users)
 
 @app.route('/observatories/<marine_facility_id>/', methods=['GET'])
+@app.route('/observatories/<marine_facility_id>/edit/', methods=['GET'])
 def observatory_facepage(marine_facility_id):
     if request.is_xhr:
         marine_facility = ServiceApi.find_observatory(marine_facility_id)
         return jsonify(data=marine_facility)
     else:
         return render_app_template(request.path)
+
+# @app.route('/observatories/<marine_facility_id>/edit/', methods=['GET'])
+# def observatory_facepage(marine_facility_id):
+#     if request.is_xhr:
+#         marine_facility = ServiceApi.find_observatory(marine_facility_id)
+#         return jsonify(data=marine_facility)
+#     else:
+#         return render_app_template(request.path)
 
 @app.route('/observatories/<marine_facility_id>/request_enrollment/', methods=['GET'])
 def enroll_user(marine_facility_id):
@@ -196,13 +206,13 @@ def observatory_user_requests(marine_facility_id):
             user_requests = ServiceApi.find_org_user_requests(marine_facility_id, session['user_id'])
     else:
         users_requests = []
-
+        
     return jsonify(data=user_requests)
     
 @app.route('/observatories/<marine_facility_id>/user_requests/<request_id>/<action>/', methods=['GET'])
-def user_request(marine_facility_id, request_id, reason=None, action=None):
-    resp = ServiceApi.handle_user_request(marine_facility_id, request_id, reason, action)
-    return jsonify(resp)
+def user_request(marine_facility_id, request_id, action=None):
+    resp = ServiceApi.handle_user_request(marine_facility_id, request_id, action, reason="because")
+    return jsonify(data=resp)
 
 
 @app.route('/platforms/', methods=['GET'])
@@ -221,6 +231,15 @@ def platform_facepage(platform_device_id):
         return jsonify(data=platform)
     else:
         return render_app_template(request.path)
+
+@app.route('/platform_models/', methods=['GET'])
+def platform_models():
+    if request.is_xhr:
+        instruments = ServiceApi.find_by_resource_type('PlatformModels')
+        return jsonify(data=instruments)
+    else:
+        return render_app_template(request.path)
+
 
 @app.route('/platform_models/<platform_model_id>/', methods=['GET'])
 def platform_model_facepage(platform_model_id):
@@ -543,7 +562,8 @@ def build_schema_from_form(form_data, service="marine_facilities", object_name="
             sub_result_dict[elems[0]] = v
         if len(elems) == 2:
             sub_k, sub_v = elems
-            if sub_k in result_dict:
+            # if sub_k in result_dict:
+            if sub_result_dict.has_key(sub_k):
                 sub_result_dict[sub_k].update({sub_v:v})
             else:
                 sub_result_dict[sub_k] = {sub_v:v}
