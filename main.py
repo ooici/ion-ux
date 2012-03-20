@@ -205,8 +205,8 @@ def observatory_user_requests(marine_facility_id):
         else:
             user_requests = ServiceApi.find_org_user_requests(marine_facility_id, session['user_id'])
     else:
-        users_requests = []
-        
+        user_requests = []
+
     return jsonify(data=user_requests)
     
 @app.route('/observatories/<marine_facility_id>/user_requests/<request_id>/<action>/', methods=['GET'])

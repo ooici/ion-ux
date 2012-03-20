@@ -290,6 +290,28 @@
 					<% }); %>
 				</table>			
 			</section>
+		
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Frames Of Reference</h3>
+				<table class="table">
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+						<th>Type</th>
+						<th>Updated</th>
+					</tr>
+					<% _.each(subordinates, function(key) { %>
+						<% _.each(key, function(obj) { %>
+							<tr>
+								<td><a href="/frame_of_references/<%= obj._id %>/"><%= obj.name %></a></td>
+								<td><%= obj.description %></td>
+								<td><%= obj.type_ %></td>
+								<td><%= obj.ts_updated %></td>
+							</tr>
+						<% }); %>
+					<% }); %>
+				</table>
+			</section>
 		</section>
 	</div>
 	

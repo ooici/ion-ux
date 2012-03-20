@@ -10,14 +10,14 @@
 		
 	<div class="span8 test">
 		<section class="wrapper">
-			<h3 class="wrapper-heading">Observatories</h3>
-			<table id="observatories-container" class="table datatable-ize" width="100%">
-				<tr>
+			<h3 class="wrapper-heading">Data Products</h3>
+			<table id="data-products-container" class="table datatable-ize" width="100%">
+				<thead>
 					<th>Name</th>
 					<th>Description</th>
 					<th>Updated</th>
-				</tr>
-
+				</thead>
+                <tbody>
 			    <% _.each(collection, function(obj) { %>
 						<tr>
 							<td><a href="/data_products/<%= obj._id %>/"><%= obj.name %></a></td>
@@ -25,6 +25,7 @@
 							<td><%= obj.ts_updated %></td>
 						</tr>
 			    <% }); %>
+			    </tbody>
 			</table>		
 		</section>
 	</div>
