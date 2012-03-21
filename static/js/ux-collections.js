@@ -92,7 +92,14 @@ IONUX.Collections.DataProcessDefinitions = Backbone.Collection.extend({
   }
 });
 
+IONUX.Collections.FrameOfReferences = Backbone.Collection.extend({
+  model: IONUX.Models.FrameOfReference,
+  url: "/frame_of_references/",
 
+  parse: function(resp) {
+    return resp.data;
+  }
+});
 
 IONUX.Collections.ObservatoryDataProductCollection = Backbone.Collection.extend({
   model: IONUX.Models.ObservatoryDataProduct,

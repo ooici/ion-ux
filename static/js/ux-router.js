@@ -23,6 +23,7 @@ IONUX.Router = Backbone.Router.extend({
     "instrument_models/:instrument_model_id/": "instrument_model_facepage",
     "instrument_agents/": "instrument_agents",
     "instrument_agents/:instrument_agent_id/": "instrument_agent_facepage",
+    "frame_of_references/": "frame_of_references",
     "frame_of_references/new/": "frame_of_reference_new",
     "frame_of_references/:frame_of_reference_id/": "frame_of_reference_facepage",
     "data_process_definitions/": "data_process_definitions",
@@ -216,6 +217,14 @@ IONUX.Router = Backbone.Router.extend({
     var fpModel = new IONUX.Models.DataProductFacepageModel({data_product_id: data_product_id});
     new IONUX.Views.DataProductFacepage({model: fpModel});
     fpModel.fetch();
+  },
+  
+  frame_of_references: function() {
+    this._reset();
+    $("#frame-of-references-container").show();
+    this.frameOfReferencesList = new IONUX.Collections.FrameOfReferences();
+    var frameOfReferencesView = new IONUX.Views.FrameOfReferences({collection: this.frameOfReferencesList});
+    this.frameOfReferencesList.fetch();
   },
   
   frame_of_reference_new: function() {

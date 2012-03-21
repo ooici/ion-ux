@@ -1,4 +1,4 @@
-<h1>Collection: Data Process Definitions</h1>
+<h1>Collection: Frame of References</h1>
 
 <div id="lca-collections" class="row">
 	<div class="span2 test">
@@ -10,7 +10,7 @@
 		
 	<div class="span8 test">
 		<section class="wrapper">
-			<h3 class="wrapper-heading">Data Process Definitions</h3>
+			<h3 class="wrapper-heading">Frame Of References</h3>
 			<table id="platform-models-table" class="table" width="100%">
 				<thead>
 					<th>Name</th>
@@ -20,7 +20,7 @@
 				<tbody>
 				<% _.each(collection, function(obj) { %>
 					<tr>
-						<td><a href="/data_process_definitions/<%= obj._id %>/"><%= obj.name %></a></td>
+						<td><a href="/platform_models/<%= obj._id %>/"><%= obj.name %></a></td>
 						<td><%= obj.description %></td>
 						<td><%= obj.ts_updated %></td>
 					</tr>
@@ -30,6 +30,4 @@
 		</section>
 	</div>
 </div>
-
-
 

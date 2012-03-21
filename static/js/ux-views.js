@@ -811,6 +811,22 @@ IONUX.Views.DataProcessDefinitions = Backbone.View.extend({
   }
 });
 
+IONUX.Views.FrameOfReferences = Backbone.View.extend({
+  el:"#frame-of-references-container",
+
+  template: _.template($("#frame-of-references-tmpl").html()),
+
+  initialize: function(){
+    _.bindAll(this, "render");
+    this.collection.bind("reset", this.render);
+  },
+  
+  render: function(){
+    this.$el.html(this.template({"collection": this.collection.toJSON()}));
+    return this;
+  }
+});
+
 
 
 IONUX.Views.InstrumentModelFacepage = Backbone.View.extend({
