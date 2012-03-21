@@ -236,8 +236,8 @@ IONUX.Views.NewObservatoryView = IONUX.Views.CreateNewView.extend({
       success: function(resp) {
         _.each(resp.data, function(e, i) {
           // this works with UserInfo.
-          $('#user_info_id').append($('<option>').text(e.contact.name).val(e._id));
-          console.log(e.contact.name);
+          $('#user_id').append($('<option>').text(e.user_info.contact.name).val(e._id));
+          console.log(e.user_info.contact.name);
         });
       }
     });
