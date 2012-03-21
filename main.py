@@ -185,8 +185,8 @@ def observatories_all_users():
     all_users = ServiceApi.find_all_users()
     return jsonify(data=all_users)
 
-@app.route('/observatories/<marine_facility_id>/', methods=['GET'])
-@app.route('/observatories/<marine_facility_id>/edit/', methods=['GET'])
+@app.route('/observatories/<marine_facility_id>/', methods=['GET', 'POST'])
+@app.route('/observatories/<marine_facility_id>/edit/', methods=['GET', 'POST'])
 def observatory_facepage(marine_facility_id):
     if request.is_xhr:
         marine_facility = ServiceApi.find_observatory(marine_facility_id)

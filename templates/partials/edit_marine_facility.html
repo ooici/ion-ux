@@ -1,0 +1,89 @@
+<section class="wrapper">
+	<h3 class="wrapper-heading">Edit Observatory</h3>
+	<form action="" method="post" enctype="multipart/form-data" class="form-horizontal">
+		<fieldset>
+			<legend>Identification</legend>
+			<div class="control-group">
+				<label for="name">Name</label>
+				<div class="controls">
+					<input class="xlarge" id="new-marine-facility-name" name="name" value="<%= name %>">
+				</div>
+			</div>
+		</fieldset>	
+		<fieldset>
+			<legend>Description</legend>
+			<div class="control-group">
+				<label for="description">Description</label>
+				<div class="controls">
+					<textarea class="xxlarge" id="new-marine-facility-description" name="description" rows="3">
+                      <%= description %>
+                    </textarea>
+				</div>
+			</div>
+		</fieldset>
+		<fieldset>
+			<legend>Contact</legend>
+			<div class="control-group">
+				<label for="name">Name</label>
+				<div class="controls">
+					<input class="xlarge" id="contact-name" name="contact__name" value="<%= contact.name %>">
+				</div>
+			</div>
+			<div class="control-group">
+				<label for="email">Email</label>
+				<div class="controls">
+					<input class="xlarge" id="contact-email" name="contact__email" value="<%= contact.email %>">
+				</div>
+			</div>
+			<div class="control-group">
+				<label for="phone">Phone</label>
+					<div class="controls">
+					<input class="xlarge" id="contact-phone" name="contact__phone" value="<%= contact.phone %>">
+				</div>
+			</div>
+			<div class="control-group">
+				<label for="address">Address</label>
+				<div class="controls">
+					<input class="xlarge" id="contact-address" name="contact__address" value="<%= contact.address %>">
+				</div>
+			</div>
+			<div class="control-group">
+				<label for="city">City</label>
+				<div class="controls">
+					<input class="xlarge" id="contact-city" name="contact__city" value="<%= contact.city %>">
+				</div>
+			</div>
+		</fieldset>
+		<fieldset>
+			<legend>Institution</legend>
+			<div class="control-group">
+				<label for="name">Name</label>
+				<div class="controls">
+					<input class="xlarge" id="institution-name" name="institution__name" value="<%= institution.name %>">
+				</div>
+			</div>
+			<div class="control-group">
+				<label for="website">Website</label>
+				<div class="controls">
+					<input class="xlarge" id="institution-website" name="institution__website" value="<%= institution.website %>">
+				</div>
+			</div>
+			<div class="control-group">
+				<label for="email">Email</label>
+				<div class="controls">
+					<input class="xlarge" id="institution-email" name="institution__email" value="<%= institution.email %>">
+				</div>
+			</div>
+			<div class="control-group">
+				<label for="phone">Phone</label>
+					<div class="controls">
+					<input class="xlarge" id="institution-phone" name="institution__phone" value="<%= institution.phone %>">
+				</div>
+			</div>
+		</fieldset>
+		<div class="form-actions">
+		  <input class="save btn" type="submit" value="Save" />
+		  <input class="cancel btn" type="cancel" value="Cancel" />
+		</div>
+	</form>
+</section>

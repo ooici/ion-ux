@@ -44,6 +44,7 @@ IONUX.Views.CreateNewView = Backbone.View.extend({
   cancel: function(){
     this.$el.hide();
   }
+
 });
 
 
@@ -109,7 +110,6 @@ IONUX.Views.UserRegistration = IONUX.Views.CreateNewView.extend({
   },
   
   render: function() {
-   console.log(this.model.toJSON());
    this.$el.html(this.template(this.model.toJSON())).show();
    $('#name').focus();
    return this; 
@@ -486,6 +486,66 @@ IONUX.Views.ObservatoryModalView = Backbone.View.extend({
   }
 });
 
+IONUX.Views.ObservatoryEditView = Backbone.View.extend({
+  el: "#observatory-edit-container",
+
+  template: _.template($("#observatory-edit-tmpl").html()),
+
+  events: {
+    "click .save":"save",
+    "click .cancel":"cancel"
+  },
+
+  initialize: function(){
+    _.bindAll(this, "render", "save");
+    this.model.bind("change", this.render);
+  },
+  
+  render: function(){
+    this.$el.html(this.template(this.model.toJSON()));
+    this.$el.show();
+    return this;
+  },
+
+  save: function(evt){
+    evt.preventDefault();
+    this.$el.find("input[type='submit']").attr("disabled", true).val("Saving...");
+    // var mf = new IONUX.Models.Observatory();
+    
+    var self = this;
+    $.each(this.$el.find("input,textarea").not("input[type='submit'],input[type='cancel']"), function(i, e){
+      var key = $(e).attr("name"), val = $(e).val();
+      if (key.indexOf("__") != -1){
+        var attrslist = key.split("__");
+        var attr0 = attrslist[0], attr1 = attrslist[1];
+        self.model.attributes[attr0][attr1] = val; //XXX not the best practice of setting Backbone model attrs - see: http://stackoverflow.com/questions/6351271/backbone-js-get-and-set-nested-object-attribute
+      } else {
+        var kv = {};
+        kv[key] = val;
+        self.model.set(kv);
+      }
+    });
+    
+    self.model.save(null, {success:function(model, resp){
+      self.goto_facepage();
+    }});
+  },
+
+  cancel: function(){
+     this.goto_facepage();
+  },
+
+  goto_facepage: function(){
+    var router = new Backbone.Router();
+    var destination = document.location.pathname.replace("edit/", "");
+    router.navigate(destination, {trigger:true});
+  }
+
+
+});
+
+
+
 IONUX.Views.ObservatoryFacepage = Backbone.View.extend({
   el: "#observatory-facepage-container",
 
@@ -548,7 +608,6 @@ IONUX.Views.PlatformModelFacepage = Backbone.View.extend({
   },
 
   render: function(){
-    console.log('PlatformModelFacepage');
     this.$el.html(this.template(this.model.toJSON())).show();
   }
 });
@@ -811,7 +870,6 @@ IONUX.Views.Search = Backbone.View.extend({
     
     collection.fetch({
       success: function(resp) {
-        console.log('success', resp);
         _.each(resp.models, function(e, i) {
           select_elem.append($('<option>').text(e.get('name')));
         })
