@@ -365,8 +365,8 @@ def start_instrument_agent(instrument_device_id, agent_command):
 @app.route('/instrument_models/', methods=['GET'])
 def instrument_models():
     if request.is_xhr:
-        instrument_model = ServiceApi.find_by_resource_type('InstrumentModel')
-        return jsonify(data=instrument_model)
+        instrument_models = ServiceApi.find_by_resource_type('InstrumentModel')
+        return jsonify(data=instrument_models)
     else:
         return render_app_template(request.path)
 
@@ -381,7 +381,11 @@ def instrument_model_facepage(instrument_model_id):
 
 @app.route('/instrument_agents/')
 def instrument_agents():
-    pass
+    if request.is_xhr:
+        instrument_agents = ServiceApi.find_by_resource_type('InstrumentAgent')
+        return jsonify(data=instrument_agents)
+    else:
+        return render_app_template(request.path)
 
 @app.route('/instrument_agents/<instrument_agent_id>/', methods=['GET'])
 def instrument_agent_facepage(instrument_agent_id):

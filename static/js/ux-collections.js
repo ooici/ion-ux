@@ -73,6 +73,16 @@ IONUX.Collections.InstrumentModels = Backbone.Collection.extend({
 });
 
 
+IONUX.Collections.InstrumentAgents = Backbone.Collection.extend({
+  model: IONUX.Models.InstrumentAgent,
+  url: "/instrument_agents/",
+
+  parse: function(resp) {
+    return resp.data;
+  }
+});
+
+
 IONUX.Collections.ObservatoryDataProductCollection = Backbone.Collection.extend({
   model: IONUX.Models.ObservatoryDataProduct,
   url: function() {

@@ -21,6 +21,7 @@ IONUX.Router = Backbone.Router.extend({
     "instrument_models/": "instrument_models",
     "instrument_models/new/": "instrument_model_new",
     "instrument_models/:instrument_model_id/": "instrument_model_facepage",
+    "instrument_agents/": "instrument_agents",
     "instrument_agents/:instrument_agent_id/": "instrument_agent_facepage",
     "frame_of_references/new/": "frame_of_reference_new",
     "frame_of_references/:frame_of_reference_id/": "frame_of_reference_facepage",
@@ -163,9 +164,7 @@ IONUX.Router = Backbone.Router.extend({
     this.instrumentModelsList = new IONUX.Collections.InstrumentModels();
     var instrumentModelsView = new IONUX.Views.InstrumentModels({collection: this.instrumentModelsList});
     this.instrumentModelsList.fetch();
-    instrumentModelsView.render();
     $("#instrument-models-container").show();
-    console.log('instrument models lists');
   },
   
   instrument_model_new: function() {
@@ -179,6 +178,14 @@ IONUX.Router = Backbone.Router.extend({
     var fpModel = new IONUX.Models.InstrumentModelFacepageModel({instrument_model_id: instrument_model_id});
     new IONUX.Views.InstrumentModelFacepage({model: fpModel});
     fpModel.fetch();
+  },
+  
+  instrument_agents: function() {
+    this._reset();
+    $("#instrument-agents-container").show();
+    this.instrumentAgentsList = new IONUX.Collections.InstrumentAgents();
+    var instrumentAgentsView = new IONUX.Views.InstrumentAgents({collection: this.instrumentAgentsList});
+    this.instrumentAgentsList.fetch();
   },
   
   instrument_agent_facepage: function(instrument_agent_id) {

@@ -778,6 +778,22 @@ IONUX.Views.InstrumentModels = Backbone.View.extend({
 });
 
 
+IONUX.Views.InstrumentAgents = Backbone.View.extend({
+  el:"#instrument-agents-container",
+
+  template: _.template($("#instrument-agents-tmpl").html()),
+
+  initialize: function(){
+    _.bindAll(this, "render");
+    this.collection.bind("reset", this.render);
+  },
+  
+  render: function(){
+    this.$el.html(this.template({"collection": this.collection.toJSON()}));
+    return this;
+  }
+});
+
 
 
 
