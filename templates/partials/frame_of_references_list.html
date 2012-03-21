@@ -11,21 +11,22 @@
 	<div class="span8 test">
 		<section class="wrapper">
 			<h3 class="wrapper-heading">Frame Of References</h3>
-			<table id="platform-models-table" class="table" width="100%">
-				<thead>
+
+			<table class="table">
+				<tr>
 					<th>Name</th>
 					<th>Description</th>
+					<th>Type</th>
 					<th>Updated</th>
-				</thead>
-				<tbody>
-				<% _.each(collection, function(obj) { %>
-					<tr>
-						<td><a href="/platform_models/<%= obj._id %>/"><%= obj.name %></a></td>
-						<td><%= obj.description %></td>
-						<td><%= obj.ts_updated %></td>
-					</tr>
-			    <% }); %>
-			    </tbody>
+				</tr>
+					<% _.each(collection, function(obj) { %>
+						<tr>
+							<td><a href="/frame_of_references/<%= obj._id %>/"><%= obj.name %></a></td>
+							<td><%= obj.description %></td>
+							<td><%= obj.type_ %></td>
+							<td><%= obj.ts_updated %></td>
+						</tr>
+					<% }); %>
 			</table>
 		</section>
 	</div>

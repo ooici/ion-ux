@@ -448,7 +448,7 @@ def user_facepage(user_id):
 @app.route('/frame_of_references/')
 def frame_of_references():
     if request.is_xhr:
-        frame_of_references = ServiceApi.find_by_resource_type('FrameofReference')
+        frame_of_references = ServiceApi.find_all_frame_of_references()
         return jsonify(data=frame_of_references)
     else:
         return render_app_template(request.path)

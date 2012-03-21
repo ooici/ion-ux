@@ -24,7 +24,13 @@ AGENT_REQUEST_TEMPLATE = {
 
 class ServiceApi(object):
     
-    
+    @staticmethod
+    def find_all_frame_of_references():
+        frame_of_references = []
+        frame_of_references.append(ServiceApi.find_by_resource_type('Site')[0])
+        frame_of_references.append(ServiceApi.find_by_resource_type('LogicalPlatform')[0])
+        frame_of_references.append(ServiceApi.find_by_resource_type('LogicalInstrument')[0])
+        return frame_of_references
     
     @staticmethod
     def create_observatory(form_data):
