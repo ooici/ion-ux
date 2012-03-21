@@ -1,6 +1,3 @@
-<a href="/observatories/">Back to Observatories</a>
-
-
 <div class="row">
   <div class="span8">
     <h1>Observatory: <%= name %></h1>
@@ -25,10 +22,10 @@
 			
 			<section class="wrapper">
 				<h3 class="wrapper-heading">Location</h3>
-					<%= geospatial_constraint.geospatiallatmin %>
-					<%= geospatial_constraint.geospatiallatmax %>
-					<%= geospatial_constraint.geospatiallonmin %>
-					<%= geospatial_constraint.geospatiallonmax %>
+					<strong>North: </strong><%= geospatial_constraint.geospatiallatmin %><br/>
+					<strong>South: </strong><%= geospatial_constraint.geospatiallatmax %><br />
+					<strong>East: </strong><%= geospatial_constraint.geospatiallonmin %><br />
+					<strong>West: </strong><%= geospatial_constraint.geospatiallonmax %>
 				</p>
 			</section>
 			

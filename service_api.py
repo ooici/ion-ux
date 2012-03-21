@@ -24,10 +24,13 @@ AGENT_REQUEST_TEMPLATE = {
 
 class ServiceApi(object):
     
+    
+    
     @staticmethod
-    def create_obsevatory(object_schema):
-        print 'OBJECTSCHEMA++++++++++++++++++++++++++++++++++++++++++++++\n', str(object_schema)
-        return object_schema
+    def create_observatory(form_data):
+        print 'FORM DATA IN "SERVICEAPI: "\n', str(type(form_data))
+        marine_facility = service_gateway_post('marine_facility_management', 'create_marine_facility', params=form_data)
+        return marine_facility
     
     
     @staticmethod
@@ -65,6 +68,27 @@ class ServiceApi(object):
         # 
         # # Make call to assign user.
     
+    @staticmethod
+    def find_user_id_by_user_info_id(user_info_id):
+        user_id = service_gateway_get('resource_registry', 'find_subjects', params={'object': user_info_id, 'predicate': 'hasInfo'})[0][0]['_id']
+        return user_id
+    
+    @staticmethod
+    def find_tim():
+        tim = service_gateway_get('identity_management', 'find_user_identity_by_name', params={'name': "/DC=org/DC=cilogon/C=US/O=Google/CN=Tim%20Ampe%20A448"})
+        print str(tim)
+        return tim
+    
+    @staticmethod
+    def assign_marine_facility_org_manager(marine_facility_id, user_id):
+        org_id = service_gateway_get('marine_facility_management', 'find_marine_facility_org', params={'marine_facility_id': marine_facility_id})
+        enrollment = service_gateway_get('org_management', 'enroll_member', params={'org_id': org_id, 'user_id': user_id})
+        print '\nEnroll member------------------------------------------------------------------', str(enrollment)
+        
+        management = service_gateway_get('org_management', 'grant_role', params={'org_id': org_id, 'user_id': user_id, 'role_name': 'ORG_MANAGER'})
+        print '\nManagment----------------------------------------------------------------------', str(management)
+        
+        return True
     
     @staticmethod
     def find_all_users():
@@ -931,9 +955,9 @@ def service_gateway_agent_request(agent_id, operation_name, params={}):
             return resp['data']['GatewayResponse'][0]
 
 def pretty_console_log(label, content, data=None):
-    print '\n\n\n'
+    print '\n'
     print '-------------------------------------------'
-    print '%s : %s' % (label, content)
+    print '%s : %s' % (label, content), '\n\n'
     if data:
         print 'data : %s' % data
-    print '-------------------------------------------'
+

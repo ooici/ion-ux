@@ -18,7 +18,7 @@ IONUX.Views.DataProducts = Backbone.View.extend({
 IONUX.Views.CreateNewView = Backbone.View.extend({
   events: {
     "click input[type='submit']":"create_new",
-    "submit input[type='submit']":"create_new",
+    // "submit input[type='submit']":"create_new",
     // "click .create": "create_new",
     "click .cancel":"cancel"
   },
@@ -29,7 +29,7 @@ IONUX.Views.CreateNewView = Backbone.View.extend({
     // var mf = new IONUX.Models.Observatory();
     
     var self = this;
-    $.each(this.$el.find("input,textarea").not("input[type='submit'],input[type='cancel']"), function(i, e){
+    $.each(this.$el.find("input,textarea,select").not("input[type='submit'],input[type='cancel']"), function(i, e){
       var key = $(e).attr("name"), val = $(e).val();
       var kv = {};
       kv[key] = val;
@@ -224,9 +224,25 @@ IONUX.Views.NewObservatoryView = IONUX.Views.CreateNewView.extend({
   // },
 
   render: function(){
-    this.$el.empty().html(this.template(this.model.toJSON())).show();    
+    this.$el.empty().html(this.template(this.model.toJSON())).show();
+    this.get_all_users();
     return this;
   },
+  
+  get_all_users: function() {
+    $.ajax({
+      url: '/observatories/all_users/',
+      dataType: 'json',
+      success: function(resp) {
+        _.each(resp.data, function(e, i) {
+          // this works with UserInfo.
+          $('#user_info_id').append($('<option>').text(e.contact.name).val(e._id));
+          console.log(e.contact.name);
+        });
+      }
+    });
+  },
+  
 });
 
 
@@ -241,7 +257,6 @@ IONUX.Views.NewPlatformView = IONUX.Views.CreateNewView.extend({
   },
 
   initialize: function(){
-    console.log(this.events());
   },
 
   render: function(){

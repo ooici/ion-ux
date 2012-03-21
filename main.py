@@ -63,6 +63,10 @@ def render_app_template(current_url):
             is_registered = "False"
     return render_template("ion-ux.html", **{"current_url":"/", "roles":roles, "logged_in":logged_in,"is_registered": is_registered})
 
+@app.route('/tim/', methods=['GET'])
+def tim():
+    tim = ServiceApi.find_tim()['_id']
+    return jsonify(data=tim)
 
 @app.route('/')
 def index():
@@ -153,23 +157,39 @@ def observatory_create():
 def observatories():
     if request.is_xhr:
         if request.method == 'POST':
-            # object_schema = build_schema_from_form(form_data, service="marine_facilities")
-            # post_request = gateway_post_request(
-            #            '%s/marine_facility_management/create_marine_facility' % SERVICE_GATEWAY_BASE_URL,
-            #            object_schema
-            #        )
-            #        print '\nPOST_REQUEST_RESULT!-----------------------------------------\n', str(post_request.content)
-            #        mf_resp = json.loads(post_request.content)
-            #        mf_id = mf_resp['data']['GatewayResponse']
-            #        print '\nMF_ID--------------------------------------------------------\n', str(mf_id)
-            #        
-            #        gateway_post_request
+            form_data = json.loads(request.data)
+            print '\n\nForm Data----------------------------------', str(form_data)
+            
+            user_info_id = form_data.pop('user_info_id')
+            print '\n\nOwner Info ID-----------------------------', str(user_info_id)
+            
+            user_id = ServiceApi.find_user_id_by_user_info_id(user_info_id)
+            print '\n\nOwner User ID-----------------------------', str(user_id)
+                        
+            object_schema = build_schema_from_form(form_data, service="marine_facilities")
+            print '\n\nObject Schema-----------------------------', str(object_schema)
+
+            post_request = gateway_post_request('%s/marine_facility_management/create_marine_facility' % SERVICE_GATEWAY_BASE_URL, object_schema)
+            print '\n\nRequest Result----------------------------', str(post_request.content)
+            
+            marine_facility_response = json.loads(post_request.content)
+            marine_facility_id = marine_facility_response['data']['GatewayResponse']
+            print '\n\nMarine Facility ID------------------------', str(marine_facility_id)
+            
+            assign_ownership = ServiceApi.assign_marine_facility_org_manager(marine_facility_id, user_id)
+            print '\n\nAssign Ownership--------------------------', str(marine_facility_id)
+
             
             # resp_data = {"success":True}
-
-            form_data = dict_from_form_data(json.loads(request.data))
-            marine_facility = ''
-            
+            # raw_form = json.loads(request.data)
+            # print 'raw_form IN MAIN.PY\n', str(raw_form)
+            # 
+            # 
+            # form_data = dict_from_form_data(json.loads(request.data))
+            # print 'FORM_DATA IN MAIN.PY\n', str(form_data)
+            # marine_facility = ServiceApi.create_observatory(form_data)
+            # 
+            # print str(marine_facility)
             
             return 'True'
         else:
@@ -179,6 +199,44 @@ def observatories():
         return jsonify(data=resp_data)
     else:
         return render_app_template(request.path)
+
+
+# @app.route('/observatories/', methods=["GET", "POST"])
+# def observatories():
+#     if request.is_xhr:
+#         if request.method == 'POST':
+#             # object_schema = build_schema_from_form(form_data, service="marine_facilities")
+#             # post_request = gateway_post_request(
+#             #            '%s/marine_facility_management/create_marine_facility' % SERVICE_GATEWAY_BASE_URL,
+#             #            object_schema
+#             #        )
+#             #        print '\nPOST_REQUEST_RESULT!-----------------------------------------\n', str(post_request.content)
+#             #        mf_resp = json.loads(post_request.content)
+#             #        mf_id = mf_resp['data']['GatewayResponse']
+#             #        print '\nMF_ID--------------------------------------------------------\n', str(mf_id)
+#             #        
+#             #        gateway_post_request
+# 
+#             # resp_data = {"success":True}
+#             # raw_form = json.loads(request.data)
+#             # print 'raw_form IN MAIN.PY\n', str(raw_form)
+# 
+# 
+#             form_data = dict_from_form_data(json.loads(request.data))
+#             print 'FORM_DATA IN MAIN.PY\n', str(form_data)
+#             marine_facility = ServiceApi.create_observatory(form_data)
+# 
+#             print str(marine_facility)
+# 
+#             return 'True'
+#         else:
+#             resp_data = ServiceApi.find_by_resource_type('MarineFacility')
+#             available_users = ServiceApi.find_all_user_infos()
+# 
+#         return jsonify(data=resp_data)
+#     else:
+#         return render_app_template(request.path)
+
 
 @app.route('/observatories/all_users/', methods=['GET'])
 def observatories_all_users():
@@ -545,9 +603,12 @@ def gateway_post_request(url, payload):
         payload['serviceRequest']['params']['expiry'] = session['valid_until']
 
     data={'payload': json.dumps(payload)}
-    print "POST request\n  url: %s\n  data: %s" % (url,data)    
-        
-    service_gateway_call = requests.post(url,data)
+    print "POST request\n  url: %s\n  data: %s" % (url,data)
+    
+    ion_actor_id = ServiceApi.find_tim()['_id']
+    headers = {}
+    headers['ion-actor-id'] = ion_actor_id
+    service_gateway_call = requests.post(url, data, headers=headers)
 
     print "POST response\n  url: %s\n  content: %s" % (url,service_gateway_call)    
 
@@ -573,7 +634,8 @@ def dict_from_form_data(form_data):
             else:
                 sub_result_dict[sub_k] = {sub_v:v}
     
-    print "\n\n\nSUBRESULTDICT=====================================\n", str(sub_result_dict), '\n====================================================\n\n\n'
+    print "\n\n\nSUBRESULTDICT=====================================\n", str(sub_result_dict)
+    return sub_result_dict
 
 
 def build_schema_from_form(form_data, service="marine_facilities", object_name="marine_facility"):
