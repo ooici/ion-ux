@@ -144,24 +144,34 @@ def list(resource_type=None):
     return jsonify(data=json.dumps(resources))
 
 
-@app.route('/obs/create', methods=['GET'])
+@app.route('/obs/create/', methods=['GET'])
 def observatory_create():
-    observatory = {}
+    observatory = ServiceApi.test_create_marine_facility();
+    return jsonify(data=observatory)
 
 @app.route('/observatories/', methods=["GET", "POST"])
 def observatories():
     if request.is_xhr:
         if request.method == 'POST':
-            # TODO - NEEDS TO BE MOVED INTO SERVICEAPI
-            form_data = json.loads(request.data)
-            print 'FORMDATA-------------------------\n\n', str(form_data), '\n\nENDFORMDATA----------------------'
-            object_schema = build_schema_from_form(form_data, service="marine_facilities")
-            print 'OBJECTSCHEMA-------------------------\n\n', str(object_schema), '\n\nENDOBJECTSCHEMA-------------------'
-            post_request = gateway_post_request(
-                '%s/marine_facility_management/create_marine_facility' % SERVICE_GATEWAY_BASE_URL,
-                object_schema
-            )
-            resp_data = {"success":True}
+            # object_schema = build_schema_from_form(form_data, service="marine_facilities")
+            # post_request = gateway_post_request(
+            #            '%s/marine_facility_management/create_marine_facility' % SERVICE_GATEWAY_BASE_URL,
+            #            object_schema
+            #        )
+            #        print '\nPOST_REQUEST_RESULT!-----------------------------------------\n', str(post_request.content)
+            #        mf_resp = json.loads(post_request.content)
+            #        mf_id = mf_resp['data']['GatewayResponse']
+            #        print '\nMF_ID--------------------------------------------------------\n', str(mf_id)
+            #        
+            #        gateway_post_request
+            
+            # resp_data = {"success":True}
+
+            form_data = dict_from_form_data(json.loads(request.data))
+            marine_facility = ''
+            
+            
+            return 'True'
         else:
             resp_data = ServiceApi.find_by_resource_type('MarineFacility')
             available_users = ServiceApi.find_all_user_infos()
@@ -546,6 +556,24 @@ def gateway_post_request(url, payload):
         return "The service gateway returned the following error: %d" % service_gateway_call.status_code
 
     return service_gateway_call
+
+
+
+def dict_from_form_data(form_data):
+    sub_result_dict = {}
+    for (k, v) in form_data.iteritems():
+        elems = k.split("__")
+        if len(elems) == 1:
+            sub_result_dict[elems[0]] = v
+        if len(elems) == 2:
+            sub_k, sub_v = elems
+            # if sub_k in result_dict:
+            if sub_result_dict.has_key(sub_k):
+                sub_result_dict[sub_k].update({sub_v:v})
+            else:
+                sub_result_dict[sub_k] = {sub_v:v}
+    
+    print "\n\n\nSUBRESULTDICT=====================================\n", str(sub_result_dict), '\n====================================================\n\n\n'
 
 
 def build_schema_from_form(form_data, service="marine_facilities", object_name="marine_facility"):

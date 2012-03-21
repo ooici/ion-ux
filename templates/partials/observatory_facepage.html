@@ -273,7 +273,6 @@
 						<th>Instrument Class</th>
 						<th>Instrument Family</th>
 						<th>Model Label</th>
-						<th>Primary Interface</th>
 						<th>Updated</th>
 					</tr>
 					<% _.each(instrument_models, function(obj) { %>
@@ -284,7 +283,6 @@
 							<td><%= obj.instrument_class %></td>
 							<td><%= obj.instrument_family %></td>
 							<td><%= obj.model_label %></td>
-							<td><%= obj.primary_interface %></td>
 							<td><%= obj.ts_updated %></td>
 						</tr>
 					<% }); %>
