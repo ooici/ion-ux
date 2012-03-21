@@ -828,7 +828,6 @@ IONUX.Views.FrameOfReferences = Backbone.View.extend({
 });
 
 
-
 IONUX.Views.InstrumentModelFacepage = Backbone.View.extend({
   el: "#instrument-model-facepage-container",
 

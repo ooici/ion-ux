@@ -97,6 +97,12 @@ table tr:nth-child(odd) td, .table-striped tbody tr:nth-child(odd) th {
   margin: 0 10px;
 }
 
+#row-count {
+  background: gray;
+  padding: 2px 6px;
+  color: white;
+  border-radius: 3px;
+}
 
 .invisible {
     display:none;

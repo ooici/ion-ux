@@ -19,13 +19,15 @@
 					<th>Type</th>
 					<th>Updated</th>
 				</tr>
-					<% _.each(collection, function(obj) { %>
+					<% _.each(collection, function(o) { %>
+						<% _.each(o, function(obj) { %>
 						<tr>
 							<td><a href="/frame_of_references/<%= obj._id %>/"><%= obj.name %></a></td>
 							<td><%= obj.description %></td>
 							<td><%= obj.type_ %></td>
 							<td><%= obj.ts_updated %></td>
 						</tr>
+					<% }); %>
 					<% }); %>
 			</table>
 		</section>

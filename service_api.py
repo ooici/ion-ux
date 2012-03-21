@@ -27,9 +27,9 @@ class ServiceApi(object):
     @staticmethod
     def find_all_frame_of_references():
         frame_of_references = []
-        frame_of_references.append(ServiceApi.find_by_resource_type('Site')[0])
-        frame_of_references.append(ServiceApi.find_by_resource_type('LogicalPlatform')[0])
-        frame_of_references.append(ServiceApi.find_by_resource_type('LogicalInstrument')[0])
+        frame_of_references.append(ServiceApi.find_by_resource_type('Site'))
+        frame_of_references.append(ServiceApi.find_by_resource_type('LogicalPlatform'))
+        frame_of_references.append(ServiceApi.find_by_resource_type('LogicalInstrument'))
         return frame_of_references
     
     @staticmethod
