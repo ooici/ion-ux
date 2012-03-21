@@ -11,6 +11,7 @@ IONUX.Router = Backbone.Router.extend({
     "platforms/":"platforms",
     "platforms/new/": "platform_new",
     "platforms/:platform_id/": "platform_facepage",
+    "platform_models/": "platform_models",
     "platform_models/new/": "platform_model_new",
     "platform_models/:platform_model_id/": "platform_model_facepage",
     "instruments/":"instruments",
@@ -25,7 +26,7 @@ IONUX.Router = Backbone.Router.extend({
     "data_process_definitions/:data_process_definition_id/": "data_process_definition_facepage",
     "data_products/": "data_products",
     "data_products/:data_product_id/": "data_product_facepage",
-    // "users/": "user_facepage",
+    "users/": "users",
     "users/:user_id/": "user_facepage",
     "resource_types/:resource_type_id/": "resource_type_details",
   },
@@ -105,6 +106,14 @@ IONUX.Router = Backbone.Router.extend({
     var fpModel = new IONUX.Models.PlatformFacepageModel({platform_id: platform_id});
     new IONUX.Views.PlatformFacepage({model:fpModel});
     fpModel.fetch();
+  },
+  
+  platform_models: function(){
+    this._reset();
+    $("#platform-models-container").show();
+    this.platformModelsList = new IONUX.Collections.PlatformModels();
+    var platformModelsView = new IONUX.Views.PlatformModelsView({collection:this.platformModelsList});
+    this.platformModelsList.fetch();
   },
 
   platform_model_new: function() {
@@ -193,6 +202,14 @@ IONUX.Router = Backbone.Router.extend({
     var fpModel = new IONUX.Models.FrameOfReferenceFacepage({frame_of_reference_id: frame_of_reference_id});
     this.forView = new IONUX.Views.FramesOfReferenceFacepage({model: fpModel});
     fpModel.fetch();
+  },
+
+  users: function() {
+    this._reset();
+    $("#users-container").show();
+    this.usersList = new IONUX.Collections.Users();
+    this.usersListView = new IONUX.Views.UsersView({collection: this.usersList});
+    this.usersList.fetch();
   },
   
   user_facepage : function(user_id) {

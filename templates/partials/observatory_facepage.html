@@ -128,8 +128,8 @@
 					</tr>
 					<% _.each(participants, function(obj) { %>
 						<tr>
-							<td><a href="/users/<%= obj._id %>/"><%= obj.contact.name %></a></td>
-							<td><%= obj.contact.email %></td>
+							<td><a href="/users/<%= obj._id %>/"><%= obj.user_info.contact.name %></a></td>
+							<td><%= obj.user_info.contact.email %></td>
 							<td><%= obj.ts_updated %></td>
 						</tr>
 					<% }); %>

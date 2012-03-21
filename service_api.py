@@ -210,11 +210,6 @@ class ServiceApi(object):
                     roles_str = roles_str + str(role["name"])
                 session['roles'] = roles_str
                 return
-
-    @staticmethod
-    def find_user_info(user_id):
-        params={'user_id': user_id}
-        return service_gateway_post('identity_management', 'find_user_info_by_id', params)
     
     @staticmethod
     def find_all_user_infos():
@@ -233,6 +228,17 @@ class ServiceApi(object):
         return service_gateway_post('identity_management', 'update_user_info', params)
     
     @staticmethod
+    def find_users():
+        resp = []
+        user_identities = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'UserIdentity'})[0]
+        for user_identity in user_identities:
+            user_info = ServiceApi.find_user_info(user_identity["_id"])
+            user_identity["user_info"] = user_info
+            resp.append(user_identity)
+
+        return resp
+    
+    @staticmethod
     def find_user(user_id):
         user = service_gateway_get('identity_management', 'read_user_identity', params={'user_id': user_id})
         
@@ -241,22 +247,36 @@ class ServiceApi(object):
             user['credentials'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': user_id, 'predicate': 'hasCredentials', 'object_type': 'UserCredentials'})[0]
 
             # USER INFO
-            user['user_info'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': user_id, 'predicate': 'hasInfo'})[0]
+            user['user_info'] = ServiceApi.find_user_info(user_id)
 
             # ROLES
-            user['roles'] = service_gateway_get('org_management', 'find_all_roles_by_user', params={'user_id': user_id})
-
+            roles = service_gateway_get('org_management', 'find_all_roles_by_user', params={'user_id': user_id})
+            role_list = []
+            for org in roles:
+                for role in roles[org]:
+                    role["org"] = org
+                    role_list.append(role)
+            user['roles'] = role_list
+ 
             # POLICIES
             user['policies'] = service_gateway_get('policy_management', 'find_resource_policies', params={'resource_id': user_id})
 
             # OWNED RESOURCES , 'id_only': False
-            user['owned_resources'] = service_gateway_get('resource_registry', 'find_subjects', params={'predicate': 'hasOwner', 'object': user_id})#[0]
+            user['owned_resources'] = service_gateway_get('resource_registry', 'find_subjects', params={'predicate': 'hasOwner', 'object': user_id, 'id_only': False})#[0]
             
             # EVENTS
             user['recent_events'] = []
             user['user_requests'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': user_id, 'predicate': 'hasRequest'})[0]
 
         return user
+
+    @staticmethod
+    def find_user_info(user_id):
+        try:
+            user_info = service_gateway_get('identity_management', 'find_user_info_by_id', params={'user_id': user_id})
+        except:
+            user_info = {'contact': {'name': '???', 'email': '???', 'phone': '???'}}
+        return user_info
 
     @staticmethod
     def handle_user_request(marine_facility_id, request_id, action, reason=None):
@@ -296,10 +316,8 @@ class ServiceApi(object):
             participants = service_gateway_get('resource_registry', 'find_objects', params={'subject': org_id, 'predicate': 'hasMembership'})[0]
             
             for participant in participants:
-                user_info = service_gateway_get('resource_registry', 'find_objects', params={'subject': participant.get('_id'), 'predicate': 'hasInfo'})[0][0]
-
-                # Remove user_info id or just add name.
-                marine_facility['participants'].append(user_info)
+                participant["user_info"] = ServiceApi.find_user_info(participant["_id"])
+                marine_facility['participants'].append(participant)
 
             marine_facility['roles'] = service_gateway_get('org_management', 'find_org_roles', params={'org_id': org_id})
             

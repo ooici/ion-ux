@@ -35,7 +35,17 @@ IONUX.Collections.Platforms = Backbone.Collection.extend({
 
 IONUX.Collections.PlatformModels = Backbone.Collection.extend({
   model: IONUX.Models.PlatformModel,
-  url: "/platforms_models/",
+  url: "/platform_models/",
+
+  parse: function(resp) {
+    return resp.data;
+  }
+});
+
+
+IONUX.Collections.Users = Backbone.Collection.extend({
+  model: IONUX.Models.User,
+  url: "/users/",
 
   parse: function(resp) {
     return resp.data;

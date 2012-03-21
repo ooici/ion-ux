@@ -1,0 +1,34 @@
+<h1>Collection: Users</h1>
+
+<div id="lca-collections" class="row">
+	<div class="span2 test">
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Information</h3>
+			<strong>Resources in List: </strong><span id="row-count"></span>
+		</section>
+	</div>
+		
+	<div class="span8 test">
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Users</h3>
+			<table id="users-container" class="table datatable-ize" width="100%">
+				<thead>
+					<th>OOI ID</th>
+					<th>Name</th>
+					<th>Email</th>
+					<th>Credential Subject</th>
+				</thead>
+                <tbody>
+			    <% _.each(collection, function(obj) { %>
+						<tr>
+							<td><a href="/users/<%= obj._id %>/"><%= obj._id %></a></td>
+							<td><%= obj.user_info.contact.name %></td>
+							<td><%= obj.user_info.contact.email %></td>
+							<td><%= obj.name %></td>
+						</tr>
+			    <% }); %>
+			    </tbody>
+			</table>		
+		</section>
+	</div>
+</div>

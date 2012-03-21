@@ -465,6 +465,39 @@ IONUX.Views.PlatformCreateNewView = IONUX.Views.CreateNewView.extend({
   // }
 });
 
+IONUX.Views.UsersView = Backbone.View.extend({
+  el:"#users-container",
+  template: _.template($("#users-tmpl").html()),
+
+  initialize: function(){
+    _.bindAll(this, "render");
+    this.collection.bind("reset", this.render);
+  },
+  
+  render: function(){
+    this.$el.html(this.template({"collection":this.collection.toJSON()}));
+    $('.datatable-ize').dataTable();
+    return this;
+  },
+});
+
+
+IONUX.Views.PlatformModelsView = Backbone.View.extend({
+  el:"#platform-models-container",
+  template: _.template($("#platform-models-tmpl").html()),
+
+  initialize: function(){
+    _.bindAll(this, "render");
+    this.collection.bind("reset", this.render);
+  },
+  
+  render: function(){
+    this.$el.html(this.template({"collection":this.collection.toJSON()}));
+    $('.datatable-ize').dataTable();
+    return this;
+  },
+});
+
 
 IONUX.Views.ObservatoryModalView = Backbone.View.extend({
   el: "#observatory-modal",
@@ -624,6 +657,8 @@ IONUX.Views.PlatformModelFacepage = Backbone.View.extend({
 
   render: function(){
     this.$el.html(this.template(this.model.toJSON())).show();
+    $('.datatable-ize').dataTable();
+    return this;
   }
 });
 
@@ -869,6 +904,8 @@ IONUX.Views.UserFacepage = Backbone.View.extend({
 
   render: function(){
     this.$el.empty().html(this.template(this.model.toJSON())).show();
+    $('.datatable-ize').dataTable();
+    return this;
   }
 });
 

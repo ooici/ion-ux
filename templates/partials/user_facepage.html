@@ -1,4 +1,4 @@
-<h1>User: <%= contact.name %></h1>
+<h1>User: <%= user_info.contact.name %></h1>
 
 <div class="row">
 	<div class="span2">
@@ -7,7 +7,7 @@
 			<section class="wrapper">
 				<h3 class="wrapper-heading">Identification</h3>
 				<p>
-					<strong>Name:</strong> <%= contact.name %><br />
+					<strong>Name:</strong> <%= user_info.contact.name %><br />
 					<strong>ID:</strong> <span style="word-wrap:break-word;"><%= _id %></span><br />
 				</p>
 			</section>
@@ -21,8 +21,8 @@
 		<section class="wrapper">
 			<h3 class="wrapper-heading">Contact</h3>
 			<p>
-				<strong>Email:</strong> <%= contact.email %><br />
-				<strong>Phone:</strong> <%= contact.phone %><br />
+				<strong>Email:</strong> <%= user_info.contact.email %><br />
+				<strong>Phone:</strong> <%= user_info.contact.phone %><br />
 			</p>
 		</section>
 	</div>
@@ -31,20 +31,24 @@
 			<h3 class="wrapper-heading">Resource Access</h3>
 			<section class="wrapper">
 				<h3 class="wrapper-heading">Resources</h3>
-				<p>Owned resources?</p>
-				<table class="table">
-					<tr>
+				<table id="owned-resources-container" class="table datatable-ize" width="100%">
+					<thead>
+						<th>ID</th>
 						<th>Name</th>
 						<th>Description</th>
 						<th>Updated</th>
-					</tr>
+					</thead>
+					<tbody>
 					<% _.each(owned_resources, function(obj) { %>
 						<tr>
+							<!-- <td><a href="/resources/show/<%= obj._id %>/"><%= obj._id %></a></td> -->
+							<td><%= obj._id %></td>
 							<td><%= obj.name %></td>
 							<td><%= obj.description %></td>
 							<td><%= obj.ts_updated %></td>
 						</tr>
 					<% }); %>
+					</tbody>
 				</table>
 			</section>
 		</section>
@@ -54,12 +58,14 @@
 				<h3 class="wrapper-heading">Roles</h3>
 				<table class="table">
 					<tr>
+						<th>Org</th>
 						<th>Name</th>
 						<th>Description</th>
 						<th>Updated</th>
 					</tr>
-					<% _.each(roles['ION'], function(obj) { %>
+					<% _.each(roles, function(obj) { %>
 						<tr>
+							<td><%= obj.org %></td>
 							<td><%= obj.name %></td>
 							<td><%= obj.description %></td>
 							<td><%= obj.ts_updated %></td>
