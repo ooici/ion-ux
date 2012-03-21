@@ -178,8 +178,8 @@ def observatories():
             # 
             # print str(marine_facility)
             
-#            return 'True'
-            return redirect('/observatories/' + marine_facility_id)
+            return 'True'
+            # return redirect('/observatories/' + marine_facility_id)
         else:
             resp_data = ServiceApi.find_by_resource_type('MarineFacility')
             
