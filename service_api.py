@@ -75,7 +75,7 @@ class ServiceApi(object):
     
     @staticmethod
     def find_tim():
-        tim = service_gateway_get('identity_management', 'find_user_identity_by_name', params={'name': "/DC=org/DC=cilogon/C=US/O=Google/CN=Tim%20Ampe%20A448"})
+        tim = service_gateway_get('identity_management', 'find_user_identity_by_name', params={'name': ""})
         print str(tim)
         return tim
     
