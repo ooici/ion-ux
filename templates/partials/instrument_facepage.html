@@ -77,6 +77,29 @@
 			</table>
 		</section>
 		
+		
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Data Products</h3>
+				<table class="table">
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+						<th>Raw Data Product Level</th>
+						<th>Parsed Data Product Level</th>
+						<th>Updated</th>
+					</tr>
+					<% _.each(data_products, function(key) { %>
+							<tr>
+								<td><a href="/data_products/<%= obj._id %>/"><%= obj.name %></a></td>
+								<td><%= obj.description %></td>
+								<td><%= obj.raw_data_product.data_product_level %></td>
+								<td><%= obj.parsed_data_product.data_product_level %></td>
+								<td><%= obj.ts_updated %></td>
+							</tr>
+					<% }); %>
+				</table>
+			</section>
+		
 		<section class="wrapper">
 			<h3 class="wrapper-heading">Administration</h3>
 			<section class="wrapper">
@@ -120,6 +143,7 @@
 							</tr>
 						<% }); %>
 					<% }); %>
+				</table>
 			</section>
 		</section>
 	</div>

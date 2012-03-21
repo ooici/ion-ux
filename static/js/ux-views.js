@@ -328,26 +328,6 @@ IONUX.Views.NewInstrumentView = IONUX.Views.CreateNewView.extend({
 });
 
 
-// IONUX.Views.NewInstrumentModelView = IONUX.Views.CreateNewView.extend({
-//   el: "#instrument-model-new-container",
-// 
-//   template: _.template($("#new-instrument-model-tmpl").html()),
-// 
-//   initialize: function(){
-//     _.bindAll(this, "create_new", "render");
-//     this.model.bind("change", this.render)
-//   },
-// 
-//   render: function(){
-//     this.$el.empty().html(this.template(this.model.toJSON())).show();
-//     return this;
-//   },
-// });
-// 
-// 
-
-
-
 IONUX.Views.ObservatoryCreateNewView = IONUX.Views.CreateNewView.extend({
 
   el: "#observatories-new",
@@ -779,6 +759,27 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
     return false;
   }
 });
+
+
+IONUX.Views.InstrumentModels = Backbone.View.extend({
+  el:"#instrument-models-container",
+
+  template: _.template($("#instrument-models-tmpl").html()),
+
+  initialize: function(){
+    _.bindAll(this, "render");
+    this.collection.bind("reset", this.render);
+  },
+  
+  render: function(){
+    this.$el.html(this.template({"collection": this.collection.toJSON()}));
+    return this;
+  }
+});
+
+
+
+
 
 IONUX.Views.InstrumentModelFacepage = Backbone.View.extend({
   el: "#instrument-model-facepage-container",

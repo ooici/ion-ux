@@ -61,12 +61,15 @@ IONUX.Models.PlatformModelFacepageModel = Backbone.Model.extend({
   } 
 });
 
-
 IONUX.Models.Instrument = Backbone.Model.extend({
   url: "/instruments/",
   idAttribute: "_id"
 });
 
+IONUX.Models.Instrument = Backbone.Model.extend({
+  url: "/instrument_models/",
+  idAttribute: "_id"
+});
 
 IONUX.Models.InstrumentFacepageModel = Backbone.Model.extend({
   url: function(){

@@ -362,6 +362,15 @@ def start_instrument_agent(instrument_device_id, agent_command):
     return jsonify(data=command_response)
 
 
+@app.route('/instrument_models/', methods=['GET'])
+def instrument_models():
+    if request.is_xhr:
+        instrument_model = ServiceApi.find_by_resource_type('InstrumentModel')
+        return jsonify(data=instrument_model)
+    else:
+        return render_app_template(request.path)
+
+
 @app.route('/instrument_models/<instrument_model_id>/', methods=['GET'])
 def instrument_model_facepage(instrument_model_id):
     if request.is_xhr:

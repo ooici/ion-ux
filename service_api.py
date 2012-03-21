@@ -436,6 +436,7 @@ class ServiceApi(object):
             # POLICIES
             instrument['policies'] = service_gateway_get('policy_management', 'find_resource_policies', params={'resource_id': instrument_device_id})
 
+
         
         return instrument
 
