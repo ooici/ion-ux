@@ -29,7 +29,21 @@
 	</div>
 	<div class="span8">
 		<section class="wrapper">
-			<h3 class="wrapper-heading">Placeholder</h3>
+			<h3 class="wrapper-heading">Related Devices</h3>
+			<table class="table">
+				<tr>
+					<th>Name</th>
+					<th>Description</th>
+					<th>Updated</th>
+				</tr>
+				<% _.each(related_devices, function(obj) { %>
+					<tr>
+						<td><a href="/platforms/<%= obj._id %>/"><%= obj.name %></a></td>
+						<td><%= obj.description %></td>
+						<td><%= obj.ts_updated %></td>
+					</tr>
+				<% }); %>
+			</table>
 			
 		</section>
 	</div>
