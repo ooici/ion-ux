@@ -1,0 +1,32 @@
+<h1>Collection: Instrument Models</h1>
+
+<div id="lca-collections" class="row">
+	<div class="span2">
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Information</h3>
+			<strong>Resources in List: </strong><span id="row-count"></span>
+		</section>
+	</div>
+		
+	<div class="span8">	
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Instrument Models</h3>
+			<table id="instruments-table" class="table" width="100%">
+				<thead>
+					<th>Name</th>
+					<th>Description</th>
+					<th>Updated</th>
+				</thead>
+				<tbody>
+				<% _.each(collection, function(obj) { %>
+					<tr>
+						<td><a href="/instrument_models/<%= obj._id %>/"><%= obj.name %></a></td>
+						<td><%= obj.description %></td>
+						<td><%= obj.ts_updated %></td>
+					</tr>
+			    <% }); %>
+			    </tbody>
+			</table>
+		</section>
+	</div>
+</div>
