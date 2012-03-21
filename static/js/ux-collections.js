@@ -83,6 +83,17 @@ IONUX.Collections.InstrumentAgents = Backbone.Collection.extend({
 });
 
 
+IONUX.Collections.DataProcessDefinitions = Backbone.Collection.extend({
+  model: IONUX.Models.DataProcessDefinition,
+  url: "/data_process_definitions/",
+
+  parse: function(resp) {
+    return resp.data;
+  }
+});
+
+
+
 IONUX.Collections.ObservatoryDataProductCollection = Backbone.Collection.extend({
   model: IONUX.Models.ObservatoryDataProduct,
   url: function() {

@@ -395,6 +395,15 @@ def instrument_agent_facepage(instrument_agent_id):
     else:
         return render_app_template(request.path)
 
+
+@app.route('/data_process_definitions/')
+def data_process_definitions():
+    if request.is_xhr:
+        data_process_definitions = ServiceApi.find_by_resource_type('DataProcessDefinition')
+        return jsonify(data=data_process_definitions)
+    else:
+        return render_app_template(request.path)
+
 @app.route('/data_process_definitions/<data_process_definition_id>/')
 def data_process_definition_facepage(data_process_definition_id):
     if request.is_xhr:    

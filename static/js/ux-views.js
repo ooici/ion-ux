@@ -795,6 +795,22 @@ IONUX.Views.InstrumentAgents = Backbone.View.extend({
 });
 
 
+IONUX.Views.DataProcessDefinitions = Backbone.View.extend({
+  el:"#data-process-definitions-container",
+
+  template: _.template($("#data-process-definitions-tmpl").html()),
+
+  initialize: function(){
+    _.bindAll(this, "render");
+    this.collection.bind("reset", this.render);
+  },
+  
+  render: function(){
+    this.$el.html(this.template({"collection": this.collection.toJSON()}));
+    return this;
+  }
+});
+
 
 
 IONUX.Views.InstrumentModelFacepage = Backbone.View.extend({

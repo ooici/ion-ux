@@ -25,6 +25,7 @@ IONUX.Router = Backbone.Router.extend({
     "instrument_agents/:instrument_agent_id/": "instrument_agent_facepage",
     "frame_of_references/new/": "frame_of_reference_new",
     "frame_of_references/:frame_of_reference_id/": "frame_of_reference_facepage",
+    "data_process_definitions/": "data_process_definitions",
     "data_process_definitions/:data_process_definition_id/": "data_process_definition_facepage",
     "data_products/": "data_products",
     "data_products/:data_product_id/": "data_product_facepage",
@@ -193,6 +194,14 @@ IONUX.Router = Backbone.Router.extend({
     var fpModel = new IONUX.Models.InstrumentAgentFacepageModel({instrument_agent_id: instrument_agent_id});
     new IONUX.Views.InstrumentAgentFacepage({model: fpModel});
     fpModel.fetch();
+  },
+  
+  data_process_definitions: function() {
+    this._reset();
+    $("#data-process-definitions-container").show();
+    this.dataProcessDefinitionsList = new IONUX.Collections.DataProcessDefinitions();
+    var dataProcessDefinitionsView = new IONUX.Views.DataProcessDefinitions({collection: this.dataProcessDefinitionsList});
+    this.dataProcessDefinitionsList.fetch();
   },
   
   data_process_definition_facepage: function(data_process_definition_id) {
