@@ -25,6 +25,12 @@ AGENT_REQUEST_TEMPLATE = {
 class ServiceApi(object):
     
     @staticmethod
+    def create_obsevatory(object_schema):
+        print 'OBJECTSCHEMA++++++++++++++++++++++++++++++++++++++++++++++\n', str(object_schema)
+        return object_schema
+    
+    
+    @staticmethod
     def test_create_marine_facility():
         marine_facility_template = {"serviceRequest": {
             "serviceName": "marine_facility_management",
@@ -48,7 +54,7 @@ class ServiceApi(object):
                         }}]}}}
         
         
-        marine_facilty = service_gateway_post("marine_facility_management", "create_marine_facility", params=marine_facility_management)
+        marine_facility = service_gateway_post("marine_facility_management", "create_marine_facility", params=marine_facility_template)
         return marine_facility
                     
         # owner = form_data['owner']
@@ -900,11 +906,14 @@ def service_gateway_post(service_name, operation_name, params={}):
 
     if resp.status_code == 200:
         resp = json.loads(resp.content)
-
-        if type(resp) == dict:
-            return resp['data']['GatewayResponse']
-        elif type(resp) == list:
-            return resp['data']['GatewayResponse'][0]
+        
+        if resp['data'].has_key('GatewayError'):
+            return resp['data']['GatewayError']
+        else:
+            if type(resp) == dict:
+                return resp['data']['GatewayResponse']
+            elif type(resp) == list:
+                return resp['data']['GatewayResponse'][0]
 
 def build_agent_request(agent_id, operation_name, params={}):
     url = '%s/%s/%s' % (AGENT_GATEWAY_BASE_URL, agent_id, operation_name)    

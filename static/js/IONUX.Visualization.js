@@ -1,6 +1,6 @@
 // // Global variables
 // var chart_replay, data_replay, dp_id_replay, dp_id_token_replay, query_replay;
-// var container_server_replay = "http://67.58.49.200:5000";
+// var container_server_replay = "http://67.58.49.196:5000";
 // var datatable_ready_flag_relay;
 // google.load("visualization", "1", {packages: ['annotatedtimeline']});
 // google.setOnLoadCallback(drawChartReplay);
@@ -8,7 +8,8 @@
 // function drawChartReplay(data_product_id) {
 //       var datatable_ready_flag_replay = false;
 //       // dp_id=prompt("Please enter Data Product Id","");
-//      dp_id_replay = '54202467fc474adc98c3bbd822f91ecf'
+//      // dp_id_replay = '54202467fc474adc98c3bbd822f91ecf'
+//      dp_id_replay = data_product_id;
 // 
 //       chart_replay = new google.visualization.AnnotatedTimeLine(document.getElementById('chart_replay_div'));
 // 
@@ -124,6 +125,24 @@
 //  chart_replay.redraw();
 // 
 // }
+// 
+// 
+// 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -138,8 +157,9 @@ google.load("visualization", "1", {packages: ['annotatedtimeline']});
 // google.setOnLoadCallback(drawChart);
 
 function drawChart(data_product_id) {
- 
-     var dp_id = '31e4624ba5cc481c916777a9f6eaca71'
+
+     // var dp_id = 'a6b9051a10694888ae176077cc652bc5'
+     var dp_id = data_product_id
       // dp_id=prompt("Please enter Data Product Id","");
      // var query = new google.visualization.Query("http://localhost:5000/ion-service/viz_products/google_realtime_dt/stream1");
       var query = new google.visualization.Query("http://67.58.49.196:5000/ion-service/visualization_service/get_google_realtime_dt?data_product_id=" + dp_id +"&return_format=raw_json");

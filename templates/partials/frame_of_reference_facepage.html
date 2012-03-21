@@ -1,46 +1,40 @@
-<h1>Frame of Reference: <%= name %></h1>
+<h1>Frame of Reference: <%= type_ %>: <%= name %></h1>
 
 <div class="row">
 	<div class="span2">
+		<section class="wrapper">
+			<h3 class="wrapper-heading">Information</h3>
 			<section class="wrapper">
-				<h3 class="wrapper-heading">Information</h3>
-				<section class="wrapper">
-					<h3 class="wrapper-heading">Identification</h3>
-					<p>
-						<strong>Name:</strong> <%= name %><br />
-						<strong>ID:</strong> <span style="word-wrap:break-word;"><%= _id %></span><br />
-					</p>
-				</section>
-				<section class="wrapper">
-					<h3 class="wrapper-heading">Description</h3>
-					<p>
-						<%= description %>
-					</p>
-				</section>
-				<section class="wrapper">
-					<h3 class="wrapper-heading">Contact</h3>
-					<p>
-						<strong>Name:</strong> <%= owner.contact.name %><br />
-						<strong>Email:</strong> <%= owner.contact.email %><br />
-						<strong>Phone:</strong> <%= owner.contact.phone %><br />
-					</p>
-				</section>
-
+				<h3 class="wrapper-heading">Identification</h3>
+				<p>
+					<strong>Name:</strong> <%= name %><br />
+					<strong>ID:</strong> <span style="word-wrap:break-word;"><%= _id %></span><br />
+				</p>
 			</section>
-
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Description</h3>
+				<p>
+					<%= description %>
+				</p>
+			</section>
+			<section class="wrapper">
+				<h3 class="wrapper-heading">Contact</h3>
+				<p>
+					<strong>Name:</strong> <%= owner.contact.name %><br />
+					<strong>Email:</strong> <%= owner.contact.email %><br />
+					<strong>Phone:</strong> <%= owner.contact.phone %><br />
+				</p>
+			</section>
+		</section>
 	</div>
 	<div class="span8">
 		<section class="wrapper">
 			<h3 class="wrapper-heading">Definitions</h3>
 			<section class="wrapper">
 				<h3 class="wrapper-heading">Dimensions</h3>
-				<p>...</p>
+				<p></p>
 			</section>
 		</section>
-		
-		
-		
-		<h1>CONFIRM WITH TIM ON HOW TO ITERATE</h1>
 		<section class="wrapper">
 			<h3 class="wrapper-heading">Relationships</h3>
 			<section class="wrapper">
@@ -52,15 +46,17 @@
 						<th>Type</th>
 						<th>Updated</th>
 					</tr>
-					<% _.each(subordinates, function(obj) { %>
-						<tr>
-							<td><%= obj.name %></td>
-							<td><%= obj.description %></td>
-							<td><%= obj.type_ %></td>
-							<td><%= obj.ts_updated %></td>
-						</tr>
+					<% _.each(subordinates, function(key) { %>
+						<% _.each(key, function(obj) { %>
+							<tr>
+								<td><a href="/frame_of_references/<%= obj._id %>/"><%= obj.name %></a></td>
+								<td><%= obj.description %></td>
+								<td><%= obj.type_ %></td>
+								<td><%= obj.ts_updated %></td>
+							</tr>
+						<% }); %>
 					<% }); %>
-				</table>
+					</table>
 			</section>
 			<section class="wrapper">
 				<h3 class="wrapper-heading">Superiors</h3>
@@ -71,13 +67,15 @@
 						<th>Type</th>
 						<th>Updated</th>
 					</tr>
-					<% _.each(superiors, function(obj) { %>
-						<tr>
-							<td><%= obj.name %></td>
-							<td><%= obj.description %></td>
-							<td><%= obj.type_ %></td>
-							<td><%= obj.ts_updated %></td>
-						</tr>
+					<% _.each(superiors, function(key) { %>
+						<% _.each(key, function(obj) { %>
+							<tr>
+								<td><a href="/frame_of_references/<%= obj._id %>/"><%= obj.name %></a></td>
+								<td><%= obj.description %></td>
+								<td><%= obj.type_ %></td>
+								<td><%= obj.ts_updated %></td>
+							</tr>
+						<% }); %>
 					<% }); %>
 				</table>
 			</section>

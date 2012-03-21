@@ -226,20 +226,9 @@ IONUX.Router = Backbone.Router.extend({
   handle_navigation: function(){
     var self = this;
     $(document).on("click", "a", function(e) {
-      hrefattr = $(this).attr('href');
-      if (hrefattr.startsWith('https://ux.oceanobservatories.org/login')) {
-         return true;
-      }
+      if ($(e.target).hasClass('external')) return true;
       self.navigate($(this).attr('href'), {trigger:true});
       return false;
-        // hrefattr = $(this).attr('href');
-        // if (hrefattr.startsWith('https://ux.oceanobservatories.org/login')) {
-        //   return true;
-        // }
-        // else {
-        //   self.navigate($(this).attr('href'), {trigger:true});
-        //   return false;
-        // }
     });
   },
 

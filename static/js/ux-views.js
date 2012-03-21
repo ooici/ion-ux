@@ -19,7 +19,7 @@ IONUX.Views.CreateNewView = Backbone.View.extend({
   events: {
     "click input[type='submit']":"create_new",
     "submit input[type='submit']":"create_new",
-    "click .create": "create_new",
+    // "click .create": "create_new",
     "click .cancel":"cancel"
   },
   
@@ -841,6 +841,7 @@ IONUX.Views.DataProductFacepage = Backbone.View.extend({
     this.$el.empty().html(this.template(this.model.toJSON())).show();
     var data_product_id = this.model.get('_id');
     drawChart(data_product_id);
+    // drawChartReplay(data_product_id);
   }
 });
 
