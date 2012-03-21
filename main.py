@@ -152,27 +152,20 @@ def observatories():
     if request.is_xhr:
         if request.method == 'POST':
             form_data = json.loads(request.data)
-            print '\n\nForm Data----------------------------------', str(form_data)
-            
-            user_info_id = form_data.pop('user_info_id')
-            print '\n\nOwner Info ID-----------------------------', str(user_info_id)
-            
-            user_id = ServiceApi.find_user_id_by_user_info_id(user_info_id)
-            print '\n\nOwner User ID-----------------------------', str(user_id)
-                        
+            manager_user_id = form_data.pop('user_id')
             object_schema = build_schema_from_form(form_data, service="marine_facilities")
-            print '\n\nObject Schema-----------------------------', str(object_schema)
-
-            post_request = gateway_post_request('%s/marine_facility_management/create_marine_facility' % SERVICE_GATEWAY_BASE_URL, object_schema)
-            print '\n\nRequest Result----------------------------', str(post_request.content)
-            
-            marine_facility_response = json.loads(post_request.content)
-            marine_facility_id = marine_facility_response['data']['GatewayResponse']
-            print '\n\nMarine Facility ID------------------------', str(marine_facility_id)
-            
-            assign_ownership = ServiceApi.assign_marine_facility_org_manager(marine_facility_id, user_id)
-            print '\n\nAssign Ownership--------------------------', str(marine_facility_id)
-
+            marine_facility_id = ServiceApi.create_observatory(object_schema, manager_user_id)
+#            form_data = json.loads(request.data)
+#            manager_user_id = form_data.pop('user_id')
+#            post_request = gateway_post_request('%s/marine_facility_management/create_marine_facility' % SERVICE_GATEWAY_BASE_URL, object_schema)
+#            print '\n\nRequest Result----------------------------', str(post_request.content)
+#            
+#            marine_facility_response = json.loads(post_request.content)
+#            marine_facility_id = marine_facility_response['data']['GatewayResponse']
+#            print '\n\nMarine Facility ID------------------------', str(marine_facility_id)
+#            
+#            assign_ownership = ServiceApi.assign_marine_facility_org_manager(marine_facility_id, user_id)
+#            print '\n\nAssign Ownership--------------------------', str(marine_facility_id)
             
             # resp_data = {"success":True}
             # raw_form = json.loads(request.data)
@@ -185,56 +178,18 @@ def observatories():
             # 
             # print str(marine_facility)
             
-            return 'True'
+#            return 'True'
+            return redirect('/observatories/' + marine_facility_id)
         else:
             resp_data = ServiceApi.find_by_resource_type('MarineFacility')
-            available_users = ServiceApi.find_all_user_infos()
             
         return jsonify(data=resp_data)
     else:
         return render_app_template(request.path)
 
-
-# @app.route('/observatories/', methods=["GET", "POST"])
-# def observatories():
-#     if request.is_xhr:
-#         if request.method == 'POST':
-#             # object_schema = build_schema_from_form(form_data, service="marine_facilities")
-#             # post_request = gateway_post_request(
-#             #            '%s/marine_facility_management/create_marine_facility' % SERVICE_GATEWAY_BASE_URL,
-#             #            object_schema
-#             #        )
-#             #        print '\nPOST_REQUEST_RESULT!-----------------------------------------\n', str(post_request.content)
-#             #        mf_resp = json.loads(post_request.content)
-#             #        mf_id = mf_resp['data']['GatewayResponse']
-#             #        print '\nMF_ID--------------------------------------------------------\n', str(mf_id)
-#             #        
-#             #        gateway_post_request
-# 
-#             # resp_data = {"success":True}
-#             # raw_form = json.loads(request.data)
-#             # print 'raw_form IN MAIN.PY\n', str(raw_form)
-# 
-# 
-#             form_data = dict_from_form_data(json.loads(request.data))
-#             print 'FORM_DATA IN MAIN.PY\n', str(form_data)
-#             marine_facility = ServiceApi.create_observatory(form_data)
-# 
-#             print str(marine_facility)
-# 
-#             return 'True'
-#         else:
-#             resp_data = ServiceApi.find_by_resource_type('MarineFacility')
-#             available_users = ServiceApi.find_all_user_infos()
-# 
-#         return jsonify(data=resp_data)
-#     else:
-#         return render_app_template(request.path)
-
-
 @app.route('/observatories/all_users/', methods=['GET'])
 def observatories_all_users():
-    all_users = ServiceApi.find_all_users()
+    all_users = ServiceApi.find_users()
     return jsonify(data=all_users)
 
 @app.route('/observatories/<marine_facility_id>/', methods=['GET', 'POST'])
@@ -631,9 +586,9 @@ def catchall(catchall):
 # payload if cookies found in session.
 def gateway_post_request(url, payload):
     # conditionally add user id and expiry to request
-    if "user_id" in session:
-        payload['serviceRequest']['params']['requestor'] = session['user_id']
-        payload['serviceRequest']['params']['expiry'] = session['valid_until']
+#    if "user_id" in session:
+#        payload['serviceRequest']['params']['requestor'] = session['user_id']
+#        payload['serviceRequest']['params']['expiry'] = session['valid_until']
 
     data={'payload': json.dumps(payload)}
     print "POST request\n  url: %s\n  data: %s" % (url,data)

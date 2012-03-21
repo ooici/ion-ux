@@ -27,11 +27,13 @@ class ServiceApi(object):
     
     
     @staticmethod
-    def create_observatory(form_data):
-        print 'FORM DATA IN "SERVICEAPI: "\n', str(type(form_data))
-        marine_facility = service_gateway_post('marine_facility_management', 'create_marine_facility', params=form_data)
-        return marine_facility
-    
+    def create_observatory(data, manager_user_id):
+        marine_facility_id = service_gateway_post('marine_facility_management', 'create_marine_facility', params=data["serviceRequest"]["params"])
+
+        org_id = service_gateway_get('marine_facility_management', 'find_marine_facility_org', params={'marine_facility_id': marine_facility_id})
+        enrollment = service_gateway_post('org_management', 'enroll_member', params={'org_id': org_id, 'user_id': manager_user_id})
+        management = service_gateway_post('org_management', 'grant_role', params={'org_id': org_id, 'user_id': manager_user_id, 'role_name': 'ORG_MANAGER'})
+        return marine_facility_id
     
     @staticmethod
     def test_create_marine_facility():
@@ -45,7 +47,7 @@ class ServiceApi(object):
                     "contact": {
                         "name": "Test User",
                         "phone": "858-555-1212",
-                        "emeil": "test@user.com",
+                        "email": "test@user.com",
                         "city": "San Diego",
                         "postalcode": "92093"
                     },
@@ -59,41 +61,14 @@ class ServiceApi(object):
         
         marine_facility = service_gateway_post("marine_facility_management", "create_marine_facility", params=marine_facility_template)
         return marine_facility
-                    
-        # owner = form_data['owner']
-        # del form_data['owner']
-        # 
-        # marine_facility = service_gateway_post('marine_facility_management', 'create_marine_facility', params=form_data)
-        # marine_facility_id = marine_facility_id['_id']
-        # 
-        # # Make call to assign user.
-    
-    @staticmethod
-    def find_user_id_by_user_info_id(user_info_id):
-        user_id = service_gateway_get('resource_registry', 'find_subjects', params={'object': user_info_id, 'predicate': 'hasInfo'})[0][0]['_id']
-        return user_id
     
     @staticmethod
     def find_tim():
-        tim = service_gateway_get('identity_management', 'find_user_identity_by_name', params={'name': ""})
-        print str(tim)
-        return tim
-    
-    @staticmethod
-    def assign_marine_facility_org_manager(marine_facility_id, user_id):
-        org_id = service_gateway_get('marine_facility_management', 'find_marine_facility_org', params={'marine_facility_id': marine_facility_id})
-        enrollment = service_gateway_get('org_management', 'enroll_member', params={'org_id': org_id, 'user_id': user_id})
-        print '\nEnroll member------------------------------------------------------------------', str(enrollment)
-        
-        management = service_gateway_get('org_management', 'grant_role', params={'org_id': org_id, 'user_id': user_id, 'role_name': 'ORG_MANAGER'})
-        print '\nManagment----------------------------------------------------------------------', str(management)
-        
-        return True
-    
-    @staticmethod
-    def find_all_users():
-        all_users = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'UserInfo'})[0]
-        return all_users
+        users = ServiceApi.find_users()
+        for user in users:
+            if 'Tim Ampe' in user["name"]:
+                return user
+        return None
     
     @staticmethod
     def find_platform_models():
@@ -262,7 +237,7 @@ class ServiceApi(object):
             user['policies'] = service_gateway_get('policy_management', 'find_resource_policies', params={'resource_id': user_id})
 
             # OWNED RESOURCES , 'id_only': False
-            user['owned_resources'] = service_gateway_get('resource_registry', 'find_subjects', params={'predicate': 'hasOwner', 'object': user_id, 'id_only': False})#[0]
+            user['owned_resources'] = service_gateway_get('resource_registry', 'find_subjects', params={'predicate': 'hasOwner', 'object': user_id})[0]
             
             # EVENTS
             user['recent_events'] = []
@@ -275,7 +250,7 @@ class ServiceApi(object):
         try:
             user_info = service_gateway_get('identity_management', 'find_user_info_by_id', params={'user_id': user_id})
         except:
-            user_info = {'contact': {'name': '???', 'email': '???', 'phone': '???'}}
+            user_info = {'contact': {'name': '(Not Registered)', 'email': '(Not Registered)', 'phone': '???'}}
         return user_info
 
     @staticmethod
@@ -551,67 +526,10 @@ class ServiceApi(object):
         
         return frame_of_reference
 
-#    @staticmethod
-#    def test_find_breadcrumb():
-#        print "\n\n\n\n\n\n\n\n"
-#        print "USER ==============================================================================================="
-#        resources = ServiceApi.find_by_resource_type("UserIdentity")
-#        for resource in resources:
-#            bc_str, bc_dict = ServiceApi.find_breadcrumb(resource['_id'])
-#            print "User breadcrumb str <%s> breadcrumb dict <%s>" % (bc_str, str(bc_dict))
-#        
-#        print "OBSERVATORY ==============================================================================================="
-#        resources = ServiceApi.find_by_resource_type("MarineFacility")
-#        for resource in resources:
-#            bc_str, bc_dict = ServiceApi.find_breadcrumb(resource['_id'])
-#            print "Observatory breadcrumb str <%s> breadcrumb dict <%s>" % (bc_str, str(bc_dict))
-#        
-#        print "PLATFORM ==============================================================================================="
-#        resources = ServiceApi.find_by_resource_type("PlatformDevice")
-#        for resource in resources:
-#            bc_str, bc_dict = ServiceApi.find_breadcrumb(resource['_id'])
-#            print "Platform breadcrumb str <%s> breadcrumb dict <%s>" % (bc_str, str(bc_dict))
-#        
-#        print "PLATFORM MODEL ==============================================================================================="
-#        resources = ServiceApi.find_by_resource_type("PlatformModel")
-#        for resource in resources:
-#            bc_str, bc_dict = ServiceApi.find_breadcrumb(resource['_id'])
-#            print "Platform Model breadcrumb str <%s> breadcrumb dict <%s>" % (bc_str, str(bc_dict))
-#        
-#        print "INSTRUMENT ==============================================================================================="
-#        resources = ServiceApi.find_by_resource_type("InstrumentDevice")
-#        for resource in resources:
-#            bc_str, bc_dict = ServiceApi.find_breadcrumb(resource['_id'])
-#            print "Instrument breadcrumb str <%s> breadcrumb dict <%s>" % (bc_str, str(bc_dict))
-#        
-#        print "INSTRUMENT MODEL ==============================================================================================="
-#        resources = ServiceApi.find_by_resource_type("InstrumentModel")
-#        for resource in resources:
-#            bc_str, bc_dict = ServiceApi.find_breadcrumb(resource['_id'])
-#            print "Instrument Model breadcrumb str <%s> breadcrumb dict <%s>" % (bc_str, str(bc_dict))
-#        
-#        print "INSTRUMENT AGENT ==============================================================================================="
-#        resources = ServiceApi.find_by_resource_type("InstrumentAgent")
-#        for resource in resources:
-#            bc_str, bc_dict = ServiceApi.find_breadcrumb(resource['_id'])
-#            print "Instrument Agent breadcrumb str <%s> breadcrumb dict <%s>" % (bc_str, str(bc_dict))
-#        
-#        print "DATA PROCESS ==============================================================================================="
-#        resources = ServiceApi.find_by_resource_type("DataProcessDefinition")
-#        for resource in resources:
-#            bc_str, bc_dict = ServiceApi.find_breadcrumb(resource['_id'])
-#            print "Data Process breadcrumb str <%s> breadcrumb dict <%s>" % (bc_str, str(bc_dict))
-#
-#        print "DATA PRODUCT ==============================================================================================="
-#        resources = ServiceApi.find_by_resource_type("DataProduct")
-#        for resource in resources:
-#            bc_str, bc_dict = ServiceApi.find_breadcrumb(resource['_id'])
-#            print "Data Product breadcrumb str <%s> breadcrumb dict <%s>" % (bc_str, str(bc_dict))
-
     @staticmethod
     def find_qualified_deploy_path(resource_id):
         # Only works for objects that satisfy the 'hasDeployment' association check
-        resource = [service_gateway_get('resource_registry', 'read', params={'object_id': root})]
+        resource = [service_gateway_get('resource_registry', 'read', params={'object_id': resource_id})]
         deployment = service_gateway_get('resource_registry', 'find_objects', params={'subject': resource_id, 'predicate': 'hasDeployment', 'id_only': False})[0]
         if len(deployment) == 0:
             return resource['type_'] + '::' + resource['name'], [{'name': resource['name'], 'id': resource['_id'], 'type': resource['type_']}]
@@ -637,82 +555,6 @@ class ServiceApi(object):
         breadcrumb_str = breadcrumb_str + '/' + resource['type_'] + '::' + resource['name']
         breadcrumb_list.append({'name': resource['name'], 'id': resource['_id'], 'type': resource['type_']})
         return breadcrumb_str, breadcrumb_list
-
-#    @staticmethod
-#    def test_find_install_locations():
-#        print "MARINE FACILITY TO MARINE FACILITY ==============================================================================================="
-#        ret = ServiceApi.find_leaves('MarineFacility', 'MarineFacility')
-#        print "AAAAAAAAAAAAAAAA All ret <%s>" % str(ret)
-#        resources = ServiceApi.find_by_resource_type("MarineFacility")
-#        for resource in resources:
-#            ret = ServiceApi.find_leaves(resource['_id'], 'MarineFacility')
-#            print "SSSSSSSSSSSSSSSSS Single ret <%s>" % str(ret)
-#        print "MARINE FACILITY TO SITE ==============================================================================================="
-#        ret = ServiceApi.find_leaves('MarineFacility', 'Site')
-#        print "AAAAAAAAAAAAAAAA All ret <%s>" % str(ret)
-#        resources = ServiceApi.find_by_resource_type("MarineFacility")
-#        for resource in resources:
-#            ret = ServiceApi.find_leaves(resource['_id'], 'Site')
-#            print "SSSSSSSSSSSSSSSSS Single ret <%s>" % str(ret)
-#        print "MARINE FACILITY TO LOGICAL PLATFORM ==============================================================================================="
-#        ret = ServiceApi.find_leaves('MarineFacility', 'LogicalPlatform')
-#        print "AAAAAAAAAAAAAAAA All ret <%s>" % str(ret)
-#        resources = ServiceApi.find_by_resource_type("MarineFacility")
-#        for resource in resources:
-#            ret = ServiceApi.find_leaves(resource['_id'], 'LogicalPlatform')
-#            print "SSSSSSSSSSSSSSSSS Single ret <%s>" % str(ret)
-#        print "MARINE FACILITY TO LOGICAL INSTRUMENT ==============================================================================================="
-#        ret = ServiceApi.find_leaves('MarineFacility', 'LogicalInstrument')
-#        print "AAAAAAAAAAAAAAAA All ret <%s>" % str(ret)
-#        resources = ServiceApi.find_by_resource_type("MarineFacility")
-#        for resource in resources:
-#            ret = ServiceApi.find_leaves(resource['_id'], 'LogicalInstrument')
-#            print "SSSSSSSSSSSSSSSSS Single ret <%s>" % str(ret)
-#
-#        print "SITE TO SITE ==============================================================================================="
-#        ret = ServiceApi.find_leaves('Site', 'Site')
-#        print "AAAAAAAAAAAAAAAA All ret <%s>" % str(ret)
-#        resources = ServiceApi.find_by_resource_type("Site")
-#        for resource in resources:
-#            ret = ServiceApi.find_leaves(resource['_id'], 'Site')
-#            print "SSSSSSSSSSSSSSSSS Single ret <%s>" % str(ret)
-#        print "SITE TO LOGICAL PLATFORM ==============================================================================================="
-#        ret = ServiceApi.find_leaves('Site', 'LogicalPlatform')
-#        print "AAAAAAAAAAAAAAAA All ret <%s>" % str(ret)
-#        resources = ServiceApi.find_by_resource_type("Site")
-#        for resource in resources:
-#            ret = ServiceApi.find_leaves(resource['_id'], 'LogicalPlatform')
-#            print "SSSSSSSSSSSSSSSSS Single ret <%s>" % str(ret)
-#        print "SITE TO LOGICAL INSTRUMENT ==============================================================================================="
-#        ret = ServiceApi.find_leaves('Site', 'LogicalInstrument')
-#        print "AAAAAAAAAAAAAAAA All ret <%s>" % str(ret)
-#        resources = ServiceApi.find_by_resource_type("Site")
-#        for resource in resources:
-#            ret = ServiceApi.find_leaves(resource['_id'], 'LogicalInstrument')
-#            print "SSSSSSSSSSSSSSSSS Single ret <%s>" % str(ret)
-#
-#        print "LOGICAL PLATFORM TO LOGICAL PLATFORM ==============================================================================================="
-#        ret = ServiceApi.find_leaves('LogicalPlatform', 'LogicalPlatform')
-#        print "AAAAAAAAAAAAAAAA All ret <%s>" % str(ret)
-#        resources = ServiceApi.find_by_resource_type("LogicalPlatform")
-#        for resource in resources:
-#            ret = ServiceApi.find_leaves(resource['_id'], 'LogicalPlatform')
-#            print "SSSSSSSSSSSSSSSSS Single ret <%s>" % str(ret)
-#        print "LOGICAL PLATFORM TO LOGICAL INSTRUMENT ==============================================================================================="
-#        ret = ServiceApi.find_leaves('LogicalPlatform', 'LogicalInstrument')
-#        print "AAAAAAAAAAAAAAAA All ret <%s>" % str(ret)
-#        resources = ServiceApi.find_by_resource_type("LogicalPlatform")
-#        for resource in resources:
-#            ret = ServiceApi.find_leaves(resource['_id'], 'LogicalInstrument')
-#            print "SSSSSSSSSSSSSSSSS Single ret <%s>" % str(ret)
-#        
-#        print "LOGICAL INSTRUMENT TO LOGICAL INSTRUMENT ==============================================================================================="
-#        ret = ServiceApi.find_leaves('LogicalInstrument', 'LogicalInstrument')
-#        print "AAAAAAAAAAAAAAAA All ret <%s>" % str(ret)
-#        resources = ServiceApi.find_by_resource_type("LogicalInstrument")
-#        for resource in resources:
-#            ret = ServiceApi.find_leaves(resource['_id'], 'LogicalInstrument')
-#            print "SSSSSSSSSSSSSSSSS Single ret <%s>" % str(ret)
         
     @staticmethod
     def find_leaves(root, leaf_type):
@@ -799,86 +641,12 @@ class ServiceApi(object):
 
     @staticmethod
     def find_owner(resource_id):
-        owner_id = service_gateway_get('resource_registry', 'find_objects', params={'subject': resource_id, 'predicate': 'hasOwner'})[0][0]['_id']
+        # TODO remove later
+        try:
+            owner_id = service_gateway_get('resource_registry', 'find_objects', params={'subject': resource_id, 'predicate': 'hasOwner'})[0][0]['_id']
+        except:
+            return {"contact": {"name": "Owen Ownerrep", "email": "owenownerrep@gmail.com"}}
         return service_gateway_get('resource_registry', 'find_objects', params={'subject': owner_id, 'predicate': 'hasInfo', 'id_only': False})[0][0]
-
-#    @staticmethod
-#    def test_facepages():
-#        # User facepage
-#        user_fps = []
-#        user_identities = ServiceApi.find_by_resource_type("UserIdentity")
-#        for user_identity in user_identities:
-#            user_fps.append(ServiceApi.find_user(user_identity['_id']))
-#        obs_fps = []
-#        # Observatory facepage
-#        observatories = ServiceApi.find_by_resource_type("MarineFacility")
-#        for observatory in observatories:
-#            obs_fps.append(ServiceApi.find_observatory(observatory['_id']))
-#        # Platform facepage
-#        plat_fps = []
-#        platforms = ServiceApi.find_by_resource_type("PlatformDevice")
-#        for platform in platforms:
-#            plat_fps.append(ServiceApi.find_platform(platform['_id']))
-#        # PlatformModel facepage
-#        plat_mdl_fps = []
-#        platform_models = ServiceApi.find_by_resource_type("PlatformModel")
-#        for platform_model in platform_models:
-#            plat_mdl_fps.append(ServiceApi.find_platform_model(platform_model['_id']))
-#        # Instrument facepage
-#        instr_fps = []
-#        instruments = ServiceApi.find_by_resource_type("InstrumentDevice")
-#        for instrument in instruments:
-#            instr_fps.append(ServiceApi.find_instrument(instrument['_id']))
-#        # InstrumentModel facepage
-#        instr_mdl_fps = []
-#        instrument_models = ServiceApi.find_by_resource_type("InstrumentModel")
-#        for instrument_model in instrument_models:
-#            instr_mdl_fps.append(ServiceApi.find_instrument_model(instrument_model['_id']))
-#        # InstrumentAgent facepage
-#        instr_agnt_fps = []
-#        instrument_agents = ServiceApi.find_by_resource_type("InstrumentAgent")
-#        for instrument_agent in instrument_agents:
-#            instr_agnt_fps.append(ServiceApi.find_instrument_agent(instrument_agent['_id']))
-#        # DataProcessDefinition facepage
-#        data_proc_fps = []
-#        data_processes = ServiceApi.find_by_resource_type("DataProcessDefinition")
-#        for data_process in data_processes:
-#            data_proc_fps.append(ServiceApi.find_data_process_definition(data_process['_id']))
-#        # DataProduct facepage
-#        data_prod_fps = []
-#        data_products = ServiceApi.find_by_resource_type("DataProduct")
-#        for data_product in data_products:
-#            data_prod_fps.append(ServiceApi.find_data_product(data_product['_id']))
-#        print "\n\n\n\n\n\n\n\n"
-#        print "USER ==============================================================================================="
-#        for user_fp in user_fps:
-#            print "\n====== User:\n%s\n\n" % pprint.pprint(user_fp)
-#        print "OBSERVATORY ==============================================================================================="
-#        for obs_fp in obs_fps:
-#            print "\n====== Observatory:\n%s\n\n" % pprint.pprint(obs_fp)
-#        print "PLATFORM ==============================================================================================="
-#        for plat_fp in plat_fps:
-#            print "\n====== Platform:\n%s\n\n" % pprint.pprint(plat_fp)
-#        print "PLATFORM MODEL ==============================================================================================="
-#        for plat_mdl_fp in plat_mdl_fps:
-#            print "\n====== Platform Model:\n%s\n\n" % pprint.pprint(plat_mdl_fp)
-#        print "INSTRUMENT ==============================================================================================="
-#        for instr_fp in instr_fps:
-#            print "\n====== Instrument:\n%s\n\n" % pprint.pprint(instr_fp)
-#        print "INSTRUMENT MODEL ==============================================================================================="
-#        for instr_mdl_fp in instr_mdl_fps:
-#            print "\n====== Instrument Model:\n%s\n\n" % pprint.pprint(instr_mdl_fp)
-#        print "INSTRUMENT AGENT ==============================================================================================="
-#        for instr_agnt_fp in instr_agnt_fps:
-#            print "\n====== Instrument Agent:\n%s\n\n" % pprint.pprint(instr_agnt_fp)
-#        print "DATA PROCESS ==============================================================================================="
-#        for data_proc_fp in data_proc_fps:
-#            print "\n====== Data Process:\n%s\n\n" % pprint.pprint(data_proc_fp)
-#        print "DATA PRODUCT ==============================================================================================="
-#        for data_prod_fp in data_prod_fps:
-#            print "\n====== Data Product:\n%s\n\n" % pprint.pprint(data_prod_fp)
-
-        
 
 def build_get_request(service_name, operation_name, params={}):
     url = '%s/%s/%s' % (SERVICE_GATEWAY_BASE_URL, service_name, operation_name)    
@@ -894,7 +662,7 @@ def build_get_request(service_name, operation_name, params={}):
 
 def service_gateway_get(service_name, operation_name, params={}):    
     resp = requests.get(build_get_request(service_name, operation_name, params))
-    # pretty_console_log('SERVICE GATEWAY GET RESPONSE', resp.request)
+    pretty_console_log('SERVICE GATEWAY GET RESPONSE', resp.request)
     
     if resp.status_code == 200:
         resp = json.loads(resp.content)
@@ -914,13 +682,13 @@ def build_post_request(service_name, operation_name, params={}):
         post_data['serviceRequest']['params'] = params
 
     # conditionally add user id and expiry to request
-    if "user_id" in session:
-        post_data['serviceRequest']['requester'] = session['user_id']
-        post_data['serviceRequest']['expiry'] = session['valid_until']
+#    if "user_id" in session:
+#        post_data['serviceRequest']['requester'] = session['user_id']
+#        post_data['serviceRequest']['expiry'] = session['valid_until']
 
     data={'payload': json.dumps(post_data)}
 
-    #pretty_console_log('SERVICE GATEWAY POST URL/DATA', url, data)
+    pretty_console_log('SERVICE GATEWAY POST URL/DATA', url, data)
 
     return url, data
 
@@ -950,20 +718,20 @@ def build_agent_request(agent_id, operation_name, params={}):
         post_data['agentRequest']['params'] = params
 
     # conditionally add user id and expiry to request
-    if "user_id" in session:
-        post_data['agentRequest']['requester'] = session['user_id']
-        post_data['agentRequest']['expiry'] = session['valid_until']
+#    if "user_id" in session:
+#        post_data['agentRequest']['requester'] = session['user_id']
+#        post_data['agentRequest']['expiry'] = session['valid_until']
 
     data={'payload': json.dumps(post_data)}
 
-    #pretty_console_log('SERVICE GATEWAY AGENT REQUEST POST URL/DATA', url, data)
+    pretty_console_log('SERVICE GATEWAY AGENT REQUEST POST URL/DATA', url, data)
 
     return url, data
 
 def service_gateway_agent_request(agent_id, operation_name, params={}):
     url, data = build_agent_request(agent_id, operation_name, params)
     resp = requests.post(url, data)
-    #pretty_console_log('SERVICE GATEWAY AGENT REQUEST POST RESPONSE', resp.content)
+    pretty_console_log('SERVICE GATEWAY AGENT REQUEST POST RESPONSE', resp.content)
 
     if resp.status_code == 200:
         resp = json.loads(resp.content)
