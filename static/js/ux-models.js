@@ -169,6 +169,11 @@ IONUX.Models.UserRegistrationModel = Backbone.Model.extend({
   }
 });
 
+IONUX.Models.User = Backbone.Model.extend({
+  url: "/users/",
+  idAttribute: "_id"
+});
+
 IONUX.Models.UserFacepageModel = Backbone.Model.extend({
   url: function() {
     return "/users/"+this.get("user_id")+"/";

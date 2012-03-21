@@ -10,29 +10,26 @@
 		
 	<div class="span8 test">
 		<section class="wrapper">
-			<h3 class="wrapper-heading">Platforms</h3>
-			<table class="table datatable-ize" width="100%">
-				<tr>
+			<h3 class="wrapper-heading">Platform Models</h3>
+			<table id="platform-models-table" class="table datatable-ize" width="100%">
+				<thead>
 					<th>Name</th>
 					<th>Description</th>
 					<th>Updated</th>
-					<!-- <th>Primary Measurements</th>
-					<th>Data Products</th>
-					<th>Platforms</th>
-					<th>Instruments</th>
-					<th>Participants</th>
-					<th>Registered</th>
-					<th>Uptime (days)</th> -->
-				</tr>
+				</thead>
+				<tbody>
 				<% _.each(collection, function(obj) { %>
 					<tr>
-						<td><a href="/platforms/<%= obj._id %>/"><%= obj.name %></a></td>
+						<td><a href="/platform_models/<%= obj._id %>/"><%= obj.name %></a></td>
 						<td><%= obj.description %></td>
 						<td><%= obj.ts_updated %></td>
 					</tr>
 			    <% }); %>
+			    </tbody>
 			</table>
 		</section>
 	</div>
 </div>
+
+
 

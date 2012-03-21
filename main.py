@@ -55,13 +55,7 @@ def render_app_template(current_url):
         logged_in = "True"
     else:
         logged_in = "False"
-    is_registered = "False"
-    if session.has_key("is_registered"):
-        if session["is_registered"] == True:
-            is_registered = "True"
-        else:
-            is_registered = "False"
-    return render_template("ion-ux.html", **{"current_url":"/", "roles":roles, "logged_in":logged_in,"is_registered": is_registered})
+    return render_template("ion-ux.html", **{"current_url":"/", "roles":roles, "logged_in":logged_in})
 
 
 @app.route('/')
@@ -235,8 +229,8 @@ def platform_facepage(platform_device_id):
 @app.route('/platform_models/', methods=['GET'])
 def platform_models():
     if request.is_xhr:
-        instruments = ServiceApi.find_by_resource_type('PlatformModels')
-        return jsonify(data=instruments)
+        platform_models = ServiceApi.find_by_resource_type('PlatformModel')
+        return jsonify(data=platform_models)
     else:
         return render_app_template(request.path)
 
@@ -342,6 +336,14 @@ def data_product_facepage(data_product_id):
         # Add start and stop to data processes
         data_product = ServiceApi.find_data_product(data_product_id)
         return jsonify(data=data_product)
+    else:
+        return render_app_template(request.path)
+
+@app.route('/users/', methods=['GET'])
+def users():
+    if request.is_xhr:
+        users = ServiceApi.find_users()
+        return jsonify(data=users)
     else:
         return render_app_template(request.path)
 

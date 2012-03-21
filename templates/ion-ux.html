@@ -95,6 +95,7 @@
           <div id="observatory-edit-container" class="viewcontainer"></div>
           <div id="platform-facepage-container" class="viewcontainer"></div>
 		  <div id="platform-new-container" class="viewcontainer"></div>
+          <div id="platform-models-container" class="viewcontainer"></div>
 		  <div id="platform-model-facepage-container" class="viewcontainer"></div>
 		  <div id="platform-model-new-container" class="viewcontainer"></div>
           <div id="instrument-facepage-container" class="viewcontainer"></div>
@@ -110,6 +111,7 @@
 		  <div id="data-product-facepage-container" class="viewcontainer"></div>
 		  <div id="user-facepage-container" class="viewcontainer"></div>
 		  <div id="user-registration-container" class="viewcontainer"></div>
+          <div id="users-container" class="viewcontainer"></div>
 		
           <div id="platforms-container" class="viewcontainer">
            <h4>Platforms</h4>
@@ -154,6 +156,7 @@
 <script type="text/template" id="platform-facepage-tmpl">{% include 'partials/platform_facepage.html' %} </script>
 <script type="text/template" id="new-platform-tmpl">{% include 'partials/new_platform_device.html' %}</script>
 
+<script type="text/template" id="platform-models-tmpl">{% include 'partials/platform_models_list.html' %}</script>
 <script type="text/template" id="platform-model-facepage-tmpl">{% include 'partials/platform_model_facepage.html' %}</script>
 <script type="text/template" id="platform-model-new-tmpl">{% include 'partials/new_platform_model.html' %}</script>
 
@@ -176,6 +179,7 @@
 <script type="text/template" id="data-resource-item-tmpl">{% include 'partials/data_resource_item.html' %}</script>
 <script type="text/template" id="data-resource-detail-tmpl">{% include 'partials/data_resource_detail.html' %}</script>
 
+<script type="text/template" id="users-tmpl">{% include 'partials/users_list.html' %}</script>
 <script type="text/template" id="user-facepage-tmpl">{% include 'partials/user_facepage.html' %}</script>
 <script type="text/template" id="user-registration-tmpl">{% include 'partials/new_user.html' %}</script>
 <script type="text/template" id="user-request-item-tmpl">{% include 'partials/user_request_item.html' %}</script>
@@ -211,8 +215,6 @@
     }
     else {
     	$("#logout").hide();
-    }
-    if ("{{ is_registered }}" != "True") {
     	$("#userprofile").hide();
     }
 	
