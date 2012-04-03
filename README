@@ -1,28 +1,43 @@
-## Environment setup
-virtualenv --no-site-packages venv
-pip install Flask -E venv/
-source venv/bin/activate
-pip install requests
+ION-UX Setup
+============
 
-## Configure
-cp config_template.py config.py
-<Edit as necessary.  Defaults should work on your local machine hosting the capability container.>
+Getting ION-UX up and running is straightforward once you have a Capability Container running. In a nutshell, there are three steps:
 
-## Run
-python main.py
+* Create virtualenv and install dependences
+* Configure FLASK and GATEWAY settings
+* Launch Flask web application
 
-point your browser to http://localhost:3000
+1. Environment Setup
+--------------------
 
-## Current features (in progress)
+It is best to setup a virtualenv to install the dependencies (Flask, requests).
 
+	virtualenv --no-site-packages venv
+	pip install Flask -E venv/
+	source venv/bin/activate
+	pip install requests
 
-- Flask powered API (using mock data)
+2. Configure
+------------
 
-- New js/css for R2 screens (moving away from original js/css/img from ooici-pres
+	cp config_template.py config.py
 
+For the most common scenarios (i.e. running the UI on your development environments), the settings will look like this:
 
+* FLASK_HOST = 'localhost'
+* FLASK_PORT = 3000
+* GATEWAY_HOST = 'localhost'
+* GATEWAY_PORT = 5000
 
-## Usage (see SETUP before these steps)
+3. Run
+------
 
-- Run flask powered api/webserver 
-    $ python main.py
+	python main.py
+
+Point your browser to http://localhost:3000 and enjoy.
+
+### Current features (in progress)
+
+* Flask powered API (using mock data and calls to the service gateway)
+* Continued development of JavaScript/CSS.
+* Development of dynamic layouts defined by JSON
