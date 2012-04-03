@@ -3,7 +3,7 @@ ION-UX Setup
 
 Getting ION-UX up and running is straightforward once you have a Capability Container running. In a nutshell, there are three steps:
 
-* Create virtualenv and install dependences
+* Create virtualenv and install dependencies
 * Configure FLASK and GATEWAY settings
 * Launch Flask web application
 
