@@ -1,11 +1,13 @@
 ION-UX Setup
 ============
 
-Getting ION-UX up and running is straightforward once you have a Capability Container running. In a nutshell, there are three steps:
+Getting ION-UX up and running is straightforward once you have a Capability Container running. In a nutshell, there are three steps with an optional fourth step:
 
-* Create virtualenv and install dependencies
-* Configure FLASK and GATEWAY settings
-* Launch Flask web application
+1.) Create virtualenv and install dependencies
+2.) Configure FLASK and GATEWAY settings
+3.) Launch Flask web application
+4.) Load "preload data" (test data) into COI Servies
+
 
 1. Environment Setup
 --------------------
@@ -17,17 +19,19 @@ It is best to setup a virtualenv to install the dependencies (Flask, requests).
 	source venv/bin/activate
 	pip install requests
 
+
 2. Configure
 ------------
 
 	cp config_template.py config.py
 
-For the most common scenarios (i.e. running the UI on your development environments), the settings will look like this:
+For the most common scenario (i.e. running the UI on your development environment), the settings will look like this:
 
 * FLASK_HOST = 'localhost'
 * FLASK_PORT = 3000
 * GATEWAY_HOST = 'localhost'
 * GATEWAY_PORT = 5000
+
 
 3. Run
 ------
@@ -41,3 +45,31 @@ Point your browser to http://localhost:3000 and enjoy.
 * Flask powered API (using mock data and calls to the service gateway)
 * Continued development of JavaScript/CSS.
 * Development of dynamic layouts defined by JSON
+
+
+4. Load Data into COI Services
+------------------------------
+
+It will be a better browsing experience to have data preloaded into your COI Services Capability Container. The first thing you will want to do is create pyon.local.yml:
+
+	coi-services/res/config/pylon.local.yml
+
+In pyon.local.yml:
+
+	system:
+  		force_clean: False
+  		name: ionux
+
+The name above ensures that your Capability Container will always use the same system name for creating, clearing and loading the data in CouchDB. After lauching you Capability Container with pyon.local.yml enabled, enter one of the following commands in another terminal window:
+
+Base Preload
+
+	bin/pycc -x ion.processes.bootstrap.ion_loader.IONLoader op=load path=res/preload/lca_demo scenario=LCA_DEMO_PRE
+
+Or, LCA Demo Preload:
+
+	bin/pycc -x ion.processes.bootstrap.ion_loader.IONLoader loadooi=True op=load path=res/preload/lca_demo scenario=LCA_DEMO_PRE
+
+To clear preload data, exit out of the running Capability Container and enter:
+
+	bin/pycc -x ion.processes.bootstrap.datastore_loader.DatastoreLoader op=clear
