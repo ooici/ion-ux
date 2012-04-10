@@ -1,3 +1,23 @@
+// Timestamp conversion methods to call when parsing response.
+// Maybe put these into IONUX.Helpers namespace?
+
+var epochToISO = function(epoch_time) {
+  return new Date(parseInt(epoch_time)).toISOString();
+};
+
+var makeISOTimestamps = function(resp) {    
+  _.each(resp, function(val, key) {      
+      if (key == 'ts_created' || key == 'ts_updated') {
+        resp[key] = epochToISO(val);
+      };      
+      if (typeof val == 'object') {
+        makeISOTimestamps(val);
+      };          
+  });
+  return;
+};
+
+
 IONUX.Models.DataResource = Backbone.Model.extend({});
 
 
@@ -22,15 +42,23 @@ IONUX.Models.ObservatoryFacepageModel = Backbone.Model.extend({
   },
   
   parse: function(resp) {
+    makeISOTimestamps(resp);
     return resp.data;
   }
 });
 
+
 IONUX.Models.UserRequest = Backbone.Model.extend({});
+
 
 IONUX.Models.Platform = Backbone.Model.extend({
   url: "/platforms/",
-  idAttribute: "_id"
+  idAttribute: "_id",
+  
+  parse: function(resp){
+    makeISOTimestamps(resp);
+    return resp;
+  },
 });
 
 
@@ -40,6 +68,7 @@ IONUX.Models.PlatformFacepageModel = Backbone.Model.extend({
   },
   
   parse: function(resp) {
+    makeISOTimestamps(resp);
     return resp.data;
   }
 });
@@ -47,7 +76,12 @@ IONUX.Models.PlatformFacepageModel = Backbone.Model.extend({
 
 IONUX.Models.PlatformModel = Backbone.Model.extend({
   url: '/platform_models/',
-  idAttribute: '_id'
+  idAttribute: '_id',
+
+  parse: function(resp) {
+    makeISOTimestamps(resp);
+    return resp;
+  }
 });
 
 
@@ -57,19 +91,28 @@ IONUX.Models.PlatformModelFacepageModel = Backbone.Model.extend({
   },
   
   parse: function(resp) {
+    makeISOTimestamps(resp);
     return resp.data;
   } 
 });
 
-IONUX.Models.Instrument = Backbone.Model.extend({
-  url: "/instruments/",
-  idAttribute: "_id"
-});
 
 IONUX.Models.Instrument = Backbone.Model.extend({
-  url: "/instrument_models/",
-  idAttribute: "_id"
+  url: "/instruments/",
+  idAttribute: "_id",
+  
+  parse: function(resp){
+    makeISOTimestamps(resp);
+    return resp;
+  },
 });
+
+
+// IONUX.Models.Instrument = Backbone.Model.extend({
+//   url: "/instrument_models/",
+//   idAttribute: "_id"
+// });
+
 
 IONUX.Models.InstrumentFacepageModel = Backbone.Model.extend({
   url: function(){
@@ -77,6 +120,7 @@ IONUX.Models.InstrumentFacepageModel = Backbone.Model.extend({
   },
   
   parse: function(resp) {
+    makeISOTimestamps(resp);
     return resp.data;
   }
 });
@@ -84,7 +128,12 @@ IONUX.Models.InstrumentFacepageModel = Backbone.Model.extend({
 
 IONUX.Models.InstrumentModel = Backbone.Model.extend({
   url: '/instrument_models/',
-  idAttribute: '_id'
+  idAttribute: '_id',
+  
+  parse: function(resp){
+    makeISOTimestamps(resp);
+    return resp;
+  }
 });
 
 
@@ -94,6 +143,7 @@ IONUX.Models.InstrumentModelFacepageModel = Backbone.Model.extend({
   },
   
   parse: function(resp) {
+    makeISOTimestamps(resp);
     return resp.data;
   } 
 });
@@ -101,7 +151,12 @@ IONUX.Models.InstrumentModelFacepageModel = Backbone.Model.extend({
 
 IONUX.Models.InstrumentAgent = Backbone.Model.extend({
   url: '/instrument_agents/',
-  idAttribute: '_id'
+  idAttribute: '_id',
+  
+  parse: function(resp){
+    makeISOTimestamps(resp);
+    return resp;
+  },
 });
 
 
@@ -111,6 +166,7 @@ IONUX.Models.InstrumentAgentFacepageModel = Backbone.Model.extend({
   },
   
   parse: function(resp) {
+    makeISOTimestamps(resp);
     return resp.data;
   } 
 });
@@ -118,7 +174,12 @@ IONUX.Models.InstrumentAgentFacepageModel = Backbone.Model.extend({
 
 IONUX.Models.DataProcessDefinition = Backbone.Model.extend({
   url: "/data_process_definitions/",
-  idAttribute: "_id"
+  idAttribute: "_id",
+  
+  parse: function(resp){
+    makeISOTimestamps(resp);
+    return resp;
+  },
 });
 
 
@@ -128,6 +189,7 @@ IONUX.Models.DataProcessDefinitionFacepageModel = Backbone.Model.extend({
   },
   
   parse: function(resp) {
+    makeISOTimestamps(resp);
     return resp.data;
   }
 });
@@ -135,7 +197,12 @@ IONUX.Models.DataProcessDefinitionFacepageModel = Backbone.Model.extend({
 
 IONUX.Models.DataProduct = Backbone.Model.extend({
   url: "/data_products/",
-  idAttribute: "_id"
+  idAttribute: "_id",
+  
+  parse: function(resp) {
+    makeISOTimestamps(resp);
+    return resp;
+  }
 });
 
 
@@ -143,23 +210,34 @@ IONUX.Models.DataProductFacepageModel = Backbone.Model.extend({
   url: function(){
     return "/data_products/"+this.get("data_product_id")+"/";
   },
+  
   parse: function(resp) {
+    makeISOTimestamps(resp);
     return resp.data;
   }
 });
+
+
+IONUX.Models.FrameOfReference = Backbone.Model.extend({
+  url: "/frame_of_references/",
+  idAttribute: "_id",
+
+  parse: function(resp){
+    makeISOTimestamps(resp);
+    return resp;
+  },
+});
+
 
 IONUX.Models.FrameOfReferenceFacepage = Backbone.Model.extend({
   url: function() {
     return "/frame_of_references/"+this.get("frame_of_reference_id")+"/";
   },
+  
   parse: function(resp) {
+    makeISOTimestamps(resp);
     return resp.data;
   }
-});
-
-IONUX.Models.FrameOfReference = Backbone.Model.extend({
-  url: "/frame_of_references/",
-  idAttribute: "_id"
 });
 
 
@@ -172,19 +250,21 @@ IONUX.Models.UserRegistrationModel = Backbone.Model.extend({
   }
 });
 
+
 IONUX.Models.User = Backbone.Model.extend({
   url: "/users/",
   idAttribute: "_id"
 });
+
 
 IONUX.Models.UserFacepageModel = Backbone.Model.extend({
   url: function() {
     return "/users/"+this.get("user_id")+"/";
   },
   parse: function(resp) {
+    makeISOTimestamps(resp);
     return resp.data;
   }
 });
-
 
 IONUX.Models.ResourceType = Backbone.Model.extend({})

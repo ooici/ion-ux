@@ -155,31 +155,8 @@ def observatories():
             manager_user_id = form_data.pop('user_id')
             object_schema = build_schema_from_form(form_data, service="marine_facilities")
             marine_facility_id = ServiceApi.create_observatory(object_schema, manager_user_id)
-#            form_data = json.loads(request.data)
-#            manager_user_id = form_data.pop('user_id')
-#            post_request = gateway_post_request('%s/marine_facility_management/create_marine_facility' % SERVICE_GATEWAY_BASE_URL, object_schema)
-#            print '\n\nRequest Result----------------------------', str(post_request.content)
-#            
-#            marine_facility_response = json.loads(post_request.content)
-#            marine_facility_id = marine_facility_response['data']['GatewayResponse']
-#            print '\n\nMarine Facility ID------------------------', str(marine_facility_id)
-#            
-#            assign_ownership = ServiceApi.assign_marine_facility_org_manager(marine_facility_id, user_id)
-#            print '\n\nAssign Ownership--------------------------', str(marine_facility_id)
-            
-            # resp_data = {"success":True}
-            # raw_form = json.loads(request.data)
-            # print 'raw_form IN MAIN.PY\n', str(raw_form)
-            # 
-            # 
-            # form_data = dict_from_form_data(json.loads(request.data))
-            # print 'FORM_DATA IN MAIN.PY\n', str(form_data)
-            # marine_facility = ServiceApi.create_observatory(form_data)
-            # 
-            # print str(marine_facility)
-            
-            return 'True'
-            # return redirect('/observatories/' + marine_facility_id)
+
+            return jsonify(data={'resource_id': marine_facility_id})
         else:
             resp_data = ServiceApi.find_by_resource_type('MarineFacility')
             

@@ -1,3 +1,125 @@
+IONUX.Views.CreateNewView = Backbone.View.extend({
+  events: {
+    "click input[type='submit']":"create_new",
+    "click .cancel":"cancel"
+  },
+  
+  create_new: function(evt){
+    evt.preventDefault();
+    alert('create_new!');
+    this.$el.find("input[type='submit']").attr("disabled", true).val("Saving...");
+    // var mf = new IONUX.Models.Observatory();
+    
+    var self = this;
+    $.each(this.$el.find("input,textarea,select").not("input[type='submit'],input[type='cancel']"), function(i, e){
+      var key = $(e).attr("name"), val = $(e).val();
+      var kv = {};
+      kv[key] = val;
+      self.model.set(kv);
+    });
+    
+    self.model.save(null, {success:function(model, resp) {
+      console.log("create_new_success");
+      console.log(resp.data.resource_id);
+      // self.$el.hide();
+      return 'Yo!'
+    }});
+  },
+  
+  cancel: function(){
+    this.$el.hide();
+  }
+
+});
+
+
+IONUX.Views.NewObservatoryView = Backbone.View.extend({
+  el: "#observatory-new-container",
+  template: _.template($("#new-observatory-tmpl").html()),
+  events: {
+    "click input[type='submit']":"save",
+    "click .cancel":"cancel"
+  },
+
+  render: function(){
+    this.$el.empty().html(this.template(this.model.toJSON())).show();
+    this.get_all_users();
+    return this;
+  },
+  
+  get_all_users: function() {
+    $.ajax({
+      url: '/observatories/all_users/',
+      dataType: 'json',
+      success: function(resp) {
+        _.each(resp.data, function(e, i) {
+          $('#user_id').append($('<option>').text(e.user_info.contact.name).val(e._id));
+        });
+      }
+    });
+  },
+  
+  // This needs to move into it's own utility method early in R2 Construction.
+  save: function(evt){
+    evt.preventDefault();
+    this.$el.find("input[type='submit']").attr("disabled", true).val("Saving...");
+    
+    var self = this;
+    $.each(this.$el.find("input,textarea,select").not("input[type='submit'],input[type='cancel']"), function(i, e){
+      var key = $(e).attr("name"), val = $(e).val();
+      var kv = {};
+      kv[key] = val;
+      self.model.set(kv);
+    });
+    
+    self.model.save(null, {success:function(model, resp) {
+      var router = new Backbone.Router();
+      router.navigate('/observatories/' + resp.data.resource_id.toString() + '/', {trigger: true});
+    }});
+  },
+  
+  cancel: function(evt) {
+    evt.preventDefault();
+    var router = new Backbone.Router();
+    router.navigate('/observatories/', {trigger: true})
+  },
+});
+
+// IONUX.Views.NewObservatoryView = IONUX.Views.CreateNewView.extend({
+//   el: "#observatory-new-container",
+//   template: _.template($("#new-observatory-tmpl").html()),
+// 
+//   // initialize: function(){
+//   //   _.bindAll(this, "create_new", "render");
+//   //   this.model.bind("change", this.render)
+//   // },
+// 
+//   render: function(){
+//     this.$el.empty().html(this.template(this.model.toJSON())).show();
+//     this.get_all_users();
+//     return this;
+//   },
+//   
+//   get_all_users: function() {
+//     $.ajax({
+//       url: '/observatories/all_users/',
+//       dataType: 'json',
+//       success: function(resp) {
+//         _.each(resp.data, function(e, i) {
+//           $('#user_id').append($('<option>').text(e.user_info.contact.name).val(e._id));
+//         });
+//       }
+//     });
+//   },
+//   
+//   goto_facepage: function() {
+//     var router = new Backbone.Router();
+//     var destination = document.location.pathname.replace("edit/", "");
+//     router.navigate(destination, {trigger:true});
+//   }
+// });
+
+
 IONUX.Views.DataProducts = Backbone.View.extend({
   el: "#data-products-container",
   template: _.template($("#data-products-tmpl").html()),
@@ -14,38 +136,6 @@ IONUX.Views.DataProducts = Backbone.View.extend({
 });
 
 
-
-IONUX.Views.CreateNewView = Backbone.View.extend({
-  events: {
-    "click input[type='submit']":"create_new",
-    // "submit input[type='submit']":"create_new",
-    // "click .create": "create_new",
-    "click .cancel":"cancel"
-  },
-  
-  create_new: function(evt){
-    evt.preventDefault();
-    this.$el.find("input[type='submit']").attr("disabled", true).val("Saving...");
-    // var mf = new IONUX.Models.Observatory();
-    
-    var self = this;
-    $.each(this.$el.find("input,textarea,select").not("input[type='submit'],input[type='cancel']"), function(i, e){
-      var key = $(e).attr("name"), val = $(e).val();
-      var kv = {};
-      kv[key] = val;
-      self.model.set(kv);
-    });
-    
-    self.model.save(null, {success:function(model, resp){
-      self.$el.hide();
-    }});
-  },
-  
-  cancel: function(){
-    this.$el.hide();
-  }
-
-});
 
 
 /* Observatories */
@@ -115,8 +205,6 @@ IONUX.Views.UserRegistration = IONUX.Views.CreateNewView.extend({
    return this; 
   }
 });
-
-
 
 
 IONUX.Views.UserRequestItemView = Backbone.View.extend({
@@ -210,41 +298,6 @@ IONUX.Views.ObservatoriesDetailView = Backbone.View.extend({
   render: function(){
     this.$el.html(this.template(this.model.toJSON())).show();
     return this;
-  }
-});
-
-
-IONUX.Views.NewObservatoryView = IONUX.Views.CreateNewView.extend({
-  el: "#observatory-new-container",
-  template: _.template($("#new-observatory-tmpl").html()),
-
-  // initialize: function(){
-  //   _.bindAll(this, "create_new", "render");
-  //   this.model.bind("change", this.render)
-  // },
-
-  render: function(){
-    this.$el.empty().html(this.template(this.model.toJSON())).show();
-    this.get_all_users();
-    return this;
-  },
-  
-  get_all_users: function() {
-    $.ajax({
-      url: '/observatories/all_users/',
-      dataType: 'json',
-      success: function(resp) {
-        _.each(resp.data, function(e, i) {
-          $('#user_id').append($('<option>').text(e.user_info.contact.name).val(e._id));
-        });
-      }
-    });
-  },
-  
-  goto_facepage: function(){
-    var router = new Backbone.Router();
-    var destination = document.location.pathname.replace("edit/", "");
-    router.navigate(destination, {trigger:true});
   }
 });
 
@@ -715,6 +768,13 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
 
   render: function(){
     this.$el.empty().html(this.template(this.model.toJSON())).show();
+    
+    // Check if instrument is already running.
+    var instrumentAgent = this.model.get('instrument_agent');
+    if (_.isEmpty(!instrumentAgent.agent_process_id)) {
+      $("#start-instrument-agent-instance").hide();
+      $("#stop-instrument-agent-instance").show();
+    };
   },
   
   issue_command: function(evt) {
@@ -905,8 +965,8 @@ IONUX.Views.DataProductFacepage = Backbone.View.extend({
   
   render: function(){
     this.$el.empty().html(this.template(this.model.toJSON())).show();
-    var data_product_id = this.model.get('_id');
-    drawChart(data_product_id);
+    // var data_product_id = this.model.get('_id');
+    // drawChart(data_product_id);
     // drawChartReplay(data_product_id);
   }
 });
