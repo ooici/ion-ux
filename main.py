@@ -178,13 +178,6 @@ def observatory_facepage(marine_facility_id):
     else:
         return render_app_template(request.path)
 
-# @app.route('/observatories/<marine_facility_id>/edit/', methods=['GET'])
-# def observatory_facepage(marine_facility_id):
-#     if request.is_xhr:
-#         marine_facility = ServiceApi.find_observatory(marine_facility_id)
-#         return jsonify(data=marine_facility)
-#     else:
-#         return render_app_template(request.path)
 
 @app.route('/observatories/<marine_facility_id>/request_enrollment/', methods=['GET'])
 def enroll_user(marine_facility_id):
@@ -209,9 +202,14 @@ def user_request(marine_facility_id, request_id, action=None):
     return jsonify(data=resp)
 
 
-@app.route('/platforms/', methods=['GET'])
+@app.route('/platforms/', methods=['GET', 'POST'])
 def platforms():
     if request.is_xhr:
+        if request.method == 'POST':
+            print 'PLATFORM POST'
+            # Build form
+            # Service call
+            # return id
         platforms = ServiceApi.find_by_resource_type('PlatformDevice')
         return jsonify(data=platforms)
     else:

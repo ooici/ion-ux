@@ -19,10 +19,7 @@ IONUX.Views.CreateNewView = Backbone.View.extend({
     });
     
     self.model.save(null, {success:function(model, resp) {
-      console.log("create_new_success");
-      console.log(resp.data.resource_id);
       // self.$el.hide();
-      return 'Yo!'
     }});
   },
   
@@ -534,41 +531,43 @@ IONUX.Views.PlatformModelsView = Backbone.View.extend({
   },
 });
 
+// Not using this any longer, but left for reference.
+// 
+// IONUX.Views.ObservatoryModalView = Backbone.View.extend({
+//   el: "#observatory-modal",
+// 
+//   template: _.template($("#observatory-modal-tmpl").html()),
+// 
+//   events: {
+//     "click .modal-body":"clicked",
+//     "click .btn-save":"save",
+//     "click .btn-close":"close"
+//   },
+// 
+//   initialize: function(){
+//     _.bindAll(this, "render", "clicked", "save", "close");
+//   },
+//   
+//   render: function(){
+//     this.$el.html(this.template({}));
+//     return this;
+//   },
+// 
+//   clicked: function(){
+//     console.log("ObservatoryModalView clicked");
+//   },
+// 
+//   save: function(){
+//     console.log("ObservatoryModalView save");
+//     this.$el.modal("hide");
+//   },
+// 
+//   close: function(){
+//     console.log("ObservatoryModalView close");
+//     this.$el.modal("hide");
+//   }
+// });
 
-IONUX.Views.ObservatoryModalView = Backbone.View.extend({
-  el: "#observatory-modal",
-
-  template: _.template($("#observatory-modal-tmpl").html()),
-
-  events: {
-    "click .modal-body":"clicked",
-    "click .btn-save":"save",
-    "click .btn-close":"close"
-  },
-
-  initialize: function(){
-    _.bindAll(this, "render", "clicked", "save", "close");
-  },
-  
-  render: function(){
-    this.$el.html(this.template({}));
-    return this;
-  },
-
-  clicked: function(){
-    console.log("ObservatoryModalView clicked");
-  },
-
-  save: function(){
-    console.log("ObservatoryModalView save");
-    this.$el.modal("hide");
-  },
-
-  close: function(){
-    console.log("ObservatoryModalView close");
-    this.$el.modal("hide");
-  }
-});
 
 IONUX.Views.ObservatoryEditView = Backbone.View.extend({
   el: "#observatory-edit-container",
@@ -624,7 +623,6 @@ IONUX.Views.ObservatoryEditView = Backbone.View.extend({
     var destination = document.location.pathname.replace("edit/", "");
     router.navigate(destination, {trigger:true});
   }
-
 
 });
 
@@ -771,10 +769,14 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
     
     // Check if instrument is already running.
     var instrumentAgent = this.model.get('instrument_agent');
-    if (_.isEmpty(!instrumentAgent.agent_process_id)) {
-      $("#start-instrument-agent-instance").hide();
-      $("#stop-instrument-agent-instance").show();
+    if (instrumentAgent.agent_process_id !== '') {
+        $("#start-instrument-agent-instance").hide();
+        $("#stop-instrument-agent-instance").show();      
     };
+    // if (_.isEmpty(!instrumentAgent.agent_process_id)) {
+    //   $("#start-instrument-agent-instance").hide();
+    //   $("#stop-instrument-agent-instance").show();
+    // };
   },
   
   issue_command: function(evt) {
