@@ -633,7 +633,7 @@ def build_schema_from_form(form_data, service="marine_facilities", object_name="
     result_dict = SERVICE_REQUEST_TEMPLATE
     result_dict['serviceRequest']['serviceName'] = service_name
     result_dict['serviceRequest']['serviceOp'] = service_op
-    sub_result_dict = {}
+    sub_result_dict = {"type_": resource_type}
     for (k, v) in form_data.iteritems():
         elems = k.split("__")
         if len(elems) == 1:
@@ -647,8 +647,7 @@ def build_schema_from_form(form_data, service="marine_facilities", object_name="
                 sub_result_dict[sub_k] = {sub_v:v}
     
     if object_name:
-        result_dict["serviceRequest"]["params"][object_name] = [resource_type]                
-        result_dict["serviceRequest"]["params"][object_name].append(sub_result_dict)
+        result_dict["serviceRequest"]["params"][object_name] = sub_result_dict
     else:
         result_dict["serviceRequest"]["params"].append(sub_result_dict)
 

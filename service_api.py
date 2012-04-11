@@ -18,7 +18,7 @@ AGENT_REQUEST_TEMPLATE = {
     "agentRequest": { 
         "agentId": "",
         "agentOp": "",
-        "params": { "command": ["AgentCommand", { "command": "placeholder" }]}
+        "params": { "command": { "type_": "AgentCommand", "command": "placeholder" }}
     }
 }
 
@@ -47,7 +47,8 @@ class ServiceApi(object):
             "serviceName": "marine_facility_management",
             "serviceOp": "create_marine_facility",
             "params": {
-                "object": ["MarineFacility", {
+                "marine_facility": {
+                    "type_": "MarineFacility",
                     "name": "NewMF",
                     "description": "A new marine facility.",
                     "contact": {
@@ -62,7 +63,11 @@ class ServiceApi(object):
                         "website": "ti.edu",
                         "email": "ti@ti.edu",
                         "phone": "858-555-1212"
-                        }}]}}}
+                        }
+                    }
+                }
+            }
+        }
         
         
         marine_facility = service_gateway_post("marine_facility_management", "create_marine_facility", params=marine_facility_template)
@@ -142,7 +147,7 @@ class ServiceApi(object):
     @staticmethod
     def instrument_execute_agent(instrument_device_id, agent_command):
         agent_op = "execute_agent"
-        params = {"command": ["AgentCommand", {"command": agent_command}]}
+        params = {"command": {"type_": "AgentCommand", "command": agent_command}}
         agent_response = service_gateway_agent_request(instrument_device_id, agent_op, params)
         return agent_response
 
@@ -176,7 +181,7 @@ class ServiceApi(object):
             if user_name in user_identity['name']:
                 user_id = user_identity['_id']
                 session['user_id'] = user_id
-                session['valid_until'] = int(time.time()) * 100000
+                session['valid_until'] = str(int(time.time()) * 100000)
                 session['is_registered'] = True
 
                 # get roles and stash
@@ -200,12 +205,14 @@ class ServiceApi(object):
     
     @staticmethod
     def create_user_info(user_id, user_info):
-        params={'user_id': user_id, 'user_info': ['UserInfo', user_info]}
+        params={'user_id': user_id}
+        params['user_info'] = user_info
+        params['user_info']['type_'] = 'UserInfo'
         return service_gateway_post('identity_management', 'create_user_info', params)
     
     @staticmethod
     def update_user_info(user_info):
-        params={'user_info': ['UserInfo', user_info]}
+        params={'user_info': user_info}
         return service_gateway_post('identity_management', 'update_user_info', params)
     
     @staticmethod
@@ -668,7 +675,7 @@ def build_get_request(service_name, operation_name, params={}):
 
 def service_gateway_get(service_name, operation_name, params={}):    
     resp = requests.get(build_get_request(service_name, operation_name, params))
-    pretty_console_log('SERVICE GATEWAY GET RESPONSE', resp.request)
+    pretty_console_log('SERVICE GATEWAY GET RESPONSE', resp.content)
     
     if resp.status_code == 200:
         resp = json.loads(resp.content)
@@ -688,9 +695,9 @@ def build_post_request(service_name, operation_name, params={}):
         post_data['serviceRequest']['params'] = params
 
     # conditionally add user id and expiry to request
-#    if "user_id" in session:
-#        post_data['serviceRequest']['requester'] = session['user_id']
-#        post_data['serviceRequest']['expiry'] = session['valid_until']
+    if "user_id" in session:
+        post_data['serviceRequest']['requester'] = session['user_id']
+        post_data['serviceRequest']['expiry'] = session['valid_until']
 
     data={'payload': json.dumps(post_data)}
 
@@ -724,9 +731,9 @@ def build_agent_request(agent_id, operation_name, params={}):
         post_data['agentRequest']['params'] = params
 
     # conditionally add user id and expiry to request
-#    if "user_id" in session:
-#        post_data['agentRequest']['requester'] = session['user_id']
-#        post_data['agentRequest']['expiry'] = session['valid_until']
+    if "user_id" in session:
+        post_data['agentRequest']['requester'] = session['user_id']
+        post_data['agentRequest']['expiry'] = session['valid_until']
 
     data={'payload': json.dumps(post_data)}
 
