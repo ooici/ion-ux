@@ -767,16 +767,13 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
   render: function(){
     this.$el.empty().html(this.template(this.model.toJSON())).show();
     
-    // Check if instrument is already running.
+    // Check if instrument agent instance is present (running)...
     var instrumentAgent = this.model.get('instrument_agent');
     if (instrumentAgent.agent_process_id !== '') {
         $("#start-instrument-agent-instance").hide();
-        $("#stop-instrument-agent-instance").show();      
+        $("#stop-instrument-agent-instance").show();
+        $(".instrument-commands").show();    
     };
-    // if (_.isEmpty(!instrumentAgent.agent_process_id)) {
-    //   $("#start-instrument-agent-instance").hide();
-    //   $("#stop-instrument-agent-instance").show();
-    // };
   },
   
   issue_command: function(evt) {
