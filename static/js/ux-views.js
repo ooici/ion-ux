@@ -770,6 +770,7 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
     // Check if instrument agent instance is present (running)...
     var instrumentAgent = this.model.get('instrument_agent');
     if (instrumentAgent.agent_process_id !== '') {
+        console.log(instrumentAgent.agent_process_id);
         $("#start-instrument-agent-instance").hide();
         $("#stop-instrument-agent-instance").show();
         $(".instrument-commands").show();    
@@ -964,9 +965,9 @@ IONUX.Views.DataProductFacepage = Backbone.View.extend({
   
   render: function(){
     this.$el.empty().html(this.template(this.model.toJSON())).show();
-    // var data_product_id = this.model.get('_id');
-    // drawChart(data_product_id);
-    // drawChartReplay(data_product_id);
+    var data_product_id = this.model.get('_id');
+    drawChart(data_product_id);
+    drawChartReplay(data_product_id);
   }
 });
 

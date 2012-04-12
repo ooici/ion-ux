@@ -18,7 +18,7 @@ AGENT_REQUEST_TEMPLATE = {
     "agentRequest": { 
         "agentId": "",
         "agentOp": "",
-        "expiry": 0,
+        # "expiry": 0,
         "params": { "command": { "type_": "AgentCommand", "command": "placeholder" }}
     }
 }
