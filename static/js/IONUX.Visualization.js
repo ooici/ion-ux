@@ -161,8 +161,6 @@ function drawChart(data_product_id) {
      // var dp_id = 'a6b9051a10694888ae176077cc652bc5'
      var dp_id = data_product_id
       // dp_id=prompt("Please enter Data Product Id","");
-      // var query = new google.visualization.Query("http://localhost:5000/ion-service/viz_products/google_realtime_dt/stream1");
-      // var query = new google.visualization.Query("http://r2-dev1.oceanobservatories.org:5000/ion-service/visualization_service/get_google_realtime_dt?data_product_id=" + dp_id +"&return_format=raw_json");
       var query = new google.visualization.Query("http://localhost:5000/ion-service/visualization_service/get_google_realtime_dt?data_product_id=" + dp_id +"&return_format=raw_json");
       data = new google.visualization.DataTable();
 
