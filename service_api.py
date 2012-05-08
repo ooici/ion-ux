@@ -24,6 +24,11 @@ AGENT_REQUEST_TEMPLATE = {
 }
 
 class ServiceApi(object):
+        
+    @staticmethod
+    def get_layout_schema():
+        layout_schema = service_gateway_get('directory', 'get_ui_specs', params={'user_id': 'tboteler'})
+        return layout_schema
     
     @staticmethod
     def find_all_frame_of_references():

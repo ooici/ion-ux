@@ -1,3 +1,11 @@
+IONUX.Models.Layout = Backbone.Model.extend({
+  url: '/layout',
+  parse: function(resp){
+    return resp.data;
+  },
+});
+
+
 // Timestamp conversion methods to call when parsing response.
 // Maybe put these into IONUX.Helpers namespace?
 

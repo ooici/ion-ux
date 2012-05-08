@@ -2,7 +2,7 @@ IONUX.Router = Backbone.Router.extend({
 
   routes: {
     // "": "dashboard",
-    "": "data_products",
+    "layout2/": "layout2",
     "userprofile/": "user_profile",
     "observatories/": "observatories",
     "observatories/new/": "observatory_new",
@@ -35,6 +35,10 @@ IONUX.Router = Backbone.Router.extend({
     "resource_types/:resource_type_id/": "resource_type_details",
   },
   
+  layout2: function() {
+    new IONUX.Views.Layout();
+  },
+    
   data_products: function() {
     this._reset();
     this.dataProductsList = new IONUX.Collections.DataProducts();

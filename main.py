@@ -57,6 +57,20 @@ def render_app_template(current_url):
         logged_in = "False"
     return render_template("ion-ux.html", **{"current_url":"/", "roles":roles, "logged_in":logged_in})
 
+
+# ---------------------------------------------------------------------------
+# START LAYOUT
+# ---------------------------------------------------------------------------
+
+@app.route('/layout/', methods=['GET'])
+def layout():
+    layout_schema = ServiceApi.get_layout_schema()
+    return jsonify(data=layout_schema)
+
+# ---------------------------------------------------------------------------
+# END LAYOUT
+# ---------------------------------------------------------------------------
+
 @app.route('/tim/', methods=['GET'])
 def tim():
     tim = ServiceApi.find_tim()['_id']
