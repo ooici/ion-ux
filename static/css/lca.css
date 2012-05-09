@@ -1,5 +1,12 @@
+.loader {
+ position: absolute;
+ top: 200px;
+ text-align: center;
+ width: 100%;
+}
+
 body {
-  background-color: #ccc;
+  background-color: #eee;
 }
 
 #header {

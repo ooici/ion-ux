@@ -2,7 +2,7 @@ IONUX.Router = Backbone.Router.extend({
 
   routes: {
     // "": "dashboard",
-    "layout2/": "layout2",
+    "dashboard/": "dashboard",
     "userprofile/": "user_profile",
     "observatories/": "observatories",
     "observatories/new/": "observatory_new",
@@ -35,8 +35,19 @@ IONUX.Router = Backbone.Router.extend({
     "resource_types/:resource_type_id/": "resource_type_details",
   },
   
-  layout2: function() {
-    new IONUX.Views.Layout();
+  
+  // dashboard: function(){
+  //   this._reset();    
+  //   new IONUX.Views.Layout();
+  //   $("#dashboard-container").show();
+  //   // if (_.isUndefined(this.observatory_modal)){
+  //   //   this.observatory_modal = new IONUX.Views.ObservatoryModalView();
+  //   // }
+  //   // this.observatory_modal.render();
+  // },
+  
+  dashboard: function() {
+    var layoutView = new IONUX.Views.Layout();
   },
     
   data_products: function() {
@@ -53,15 +64,6 @@ IONUX.Router = Backbone.Router.extend({
     fpModel.fetch();
   },
   
-  dashboard: function(){
-    this._reset();    
-    $("#dashboard-container").show();
-    if (_.isUndefined(this.observatory_modal)){
-      this.observatory_modal = new IONUX.Views.ObservatoryModalView();
-    }
-    this.observatory_modal.render();
-  },
-
   observatories: function(){
     this._reset();
     $("#observatories-container").show();

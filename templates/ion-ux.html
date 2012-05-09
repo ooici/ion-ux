@@ -213,11 +213,9 @@
 
 <script type="text/javascript">
   $(function() {
-    layout = new IONUX.Models.Layout();
-    layout.fetch();
+	$('.container').css('opacity', 0);
+	$('body').append($('<div>').text('Loading...').addClass('loader'));
 
-    var ionux_router = IONUX.init();
-    ionux_router.handle_url("{{ current_url }}");
     IONUX.set_roles("{{ roles }}");
 
     // Handle conditionally displaying login, user profile and logout links
@@ -227,10 +225,19 @@
     else {
     	$("#logout").hide();
     	$("#userprofile").hide();
-    }
+    };
 	
-	// Temporary hack to set background.
-    $('body').css('background-color', '#eee');
+    var ionux_router = IONUX.init();
+
+	window.layoutModel = new IONUX.Models.Layout();
+	// var layoutView = new IONUX.Views.Layout({model: layoutModel});
+    window.layoutModel.fetch({
+		success: function(model, resp){
+			$('.loader').remove();
+			$('.container').animate({opacity: 1});
+			ionux_router.handle_url("{{ current_url }}");
+		},
+	});
   });
 </script>
 

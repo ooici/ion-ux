@@ -2,37 +2,38 @@ IONUX.Views.Layout = Backbone.View.extend({
   tagName: 'div',
 
   initialize: function(){
-    $('body').empty();
-    layout = window.layout.toJSON();
+      _.bindAll(this, 'render');
+      this.model.bind('change', this.render);
+  },
+
+  render: function() {
+      console.log('render');
+      console.log(this.model);
+
+      // var ion_router = new IONUX.Router();
+      // ion_router.navigation('/observatories/', {trigger: true});
+
+
+      // var viewObject = this.model.get('views')['cd594285e_2250001'];
+      // var self = this;
+      // $('#container').append('Loaded...');
+      // 
+      // _.each(viewObject, function(val, key) {
+      //     if (typeof val == 'object') { 
+      //         self.render(val);
+      //     } else {
+      //       // Spit it out on screen real quick-like...
+      //       var obj = layout.objects[val]
+      //       console.log(obj['type_'] + ': ',  obj);
+      //       var html = '<h4>' + val + '</h4><p>' + obj['type_'] + '</p>';
+      //     };
+      // });
+  },
+  
+  facepage: function(viewID){
     
-    view = layout.views['69c62a12e_2250001'];
-    this.spitfire(view);
   },
-  render: function(item) {
-    $('body').append(item);
-  },
-  spitfire: function(view) {    
-    var self = this;
-    _.each(view, function(val, key) {
-      if (typeof val == 'object') { 
-        self.spitfire(val)
-      } else {
-          // Spit it out on screen real quick-like...
-          var obj = layout.objects[val]
-          console.log(obj.type_ + ': ',  obj);
-          var html = '<h4>' + val + '</h4><p>' + obj['type_'] + '</p>';
-          self.render(html);
-        
-          // Build a list of attributes for the block view;
-          var uiAttributes = {};
-          if (obj.type_ == 'UIBlock') { 
-              _.each(val, function() {
-                  
-              });
-          };
-      };
-    });
-  }
+  
 });
 
 
