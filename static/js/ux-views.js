@@ -1,42 +1,61 @@
 IONUX.Views.Layout = Backbone.View.extend({
-  tagName: 'div',
+    initialize: function(){
+        _.bindAll(this, 'render');
+        this.model.bind('change', this.render);
+    },
 
-  initialize: function(){
-      _.bindAll(this, 'render');
-      this.model.bind('change', this.render);
-  },
-
-  render: function() {
-      console.log('render');
-      console.log(this.model);
-
-      // var ion_router = new IONUX.Router();
-      // ion_router.navigation('/observatories/', {trigger: true});
-
-
-      // var viewObject = this.model.get('views')['cd594285e_2250001'];
-      // var self = this;
-      // $('#container').append('Loaded...');
-      // 
-      // _.each(viewObject, function(val, key) {
-      //     if (typeof val == 'object') { 
-      //         self.render(val);
-      //     } else {
-      //       // Spit it out on screen real quick-like...
-      //       var obj = layout.objects[val]
-      //       console.log(obj['type_'] + ': ',  obj);
-      //       var html = '<h4>' + val + '</h4><p>' + obj['type_'] + '</p>';
-      //     };
-      // });
-  },
-  
-  facepage: function(viewID){
+    render: function() {
+        // Instrument Facepage is the only facepage currently defined
+        var facepage_object = this.model.get('views')['cd594285e_2250001'];
+        this.build_facepage_template(facepage_object);
+    },
     
-  },
-  
+    build_facepage_template: function(facepage_object) {
+        // Create and append script tag
+
+        var facepage_container = $('<div>');
+        var script = document.createElement("script");
+        script.type = "text/template";
+        script.id = "dynamic-facepage-tmpl";
+        $("body").append(script);
+        
+        // Build UI Rows
+        var self = this;
+        _.each(facepage_object, function(ui_group, group_key) {
+            var div = $('<div>').addClass('row row_demo');
+
+            // TEMP - Render placeholder.
+            div.append($('<h2>').text('Group ' + ui_group[0]));
+            // END TEMP
+
+            _.each(ui_group[1], function(ui_block, ui_key) {
+                var obj = window.layoutModel.get('objects')[ui_block[0]]
+                
+                // TEMP - Render placeholder text.
+                var block_snippet = $('<div>').addClass('span2');
+                block_snippet.append($('<h4>').text(obj['name'] + ' ' + obj['type_']));
+                // END TEMP
+
+                div.append(block_snippet);
+            });
+            facepage_container.append(div);
+        });
+        $('#dynamic-facepage-tmpl').append(facepage_container)
+    }
 });
 
 
+IONUX.Views.NewInstrumentFacepage = Backbone.View.extend({
+    el: '#dynamic-container',
+    initialize: function() {
+       this.template = _.template($('#dynamic-facepage-tmpl').html());
+       _.bindAll(this, "render");
+    },
+    render: function() {
+        this.$el.html(this.template()).show();
+        return this;
+    }
+});
 
 IONUX.Views.CreateNewView = Backbone.View.extend({
   events: {
