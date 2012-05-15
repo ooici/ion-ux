@@ -6,13 +6,12 @@ IONUX.Views.Layout = Backbone.View.extend({
 
     render: function() {
         // Instrument Facepage is the only facepage currently defined
-        var facepage_object = this.model.get('views')['cd594285e_2250001'];
+        var facepage_object = window.layoutModel.get('views')['884a290ff_2250001'];
         this.build_facepage_template(facepage_object);
     },
     
     build_facepage_template: function(facepage_object) {
         // Create and append script tag
-
         var facepage_container = $('<div>');
         var script = document.createElement("script");
         script.type = "text/template";
@@ -24,26 +23,39 @@ IONUX.Views.Layout = Backbone.View.extend({
         _.each(facepage_object, function(ui_group, group_key) {
             var div = $('<div>').addClass('row row_demo');
 
-            // TEMP - Render placeholder.
-            div.append($('<h2>').text('Group ' + ui_group[0]));
-            // END TEMP
-
+            // Display group information
+            var group = window.layoutModel.get('objects')[ui_group[0]];
+            div.append($('<h2>').text(group['name']));
+            
             _.each(ui_group[1], function(ui_block, ui_key) {
-                var obj = window.layoutModel.get('objects')[ui_block[0]]
-                
-                // TEMP - Render placeholder text.
+                var block = window.layoutModel.get('objects')[ui_block[0]]
                 var block_snippet = $('<div>').addClass('span2');
-                block_snippet.append($('<h4>').text(obj['name'] + ' ' + obj['type_']));
-                // END TEMP
-
+                block_snippet.append($('<h4>').text(block['name']));
+                
+                // Display attributes
+                var attr_list = $('<ul>');
+                _.each(ui_block[1], function(ui_attribute, ui_attribute_key) {
+                    var attribute = window.layoutModel.get('objects')[ui_attribute];
+                    attr_list.append($('<li>').text(attribute['name']));
+                });
+                block_snippet.append(attr_list);
                 div.append(block_snippet);
             });
             facepage_container.append(div);
         });
-        $('#dynamic-facepage-tmpl').append(facepage_container)
+        $('#dynamic-facepage-tmpl').append(facepage_container);
     }
 });
 
+// IONUX.Views.Table = Backbone.View.extend({
+//     el: '#dynamic-container',
+//     initialize: function() {
+//         this.html_template = $('#table-template');
+//     },
+//     render: function(){
+//         // this.$el.show();
+//     }
+// });
 
 IONUX.Views.NewInstrumentFacepage = Backbone.View.extend({
     el: '#dynamic-container',
@@ -52,68 +64,68 @@ IONUX.Views.NewInstrumentFacepage = Backbone.View.extend({
        _.bindAll(this, "render");
     },
     render: function() {
+        console.log('NewInstrumentFacepage render...');
         this.$el.html(this.template()).show();
         return this;
     }
 });
 
-IONUX.Views.CreateNewView = Backbone.View.extend({
-  events: {
-    "click input[type='submit']":"create_new",
-    "click .cancel":"cancel"
-  },
-  
-  create_new: function(evt){
-    evt.preventDefault();
-    alert('create_new!');
-    this.$el.find("input[type='submit']").attr("disabled", true).val("Saving...");
-    // var mf = new IONUX.Models.Observatory();
-    
-    var self = this;
-    $.each(this.$el.find("input,textarea,select").not("input[type='submit'],input[type='cancel']"), function(i, e){
-      var key = $(e).attr("name"), val = $(e).val();
-      var kv = {};
-      kv[key] = val;
-      self.model.set(kv);
-    });
-    
-    self.model.save(null, {success:function(model, resp) {
-      // self.$el.hide();
-    }});
-  },
-  
-  cancel: function(){
-    this.$el.hide();
-  }
 
+IONUX.Views.CreateNewView = Backbone.View.extend({
+    events: {
+        "click input[type='submit']":"create_new",
+        "click .cancel":"cancel"
+    },
+    
+    create_new: function(evt){
+        evt.preventDefault();
+        alert('create_new!');
+        this.$el.find("input[type='submit']").attr("disabled", true).val("Saving...");
+        // var mf = new IONUX.Models.Observatory();
+            
+        var self = this;
+        $.each(this.$el.find("input,textarea,select").not("input[type='submit'],input[type='cancel']"), function(i, e){
+            var key = $(e).attr("name"), val = $(e).val();
+            var kv = {};
+            kv[key] = val;
+            self.model.set(kv);
+        });
+    
+        self.model.save(null, {success:function(model, resp) {
+            // self.$el.hide();
+        }});
+    },
+    cancel: function(){
+        this.$el.hide();
+    }
 });
 
 
 IONUX.Views.NewObservatoryView = Backbone.View.extend({
-  el: "#observatory-new-container",
-  template: _.template($("#new-observatory-tmpl").html()),
-  events: {
-    "click input[type='submit']":"save",
-    "click .cancel":"cancel"
-  },
+    el: "#observatory-new-container",
+    template: _.template($("#new-observatory-tmpl").html()),
+    events: {
+        "click input[type='submit']":"save",
+        "click .cancel":"cancel"
+    },
 
-  render: function(){
-    this.$el.empty().html(this.template(this.model.toJSON())).show();
-    this.get_all_users();
-    return this;
-  },
+    render: function(){
+        this.$el.empty().html(this.template(this.model.toJSON())).show();
+        this.get_all_users();
+        return this;
+    },
   
-  get_all_users: function() {
-    $.ajax({
-      url: '/observatories/all_users/',
-      dataType: 'json',
-      success: function(resp) {
-        _.each(resp.data, function(e, i) {
-          $('#user_id').append($('<option>').text(e.user_info.contact.name).val(e._id));
+    get_all_users: function() {
+        $.ajax({
+            url: '/observatories/all_users/',
+            dataType: 'json',
+            success: function(resp) {
+                _.each(resp.data, function(e, i) {
+                $('#user_id').append($('<option>').text(e.user_info.contact.name).val(e._id));
+                });
+            }
         });
-      }
-    });
-  },
+    },
   
   // This needs to move into it's own utility method early in R2 Construction.
   save: function(evt){

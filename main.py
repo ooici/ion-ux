@@ -67,6 +67,30 @@ def layout():
     layout_schema = ServiceApi.get_layout_schema()
     return jsonify(data=layout_schema)
 
+
+
+@app.route('/layout2/', methods=['GET'])
+def layout2():
+    import os.path
+    import sys
+    from lxml.html import parse, tostring
+
+    base_path = os.path.dirname(__file__)
+    tmpl_unparsed = open(base_path + 'templates/ion-ux.html')
+    tmpl = parse(tmpl_unparsed)
+
+    # print base_template
+    # print dir(base_template)
+    # print dir(base_template.find('body'))
+    # body = base_template.find('body')
+    # head = body.getprevious()
+    # body.append()
+    # print dir(head)
+    # print tostring(body)
+    
+    return "Yeah!"
+
+
 # ---------------------------------------------------------------------------
 # END LAYOUT
 # ---------------------------------------------------------------------------

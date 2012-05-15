@@ -2,6 +2,7 @@ IONUX.Router = Backbone.Router.extend({
     routes: {
         "": "dashboard",
         "facepage/:ui_view_type/": "layout_test",
+        "table/": "table",
         "userprofile/": "user_profile",
         "observatories/": "observatories",
         "observatories/new/": "observatory_new",
@@ -39,9 +40,11 @@ IONUX.Router = Backbone.Router.extend({
   
     layout_test: function(ui_view_type) {
         this._reset();
+        // var layout = new IONUX.Views.Layout();
+        // layout.render();
         var instrument = new IONUX.Views.NewInstrumentFacepage()
         instrument.render();
-    },  
+    },
     
     data_products: function() {
         this._reset();
