@@ -12,18 +12,13 @@
 		<link rel="stylesheet" href="/static/css/ux-datatable-page.css" type="text/css" />
 		<link rel="stylesheet/less" href="/static/bootstrap/less/bootstrap.less" type="text/css" />
 		<link rel="stylesheet" href="/static/css/lca.css" type="text/css" />
-		
-		
-		<!-- Visualization -->
-		<script type='text/javascript' src='http://www.google.com/jsapi'></script>
-	    <script type="text/javascript"
-	        src='https://www.google.com/jsapi?autoload={"modules":[{"name":"visualization","version":"1"}]}'>
-	    </script>
-		<script type="text/javascript" charset="utf-8" src="/static/js/IONUX.Visualization.js"></script>
+
 	
 	</head>
 	<body>
-		
+	
+	<div class="loader">Loading...</div>
+	
 	<div id="header" class="navbar navbar-fixed-top"></div> <!-- div#header -->
 
     
@@ -70,10 +65,10 @@
 				
 				<span class="sidebar-section">Create Resources</span>
 				<ul>
-					<li class=""><a href="/observatories/new/">Observatory</a>
+					<li class=""><a href="/observatories/new/">Observatory</a></li>
 				    <li class=""><a href="/platform_models/new/">Platform Model</a></li>
-					<li class=""><a href="/platforms/new/">Platform Device</a>
-					<li class=""><a href="/instrument_models/new/">Intrument Model</a>
+					<li class=""><a href="/platforms/new/">Platform Device</a></li>
+					<li class=""><a href="/instrument_models/new/">Intrument Model</a></li>
 				    <li class=""><a href="/instruments/new/">Instrument Device</a></li>
 					<li class=""><a href="/frame_of_references/new/">Frame of Reference</a></li>
 				</ul>
@@ -217,7 +212,7 @@
 		// Temporary hack to set background
 		$('body').css('background-color', '#eee');
 		$('.container').css('opacity', 0);
-		$('body').append($('<div>').text('Loading...').addClass('loader'));
+		$('.loader').show();
 
     	IONUX.set_roles("{{ roles }}");
     	// Handle conditionally displaying login, user profile and logout links
@@ -233,7 +228,7 @@
 		window.layoutModel = new IONUX.Models.Layout();
 	    window.layoutModel.fetch({
 			success: function(model, resp){
-				$('.loader').remove();
+				$('.loader').hide();
 				$('.container').animate({opacity: 1});
 				var layoutView = new IONUX.Views.Layout({model: window.layoutModel});
 				layoutView.render();

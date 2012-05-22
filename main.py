@@ -71,18 +71,17 @@ def layout():
 def layout2():
     import os.path
     import sys
-    from lxml.html import parse, tostring
-    from lxml.html import builder as E
+    import cStringIO
+    import xml.etree.ElementTree as ET
     
-    # get existing template ready
     base_path = os.path.dirname(__file__)
     tmpl_unparsed = open(base_path + 'templates/ion-ux.html')
-    tmpl = parse(tmpl_unparsed)
+    tmpl = ET.parse(tmpl_unparsed)
+    body = tmpl.find('body')
     
-    # get full layout schema from service gateway
     layout_schema = ServiceApi.get_layout_schema()
     
-    # prepare optimized layout object for Backbone and build the facepage templates 
+    # Prepare optimized layout object for Backbone and build the facepage templates 
     # with placeholders for the Backbone sub-templates.
     layout = {}
     instrument_facepage_id = [view for view in layout_schema['views'].keys() if view.endswith('2250001')][0]
@@ -97,26 +96,42 @@ def layout2():
         for block in group[1]:
             block_obj = layout_schema['objects'][block[0]]
             block_id = block_obj['_id']
-            # block_label = layout_schema['objects'][block_obj['screen_label_id']]['name']
             
-            block_represention = None
+            try:
+                block_label = layout_schema['objects'][block_obj['screen_label_id']]['text']
+            except Exception, e:
+                block_label = block_obj['name']
+            
+            # block_represention = None
             associations = layout_schema['associated_to'][block_id]
             if associations:
                 for assoc in associations:
-                    print 'ASSOC', assoc
                     if assoc[0] == 'hasUIRepresentation':
                         block_reprentation = layout_schema['objects'][assoc[1]]['name']
-                        print 'BLOCKREP', block_reprentation
-            
-            
-            # HTML <div id="block_obj id">
+                        if block_reprentation == 'Table':
+                            script_elmt = ET.Element('script')
+                            script_elmt.set('id', block_obj['uirefid'])
+                            script_elmt.set('type', 'text/template')
+                            block_elmt = ET.SubElement(script_elmt, 'div')
+                            block_elmt.text = "Testing"
+                            body.append(script_elmt)
+                            
+                            tmpl.write(sys.stdout)
+                            
+                            # print 'BLOCKOBJ', block_obj
+                            # print 'BLOCKLABEL', block_label
+
             
             for attribute in block[1]:
                 pass
-    
+
+    string_response = cStringIO.StringIO()
+    tmpl.write(string_response)
+
+    return string_response.getvalue()
 
     # return str(layout)
-    return str(layout_schema['views'][instrument_facepage_id])
+    # return str(layout_schema['views'][instrument_facepage_id])
 
     
     # print base_template
