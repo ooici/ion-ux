@@ -398,39 +398,39 @@ class ServiceApi(object):
             # DATA PRODUCTS
             instrument['data_products'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate': 'hasOutputProduct', 'id_only': False})[0]
             for data_product in instrument['data_products']:
-                if 'raw' in data_product['name'].lower():
-                    instrument['raw_data_product'] = data_product
-                elif 'parsed' in data_product['name'].lower():
-                    instrument['parsed_data_product'] = data_product
+              if 'raw' in data_product['name'].lower():
+                  instrument['raw_data_product'] = data_product
+              elif 'parsed' in data_product['name'].lower():
+                  instrument['parsed_data_product'] = data_product
 
-            # LAST UPDATE
-            instrument['last_update'] = {}
-            if 'parsed_data_product' in instrument:
-                instrument['last_update'] = service_gateway_get('data_product_management', 'get_last_update', params={'data_product_id': instrument['parsed_data_product']['_id']})
-                # TODO use last update to populate 'Latest Readings'
-                # TODO get visualization
-                # instrument['visualization'] = service_gateway_get('visualization', 'get_google_dt', params={'data_product_id': instrument['parsed_data_product']['_id']})
+              # LAST UPDATE
+              instrument['last_update'] = {}
+              if 'parsed_data_product' in instrument:
+                  instrument['last_update'] = service_gateway_get('data_product_management', 'get_last_update', params={'data_product_id': instrument['parsed_data_product']['_id']})
+                  # TODO use last update to populate 'Latest Readings'
+                  # TODO get visualization
+                  # instrument['visualization'] = service_gateway_get('visualization', 'get_google_dt', params={'data_product_id': instrument['parsed_data_product']['_id']})
 
-            # RELATED MODEL
-            instrument['related_model'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate': 'hasModel', 'object_type': 'InstrumentModel', 'id_only': False})[0][0]
-        
-            # DEPLOYMENTS
-            instrument['primary_deployment'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate': 'hasPrimaryDeployment', 'object_type': 'LogicalInstrument', 'id_only': False})[0]
-            instrument['deployments'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate': 'hasDeployment', 'object_type': 'LogicalInstrument', 'id_only': False})[0]
-        
-            # ADMINISTRATION
-            instrument['instrument_agent'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate': 'hasAgentInstance', 'object_type': 'InstrumentAgentInstance', 'id_only': False})[0][0]
-        
-            # FRAME OF REFERENCES
-            instrument['superiors'] = service_gateway_get('marine_facility_management', 'find_superior_frames_of_reference', params={'input_resource_id': instrument['deployments'][0]["_id"]})
-            
-            # OWNER
-            instrument['owner'] = ServiceApi.find_owner(instrument_device_id)
-        
-            # POLICIES
-            instrument['policies'] = service_gateway_get('policy_management', 'find_resource_policies', params={'resource_id': instrument_device_id})
+                  # RELATED MODEL
+                  instrument['related_model'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate': 'hasModel', 'object_type': 'InstrumentModel', 'id_only': False})[0][0]
 
+                  # DEPLOYMENTS
+                  instrument['primary_deployment'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate': 'hasPrimaryDeployment', 'object_type': 'LogicalInstrument', 'id_only': False})[0]
 
+                  # NOT WORKING 5/24/2012
+                  # instrument['deployments'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate': 'hasDeployment', 'object_type': 'LogicalInstrument', 'id_only': False})[0]
+
+                  # ADMINISTRATION
+                  instrument['instrument_agent'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate': 'hasAgentInstance', 'object_type': 'InstrumentAgentInstance', 'id_only': False})[0][0]
+
+                  # FRAME OF REFERENCES
+                  # instrument['superiors'] = service_gateway_get('observatory_management', 'find_superior_frames_of_reference', params={'input_resource_id': instrument['deployments'][0]["_id"]})
+
+                  # OWNER
+                  instrument['owner'] = ServiceApi.find_owner(instrument_device_id)
+
+                  # POLICIES
+                  instrument['policies'] = service_gateway_get('policy_management', 'find_resource_policies', params={'resource_id': instrument_device_id})
         
         return instrument
 
@@ -762,8 +762,8 @@ def service_gateway_agent_request(agent_id, operation_name, params={}):
 
 def pretty_console_log(label, content, data=None):
     print '\n'
-    print '-------------------------------------------'
-    print '%s : %s' % (label, content), '\n\n'
-    if data:
-        print 'data : %s' % data
+    # print '-------------------------------------------'
+    # print '%s : %s' % (label, content), '\n\n'
+    # if data:
+    #     print 'data : %s' % data
 

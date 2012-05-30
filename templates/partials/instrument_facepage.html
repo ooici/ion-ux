@@ -21,11 +21,6 @@
 			<section class="wrapper">
 				<h3 class="wrapper-heading">Location</h3>
 				<p>
-					<strong>Name: </strong><%= deployments[0].name %><br />
-					<strong>North: </strong><%= deployments[0].geospatial_constraint.geospatiallatmin %><br />
-					<strong>South: </strong><%= deployments[0].geospatial_constraint.geospatiallatmax %><br />
-					<strong>East: </strong><%= deployments[0].geospatial_constraint.geospatiallonmax %><br />
-					<strong>West: </strong><%= deployments[0].geospatial_constraint.geospatiallonmin %>
 				</p>
 			</section>
 			<section class="wrapper">
@@ -60,20 +55,6 @@
 					<th>Updated</th>
 					<th>&nbsp;</th>
 				</tr>
-				<% _.each(deployments, function(obj) { %>
-					<tr id="<%= obj._id %>">
-						<td><%= obj.name %></td>
-						<td><%= obj.description %></td>
-						<th style="font-weight: normal;"><%= obj.type_ %></th>
-						<td><%= obj.ts_updated %></td>
-						<!-- Hack ;) -->
-						<% if ($.isEmptyObject(window.view.model.get('primary_deployment'))) { %>
-							<td><input type="checkbox" id="deployment-checkbox" value="deployed" /> Primary</td>
-						<% } else { %>
-							<td><input type="checkbox" id="deployment-checkbox" value="deployed" checked="checked" disabled="true" /> Primary</td>
-						<% } %>
-					</tr>
-				<% }); %>
 			</table>
 		</section>
 		
@@ -138,16 +119,6 @@
 						<th>Type</th>
 						<th>Updated</th>
 					</tr>
-					<% _.each(superiors, function(key) { %>
-						<% _.each(key, function(obj) { %>
-							<tr>
-								<td><a href="/frame_of_references/<%= obj._id %>/"><%= obj.name %></a></td>
-								<td><%= obj.description %></td>
-								<td><%= obj.type_ %></td>
-								<td><%= obj.ts_updated %></td>
-							</tr>
-						<% }); %>
-					<% }); %>
 				</table>
 			</section>
 		</section>

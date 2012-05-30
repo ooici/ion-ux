@@ -69,31 +69,49 @@ def layout():
 
 @app.route('/layout2/', methods=['GET'])
 def layout2():
+    from collections import defaultdict
     import os.path
     import sys
     import cStringIO
-    import xml.etree.ElementTree as ET
+    import xml.etree.cElementTree as ET
     
     base_path = os.path.dirname(__file__)
     tmpl_unparsed = open(base_path + 'templates/ion-ux.html')
     tmpl = ET.parse(tmpl_unparsed)
-    body = tmpl.find('body')
+    body_elmt = tmpl.find('body')
     
     layout_schema = ServiceApi.get_layout_schema()
+    print 'LAYOUT_SCHEMA TYPE: ', type(layout_schema)
+
+    # Prepare optimized layout object for Backbone and build the facepage 
+    # templates with placeholders for the Backbone sub-templates.
     
-    # Prepare optimized layout object for Backbone and build the facepage templates 
-    # with placeholders for the Backbone sub-templates.
-    layout = {}
-    instrument_facepage_id = [view for view in layout_schema['views'].keys() if view.endswith('2250001')][0]
+    view_id = [view for view in layout_schema['views'].keys() if view.endswith('2250001')][0]
     
-    for group in layout_schema['views'][instrument_facepage_id]:
-        group_obj = layout_schema['objects'][group[0]]
-        group_label = layout_schema['objects'][group_obj['screen_label_id']]['name']
+    # VIEW HTML
+    script_elmt = ET.Element('script')
+    script_elmt.set('id', 'dyn-instrument-facepage-tmpl')
+    script_elmt.set('type', 'text/template')
+    
+    # VIEW JSON
+    json_layout = {view_id: []}
+    
+    groups = layout_schema['views'][view_id]
+    for group_index, group in enumerate(groups):
+        group_id = group[0]
+        group_obj = layout_schema['objects'][group_id]
+        group_label = layout_schema['objects'][group_obj['screen_label_id']]['text']
         
-        # HTML <div class="row"> with <h2>group_label</h2> here...
-        # JSON group key...
+        # GROUP HTML
+        group_elmt = ET.SubElement(script_elmt, 'div')
+        group_elmt.set('class', 'row')
+        group_h2_elmt = ET.SubElement(group_elmt, 'h2')
+        group_h2_elmt.text = group_label + ' Group'
+
+        # GROUP JSON
+        json_layout[view_id].append({'group_id': group_obj['uirefid'], 'blocks': []})
         
-        for block in group[1]:
+        for block_index, block in enumerate(group[1]):
             block_obj = layout_schema['objects'][block[0]]
             block_id = block_obj['_id']
             
@@ -102,47 +120,57 @@ def layout2():
             except Exception, e:
                 block_label = block_obj['name']
             
-            # block_represention = None
+            # BLOCK HTML
+            block_elmt = ET.SubElement(group_elmt, 'div')
+            block_elmt.set('id', block_obj['uirefid'])
+            block_h3_elmt = ET.SubElement(block_elmt, 'h3')
+            block_h3_elmt.text = block_label
+            block_p_elmt = ET.SubElement(block_elmt, 'p')
+            block_p_elmt.text = 'Attributes here.'
+            
+            # BLOCK JSON            
             associations = layout_schema['associated_to'][block_id]
+            block_representation = ''
             if associations:
                 for assoc in associations:
                     if assoc[0] == 'hasUIRepresentation':
-                        block_reprentation = layout_schema['objects'][assoc[1]]['name']
-                        if block_reprentation == 'Table':
-                            script_elmt = ET.Element('script')
-                            script_elmt.set('id', block_obj['uirefid'])
-                            script_elmt.set('type', 'text/template')
-                            block_elmt = ET.SubElement(script_elmt, 'div')
-                            block_elmt.text = "Testing"
-                            body.append(script_elmt)
-                            
-                            tmpl.write(sys.stdout)
-                            
-                            # print 'BLOCKOBJ', block_obj
-                            # print 'BLOCKLABEL', block_label
+                        block_representation = layout_schema['objects'][assoc[1]]['name']
 
-            
-            for attribute in block[1]:
-                pass
 
+            json_layout[view_id][group_index]['blocks'].append({
+                'block_id': block_obj['uirefid'],
+                'ui_representation': block_representation, 
+                'attributes': []
+                })
+
+            for attribute_id in block[1]:
+
+                # ATTRIBUTE JSON
+                attribute_obj = layout_schema['objects'][attribute_id]
+                
+                try:
+                    attribute_screen_label = layout_schema['objects'][attribute_obj['screen_label_id']]['text']
+                except Exception, e:
+                    attribute_screen_label = attribute_obj['name']
+
+                try:
+                    attribute_level = layout_schema['objects'][attribute_obj['information_level_id']]['level']
+                except Exception, e:
+                    attribute_level = 'none'
+
+                json_layout[view_id][group_index]['blocks'][block_index]['attributes'].append({
+                    'attribute_id': attribute_obj['uirefid'],
+                    'attribute_screen_label': attribute_screen_label,
+                    'attribute_level': attribute_level
+                    })
+    
+    print 'JSON LAYOUT: ', json_layout
+    
+    body_elmt.append(script_elmt)
     string_response = cStringIO.StringIO()
     tmpl.write(string_response)
-
+    
     return string_response.getvalue()
-
-    # return str(layout)
-    # return str(layout_schema['views'][instrument_facepage_id])
-
-    
-    # print base_template
-    # print dir(base_template)
-    # print dir(base_template.find('body'))
-    # body = base_template.find('body')
-    # head = body.getprevious()
-    # body.append()
-    # print dir(head)
-    # print tostring(body)
-    
 
 
 # ---------------------------------------------------------------------------
