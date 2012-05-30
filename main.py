@@ -164,7 +164,12 @@ def layout2():
                     'attribute_level': attribute_level
                     })
     
-    print 'JSON LAYOUT: ', json_layout
+    
+    print 'JSON LAYOUT ', json_layout
+    
+    layout_elmt = ET.SubElement(body_elmt, 'script')
+    layout_elmt.set('id', 'layout')
+    layout_elmt.text = "var LAYOUT_OBJECT = %s;" % json.dumps(json_layout)
     
     body_elmt.append(script_elmt)
     string_response = cStringIO.StringIO()
