@@ -69,15 +69,25 @@ def layout():
 
 @app.route('/layout2/', methods=['GET'])
 def layout2():
-    from collections import defaultdict
     import os.path
     import sys
     import cStringIO
     import xml.etree.cElementTree as ET
+    import HTMLParser
     
-    base_path = os.path.dirname(__file__)
-    tmpl_unparsed = open(base_path + 'templates/ion-ux.html')
-    tmpl = ET.parse(tmpl_unparsed)
+    from collections import defaultdict
+    from jinja2 import Template
+    from jinja2 import FileSystemLoader
+    from jinja2.environment import Environment
+
+    env = Environment()
+    env.loader = FileSystemLoader('templates')
+    
+    tmpl_unparsed = env.get_template('ion-ux.html').render()
+    # return tmpl_unparsed
+    # tmpl_unparsed = Template(tmpl_unparsed.read().decode('utf-8')).render()
+    print 'TMPL UNPARSED ', tmpl_unparsed
+    tmpl = ET.fromstring(tmpl_unparsed.encode('utf-8'))
     body_elmt = tmpl.find('body')
     
     layout_schema = ServiceApi.get_layout_schema()
@@ -136,7 +146,6 @@ def layout2():
                     if assoc[0] == 'hasUIRepresentation':
                         block_representation = layout_schema['objects'][assoc[1]]['name']
 
-
             json_layout[view_id][group_index]['blocks'].append({
                 'block_id': block_obj['uirefid'],
                 'ui_representation': block_representation, 
@@ -173,9 +182,13 @@ def layout2():
     
     body_elmt.append(script_elmt)
     string_response = cStringIO.StringIO()
-    tmpl.write(string_response)
+    # tmpl.write(string_response)
     
-    return string_response.getvalue()
+    tmpl = ET.tostring(tmpl)
+    h = HTMLParser.HTMLParser()
+    return h.unescape(tmpl)
+    
+    # return string_response.getvalue()
 
 
 # ---------------------------------------------------------------------------

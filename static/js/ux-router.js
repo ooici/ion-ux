@@ -88,7 +88,7 @@ IONUX.Router = Backbone.Router.extend({
 
     observatory_edit: function(marine_facility_id){
         this._reset();    
-        var oModel = new IONUX.Models.ObservatoryFacepageModel({marine_facility_id:marine_facility_id});
+        var oModel = new IONUX.Models.ObservatoryFacepageModel({marine_facility_id: marine_facility_id});
         var editView = new IONUX.Views.ObservatoryEditView({model:oModel});
         oModel.fetch();
     },
