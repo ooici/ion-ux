@@ -1,18 +1,8 @@
 
 <table id='table_<%= uirefid %>' class='table'>
 
-    <% _.each(headers, function(header) { %>
-      <th><%= header %></th>
-    <% }); %>
-
-    <% _.each(contents, function(row) { %>
-      <tr>
-       <% _.each(row, function(td) { %>
-          <td class='<%= td.classes %>'>
-            <%= td.content %>
-          </td>
-       <% }); %>
-      </tr>
+    <% _.each(block.attributes, function(attr) { %>
+      <th><%= attr.attribute_screen_label %></th>
     <% }); %>
 
 </table>
