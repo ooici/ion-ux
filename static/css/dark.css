@@ -1,0 +1,55 @@
+body, p, h1, h2, h3, h4, h5, h6 { color: #ccc;}
+
+/* Temp header */
+#header {
+  background: #004978 url('/static/img/lca-header.png') no-repeat 0 0;
+  height: 72px;
+}
+
+#container {
+  margin-top: 82px;
+}
+
+.table {
+  background: #1e1e1e;
+}
+
+.table th td, .table thead tr {
+  background: #4d4d4d;
+  color: #ccc;
+  font-size: 10px;
+  font-weight: normal;
+  text-transform: uppercase;
+}
+
+.table tr td {
+  border: none;
+  font-size: 12px;
+}
+
+.table tr:nth-child(even) {
+  background: #333;
+}
+
+.attr_group {
+  background: #1e1e1e;
+  color: #ccc;
+  padding-bottom: 15px;
+  margin: 15px;
+}
+
+.attr_group p {
+  padding: 5px 15px;
+}
+
+.attr_group h3 {
+  background: #4d4d4d;
+  color: #ccc;
+  font-size: 10px;
+  font-weight: normal;
+  margin: 0;
+  padding: 5px 15px;
+  text-transform: uppercase;
+}
+
+

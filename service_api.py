@@ -394,6 +394,9 @@ class ServiceApi(object):
     def find_instrument(instrument_device_id):
         instrument = service_gateway_get('instrument_management', 'read_instrument_device', params={'instrument_device_id': instrument_device_id})
         
+        # Dynamic UI
+        instrument['Identification'] = {'Name': instrument['name'], 'ID': instrument['_id']}
+
         if instrument.has_key('_id'):
             # DATA PRODUCTS
             instrument['data_products'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate': 'hasOutputProduct', 'id_only': False})[0]

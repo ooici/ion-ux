@@ -1,74 +1,104 @@
-IONUX.Views.Layout = Backbone.View.extend({
-    initialize: function(){
+IONUX.Views.InstrumentFacepage2 = Backbone.View.extend({
+    el: '#instrument-facepage-container',
+
+    initialize: function() {
         _.bindAll(this, 'render');
+        // Set template here to ensure it happens after tmpl has rendered.
+        this.template = _.template($('#dyn-instrument-facepage-tmpl').html());
         this.model.bind('change', this.render);
     },
-
     render: function() {
-        // Instrument Facepage is the only facepage currently defined
-        var facepage_object = window.layoutModel.get('views')['884a290ff_2250001'];
-        this.build_facepage_template(facepage_object);
-    },
-    
-    build_facepage_template: function(facepage_object) {
-        // Create and append script tag
-        var facepage_container = $('<div>');
-        var script = document.createElement("script");
-        script.type = "text/template";
-        script.id = "dynamic-facepage-tmpl";
-        $("body").append(script);
-        
-        // Build UI Rows
-        var self = this;
-        _.each(facepage_object, function(ui_group, group_key) {
-            var div = $('<div>').addClass('row row_demo');
-
-            // Display group information
-            var group = window.layoutModel.get('objects')[ui_group[0]];
-            div.append($('<h2>').text(group['name']));
-            
-            _.each(ui_group[1], function(ui_block, ui_key) {
-                var block = window.layoutModel.get('objects')[ui_block[0]]
-                var block_snippet = $('<div>').addClass('span2');
-                block_snippet.append($('<h4>').text(block['name']));
-                
-                // Display attributes
-                var attr_list = $('<ul>');
-                _.each(ui_block[1], function(ui_attribute, ui_attribute_key) {
-                    var attribute = window.layoutModel.get('objects')[ui_attribute];
-                    attr_list.append($('<li>').text(attribute['name']));
-                });
-                block_snippet.append(attr_list);
-                div.append(block_snippet);
-            });
-            facepage_container.append(div);
-        });
-        $('#dynamic-facepage-tmpl').append(facepage_container);
-    }
-});
-
-// IONUX.Views.Table = Backbone.View.extend({
-//     el: '#dynamic-container',
-//     initialize: function() {
-//         this.html_template = $('#table-template');
-//     },
-//     render: function(){
-//         // this.$el.show();
-//     }
-// });
-
-IONUX.Views.NewInstrumentFacepage = Backbone.View.extend({
-    el: '#dynamic-container',
-    initialize: function() {
-       this.template = _.template($('#dynamic-facepage-tmpl').html());
-       _.bindAll(this, "render");
-    },
-    render: function() {
-        console.log('NewInstrumentFacepage render...');
         this.$el.html(this.template()).show();
-        return this;
+        page_builder(this.options.layout, this.model);
     }
 });
+
+// UI Representation Base View
+IONUX.Views.Base = Backbone.View.extend({
+    initialize: function() {
+        this.$el = $('#' + this.options.block.block_id);
+        this.render();
+    },
+    render: function() {
+        if (this.className) { this.$el.addClass(this.className)};
+        this.$el.append(this.template({'block': this.options.block, 'data': this.options.data}));
+    },
+});
+
+// UI Representation Views
+IONUX.Views.AttributeGroup = IONUX.Views.Base.extend({
+    className: 'attr_group',
+    template: _.template($('#dyn-attr-group-tmpl').html()),
+});
+
+IONUX.Views.Table = IONUX.Views.Base.extend({
+    template: _.template($('#dyn-table-tmpl').html()),
+});
+
+IONUX.Views.Chart = IONUX.Views.Base.extend({
+    template: _.template($('#dyn-chart-tmpl').html()),
+});
+
+IONUX.Views.Graph = IONUX.Views.Base.extend({
+    template: _.template($('#dyn-graph-tmpl').html()),
+});
+
+IONUX.Views.Image = IONUX.Views.Base.extend({
+    template: _.template($('#dyn-image-tmpl').html()),
+});
+
+IONUX.Views.Map = IONUX.Views.Base.extend({
+    template: _.template($('#dyn-map-tmpl').html()),
+});
+
+IONUX.Views.PDF = IONUX.Views.Base.extend({
+    template: _.template($('#dyn-pdf-tmpl').html()),
+});
+
+IONUX.Views.Text = IONUX.Views.Base.extend({
+    template: _.template($('#dyn-text-tmpl').html()),
+});
+
+IONUX.Views.TextIcon = IONUX.Views.Base.extend({
+    template: _.template($('#dyn-text-icon-tmpl').html()),
+});
+
+IONUX.Views.Undefined = IONUX.Views.Base.extend({
+    template: _.template($('#dyn-undefined-tmpl').html()),
+});
+
+function page_builder(layout, model) {
+    _.each(layout, function(group) {
+         _.each(group.blocks, function(block){
+             var data = model.get(block.screen_label);
+             var ui_representation = block.ui_representation;
+             
+             if (ui_representation == 'Attribute Group') {
+                 new IONUX.Views.AttributeGroup({'block': block, 'data': data});
+             } else if (ui_representation == 'Table') {
+                 new IONUX.Views.Table({'block': block, 'data': data});
+             } else if (ui_representation == 'Chart') {
+                 new IONUX.Views.Chart({'block': block, 'data': data});
+             } else if (ui_representation == 'Graph') {
+                 new IONUX.Views.Graph({'block': block, 'data': data});
+             } else if (ui_representation == 'Image') {
+                 new IONUX.Views.Image({'block': block, 'data': data});
+             } else if (ui_representation == 'Map') {
+                 new IONUX.Views.Map({'block': block, 'data': data});
+             } else if (ui_representation == 'PDF') {
+                 new IONUX.Views.PDF({'block': block, 'data': data});
+             } else if (ui_representation == 'Text') {
+                 new IONUX.Views.Text({'block': block, 'data': data});
+             } else if (ui_representation == 'Text & Icon') {
+                 new IONUX.Views.TextIcon({'block': block, 'data': data});
+             } else if (ui_representation == '') {
+                 new IONUX.Views.Undefined({'block': 'nada', 'data': 'nada'});
+             };
+         });
+    });
+};
+
+
 
 
 IONUX.Views.CreateNewView = Backbone.View.extend({

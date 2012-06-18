@@ -86,17 +86,20 @@ def layout2():
     tmpl_unparsed = env.get_template('ion-ux.html').render()
     # return tmpl_unparsed
     # tmpl_unparsed = Template(tmpl_unparsed.read().decode('utf-8')).render()
-    print 'TMPL UNPARSED ', tmpl_unparsed
+    # print 'TMPL UNPARSED ', tmpl_unparsed
     tmpl = ET.fromstring(tmpl_unparsed.encode('utf-8'))
     body_elmt = tmpl.find('body')
     
     layout_schema = ServiceApi.get_layout_schema()
-    print 'LAYOUT_SCHEMA TYPE: ', type(layout_schema)
 
     # Prepare optimized layout object for Backbone and build the facepage 
-    # templates with placeholders for the Backbone sub-templates.
+    # templates with placeholders for the Backbone sub-templates.    
+    # Need to split and use uirefid for view
     
-    view_id = [view for view in layout_schema['views'].keys() if view.endswith('2250001')][0]
+    print 'Layout schema: ', layout_schema, '\n\n'
+
+    old_view_id = [view for view in layout_schema['views'].keys() if view.endswith('2250001')][0]
+    view_id = '2250001'
     
     # VIEW HTML
     script_elmt = ET.Element('script')
@@ -106,7 +109,7 @@ def layout2():
     # VIEW JSON
     json_layout = {view_id: []}
     
-    groups = layout_schema['views'][view_id]
+    groups = layout_schema['views'][old_view_id]
     for group_index, group in enumerate(groups):
         group_id = group[0]
         group_obj = layout_schema['objects'][group_id]
@@ -114,12 +117,13 @@ def layout2():
         
         # GROUP HTML
         group_elmt = ET.SubElement(script_elmt, 'div')
+        group_elmt.set('id', group_obj['uirefid'])
         group_elmt.set('class', 'row')
         group_h2_elmt = ET.SubElement(group_elmt, 'h2')
         group_h2_elmt.text = group_label + ' Group'
 
         # GROUP JSON
-        json_layout[view_id].append({'group_id': group_obj['uirefid'], 'blocks': []})
+        json_layout[view_id].append({'group_id': group_obj['uirefid'], 'screen_label': group_label, 'blocks': []})
         
         for block_index, block in enumerate(group[1]):
             block_obj = layout_schema['objects'][block[0]]
@@ -136,7 +140,7 @@ def layout2():
             block_h3_elmt = ET.SubElement(block_elmt, 'h3')
             block_h3_elmt.text = block_label
             block_p_elmt = ET.SubElement(block_elmt, 'p')
-            block_p_elmt.text = 'Attributes here.'
+            # block_p_elmt.text = 'Attributes here.'
             
             # BLOCK JSON            
             associations = layout_schema['associated_to'][block_id]
@@ -148,6 +152,7 @@ def layout2():
 
             json_layout[view_id][group_index]['blocks'].append({
                 'block_id': block_obj['uirefid'],
+                'screen_label': block_label,
                 'ui_representation': block_representation, 
                 'attributes': []
                 })
@@ -168,13 +173,11 @@ def layout2():
                     attribute_level = 'none'
 
                 json_layout[view_id][group_index]['blocks'][block_index]['attributes'].append({
-                    'attribute_id': attribute_obj['uirefid'],
-                    'attribute_screen_label': attribute_screen_label,
-                    'attribute_level': attribute_level
+                    'id': attribute_obj['uirefid'],
+                    'name': attribute_obj['name'],
+                    'screen_label': attribute_screen_label,
+                    'level': attribute_level
                     })
-    
-    
-    print 'JSON LAYOUT ', json_layout
     
     layout_elmt = ET.SubElement(body_elmt, 'script')
     layout_elmt.set('id', 'layout')
@@ -185,17 +188,13 @@ def layout2():
     init_script_elmt = ET.Element('script')
     init_script_elmt.set('type', 'text/javascript')
     init_script_elmt.text = "$(function(){dyn_do_init();});"
-    body_elmt.append(init_script_elmt)
-    
+    body_elmt.append(init_script_elmt)    
 
     string_response = cStringIO.StringIO()
-    # tmpl.write(string_response)
-    
+
     tmpl = ET.tostring(tmpl)
     h = HTMLParser.HTMLParser()
     return h.unescape(tmpl)
-    
-    # return string_response.getvalue()
 
 
 # ---------------------------------------------------------------------------

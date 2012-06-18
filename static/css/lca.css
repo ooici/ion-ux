@@ -1,3 +1,16 @@
+html, body, .container {
+  background-color: #222;
+}
+
+.viewcontainer {
+  color: #ccc;
+  overflow: visible;
+}
+
+.sidebar { color: red};
+
+h1, h2, h3 {color: #ccc}
+
 .loader {
   display: none;
   position: absolute;
@@ -7,7 +20,6 @@
 }
 
 .row_demo {
-/*    background: #ccc;*/
     margin: 15px 0;
 }
 
@@ -20,10 +32,7 @@ body {
   background-color: #eee;
 }
 
-#header {
-  background: #004978 url('/static/img/lca-header.png') no-repeat 0 0;
-  height: 72px;
-}
+
 
 #container {
   margin-top:100px;

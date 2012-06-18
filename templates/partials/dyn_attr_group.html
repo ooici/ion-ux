@@ -1,0 +1,8 @@
+<% _.each(block.attributes, function(attr) { %>
+	<p>
+		<%= attr.screen_label %>:&nbsp;
+		<% if (! _.isUndefined(data)) { %>
+			<%= data[attr.screen_label] %>
+        <% }; %>
+	</p>
+<% }); %>
