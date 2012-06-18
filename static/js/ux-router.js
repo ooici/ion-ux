@@ -1,6 +1,5 @@
 IONUX.Router = Backbone.Router.extend({
     routes: {
-        "dyninst/:id/": 'dynamic_instrument_facepage',
         "": "dashboard",
         "table/": "table",
         "userprofile/": "user_profile",

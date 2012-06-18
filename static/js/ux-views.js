@@ -99,8 +99,6 @@ function page_builder(layout, model) {
 };
 
 
-
-
 IONUX.Views.CreateNewView = Backbone.View.extend({
     events: {
         "click input[type='submit']":"create_new",
