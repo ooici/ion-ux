@@ -140,8 +140,13 @@ class ServiceApi(object):
     
     @staticmethod
     def instrument_agent_start(instrument_device_id):
+        print '\n\n--------------------------------------------------------\n'
+        print 'zzz - instrument_device_id ', instrument_device_id
         instrument_agent_instance_id = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate':'hasAgentInstance'})[0][0]['_id']
+        print 'zzz - instrument_agent_instance_id: ', instrument_agent_instance_id
         agent_request = service_gateway_get('instrument_management', 'start_instrument_agent_instance', params={'instrument_agent_instance_id': str(instrument_agent_instance_id)})
+        print 'zzz - agent_request ', agent_request
+        print '--------------------------------------------------------\n\n'
         return agent_request
 
     @staticmethod
@@ -345,7 +350,8 @@ class ServiceApi(object):
         if platform.has_key('_id'):
             # DEPLOYMENTS
             platform['primary_deployment'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': platform_device_id, 'predicate': 'hasPrimaryDeployment', 'object_type': 'LogicalPlatform', 'id_only': False})[0]
-            platform['deployments'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': platform_device_id, 'predicate': 'hasDeployment', 'object_type': 'LogicalPlatform', 'id_only': False})[0]
+            platform['deployments'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': platform_device_id, 'predicate': 'hasDeployment', 'object_type': 'PlatformDevice', 'id_only': False})#[0]
+            print 'xxxx: ', platform['deployments']
         
             # ADMINISTRATION        
             platform['policies'] = service_gateway_get('policy_management', 'find_resource_policies', params={'resource_id': platform_device_id})
@@ -688,7 +694,7 @@ def service_gateway_get(service_name, operation_name, params={}):
     
     if resp.status_code == 200:
         resp = json.loads(resp.content)
-
+        
         if type(resp) == dict:
             return resp['data']['GatewayResponse']
         elif type(resp) == list:
@@ -765,8 +771,8 @@ def service_gateway_agent_request(agent_id, operation_name, params={}):
 
 def pretty_console_log(label, content, data=None):
     print '\n'
-    # print '-------------------------------------------'
-    # print '%s : %s' % (label, content), '\n\n'
-    # if data:
-    #     print 'data : %s' % data
+    print '-------------------------------------------'
+    print '%s : %s' % (label, content), '\n\n'
+    if data:
+        print 'data : %s' % data
 

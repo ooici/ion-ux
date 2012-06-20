@@ -102,8 +102,8 @@
 		<!-- templates -->
 		<script type="text/template" id="observatories-tmpl"><![CDATA[{% include 'partials/observatories_index.html' %}]]></script>
 		<script type="text/template" id="observatories-item-tmpl"><![CDATA[{% include 'partials/observatories_item.html' %}]]></script>
-		<script type="text/template" id="observatories-detail-tmpl"><![CDATA[{% include 'partials/observatories_detail.html' %} ]]></script>
-		<script type="text/template" id="observatory-facepage-tmpl"><![CDATA[{% include 'partials/observatory_facepage.html' %} ]]></script>
+		<script type="text/template" id="observatories-detail-tmpl"><![CDATA[{% include 'partials/observatories_detail.html' %}]]></script>
+		<script type="text/template" id="observatory-facepage-tmpl"><![CDATA[{% include 'partials/observatory_facepage.html' %}]]></script>
 		<script type="text/template" id="new-observatory-tmpl"><![CDATA[{% include 'partials/new_marine_facility.html' %}]]></script>
 		<script type="text/template" id="observatory-edit-tmpl"><![CDATA[{% include 'partials/edit_marine_facility.html' %}]]></script>
 		<script type="text/template" id="observatory-modal-tmpl"><![CDATA[{% include 'partials/observatory_modal.html' %}]]></script>
@@ -165,6 +165,11 @@
 		<script src="/static/js/ux-views.js" type="text/javascript"> </script>
 		<script src="/static/js/ux-router.js" type="text/javascript"> </script>
 		<script src="/static/js/init.js" type="text/javascript"> </script>
-
+		<script type="text/javascript" charset="utf-8">
+			$(function() {
+				dyn_do_init();
+			});
+		</script>
+		
 	</body>
 </html>

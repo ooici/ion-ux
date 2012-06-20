@@ -6,11 +6,12 @@
 		<a href="/instruments/<%= instrument_id %>/command/" class="btn">Command Instrument</a>	
 	</div>
 </div>
+
 <div id="instrument-facepage" class="row">
 	<div class="span2">
 		<section class="wrapper">
 			<h3 class="wrapper-heading">Information</h3>
-			<section class="wrapper">
+			<section class="attr_group">
 				<h3 class="wrapper-heading">Identification</h3>
 				<p>
 					<strong>Name: </strong><%= name %><br />
@@ -18,18 +19,18 @@
 					<strong>Model:</strong> <a href="/instrument_models/<%= related_model._id %>/"><%= related_model.name %></a>
 				</p>
 			</section>
-			<section class="wrapper">
+			<section class="attr_group">
 				<h3 class="wrapper-heading">Location</h3>
 				<p>
 				</p>
 			</section>
-			<section class="wrapper">
+			<section class="attr_group">
 				<h3 class="wrapper-heading">Description</h3>
 				<p>
 					<%= description %>
 				</p>
 			</section>
-			<section class="wrapper">
+			<section class="attr_group">
 				<h3 class="wrapper-heading">Contact</h3>
 				<p>
 					<strong>Owner:</strong> <%= owner.contact.name %><br />
@@ -40,14 +41,16 @@
 	</div>
 	
 	<div class="span8">
-		<section class="wrapper">
-			<h3 class="wrapper-heading">Data</h3>
+		<h3 class="wrapper-heading">Data</h3>
+		
+		<div class="attr_group">
 			<input type="checkbox" checked="checked" /> Persistent?
-		</section>
+		</div>
 		
 		<section class="wrapper">
 			<h3 class="wrapper-heading">Deployment</h3>
 			<table class="table">
+				<thead>
 				<tr>
 					<th>Name</th>
 					<th>Description</th>
@@ -55,25 +58,26 @@
 					<th>Updated</th>
 					<th>&nbsp;</th>
 				</tr>
+				</thead>
 			</table>
 		</section>
 		
-			<section class="wrapper">
+			<div class="attr_group">
 				<h3 class="wrapper-heading">Raw Data Product</h3>
-			</section>
-			
-
+			</div>
 		
-			<section class="wrapper">
+			<div class="wrapper">
 				<h3 class="wrapper-heading">Data Products</h3>
 				<table class="table">
-					<tr>
-						<th>Name</th>
-						<th>Description</th>
-						<th>Raw Data Product Level</th>
-						<th>Parsed Data Product Level</th>
-						<th>Updated</th>
-					</tr>
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>Description</th>
+							<th>Raw Data Product Level</th>
+							<th>Parsed Data Product Level</th>
+							<th>Updated</th>
+						</tr>
+					</thead>
 					<% _.each(data_products, function(key) { %>
 							<tr>
 								<td><a href="/data_products/<%= obj._id %>/"><%= obj.name %></a></td>
@@ -84,11 +88,11 @@
 							</tr>
 					<% }); %>
 				</table>
-			</section>
+			</div>
 		
-		<section class="wrapper">
+		<div class="wrapper">
 			<h3 class="wrapper-heading">Administration</h3>
-			<section class="wrapper">
+			<div class="attr_group">
 				<h3 class="wrapper-heading">Agent Information</h3>				
 				<p><strong>Name: </strong><a href="/instrument_agents/<%= obj._id %>/"><%= instrument_agent.name %></a></p>
 				<p><strong>Description: </strong><%= instrument_agent.description %></p>
@@ -101,27 +105,29 @@
 				</p>
 				<p><strong>Description:</strong> <%= instrument_agent.description %></p>
 				<p><strong>Updated:</strong> <%= instrument_agent.ts_updated %></p>
-			</section>
-			<section class="wrapper">
+			</div>
+			<div class="attr_group">
 				<h3 class="wrapper-heading">Policies</h3>
-				<p>Policies...</p>
-			</section>
-		</section>
+				<p>Not implemented.</p>
+			</div>
+		</div>
 				
-		<section class="wrapper">
+		<div class="wrapper">
 			<h3 class="wrapper-heading">Frame of Reference</h3>
-			<section class="wrapper">
+			<div class="wrapper">
 				<h3 class="wrapper-heading">Parents</h3>
 				<table class="table">
-					<tr>
-						<th>Name</th>
-						<th>Description</th>
-						<th>Type</th>
-						<th>Updated</th>
-					</tr>
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>Description</th>
+							<th>Type</th>
+							<th>Updated</th>
+						</tr>
+					</thead>
 				</table>
-			</section>
-		</section>
+			</div>
+		</div>
 	</div>
 			
 </div> <!-- div#instrument-facepage -->

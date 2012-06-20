@@ -136,10 +136,10 @@ class LayoutApi(object):
     
         body_elmt.append(script_elmt)
 
-        init_script_elmt = ET.Element('script')
-        init_script_elmt.set('type', 'text/javascript')
-        init_script_elmt.text = "$(function(){dyn_do_init();});"
-        body_elmt.append(init_script_elmt)    
+        # init_script_elmt = ET.Element('script')
+        # init_script_elmt.set('type', 'text/javascript')
+        # init_script_elmt.text = "$(function(){dyn_do_init();});"
+        # body_elmt.append(init_script_elmt)    
 
         string_response = cStringIO.StringIO()
 
