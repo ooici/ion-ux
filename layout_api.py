@@ -55,7 +55,7 @@ class LayoutApi(object):
         json_layout = {view_id: []}
     
         groups = layout_schema['views'][old_view_id]
-        for group_index, group in enumerate(groups):
+        for group_index, group in enumerate(groups):            
             group_id = group[0]
             group_obj = layout_schema['objects'][group_id]
             group_label = layout_schema['objects'][group_obj['screen_label_id']]['text']
@@ -103,7 +103,6 @@ class LayoutApi(object):
                     })
 
                 for attribute_id in block[1]:
-
                     # ATTRIBUTE JSON
                     attribute_obj = layout_schema['objects'][attribute_id]
                 

@@ -32,6 +32,9 @@ class LayoutApi(object):
         
         # Development
         layout_schema = LAYOUT_SCHEMA
+        # for (k, v) in LAYOUT_SCHEMA.iteritems():
+        #     print 'key: ', k
+        
         # Production and backend schema updates.
         # layout_schema = ServiceApi.get_layout_schema()
         # print 'Layout schema: ', layout_schema, '\n\n'
@@ -56,6 +59,12 @@ class LayoutApi(object):
             group_id = group[0]
             group_obj = layout_schema['objects'][group_id]
             group_label = layout_schema['objects'][group_obj['screen_label_id']]['text']
+        
+            for (k,v) in LAYOUT_SCHEMA.iteritems():
+                print 'key: ', k
+            
+            print LAYOUT_SCHEMA['associated_to'][group_id]
+            # print 'viewgroup', LAYOUT_SCHEMA['UIViewGroup']['1ed650f42_2370023']
         
             # GROUP HTML
             group_elmt = ET.SubElement(script_elmt, 'div')
