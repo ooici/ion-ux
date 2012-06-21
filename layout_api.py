@@ -17,7 +17,7 @@ class LayoutApi(object):
     @staticmethod
     def get_layout_schema():
         layout_schema = service_gateway_get('directory', 'get_ui_specs', params={'user_id': 'tboteler'})
-        return layout_schema
+        return layout_schema    
     
     @staticmethod    
     def build_partials(layout_schema=None):
@@ -36,9 +36,18 @@ class LayoutApi(object):
         # templates with placeholders for the Backbone sub-templates.    
         # Need to split and use uirefid for view
 
-        old_view_id = [view for view in layout_schema['views'].keys() if view.endswith('2250001')][0]
-        view_id = '2250001'
-    
+        # old_view_id = [view for view in layout_schema['views'].keys() if view.endswith('2250001')][0]
+        # view_id = '2250001'
+
+        view_id = [view for view in layout_schema['UIResourceType'].keys() if view.endswith('2050001')][0]    
+        blocks_objs = layout_schema['associated_from'][view_id]
+        group_objs = []
+
+        for block in blocks_objs:
+            group_id = layout_schema['associated_from'][block[1]][1]
+            group = layout_schema['objects'][group_id]
+        
+        
         # VIEW HTML
         script_elmt = ET.Element('script')
         script_elmt.set('id', 'dyn-instrument-facepage-tmpl')
