@@ -19,8 +19,8 @@ if PRODUCTION:
 else:
     # from dummy_service_api import ServiceApi
     from service_api import ServiceApi
-    from dummy_layout_api import LayoutApi
-    # from layout_api import LayoutApi
+    # from dummy_layout_api import LayoutApi
+    from layout_api import LayoutApi
 
 DEFINED_SERVICES_OPERATIONS = {
     'marine_facilities': {

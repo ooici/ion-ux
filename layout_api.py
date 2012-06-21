@@ -20,24 +20,17 @@ class LayoutApi(object):
         return layout_schema
     
     @staticmethod    
-    def build_partials():
+    def build_partials(layout_schema=None):
         env = Environment()
         env.loader = FileSystemLoader('templates')
     
         tmpl_unparsed = env.get_template('ion-ux.html').render()
-        # return tmpl_unparsed
-        # tmpl_unparsed = Template(tmpl_unparsed.read().decode('utf-8')).render()
-        # print 'TMPL UNPARSED ', tmpl_unparsed
+    
         tmpl = ET.fromstring(tmpl_unparsed.encode('utf-8'))
         body_elmt = tmpl.find('body')
         
-        # Development
-        # from dummy_data_layout import LAYOUT_SCHEMA
-        # layout_schema = LAYOUT_SCHEMA
-        
-        # Production and backend schema updates.
-        layout_schema = LayoutApi.get_layout_schema()
-        print 'Layout schema: ', layout_schema, '\n\n'
+        if layout_schema is None:
+            layout_schema = LayoutApi.get_layout_schema()
         
         # Prepare optimized layout object for Backbone and build the facepage 
         # templates with placeholders for the Backbone sub-templates.    
@@ -129,10 +122,10 @@ class LayoutApi(object):
     
         body_elmt.append(script_elmt)
 
-        init_script_elmt = ET.Element('script')
-        init_script_elmt.set('type', 'text/javascript')
-        init_script_elmt.text = "$(function(){dyn_do_init();});"
-        body_elmt.append(init_script_elmt)    
+        # init_script_elmt = ET.Element('script')
+        # init_script_elmt.set('type', 'text/javascript')
+        # init_script_elmt.text = "$(function(){dyn_do_init();});"
+        # body_elmt.append(init_script_elmt)    
 
         string_response = cStringIO.StringIO()
 

@@ -140,13 +140,8 @@ class ServiceApi(object):
     
     @staticmethod
     def instrument_agent_start(instrument_device_id):
-        print '\n\n--------------------------------------------------------\n'
-        print 'zzz - instrument_device_id ', instrument_device_id
         instrument_agent_instance_id = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate':'hasAgentInstance'})[0][0]['_id']
-        print 'zzz - instrument_agent_instance_id: ', instrument_agent_instance_id
         agent_request = service_gateway_get('instrument_management', 'start_instrument_agent_instance', params={'instrument_agent_instance_id': str(instrument_agent_instance_id)})
-        print 'zzz - agent_request ', agent_request
-        print '--------------------------------------------------------\n\n'
         return agent_request
 
     @staticmethod
