@@ -13,37 +13,36 @@ from jinja2.environment import Environment
 from dummy_data_layout import LAYOUT_SCHEMA
 from layout_api import LayoutApi as LayoutApiOG
 
+DEFINED_VIEWS = ['2050001', '2050002', '2050006'] # Instrument, Platform, Observatory
+
 class LayoutApi(object):
-    
     @staticmethod
     def process_layout():
-        layout_schema = json_layout_tree()
+        layout_schema = layout_json_tree()
         processed_layout = build_partials(layout_schema=layout_schema)
         return processed_layout
     
     @staticmethod
     def get_layout_schema():
         return LAYOUT_SCHEMA
-        
+
+
 # TODO: refactor group dictionary for efficiency
-def json_layout_tree():
+def layout_json_tree():
     layout_schema = LayoutApi.get_layout_schema()
     layout_objects = LAYOUT_SCHEMA['objects']
     view_groups = LAYOUT_SCHEMA['UIViewGroup']
+    layout_json = {}
 
-    json_layout = {}
-
-    defined_views = ['2050001', '2050002', '2050006'] # Instrument, Platform, Observatory
-
-    for defined_view in defined_views:
+    for defined_view in DEFINED_VIEWS:
         # Fetch the view resource
         view_id = [view for view in layout_schema['UIResourceType'] if view.endswith(defined_view)][0]
         view_obj = layout_schema['objects'][view_id]
         view_uirefid = view_obj['uirefid']
 
         # Set the view tree 
-        json_layout.update({view_uirefid: []})
-        json_view = json_layout[view_uirefid]
+        layout_json.update({view_uirefid: []})
+        view_json = layout_json[view_uirefid]
 
         # Fetch the view's blocks via associated_from
         view_block_associations = layout_schema['associated_from'][view_id]
@@ -64,7 +63,7 @@ def json_layout_tree():
             group_id = layout_schema['associated_from'][block_id][0][1]
             group_obj = layout_objects[group_id]
             group_screen_label = layout_objects[group_obj['screen_label_id']]['text']
-
+            
             # Get group position
             for view_group_id in view_groups:
                 view_group_obj = layout_objects[view_group_id]
@@ -72,13 +71,12 @@ def json_layout_tree():
                     group_position = view_group_obj['position']
                 else:
                     group_position = None
-
+            
             # Append the group so that we can cycle back over them to append the block
-            json_view.append({'group_id': group_obj['uirefid'], 'group_screen_label': group_screen_label, 'group_position': group_position,'blocks': []})
-            group_view = {'group_id': group_obj['uirefid'], 'group_screen_label': group_screen_label, 'group_position': group_position,'blocks': []}
+            view_json.append({'group_id': group_obj['uirefid'], 'group_screen_label': group_screen_label, 'group_position': group_position,'blocks': []})
             
             # Cycle over the groups to find the current group
-            for group_index, group in enumerate(json_view):
+            for group_index, group in enumerate(view_json):
                 if group_obj['uirefid'] == group['group_id']:
                     block_view = {'block_id': block_obj['uirefid'], 'block_screen_label': block_screen_label, 'attributes': []}
                     attributes = {}
@@ -109,9 +107,10 @@ def json_layout_tree():
 
                             block_view['attributes'].append(attributes)
 
-                    json_view[group_index]['blocks'].append(block_view)
+                    view_json[group_index]['blocks'].append(block_view)
 
-    return json_layout
+    return layout_json
+
 
 def build_partials(layout_schema=None):
     env = Environment()
@@ -179,4 +178,4 @@ def refresh_dummy_data():
     return True
         
 if __name__ == '__main__':
-    print json_layout_tree()
+    print layout_json_tree()
