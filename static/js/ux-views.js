@@ -4,7 +4,7 @@ IONUX.Views.InstrumentFacepage2 = Backbone.View.extend({
     initialize: function() {
         _.bindAll(this, 'render');
         // Set template here to ensure it happens after tmpl has rendered.
-        this.template = _.template($('#dyn-instrument-facepage-tmpl').html());
+        this.template = _.template($('#2050001').html());
         this.model.bind('change', this.render);
     },
     render: function() {
@@ -68,11 +68,11 @@ IONUX.Views.Undefined = IONUX.Views.Base.extend({
 });
 
 function page_builder(layout, model) {
+    console.log(layout);
     _.each(layout, function(group) {
-         _.each(group.blocks, function(block){
+        _.each(group.blocks, function(block){
              var data = model.get(block.screen_label);
              var ui_representation = block.ui_representation;
-             
              if (ui_representation == 'Attribute Group') {
                  new IONUX.Views.AttributeGroup({'block': block, 'data': data});
              } else if (ui_representation == 'Table') {

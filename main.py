@@ -73,7 +73,7 @@ def layout():
 
 @app.route('/layout2/', methods=['GET'])
 def layout2():
-    layout = LayoutApi.build_partials()
+    layout = LayoutApi.process_layout()
     return layout
 
 # ---------------------------------------------------------------------------
