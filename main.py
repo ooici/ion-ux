@@ -173,16 +173,7 @@ def observatory_create():
 @app.route('/observatories/', methods=["GET", "POST"])
 def observatories():
     if request.is_xhr:
-        if request.method == 'POST':
-            form_data = json.loads(request.data)
-            manager_user_id = form_data.pop('user_id')
-            object_schema = build_schema_from_form(form_data, service="marine_facilities")
-            marine_facility_id = ServiceApi.create_observatory(object_schema, manager_user_id)
-
-            return jsonify(data={'resource_id': marine_facility_id})
-        else:
-            resp_data = ServiceApi.find_by_resource_type('MarineFacility')
-            
+        resp_data = ServiceApi.find_by_resource_type('Observatory')
         return jsonify(data=resp_data)
     else:
         return render_app_template(request.path)

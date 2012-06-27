@@ -5,6 +5,7 @@ IONUX.Router = Backbone.Router.extend({
         "userprofile/": "user_profile",
         "observatories/": "observatories",
         "observatories/new/": "observatory_new",
+        "observatories/dyn/:observatory_id/": "dynamic_observatory_facepage",
         "observatories/:marine_facility_id/": "observatory_facepage",
         "observatories/:marine_facility_id/edit/": "observatory_edit",
         "platforms/":"platforms",
@@ -35,8 +36,16 @@ IONUX.Router = Backbone.Router.extend({
         "users/:user_id/": "user_facepage",
         "resource_types/:resource_type_id/": "resource_type_details",
     },
+
+    dynamic_observatory_facepage: function(observatory_id) {
+        this._reset();
+        var view_id = '2050006';
+        var observatoryFacepageModel = new IONUX.Models.ObservatoryFacepageModel({observatory_id: observatory_id});
+        new IONUX.Views.Page({model: observatoryFacepageModel, view_id: view_id, layout: LAYOUT_OBJECT[view_id]});
+        observatoryFacepageModel.fetch();
+    },
     
-    dynamic_platform_facepage: function(platform_id){
+    dynamic_platform_facepage: function(platform_id) {
         this._reset();
         var view_id = '2050002';
         var platformFacepageModel = new IONUX.Models.PlatformFacepageModel({platform_id: platform_id});
@@ -44,7 +53,7 @@ IONUX.Router = Backbone.Router.extend({
         platformFacepageModel.fetch();
     },
 
-    dynamic_instrument_facepage: function(instrument_id){
+    dynamic_instrument_facepage: function(instrument_id) {
         this._reset();
         var view_id = '2050001';
         var instrumentFacepageModel = new IONUX.Models.InstrumentFacepageModel({instrument_id: instrument_id});
@@ -52,8 +61,9 @@ IONUX.Router = Backbone.Router.extend({
         instrumentFacepageModel.fetch();
     },
     
-    dashboard: function() {
-    },
+    
+    
+    dashboard: function() {},
     
     data_products: function() {
         this._reset();
@@ -83,14 +93,14 @@ IONUX.Router = Backbone.Router.extend({
         this.newObservatoryView.render();
     },
 
-    observatory_facepage: function(marine_facility_id){
+    observatory_facepage: function(observatory_id){
         this._reset();
-        var fpModel = new IONUX.Models.ObservatoryFacepageModel({marine_facility_id:marine_facility_id});
+        var fpModel = new IONUX.Models.ObservatoryFacepageModel({observatory_id:observatory_id});
         new IONUX.Views.ObservatoryFacepage({model:fpModel});
         fpModel.fetch();
 
         var urCollection = new IONUX.Collections.UserRequestCollection();
-        urCollection.marine_facility_id = marine_facility_id; //XXX better way to set this?
+        urCollection.observatory_id = observatory_id; //XXX better way to set this?
         var userRequestsView = new IONUX.Views.UserRequestsView({collection:urCollection, facepage_model: fpModel});
         urCollection.fetch();
     },

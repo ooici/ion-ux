@@ -1,6 +1,6 @@
 <h2>Collection: Observatories</h2>
 
-<div id="lca-collections" class="row">
+<div id="lca-collections" class="row-fluid">
 	<div class="span2 test">
 		<section class="wrapper">
 			<h3 class="wrapper-heading">Information</h3>
@@ -8,7 +8,7 @@
 		</section>
 	</div>
 		
-	<div class="span8 test">
+	<div class="span10 test">
 		<section class="wrapper">
 			<h3 class="wrapper-heading">Observatories</h3>
 			<table id="observatories-container" class="table" width="100%">
@@ -21,10 +21,10 @@
 				<tbody>
 			    <% _.each(collection, function(obj) { %>
 						<tr>
-							<td><a href="/observatories/<%= obj._id %>/"><%= obj.name %></a></td>
-							<td><%= obj.institution.name %></td>
+							<td><a href="/observatories/<%= obj._id %>/"><%= obj.name %></a> (<a href="/observatories/dyn/<%= obj._id %>/">Dyn</a>)</td>
+							<td>Placeholder</td>
 							<td><%= obj.description %></td>
-							<td><%= obj.contact.name %></td>
+							<td>Placeholder</td>
 						</tr>
 			    <% }); %>
 			    </tbody>

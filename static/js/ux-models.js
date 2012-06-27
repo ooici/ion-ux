@@ -46,7 +46,7 @@ IONUX.Models.ObservatoryFacepageModel = Backbone.Model.extend({
   org_id: null,
   
   url: function(){
-    return "/observatories/"+this.get("marine_facility_id")+"/";
+    return "/observatories/"+this.get("observatory_id")+"/";
   },
   
   parse: function(resp) {

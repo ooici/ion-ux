@@ -291,52 +291,102 @@ class ServiceApi(object):
         return res
 
     @staticmethod
-    def find_observatory(marine_facility_id):
-        marine_facility = service_gateway_get('marine_facility_management', 'read_marine_facility', params={'marine_facility_id': marine_facility_id})
+    def find_observatory(observatory_id):
+        observatory = service_gateway_get('observatory_management', 'read_observatory', params={'observatory_id': observatory_id})
         
-        if marine_facility.has_key('_id'):
-            org_id = service_gateway_get('marine_facility_management', 'find_marine_facility_org', params={'marine_facility_id': marine_facility_id})
-
+        if observatory.has_key('_id'):
+            org_id = service_gateway_get('observatory_management', 'find_org_by_observatory', params={'observatory_id': observatory_id})
+            
             if org_id:
-                marine_facility['org_id'] = org_id
-
+                observatory['org_id'] = org_id
+    
             # GENERAL
-            marine_facility['data_products'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': org_id, 'predicate': 'hasResource', 'object_type': 'DataProduct'})[0]
-            marine_facility['platforms'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': org_id, 'predicate': 'hasResource', 'object_type': 'PlatformDevice'})[0]
-            marine_facility['instruments'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': org_id, 'predicate': 'hasResource', 'object_type': 'InstrumentDevice'})[0]
-
-            # ADMINISTRATION            
-            marine_facility['participants'] = []
-            participants = service_gateway_get('resource_registry', 'find_objects', params={'subject': org_id, 'predicate': 'hasMembership'})[0]
-            
-            for participant in participants:
-                participant["user_info"] = ServiceApi.find_user_info(participant["_id"])
-                marine_facility['participants'].append(participant)
-
-            marine_facility['roles'] = service_gateway_get('org_management', 'find_org_roles', params={'org_id': org_id})
-            
-            # SOFTWARE
-            marine_facility['instrument_agents'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': org_id, 'predicate': 'hasResource', 'object_type': 'InstrumentAgent'})[0]
-            marine_facility['data_process_definitions'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': org_id, 'predicate': 'hasResource', 'object_type': 'DataProcessDefinition'})[0]
-            
-            # EVENTS
-            marine_facility['recent_events'] = []
-            marine_facility['user_requests'] = service_gateway_get('org_management', 'find_requests', params={'org_id': org_id})
-            
-            # DEFINITIONS
-            marine_facility['platform_models'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': org_id, 'predicate': 'hasResource', 'object_type': 'PlatformModel'})[0]
-            marine_facility['instrument_models'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': org_id, 'predicate': 'hasResource', 'object_type': 'InstrumentModel'})[0]
+            # observatory['data_products'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': org_id, 'predicate': 'hasResource', 'object_type': 'DataProduct'})[0]
+            # observatory['platforms'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': org_id, 'predicate': 'hasResource', 'object_type': 'PlatformDevice'})[0]
+            # observatory['instruments'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': org_id, 'predicate': 'hasResource', 'object_type': 'InstrumentDevice'})[0]
+            #     
+            # # ADMINISTRATION            
+            # observatory['participants'] = []
+            # participants = service_gateway_get('resource_registry', 'find_objects', params={'subject': org_id, 'predicate': 'hasMembership'})[0]
+            # 
+            # for participant in participants:
+            #     participant["user_info"] = ServiceApi.find_user_info(participant["_id"])
+            #     observatory['participants'].append(participant)
+            #     
+            # observatory['roles'] = service_gateway_get('org_management', 'find_org_roles', params={'org_id': org_id})
+            # 
+            # # SOFTWARE
+            # observatory['instrument_agents'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': org_id, 'predicate': 'hasResource', 'object_type': 'InstrumentAgent'})[0]
+            # observatory['data_process_definitions'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': org_id, 'predicate': 'hasResource', 'object_type': 'DataProcessDefinition'})[0]
+            # 
+            # # EVENTS
+            # observatory['recent_events'] = []
+            # observatory['user_requests'] = service_gateway_get('org_management', 'find_requests', params={'org_id': org_id})
+            # 
+            # # DEFINITIONS
+            # observatory['platform_models'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': org_id, 'predicate': 'hasResource', 'object_type': 'PlatformModel'})[0]
+            # observatory['instrument_models'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': org_id, 'predicate': 'hasResource', 'object_type': 'InstrumentModel'})[0]
+            #         
+            # # FRAMES OF REFERENCE
+            # observatory['subordinates'] = service_gateway_get('marine_facility_management', 'find_subordinate_frames_of_reference', params={'input_resource_id': marine_facility_id})
+            # 
+            # # OWNER
+            # observatory['owner'] = ServiceApi.find_owner(marine_facility_id)
+            #     
+            # # POLICIES
+            # observatory['policies'] = service_gateway_get('policy_management', 'find_resource_policies', params={'resource_id': org_id})
         
-            # FRAMES OF REFERENCE
-            marine_facility['subordinates'] = service_gateway_get('marine_facility_management', 'find_subordinate_frames_of_reference', params={'input_resource_id': marine_facility_id})
-            
-            # OWNER
-            marine_facility['owner'] = ServiceApi.find_owner(marine_facility_id)
+        return observatory
 
-            # POLICIES
-            marine_facility['policies'] = service_gateway_get('policy_management', 'find_resource_policies', params={'resource_id': org_id})
-        
-        return marine_facility
+
+
+    # @staticmethod
+    # def find_observatory(marine_facility_id):
+    #     marine_facility = service_gateway_get('marine_facility_management', 'read_marine_facility', params={'marine_facility_id': marine_facility_id})
+    #     
+    #     if marine_facility.has_key('_id'):
+    #         org_id = service_gateway_get('marine_facility_management', 'find_marine_facility_org', params={'marine_facility_id': marine_facility_id})
+    # 
+    #         if org_id:
+    #             marine_facility['org_id'] = org_id
+    # 
+    #         # GENERAL
+    #         marine_facility['data_products'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': org_id, 'predicate': 'hasResource', 'object_type': 'DataProduct'})[0]
+    #         marine_facility['platforms'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': org_id, 'predicate': 'hasResource', 'object_type': 'PlatformDevice'})[0]
+    #         marine_facility['instruments'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': org_id, 'predicate': 'hasResource', 'object_type': 'InstrumentDevice'})[0]
+    # 
+    #         # ADMINISTRATION            
+    #         marine_facility['participants'] = []
+    #         participants = service_gateway_get('resource_registry', 'find_objects', params={'subject': org_id, 'predicate': 'hasMembership'})[0]
+    #         
+    #         for participant in participants:
+    #             participant["user_info"] = ServiceApi.find_user_info(participant["_id"])
+    #             marine_facility['participants'].append(participant)
+    # 
+    #         marine_facility['roles'] = service_gateway_get('org_management', 'find_org_roles', params={'org_id': org_id})
+    #         
+    #         # SOFTWARE
+    #         marine_facility['instrument_agents'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': org_id, 'predicate': 'hasResource', 'object_type': 'InstrumentAgent'})[0]
+    #         marine_facility['data_process_definitions'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': org_id, 'predicate': 'hasResource', 'object_type': 'DataProcessDefinition'})[0]
+    #         
+    #         # EVENTS
+    #         marine_facility['recent_events'] = []
+    #         marine_facility['user_requests'] = service_gateway_get('org_management', 'find_requests', params={'org_id': org_id})
+    #         
+    #         # DEFINITIONS
+    #         marine_facility['platform_models'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': org_id, 'predicate': 'hasResource', 'object_type': 'PlatformModel'})[0]
+    #         marine_facility['instrument_models'] = service_gateway_get('resource_registry', 'find_objects', params={'subject': org_id, 'predicate': 'hasResource', 'object_type': 'InstrumentModel'})[0]
+    #     
+    #         # FRAMES OF REFERENCE
+    #         marine_facility['subordinates'] = service_gateway_get('marine_facility_management', 'find_subordinate_frames_of_reference', params={'input_resource_id': marine_facility_id})
+    #         
+    #         # OWNER
+    #         marine_facility['owner'] = ServiceApi.find_owner(marine_facility_id)
+    # 
+    #         # POLICIES
+    #         marine_facility['policies'] = service_gateway_get('policy_management', 'find_resource_policies', params={'resource_id': org_id})
+    #     
+    #     return marine_facility
     
     @staticmethod
     def find_platform(platform_device_id):

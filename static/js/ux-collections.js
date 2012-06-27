@@ -15,7 +15,7 @@ IONUX.Collections.DataResources = Backbone.Collection.extend({
 
 IONUX.Collections.ObservatoryCollection = Backbone.Collection.extend({
   model: IONUX.Models.Observatory,
-  url: "/observatories",
+  url: "/observatories/",
 
   parse: function(resp) {
     return resp.data;
@@ -124,7 +124,7 @@ IONUX.Collections.UserRequestCollection = Backbone.Collection.extend({
 
   url: function() {
     console.log(this);
-    return "/observatories/" + this.marine_facility_id + "/user_requests/";
+    return "/observatories/" + this.observatory_id + "/user_requests/";
   },
   
   parse: function(resp) {

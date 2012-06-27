@@ -39,8 +39,6 @@
 			<section class="wrapper">
 				<h3 class="wrapper-heading">Contact</h3>
 				<p>
-					<strong>Owner:</strong> <%= owner.contact.name %><br />
-					<strong>Email:</strong> <a href="mailto:<%= owner.contact.mail %>"><%= owner.contact.email %></a>
 				</p>
 			</section>
 
@@ -65,15 +63,6 @@
 					<th>Updated</th>
 				</tr>
 
-				<% _.each(data_products, function(obj) { %>
-					<tr>
-						<td><a href="/data_products/<%= obj._id %>/"><%= obj.name %></a></td>
-						<td><%= obj.description %></td>
-						<td><%= obj.data_product_level %></td>
-						<td><%= obj.CDM_data_type %></td>
-						<td><%= obj.ts_updated %></td>
-					</tr>
-				<% }); %>
 			</table>
 		</section>
 		
@@ -85,13 +74,6 @@
 					<th>Description</th>
 					<th>Updated</th>
 				</tr>
-				<% _.each(platforms, function(obj) { %>
-					<tr>
-						<td><a href="/platforms/<%= obj._id %>/"><%= obj.name %></a></td>
-						<td><%= obj.description %></td>
-						<td><%= obj.ts_updated %></td>
-					</tr>
-				<% }); %>
 			</table>
 		</section>
 		
@@ -103,14 +85,6 @@
 					<th>Description</th>
 					<th>Updated</th>
 				</tr>
-			
-				<% _.each(instruments, function(obj) { %>
-					<tr>
-						<td><a href="/instruments/<%= obj._id %>/"><%= obj.name %></a></td>
-						<td><%= obj.description %></td>
-						<td><%= obj.ts_updated %></td>
-					</tr>
-				<% }); %>
 			</table>
 		</section>
 		
@@ -126,13 +100,6 @@
 						<th>Email</th>
 						<th>Updated</th>
 					</tr>
-					<% _.each(participants, function(obj) { %>
-						<tr>
-							<td><a href="/users/<%= obj._id %>/"><%= obj.user_info.contact.name %></a></td>
-							<td><%= obj.user_info.contact.email %></td>
-							<td><%= obj.ts_updated %></td>
-						</tr>
-					<% }); %>
 					</table>
 			</section>
 			
@@ -144,13 +111,6 @@
 						<th>Description</th>
 						<th>Updated</th>
 					</tr>
-					<% _.each(roles, function(obj) { %>
-						<tr>
-							<td><%= obj.name %></td>
-							<td><%= obj.description %></td>
-							<td><%= obj.ts_updated %></td>
-						</tr>
-					<% }); %>
 				</table>
 			</section>
 			<section class="wrapper">
@@ -161,13 +121,6 @@
 						<th>Description</th>
 						<th>Updated</th>
 					</tr>
-					<% _.each(policies, function(obj) { %>
-						<tr>
-							<td><%= obj.name %></td>
-							<td><%= obj.description %></td>
-							<td><%= obj.ts_updated %></td>
-						</tr>
-					<% }); %>
 				</table>
 				
 			</section>
@@ -199,19 +152,6 @@
 						<th>Driver Class Model</th>
 						<th>Updated</th>
 					</tr>
-					<% _.each(instrument_agents, function(obj) { %>
-						<tr>
-							<td><a href="/instrument_agents/<%= obj._id %>/"><%= obj.name %></a></td>
-							<td><%= obj.description %></td>
-							<td><%= obj.agent_version %></td>
-							<td><%= obj.driver_module %></td>
-							<td><%= obj.connection_method %></td>
-							<td><%= obj.driver_class %></td>
-							<td><%= obj.driver_class_client %></td>
-							<td><%= obj.driver_class_model %></td>
-							<td><%= obj.ts_updated %></td>
-						</tr>
-					<% }); %>
 				</table>
 			</section>
 		
@@ -226,16 +166,6 @@
 						<th>Module</th>
 						<th>Updated</th>
 					</tr>
-					<% _.each(data_process_definitions, function(obj) { %>
-						<tr>
-							<td><a href="/data_process_definitions/<%= obj._id %>/"><%= obj.name %></a></td>
-							<td><%= obj.description %></td>
-							<td><%= obj.class_name %></td>
-							<td><%= obj.module %></td>
-							<td><%= obj.ts_updated %></td>
-							<!-- <td><%= obj.process_source %></td> -->
-						</tr>
-					<% }); %>
 				</table>
 			</section>
 		</section>
@@ -254,16 +184,6 @@
 						<th>Platform Type</th>
 						<th>Updated</th>
 					</tr>
-					<% _.each(platform_models, function(obj) { %>
-						<tr>
-							<td><a href="/platform_models/<%= obj._id %>/"><%= obj.name %></a></td>
-							<td><%= obj.description %></td>
-							<td><%= obj.manufacturer.name %></td>
-							<td><%= obj.OOI_node_type %></td>
-							<td><%= obj.platform_type %></td>
-							<td><%= obj.ts_updated %></td>
-						</tr>
-					<% }); %>
 				</table>			
 			</section>
 		
@@ -279,17 +199,6 @@
 						<th>Model Label</th>
 						<th>Updated</th>
 					</tr>
-					<% _.each(instrument_models, function(obj) { %>
-						<tr>
-							<td><a href="/instrument_models/<%= obj._id %>/"><%= obj.name %></a></td>
-							<td><%= obj.description %></td>
-							<td><%= obj.manufacturer.name %></td>
-							<td><%= obj.instrument_class %></td>
-							<td><%= obj.instrument_family %></td>
-							<td><%= obj.model_label %></td>
-							<td><%= obj.ts_updated %></td>
-						</tr>
-					<% }); %>
 				</table>			
 			</section>
 		
@@ -302,16 +211,6 @@
 						<th>Type</th>
 						<th>Updated</th>
 					</tr>
-					<% _.each(subordinates, function(key) { %>
-						<% _.each(key, function(obj) { %>
-							<tr>
-								<td><a href="/frame_of_references/<%= obj._id %>/"><%= obj.name %></a></td>
-								<td><%= obj.description %></td>
-								<td><%= obj.type_ %></td>
-								<td><%= obj.ts_updated %></td>
-							</tr>
-						<% }); %>
-					<% }); %>
 				</table>
 			</section>
 		</section>
