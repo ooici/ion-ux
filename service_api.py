@@ -340,8 +340,6 @@ class ServiceApi(object):
     
     @staticmethod
     def find_platform(platform_device_id):
-        print 'XOXOX', platform_device_id
-
         platform = service_gateway_get('instrument_management', 'read_platform_device', params={'platform_device_id': platform_device_id})
         
         if platform.has_key('_id'):
