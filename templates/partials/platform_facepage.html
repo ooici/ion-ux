@@ -115,16 +115,6 @@
 						<th>Type</th>
 						<th>Updated</th>
 					</tr>
-					<% _.each(subordinates, function(key) { %>
-						<% _.each(key, function(obj) { %>
-							<tr>
-								<td><a href="/frame_of_references/<%= obj._id %>/"><%= obj.name %></a></td>
-								<td><%= obj.description %></td>
-								<td><%= obj.type_ %></td>
-								<td><%= obj.ts_updated %></td>
-							</tr>
-						<% }); %>
-					<% }); %>
 				</table>
 			</section>
 		
@@ -137,16 +127,6 @@
 						<th>Type</th>
 						<th>Updated</th>
 					</tr>
-					<% _.each(superiors, function(key) { %>
-						<% _.each(key, function(obj) { %>
-							<tr>
-								<td><a href="/frame_of_references/<%= obj._id %>/"><%= obj.name %></a></td>
-								<td><%= obj.description %></td>
-								<td><%= obj.type_ %></td>
-								<td><%= obj.ts_updated %></td>
-							</tr>
-						<% }); %>
-					<% }); %>
 			</section>
 		</section>
 	</div>

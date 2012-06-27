@@ -9,6 +9,7 @@ IONUX.Router = Backbone.Router.extend({
         "observatories/:marine_facility_id/edit/": "observatory_edit",
         "platforms/":"platforms",
         "platforms/new/": "platform_new",
+        "platforms/dyn/:platform_id/" : "dynamic_platform_facepage",
         "platforms/:platform_id/": "platform_facepage",
         "platform_models/": "platform_models",
         "platform_models/new/": "platform_model_new",
@@ -35,12 +36,19 @@ IONUX.Router = Backbone.Router.extend({
         "resource_types/:resource_type_id/": "resource_type_details",
     },
     
+    dynamic_platform_facepage: function(platform_id){
+        this._reset();
+        var view_id = '2050002';
+        var platformFacepageModel = new IONUX.Models.PlatformFacepageModel({platform_id: platform_id});
+        new IONUX.Views.Page({model: platformFacepageModel, view_id: view_id, layout: LAYOUT_OBJECT[view_id]});
+        platformFacepageModel.fetch();
+    },
+
     dynamic_instrument_facepage: function(instrument_id){
         this._reset();
-        console.log('LAYOUT_OBJECT', LAYOUT_OBJECT);
-        var instrument_id = instrument_id;
+        var view_id = '2050001';
         var instrumentFacepageModel = new IONUX.Models.InstrumentFacepageModel({instrument_id: instrument_id});
-        var instrumentFacepageView = new IONUX.Views.InstrumentFacepage2({model: instrumentFacepageModel, layout: LAYOUT_OBJECT['2050001']});
+        new IONUX.Views.Page({model: instrumentFacepageModel, view_id: view_id, layout: LAYOUT_OBJECT[view_id]});
         instrumentFacepageModel.fetch();
     },
     

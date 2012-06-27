@@ -340,6 +340,8 @@ class ServiceApi(object):
     
     @staticmethod
     def find_platform(platform_device_id):
+        print 'XOXOX', platform_device_id
+
         platform = service_gateway_get('instrument_management', 'read_platform_device', params={'platform_device_id': platform_device_id})
         
         if platform.has_key('_id'):
@@ -362,8 +364,8 @@ class ServiceApi(object):
             platform['user_requests'] = []
         
             # FRAMES OF REFERENCE
-            platform['subordinates'] = service_gateway_get('marine_facility_management', 'find_subordinate_frames_of_reference', params={'input_resource_id': platform['deployments'][0]['_id']})
-            platform['superiors'] = service_gateway_get('marine_facility_management', 'find_superior_frames_of_reference', params={'input_resource_id': platform['deployments'][0]['_id']})
+            # platform['subordinates'] = service_gateway_get('marine_facility_management', 'find_subordinate_frames_of_reference', params={'input_resource_id': platform['deployments'][0]['_id']})
+            # platform['superiors'] = service_gateway_get('marine_facility_management', 'find_superior_frames_of_reference', params={'input_resource_id': platform['deployments'][0]['_id']})
             
             # OWNER
             platform['owner'] = ServiceApi.find_owner(platform_device_id)

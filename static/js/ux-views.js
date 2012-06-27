@@ -1,10 +1,9 @@
-IONUX.Views.InstrumentFacepage2 = Backbone.View.extend({
-    el: '#instrument-facepage-container',
-
+IONUX.Views.Page = Backbone.View.extend({
+    el: '#dynamic-container',
     initialize: function() {
         _.bindAll(this, 'render');
         // Set template here to ensure it happens after tmpl has rendered.
-        this.template = _.template($('#2050001').html());
+        this.template = _.template($('#' + this.options.view_id).html());
         this.model.bind('change', this.render);
     },
     render: function() {
@@ -68,8 +67,7 @@ IONUX.Views.Undefined = IONUX.Views.Base.extend({
 });
 
 function page_builder(layout, model) {
-    console.log(layout);
-    _.each(layout, function(group) {
+    _.each(layout.groups, function(group) {
         _.each(group.blocks, function(block){
              var data = model.get(block.screen_label);
              var ui_representation = block.ui_representation;

@@ -26,88 +26,93 @@ class LayoutApi(object):
     def get_layout_schema():
         return LAYOUT_SCHEMA
 
-
-# TODO: refactor group dictionary for efficiency
+# TODO: still some efficiency/clean-up to do with *_view dicts
 def layout_json_tree():
     layout_schema = LayoutApi.get_layout_schema()
     layout_objects = LAYOUT_SCHEMA['objects']
-    view_groups = LAYOUT_SCHEMA['UIViewGroup']
+    view_group_ids = LAYOUT_SCHEMA['UIViewGroup']
     layout_json = {}
 
     for defined_view in DEFINED_VIEWS:
         # Fetch the view resource
         view_id = [view for view in layout_schema['UIResourceType'] if view.endswith(defined_view)][0]
-        view_obj = layout_schema['objects'][view_id]
+        view_obj = layout_objects[view_id]
         view_uirefid = view_obj['uirefid']
-
-        # Set the view tree 
-        layout_json.update({view_uirefid: []})
+        
+        # TEMP - catching unassociatedd screen_labels
+        if view_obj['screen_label_id']:
+            view_screen_label = layout_objects['screen_label_id']
+        else:
+            view_screen_label = view_obj['name']
+        
+        # Set the view tree
+        layout_json.update({view_uirefid: {'screen_label': view_screen_label, 'groups': []}})
         view_json = layout_json[view_uirefid]
-
+        
         # Fetch the view's blocks via associated_from
         view_block_associations = layout_schema['associated_from'][view_id]
         for block_association in view_block_associations:
             # Extract the block's id and fetch the block object
             block_id = block_association[1]
             block_obj = layout_objects[block_id]
-            block_position = None # TODO
-
-            # Juking a key error in the UI database
-            block_screen_label = None
-            try:
-                block_screen_label = layout_objects[block_obj['screen_label_id']]['text']
-            except Exception, e:
-                print 'Block screen label error: %s' % e
-
+            
+            # Assemble group
             # Find the block's associated group id, object, screen label and position
             group_id = layout_schema['associated_from'][block_id][0][1]
             group_obj = layout_objects[group_id]
             group_screen_label = layout_objects[group_obj['screen_label_id']]['text']
             
             # Get group position
-            for view_group_id in view_groups:
+            for view_group_id in view_group_ids:
                 view_group_obj = layout_objects[view_group_id]
                 if view_group_obj['group_id'] == group_id:
                     group_position = view_group_obj['position']
                 else:
                     group_position = None
             
-            # Append the group so that we can cycle back over them to append the block
-            view_json.append({'group_id': group_obj['uirefid'], 'group_screen_label': group_screen_label, 'group_position': group_position,'blocks': []})
+            group_view = {'group_id': group_obj['uirefid'], 'group_screen_label': group_screen_label, 'group_position': group_position,'blocks': []}
             
-            # Cycle over the groups to find the current group
-            for group_index, group in enumerate(view_json):
-                if group_obj['uirefid'] == group['group_id']:
-                    block_view = {'block_id': block_obj['uirefid'], 'block_screen_label': block_screen_label, 'attributes': []}
-                    attributes = {}
+            # Assemble block
+            block_position = None # TODO
+            # Juking a key error in the UI database
+            block_screen_label = None
+            try:
+                block_screen_label = layout_objects[block_obj['screen_label_id']]['text']
+            except Exception, e:
+                print 'Block screen label error: %s' % e
+            
+            block_view = {'block_id': block_obj['uirefid'], 'block_screen_label': block_screen_label, 'attributes': []}
+            
+            # Assemble attributes
+            # Fetch the block's attributes.
+            block_associations = layout_schema['associated_to'][block_id]
+            for block_association in block_associations:
+                
+                if block_association[0] == 'hasUIRepresentation':
+                    block_view.update({'ui_representation': layout_objects[block_association[1]]['name']})
+                
+                if block_association[0] == 'hasUIAttribute':
+                    attribute_obj = layout_objects[block_association[1]]
+                    attributes_view = {}
+                    
+                    # Fetch attribute screen label (full and abbreviated)
+                    # Juking a key error in the UI database
+                    screen_label_obj = None
+                    try:
+                        screen_label_obj = layout_objects[attribute_obj['screen_label_id']]
+                    except Exception, e:
+                        print 'Attribute screen label error: %s' % e
+                    if screen_label_obj:
+                        attributes_view.update({'screen_label_text': screen_label_obj['text']})
+                        attributes_view.update({'screen_label_abbreviation': screen_label_obj['abbreviation']})
 
-                    # Fetch the block's attributes.
-                    block_associations = layout_schema['associated_to'][block_id]
-                    for block_association in block_associations:
-                        if block_association[0] == 'hasUIRepresentation':
-                            block_view.update({'ui_representation': layout_objects[block_association[1]]['name']})
+                    if attribute_obj['information_level_id']:
+                        attributes_view.update({'information_level': layout_objects[attribute_obj['information_level_id']]['level']})
 
-
-                        if block_association[0] == 'hasUIAttribute':
-                            attribute_obj = layout_objects[block_association[1]]                            
-
-                            # Fetch attribute screen label (full and abbreviated)
-                            # Juking a key error in the UI database
-                            screen_label_obj = None
-                            try:
-                                screen_label_obj = layout_objects[attribute_obj['screen_label_id']]
-                            except Exception, e:
-                                print 'Attribute screen label error: %s' % e
-                            if screen_label_obj:
-                                attributes.update({'screen_label_text': screen_label_obj['text']})
-                                attributes.update({'screen_label_abbreviation': screen_label_obj['abbreviation']})
-
-                            if attribute_obj['information_level_id']:
-                                attributes.update({'information_level': layout_objects[attribute_obj['information_level_id']]['level']})
-
-                            block_view['attributes'].append(attributes)
-
-                    view_json[group_index]['blocks'].append(block_view)
+                    block_view['attributes'].append(attributes_view)
+            
+            group_view['blocks'].append(block_view)
+            view_json['groups'].append(group_view)
 
     return layout_json
 
@@ -125,16 +130,23 @@ def build_partials(layout_schema=None):
         script_elmt = ET.Element('script')
         script_elmt.set('id', view_id)
         script_elmt.set('type', 'text/template')
-
+        
+        pagename_container_elmt = ET.SubElement(script_elmt, 'div')
+        pagename_container_elmt.set('class', 'row-fluid')
+        pagename_emlt = ET.SubElement(pagename_container_elmt, 'div')
+        pagename_emlt.set('class', 'span12')
+        pagename_h1_elmt = ET.SubElement(pagename_emlt, 'h1')
+        pagename_h1_elmt.text = view_tree['screen_label']
+        
         # Set columns here
         column_container_elmt = ET.SubElement(script_elmt, 'div')
-        column_container_elmt.set('class', 'row')
+        column_container_elmt.set('class', 'row-fluid')
         column_one_elmt = ET.SubElement(column_container_elmt, 'div')
         column_one_elmt.set('class', 'span2')
         column_two_elmt = ET.SubElement(column_container_elmt, 'div')
-        column_two_elmt.set('class', 'span8')
+        column_two_elmt.set('class', 'span10')
 
-        for group in view_tree:
+        for group in view_tree['groups']:
             # Temporary hack to text columns to circumvent UI database positioning errors.
             if group['group_screen_label'] == 'Information':
                 group_elmt = ET.SubElement(column_one_elmt, 'div')
@@ -175,7 +187,7 @@ def refresh_dummy_data():
     layout_schema = LayoutApiOG.get_layout_schema()
     schema = open('dummy_data_layout.py', 'w')
     schema.write('LAYOUT_SCHEMA = ' + str(layout_schema))
-    return True
-        
+
+
 if __name__ == '__main__':
     print layout_json_tree()
