@@ -30,6 +30,12 @@ class ServiceApi(object):
     #     layout_schema = service_gateway_get('directory', 'get_ui_specs', params={'user_id': 'tboteler'})
     #     return layout_schema
     
+
+    @staticmethod
+    def get_instrument_extension(instrument_device_id):
+        instrument_device_data = service_gateway_get('instrument_management', 'get_instrument_device_extension', params= {'instrument_device_id': instrument_device_id})
+        return instrument_device_data
+
     @staticmethod
     def find_all_frame_of_references():
         frame_of_references = []
@@ -154,6 +160,8 @@ class ServiceApi(object):
     def instrument_execute_agent(instrument_device_id, agent_command):
         agent_op = "execute_agent"
         params = {"command": {"type_": "AgentCommand", "command": agent_command}}
+        if agent_command == 'go_direct_access':
+            params['command'].update({'session_type': 3, 'session_timeout':600, 'inactivity_timeout': 600})
         agent_response = service_gateway_agent_request(instrument_device_id, agent_op, params)
         return agent_response
 

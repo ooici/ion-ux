@@ -44,7 +44,8 @@ body, p, h1, h2, h3, h4, h5, h6 { color: #ccc;}
 }
 
 .attr_group p {
-  padding: 5px 15px;
+  margin: 0;
+  padding: 0;
 }
 
 .attr_group h3 {

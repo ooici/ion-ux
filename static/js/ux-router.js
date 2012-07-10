@@ -31,6 +31,7 @@ IONUX.Router = Backbone.Router.extend({
         "data_process_definitions/": "data_process_definitions",
         "data_process_definitions/:data_process_definition_id/": "data_process_definition_facepage",
         "data_products/": "data_products",
+        "data_products/dyn/:data_product_id/" : "dynamic_data_product_facepage",
         "data_products/:data_product_id/": "data_product_facepage",
         "users/": "users",
         "users/:user_id/": "user_facepage",
@@ -61,6 +62,14 @@ IONUX.Router = Backbone.Router.extend({
         instrumentFacepageModel.fetch();
     },
     
+    dynamic_data_product_facepage: function(data_product_id) {
+        console.log('dynamic_data_product_facepage');
+        this._reset();
+        var view_id = '2050007';
+        var dataproductFacepageModel = new IONUX.Models.DataProductFacepageModel({data_product_id: data_product_id});
+        new IONUX.Views.Page({model: dataproductFacepageModel, view_id: view_id, layout: LAYOUT_OBJECT[view_id]});
+        dataproductFacepageModel.fetch();
+    },
     
     
     dashboard: function() {},

@@ -60,6 +60,12 @@ def render_app_template(current_url):
         logged_in = "False"
     return render_template("ion-ux.html", **{"current_url":"/", "roles":roles, "logged_in":logged_in})
 
+@app.route('/instrument_extension/<instrument_device_id>/')
+def get_instrument_ext(instrument_device_id=None):
+    instrument_extension_data = ServiceApi.get_instrument_extension(instrument_device_id=instrument_device_id)
+    return jsonify(instrument_extension_data)
+
+
 
 # ---------------------------------------------------------------------------
 # START LAYOUT

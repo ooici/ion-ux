@@ -13,7 +13,7 @@ from jinja2.environment import Environment
 from dummy_data_layout import LAYOUT_SCHEMA
 from layout_api import LayoutApi as LayoutApiOG
 
-DEFINED_VIEWS = ['2050001', '2050002', '2050006'] # Instrument, Platform, Observatory
+DEFINED_VIEWS = ['2050001', '2050002', '2050006', '2050004', '2050007'] #, '2050004' '2050007'] # Instrument, Platform, Observatory
 
 class LayoutApi(object):
     @staticmethod
@@ -58,10 +58,14 @@ def layout_json_tree():
             
             # Assemble group
             # Find the block's associated group id, object, screen label and position
-            group_id = layout_schema['associated_from'][block_id][0][1]
-            group_obj = layout_objects[group_id]
-            group_screen_label = layout_objects[group_obj['screen_label_id']]['text']
-            
+            try:
+                group_id = layout_schema['associated_from'][block_id][0][1]
+                group_obj = layout_objects[group_id]
+                group_screen_label = layout_objects[group_obj['screen_label_id']]['text']
+            except Exception, e:
+                print 'Block group_id error: %s' % e
+                continue # Skip this block, will not render until block -> group association is made.
+
             # Get group position
             for view_group_id in view_group_ids:
                 view_group_obj = layout_objects[view_group_id]

@@ -20,7 +20,7 @@
                 <tbody>
 			    <% _.each(collection, function(obj) { %>
 						<tr>
-							<td><a href="/data_products/<%= obj._id %>/"><%= obj.name %></a></td>
+							<td><a href="/data_products/<%= obj._id %>/"><%= obj.name %></a> (<a href="/data_products/dyn/<%= obj._id %>/">Dyn</a>)</td>
 							<td><%= obj.description %></td>
 							<td><%= obj.ts_updated %></td>
 						</tr>
