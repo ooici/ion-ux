@@ -15,7 +15,7 @@ SERVICE_GATEWAY_BASE_URL = 'http://%s:%d/ion-service' % (GATEWAY_HOST, GATEWAY_P
 
 if PRODUCTION:
     from service_api import ServiceApi
-    from layout_api import LayoutApi
+    from dummy_layout_api import LayoutApi
 else:
     # from dummy_service_api import ServiceApi
     from service_api import ServiceApi
