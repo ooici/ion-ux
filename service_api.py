@@ -161,7 +161,7 @@ class ServiceApi(object):
         agent_op = "execute_agent"
         params = {"command": {"type_": "AgentCommand", "command": agent_command}}
         if agent_command == 'go_direct_access':
-            params['command'].update({'session_type': 3, 'session_timeout':600, 'inactivity_timeout': 600})
+            params['command'].update({'kwargs': {'session_type': 3, 'session_timeout':600, 'inactivity_timeout': 600}})
         agent_response = service_gateway_agent_request(instrument_device_id, agent_op, params)
         return agent_response
 
