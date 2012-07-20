@@ -58,4 +58,19 @@ body, p, h1, h2, h3, h4, h5, h6 { color: #ccc;}
   text-transform: uppercase;
 }
 
+ul.tabby {
+  border-color: #666;
+}
 
+ul.tabby li a {
+  color: #999;
+}
+
+
+ul.tabby li.active a:link {
+  background: #333;
+  background-color: #333;
+  border: none;;
+  border-color: #666;
+  color: white;
+}

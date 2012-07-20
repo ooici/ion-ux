@@ -15,6 +15,11 @@ from service_api import ServiceApi, service_gateway_get, build_get_request, pret
 class LayoutApi(object):
     
     @staticmethod
+    def process_layout():
+        layout_schema = layout_json_tree()
+        processed_layout = build_partials(layout_schema=layout_schema)
+        return processed_layout
+
     def get_layout_schema():
         layout_schema = service_gateway_get('directory', 'get_ui_specs', params={'user_id': 'tboteler'})        
         return layout_schema    

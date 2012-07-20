@@ -13,26 +13,35 @@ from jinja2.environment import Environment
 from dummy_data_layout import LAYOUT_SCHEMA
 from layout_api import LayoutApi as LayoutApiOG
 
-DEFINED_VIEWS = ['2050001', '2050002', '2050006', '2050004', '2050007'] #, '2050004' '2050007'] # Instrument, Platform, Observatory
+from service_api import ServiceApi, service_gateway_get, build_get_request, pretty_console_log
+
+DEFINED_VIEWS = ['2050001', '2050002', '2050006', '2050011']  #'2050002', '2050006', '2050004', '2050007'] #, '2050004' '2050007'] # Instrument, Platform, Observatory
 
 class LayoutApi(object):
     @staticmethod
     def process_layout():
-        layout_schema = layout_json_tree()
-        processed_layout = build_partials(layout_schema=layout_schema)
+        layout_json = layout_json_tree()
+        processed_layout = build_partials(layout_schema=layout_json)
         return processed_layout
     
     @staticmethod
     def get_layout_schema():
-        return LAYOUT_SCHEMA
+        layout_schema = service_gateway_get('directory', 'get_ui_specs', params={'user_id': 'tboteler'})
+        # print 'UIResourceType', layout_schema['UIResourceType']
+        return layout_schema
+        
+    
+    # @staticmethod
+    # def get_layout_schema():
+    #     return LAYOUT_SCHEMA
 
 # TODO: still some efficiency/clean-up to do with *_view dicts
 def layout_json_tree():
     layout_schema = LayoutApi.get_layout_schema()
-    layout_objects = LAYOUT_SCHEMA['objects']
-    view_group_ids = LAYOUT_SCHEMA['UIViewGroup']
+    layout_objects = layout_schema['objects']
+    view_group_ids = layout_schema['UIViewGroup']
     layout_json = {}
-
+    
     for defined_view in DEFINED_VIEWS:
         # Fetch the view resource
         view_id = [view for view in layout_schema['UIResourceType'] if view.endswith(defined_view)][0]
@@ -40,33 +49,32 @@ def layout_json_tree():
         view_uirefid = view_obj['uirefid']
         
         # TEMP - catching unassociatedd screen_labels
-        if view_obj['screen_label_id']:
-            view_screen_label = layout_objects['screen_label_id']
-        else:
-            view_screen_label = view_obj['name']
+        # if view_obj['screen_label_id']:
+        #     view_screen_label = layout_objects['screen_label_id']
+        # else:
+        #     view_screen_label = view_obj['name']
         
+        view_screen_label = view_obj['name']
         # Set the view tree
         layout_json.update({view_uirefid: {'screen_label': view_screen_label, 'groups': []}})
         view_json = layout_json[view_uirefid]
-        
         # Fetch the view's blocks via associated_from
         view_block_associations = layout_schema['associated_from'][view_id]
+        
         for block_association in view_block_associations:
-            # Extract the block's id and fetch the block object
+            # Extract block and group objects
             block_id = block_association[1]
-            block_obj = layout_objects[block_id]
-            
-            # Assemble group
-            # Find the block's associated group id, object, screen label and position
+            block_obj = layout_objects[block_id]            
+            group_id = layout_schema['associated_from'][block_id][0][1]
+            group_obj = layout_objects[group_id]
+                        
             try:
-                group_id = layout_schema['associated_from'][block_id][0][1]
-                group_obj = layout_objects[group_id]
-                group_screen_label = layout_objects[group_obj['screen_label_id']]['text']
+                group_screen_label = group_obj['name'] # "Group" #layout_objects[group_obj['screen_label_id']]['text']
             except Exception, e:
-                print 'Block group_id error: %s' % e
                 continue # Skip this block, will not render until block -> group association is made.
 
             # Get group position
+            group_position = ''
             for view_group_id in view_group_ids:
                 view_group_obj = layout_objects[view_group_id]
                 if view_group_obj['group_id'] == group_id:
@@ -74,14 +82,22 @@ def layout_json_tree():
                 else:
                     group_position = None
             
-            group_view = {'group_id': group_obj['uirefid'], 'group_screen_label': group_screen_label, 'group_position': group_position,'blocks': []}
+            is_new_group = True
+            group_view = {'_id': group_obj['_id'], 'group_id': group_obj['uirefid'], 'group_screen_label': group_screen_label, 'group_position': group_position,'blocks': []}
+            for group in view_json['groups']:
+                if group['group_id'] == group_obj['uirefid']:
+                    is_new_group = False
+                    group_view = group
             
             # Assemble block
             block_position = None # TODO
+            
             # Juking a key error in the UI database
             block_screen_label = None
             try:
-                block_screen_label = layout_objects[block_obj['screen_label_id']]['text']
+                # TODO - switch this back to a screen label
+                # block_screen_label = layout_objects[block_obj['screen_label_id']]['text']
+                block_screen_label = block_obj['name']
             except Exception, e:
                 print 'Block screen label error: %s' % e
             
@@ -98,7 +114,6 @@ def layout_json_tree():
                 if block_association[0] == 'hasUIAttribute':
                     attribute_obj = layout_objects[block_association[1]]
                     attributes_view = {}
-                    
                     # Fetch attribute screen label (full and abbreviated)
                     # Juking a key error in the UI database
                     screen_label_obj = None
@@ -106,20 +121,26 @@ def layout_json_tree():
                         screen_label_obj = layout_objects[attribute_obj['screen_label_id']]
                     except Exception, e:
                         print 'Attribute screen label error: %s' % e
+
                     if screen_label_obj:
                         attributes_view.update({'screen_label_text': screen_label_obj['text']})
                         attributes_view.update({'screen_label_abbreviation': screen_label_obj['abbreviation']})
 
+                    # TEMP until screen labels are fixed.
+                    attributes_view.update({'screen_label_text': attribute_obj['name']})
+
                     if attribute_obj['information_level_id']:
-                        attributes_view.update({'information_level': layout_objects[attribute_obj['information_level_id']]['level']})
+                        pass
+                        # attributes_view.update({'information_level': layout_objects[attribute_obj['information_level_id']]['level']})
 
                     block_view['attributes'].append(attributes_view)
             
             group_view['blocks'].append(block_view)
-            view_json['groups'].append(group_view)
+            
+            if is_new_group:
+                view_json['groups'].append(group_view)
 
     return layout_json
-
 
 def build_partials(layout_schema=None):
     env = Environment()
@@ -128,20 +149,20 @@ def build_partials(layout_schema=None):
     tmpl = ET.fromstring(tmpl_unparsed.encode('utf-8'))
     body_elmt = tmpl.find('body')
     if layout_schema is None:
-        layout_schema = LayoutApi.get_layout_schema()
-    
+        layout_schema = LayoutApi.layout_json_tree(LAYOUT_SCHEMA)
+
     for view_id, view_tree in layout_schema.iteritems():
         script_elmt = ET.Element('script')
         script_elmt.set('id', view_id)
         script_elmt.set('type', 'text/template')
-        
+
         pagename_container_elmt = ET.SubElement(script_elmt, 'div')
         pagename_container_elmt.set('class', 'row-fluid')
         pagename_emlt = ET.SubElement(pagename_container_elmt, 'div')
         pagename_emlt.set('class', 'span12')
         pagename_h1_elmt = ET.SubElement(pagename_emlt, 'h1')
         pagename_h1_elmt.text = view_tree['screen_label']
-        
+
         # Set columns here
         column_container_elmt = ET.SubElement(script_elmt, 'div')
         column_container_elmt.set('class', 'row-fluid')
@@ -156,18 +177,35 @@ def build_partials(layout_schema=None):
                 group_elmt = ET.SubElement(column_one_elmt, 'div')
             else:
                 group_elmt = ET.SubElement(column_two_elmt, 'div')
+            
             group_elmt.set('id', group['group_id'])
-            group_h2_elmt = ET.SubElement(group_elmt, 'h2')
-            group_h2_elmt.text = group['group_screen_label']
-
-            for block in group['blocks']:
+            # group_h2_elmt = ET.SubElement(group_elmt, 'h2')
+            # group_h2_elmt.text = group['group_screen_label']
+            
+            tab_ul_elmt = ET.SubElement(group_elmt, 'ul')
+            tab_ul_elmt.set('class', 'nav nav-tabs tabby')
+            tab_content_elmt = ET.SubElement(group_elmt, 'div')
+            tab_content_elmt.set('class', 'tab-content')
+            
+            for idx, block in enumerate(group['blocks']):
                 # BLOCK HTML
-                block_elmt = ET.SubElement(group_elmt, 'div')
+                block_elmt = ET.SubElement(tab_content_elmt, 'div')
                 block_elmt.set('id', block['block_id'])
-                block_h3_elmt = ET.SubElement(block_elmt, 'h3')
-                block_h3_elmt.text = block['block_screen_label']
+
+                block_li_elmt = ET.SubElement(tab_ul_elmt, 'li')
+                block_li_a_elmt = ET.SubElement(block_li_elmt, 'a', {'href': '#' + block['block_id'], 'data-toggle': 'tab'})
+                block_li_a_elmt.text = block['block_screen_label']
+                
+                if idx == 0:
+                    block_elmt.set('class', 'tab-pane active')
+                    block_li_elmt.set('class', 'active')
+                else:
+                    block_elmt.set('class', 'tab-pane')
+                
+                # block_h3_elmt = ET.SubElement(block_elmt, 'h3')
+                # block_h3_elmt.text = block['block_screen_label']
                 block_p_elmt = ET.SubElement(block_elmt, 'p')
-        
+
         body_elmt.append(script_elmt)
 
     layout_elmt = ET.SubElement(body_elmt, 'script')
@@ -179,19 +217,18 @@ def build_partials(layout_schema=None):
     init_script_elmt.text = "$(function(){dyn_do_init();});"
     body_elmt.append(init_script_elmt)
 
-    # string_response = cStringIO.StringIO()
-
     tmpl = ET.tostring(tmpl)
     h = HTMLParser.HTMLParser()
     return h.unescape(tmpl)
-
-
-def refresh_dummy_data():
-    '''Refresh dummy_data_layout.py with latest schema.'''
-    layout_schema = LayoutApiOG.get_layout_schema()
-    schema = open('dummy_data_layout.py', 'w')
-    schema.write('LAYOUT_SCHEMA = ' + str(layout_schema))
-
-
-if __name__ == '__main__':
-    print layout_json_tree()
+# 
+# 
+# def refresh_dummy_data():
+#     '''Refresh dummy_data_layout.py with latest schema.'''
+#     layout_schema = LayoutApi.get_layout_schema()
+#     schema = open('dummy_data_layout.py', 'w')
+#     schema.write('LAYOUT_SCHEMA = ' + str(layout_schema))
+# 
+# 
+# if __name__ == '__main__':
+#     # ' layout_json_tree()
+#     refresh_dummy_data()
