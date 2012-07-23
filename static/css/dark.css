@@ -15,6 +15,53 @@ body, p, h1, h2, h3, h4, h5, h6 { color: #ccc;}
   margin: 15px 0;
 }
 
+/* Left-hand navigation */
+.sidebar-map {
+  text-align: center;
+  margin: 15px 0;
+}
+
+.sidebar-map img {
+  border: solid 1px #444;
+}
+
+#sidebar-search {
+  background: #ccc;
+  border: solid 1px #444;
+  padding: 12px;
+  width: 100%;
+}
+
+.sidebar-section {
+  border-top: solid 1px #333;
+  color: #999;
+  display: block;
+  font-size: 11px;
+  padding-top: 10px;
+  text-transform: uppercase;
+}
+
+.sidebar ul {background: red;}
+
+.sidebar ul li a {color: white;}
+
+.main-nav {
+  list-style-type: none;
+  margin: 0 0 10px;
+  padding: 0 0 0 16px;
+}
+
+.main-nav li a {
+  color: #999;
+  font-size: 11px;
+}
+
+.main-nav li a:hover {
+  color: white;
+  text-decoration: none;
+}
+
+
 .table {
   background: #1e1e1e;
 }
@@ -36,29 +83,41 @@ body, p, h1, h2, h3, h4, h5, h6 { color: #ccc;}
   background: #333;
 }
 
-.attr_group {
+.attr_block {
   background: #1e1e1e;
   color: #ccc;
   padding-bottom: 15px;
-  margin: 15px 0;
-}
-
-.attr_group p {
   margin: 0;
-  padding: 0;
 }
 
-.attr_group h3 {
+.attr_block h3 {
   background: #4d4d4d;
   color: #ccc;
   font-size: 10px;
   font-weight: normal;
   margin: 0;
-  padding: 5px 15px;
+  padding: 1px 15px;
   text-transform: uppercase;
 }
 
-ul.tabby {
+.attr_block p {
+  font-size: 11px;
+  margin: 0;
+  padding: 0;
+}
+
+.map_block {}
+
+.map_block img {
+  border: solid 1px #333;
+  width: 90%;
+  margin: 15px auto;
+}
+
+ul.nav {margin: 0;}
+ul.nav-tabs { color: blue;}
+
+/*ul.tabby {
   border-color: #666;
 }
 
@@ -73,4 +132,4 @@ ul.tabby li.active a:link {
   border: none;;
   border-color: #666;
   color: white;
-}
+}*/

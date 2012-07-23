@@ -2,11 +2,20 @@ IONUX.Views.Page = Backbone.View.extend({
     el: '#dynamic-container',
     initialize: function() {
         _.bindAll(this, 'render');
+
         // Set template here to ensure it happens after tmpl has rendered.
-        this.template = _.template($('#' + this.options.view_id).html());
+        // This is to work with both hybrid (template_id) and dyn (view_id)
+        // simultaneously, for the time being.
+        if (this.options.template_id) {
+            this.template = _.template($('#' + this.options.template_id).html());
+        } else {
+            this.template = _.template($('#' + this.options.view_id).html());
+        };
+        
         this.model.bind('change', this.render);
     },
     render: function() {
+        console.log(this.options.layout['screen_label']);
         this.$el.html(this.template()).show();
         page_builder(this.options.layout, this.model);
     }
@@ -19,14 +28,14 @@ IONUX.Views.Base = Backbone.View.extend({
         this.render();
     },
     render: function() {
-        if (this.className) { this.$el.addClass(this.className)};
+        if (this.className) {this.$el.addClass(this.className)};
         this.$el.append(this.template({'block': this.options.block, 'data': this.options.data}));
     },
 });
 
 // UI Representation Views
 IONUX.Views.AttributeGroup = IONUX.Views.Base.extend({
-    className: 'attr_group',
+    className: 'attr_block',
     template: _.template($('#dyn-attr-group-tmpl').html()),
 });
 
@@ -47,6 +56,7 @@ IONUX.Views.Image = IONUX.Views.Base.extend({
 });
 
 IONUX.Views.Map = IONUX.Views.Base.extend({
+    className: 'map_block',
     template: _.template($('#dyn-map-tmpl').html()),
 });
 
@@ -105,10 +115,9 @@ IONUX.Views.CreateNewView = Backbone.View.extend({
     
     create_new: function(evt){
         evt.preventDefault();
-        alert('create_new!');
         this.$el.find("input[type='submit']").attr("disabled", true).val("Saving...");
         // var mf = new IONUX.Models.Observatory();
-            
+        
         var self = this;
         $.each(this.$el.find("input,textarea,select").not("input[type='submit'],input[type='cancel']"), function(i, e){
             var key = $(e).attr("name"), val = $(e).val();
