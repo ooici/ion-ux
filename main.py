@@ -8,6 +8,7 @@ import time
 from config import FLASK_HOST, FLASK_PORT, GATEWAY_HOST, GATEWAY_PORT, LOGGED_IN, PRODUCTION, SECRET_KEY
 from service_api import ServiceApi
 from layout_api import LayoutApi
+from jinja2 import Template
 
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
@@ -24,8 +25,8 @@ def render_app_template(current_url):
         logged_in = "True"
     else:
         logged_in = "False"
-        layout = LayoutApi.process_layout()
-    return render_template("ion-ux.html", **{"current_url":"/", "roles":roles, "logged_in":logged_in})
+        tmpl = Template(LayoutApi.process_layout())
+    return render_template(tmpl, **{"current_url":"/", "roles":roles, "logged_in":logged_in})
 
 @app.route('/instrument_extension/<instrument_device_id>/')
 def get_instrument_ext(instrument_device_id=None):

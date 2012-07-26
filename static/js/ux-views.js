@@ -93,14 +93,6 @@ function page_builder(layout, model) {
     _.each(layout.groups, function(group) {
         _.each(group.blocks, function(block, idx){
              var data = model.get(block.screen_label);
-             window.block1 = block;
-             
-             console.log(idx);
-             console.log('model: ', model);
-             console.log('model typeof: ', typeof(model));
-             console.log('block: ', block);
-             console.log('block typeof: ', typeof(block));
-
              var ui_representation = block.ui_representation;
              if (ui_representation == 'Attribute Group') {
                  new IONUX.Views.AttributeGroup({'block': block, 'data': data});
