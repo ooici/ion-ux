@@ -1,5 +1,10 @@
 body, p, h1, h2, h3, h4, h5, h6 { color: #ccc;}
 
+#chart-placeholder {
+  text-align: center;
+  padding: auto;
+}
+
 /* Temp header */
 #header {
   background: #004978 url('/static/img/lca-header.png') no-repeat 0 0;
@@ -116,6 +121,24 @@ body, p, h1, h2, h3, h4, h5, h6 { color: #ccc;}
 
 ul.nav {margin: 0;}
 ul.nav-tabs { color: blue;}
+
+ul.nav-tabs > li.active a {
+    background-color:#CCC;
+}
+
+ul.nav {
+  border-bottom: #999 solid 1px;
+  margin-top: 15px;
+}
+
+ul.nav li a:link {
+  color: #666;
+}
+
+
+ul.nav li.active a {
+  background: #ccc;
+}
 
 /*ul.tabby {
   border-color: #666;

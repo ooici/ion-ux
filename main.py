@@ -51,6 +51,19 @@ def layout2():
 # END LAYOUT
 # ---------------------------------------------------------------------------
 
+@app.route('/instruments/ext/<instrument_device_id>/', methods=['GET'])
+def instrument_extension(instrument_device_id=None):
+    instrument = ServiceApi.get_instrument_extension(instrument_device_id)
+    return jsonify(data=instrument)
+
+    # if request.is_xhr:
+    #     instrument = ServiceApi.instrument_extension(instrument_id=instrument_id)
+    #     return jsonify(data=instruments)
+    # else:
+    #     return render_app_template(request.path)
+
+
+
 @app.route('/tim/', methods=['GET'])
 def tim():
     tim = ServiceApi.find_tim()['_id']

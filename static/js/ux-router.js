@@ -6,6 +6,7 @@ IONUX.Router = Backbone.Router.extend({
         "observatories/": "observatories",
         "observatories/new/": "observatory_new",
         "observatories/dyn/:observatory_id/": "dynamic_observatory_facepage",
+        "observatories/hybrid/:observatory_id/": "hybrid_observatory_facepage",
         "observatories/:marine_facility_id/": "observatory_facepage",
         "observatories/:marine_facility_id/edit/": "observatory_edit",
         "platforms/":"platforms",
@@ -37,6 +38,16 @@ IONUX.Router = Backbone.Router.extend({
         "users/": "users",
         "users/:user_id/": "user_facepage",
         "resource_types/:resource_type_id/": "resource_type_details",
+    },
+
+    hybrid_observatory_facepage: function(observatory_id) {
+        console.log('hybrid_observatory_facepage');
+        this._reset();
+        var view_id = '2050006';
+        var template_id = 'hybrid-observatory-tmpl';
+        var observatoryFacepageModel = new IONUX.Models.ObservatoryFacepageModel({observatory_id: observatory_id});
+        new IONUX.Views.Page({model: observatoryFacepageModel, template_id: template_id, layout: LAYOUT_OBJECT[view_id]});
+        observatoryFacepageModel.fetch();
     },
 
     hybrid_instrument_facepage: function(instrument_id) {

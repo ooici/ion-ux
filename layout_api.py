@@ -90,15 +90,17 @@ def layout_json_tree():
             block_position = None # TODO
             
             # Juking a key error in the UI database
-            block_screen_label = None
+            block_name = None
             try:
                 # TODO - switch this back to a screen label
                 # block_screen_label = layout_objects[block_obj['screen_label_id']]['text']
-                block_screen_label = block_obj['name']
+                block_name = block_obj['name']
             except Exception, e:
                 print 'Block screen label error: %s' % e
             
-            block_view = {'block_id': block_obj['uirefid'], 'block_screen_label': block_screen_label, 'attributes': []}
+            print(block_obj, '\n\n\n')
+            
+            block_view = {'block_id': block_obj['uirefid'], 'name': block_name, 'attributes': []}
             
             # Assemble attributes
             # Fetch the block's attributes.
@@ -176,8 +178,8 @@ def build_partials(layout_schema=None):
                 group_elmt = ET.SubElement(column_two_elmt, 'div')
             
             group_elmt.set('id', group['group_id'])
-            # group_h2_elmt = ET.SubElement(group_elmt, 'h2')
-            # group_h2_elmt.text = group['group_screen_label']
+            group_h2_elmt = ET.SubElement(group_elmt, 'h2')
+            group_h2_elmt.text = group['group_screen_label']
             
             tab_ul_elmt = ET.SubElement(group_elmt, 'ul')
             tab_ul_elmt.set('class', 'nav nav-tabs tabby')
@@ -191,7 +193,7 @@ def build_partials(layout_schema=None):
 
                 block_li_elmt = ET.SubElement(tab_ul_elmt, 'li')
                 block_li_a_elmt = ET.SubElement(block_li_elmt, 'a', {'href': '#' + block['block_id'], 'data-toggle': 'tab'})
-                block_li_a_elmt.text = block['block_screen_label']
+                block_li_a_elmt.text = block['name']
                 
                 if idx == 0:
                     block_elmt.set('class', 'tab-pane active')

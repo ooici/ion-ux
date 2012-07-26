@@ -42,9 +42,7 @@ IONUX.Models.Observatory = Backbone.Model.extend({
 });
 
 
-IONUX.Models.ObservatoryFacepageModel = Backbone.Model.extend({
-  org_id: null,
-  
+IONUX.Models.ObservatoryFacepageModel = Backbone.Model.extend({  
   url: function(){
     return "/observatories/"+this.get("observatory_id")+"/";
   },

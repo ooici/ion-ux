@@ -15,7 +15,6 @@ IONUX.Views.Page = Backbone.View.extend({
         this.model.bind('change', this.render);
     },
     render: function() {
-        console.log(this.options.layout['screen_label']);
         this.$el.html(this.template()).show();
         page_builder(this.options.layout, this.model);
     }
@@ -30,13 +29,27 @@ IONUX.Views.Base = Backbone.View.extend({
     render: function() {
         if (this.className) {this.$el.addClass(this.className)};
         this.$el.append(this.template({'block': this.options.block, 'data': this.options.data}));
+        this.delegateEvents();
     },
+    
 });
 
 // UI Representation Views
 IONUX.Views.AttributeGroup = IONUX.Views.Base.extend({
     className: 'attr_block',
     template: _.template($('#dyn-attr-group-tmpl').html()),
+    events: {
+        'click .attr_block': 'drill_down_up_interaction'
+    },
+    drill_down_up_interaction:function(){
+        $(this).find('.attributes').slideToggle();
+    },
+    
+    render: function() {
+        if (this.className) this.$el.addClass(this.className);
+        this.$el.append(this.template({'block': this.options.block, 'data': this.options.data}));
+        this.$el.click(this.drill_down_up_interaction);
+    }
 });
 
 IONUX.Views.Table = IONUX.Views.Base.extend({
@@ -78,8 +91,16 @@ IONUX.Views.Undefined = IONUX.Views.Base.extend({
 
 function page_builder(layout, model) {
     _.each(layout.groups, function(group) {
-        _.each(group.blocks, function(block){
+        _.each(group.blocks, function(block, idx){
              var data = model.get(block.screen_label);
+             window.block1 = block;
+             
+             console.log(idx);
+             console.log('model: ', model);
+             console.log('model typeof: ', typeof(model));
+             console.log('block: ', block);
+             console.log('block typeof: ', typeof(block));
+
              var ui_representation = block.ui_representation;
              if (ui_representation == 'Attribute Group') {
                  new IONUX.Views.AttributeGroup({'block': block, 'data': data});
