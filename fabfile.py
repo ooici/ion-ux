@@ -2,57 +2,167 @@
 
 from __future__ import with_statement
 from fabric.api import *
+import getpass
 import os
 import re
 import time
 
 web_host = None
-def config_cilogon():
-    global web_host
-    if not web_host:
-        web_host = prompt('Fully qualified web application host: ', default='ux.oceanobservatories.org')
-
-    cilogon_cfg = open('cilogon_wsgi/cilogon/cfg.rdf', 'w')
-
-    ready_url = 'https://' + web_host + '/cilogon/ready'
-    failure_url = 'https://' + web_host + '/cilogon/failure'
-    success_url = 'https://' + web_host + '/cilogon/success'
-
-    cilogon_cfg = re.sub('READY', ready_url, cilogon_cfg)
-    cilogon_cfg = re.sub('FAILURE', failure_url, cilogon_cfg)
-    cilogon_cfg = re.sub('SUCCESS', success_url, cilogon_cfg)
-
-    cilogon_cfg.close()
-
 web_port = None
-secret_key = None
+extract_dir = None
 deploy_dir = None
 gateway_host = None
 gateway_port = None
-def config_flask():
+ssh_user = None
+
+def setup_env():
     global web_host
     if not web_host:
-        web_host = prompt('Web service host: ', default='localhost')
+        web_host = prompt('Fully qualified web application host name: ', default='ux.oceanobservatories.org')
 
     global web_port
     if not web_port:
         web_port = prompt('Web service port: ', default=3000)
 
-    global secret_key
-    if not secret_key:
-        secret_key = prompt('Session encryption secret key: ')
+    global extract_dir
+    if not extract_dir:
+        extract_dir = prompt('Temporary extract dir on web host: ', default='/tmp/ux')
 
     global deploy_dir
     if not deploy_dir:
-        deploy_dir = prompt('Deploy dir on web host: ', default='/www/ux/flask')
+        deploy_dir = prompt('Root deploy dir on web host: ', default='/www/ux')
+    print "deploy_dir: " + deploy_dir
 
     global gateway_host
     if not gateway_host:
-        gateway_host = prompt('Gateway service host: ', default='localhost')
+        gateway_host = prompt('Service Gateway Service host: ', default='localhost')
 
     global gateway_port
     if not gateway_port:
-        gateway_port = prompt('Gateway service port: ', default=5000)
+        gateway_port = prompt('Service Gateway Service port: ', default=5000)
+
+    global ssh_user
+    if not ssh_user:
+        ssh_user = prompt('User login on web application host: ', default=getpass.getuser())
+
+    env.user = ssh_user
+    env.hosts = [web_host]
+
+# Work around for fab issue where it doesn't seem to properly utilize the env.hosts value
+# Pass one of these method names on the command line to properly set up the env so
+# fabric doesn't prompt you of for a host name.
+# e.g. fab ux_test deploy_ux_test
+def ux_test():
+    global web_host
+    web_host = 'ux-test.oceanobservatories.org'
+
+    global ssh_user
+    if not ssh_user:
+        ssh_user = prompt('User login on web application host: ', default=getpass.getuser())
+
+    env.user = ssh_user
+    env.hosts = ['ux-test.oceanobservatories.org']
+
+# See comment above
+# eg. fab ux_dev deploy_ux_dev
+def ux_dev():
+    global web_host
+    web_host = 'ux-dev.oceanobservatories.org'
+
+    global ssh_user
+    if not ssh_user:
+        ssh_user = prompt('User login on web application host: ', default=getpass.getuser())
+
+    env.user = ssh_user
+    env.hosts = ['ux-dev.oceanobservatories.org']
+
+# Not used, but in theory they could be ...
+def stop_apache():
+    setup_env()
+
+    # Stop apache
+    run('sudo apachectl stop')
+    print 'Waiting for Apache to fully stop'
+    time.sleep(10);
+
+def start_apache():
+    setup_env()
+
+    # Start apache
+    run('apachectl start')
+
+# Sets up CILogon portal config values and then tars up the portal
+def config_cilogon():
+    setup_env()
+
+    portal_root = deploy_dir + '/cilogon-wsgi/'
+
+    wsgi_portal = 'wsgi-portal'
+
+    # Remove any existing config file
+    # This is configuration for the python code that interacts with the SGS
+    local('rm -f cilogon-wsgi/wsgi-portal/portal.wsgi')
+    o = open('cilogon-wsgi/wsgi-portal/portal.wsgi', 'w')
+    cilogon_cfg = open('cilogon-wsgi/wsgi-portal/portal.wsgi.template').read()
+    o.write( re.sub('FLASK_HOST_VALUE', web_host, cilogon_cfg) )
+    o.close()
+
+    ready_url = 'https://' + web_host + '/login/ready'
+    failure_url = 'https://' + web_host + '/login/failure'
+    success_url = 'https://' + web_host + '/login/success'
+
+    local('rm -f cilogon-wsgi/cilogon/cfg.rdf')
+    o = open('cilogon-wsgi/cilogon/cfg.rdf', 'w')
+    cfgrdf_cfg = open('cilogon-wsgi/cilogon/cfg.rdf.template').read()
+    cfgrdf_cfg = re.sub('READY', ready_url, cfgrdf_cfg)
+    cfgrdf_cfg = re.sub('FAILURE', failure_url, cfgrdf_cfg)
+    o.write( re.sub('SUCCESS', success_url, cfgrdf_cfg) )
+    o.close()
+
+    # Remove tar file
+    with settings(warn_only=True):
+        local('rm cilogon.tar')
+
+    # create source distribution as tarball
+    local('tar -cf cilogon.tar -X cilogontarexcludes.txt cilogon-wsgi')
+
+# Call the config method and then scp, untar and install the CILogon portal software
+def deploy_cilogon():
+    config_cilogon()
+
+    # Remove/recreate web app extract and install dirs
+    run('rm -rf %s' % extract_dir)
+    with settings(warn_only=True):
+        run('mkdir %s' % extract_dir)
+    with settings(warn_only=True):
+        sudo('rm -rf %s' % deploy_dir, shell=False)
+    with settings(warn_only=True):
+        sudo('mkdir %s' % deploy_dir, shell=False)
+
+    put('cilogon.tar', '%s/cilogon.tar' % extract_dir)
+    sudo('tar -xf %s/cilogon.tar -C %s' % (extract_dir, deploy_dir), shell=False)
+    sudo('mkdir %s/cilogon-wsgi/temp' % deploy_dir, shell=False)
+    sudo('mkdir %s/cilogon-wsgi/temp/data' % deploy_dir, shell=False)
+    sudo('mkdir %s/cilogon-wsgi/temp/lookup' % deploy_dir, shell=False)
+    sudo('chgrp -R root %s' % deploy_dir, shell=False)
+    sudo('chown -R root %s' % deploy_dir, shell=False)
+    sudo('chmod -R 777 %s/cilogon-wsgi/temp' % deploy_dir, shell=False)
+
+# Sets up core flask app config values and then tars it
+secret_key = None
+def config_flask():
+    setup_env()
+
+    global secret_key
+    if not secret_key:
+        secret_key = prompt('Enter a session encryption secret key to be used between browser and flask app: ')
+
+    # Remove any existing ion-ux.html file
+    local('rm -f templates/ion-ux.html')
+    o = open('templates/ion-ux.html', 'w')
+    ion_ux_cfg = open('templates/ion-ux.html.template').read()
+    o.write( re.sub('FLASK_HOST_VALUE', web_host, ion_ux_cfg) )
+    o.close()
 
     # Remove any existing config file
     local('rm -f config.py')
@@ -69,71 +179,74 @@ def config_flask():
     local('rm -f ion-ux.wsgi')
     o = open('ion-ux.wsgi', 'w')
     wsgi_config = open('ion-ux.wsgi.template').read()
-    o.write( re.sub('DEPLOY_DIR_VALUE', deploy_dir, wsgi_config) )
+    o.write( re.sub('DEPLOY_DIR_VALUE', deploy_dir + '/flask', wsgi_config) )
     o.close()
 
-def deploy_flask_local():
-    local('python main.py')
-
-ssh_user = None
-extract_dir = None
-def deploy_flask_remote():
-    global web_host
-    if not web_host:
-        web_host = prompt('Web service host: ', default='ux.oceanobservatories.org')
-
-    global ssh_user
-    if ssh_user is None:
-        ssh_user = os.getlogin()
-        ssh_user = prompt('ssh login name:', default=ssh_user)
-
-    global extract_dir
-    if not extract_dir:
-        extract_dir = prompt('Temporary extract dir on web host: ', default='/tmp/ux')
-
-    global deploy_dir
-    if not deploy_dir:
-        deploy_dir = prompt('Deploy dir on web host: ', default='/www/ux/flask')
+    # Remove tar file
+    with settings(warn_only=True):
+        local('rm ux.tar')
 
     # create source distribution as tarball
-    local('tar -cf ux.tar -X tarexcludes.txt *')
+    local('tar -cf ux.tar -X uitarexcludes.txt *')
 
-    # Stop apache
-#    run('sudo su root && apachectl stop')
-#    print 'Waiting for Apache to fully stop'
-#    time.sleep(10);
+# Call the config method and then scp, untar and install the core flask software
+def deploy_ui():
+    config_flask()
 
-    env.user = ssh_user
-    env.hosts = [web_host]
+    flask_root = deploy_dir + '/flask'
 
     # Remove/recreate web app extract and install dirs
     run('rm -rf %s' % extract_dir)
-    run('mkdir  %s' % extract_dir)
-    run('rm -rf %s/*' % deploy_dir)
-#    run('mkdir %s' % deploy_dir)
+    with settings(warn_only=True):
+        run('mkdir  %s' % extract_dir)
+    with settings(warn_only=True):
+        sudo('rm -rf %s' % flask_root, shell=False)
+    with settings(warn_only=True):
+        sudo('mkdir  %s' % deploy_dir, shell=False)
+    with settings(warn_only=True):
+        sudo('mkdir  %s' % flask_root, shell=False)
 
     put('ux.tar', '%s/ux.tar' % extract_dir)
-    run('cd %s && tar -xf %s/ux.tar' % (deploy_dir, extract_dir))
+    sudo('tar -xf %s/ux.tar -C %s' % (extract_dir, deploy_dir + '/flask'), shell=False)
+    sudo('mkdir %s/public' % deploy_dir, shell=False)
+    sudo('mkdir %s/logs' % deploy_dir, shell=False)
+    sudo('chgrp -R root %s' % deploy_dir, shell=False)
+    sudo('chown -R root %s' % deploy_dir, shell=False)
 
-    # Start apache
-#    run('apachectl start')
-
-    # Remove tar file
-    local('rm ux.tar')
-
-def deploy_lca():
+# Helper methods that just set all the default values for you.  Use as follows:
+#  > fab ux_test deploy_ux_test
+def deploy_ux_test():
     global web_host
     global web_port
     global gateway_host
     global gateway_port
     global extract_dir
     global deploy_dir
-    web_host='ux.oceanobservatories.org'
+    web_host='ux-test.oceanobservatories.org'
     web_port=3000
-    gateway_host='r2-dev1.oceanobservatories.org'
+    gateway_host='pub106.oceanobservatories.org'
     gateway_port=5000
     extract_dir='/tmp/ux'
-    deploy_dir='/www/ux/flask'
+    deploy_dir='/www/ux'
 
-    config_flask()
-    deploy_flask_remote()
+    deploy_cilogon()
+    deploy_ui()
+
+# Use as follows:
+#  > fab ux_dev deploy_ux_dev
+def deploy_ux_dev():
+    global web_host
+    global web_port
+    global gateway_host
+    global gateway_port
+    global extract_dir
+    global deploy_dir
+    web_host='ux-dev.oceanobservatories.org'
+    web_port=3000
+    gateway_host='pub106.oceanobservatories.org'
+    gateway_port=5000
+    extract_dir='/tmp/ux'
+    deploy_dir='/www/ux'
+
+    deploy_cilogon()
+    deploy_ui()

@@ -23,7 +23,7 @@
 				<div id="sidebar" class="span2">
 					<span class="sidebar-section">User</span>
 					<ul>
-						<li class="filter" id="login"><a href="https://ux-dev.oceanobservatories.org/login/" class="external">Login</a></li>
+						<li class="filter" id="login"><a href="https://FLASK_HOST_VALUE/login/" class="external">Login</a></li>
 						<li class="filter" id="userprofile"><a href="/userprofile/">User Profile</a></li>
 						<li class="filter" id="logout"><a href="/logout/">Logout</a></li>
 					</ul>

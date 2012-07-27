@@ -18,11 +18,10 @@
         <c:hasPortalParameters>
             <rdf:Description rdf:about="ncsa:cilogon.org,2010:206d23fd4830174408e16c649f6d4a06">
                 <rdf:type rdf:resource="ncsa:cilogon.org,2010:/1.0/configuration/portal/"/>
-                <d:callbackUri>READY</d:callbackUri>
-                <d:failureUri>FAILURE</d:failureUri>
+                <d:callbackUri>https://ux-dev.oceanobservatories.org/login/ready</d:callbackUri>
+                <d:failureUri>https://ux-dev.oceanobservatories.org/login/failure</d:failureUri>
                 <d:portalName>Sample OOI python delegation portal</d:portalName>
-                <d:successUri>SUCCESS</d:successUri>
-                <d:portalSkin>OOI</c:portalSkin>
+                <d:successUri>https://ux-dev.oceanobservatories.org/login/success</d:successUri>
                 <d:tempDirectory>/www/ux/cilogon-wsgi/temp</d:tempDirectory>
                 <d:certReqConfig>/www/ux/cilogon-wsgi/cilogon/cert-request.cfg</d:certReqConfig>
             </rdf:Description>

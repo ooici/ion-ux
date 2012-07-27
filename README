@@ -20,10 +20,12 @@ It is best to setup a virtualenv to install the dependencies (Flask, requests).
 	pip install requests
 
 
-2. Configure
-------------
+2. Deploy Local
+---------------
 
-	cp config_template.py config.py
+First, copy the config template file and enter appropriate values for your local machine.
+
+	cp config.py.template config.py
 
 For the most common scenario (i.e. running the UI on your development environment), the settings will look like this:
 
@@ -33,8 +35,10 @@ For the most common scenario (i.e. running the UI on your development environmen
 * GATEWAY_PORT = 5000
 
 
-3. Run
-------
+3. Run Local
+------------
+
+To run locally, simply excute the main module.
 
 	python main.py
 
@@ -73,3 +77,15 @@ Or, LCA Demo Preload:
 To clear preload data, exit out of the running Capability Container and enter:
 
 	bin/pycc -x ion.processes.bootstrap.datastore_loader.DatastoreLoader op=clear
+
+5. Deploy Remote
+----------------
+
+A fab script has been provided to facilitate deployment to a remote VM.  To prepare to run the fab script, be sure to install fabric.
+
+        easy_install fabric
+
+Now you run the fab script, which will prompt you for necessary information to complete the deployment.  Currently, the script supports deployment to ux-test and ux-dev.  Utilize one of the following command lines to deploy to ux-dev or ux-test.
+
+        > fab ux_dev deploy_ux_dev
+        > fab ux_test deploy_ux_test
