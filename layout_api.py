@@ -14,7 +14,12 @@ from dummy_data_layout import LAYOUT_SCHEMA
 from service_api import service_gateway_get
 from config import CACHED_LAYOUT
 
-DEFINED_VIEWS = ['2050001', '2050002', '2050006', '2050011']
+DEFINED_VIEWS = ['2050001', # Instrument
+                 '2050002', # Platform
+                 '2050006', # Observatory
+                 '2050011', # Resource
+                 '2050007', # User
+                ]
 
 class LayoutApi(object):
     @staticmethod
@@ -202,7 +207,7 @@ def build_partials(layout_schema=None):
                     block_elmt.set('class', 'tab-pane')
                 
                 # block_h3_elmt = ET.SubElement(block_elmt, 'h3')
-                # block_h3_elmt.text = block['block_screen_label']
+                # block_h3_elmt.text = block['name']
                 block_p_elmt = ET.SubElement(block_elmt, 'p')
 
         body_elmt.append(script_elmt)

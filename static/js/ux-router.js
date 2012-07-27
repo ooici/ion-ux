@@ -1,24 +1,23 @@
 IONUX.Router = Backbone.Router.extend({
     routes: {
         "": "dashboard",
+        ":resource_type/:view_type/:resource_id/": "facepage",
+
+        // LCA routes
         "table/": "table",
         "userprofile/": "user_profile",
         "observatories/": "observatories",
         "observatories/new/": "observatory_new",
-        "observatories/dyn/:observatory_id/": "dynamic_observatory_facepage",
-        "observatories/hybrid/:observatory_id/": "hybrid_observatory_facepage",
         "observatories/:marine_facility_id/": "observatory_facepage",
         "observatories/:marine_facility_id/edit/": "observatory_edit",
         "platforms/":"platforms",
         "platforms/new/": "platform_new",
-        "platforms/dyn/:platform_id/" : "dynamic_platform_facepage",
         "platforms/:platform_id/": "platform_facepage",
         "platform_models/": "platform_models",
         "platform_models/new/": "platform_model_new",
         "platform_models/:platform_model_id/": "platform_model_facepage",
         "instruments/":"instruments",
         "instruments/new/":"instrument_new",
-        "instruments/dyn/:instrument_id/" : "dynamic_instrument_facepage",
         "instruments/hybrid/:instrument_id/" : "hybrid_instrument_facepage",
         "instruments/:instrument_id/" : "instrument_facepage",
         "instruments/:instrument_id/command/": "instrument_command_facepage",
@@ -33,68 +32,42 @@ IONUX.Router = Backbone.Router.extend({
         "data_process_definitions/": "data_process_definitions",
         "data_process_definitions/:data_process_definition_id/": "data_process_definition_facepage",
         "data_products/": "data_products",
-        "data_products/dyn/:data_product_id/" : "dynamic_data_product_facepage",
         "data_products/:data_product_id/": "data_product_facepage",
         "users/": "users",
         "users/:user_id/": "user_facepage",
         "resource_types/:resource_type_id/": "resource_type_details",
     },
-
-    hybrid_observatory_facepage: function(observatory_id) {
-        console.log('hybrid_observatory_facepage');
-        this._reset();
-        var view_id = '2050006';
-        var template_id = 'hybrid-observatory-tmpl';
-        var observatoryFacepageModel = new IONUX.Models.ObservatoryFacepageModel({observatory_id: observatory_id});
-        new IONUX.Views.Page({model: observatoryFacepageModel, template_id: template_id, layout: LAYOUT_OBJECT[view_id]});
-        observatoryFacepageModel.fetch();
-    },
-
-    hybrid_instrument_facepage: function(instrument_id) {
-        console.log('hybrid_instrument_facepage');
-        this._reset();
-        var view_id = '2050001';
-        var template_id = 'hybrid-instrument-tmpl';
-        var instrumentFacepageModel = new IONUX.Models.InstrumentFacepageModel({instrument_id: instrument_id});
-        new IONUX.Views.Page({model: instrumentFacepageModel, template_id: template_id, layout: LAYOUT_OBJECT[view_id]});
-        instrumentFacepageModel.fetch();
-    },
-
-    dynamic_observatory_facepage: function(observatory_id) {
-        this._reset();
-        var view_id = '2050006';
-        var observatoryFacepageModel = new IONUX.Models.ObservatoryFacepageModel({observatory_id: observatory_id});
-        new IONUX.Views.Page({model: observatoryFacepageModel, view_id: view_id, layout: LAYOUT_OBJECT[view_id]});
-        observatoryFacepageModel.fetch();
-    },
-    
-    dynamic_platform_facepage: function(platform_id) {
-        this._reset();
-        var view_id = '2050002';
-        var platformFacepageModel = new IONUX.Models.PlatformFacepageModel({platform_id: platform_id});
-        new IONUX.Views.Page({model: platformFacepageModel, view_id: view_id, layout: LAYOUT_OBJECT[view_id]});
-        platformFacepageModel.fetch();
-    },
-
-    dynamic_instrument_facepage: function(instrument_id) {
-        this._reset();
-        var view_id = '2050001';
-        var instrumentFacepageModel = new IONUX.Models.InstrumentFacepageModel({instrument_id: instrument_id});
-        new IONUX.Views.Page({model: instrumentFacepageModel, view_id: view_id, layout: LAYOUT_OBJECT[view_id]});
-        instrumentFacepageModel.fetch();
-    },
-    
-    dynamic_data_product_facepage: function(data_product_id) {
-        console.log('dynamic_data_product_facepage');
-        this._reset();
-        var view_id = '2050007';
-        var dataproductFacepageModel = new IONUX.Models.DataProductFacepageModel({data_product_id: data_product_id});
-        new IONUX.Views.Page({model: dataproductFacepageModel, view_id: view_id, layout: LAYOUT_OBJECT[view_id]});
-        dataproductFacepageModel.fetch();
-    },
-    
     
     dashboard: function() {},
+    
+    facepage: function(resource_type, view_type, resource_id) {
+        this._reset();
+        
+        // Initialize model (refactor with generic model?)
+        if (resource_type == 'instruments') {
+            var facepage_model = new IONUX.Models.InstrumentFacepageModel({instrument_id: resource_id});
+        } else if (resource_type == 'platforms') {
+            var facepage_model = new IONUX.Models.PlatformFacepageModel({platform_id: resource_id});
+        } else if (resource_type == 'observatories') {
+            var facepage_model = new IONUX.Models.ObservatoryFacepageModel({observatory_id: resource_id});
+        };
+        
+        // Initialize view.
+        var view_id = IONUX.DefinedViews[resource_type]['view_id'];
+        if (view_type == 'hybrid') {
+            var template_id = IONUX.DefinedViews[resource_type]['template_id'];
+            new IONUX.Views.Page({model: facepage_model, template_id: template_id, layout: LAYOUT_OBJECT[view_id]});
+        } else {
+            new IONUX.Views.Page({model: facepage_model, view_id: view_id, layout: LAYOUT_OBJECT[view_id]});
+        };
+        
+        // Data.
+        facepage_model.fetch()
+    },
+    
+    
+    
+    // BEGIN LCA demo routes
     
     data_products: function() {
         this._reset();
@@ -310,6 +283,12 @@ IONUX.Router = Backbone.Router.extend({
     resource_type_details: function(resource_type_id) {
         this._reset();
     },
+    
+    
+    // END LCA demo routes
+    
+    
+    
 
     handle_navigation: function(){
         var self = this;

@@ -16,18 +16,15 @@
 					<th>Name</th>
 					<th>Description</th>
 					<th>Updated</th>
-					<!-- <th>Primary Measurements</th>
-					<th>Data Products</th>
-					<th>Platforms</th>
-					<th>Instruments</th>
-					<th>Participants</th>
-					<th>Registered</th>
-					<th>Uptime (days)</th> -->
 				</thead>
 				<tbody>
 				<% _.each(collection, function(obj) { %>
 					<tr>
-						<td><a href="/platforms/<%= obj._id %>/"><%= obj.name %></a> (<a href="/platforms/dyn/<%= obj._id %>/">Dyn</a>)</td>
+						<td>
+							<a href="/platforms/<%= obj._id %>/"><%= obj.name %></a> 
+							(<a href="/platforms/dynamic/<%= obj._id %>/">Dynamic</a>) 
+							(<a href="/platforms/hybrid/<%= obj._id %>/">Hybrid</a>)
+						</td>
 						<td><%= obj.description %></td>
 						<td><%= obj.ts_updated %></td>
 					</tr>
@@ -37,6 +34,4 @@
 		</section>
 	</div>
 </div>
-
-
 
