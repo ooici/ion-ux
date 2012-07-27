@@ -6,46 +6,13 @@ import hashlib
 import time
 
 from config import FLASK_HOST, FLASK_PORT, GATEWAY_HOST, GATEWAY_PORT, LOGGED_IN, PRODUCTION, SECRET_KEY
+from service_api import ServiceApi
+from layout_api import LayoutApi
+from jinja2 import Template
 
 app = Flask(__name__)
-
 app.secret_key = SECRET_KEY
-
 SERVICE_GATEWAY_BASE_URL = 'http://%s:%d/ion-service' % (GATEWAY_HOST, GATEWAY_PORT)
-
-if PRODUCTION:
-    from service_api import ServiceApi
-    from dummy_layout_api import LayoutApi
-else:
-    # from dummy_service_api import ServiceApi
-    from service_api import ServiceApi
-    from dummy_layout_api import LayoutApi
-    # from layout_api import LayoutApi
-
-DEFINED_SERVICES_OPERATIONS = {
-    'marine_facilities': {
-            'restype': 'MarineFacility',
-            'service_name': 'marine_facility_management',
-            'object_name': 'marine_facility',
-            'operation_names': {'create': 'create_marine_facility'}
-        },
-  
-    'platforms': {
-            'restype': 'PlatformDevice'
-        },
-
-    'instruments': {
-            'restype': 'InstrumentDevice'
-        },
-}
-
-SERVICE_REQUEST_TEMPLATE = {
-    'serviceRequest': {
-        'serviceName': '', 
-        'serviceOp': '',
-        'params': {} # Example -> 'object_name': ['restype', {}] }
-    }
-}
 
 
 def render_app_template(current_url):
@@ -58,14 +25,13 @@ def render_app_template(current_url):
         logged_in = "True"
     else:
         logged_in = "False"
-    return render_template("ion-ux.html", **{"current_url":"/", "roles":roles, "logged_in":logged_in})
+        tmpl = Template(LayoutApi.process_layout())
+    return render_template(tmpl, **{"current_url":"/", "roles":roles, "logged_in":logged_in})
 
 @app.route('/instrument_extension/<instrument_device_id>/')
 def get_instrument_ext(instrument_device_id=None):
     instrument_extension_data = ServiceApi.get_instrument_extension(instrument_device_id=instrument_device_id)
     return jsonify(instrument_extension_data)
-
-
 
 # ---------------------------------------------------------------------------
 # START LAYOUT
@@ -85,6 +51,19 @@ def layout2():
 # ---------------------------------------------------------------------------
 # END LAYOUT
 # ---------------------------------------------------------------------------
+
+@app.route('/instruments/ext/<instrument_device_id>/', methods=['GET'])
+def instrument_extension(instrument_device_id=None):
+    instrument = ServiceApi.get_instrument_extension(instrument_device_id)
+    return jsonify(data=instrument)
+
+    # if request.is_xhr:
+    #     instrument = ServiceApi.instrument_extension(instrument_id=instrument_id)
+    #     return jsonify(data=instruments)
+    # else:
+    #     return render_app_template(request.path)
+
+
 
 @app.route('/tim/', methods=['GET'])
 def tim():

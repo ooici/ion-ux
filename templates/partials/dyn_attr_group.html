@@ -1,8 +1,11 @@
-<% _.each(block.attributes, function(attr) { %>
-	<p>
-		<%= attr.screen_label_text %>:&nbsp;
-		<% if (! _.isUndefined(data)) { %>
-			<%= data[attr.screen_label] %>
-        <% }; %>
-	</p>
-<% }); %>
+<h3><%= block.name %></h3>
+<div class="attributes">
+	<% _.each(block.attributes, function(attr) { %>
+		<p>
+			<%= attr.screen_label_text %>:&nbsp;
+			<% if (! _.isUndefined(data)) { %>
+				<%= data[attr.screen_label] %>
+	        <% }; %>
+		</p>
+	<% }); %>	
+</div>

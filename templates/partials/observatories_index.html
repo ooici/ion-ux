@@ -21,7 +21,11 @@
 				<tbody>
 			    <% _.each(collection, function(obj) { %>
 						<tr>
-							<td><a href="/observatories/<%= obj._id %>/"><%= obj.name %></a> (<a href="/observatories/dyn/<%= obj._id %>/">Dyn</a>)</td>
+							<td>
+								<a href="/observatories/<%= obj._id %>/"><%= obj.name %></a> 
+								(<a href="/observatories/dynamic/<%= obj._id %>/">Dynamic</a>) 
+								(<a href="/observatories/hybrid/<%= obj._id %>/">Hybrid</a>)
+							</td>
 							<td>Placeholder</td>
 							<td><%= obj.description %></td>
 							<td>Placeholder</td>

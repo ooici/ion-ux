@@ -2,8 +2,16 @@ IONUX.Views.Page = Backbone.View.extend({
     el: '#dynamic-container',
     initialize: function() {
         _.bindAll(this, 'render');
+
         // Set template here to ensure it happens after tmpl has rendered.
-        this.template = _.template($('#' + this.options.view_id).html());
+        // This is to work with both hybrid (template_id) and dyn (view_id)
+        // simultaneously, for the time being.
+        if (this.options.template_id) {
+            this.template = _.template($('#' + this.options.template_id).html());
+        } else {
+            this.template = _.template($('#' + this.options.view_id).html());
+        };
+        
         this.model.bind('change', this.render);
     },
     render: function() {
@@ -19,15 +27,29 @@ IONUX.Views.Base = Backbone.View.extend({
         this.render();
     },
     render: function() {
-        if (this.className) { this.$el.addClass(this.className)};
+        if (this.className) {this.$el.addClass(this.className)};
         this.$el.append(this.template({'block': this.options.block, 'data': this.options.data}));
+        this.delegateEvents();
     },
+    
 });
 
 // UI Representation Views
 IONUX.Views.AttributeGroup = IONUX.Views.Base.extend({
-    className: 'attr_group',
+    className: 'attr_block',
     template: _.template($('#dyn-attr-group-tmpl').html()),
+    events: {
+        'click .attr_block': 'drill_down_up_interaction'
+    },
+    drill_down_up_interaction:function(){
+        $(this).find('.attributes').slideToggle();
+    },
+    
+    render: function() {
+        if (this.className) this.$el.addClass(this.className);
+        this.$el.append(this.template({'block': this.options.block, 'data': this.options.data}));
+        this.$el.click(this.drill_down_up_interaction);
+    }
 });
 
 IONUX.Views.Table = IONUX.Views.Base.extend({
@@ -47,6 +69,7 @@ IONUX.Views.Image = IONUX.Views.Base.extend({
 });
 
 IONUX.Views.Map = IONUX.Views.Base.extend({
+    className: 'map_block',
     template: _.template($('#dyn-map-tmpl').html()),
 });
 
@@ -68,7 +91,7 @@ IONUX.Views.Undefined = IONUX.Views.Base.extend({
 
 function page_builder(layout, model) {
     _.each(layout.groups, function(group) {
-        _.each(group.blocks, function(block){
+        _.each(group.blocks, function(block, idx){
              var data = model.get(block.screen_label);
              var ui_representation = block.ui_representation;
              if (ui_representation == 'Attribute Group') {
@@ -105,10 +128,9 @@ IONUX.Views.CreateNewView = Backbone.View.extend({
     
     create_new: function(evt){
         evt.preventDefault();
-        alert('create_new!');
         this.$el.find("input[type='submit']").attr("disabled", true).val("Saving...");
         // var mf = new IONUX.Models.Observatory();
-            
+        
         var self = this;
         $.each(this.$el.find("input,textarea,select").not("input[type='submit'],input[type='cancel']"), function(i, e){
             var key = $(e).attr("name"), val = $(e).val();

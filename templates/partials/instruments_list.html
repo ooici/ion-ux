@@ -22,8 +22,9 @@
 					<tr>
 						<td>
 							<a href="/instruments/<%= obj._id %>/"><%= obj.name %></a> 
-							(<a href="/instruments/dyn/<%= obj._id %>/">Dyn</a>) 
-							(<a href="/instrument_extension/<%= obj._id %>/" class="external">Extension</a>)
+							(<a href="/instruments/dynamic/<%= obj._id %>/">Dynamic</a>)
+							(<a href="/instruments/hybrid/<%= obj._id %>/">Hybrid</a>)
+							(<a class="external" href="/instruments/ext/<%= obj._id %>/">Data</a>)
 						</td>
 						<td><%= obj.description %></td>
 						<td><%= obj.ts_updated %></td>
