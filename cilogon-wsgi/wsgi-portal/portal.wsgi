@@ -1,0 +1,162 @@
+import os,sys
+
+os.environ['PORTAL_ROOT'] = '/www/ux/cilogon-wsgi/'
+
+os.environ['PATH_INFO'] = '/wsgiportal'
+sys.path.insert(0, '../')
+sys.path.insert(0, '../')
+sys.path.insert(0, os.environ['PORTAL_ROOT'] + 'wsgi-portal')
+sys.path.insert(0, os.environ['PORTAL_ROOT'] + 'cilogon')
+sys.path.insert(0, os.environ['PORTAL_ROOT'] )
+
+import re
+from cgi import escape
+import logging
+import CILogonUtil
+from  urllib import unquote
+
+import constants
+import hashlib
+import sys
+from CILogonService import CILogonService
+import random
+import cgi
+import OAuthUtilities
+import base64
+from string import strip
+
+flask_url_base='http://ux-dev.oceanobservatories.org'
+
+def startRequest(environ, start_response):
+    # get the name from the url if it was specified there.
+    logging.info('path = ' + str(sys.path))
+    transactionStore = CILogonUtil.store()
+    portalProperties = CILogonUtil.portalProperties()
+    logging.info('##### Got portal properties, succ = ' + str(portalProperties.successUrl()))
+    cil = CILogonService(portalProperties, transactionStore)
+    # This creates a unique string identifier. This will be stored in a cookie in the user's browser for later reuse.
+    id = 'cilogon-' + hashlib.sha1(str(random.random()) + str(random.random())).hexdigest()
+
+    logging.info('starting request with id = ' + id)
+    redirecturl= 'https://cilogon.org' + cil.requestCredential(id)
+    logging.info('finished request, redirect = ' + redirecturl)
+    cil.transactionStore.load(id)
+
+    headers = [('Content-Type', 'text/html'),
+       ('Set-Cookie', constants.CERT_REQUEST_ID + '=' + id + ";"),
+       ('Location', redirecturl)]
+    logging.info("testSite: setting cookie = " + id);
+    # Status of 302 required for redirect.
+    start_response('302 FOUND', headers)
+    # We don't actually have to put anything in the user's browser, but just in case...
+    return "<html><body>Please follow this <a href=\""+ redirecturl +"\">link</a>!</body></html>\n"
+
+
+def success(environ, start_response):
+    if environ.has_key('HTTP_COOKIE'):
+        for cookie in map(strip, re.split(';', environ['HTTP_COOKIE'])):
+             (key, value) = re.split('=', cookie, 1)
+             if key == constants.CERT_REQUEST_ID:
+                 id = value
+
+    # In this case, no cookie was found to identify that a request was made.
+    # Redirect to non-logged in "index" page.
+    # TODO get proper error case redirect url
+    if id is None:
+        redirecturl = flask_url_base
+        headers = [('Content-Type', 'text/html'), ('Location', redirecturl)]
+        start_response('302 ERROR', headers)
+        return '<html><body><h2>Error, no session cookie found</h2></body></html>'
+
+    transactionStore = CILogonUtil.store()
+    portalProperties = CILogonUtil.portalProperties()
+    logging.info('##### Got portal properties, succ = ' + str(portalProperties.successUrl()))
+
+    # Redirect to flask app with certificate to complete signon
+    cil = CILogonService(portalProperties, transactionStore)
+    cred = cil.getCredential(id)
+    logging.info('id = ' + id + ', cert = ' + cred.certificate)
+    # Until we find out the right way to send cert on redirect,
+    # we pass it on the url, so line breaks need to get removed.
+    cert = base64.b64encode(cred.certificate)
+    redirecturl = flask_url_base + '/signon?cert=' + cert
+    headers = [('Content-Type', 'text/html'),
+       ('Location', redirecturl)]
+    start_response('302 FOUND', headers)
+    return "<html><body>Please follow this <a href=\""+ redirecturl +"\">link</a>!</body></html>\n"
+
+
+def failure(environ, start_response):
+    redirecturl = flask_url_base
+    headers = [('Content-Type', 'text/html'), ('Location', redirecturl)]
+    start_response('302 ERROR', headers)
+    return '<html><body><h2>CILogon failed.</h2></body></html>'
+
+
+def doCallback(environ, start_response):
+    # Standard canonical way to interpret the request values is to run the wsgi environment
+    # through the cgi module
+    form = cgi.FieldStorage(fp=environ['wsgi.input'],
+                            environ=environ,
+                            keep_blank_values=1)
+
+    # Get data from fields
+    key = unquote(form.getvalue(constants.OAUTH_TOKEN, None))
+    v  = unquote(form.getvalue(constants.OAUTH_VERIFIER, None))
+    logging.info('got the tempCred =' + str(key) + ' and verifier =' + str(v))
+    tStore = CILogonUtil.store()
+    portalProperties = CILogonUtil.portalProperties()
+    t = tStore.loadByTempCred(key)
+    logging.info('got the transaction with identifier = '+ t.identifier)
+    t.verifier = v
+    t.save()
+    logging.info('creating the client cilogon service')
+    doRest = OAuthUtilities.doRest(t, portalProperties)
+    doRest.start()
+    headers = [('Content-Type', 'text/html')]
+    start_response('200 OK', headers)
+    # We don't have to respond with anything. Just return.
+    return ''
+
+
+def not_found(environ, start_response):
+    """Called if no URL matches."""
+    redirecturl = flask_url_base
+    headers = [('Content-Type', 'text/html'), ('Location', redirecturl)]
+    start_response('302 ERROR', headers)
+    return '<html><body><h2>Bad URL</h2></body></html>'
+
+
+# map urls to functions
+urls = [
+    (r'^$', startRequest),
+    (r'login', startRequest),
+    (r'startRequest', startRequest),
+    (r'ready', doCallback),
+    (r'success', success),
+    (r'failure', failure)
+]
+
+
+def application(environ, start_response):
+    """
+    The main WSGI application. Dispatch the current request to
+    the functions from above and store the regular expression
+    captures in the WSGI environment as  `myapp.url_args` so that
+    the functions from above can access the url placeholders.
+
+    If nothing matches call the `not_found` function.
+    """
+    path = environ.get('PATH_INFO', '').lstrip('/')
+    for regex, callback in urls:
+        match = re.search(regex, path)
+        if match is not None:
+            environ['myapp.url_args'] = match.groups()
+            return callback(environ, start_response)
+    return not_found(environ, start_response)
+
+
+if __name__ == '__main__':
+    from wsgiref.simple_server import make_server
+    srv = make_server('localhost', 44444, application)
+    srv.serve_forever()

@@ -21,20 +21,20 @@
 		<div id="container" class="container-fluid">
 		    <div class="row-fluid">
 				<div id="sidebar" class="span2">
-					<div class="sidebar-map">
-						<img src="/static/img/r2/placeholder_map.png" />
-					</div>
-					
-					<input id="sidebar-search" type="text" />
 					<span class="sidebar-section">User</span>
-					<ul class="main-nav">
-						<li class="filter" id="login"><a href="https://ux-dev.oceanobservatories.org/login/" class="external">Login</a></li>
+					<ul>
+						<li class="filter" id="login"><a href="https://FLASK_HOST_VALUE/login/" class="external">Login</a></li>
 						<li class="filter" id="userprofile"><a href="/userprofile/">User Profile</a></li>
 						<li class="filter" id="logout"><a href="/logout/">Logout</a></li>
 					</ul>
 
+					<span class="sidebar-section">Dynamic Layouts</span>
+					<ul>
+						<li class=""><a href="/layout2/" class="external">Layout2</a></li>
+					</ul>
+
 					<span class="sidebar-section">OOI Resources</span>
-					<ul class="main-nav">
+					<ul>
 						<li class="dashboard"><a href="/">Dashboard</a></li>
 						<li class="data"><a href="/data_products/">Data Products</a></li>
 						<li class="observatories"><a href="/observatories/">Observatories</a></li>
@@ -49,7 +49,7 @@
 					</ul>
 			
 					<span class="sidebar-section">Create Resources</span>
-					<ul class="main-nav">
+					<ul>
 						<li class=""><a href="/observatories/new/">Observatory</a></li>
 					    <li class=""><a href="/platform_models/new/">Platform Model</a></li>
 						<li class=""><a href="/platforms/new/">Platform Device</a></li>
@@ -99,13 +99,7 @@
 			</div> <!-- div.row -->
 		 </div> <!-- div.container -->
 
-		
-
 		<!-- templates -->
-		<script type="text/template" id="hybrid-instrument-tmpl"><![CDATA[{% include 'partials/hybrid_instrument_facepage.html' %}]]></script>
-		<script type="text/template" id="hybrid-platform-tmpl"><![CDATA[{% include 'partials/hybrid_platform_facepage.html' %}]]></script>
-		<script type="text/template" id="hybrid-observatory-tmpl"><![CDATA[{% include 'partials/hybrid_observatory_facepage.html' %}]]></script>
-
 		<script type="text/template" id="observatories-tmpl"><![CDATA[{% include 'partials/observatories_index.html' %}]]></script>
 		<script type="text/template" id="observatories-item-tmpl"><![CDATA[{% include 'partials/observatories_item.html' %}]]></script>
 		<script type="text/template" id="observatories-detail-tmpl"><![CDATA[{% include 'partials/observatories_detail.html' %}]]></script>

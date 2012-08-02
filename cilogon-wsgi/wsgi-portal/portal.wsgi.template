@@ -1,7 +1,6 @@
 import os,sys
 
-#os.environ['PORTAL_ROOT']='/opt/vhosts/staging2/python/'
-os.environ['PORTAL_ROOT']='/www/ux/cilogon-wsgi/'
+os.environ['PORTAL_ROOT'] = '/www/ux/cilogon-wsgi/'
 
 os.environ['PATH_INFO'] = '/wsgiportal'
 sys.path.insert(0, '../')
@@ -10,10 +9,8 @@ sys.path.insert(0, os.environ['PORTAL_ROOT'] + 'wsgi-portal')
 sys.path.insert(0, os.environ['PORTAL_ROOT'] + 'cilogon')
 sys.path.insert(0, os.environ['PORTAL_ROOT'] )
 
-
 import re
 from cgi import escape
-#import simpleLogging
 import logging
 import CILogonUtil
 from  urllib import unquote
@@ -28,7 +25,7 @@ import OAuthUtilities
 import base64
 from string import strip
 
-flask_url_base='http://ux.oceanobservatories.org'
+flask_url_base='http://FLASK_HOST_VALUE'
 
 def startRequest(environ, start_response):
     # get the name from the url if it was specified there.
@@ -58,7 +55,7 @@ def startRequest(environ, start_response):
 def success(environ, start_response):
     if environ.has_key('HTTP_COOKIE'):
         for cookie in map(strip, re.split(';', environ['HTTP_COOKIE'])):
-             (key, value ) = re.split('=', cookie)
+             (key, value) = re.split('=', cookie, 1)
              if key == constants.CERT_REQUEST_ID:
                  id = value
 
@@ -66,7 +63,7 @@ def success(environ, start_response):
     # Redirect to non-logged in "index" page.
     # TODO get proper error case redirect url
     if id is None:
-        redirecturl = 'http://ux.oceanobservatories.org'
+        redirecturl = flask_url_base
         headers = [('Content-Type', 'text/html'), ('Location', redirecturl)]
         start_response('302 ERROR', headers)
         return '<html><body><h2>Error, no session cookie found</h2></body></html>'
@@ -90,7 +87,7 @@ def success(environ, start_response):
 
 
 def failure(environ, start_response):
-    redirecturl = 'http://ux.oceanobservatories.org'
+    redirecturl = flask_url_base
     headers = [('Content-Type', 'text/html'), ('Location', redirecturl)]
     start_response('302 ERROR', headers)
     return '<html><body><h2>CILogon failed.</h2></body></html>'
@@ -124,7 +121,7 @@ def doCallback(environ, start_response):
 
 def not_found(environ, start_response):
     """Called if no URL matches."""
-    redirecturl = 'http://ux.oceanobservatories.org'
+    redirecturl = flask_url_base
     headers = [('Content-Type', 'text/html'), ('Location', redirecturl)]
     start_response('302 ERROR', headers)
     return '<html><body><h2>Bad URL</h2></body></html>'

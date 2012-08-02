@@ -1,8 +1,10 @@
 README
 SETUP
-cilogon_wsgi
 fabfile.py
 *.pyc
 *.tar
 *.template
+cilogon*
 tarexcludes.txt
+uitarexcludes.txt
+venv
