@@ -33,6 +33,16 @@ def get_instrument_ext(instrument_device_id=None):
     instrument_extension_data = ServiceApi.get_instrument_extension(instrument_device_id=instrument_device_id)
     return jsonify(instrument_extension_data)
 
+@app.route('/instruments/<type>/<instrument_device_id>/', methods=['GET'])
+def instrument_facepage_2(type, instrument_device_id):
+    if request.is_xhr:
+        instrument_extension_data = ServiceApi.get_instrument_extension(instrument_device_id=instrument_device_id)
+        return jsonify(data=instrument_extension_data)
+    else:
+        return render_app_template(request.path)
+
+
+
 # ---------------------------------------------------------------------------
 # START LAYOUT
 # ---------------------------------------------------------------------------
@@ -56,13 +66,6 @@ def layout2():
 def instrument_extension(instrument_device_id=None):
     instrument = ServiceApi.get_instrument_extension(instrument_device_id)
     return jsonify(data=instrument)
-
-    # if request.is_xhr:
-    #     instrument = ServiceApi.instrument_extension(instrument_id=instrument_id)
-    #     return jsonify(data=instruments)
-    # else:
-    #     return render_app_template(request.path)
-
 
 
 @app.route('/tim/', methods=['GET'])
@@ -255,6 +258,7 @@ def instrument_facepage(instrument_device_id):
         return jsonify(data=instrument)
     else:
         return render_app_template(request.path)
+
 
 @app.route('/instruments/<instrument_device_id>/primary_deployment_off/<logical_instrument_id>/', methods=['GET'])
 def primary_deployment_off(instrument_device_id, logical_instrument_id):
