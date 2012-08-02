@@ -23,7 +23,7 @@ IONUX.Views.Page = Backbone.View.extend({
 // UI Representation Base View
 IONUX.Views.Base = Backbone.View.extend({
     initialize: function() {
-        this.$el = $('#' + this.options.block.block_id);
+        // this.$el = $('#' + this.options.block.block_id);
         this.render();
     },
     render: function() {
@@ -41,14 +41,16 @@ IONUX.Views.AttributeGroup = IONUX.Views.Base.extend({
     events: {
         'click .attr_block': 'drill_down_up_interaction'
     },
+    initialize: function() {
+        _.bindAll(this, 'render', 'drill_down_up_interaction');
+    },
     drill_down_up_interaction:function(){
         $(this).find('.attributes').slideToggle();
     },
-    
     render: function() {
         if (this.className) this.$el.addClass(this.className);
         this.$el.append(this.template({'block': this.options.block, 'data': this.options.data}));
-        this.$el.click(this.drill_down_up_interaction);
+        // this.$el.click(this.drill_down_up_interaction);
     }
 });
 
@@ -92,26 +94,27 @@ IONUX.Views.Undefined = IONUX.Views.Base.extend({
 function page_builder(layout, model) {
     _.each(layout.groups, function(group) {
         _.each(group.blocks, function(block, idx){
-             var data = model.get(block.screen_label);
+             var data = model.get(block.name);
              var ui_representation = block.ui_representation;
+             var el_id = '#' + block.block_id;
              if (ui_representation == 'Attribute Group') {
-                 new IONUX.Views.AttributeGroup({'block': block, 'data': data});
+                 new IONUX.Views.AttributeGroup({'block': block, 'data': data, el: el_id });
              } else if (ui_representation == 'Table') {
-                 new IONUX.Views.Table({'block': block, 'data': data});
+                 new IONUX.Views.Table({'block': block, 'data': data, el: el_id});
              } else if (ui_representation == 'Chart') {
-                 new IONUX.Views.Chart({'block': block, 'data': data});
+                 new IONUX.Views.Chart({'block': block, 'data': data, el: el_id});
              } else if (ui_representation == 'Graph') {
-                 new IONUX.Views.Graph({'block': block, 'data': data});
+                 new IONUX.Views.Graph({'block': block, 'data': data, el: el_id});
              } else if (ui_representation == 'Image') {
-                 new IONUX.Views.Image({'block': block, 'data': data});
+                 new IONUX.Views.Image({'block': block, 'data': data, el: el_id});
              } else if (ui_representation == 'Map') {
-                 new IONUX.Views.Map({'block': block, 'data': data});
+                 new IONUX.Views.Map({'block': block, 'data': data, el: el_id});
              } else if (ui_representation == 'PDF') {
-                 new IONUX.Views.PDF({'block': block, 'data': data});
+                 new IONUX.Views.PDF({'block': block, 'data': data, el: el_id});
              } else if (ui_representation == 'Text') {
-                 new IONUX.Views.Text({'block': block, 'data': data});
+                 new IONUX.Views.Text({'block': block, 'data': data, el: el_id});
              } else if (ui_representation == 'Text & Icon') {
-                 new IONUX.Views.TextIcon({'block': block, 'data': data});
+                 new IONUX.Views.TextIcon({'block': block, 'data': data, el: el_id});
              } else if (ui_representation == '') {
                  new IONUX.Views.Undefined({'block': 'nada', 'data': 'nada'});
              };

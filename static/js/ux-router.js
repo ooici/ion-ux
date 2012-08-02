@@ -127,7 +127,7 @@ IONUX.Router = Backbone.Router.extend({
     platform_new: function() {
         this._reset();
         this.newPlatformView = new IONUX.Views.NewPlatformView({model: new IONUX.Models.Platform()});
-        this.newPlatformView.render();    
+        this.newPlatformView.render();
     },
 
     platform_facepage: function(platform_id) {
