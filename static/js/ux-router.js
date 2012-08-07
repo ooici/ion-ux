@@ -18,7 +18,6 @@ IONUX.Router = Backbone.Router.extend({
         "platform_models/:platform_model_id/": "platform_model_facepage",
         "instruments/":"instruments",
         "instruments/new/":"instrument_new",
-        "instruments/hybrid/:instrument_id/" : "hybrid_instrument_facepage",
         "instruments/:instrument_id/" : "instrument_facepage",
         "instruments/:instrument_id/command/": "instrument_command_facepage",
         "instrument_models/": "instrument_models",
@@ -34,6 +33,7 @@ IONUX.Router = Backbone.Router.extend({
         "data_products/": "data_products",
         "data_products/:data_product_id/": "data_product_facepage",
         "users/": "users",
+        "users/demo-user-facepage/": "demo_user_facepage", 
         "users/:user_id/": "user_facepage",
         "resource_types/:resource_type_id/": "resource_type_details",
     },
@@ -42,7 +42,6 @@ IONUX.Router = Backbone.Router.extend({
     
     facepage: function(resource_type, view_type, resource_id) {
         this._reset();
-        
         // Initialize model (refactor with generic model?)
         if (resource_type == 'instruments') {
             var facepage_model = new IONUX.Models.InstrumentFacepageModel({instrument_id: resource_id});
@@ -56,16 +55,16 @@ IONUX.Router = Backbone.Router.extend({
         var view_id = IONUX.DefinedViews[resource_type]['view_id'];
         if (view_type == 'hybrid') {
             var template_id = IONUX.DefinedViews[resource_type]['template_id'];
-            new IONUX.Views.Page({model: facepage_model, template_id: template_id, layout: LAYOUT_OBJECT[view_id]});
+            $('#dynamic-container').empty().html($(template_id).html()).show();
         } else {
-            new IONUX.Views.Page({model: facepage_model, view_id: view_id, layout: LAYOUT_OBJECT[view_id]});
+            $('#dynamic-container').empty().html($('#' + view_id).html()).show();
         };
-        
+
         // Data.
-        facepage_model.fetch()
+        facepage_model.fetch({success: function() {
+            page_builder(LAYOUT_OBJECT[view_id], facepage_model);
+        }});
     },
-    
-    
     
     // BEGIN LCA demo routes
     
@@ -271,6 +270,12 @@ IONUX.Router = Backbone.Router.extend({
         this.usersList = new IONUX.Collections.Users();
         this.usersListView = new IONUX.Views.UsersView({collection: this.usersList});
         this.usersList.fetch();
+    },
+    
+    demo_user_facepage: function() {
+        this._reset();
+        var demoUserFacePage = new IONUX.Views.DemoUserFacepage();
+        demoUserFacePage.render().el;
     },
 
     user_facepage : function(user_id) {

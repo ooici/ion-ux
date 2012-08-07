@@ -1,56 +1,60 @@
-IONUX.Views.Page = Backbone.View.extend({
-    el: '#dynamic-container',
-    initialize: function() {
-        _.bindAll(this, 'render');
-
-        // Set template here to ensure it happens after tmpl has rendered.
-        // This is to work with both hybrid (template_id) and dyn (view_id)
-        // simultaneously, for the time being.
-        if (this.options.template_id) {
-            this.template = _.template($('#' + this.options.template_id).html());
-        } else {
-            this.template = _.template($('#' + this.options.view_id).html());
-        };
-        
-        this.model.bind('change', this.render);
-    },
-    render: function() {
-        this.$el.html(this.template()).show();
-        page_builder(this.options.layout, this.model);
-    }
-});
+// IONUX.Views.Page = Backbone.View.extend({
+//     // el: '#dynamic-container',
+//     events: {
+//         'click .span2': 'radical'
+//     },
+//     initialize: function() {
+//         _.bindAll(this, 'render');
+//         // Set template here to ensure it happens after tmpl has rendered.
+//         // This is to work with both hybrid (template_id) and dyn (view_id)
+//         // simultaneously, for the time being.
+//         if (this.options.template_id) {
+//             this.template = _.template($('#' + this.options.template_id).html());
+//         } else {
+//             this.template = _.template($('#' + this.options.view_id).html());
+//         };
+//         this.model.bind('change', this.render);
+//     },
+//     
+//     radical: function(){
+//       alert('RADY!');  
+//     },
+//     render: function() {
+//         this.$el.html(this.template()).show();
+//     }
+// });
 
 // UI Representation Base View
 IONUX.Views.Base = Backbone.View.extend({
+    events: {
+    },
     initialize: function() {
-        // this.$el = $('#' + this.options.block.block_id);
-        this.render();
+        this.render().el;
     },
     render: function() {
         if (this.className) {this.$el.addClass(this.className)};
         this.$el.append(this.template({'block': this.options.block, 'data': this.options.data}));
-        this.delegateEvents();
-    },
-    
+        return this;
+    }
 });
 
 // UI Representation Views
-IONUX.Views.AttributeGroup = IONUX.Views.Base.extend({
+IONUX.Views.AttributeGroup = Backbone.View.extend({
     className: 'attr_block',
     template: _.template($('#dyn-attr-group-tmpl').html()),
-    events: {
-        'click .attr_block': 'drill_down_up_interaction'
+    events:  {
+        "click": 'drill_down_up_interaction'
     },
     initialize: function() {
-        _.bindAll(this, 'render', 'drill_down_up_interaction');
+        this.render().el;
     },
-    drill_down_up_interaction:function(){
-        $(this).find('.attributes').slideToggle();
+    drill_down_up_interaction: function() {
+        $(this.el).find('.attributes').slideToggle();
     },
     render: function() {
-        if (this.className) this.$el.addClass(this.className);
+        if (this.className) {this.$el.addClass(this.className)};
         this.$el.append(this.template({'block': this.options.block, 'data': this.options.data}));
-        // this.$el.click(this.drill_down_up_interaction);
+        return this;
     }
 });
 
@@ -97,7 +101,7 @@ function page_builder(layout, model) {
              var data = model.get(block.name);
              var ui_representation = block.ui_representation;
              var el_id = '#' + block.block_id;
-             if (ui_representation == 'Attribute Group') {
+            if (ui_representation == 'Attribute Group') {
                  new IONUX.Views.AttributeGroup({'block': block, 'data': data, el: el_id });
              } else if (ui_representation == 'Table') {
                  new IONUX.Views.Table({'block': block, 'data': data, el: el_id});
@@ -1122,6 +1126,18 @@ IONUX.Views.NewFrameOfReferenceView = IONUX.Views.CreateNewView.extend({
     this.$el.empty().html(this.template(this.model.toJSON())).show();
     return this;
   },
+});
+
+
+IONUX.Views.DemoUserFacepage = Backbone.View.extend({
+    el: "#dynamic-container",
+    template: _.template($("#hybrid-user-tmpl").html()),
+    initialize: function() {
+    },
+    render: function() {
+        this.$el.html(this.template()).show();
+        return this;
+    }
 });
 
 

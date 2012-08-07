@@ -16,9 +16,11 @@ from config import CACHED_LAYOUT
 
 DEFINED_VIEWS = ['2050001', # Instrument
                  '2050002', # Platform
+                 # '2050004', # Data Product
                  '2050006', # Observatory
-                 '2050011', # Resource
                  '2050007', # User
+                 '2050011', # Resource
+                 '2050012', # Information Resource
                 ]
 
 class LayoutApi(object):
@@ -66,7 +68,7 @@ def layout_json_tree():
         for block_association in view_block_associations:
             # Extract block and group objects
             block_id = block_association[1]
-            block_obj = layout_objects[block_id]            
+            block_obj = layout_objects[block_id]
             group_id = layout_schema['associated_from'][block_id][0][1]
             group_obj = layout_objects[group_id]
                         
@@ -131,7 +133,7 @@ def layout_json_tree():
                         attributes_view.update({'screen_label_abbreviation': screen_label_obj['abbreviation']})
 
                     # TEMP until screen labels are fixed.
-                    attributes_view.update({'screen_label_text': attribute_obj['name']})
+                    attributes_view.update({'screen_label_text': attribute_obj['name'], 'attribute_id': attribute_obj['uirefid']})
 
                     if attribute_obj['information_level_id']:
                         pass
@@ -193,8 +195,9 @@ def build_partials(layout_schema=None):
             
             for idx, block in enumerate(group['blocks']):
                 # BLOCK HTML
+                block_id = 'block_' + block['block_id']
                 block_elmt = ET.SubElement(tab_content_elmt, 'div')
-                block_elmt.set('id', block['block_id'])
+                block_elmt.set('id', block_id)
 
                 block_li_elmt = ET.SubElement(tab_ul_elmt, 'li')
                 block_li_a_elmt = ET.SubElement(block_li_elmt, 'a', {'href': '#' + block['block_id'], 'data-toggle': 'tab'})

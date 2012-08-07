@@ -1,8 +1,8 @@
 IONUX = {
     DefinedViews:{
-        instruments: {view_id: '2050001', template_id: 'hybrid-instrument-tmpl'},
-        platforms: {view_id: '2050002', template_id: 'hybrid-platform-tmpl'},
-        observatories: {view_id: '2050006', template_id: 'hybrid-observatory-tmpl'}
+        instruments: {view_id: '2050001', template_id: '#hybrid-instrument-tmpl'},
+        platforms: {view_id: '2050002', template_id: '#hybrid-platform-tmpl'},
+        observatories: {view_id: '2050006', template_id: '#hybrid-observatory-tmpl'}
     },
     Models:{},
     Collections:{},

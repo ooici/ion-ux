@@ -1,6 +1,6 @@
 // For development use only
-window.layoutModel = new IONUX.Models.Layout();
-window.layoutModel.fetch();
+window.UI_OBJECT = new IONUX.Models.Layout();
+window.UI_OBJECT.fetch();
 
 /* rename and put in seperate file: */
 // function dyn_do_layout(){
