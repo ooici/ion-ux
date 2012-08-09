@@ -27,7 +27,8 @@ class LayoutApi(object):
     @staticmethod
     def process_layout():
         layout_json = layout_json_tree()
-        processed_layout = build_partials(layout_schema=layout_json)
+        interaction_json = interaction_layout_tree()
+        processed_layout = build_partials(layout_schema=layout_json, interactions=interaction_json)
         return processed_layout
     
     @staticmethod
@@ -38,6 +39,10 @@ class LayoutApi(object):
             layout_schema = service_gateway_get('directory', 'get_ui_specs', params={'user_id': 'tboteler'})
         return layout_schema
     
+def interaction_layout_tree():
+    block_interaction = {'Save': 'save_value', 'Edit': 'edit_value', 'Close': 'close_value'}
+    return block_interaction
+
 
 # TODO: much more efficiency/clean-up to do with *_view dicts
 def layout_json_tree():
@@ -105,8 +110,6 @@ def layout_json_tree():
             except Exception, e:
                 print 'Block screen label error: %s' % e
             
-            print(block_obj, '\n\n\n')
-            
             block_view = {'block_id': block_obj['uirefid'], 'name': block_name, 'attributes': []}
             
             # Assemble attributes
@@ -133,8 +136,11 @@ def layout_json_tree():
                         attributes_view.update({'screen_label_abbreviation': screen_label_obj['abbreviation']})
 
                     # TEMP until screen labels are fixed.
-                    attributes_view.update({'screen_label_text': attribute_obj['name'], 'attribute_id': attribute_obj['uirefid']})
-
+                    attributes_view.update({
+                        'screen_label_text': attribute_obj['name'], 
+                        'attribute_id': attribute_obj['uirefid'],
+                        'path': attribute_obj['path']})
+                    
                     if attribute_obj['information_level_id']:
                         pass
                         # attributes_view.update({'information_level': layout_objects[attribute_obj['information_level_id']]['level']})
@@ -148,14 +154,14 @@ def layout_json_tree():
 
     return layout_json
 
-def build_partials(layout_schema=None):
+def build_partials(layout_schema=None, interactions=None):
     env = Environment()
     env.loader = FileSystemLoader('templates')
     tmpl_unparsed = env.get_template('ion-ux.html').render()
     tmpl = ET.fromstring(tmpl_unparsed.encode('utf-8'))
     body_elmt = tmpl.find('body')
-    if layout_schema is None:
-        layout_schema = LayoutApi.layout_json_tree(LAYOUT_SCHEMA)
+    # if layout_schema is None:
+    #     layout_schema = LayoutApi.layout_json_tree(LAYOUT_SCHEMA)
 
     for view_id, view_tree in layout_schema.iteritems():
         script_elmt = ET.Element('script')
@@ -218,6 +224,10 @@ def build_partials(layout_schema=None):
     layout_elmt = ET.SubElement(body_elmt, 'script')
     layout_elmt.set('id', 'layout')
     layout_elmt.text = "var LAYOUT_OBJECT = %s;" % json.dumps(layout_schema)
+
+    interactions_elmt = ET.SubElement(body_elmt, 'script')
+    interactions_elmt.set('id', 'interactions')
+    interactions_elmt.text = "var INTERACTION_OBJECT = %s;" % json.dumps(interactions)
 
     init_script_elmt = ET.Element('script')
     init_script_elmt.set('type', 'text/javascript')

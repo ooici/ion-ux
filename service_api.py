@@ -823,10 +823,8 @@ def service_gateway_agent_request(agent_id, operation_name, params={}):
             return resp['data']['GatewayResponse'][0]
 
 def pretty_console_log(label, content, data=None):
-    pass
-    # print '\n'
-    # print '-------------------------------------------'
-    # print '%s : %s' % (label, content), '\n\n'
+    # pass
+    print '\n Service Gateway: ', '%s : %s' % (label, content), '\n\n'
     # if data:
     #     print 'data : %s' % data
 
