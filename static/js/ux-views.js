@@ -27,6 +27,7 @@
 // UI Representation Base View
 IONUX.Views.Base = Backbone.View.extend({
     events: {
+        // "hover": IONUX.Interactions.action_controls
     },
     initialize: function() {
         this.render().el;
@@ -43,7 +44,8 @@ IONUX.Views.AttributeGroup = Backbone.View.extend({
     className: 'attr_block',
     template: _.template($('#dyn-attr-group-tmpl').html()),
     events:  {
-        "click": 'drill_down_up_interaction'
+        "hover": IONUX.Interactions.action_controls,
+        "click .dropdown-menu li": IONUX.Interactions.action_control_click
     },
     initialize: function() {
         this.render().el;
@@ -98,11 +100,14 @@ IONUX.Views.Undefined = IONUX.Views.Base.extend({
 function page_builder(layout, model) {
     _.each(layout.groups, function(group) {
         _.each(group.blocks, function(block, idx){
-             var data = model.get(block.name);
-             var ui_representation = block.ui_representation;
-             var el_id = '#' + block.block_id;
+            var data = model.toJSON();
+            $('#page_name').html(data['resource']['name']);
+            var ui_representation = block.ui_representation;
+            var el_id = '#' + block.block_id;
+
+            
             if (ui_representation == 'Attribute Group') {
-                 new IONUX.Views.AttributeGroup({'block': block, 'data': data, el: el_id });
+                 new IONUX.Views.AttributeGroup({block: block, data: data, el: el_id });
              } else if (ui_representation == 'Table') {
                  new IONUX.Views.Table({'block': block, 'data': data, el: el_id});
              } else if (ui_representation == 'Chart') {

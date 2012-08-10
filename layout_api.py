@@ -40,8 +40,8 @@ class LayoutApi(object):
         return layout_schema
     
 def interaction_layout_tree():
-    block_interaction = {'Save': 'save_value', 'Edit': 'edit_value', 'Close': 'close_value'}
-    return block_interaction
+    interactions = {'block_interactions': ['Save', 'Edit', 'Close']}
+    return interactions
 
 
 # TODO: much more efficiency/clean-up to do with *_view dicts
@@ -137,7 +137,8 @@ def layout_json_tree():
 
                     # TEMP until screen labels are fixed.
                     attributes_view.update({
-                        'screen_label_text': attribute_obj['name'], 
+                        'name': attribute_obj['name'],
+                        'screen_label_text': attribute_obj['name'], # TODO - set screen_label to actual value
                         'attribute_id': attribute_obj['uirefid'],
                         'path': attribute_obj['path']})
                     
@@ -227,7 +228,7 @@ def build_partials(layout_schema=None, interactions=None):
 
     interactions_elmt = ET.SubElement(body_elmt, 'script')
     interactions_elmt.set('id', 'interactions')
-    interactions_elmt.text = "var INTERACTION_OBJECT = %s;" % json.dumps(interactions)
+    interactions_elmt.text = "var INTERACTIONS_OBJECT = %s;" % json.dumps(interactions)
 
     init_script_elmt = ET.Element('script')
     init_script_elmt.set('type', 'text/javascript')

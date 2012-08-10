@@ -1,14 +1,13 @@
 
-IONUX.Interaction.action_controls = function(event){
-
-    if (event.mouseenter) {
+IONUX.Interactions.action_controls = function(event){
+    if (event.type == 'mouseenter') {
         var btn = $(this.el).find(".btn-group");
-        if (btn){
+        if (btn.length) {
             btn.show();
             return;
         }
     } 
-    if (event.mouseleave) {
+    if (event.type == 'mouseleave') {
         $(this.el).find(".btn-group").hide();
         return;
     }
@@ -21,6 +20,10 @@ IONUX.Interaction.action_controls = function(event){
 
     var dropdown_items = INTERACTIONS_OBJECT.block_interactions; 
     var html = _.template(dropdown_button_tmpl, {"dropdown_items":dropdown_items});
-    $(this.el).find(".attr_block").prepend(html);
+    $(this.el).prepend(html);
+};
 
+
+IONUX.Interactions.action_control_click = function(event) {
+    alert('Handling ' + $(event.target).text() + ' of Block #' + $(this.el).attr('id') + '.');
 }

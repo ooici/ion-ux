@@ -10,7 +10,11 @@ IONUX.Models.Layout = Backbone.Model.extend({
 // Maybe put these into IONUX.Helpers namespace?
 
 var epochToISO = function(epoch_time) {
-  return new Date(parseInt(epoch_time)).toISOString();
+    try {
+        return new Date(parseInt(epoch_time)).toISOString();        
+    } catch (err) {
+        return epoch_time;
+    };
 };
 
 var makeISOTimestamps = function(resp) {    
@@ -122,7 +126,7 @@ IONUX.Models.Instrument = Backbone.Model.extend({
 
 IONUX.Models.InstrumentFacepageModel = Backbone.Model.extend({
   url: function(){
-    return "/instruments/"+this.get("instrument_id")+"/";
+    return "/instruments/ext/"+this.get("instrument_id")+"/";
   },
   
   parse: function(resp) {

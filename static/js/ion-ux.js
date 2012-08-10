@@ -1,4 +1,5 @@
 IONUX = {
+    Interactions: {},
     DefinedViews:{
         instruments: {view_id: '2050001', template_id: '#hybrid-instrument-tmpl'},
         platforms: {view_id: '2050002', template_id: '#hybrid-platform-tmpl'},

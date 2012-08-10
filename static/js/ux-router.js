@@ -50,7 +50,6 @@ IONUX.Router = Backbone.Router.extend({
         } else if (resource_type == 'observatories') {
             var facepage_model = new IONUX.Models.ObservatoryFacepageModel({observatory_id: resource_id});
         };
-        
         // Initialize view.
         var view_id = IONUX.DefinedViews[resource_type]['view_id'];
         if (view_type == 'hybrid') {
@@ -59,7 +58,6 @@ IONUX.Router = Backbone.Router.extend({
         } else {
             $('#dynamic-container').empty().html($('#' + view_id).html()).show();
         };
-
         // Data.
         facepage_model.fetch({success: function() {
             page_builder(LAYOUT_OBJECT[view_id], facepage_model);
