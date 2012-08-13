@@ -101,7 +101,7 @@ function page_builder(layout, model) {
     _.each(layout.groups, function(group) {
         _.each(group.blocks, function(block, idx){
             var data = model.toJSON();
-            $('#page_name').html(data['resource']['name']);
+            // $('#page_name').html(data['resource']['name']);
             var ui_representation = block.ui_representation;
             var el_id = '#' + block.block_id;
 

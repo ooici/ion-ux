@@ -42,14 +42,17 @@ IONUX.Router = Backbone.Router.extend({
     
     facepage: function(resource_type, view_type, resource_id) {
         this._reset();
-        // Initialize model (refactor with generic model?)
+        // Initialize model - TODO: refactor with generic model?
         if (resource_type == 'instruments') {
             var facepage_model = new IONUX.Models.InstrumentFacepageModel({instrument_id: resource_id});
         } else if (resource_type == 'platforms') {
             var facepage_model = new IONUX.Models.PlatformFacepageModel({platform_id: resource_id});
         } else if (resource_type == 'observatories') {
             var facepage_model = new IONUX.Models.ObservatoryFacepageModel({observatory_id: resource_id});
+        } else if (resource_type == 'data_products') {
+            var facepage_model = new IONUX.Models.DataProductFacepageModel({data_product_id: resource_id});
         };
+        
         // Initialize view.
         var view_id = IONUX.DefinedViews[resource_type]['view_id'];
         if (view_type == 'hybrid') {

@@ -16,7 +16,7 @@ from config import CACHED_LAYOUT
 
 DEFINED_VIEWS = ['2050001', # Instrument
                  '2050002', # Platform
-                 # '2050004', # Data Product
+                 '2050004', # Data Product
                  '2050006', # Observatory
                  '2050007', # User
                  '2050011', # Resource
@@ -74,7 +74,13 @@ def layout_json_tree():
             # Extract block and group objects
             block_id = block_association[1]
             block_obj = layout_objects[block_id]
-            group_id = layout_schema['associated_from'][block_id][0][1]
+            
+            # Skip unused blocks (Data Products)
+            try:
+                group_id = layout_schema['associated_from'][block_id][0][1]
+            except Exception, e:
+                continue
+            
             group_obj = layout_objects[group_id]
                         
             try:
