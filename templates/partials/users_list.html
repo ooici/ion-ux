@@ -14,26 +14,18 @@
 			<table id="users-container" class="table" width="100%">
 				<thead>
 					<th>Name</th>
-					<th>Email</th>
-					<th>Credential Subject</th>
 				</thead>
                 <tbody>
-                    <!-- Sample row -->
-                    <tr>
-						<td><a href="/users/demo-user-facepage/">Marty McFly</a></td>
-						<td>marty@marty.com</td>
-						<td>&nbsp;</td>
-					</tr>
-                    <!-- Sample row end -->
 			    <% _.each(collection, function(obj) { %>
-						<tr>
-							<td><a href="/users/<%= obj._id %>/"><%= obj.user_info.contact.name %></a></td>
-							<td><%= obj.user_info.contact.email %></td>
-							<td><%= obj.name %></td>
-						</tr>
+					<tr>
+						<td>
+						    <a href="/users/<%= obj._id %>/"><%= obj.name %></a> 
+						    (<a href="/users/hybrid/<%= obj._id %>/">Hybrid</a>)
+						</td>
+					</tr>
 			    <% }); %>
 			    </tbody>
-			</table>		
+			</table>
 		</section>
 	</div>
 </div>

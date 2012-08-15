@@ -25,16 +25,21 @@ AGENT_REQUEST_TEMPLATE = {
 
 class ServiceApi(object):
         
-    # @staticmethod
-    # def get_layout_schema():
-    #     layout_schema = service_gateway_get('directory', 'get_ui_specs', params={'user_id': 'tboteler'})
-    #     return layout_schema
-    
-
     @staticmethod
     def get_instrument_extension(instrument_device_id):
-        instrument_device_data = service_gateway_get('instrument_management', 'get_instrument_device_extension', params= {'instrument_device_id': instrument_device_id})
-        return instrument_device_data
+        instrument_device = service_gateway_get('instrument_management', 'get_instrument_device_extension', params= {'instrument_device_id': instrument_device_id})
+        return instrument_device
+
+    @staticmethod
+    def get_actor_identity_extension(user_id):
+        user = service_gateway_get('identity_management', 'get_actor_identity_extension', params= {'user_id': user_id})
+        return user
+    
+    @staticmethod
+    def find_by_resource_id(resource_id):
+        resource = service_gateway_get('resource_registry', 'read', params={'object_id': resource_id})
+        return jsonify(data=resource)
+        
 
     @staticmethod
     def find_all_frame_of_references():

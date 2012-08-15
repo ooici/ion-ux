@@ -61,6 +61,9 @@ IONUX.Views.AttributeGroup = Backbone.View.extend({
 });
 
 IONUX.Views.Table = IONUX.Views.Base.extend({
+    events: {
+        "click .dropdown-menu li": IONUX.Interactions.action_control_click
+    },
     template: _.template($('#dyn-table-tmpl').html()),
 });
 

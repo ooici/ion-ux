@@ -51,6 +51,8 @@ IONUX.Router = Backbone.Router.extend({
             var facepage_model = new IONUX.Models.ObservatoryFacepageModel({observatory_id: resource_id});
         } else if (resource_type == 'data_products') {
             var facepage_model = new IONUX.Models.DataProductFacepageModel({data_product_id: resource_id});
+        } else if (resource_type == 'users') {
+            var facepage_model = new IONUX.Models.UserFacepageModel({user_id: resource_id});
         };
         
         // Initialize view.
@@ -61,6 +63,7 @@ IONUX.Router = Backbone.Router.extend({
         } else {
             $('#dynamic-container').empty().html($('#' + view_id).html()).show();
         };
+        
         // Data.
         facepage_model.fetch({success: function() {
             page_builder(LAYOUT_OBJECT[view_id], facepage_model);

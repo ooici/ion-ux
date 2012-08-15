@@ -1,4 +1,3 @@
-
 IONUX.Interactions.action_controls = function(event){
     if (event.type == 'mouseenter') {
         var btn = $(this.el).find(".btn-group");

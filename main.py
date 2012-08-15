@@ -28,19 +28,49 @@ def render_app_template(current_url):
         tmpl = Template(LayoutApi.process_layout())
     return render_template(tmpl, **{"current_url":"/", "roles":roles, "logged_in":logged_in})
 
-@app.route('/instrument_extension/<instrument_device_id>/')
-def get_instrument_ext(instrument_device_id=None):
-    instrument_extension_data = ServiceApi.get_instrument_extension(instrument_device_id=instrument_device_id)
-    return jsonify(instrument_extension_data)
 
 @app.route('/instruments/<type>/<instrument_device_id>/', methods=['GET'])
-def instrument_facepage_2(type, instrument_device_id):
+def instrument_facepage_with_extension(type, instrument_device_id):
     if request.is_xhr:
         instrument_extension_data = ServiceApi.get_instrument_extension(instrument_device_id=instrument_device_id)
         return jsonify(data=instrument_extension_data)
     else:
         return render_app_template(request.path)
 
+@app.route('/instruments/ext/<instrument_device_id>/', methods=['GET'])
+def instrument_extension(instrument_device_id=None):
+    instrument = ServiceApi.get_instrument_extension(instrument_device_id)
+    return jsonify(data=instrument)
+
+
+
+@app.route('/users/', methods=['GET'])
+def users():
+    if request.is_xhr:
+        users = ServiceApi.find_by_resource_type('ActorIdentity')
+        return jsonify(data=users)
+    else:
+        return render_app_template(request.path)
+
+@app.route('/users/<user_id>/', methods=['GET'])
+def user_facepage(user_id):
+    if request.is_xhr:
+        user = ServiceApi.get_actor_identity_extension(user_id)
+        return jsonify(data=user)
+    else:
+        return render_app_template(request.path)
+
+
+# Routes for generic information resource and resource.
+@app.route('/resources/list/<resource_type>/', methods=['GET'])
+def resource_list(resource_type=None):
+    resources = ServiceApi.find_by_resource_type(resource_type)
+    return jsonify(data=resources)
+
+@app.route('/resources/read/<resource_id>/', methods=['GET'])
+def resource_facepage(resource_id=None):
+    resource = ServiceApi.find_by_resource_id(resource_id)
+    return jsonify(data=resource)
 
 
 # ---------------------------------------------------------------------------
@@ -62,10 +92,6 @@ def layout2():
 # END LAYOUT
 # ---------------------------------------------------------------------------
 
-@app.route('/instruments/ext/<instrument_device_id>/', methods=['GET'])
-def instrument_extension(instrument_device_id=None):
-    instrument = ServiceApi.get_instrument_extension(instrument_device_id)
-    return jsonify(data=instrument)
 
 
 @app.route('/tim/', methods=['GET'])
@@ -362,21 +388,6 @@ def data_product_facepage(data_product_id):
     else:
         return render_app_template(request.path)
 
-@app.route('/users/', methods=['GET'])
-def users():
-    if request.is_xhr:
-        users = ServiceApi.find_users()
-        return jsonify(data=users)
-    else:
-        return render_app_template(request.path)
-
-@app.route('/users/<user_id>/', methods=['GET'])
-def user_facepage(user_id):
-    if request.is_xhr:
-        user = ServiceApi.find_user(user_id)
-        return jsonify(data=user)
-    else:
-        return render_app_template(request.path)
 
 @app.route('/frame_of_references/')
 def frame_of_references():
