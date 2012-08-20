@@ -1,7 +1,6 @@
 // IONUX.Views.Page = Backbone.View.extend({
 //     // el: '#dynamic-container',
 //     events: {
-//         'click .span2': 'radical'
 //     },
 //     initialize: function() {
 //         _.bindAll(this, 'render');
@@ -14,10 +13,6 @@
 //             this.template = _.template($('#' + this.options.view_id).html());
 //         };
 //         this.model.bind('change', this.render);
-//     },
-//     
-//     radical: function(){
-//       alert('RADY!');  
 //     },
 //     render: function() {
 //         this.$el.html(this.template()).show();
@@ -575,31 +570,6 @@ IONUX.Views.DataProcessDefinitions = Backbone.View.extend({
 IONUX.Views.DataProcessDefinitionFacepage = Backbone.View.extend({
   el: "#dynamic-container",
   template: _.template($("#data-process-definition-facepage-tmpl").html()),
-  initialize: function(){
-    _.bindAll(this, "render");
-    this.model.bind("change", this.render);
-  },
-  render: function(){
-    this.$el.empty().html(this.template(this.model.toJSON())).show();
-  }
-});
-
-IONUX.Views.FrameOfReferences = Backbone.View.extend({
-  el:"#dynamic-container",
-  template: _.template($("#frame-of-references-tmpl").html()),
-  initialize: function(){
-    _.bindAll(this, "render");
-    this.collection.bind("reset", this.render);
-  },
-  render: function(){
-    this.$el.html(this.template({"collection": this.collection.toJSON()})).show();
-    return this;
-  }
-});
-
-IONUX.Views.FramesOfReferenceFacepage = Backbone.View.extend({
-  el: "#dynamic-container",
-  template: _.template($("#frame-of-reference-facepage-tmpl").html()),
   initialize: function(){
     _.bindAll(this, "render");
     this.model.bind("change", this.render);
