@@ -16,7 +16,7 @@
 				<p>
 					<strong>Name: </strong><%= name %><br />
 					<strong>ID: </strong><span style="word-wrap: break-word"><%= _id %></span><br />
-					<strong>Model:</strong> <a href="/instrument_models/<%= related_model._id %>/"><%= related_model.name %></a>
+					<strong>Model:</strong> 
 				</p>
 			</section>
 			<section class="attr_group">
@@ -27,14 +27,13 @@
 			<section class="attr_group">
 				<h3 class="wrapper-heading">Description</h3>
 				<p>
-					<%= description %>
 				</p>
 			</section>
 			<section class="attr_group">
 				<h3 class="wrapper-heading">Contact</h3>
 				<p>
-					<strong>Owner:</strong> <%= owner.contact.name %><br />
-					<strong>Email:</strong> <a href="mailto:<%= owner.contact.mail %>"><%= owner.contact.email %></a>
+					<strong>Owner:</strong><br />
+					<strong>Email:</strong>
 				</p>
 			</section>
 		</section>
