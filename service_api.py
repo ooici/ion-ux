@@ -26,6 +26,16 @@ AGENT_REQUEST_TEMPLATE = {
 class ServiceApi(object):
         
     @staticmethod
+    def find_by_resource_type(resource_type):
+        return service_gateway_get('resource_registry', 'find_resources', params={'restype': resource_type})[0]
+
+    @staticmethod
+    def find_by_resource_id(resource_id):
+        resource = service_gateway_get('resource_registry', 'read', params={'object_id': resource_id})
+        return jsonify(data=resource)
+
+
+    @staticmethod
     def get_instrument_extension(instrument_device_id):
         instrument_device = service_gateway_get('instrument_management', 'get_instrument_device_extension', params= {'instrument_device_id': instrument_device_id})
         return instrument_device
@@ -34,12 +44,6 @@ class ServiceApi(object):
     def get_actor_identity_extension(user_id):
         user = service_gateway_get('identity_management', 'get_actor_identity_extension', params= {'user_id': user_id})
         return user
-    
-    @staticmethod
-    def find_by_resource_id(resource_id):
-        resource = service_gateway_get('resource_registry', 'read', params={'object_id': resource_id})
-        return jsonify(data=resource)
-        
 
     @staticmethod
     def find_all_frame_of_references():
@@ -721,9 +725,6 @@ class ServiceApi(object):
                 ret_list.append([logical_instrument_dict])
         return ret_list
     
-    @staticmethod
-    def find_by_resource_type(resource_type):
-        return service_gateway_get('resource_registry', 'find_resources', params={'restype': resource_type})[0]
 
     @staticmethod
     def find_owner(resource_id):

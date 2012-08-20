@@ -33,7 +33,6 @@ IONUX.Router = Backbone.Router.extend({
         "data_products/": "data_products",
         "data_products/:data_product_id/": "data_product_facepage",
         "users/": "users",
-        "users/demo-user-facepage/": "demo_user_facepage", 
         "users/:user_id/": "user_facepage",
         "resource_types/:resource_type_id/": "resource_type_details",
     },
@@ -69,7 +68,7 @@ IONUX.Router = Backbone.Router.extend({
             page_builder(LAYOUT_OBJECT[view_id], facepage_model);
         }});
     },
-    
+        
     // BEGIN LCA demo routes
     
     data_products: function() {
@@ -121,7 +120,7 @@ IONUX.Router = Backbone.Router.extend({
 
     platforms: function(){
         this._reset();
-        $("#platforms-container").show();
+        // $("#platforms-container").show();
         this.platformsList = new IONUX.Collections.Platforms();
         var platformsView = new IONUX.Views.PlatformsView({collection:this.platformsList});
         this.platformsList.fetch();
@@ -249,7 +248,6 @@ IONUX.Router = Backbone.Router.extend({
 
     frame_of_references: function() {
         this._reset();
-        $("#frame-of-references-container").show();
         this.frameOfReferencesList = new IONUX.Collections.FrameOfReferences();
         var frameOfReferencesView = new IONUX.Views.FrameOfReferences({collection: this.frameOfReferencesList});
         this.frameOfReferencesList.fetch();
@@ -276,12 +274,6 @@ IONUX.Router = Backbone.Router.extend({
         this.usersList.fetch();
     },
     
-    demo_user_facepage: function() {
-        this._reset();
-        var demoUserFacePage = new IONUX.Views.DemoUserFacepage();
-        demoUserFacePage.render().el;
-    },
-
     user_facepage : function(user_id) {
         this._reset();
         var fpModel = new IONUX.Models.UserFacepageModel({user_id: user_id});

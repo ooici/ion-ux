@@ -42,8 +42,6 @@ def instrument_extension(instrument_device_id=None):
     instrument = ServiceApi.get_instrument_extension(instrument_device_id)
     return jsonify(data=instrument)
 
-
-
 @app.route('/users/', methods=['GET'])
 def users():
     if request.is_xhr:
@@ -60,7 +58,6 @@ def user_facepage(user_id):
     else:
         return render_app_template(request.path)
 
-
 # Routes for generic information resource and resource.
 @app.route('/resources/list/<resource_type>/', methods=['GET'])
 def resource_list(resource_type=None):
@@ -73,7 +70,6 @@ def resource_facepage(resource_id=None):
     return jsonify(data=resource)
 
 
-# ---------------------------------------------------------------------------
 # START LAYOUT
 # ---------------------------------------------------------------------------
 
@@ -82,7 +78,6 @@ def layout():
     layout_schema = LayoutApi.get_layout_schema()
     return jsonify(data=layout_schema)
 
-
 @app.route('/layout2/', methods=['GET'])
 def layout2():
     layout = LayoutApi.process_layout()
@@ -90,8 +85,6 @@ def layout2():
 
 # ---------------------------------------------------------------------------
 # END LAYOUT
-# ---------------------------------------------------------------------------
-
 
 
 @app.route('/tim/', methods=['GET'])
