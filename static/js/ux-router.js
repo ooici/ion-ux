@@ -2,9 +2,9 @@ IONUX.Router = Backbone.Router.extend({
     routes: {
         "": "dashboard",
         ":resource_type/:view_type/:resource_id/": "facepage",
+        'interactions/': 'interactions',
 
         // LCA routes
-        "table/": "table",
         "userprofile/": "user_profile",
         "observatories/": "observatories",
         "observatories/:marine_facility_id/": "observatory_facepage",
@@ -61,6 +61,9 @@ IONUX.Router = Backbone.Router.extend({
         }});
     },
         
+    interactions: function(){
+        
+    },
     // BEGIN LCA demo routes
     
     data_products: function() {

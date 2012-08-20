@@ -381,24 +381,6 @@ def data_product_facepage(data_product_id):
     else:
         return render_app_template(request.path)
 
-
-@app.route('/frame_of_references/')
-def frame_of_references():
-    if request.is_xhr:
-        frame_of_references = ServiceApi.find_all_frame_of_references()
-        return jsonify(data=frame_of_references)
-    else:
-        return render_app_template(request.path)
-
-
-@app.route('/frame_of_references/<frame_of_reference_id>/', methods=['GET'])
-def frame_of_reference_facepage(frame_of_reference_id):
-    if request.is_xhr:
-        frame_of_reference = ServiceApi.find_frame_of_reference(frame_of_reference_id)
-        return jsonify(data=frame_of_reference)
-    else:
-        return render_app_template(request.path)
-
 # Request actions
 @app.route('/<resource_type>/request/<request_id>/<request_action>', methods=['GET', 'POST'])
 def take_action_on_request(resource_type, resource_id, request_action):
@@ -534,8 +516,6 @@ def delete_resource(resource_id=None):
 
 @app.route('/schema/<resource_type>')
 def get_resource_schema(resource_type):
-    # resource_type = str(resource_type)
-
     resource_type_schema_response = requests.get(
         "http://%s/ion-service/resource_type_schema/%s" % (SERVICE_GATEWAY_BASE_URL,resource_type)
     )

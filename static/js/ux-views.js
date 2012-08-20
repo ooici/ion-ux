@@ -128,6 +128,16 @@ function page_builder(layout, model) {
     });
 };
 
+IONUX.Views.Interactions = IONUX.Views.Base.extend({
+    initialize: function(){
+        
+    },
+    render: function(attribute){
+        console.log('interactions#render');
+    },
+})
+
+
 
 IONUX.Views.CreateNewView = Backbone.View.extend({
     events: {
