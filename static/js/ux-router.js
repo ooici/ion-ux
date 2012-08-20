@@ -7,26 +7,19 @@ IONUX.Router = Backbone.Router.extend({
         "table/": "table",
         "userprofile/": "user_profile",
         "observatories/": "observatories",
-        "observatories/new/": "observatory_new",
         "observatories/:marine_facility_id/": "observatory_facepage",
-        "observatories/:marine_facility_id/edit/": "observatory_edit",
         "platforms/":"platforms",
-        "platforms/new/": "platform_new",
         "platforms/:platform_id/": "platform_facepage",
         "platform_models/": "platform_models",
-        "platform_models/new/": "platform_model_new",
         "platform_models/:platform_model_id/": "platform_model_facepage",
         "instruments/":"instruments",
-        "instruments/new/":"instrument_new",
         "instruments/:instrument_id/" : "instrument_facepage",
         "instruments/:instrument_id/command/": "instrument_command_facepage",
         "instrument_models/": "instrument_models",
-        "instrument_models/new/": "instrument_model_new",
         "instrument_models/:instrument_model_id/": "instrument_model_facepage",
         "instrument_agents/": "instrument_agents",
         "instrument_agents/:instrument_agent_id/": "instrument_agent_facepage",
         "frame_of_references/": "frame_of_references",
-        "frame_of_references/new/": "frame_of_reference_new",
         "frame_of_references/:frame_of_reference_id/": "frame_of_reference_facepage",
         "data_process_definitions/": "data_process_definitions",
         "data_process_definitions/:data_process_definition_id/": "data_process_definition_facepage",
@@ -34,10 +27,11 @@ IONUX.Router = Backbone.Router.extend({
         "data_products/:data_product_id/": "data_product_facepage",
         "users/": "users",
         "users/:user_id/": "user_facepage",
-        "resource_types/:resource_type_id/": "resource_type_details",
     },
     
-    dashboard: function() {},
+    dashboard: function() {
+        this._reset();
+    },
     
     facepage: function(resource_type, view_type, resource_id) {
         this._reset();
@@ -93,12 +87,6 @@ IONUX.Router = Backbone.Router.extend({
         this.observatoriesList.fetch();
     },
   
-    observatory_new: function() {
-        this._reset();
-        this.newObservatoryView = new IONUX.Views.NewObservatoryView({model: new IONUX.Models.Observatory()});
-        this.newObservatoryView.render();
-    },
-
     observatory_facepage: function(observatory_id){
         this._reset();
         var fpModel = new IONUX.Models.ObservatoryFacepageModel({observatory_id:observatory_id});
@@ -111,25 +99,12 @@ IONUX.Router = Backbone.Router.extend({
         urCollection.fetch();
     },
 
-    observatory_edit: function(marine_facility_id){
-        this._reset();    
-        var oModel = new IONUX.Models.ObservatoryFacepageModel({marine_facility_id: marine_facility_id});
-        var editView = new IONUX.Views.ObservatoryEditView({model:oModel});
-        oModel.fetch();
-    },
-
     platforms: function(){
         this._reset();
         // $("#platforms-container").show();
         this.platformsList = new IONUX.Collections.Platforms();
         var platformsView = new IONUX.Views.PlatformsView({collection:this.platformsList});
         this.platformsList.fetch();
-    },
-
-    platform_new: function() {
-        this._reset();
-        this.newPlatformView = new IONUX.Views.NewPlatformView({model: new IONUX.Models.Platform()});
-        this.newPlatformView.render();
     },
 
     platform_facepage: function(platform_id) {
@@ -147,12 +122,6 @@ IONUX.Router = Backbone.Router.extend({
         this.platformModelsList.fetch();
     },
 
-    platform_model_new: function() {
-        this._reset();
-        this.platformModelNewView = new IONUX.Views.NewPlatformModel({model: new IONUX.Models.PlatformModel()});
-        this.platformModelNewView.render();
-    },
-
     platform_model_facepage: function(platform_model_id) {
         this._reset();
         var fpModel = new IONUX.Models.PlatformModelFacepageModel({platform_model_id: platform_model_id});
@@ -166,12 +135,6 @@ IONUX.Router = Backbone.Router.extend({
         this.instrumentsList = new IONUX.Collections.Instruments();
         var instrumentsView = new IONUX.Views.InstrumentsView({collection: this.instrumentsList});
         this.instrumentsList.fetch();
-    },
-
-    instrument_new: function() {
-        this._reset();
-        this.instrumentNewView = new IONUX.Views.NewInstrumentView({model: new IONUX.Models.Instrument()});
-        this.instrumentNewView.render();
     },
 
     instrument_facepage: function(instrument_id) {
@@ -194,12 +157,6 @@ IONUX.Router = Backbone.Router.extend({
         var instrumentModelsView = new IONUX.Views.InstrumentModels({collection: this.instrumentModelsList});
         this.instrumentModelsList.fetch();
         $("#instrument-models-container").show();
-    },
-
-    instrument_model_new: function() {
-        this._reset();
-        this.instrumentModelView = new IONUX.Views.NewInstrumentModel({model: new IONUX.Models.PlatformModel()});
-        this.instrumentModelView.render();
     },
 
     instrument_model_facepage: function(instrument_model_id) {
@@ -253,12 +210,6 @@ IONUX.Router = Backbone.Router.extend({
         this.frameOfReferencesList.fetch();
     },
 
-    frame_of_reference_new: function() {
-        this._reset();
-        this.frameOfReferenceView = new IONUX.Views.NewFrameOfReferenceView({model: new IONUX.Models.FrameOfReference()})
-        this.frameOfReferenceView.render();
-    },
-
     frame_of_reference_facepage : function(frame_of_reference_id) {
         this._reset();
         var fpModel = new IONUX.Models.FrameOfReferenceFacepage({frame_of_reference_id: frame_of_reference_id});
@@ -280,17 +231,9 @@ IONUX.Router = Backbone.Router.extend({
         new IONUX.Views.UserFacepage({model: fpModel});
         fpModel.fetch();
     },
-
-    resource_type_details: function(resource_type_id) {
-        this._reset();
-    },
-    
     
     // END LCA demo routes
     
-    
-    
-
     handle_navigation: function(){
         var self = this;
         $(document).on("click", "a", function(e) {

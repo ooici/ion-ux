@@ -163,59 +163,6 @@ IONUX.Views.CreateNewView = Backbone.View.extend({
     }
 });
 
-
-IONUX.Views.NewObservatoryView = Backbone.View.extend({
-    el: "#observatory-new-container",
-    template: _.template($("#new-observatory-tmpl").html()),
-    events: {
-        "click input[type='submit']":"save",
-        "click .cancel":"cancel"
-    },
-
-    render: function(){
-        this.$el.empty().html(this.template(this.model.toJSON())).show();
-        this.get_all_users();
-        return this;
-    },
-  
-    get_all_users: function() {
-        $.ajax({
-            url: '/observatories/all_users/',
-            dataType: 'json',
-            success: function(resp) {
-                _.each(resp.data, function(e, i) {
-                $('#user_id').append($('<option>').text(e.user_info.contact.name).val(e._id));
-                });
-            }
-        });
-    },
-  
-  // This needs to move into it's own utility method early in R2 Construction.
-  save: function(evt){
-    evt.preventDefault();
-    this.$el.find("input[type='submit']").attr("disabled", true).val("Saving...");
-    
-    var self = this;
-    $.each(this.$el.find("input,textarea,select").not("input[type='submit'],input[type='cancel']"), function(i, e){
-      var key = $(e).attr("name"), val = $(e).val();
-      var kv = {};
-      kv[key] = val;
-      self.model.set(kv);
-    });
-    
-    self.model.save(null, {success:function(model, resp) {
-      var router = new Backbone.Router();
-      router.navigate('/observatories/' + resp.data.resource_id.toString() + '/', {trigger: true});
-    }});
-  },
-  
-  cancel: function(evt) {
-    evt.preventDefault();
-    var router = new Backbone.Router();
-    router.navigate('/observatories/', {trigger: true})
-  },
-});
-
 IONUX.Views.DataProducts = Backbone.View.extend({
   el: "#dynamic-container",
   template: _.template($("#data-products-tmpl").html()),
@@ -386,88 +333,6 @@ IONUX.Views.ObservatoriesDetailView = Backbone.View.extend({
     this.$el.html(this.template(this.model.toJSON())).show();
     return this;
   }
-});
-
-
-IONUX.Views.NewPlatformView = IONUX.Views.CreateNewView.extend({
-  el: "#platform-new-container",
-  template: _.template($("#new-platform-tmpl").html()),
-  events: function() {
-    // extend parent events to avoid overwriting them.
-    return _.extend({}, IONUX.Views.CreateNewView.prototype.events, {
-      'change #marine_facility_id' : 'get_related_logical_platforms'
-    });
-  },
-
-  initialize: function(){
-  },
-
-  render: function(){
-    this.$el.empty().html(this.template(this.model.toJSON())).show();    
-    this.get_marine_facilities();
-    this.get_platform_models();
-    return this;
-  },
-  
-  get_marine_facilities: function() {
-    $.ajax({
-      url: '/find_tree/MarineFacility/MarineFacility/',
-      dataType: 'json',
-      success: function(resp) {
-        _.each(resp.data, function(e, i) {
-          $('#marine_facility_id').append($('<option>').text(e[0].name).val(e[0].id).addClass('mf'));
-        });
-      }
-    });
-  },
-  
-  get_related_logical_platforms: function(evt) {
-    var marine_facility_id = $("option:selected", evt.target).val();
-    $.ajax({
-      url: '/find_tree/' + marine_facility_id + '/LogicalPlatform/',
-      dataType: 'json',
-      success: function(resp) {
-        $('#logical_platform_id').empty().show();
-      
-        _.each(resp.data, function(e, i) {
-            if (e.length > 1) {
-                $('#logical_platform_id').append($('<option>').text(e[1].name + '/' + e[2].name).val(e[2].id));
-            } else {
-              $('#logical_platform_id').append($('<option>').text('Not found.'));
-            }
-        });
-      }
-    });
-  },
-  
-  get_platform_models: function() {
-    $.ajax({
-      url: '/find_platform_models/',
-      dataType: 'json',
-      success: function(resp) {
-        _.each(resp.data, function(e, i) {
-          $('#platform_model_id').append($('<option>').text(e.name).val(e._id));
-        });
-      }
-    });
-  }
-});
-
-
-IONUX.Views.NewInstrumentView = IONUX.Views.CreateNewView.extend({
-  el: "#instrument-new-container",
-
-  template: _.template($("#new-instrument-tmpl").html()),
-
-  initialize: function(){
-    _.bindAll(this, "create_new", "render");
-    this.model.bind("change", this.render)
-  },
-
-  render: function(){
-    this.$el.empty().html(this.template(this.model.toJSON())).show();
-    return this;
-  },
 });
 
 
@@ -643,65 +508,6 @@ IONUX.Views.PlatformModelsView = Backbone.View.extend({
 // });
 
 
-IONUX.Views.ObservatoryEditView = Backbone.View.extend({
-  el: "#observatory-edit-container",
-
-  template: _.template($("#observatory-edit-tmpl").html()),
-
-  events: {
-    "click .save":"save",
-    "click .cancel":"cancel"
-  },
-
-  initialize: function(){
-    _.bindAll(this, "render", "save");
-    this.model.bind("change", this.render);
-  },
-  
-  render: function(){
-    this.$el.html(this.template(this.model.toJSON()));
-    this.$el.show();
-    return this;
-  },
-
-  save: function(evt){
-    evt.preventDefault();
-    this.$el.find("input[type='submit']").attr("disabled", true).val("Saving...");
-    // var mf = new IONUX.Models.Observatory();
-    
-    var self = this;
-    $.each(this.$el.find("input,textarea").not("input[type='submit'],input[type='cancel']"), function(i, e){
-      var key = $(e).attr("name"), val = $(e).val();
-      if (key.indexOf("__") != -1){
-        var attrslist = key.split("__");
-        var attr0 = attrslist[0], attr1 = attrslist[1];
-        self.model.attributes[attr0][attr1] = val; //XXX not the best practice of setting Backbone model attrs - see: http://stackoverflow.com/questions/6351271/backbone-js-get-and-set-nested-object-attribute
-      } else {
-        var kv = {};
-        kv[key] = val;
-        self.model.set(kv);
-      }
-    });
-    
-    self.model.save(null, {success:function(model, resp){
-      self.goto_facepage();
-    }});
-  },
-
-  cancel: function(){
-     this.goto_facepage();
-  },
-
-  goto_facepage: function(){
-    var router = new Backbone.Router();
-    var destination = document.location.pathname.replace("edit/", "");
-    router.navigate(destination, {trigger:true});
-  }
-
-});
-
-
-
 IONUX.Views.ObservatoryFacepage = Backbone.View.extend({
   el: "#observatory-facepage-container",
 
@@ -769,23 +575,6 @@ IONUX.Views.PlatformModelFacepage = Backbone.View.extend({
     return this;
   }
 });
-
-IONUX.Views.NewPlatformModel = IONUX.Views.CreateNewView.extend({
-  el: "#platform-model-new-container",
-
-  template: _.template($("#platform-model-new-tmpl").html()),
-
-  initialize: function(){
-    _.bindAll(this, "create_new", "render");
-    this.model.bind("change", this.render)
-  },
-
-  render: function(){
-    this.$el.empty().html(this.template(this.model.toJSON())).show();
-    return this;
-  },
-});
-
 
 IONUX.Views.InstrumentFacepage = Backbone.View.extend({
   el: "#instrument-facepage-container",
@@ -959,24 +748,6 @@ IONUX.Views.InstrumentModelFacepage = Backbone.View.extend({
   }
 });
 
-
-IONUX.Views.NewInstrumentModel = IONUX.Views.CreateNewView.extend({
-  el: "#instrument-model-new-container",
-
-  template: _.template($("#instrument-model-new-tmpl").html()),
-
-  initialize: function(){
-    _.bindAll(this, "create_new", "render");
-    this.model.bind("change", this.render)
-  },
-
-  render: function(){
-    this.$el.empty().html(this.template(this.model.toJSON())).show();
-    return this;
-  },
-});
-
-
 IONUX.Views.InstrumentAgentFacepage = Backbone.View.extend({
 
   el: "#instrument-agent-facepage-container",
@@ -1034,22 +805,6 @@ IONUX.Views.FramesOfReferenceFacepage = Backbone.View.extend({
   render: function(){
     this.$el.empty().html(this.template(this.model.toJSON())).show();
   }
-});
-
-IONUX.Views.NewFrameOfReferenceView = IONUX.Views.CreateNewView.extend({
-  el: "#frame-of-reference-new-container",
-
-  template: _.template($("#frame-of-reference-new-tmpl").html()),
-
-  initialize: function(){
-    _.bindAll(this, "create_new", "render");
-    this.model.bind("change", this.render)
-  },
-
-  render: function(){
-    this.$el.empty().html(this.template(this.model.toJSON())).show();
-    return this;
-  },
 });
 
 
