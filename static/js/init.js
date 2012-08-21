@@ -27,7 +27,7 @@ window.UI_OBJECT.fetch();
 
 function dyn_do_init(){
     // Temporary hack to set background
-    $('body').css('background-color', '#000');
+    // $('body').css('background-color', '#000');
     $('.container').css('opacity', 0);
     $('.loader').show();
 

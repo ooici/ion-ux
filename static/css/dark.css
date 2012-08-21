@@ -1,8 +1,8 @@
 body, p, h1, h2, h3, h4, h5, h6 {
   color: #ccc;
   font-family: Signika Negative;
+  background-color: #000;
 }
-body {margin-bottom: 100px}
 
 
 #ooi-logo {
