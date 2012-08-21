@@ -530,6 +530,14 @@ def resource_types():
 
 
 
+@app.route('/dev/datatable', methods=['GET'])
+def dev_datatable(resource_id=None):
+    return render_template('dev_datatable.html')
+
+
+
+
+
 # -------------------------------------------------------------------------
 # CATCHALL ROUTE
 # -------------------------------------------------------------------------
