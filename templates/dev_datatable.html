@@ -1,8 +1,126 @@
-{% extends "base.html" %}
+{% extends "ion-ux.html" %}
 
-{% block content %}
-	<div class="grid_5 alpha rounded_5">
-		<h5>Ttt</h5>
-    </div>
-	
-{% endblock content %}
+{% block extra_css %}
+<style type="text/css">
+
+
+.table tr.even {
+    background-color:#282828;
+}
+.table tr.odd {
+    background-color:#1E1E1E;
+}
+
+.dataTables_wrapper {
+    background-color:#3FA9F5;
+}
+.dataTables_filter {
+    display:none; /* XXX */
+}
+.dataTables_length {
+    padding-top:10px;
+    margin-left:5px;
+}
+.dataTables_length * {
+    display:inline;
+}
+
+
+
+.filter-header {
+    background-color:#056691;
+    text-transform:uppercase;
+    padding:4px 8px;
+}
+
+.filter-header button {
+    float:right;
+    position:relative;
+    top:-1px;
+    padding:1px;
+    font-size:10px;
+}
+
+
+.filter-items {
+    background-color:#3FA9F5;
+    border-bottom:1px solid #f0f0f0;
+}
+.filter-item {
+    font-size:10px;
+    margin:0px 0px 0px 10px;
+    padding-top:4px;
+}
+.filter-item .filter-add,.filter-remove {
+    font-size:18px;
+    padding:0px 6px;
+    margin:0px 4px;
+    background-color:#056691;
+}
+
+
+</style>
+{% endblock %}
+
+{% block extra_templates %}
+    <script type="text/template" id="datatable-tmpl">{% include 'partials/datatable.html' %}</script>
+{% endblock %}
+
+
+{% block extra_vendor_js %}
+    <script type="text/javascript" src="/static/js/jquery.dataTables-1.9.3.js"> </script>
+{% endblock %}
+
+
+{% block extra_ionux_js %} {% endblock %}
+
+
+{% block document_ready %}
+
+TABLE_DATA = {
+    "headers":[
+        {"sTitle":"", "sClass": "center"}, 
+        {"sTitle":"", "sClass": "center"},
+        {"sTitle":"Name"}, 
+        {"sTitle":"Id"},
+        {"sTitle":"Type"},
+        {"sTitle":"Uptime"},
+        {"sTitle":"Port"},
+        {"sTitle":"Last Comm."},
+        {"sTitle":"Last Data"},
+        {"sTitle":"Last Note"},
+        {"sTitle":"Open Tkt"}
+    ],
+    "data":[
+        ["+", "✓", "Platform AS02CPSM", 274508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note...", 1],
+        ["+", "ᐦ", "Platform AS02CPSM", 274508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note...", 1],
+        ["+", "?", "Platform AS02CPSM", 274508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note...", 1],
+        ["+", "✓", "Platform AS02CPSM", 274508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note...", 1],
+        ["+", "✓", "Platform AS02CPSM", 274508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note...", 1],
+        ["+", "!", "Platform AS02CPSM", 274508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note...", 1],
+        ["+", "✓", "Platform AS02CPSM", 274508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note...", 1],
+        ["+", "✓", "Platform AS02CPSM", 274508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note...", 1],
+        ["+", "✓", "Platform AS02CPSM", 274508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note...", 1],
+        ["+", "✓", "Platform AS02CPSM", 274508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note...", 1],
+        ["+", "✓", "Platform AS02CPSM", 274508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note...", 1],
+        ["+", "✓", "Platform AS02CPSM", 274508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note...", 1],
+        ["+", "✓", "Platform AS02CPSM", 274508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note...", 1],
+        ["+", "✓", "Platform AS02CPSM", 274508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note...", 1],
+    ]
+}
+
+
+  $(function(){
+
+    var template = _.template($('#datatable-tmpl').html());
+    $("#dynamic-container").html(template());
+
+    $("#dynamic-container .datatable-container table").dataTable({
+        "aaData": TABLE_DATA.data,
+        "aoColumns":TABLE_DATA.headers
+    });
+
+    $(".table tr.odd td").css("background-color", "#1E1E1E"); //wtf css
+
+  });
+{% endblock %}
