@@ -1,6 +1,7 @@
 IONUX.Router = Backbone.Router.extend({
     routes: {
         "": "dashboard",
+        "instruments/:instrument_id/command/": "instrument_command_facepage",
         ":resource_type/:view_type/:resource_id/": "facepage",
         'interactions/': 'interactions',
 
@@ -14,7 +15,6 @@ IONUX.Router = Backbone.Router.extend({
         "platform_models/:platform_model_id/": "platform_model_facepage",
         "instruments/":"instruments",
         "instruments/:instrument_id/" : "instrument_facepage",
-        "instruments/:instrument_id/command/": "instrument_command_facepage",
         "instrument_models/": "instrument_models",
         "instrument_models/:instrument_model_id/": "instrument_model_facepage",
         "instrument_agents/": "instrument_agents",
@@ -147,7 +147,7 @@ IONUX.Router = Backbone.Router.extend({
 
     instrument_command_facepage : function(instrument_id) {
         this._reset();
-        var fpModel = new IONUX.Models.InstrumentFacepageModel({instrument_id: instrument_id});
+        var fpModel = new IONUX.Models.InstrumentFacepageModelLegacy({instrument_id: instrument_id});
         new IONUX.Views.InstrumentCommandFacepage({model: fpModel});
         fpModel.fetch();
     },

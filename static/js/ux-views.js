@@ -439,7 +439,7 @@ IONUX.Views.InstrumentFacepage = Backbone.View.extend({
 
 
 IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
-  el: "#instrument-command-facepage-container",
+  el: "#dynamic-container",
   template: _.template($("#instrument-command-facepage-tmpl").html()),
   
   events: {

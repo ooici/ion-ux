@@ -124,6 +124,18 @@ IONUX.Models.Instrument = Backbone.Model.extend({
 //   idAttribute: "_id"
 // });
 
+IONUX.Models.InstrumentFacepageModelLegacy = Backbone.Model.extend({
+  url: function(){
+    return "/instruments/"+this.get("instrument_id")+"/";
+  },
+  
+  parse: function(resp) {
+    makeISOTimestamps(resp);
+    return resp.data;
+  }
+});
+
+
 
 IONUX.Models.InstrumentFacepageModel = Backbone.Model.extend({
   url: function(){
