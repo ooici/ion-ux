@@ -13,7 +13,7 @@
 		
 		<!-- CSS themes will be a user preference (light and dark) -->
 		<link rel="stylesheet" href="/static/css/dark.css" type="text/css" />
-
+		{% block extra_css %}{% endblock %}
 	</head>
 	<body>
 		<div class="loader">Loading...</div>
@@ -31,8 +31,7 @@
                 </div>                
             </div>
         </div>
-
-		<div id="container" class="container-fluid">
+		<div id="container" class="container-fluid" style="height: 100%;">
 		    <div class="row-fluid">
 				<div id="sidebar" class="span2">
 					<div class="sidebar-map">
@@ -58,8 +57,8 @@
 	                <div id="dynamic-container" class="viewcontainer"> </div>
 				</div>
 			</div> <!-- div.row -->
-		 </div> <!-- div.container -->
-
+		 </div> <!-- div.container-fluid -->
+		          
 		<!-- templates -->
 		<script type="text/template" id="hybrid-instrument-tmpl"><![CDATA[{% include 'partials/hybrid_instrument_facepage.html' %}]]></script>
 		<script type="text/template" id="hybrid-platform-tmpl"><![CDATA[{% include 'partials/hybrid_platform_facepage.html' %}]]></script>
@@ -104,6 +103,7 @@
 		<script type="text/template" id="dyn-text-tmpl"><![CDATA[{% include 'partials/dyn_text.html' %}]]></script>
 		<script type="text/template" id="dyn-text-icon-tmpl"><![CDATA[{% include 'partials/dyn_text_icon.html' %}]]></script>
 		<script type="text/template" id="dyn-undefined-tmpl"><![CDATA[{% include 'partials/dyn_undefined.html' %}]]></script>
+        {% block extra_templates %} {% endblock %}
 
 		<!-- Vendor JavaScripts -->
 		<script type="text/javascript" src="/static/js/jquery-1.7.1.min.js"> </script>
@@ -115,6 +115,7 @@
 		<script type="text/javascript" src="/static/js/jquery.jscrollpane.min.js"> </script>
 		<script type="text/javascript" src="/static/js/jquery.mousewheel.js"> </script>
 		<script src="/static/js/less-1.2.1.min.js" type="text/javascript"> </script>
+        {% block extra_vendor_js %} {% endblock %}
 
 		<!-- UX JavaScripts -->	
 		<script src="/static/js/ion-ux.js" type="text/javascript"> </script>
@@ -124,10 +125,12 @@
 		<script src="/static/js/ux-views.js" type="text/javascript"> </script>
 		<script src="/static/js/ux-router.js" type="text/javascript"> </script>
 		<script src="/static/js/init.js" type="text/javascript"> </script>
+        {% block extra_ionux_js %} {% endblock %}
+		
 		<script type="text/javascript" charset="utf-8">
-			$(function() {
-				 $('.tabby').tab('show');
-			});
+            {% block document_ready %}
+                
+            {% endblock %}
 		</script>
 		
 	</body>
