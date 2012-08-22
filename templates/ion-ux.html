@@ -9,6 +9,7 @@
 		<link rel="stylesheet" href="/static/css/ux-datatable-table-jui.css" type="text/css" />
 		<link rel="stylesheet" href="/static/css/ux-datatable-page.css" type="text/css" />
 		<link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css" type="text/css" />
+        <link href='http://fonts.googleapis.com/css?family=Signika:300,400,600,700' rel='stylesheet' type='text/css'/>
 		<link href='http://fonts.googleapis.com/css?family=Signika+Negative:300,400,600,700' rel='stylesheet' type='text/css' />
 		
 		<!-- CSS themes will be a user preference (light and dark) -->
@@ -16,49 +17,52 @@
 		{% block extra_css %}{% endblock %}
 	</head>
 	<body>
-		<div class="loader">Loading...</div>
-        <div id="header" class="navbar navbar-fixed-top">
-            <div class="container-fluid">
-                <div class="row-fluid">
-                    <div class="span6"><img id="ooi-logo" src="/static/img/ooi-logo.png" alt="OOI" width="100" /></div>
-                    <div class="span6 navigation">
-                        <a id="signup" href="#" class="btn-navigation filter">Create Account</a>
-                        <a id="login" href="https://ux-dev.oceanobservatories.org/login/" class="external btn-navigation filter">Sign In</a>
-						<a id="userprofile" href="/userprofile/" class="btn-navigation filter">User Profile</a>
-                        <a id="logout" href="/logout/" class="btn-navigation filter">Logout</a>
-                        <a id="help" href="#" class="btn-navigation-plain">Help</a>
-                    </div>
-                </div>                
+	    
+	    <div class="wrapper">
+    		<div class="loader">Loading...</div>
+            <div id="header" class="navbar navbar-fixed-top">
+                <div class="container-fluid">
+                    <div class="row-fluid">
+                        <div class="span6"><img id="ooi-logo" src="/static/img/ooi-logo.png" alt="OOI" width="100" /></div>
+                        <div class="span6 navigation">
+                            <a id="signup" href="#" class="btn-navigation filter">Create Account</a>
+                            <a id="login" href="https://ux-dev.oceanobservatories.org/login/" class="external btn-navigation filter">Sign In</a>
+    						<a id="userprofile" href="/userprofile/" class="btn-navigation filter">User Profile</a>
+                            <a id="logout" href="/logout/" class="btn-navigation filter">Logout</a>
+                            <a id="help" href="#" class="btn-navigation-plain">Help</a>
+                        </div>
+                    </div>                
+                </div>
             </div>
-        </div>
-		<div id="container" class="container-fluid">
-		    <div class="row-fluid">
-				<div id="sidebar" class="span2">
-					<div class="sidebar-map">
-						<img src="/static/img/r2/placeholder_map.png" />
-					</div>
-					<input id="sidebar-search" class="textfield" type="text" /><br />
-                    <a class="btn-advanced-search" href="#">Advanced Search</a>
-					<span class="sidebar-section">OOI Resources</span>
-					<ul class="main-nav">
-						<li class="dashboard"><a href="/">Dashboard</a></li>
-						<li class="data"><a href="/data_products/">Data Products</a></li>
-						<li class="observatories"><a href="/observatories/">Observatories</a></li>
-						<li class="platforms"><a href="/platforms/">Platforms</a></li>
-						<li class="platform-models"><a href="/platform_models/">Platform Models</a></li>
-						<li class="instruments"><a href="/instruments/">Instruments</a></li>
-						<li class="instrument-models"><a href="/instrument_models/">Instrument Models</a></li>
-						<li class="instrument-agents"><a href="/instrument_agents/">Instrument Agents</a></li>
-						<li class="data_process_definitions"><a href="/data_process_definitions/">Data Process Definitions</a></li>
-						<li class="users"><a href="/users/">Users</a></li>
-					</ul>
-			    </div> <!-- div#sidebar -->
-				<div id="info" class="span10">
-	                <div id="dynamic-container" class="viewcontainer"> </div>
-				</div>
-			</div> <!-- div.row -->
-		 </div> <!-- div.container-fluid -->
-         
+    		<div id="container" class="container-fluid">
+    		    <div class="row-fluid">
+    				<div id="sidebar" class="span2">
+    					<div class="sidebar-map">
+    						<img src="/static/img/r2/placeholder_map.png" />
+    					</div>
+    					<input id="sidebar-search" class="textfield" type="text" /><br />
+                        <a class="btn-advanced-search" href="#">Advanced Search</a>
+    					<span class="sidebar-section">OOI Resources</span>
+    					<ul class="main-nav">
+    						<li class="dashboard"><a href="/">Dashboard</a></li>
+    						<li class="data"><a href="/data_products/">Data Products</a></li>
+    						<li class="observatories"><a href="/observatories/">Observatories</a></li>
+    						<li class="platforms"><a href="/platforms/">Platforms</a></li>
+    						<li class="platform-models"><a href="/platform_models/">Platform Models</a></li>
+    						<li class="instruments"><a href="/instruments/">Instruments</a></li>
+    						<li class="instrument-models"><a href="/instrument_models/">Instrument Models</a></li>
+    						<li class="instrument-agents"><a href="/instrument_agents/">Instrument Agents</a></li>
+    						<li class="data_process_definitions"><a href="/data_process_definitions/">Data Process Definitions</a></li>
+    						<li class="users"><a href="/users/">Users</a></li>
+    					</ul>
+    			    </div> <!-- div#sidebar -->
+    				<div id="info" class="span10">
+    	                <div id="dynamic-container" class="viewcontainer"> </div>
+    				</div>
+    			</div> <!-- div.row -->
+    		 </div> <!-- div.container-fluid -->
+	    </div> <!-- div.wrapper -->
+
         <!-- templates -->
 		<script type="text/template" id="hybrid-instrument-tmpl"><![CDATA[{% include 'partials/hybrid_instrument_facepage.html' %}]]></script>
 		<script type="text/template" id="hybrid-platform-tmpl"><![CDATA[{% include 'partials/hybrid_platform_facepage.html' %}]]></script>

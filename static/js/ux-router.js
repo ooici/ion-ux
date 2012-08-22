@@ -60,12 +60,9 @@ IONUX.Router = Backbone.Router.extend({
             page_builder(LAYOUT_OBJECT[view_id], facepage_model);
         }});
     },
-        
-    interactions: function(){
-        
-    },
-    // BEGIN LCA demo routes
-    
+
+
+    // BEGIN LCA demo routes    
     data_products: function() {
         this._reset();
         this.dataProductsList = new IONUX.Collections.DataProducts();
