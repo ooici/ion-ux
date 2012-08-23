@@ -1,18 +1,21 @@
 body, p, h1, h2, h3, h4, h5, h6 {
   color: #ccc;
   font-family: Signika Negative;
-  background-color: #000;
 }
 body {
   background-color:#000;
 }
 
+#container {
+  padding-top: 82px;
+}
+
 #ooi-logo {
   margin-top: 15px;
 }
+
 .textfield {
   width: 100%;
-/*  font-family: Signika Negative; */
   color: #666666;
   font-size: 11px;
   font-weight:400;
@@ -31,7 +34,6 @@ body {
 }
 
 a.btn-advanced-search {
-/*  font-family: Signika Negative;*/
   color:#999; font-size:11px;
   font-weight:400;
   letter-spacing:2px;
@@ -40,8 +42,6 @@ a.btn-advanced-search {
   padding-right:10px;
   padding-left: 10px;
   margin-bottom:5px;
-/*  margin-left:15px;*/
-/*  margin-right:67px;*/
   margin-top:10px;
   text-decoration: none; 
   text-transform: uppercase;
@@ -62,7 +62,6 @@ a.btn-advanced-search:active {background: #333333; color:#fff; border: solid #ff
 }
 
 a.btn-navigation {
-/*  font-family: Signika Negative; */
   color: #FFFFFF; 
   font-size: 11px; 
   font-weight: 400; 
@@ -141,10 +140,6 @@ a.btn-navigation-plain {
 #header {
   background: #004978 url('/static/img/lca-header.png') no-repeat 0 0;
   height: 72px;
-}
-
-#container {
-  margin-top: 82px;
 }
 
 .wrapper-heading {
@@ -265,49 +260,75 @@ a.btn-navigation-plain {
 }
 
 ul.nav {margin: 0;}
-ul.nav-tabs { color: blue;}
 
 /*ul.nav-tabs > li.active a {
     background-color:#333;
 }
 */
 ul.nav {
-  border-bottom: #999 solid 1px;
+/*  border-bottom: #999 solid 1px;*/
   margin-top: 15px;
 }
 
-ul.nav li a:link {
+/*ul.nav li a:link {
   color: #666;
+}*/
+
+.nav-tabs, .nav {
+  border-bottom: none;
 }
 
-
-ul.nav li.active a {
-  background: #ccc;
+.nav-tabs > li {
+  border: none;
+  margin-bottom: 0;
 }
 
-/*ul.nav li.active a {
-  background-color: black;
-  background: -webkit-gradient(linear, left top, left bottom, color-stop (0%,#999999), color-stop(80%,#808080), color-stop(80%,#808080), color-stop (100%,#333333));
-  background: -moz-linear-gradient(center top, #999999 0%, #808080 80%, #808080 80%, #333333 100%); 
-  -webkit-box-shadow: 1px 1px #999999 inset;  
-  -moz-box-shadow: 1px 1px #999999 inset; 
-  box-shadow: 1px 1px #999999 inset; 
-  -webkit-border-radius: 5px 5px 0px 0px; 
-  -moz-border-radius: 5px 5px 0px 0px; 
-  border-radius: 5px 5px 0px 0px; 
-  text-shadow: 1px 1px 0px #333333; 
-  padding:5px 30px 5px 10px; 
-/*  font-family: Signika; */
-  font-size: 15px; 
-  color: #FFFFFF; 
-  letter-spacing:1px; 
-  margin-right: 10px; 
-  width:115px;
+.nav-tabs li a {
+  background: #1A1A1A;
+  /*-webkit-box-shadow: 1px 1px #333333 inset;
+  -moz-box-shadow: 1px 1px #333333 inset;
+  box-shadow: 1px 1px #333333 inset;*/  
+  -webkit-border-radius: 5px 5px 0px 0px;
+  -moz-border-radius: 5px 5px 0px 0px;
+  border-radius: 5px 5px 0px 0px;
+  padding: 5px 30px 5px 10px;
+  font-family: Signika;
+  font-size: 15px;
+  color: #808080;
+  letter-spacing:1px;
+  margin-right:10px;
+  /*width:115px;*/
 }
-*/
 
+.nav-tabs li.active a:link { 
+  border: none;
+  background-color: #808080;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#999999), color-stop(80%,#808080), color-stop(80%,#808080), to(#333333)); 
+  background-image: -moz-linear-gradient(center top, #999999 0%, #808080 80%, #808080 80%, #333333 100%);
+  /*-webkit-box-shadow: 1px 1px #999999 inset;
+  -moz-box-shadow: 1px 1px #999999 inset;
+  box-shadow: 1px 1px #999999 inset;*/
+  -webkit-border-radius: 5px 5px 0px 0px;
+  -moz-border-radius: 5px 5px 0px 0px;
+  border-radius: 5px 5px 0px 0px;
+  text-shadow: 1px 1px 0px #333333;
+  padding:5px 30px 5px 10px;
+  font-family: Signika;
+  font-size: 15px;
+  color: #FFFFFF;
+  letter-spacing:1px;
+  margin-right: 10px;
+  /*width:115px;*/
+  border: none;
+}
 
-
+.nav-tabs li a:hover {
+  background-color: #1A1A1A;
+  color:#999;
+  text-shadow:none;
+  border-color: transparent;
+}
+.nav-tabs li a:active {color:#999; background:#FFF;}
 
 
 
