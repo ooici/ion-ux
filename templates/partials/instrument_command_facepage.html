@@ -1,42 +1,47 @@
-<div class="row">
-	<div class="span2">
-		<section class="wrapper">
-			<h3 class="wrapper-heading">Information</h3>
-			<section class="attr_group">
-				<h3 class="wrapper-heading">Identification</h3>
-				<p>
-					<strong>Name: </strong><%= name %><br />
+<div class="row-fluid">
+	<div class="span3">
+    	<ul class="nav nav-tabs">
+			<li class="active"><a data-toggle="tab" href="#">Information</a></li>
+		</ul>
+		<div class="tab-contents attr_block">
+			<h3>Identification</h3>
+			<div class="attributes">
+			    <p>
+			        <strong>Name: </strong><%= name %><br />
 					<strong>ID: </strong> <span style="word-wrap: break-word"><%= _id %></span> <br />
 					<strong>Model:</strong> <a href="/instrument_models/<%= obj._id %>/"></a>
-				</p>
-			</section>
-			<section class="attr_group">
-				<h3 class="wrapper-heading">Location</h3>
-				<p></p>
-			</section>
+			    </p>
 
-			<section class="attr_group">
-				<h3 class="wrapper-heading">Description</h3>
-				<p>
-					<%= description %>
-				</p>
-			</section>
-			<section class="attr_group">
-				<h3 class="wrapper-heading">Contact</h3>
-				<p>
-					<strong>Owner:</strong> <a href="mailto:"></a><br />
-				</p>
-			</section>
-		</section>
+			</div>
+		</div>
+    	<div class="attr_block">
+    	   <h3>Information</h3>
+    	   <p>Placeholder</p>
+    	</div>
+	    <div class="attr_block">
+	       	<h3>Location</h3>
+    		<p>Placeholder</p>
+	    </div>
+		<div class="attr_block">
+			<h3>Description</h3>
+			<p><%= description %></p>
+		</div>
+		<div class="attr_block">
+			<h3>Contacts</h3>
+			<p>Placeholder</p>
+		</div>
 	</div>	
 	
-	<div class="span8">
-		
-		<section class="wrapper">
-			<h3 class="wrapper-heading">Start/Stop Instance</h3>
+	<div class="span9">
+        <ul class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#">Command Instrument</a></li>
+        </ul>
+
+		<div class="attr_block">
+			<h3>Start/Stop Instance</h3>
 			<input type="submit" id="start-instrument-agent-instance" value="Start Instrument Agent" class="btn btn-success"/>
 			<input type="submit" id="stop-instrument-agent-instance" value="Stop Instrument Agent" class="btn btn-danger stop-instrument-agent-instance" style="display:none;"/>
-		</section>
+		</div>
 		
 		<div class="instrument-commands" style="display: none;">
 			<div class="xcommand">
