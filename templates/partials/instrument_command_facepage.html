@@ -36,45 +36,46 @@
         <ul class="nav nav-tabs">
             <li class="active"><a data-toggle="tab" href="#">Command Instrument</a></li>
         </ul>
+        
+        <div class="tab-contents">
+    		<div class="attr_block">
+    			<h3>Start/Stop Instance</h3>
+    			<input type="submit" id="start-instrument-agent-instance" value="Start Instrument Agent" class="btn btn-success"/>
+    			<input type="submit" id="stop-instrument-agent-instance" value="Stop Instrument Agent" class="btn btn-danger stop-instrument-agent-instance" style="display:none;"/>
+    		</div>            
+    		<div class="instrument-commands attr_block" style="display: asdfnone;">
+    			<div class="xcommand">
+    				<section class="wrapper">
+    					<h3 class="wrapper-heading">Instrument Instance Agent Commands</h3>
+    				<form>
+    				<p>Command</p>
+    				<select>
+    					<option value='initialize'>Initialize (start driver)</option>
+    					<option value='reset'>Reset (stop driver)</option>
+    					<option value='get_capabilities'>Capabilities (get instrument capabilities)</option>
+    					<option value='go_active'>Activate (start logger and connect to instrument)</option>
+    					<option value='go_inactive'>Deactivate (stop logger and disconnect from instrument)</option>
+    					<option value='run'>Run (enter observatory mode from active mode)</option>
+    					<option value='go_streaming'>Go Streaming (being streaming data)</option>
+    					<option value='go_direct_access'>Direct Access (enter direct access mode)</option>
+    					<option value='go_observatory'>Go Observatory (enter observatory mode from streaming or direct access)</option>
+    					<!-- <option value='get_param'>Get parameters (get all configurable parameters)</option>
+    					<option value='set_param'>Set parameters (save changes to parameters)</option> 
+    					<option value='start'>Start sampling (start auto-sample of data collection)</option>
+    					<option value='stop'>Stop sampling (stop auto-sample of data collection)</option> -->
+    				</select>
 
-		<div class="attr_block">
-			<h3>Start/Stop Instance</h3>
-			<input type="submit" id="start-instrument-agent-instance" value="Start Instrument Agent" class="btn btn-success"/>
-			<input type="submit" id="stop-instrument-agent-instance" value="Stop Instrument Agent" class="btn btn-danger stop-instrument-agent-instance" style="display:none;"/>
-		</div>
-		
-		<div class="instrument-commands" style="display: none;">
-			<div class="xcommand">
-				<section class="wrapper">
-					<h3 class="wrapper-heading">Instrument Instance Agent Commands</h3>
-				<form>
-				<label>Command</label>
-				<select>
-					<option value='initialize'>Initialize (start driver)</option>
-					<option value='reset'>Reset (stop driver)</option>
-					<option value='get_capabilities'>Capabilities (get instrument capabilities)</option>
-					<option value='go_active'>Activate (start logger and connect to instrument)</option>
-					<option value='go_inactive'>Deactivate (stop logger and disconnect from instrument)</option>
-					<option value='run'>Run (enter observatory mode from active mode)</option>
-					<option value='go_streaming'>Go Streaming (being streaming data)</option>
-					<option value='go_direct_access'>Direct Access (enter direct access mode)</option>
-					<option value='go_observatory'>Go Observatory (enter observatory mode from streaming or direct access)</option>
-					<!-- <option value='get_param'>Get parameters (get all configurable parameters)</option>
-					<option value='set_param'>Set parameters (save changes to parameters)</option> 
-					<option value='start'>Start sampling (start auto-sample of data collection)</option>
-					<option value='stop'>Stop sampling (stop auto-sample of data collection)</option> -->
-				</select>
-				
-				<input type="submit" name="Send Command" class="btn issue_command"/>
-			</form>
-			</section>
-			</div>
+    				<input type="submit" name="Send Command" class="btn issue_command"/>
+    			</form>
+    			</section>
+    			</div>
 
-			<section class="wrapper">
-				<h3 class="wrapper-heading">Command Results</h3>
-				<div class="command-output"> </div>
-			</section>
-		</div>
+    			<section class="wrapper">
+    				<h3 class="wrapper-heading">Command Results</h3>
+    				<div class="command-output"> </div>
+    			</section>
+    		</div>
+        </div>
 	</div>	
 </div>
 
