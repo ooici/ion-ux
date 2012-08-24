@@ -72,7 +72,9 @@
 {% endblock %}
 
 
-{% block extra_ionux_js %} {% endblock %}
+{% block extra_ionux_js %}
+    <script type="text/javascript" src="/static/js/dev_datatable.js"> </script>
+{% endblock %}
 
 
 {% block document_ready %}
@@ -112,15 +114,7 @@ TABLE_DATA = {
 
   $(function(){
 
-    var template = _.template($('#datatable-tmpl').html());
-    $("#dynamic-container").html(template());
-
-    $("#dynamic-container .datatable-container table").dataTable({
-        "aaData": TABLE_DATA.data,
-        "aoColumns":TABLE_DATA.headers
-    });
-
-    $(".table tr.odd td").css("background-color", "#1E1E1E"); //wtf css
+    dt_init(TABLE_DATA);
 
   });
 {% endblock %}
