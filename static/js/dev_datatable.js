@@ -15,15 +15,34 @@ function add_filter_item(evt){
     var columns = _.reject(_.map(TABLE_DATA.headers, function(e){return e['sTitle']}), function(e){return e==""});
     var data = {"columns":columns, "operators":OPERATORS};
     var filter_item = _.template(filter_item_tmpl)(data);
-    $(this).parent().after(filter_item);
+    if (evt == null){
+        $(".datatable-container .filter-items").empty().append(filter_item); //XXX namespace
+    } else {
+        $(this).parent().after(filter_item);
+    }
 }
 
 function remove_filter_item(evt){
+    t = $(this);
     var this_filter_item = $(this).parent();
-    var filter_items = $(this).parents(".datatable-filters").find(".filter-item");
-    if (filter_items.length > 0) {
+    var filter_items = $(".datatable-container .filter-item"); //XXX namespace
+    if (filter_items.length > 1) {
         this_filter_item.remove();
         return;
+    }
+}
+
+function show_hide_filters(evt){
+    var filter_items = $(".datatable-filters .filter-items"); //XXX namespace
+    var filter_controls = $(".datatable-filters .filter-controls"); //XXX namespace
+    if ($(this).hasClass("hidden")){ 
+        $(this).text("CLOSE").removeClass("hidden");
+        add_filter_item(null);
+        filter_items.slideDown("fast", function(){ filter_controls.show();});
+    } else {
+        $(this).text("FILTER").addClass("hidden");
+        filter_controls.hide();
+        filter_items.slideUp("fast");
     }
 }
 
@@ -42,5 +61,6 @@ function dt_init(table_data){
 
     $(".datatable-filters").on("click", ".filter-add", add_filter_item);
     $(".datatable-filters").on("click", ".filter-remove", remove_filter_item);
+    $(".datatable-filters").on("click", ".show-hide-filters", show_hide_filters);
 
 }
