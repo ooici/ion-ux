@@ -16,7 +16,10 @@ function add_filter_item(evt){
     var data = {"columns":columns, "operators":OPERATORS};
     var filter_item = _.template(filter_item_tmpl)(data);
     if (evt == null){
-        $(".datatable-container .filter-items").empty().append(filter_item); //XXX namespace
+        var filter_items = $(".datatable-container .filter-item"); //XXX namespace
+        if (filter_items.length == 0){
+            $(".datatable-container .filter-items").append(filter_item); //XXX namespace
+        }
     } else {
         $(this).parent().after(filter_item);
     }
@@ -56,8 +59,6 @@ function dt_init(table_data){
         "aaData": table_data.data,
         "aoColumns":table_data.headers
     });
-
-    $(".table tr.odd td").css("background-color", "#1E1E1E"); //wtf css?
 
     $(".datatable-filters").on("click", ".filter-add", add_filter_item);
     $(".datatable-filters").on("click", ".filter-remove", remove_filter_item);
