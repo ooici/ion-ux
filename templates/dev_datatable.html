@@ -4,6 +4,9 @@
 <style type="text/css">
 
 
+table.table thead tr th {
+    cursor:pointer;
+}
 table.table tr.even td {
     background-color:#282828;
 }
@@ -86,6 +89,7 @@ table.table tr.odd td {
 
 {% block extra_vendor_js %}
     <script type="text/javascript" src="/static/js/jquery.dataTables-1.9.3.js"> </script>
+    <script type="text/javascript" src="/static/js/jquery.dataTables-api-extensions.js"> </script>
 {% endblock %}
 
 
@@ -95,43 +99,7 @@ table.table tr.odd td {
 
 
 {% block document_ready %}
-
-TABLE_DATA = {
-    "headers":[
-        {"sTitle":"", "sClass": "center"}, 
-        {"sTitle":"", "sClass": "center"},
-        {"sTitle":"Name"}, 
-        {"sTitle":"Id"},
-        {"sTitle":"Type"},
-        {"sTitle":"Uptime"},
-        {"sTitle":"Port"},
-        {"sTitle":"Last Comm."},
-        {"sTitle":"Last Data"},
-        {"sTitle":"Last Note"},
-        {"sTitle":"Open Tkt"}
-    ],
-    "data":[
-        ["+", "✓", "Platform AS02CPSM", 274500, "OOI", "05:12:33", 1000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note1..", 1],
-        ["+", "ᐦ", "Platform AS02CPSM", 174501, "OOI", "05:12:33", 3000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note2..", 1],
-        ["+", "?", "Platform AS02CPSM", 275504, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note3..", 1],
-        ["+", "✓", "Platform AS02CPSM", 274503, "OOI", "05:12:33", 4000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note4..", 1],
-        ["+", "✓", "Platform AS02CPSM", 473508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note5..", 1],
-        ["+", "!", "Platform AS02CPSM", 274508, "OOI", "05:12:33", 7000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note6..", 1],
-        ["+", "✓", "Platform AS02CPSM", 974508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note7..", 1],
-        ["+", "✓", "Platform AS02CPSM", 271501, "OOI", "05:12:33", 9000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note8..", 1],
-        ["+", "✓", "Platform AS02CPSM", 274508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note9..", 1],
-        ["+", "✓", "Platform AS02CPSM", 274508, "OOI", "05:12:33", 1000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note10.", 1],
-        ["+", "✓", "Platform AS02CPSM", 471508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note11.", 1],
-        ["+", "✓", "Platform AS02CPSM", 970508, "OOI", "05:12:33", 3000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note12.", 1],
-        ["+", "✓", "Platform AS02CPSM", 374508, "OOI", "05:12:33", 7000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note13.", 1],
-        ["+", "✓", "Platform AS02CPSM", 274508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note14.", 1],
-    ]
-}
-
-
   $(function(){
-
-    dt_init(TABLE_DATA);
-
+    dt_init();
   });
 {% endblock %}
