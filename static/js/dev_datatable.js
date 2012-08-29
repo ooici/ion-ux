@@ -1,7 +1,6 @@
 /* below is in-progress datatable widget functions, 
 *without* correct (upcoming) backbone-ified structure
 
-
 TODO:
 
 - how will filter specific data/datypes be passed/used?
@@ -10,14 +9,12 @@ TODO:
 
 - "+" row is not a "data element", put outside of datatable / allow click of row and modal or abs. pos. element below.
 
-
-
 */
 
 TABLE_DATA = {
     "headers":[
         {"sTitle":"", "sClass": "center"}, 
-        {"sTitle":"", "sClass": "center"},
+        {"sTitle":"", "sClass": "center", "fnRender":status_indicator},
         {"sTitle":"Name"}, 
         {"sTitle":"Id"},
         {"sTitle":"Type"},
@@ -29,20 +26,20 @@ TABLE_DATA = {
         {"sTitle":"Open Tkt"}
     ],
     "data":[
-        ["+", "✓", "Platform AS02CPSM", 274500, "OOI", "05:12:33", 1000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note1..", 1],
-        ["+", "ᐦ", "Platform AS02CPSM", 174501, "OOI", "05:12:33", 3000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note2..", 1],
-        ["+", "?", "Platform AS02CPSM", 275504, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note3..", 1],
-        ["+", "✓", "Platform AS02CPSM", 274503, "OOI", "05:12:33", 4000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note4..", 1],
-        ["+", "✓", "Platform AS02CPSM", 473508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note5..", 1],
-        ["+", "!", "Platform AS02CPSM", 274508, "OOI", "05:12:33", 7000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note6..", 1],
-        ["+", "✓", "Platform AS02CPSM", 974508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note7..", 1],
-        ["+", "✓", "Platform AS02CPSM", 271501, "OOI", "05:12:33", 9000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note8..", 1],
-        ["+", "✓", "Platform AS02CPSM", 274508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note9..", 1],
-        ["+", "✓", "Platform AS02CPSM", 274508, "OOI", "05:12:33", 1000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note10.", 1],
-        ["+", "✓", "Platform AS02CPSM", 471508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note11.", 1],
-        ["+", "✓", "Platform AS02CPSM", 970508, "OOI", "05:12:33", 3000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note12.", 1],
-        ["+", "✓", "Platform AS02CPSM", 374508, "OOI", "05:12:33", 7000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note13.", 1],
-        ["+", "✓", "Platform AS02CPSM", 274508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note14.", 1],
+        ["+", "Normal", "Platform AS02CPSM", 274500, "OOI", "05:12:33", 1000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note1..", 1],
+        ["+", "Alarm", "Platform AS02CPSM", 174501, "OOI", "05:12:33", 3000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note2..", 1],
+        ["+", "Unknown", "Platform AS02CPSM", 275504, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note3..", 1],
+        ["+", "Normal", "Platform AS02CPSM", 274503, "OOI", "05:12:33", 4000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note4..", 1],
+        ["+", "Normal", "Platform AS02CPSM", 473508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note5..", 1],
+        ["+", "Alert", "Platform AS02CPSM", 274508, "OOI", "05:12:33", 7000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note6..", 1],
+        ["+", "Normal", "Platform AS02CPSM", 974508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note7..", 1],
+        ["+", "Normal", "Platform AS02CPSM", 271501, "OOI", "05:12:33", 9000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note8..", 1],
+        ["+", "Normal", "Platform AS02CPSM", 274508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note9..", 1],
+        ["+", "Normal", "Platform AS02CPSM", 274508, "OOI", "05:12:33", 1000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note10.", 1],
+        ["+", "Normal", "Platform AS02CPSM", 471508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note11.", 1],
+        ["+", "Normal", "Platform AS02CPSM", 970508, "OOI", "05:12:33", 3000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note12.", 1],
+        ["+", "Normal", "Platform AS02CPSM", 374508, "OOI", "05:12:33", 7000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note13.", 1],
+        ["+", "Normal", "Platform AS02CPSM", 274508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note14.", 1],
     ]
 }
 
@@ -114,6 +111,15 @@ function filters_reset(evt){
         $(e).val("");
     });
     DATATABLE.fnFilterClear();
+}
+
+
+function status_indicator(obj){
+    var stat = obj.aData[obj.iDataColumn];
+    var pos_map = {"Uknown":"0px 0px", "Normal":"0px -20px", "Alert":"0px -40px", "Alarm":"0px 18px"};
+    var stat_pos = pos_map[stat];
+    var html = "<div class='status_indicator_sprite' style='background-position:"+stat_pos+"' title='"+stat+"'>&nbsp;</div>";
+    return html;
 }
 
 
