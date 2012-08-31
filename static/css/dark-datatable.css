@@ -1,0 +1,89 @@
+table.table thead tr th {
+    cursor:pointer;
+}
+table.table tr.even td {
+    background-color:#282828;
+}
+table.table tr.odd td {
+    background-color:#1E1E1E;
+}
+
+.dataTables_wrapper {
+    background-color:#3FA9F5;
+}
+.dataTables_filter {
+    float:right;
+    margin:10px;
+    margin-bottom:0px;
+}
+.dataTables_filter label {
+    margin-bottom:0px;
+}
+.dataTables_filter input {
+    display:inline;
+}
+.dataTables_length {
+    float:left;
+    margin:15px 0px 0px 10px;
+}
+.dataTables_length select {
+    display:inline;
+    margin-bottom:0px;
+}
+
+.filter-header {
+    background-color:#056691;
+    text-transform:uppercase;
+    padding:4px 8px;
+}
+
+.filter-header button {
+    float:right;
+    position:relative;
+    top:-1px;
+    padding:1px;
+    font-size:10px;
+}
+
+.filter-controls {
+    display:none;
+    float:right;
+    position:relative;
+    top:5px;
+}
+.filter-controls button {
+    margin:4px 8px;
+}
+
+.filter-items {
+    display:none;
+    background-color:#3FA9F5;
+    border-bottom:1px solid #f0f0f0;
+}
+.filter-item {
+    font-size:10px;
+    margin:0px 0px 0px 10px;
+    padding:8px 0px 6px 0px;
+}
+.filter-item select {
+    margin:0px 10px 0px 0px;
+}
+.filter-item input {
+    margin:0px;
+}
+.filter-item .filter-add,.filter-remove {
+    font-size:18px;
+    padding:0px 6px;
+    margin:5px;
+    background-color:#056691;
+    cursor:pointer;
+    position:relative;
+    top:4px;
+}
+.status_indicator_sprite {
+    background-image:url(/static/img/status_indicator_sprite.png);
+    width:15px;
+    margin:5px 0px 0px 6px;
+}
+
+
