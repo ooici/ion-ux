@@ -330,22 +330,42 @@ ul.nav {
 }
 .nav-tabs li a:active {color:#999; background:#FFF;}
 
-
-
-
-/*ul.tabby {
-  border-color: #666;
+.btn-footer {
+  font-family: Signika Negative;
+  color: #999999;
+  font-size:11px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  padding-top: 4px;
+  padding-right:10px;
+  padding-bottom:4px;
+  padding-left:10px;
+  text-decoration: none;
+  -webkit-border-radius:5px;
+  -moz-border-radius:5px;
+  border: solid #808080 1px;
+  background: #333333;
+  background: -webkit-gradient(linear, left top, left bottom, from(#3d3d3d), color-stop(75%,#333333), color-stop(75%,#333333), to(#2e2e2e));
+  background: -moz-linear-gradient(center top, #3d3d3d 0%, #333333 75%, #333333 75%, #2e2e2e 100%);
 }
 
-ul.tabby li a {
-  color: #999;
+.btn-footer:hover {
+  background: #666666; border: solid #FFFFFF 1px; color: #FFFFFF;
 }
 
-
-ul.tabby li.active a:link {
-  background: #333;
-  background-color: #333;
-  border: none;;
-  border-color: #666;
-  color: white;
-}*/
+.btn-footer:active {
+  font-family: Signika Negative;
+  color: #F2F2F2;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  padding-top: 4px;
+  padding-right: 10px;
+  padding-bottom: 4px;
+  padding-left: 10px;
+  text-decoration: none;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border: solid #B3B3B3 1px;
+  background: #666666;
+}
