@@ -1,0 +1,78 @@
+{% extends "ion-ux.html" %}
+
+{% block extra_css %}
+    <style type='text/css'>
+        #dynamic-container div {
+            border:1px solid #555;
+            margin:-1px;
+            padding:6px;
+        }
+    </style>
+{% endblock %}
+
+{% block extra_templates %}
+<script type="text/template" id="actionmenu-tmpl">
+
+  <div class="row-fluid">  
+        <div class='header span12'>VIEW action menu</div>
+  </div>
+
+  <div class="row-fluid">
+
+    <div class='group1 span6'>
+        <div class='header'>GROUP1 action menu</div>
+        <div class='block1'>
+         <div class='header'>block1 action menu</div>
+         <p>...group1-block1-placeholdertext...</p>
+         <p>...group1-block1-placeholdertext...</p>
+         <p>...group1-block1-placeholdertext...</p>
+        </div>
+        <div class='block2'>
+         <div class='header'>block2 action menu</div>
+         <p>...group1-block2-placeholdertext...</p>
+         <p>...group1-block2-placeholdertext...</p>
+         <p>...group1-block2-placeholdertext...</p>
+        </div>
+   </div><!-- END group1 -->
+
+    <div class='group2 span6'>
+         <div class='header'>GROUP2 action menu</div>
+
+        <div class='block1'>
+         <div class='header'>block1 action menu</div>
+           <p>...group2-block1-placeholdertext...</p>
+           <p>...group2-block1-placeholdertext...</p>
+           <p>...group2-block1-placeholdertext...</p>
+        </div>
+          <div class='block2'>
+           <div class='header'>block2 action menu</div>
+           <p>...group2-block2-placeholdertext...</p>
+           <p>...group2-block2-placeholdertext...</p>
+           <p>...group2-block2-placeholdertext...</p>
+          </div>
+    </div><!-- END group2 -->
+
+  </div>
+
+
+</script>
+{% endblock %}
+
+
+{% block extra_vendor_js %}
+    <script type="text/javascript" src="/static/js/jquery.dataTables-1.9.3.js"> </script>
+    <script type="text/javascript" src="/static/js/jquery.dataTables-api-extensions.js"> </script>
+{% endblock %}
+
+
+{% block extra_ionux_js %}
+    <script type="text/javascript"></script>
+{% endblock %}
+
+
+{% block document_ready %}
+  $(function(){
+    var template = _.template($('#actionmenu-tmpl').html());
+    $("#dynamic-container").html(template());
+  });
+{% endblock %}
