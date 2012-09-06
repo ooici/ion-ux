@@ -6,6 +6,12 @@ selection for the element's corresponding Action Menu.
 
 */
 
+INTERACTIONS_OBJECT = {};
+INTERACTIONS_OBJECT.block_interactions = ['More Info', 'Detailed View', 'Hide', 'Edit'];
+INTERACTIONS_OBJECT.group_interactions = ['More Info', 'Detailed View', 'Submenu Toggle', 'Edit'];
+INTERACTIONS_OBJECT.view_interactions = ['Subscribe', 'Detailed View', 'Submenu Toggle', 'Command'];
+
+
 IONUX.Views.ActionMenu = Backbone.View.extend({
 
 });
