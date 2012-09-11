@@ -2,11 +2,28 @@
 
 {% block extra_css %}
     <style type='text/css'>
-        #dynamic-container div {
-            border:1px solid #555;
-            margin:-1px;
-            padding:6px;
-        }
+     div.header {
+        border:1px solid #555;
+        margin:4px;
+        padding:6px;
+        width:95%;
+     }
+    .btn-group {
+      float: right;
+      position: relative;
+      top: 0px;
+      right: 4px;
+      margin:0px;
+    }
+    .btn-group a {
+      padding: 0;
+      font-size: 11px;
+      margin: 0;
+    }
+    .dropdown-menu li {
+      color: black;
+    }
+
     </style>
 {% endblock %}
 
@@ -14,21 +31,21 @@
 <script type="text/template" id="actionmenu-tmpl">
 
   <div class="row-fluid">  
-        <div class='header span12'>VIEW action menu</div>
+        <div id="view" class='header span12'>VIEW</div>
   </div>
 
   <div class="row-fluid">
 
     <div class='group1 span6'>
-        <div class='header'>GROUP1 action menu</div>
+        <div id="group1" class='header'>GROUP1</div>
         <div class='block1'>
-         <div class='header'>block1 action menu</div>
+         <div id="block1group1" class='header'>block1</div>
          <p>...group1-block1-placeholdertext...</p>
          <p>...group1-block1-placeholdertext...</p>
          <p>...group1-block1-placeholdertext...</p>
         </div>
         <div class='block2'>
-         <div class='header'>block2 action menu</div>
+         <div id="block2group1" class='header'>block2</div>
          <p>...group1-block2-placeholdertext...</p>
          <p>...group1-block2-placeholdertext...</p>
          <p>...group1-block2-placeholdertext...</p>
@@ -36,16 +53,16 @@
    </div><!-- END group1 -->
 
     <div class='group2 span6'>
-         <div class='header'>GROUP2 action menu</div>
+         <div id="group2" class='header'>GROUP2</div>
 
         <div class='block1'>
-         <div class='header'>block1 action menu</div>
+         <div id="block1group2" class='header'>block1</div>
            <p>...group2-block1-placeholdertext...</p>
            <p>...group2-block1-placeholdertext...</p>
            <p>...group2-block1-placeholdertext...</p>
         </div>
           <div class='block2'>
-           <div class='header'>block2 action menu</div>
+           <div id="block2group2" class='header'>block2</div>
            <p>...group2-block2-placeholdertext...</p>
            <p>...group2-block2-placeholdertext...</p>
            <p>...group2-block2-placeholdertext...</p>
@@ -60,12 +77,11 @@
 
 
 {% block extra_vendor_js %}
-    <script type="text/javascript" src="/static/js/jquery.dataTables-1.9.3.js"> </script>
-    <script type="text/javascript" src="/static/js/jquery.dataTables-api-extensions.js"> </script>
 {% endblock %}
 
 
 {% block extra_ionux_js %}
+    <script type="text/javascript" src="/static/js/ux-views-actionmenu.js"></script>
     <script type="text/javascript"></script>
 {% endblock %}
 
@@ -74,5 +90,15 @@
   $(function(){
     var template = _.template($('#actionmenu-tmpl').html());
     $("#dynamic-container").html(template());
+
+    new IONUX.Views.ViewActions({el:"#view"});
+
+    new IONUX.Views.GroupActions({el:"#group1"});
+    new IONUX.Views.GroupActions({el:"#group2"});
+
+    new IONUX.Views.BlockActions({el:"#block1group1"});
+    new IONUX.Views.BlockActions({el:"#block2group1"});
+    new IONUX.Views.BlockActions({el:"#block1group2"});
+    new IONUX.Views.BlockActions({el:"#block2group2"});
   });
 {% endblock %}
