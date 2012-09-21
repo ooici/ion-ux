@@ -29,60 +29,49 @@ def render_app_template(current_url):
     return render_template(tmpl, **{"current_url":"/", "roles":roles, "logged_in":logged_in})
 
 
-@app.route('/instruments/<type>/<instrument_device_id>/', methods=['GET'])
-def instrument_facepage_with_extension(type, instrument_device_id):
-    if request.is_xhr:
-        instrument_extension_data = ServiceApi.get_instrument_extension(instrument_device_id=instrument_device_id)
-        return jsonify(data=instrument_extension_data)
-    else:
-        return render_app_template(request.path)
+# @app.route('/instruments/<type>/<instrument_device_id>/', methods=['GET'])
+# def instrument_facepage_with_extension(type, instrument_device_id):
+#     if request.is_xhr:
+#         instrument_extension_data = ServiceApi.get_instrument_extension(instrument_device_id=instrument_device_id)
+#         return jsonify(data=instrument_extension_data)
+#     else:
+#         return render_app_template(request.path)
 
 @app.route('/instruments/ext/<instrument_device_id>/', methods=['GET'])
 def instrument_extension(instrument_device_id=None):
     instrument = ServiceApi.get_instrument_extension(instrument_device_id)
     return jsonify(data=instrument)
 
-@app.route('/users/', methods=['GET'])
-def users():
-    if request.is_xhr:
-        users = ServiceApi.find_by_resource_type('ActorIdentity')
-        return jsonify(data=users)
-    else:
-        return render_app_template(request.path)
+# @app.route('/users/', methods=['GET'])
+# def users():
+#     if request.is_xhr:
+#         users = ServiceApi.find_by_resource_type('ActorIdentity')
+#         return jsonify(data=users)
+#     else:
+#         return render_app_template(request.path)
 
-@app.route('/users/<user_id>/', methods=['GET'])
-def user_facepage(user_id):
-    if request.is_xhr:
-        user = ServiceApi.get_actor_identity_extension(user_id)
-        return jsonify(data=user)
-    else:
-        return render_app_template(request.path)
-
-# Routes for generic information resource and resource.
-@app.route('/resources/list/<resource_type>/', methods=['GET'])
-def resource_list(resource_type=None):
-    resources = ServiceApi.find_by_resource_type(resource_type)
-    return jsonify(data=resources)
-
-@app.route('/resources/read/<resource_id>/', methods=['GET'])
-def resource_facepage(resource_id=None):
-    resource = ServiceApi.find_by_resource_id(resource_id)
-    return jsonify(data=resource)
+# @app.route('/users/<user_id>/', methods=['GET'])
+# def user_facepage(user_id):
+#     if request.is_xhr:
+#         user = ServiceApi.get_actor_identity_extension(user_id)
+#         return jsonify(data=user)
+#     else:
+#         return render_app_template(request.path)
+# 
+# # Routes for generic information resource and resource.
+# @app.route('/resources/list/<resource_type>/', methods=['GET'])
+# def resource_list(resource_type=None):
+#     resources = ServiceApi.find_by_resource_type(resource_type)
+#     return jsonify(data=resources)
+# 
+# @app.route('/resources/read/<resource_id>/', methods=['GET'])
+# def resource_facepage(resource_id=None):
+#     resource = ServiceApi.find_by_resource_id(resource_id)
+#     return jsonify(data=resource)
 
 
 # START LAYOUT
 # ---------------------------------------------------------------------------
-
-# @app.route('/layout/', methods=['GET'])
-# def layout():
-#     layout_schema = LayoutApi.get_layout_schema()
-#     return jsonify(data=layout_schema)
-# 
-# @app.route('/layout2/', methods=['GET'])
-# def layout2():
-#     layout = LayoutApi.process_layout()
-#     return layout
-
 @app.route('/ui/', methods=['GET'])
 def layout3():
     layout = LayoutApi.get_new_layout_schema()
@@ -94,10 +83,8 @@ def reset_ui():
     return jsonify(data=reset_ui)
 
 
+# LCA ROUTES
 # ---------------------------------------------------------------------------
-# END LAYOUT
-
-
 @app.route('/tim/', methods=['GET'])
 def tim():
     tim = ServiceApi.find_tim()['_id']
@@ -136,7 +123,6 @@ def signon():
     else:
         return redirect('/')
 
-
 @app.route('/userprofile/', methods=['GET', 'POST', 'PUT'])
 def userprofile():
     if not session.has_key('user_id'):
@@ -169,378 +155,16 @@ def userprofile():
     else:
         return render_app_template(request.path)
 
-@app.route('/logout/', methods=['GET'])
+@app.route('/signout/', methods=['GET'])
 def logout():
     session.pop('roles', None)
     session.pop('user_id', None)
     session.pop('is_registered', None)
     return redirect('/')
 
-# Generic index to view any resource type
-@app.route('/list/<resource_type>/', methods=['GET'])
-def list(resource_type=None):
-    resources = ServiceApi.find_by_resource_type(resource_type)
-    return jsonify(data=json.dumps(resources))
 
-
-@app.route('/obs/create/', methods=['GET'])
-def observatory_create():
-    observatory = ServiceApi.test_create_marine_facility();
-    return jsonify(data=observatory)
-
-@app.route('/observatories/', methods=["GET", "POST"])
-def observatories():
-    if request.is_xhr:
-        resp_data = ServiceApi.find_by_resource_type('Observatory')
-        return jsonify(data=resp_data)
-    else:
-        return render_app_template(request.path)
-
-@app.route('/observatories/all_users/', methods=['GET'])
-def observatories_all_users():
-    all_users = ServiceApi.find_users()
-    return jsonify(data=all_users)
-
-@app.route('/observatories/<marine_facility_id>/', methods=['GET', 'POST'])
-@app.route('/observatories/<marine_facility_id>/edit/', methods=['GET', 'POST'])
-def observatory_facepage(marine_facility_id):
-    if request.is_xhr:
-        marine_facility = ServiceApi.find_observatory(marine_facility_id)
-        return jsonify(data=marine_facility)
-    else:
-        return render_app_template(request.path)
-
-
-@app.route('/observatories/<marine_facility_id>/request_enrollment/', methods=['GET'])
-def enroll_user(marine_facility_id):
-    request_enrollment = ServiceApi.request_enrollment_in_org(marine_facility_id, session['user_id'])
-    return str(request_enrollment)
-
-@app.route('/observatories/<marine_facility_id>/user_requests/', methods=['GET'])
-def observatory_user_requests(marine_facility_id):
-    if session.has_key('roles'):
-        if 'ORG_MANAGER' in session['roles']:
-            user_requests = ServiceApi.find_org_user_requests(marine_facility_id)
-        else:
-            user_requests = ServiceApi.find_org_user_requests(marine_facility_id, session['user_id'])
-    else:
-        user_requests = []
-
-    return jsonify(data=user_requests)
-    
-@app.route('/observatories/<marine_facility_id>/user_requests/<request_id>/<action>/', methods=['GET'])
-def user_request(marine_facility_id, request_id, action=None):
-    resp = ServiceApi.handle_user_request(marine_facility_id, request_id, action, reason="because")
-    return jsonify(data=resp)
-
-
-@app.route('/platforms/', methods=['GET', 'POST'])
-def platforms():
-    if request.is_xhr:
-        if request.method == 'POST':
-            print 'PLATFORM POST'
-            # Build form
-            # Service call
-            # return id
-        platforms = ServiceApi.find_by_resource_type('PlatformDevice')
-        return jsonify(data=platforms)
-    else:
-        return render_app_template(request.path)
-
-
-@app.route('/platforms/<platform_device_id>/', methods=['GET'])
-def platform_facepage(platform_device_id):
-    if request.is_xhr:
-        platform = ServiceApi.find_platform(platform_device_id)
-        return jsonify(data=platform)
-    else:
-        return render_app_template(request.path)
-
-@app.route('/platform_models/', methods=['GET'])
-def platform_models():
-    if request.is_xhr:
-        platform_models = ServiceApi.find_by_resource_type('PlatformModel')
-        return jsonify(data=platform_models)
-    else:
-        return render_app_template(request.path)
-
-
-@app.route('/platform_models/<platform_model_id>/', methods=['GET'])
-def platform_model_facepage(platform_model_id):
-    if request.is_xhr:
-        platform_model = ServiceApi.find_platform_model(platform_model_id)
-        return jsonify(data=platform_model)
-    else:
-        return render_app_template(request.path)
-
-@app.route('/instruments/', methods=['GET', 'POST'])
-def instruments():
-    if request.is_xhr:
-        instruments = ServiceApi.find_by_resource_type('InstrumentDevice')
-        return jsonify(data=instruments)
-    else:
-        return render_app_template(request.path)
-
-@app.route('/instruments/<instrument_device_id>/', methods=['GET'])
-def instrument_facepage(instrument_device_id):
-    if request.is_xhr:
-        instrument = ServiceApi.find_instrument(instrument_device_id)
-        return jsonify(data=instrument)
-    else:
-        return render_app_template(request.path)
-
-
-@app.route('/instruments/<instrument_device_id>/primary_deployment_off/<logical_instrument_id>/', methods=['GET'])
-def primary_deployment_off(instrument_device_id, logical_instrument_id):
-    deployment_off = ServiceApi.instrument_primary_deployment_off(instrument_device_id, logical_instrument_id)
-    return jsonify(data=True)
-
-@app.route('/instruments/<instrument_device_id>/primary_deployment_on/<logical_instrument_id>/', methods=['GET'])
-def primary_deployment_off(instrument_device_id, logical_instrument_id):
-    deployment_off = ServiceApi.instrument_primary_deployment_on(instrument_device_id, logical_instrument_id)
-    return jsonify(data=True)
-        
-        
-@app.route('/instruments/<instrument_device_id>/command/', methods=['GET'])
-def instrument_facepage(instrument_device_id):
-    if request.is_xhr:
-        instrument = ServiceApi.find_instrument(instrument_device_id)
-        return jsonify(data=instrument)
-    else:
-        return render_app_template(request.path)
-
-@app.route('/instruments/<instrument_device_id>/command/<agent_command>/')
-def start_instrument_agent(instrument_device_id, agent_command):
-    if agent_command == 'start':
-        command_response = ServiceApi.instrument_agent_start(instrument_device_id)
-        return jsonify(data=command_response)
-    elif agent_command == 'stop':
-        command_response = ServiceApi.instrument_agent_stop(instrument_device_id)
-        return jsonify(data=command_response)
-    elif agent_command == 'get_capabilities':
-        command_response = ServiceApi.instrument_agent_get_capabilities(instrument_device_id)
-        return jsonify(data=True)
-    else:
-        command_response = ServiceApi.instrument_execute_agent(instrument_device_id, agent_command)
-    return jsonify(data=command_response)
-
-
-@app.route('/instrument_models/', methods=['GET'])
-def instrument_models():
-    if request.is_xhr:
-        instrument_models = ServiceApi.find_by_resource_type('InstrumentModel')
-        return jsonify(data=instrument_models)
-    else:
-        return render_app_template(request.path)
-
-
-@app.route('/instrument_models/<instrument_model_id>/', methods=['GET'])
-def instrument_model_facepage(instrument_model_id):
-    if request.is_xhr:
-        instrument_model = ServiceApi.find_instrument_model(instrument_model_id)
-        return jsonify(data=instrument_model)
-    else:
-        return render_app_template(request.path)
-
-@app.route('/instrument_agents/')
-def instrument_agents():
-    if request.is_xhr:
-        instrument_agents = ServiceApi.find_by_resource_type('InstrumentAgent')
-        return jsonify(data=instrument_agents)
-    else:
-        return render_app_template(request.path)
-
-@app.route('/instrument_agents/<instrument_agent_id>/', methods=['GET'])
-def instrument_agent_facepage(instrument_agent_id):
-    if request.is_xhr:
-        instrument = ServiceApi.find_instrument_agent(instrument_agent_id)
-        return jsonify(data=instrument)
-    else:
-        return render_app_template(request.path)
-
-
-@app.route('/data_process_definitions/')
-def data_process_definitions():
-    if request.is_xhr:
-        data_process_definitions = ServiceApi.find_by_resource_type('DataProcessDefinition')
-        return jsonify(data=data_process_definitions)
-    else:
-        return render_app_template(request.path)
-
-@app.route('/data_process_definitions/<data_process_definition_id>/')
-def data_process_definition_facepage(data_process_definition_id):
-    if request.is_xhr:    
-        data_process_definition = ServiceApi.find_data_process_definition(data_process_definition_id)
-        return jsonify(data=data_process_definition)
-    else:
-        return render_app_template(request.path)
-
-@app.route('/data_products/', methods=['GET'])
-def data_products():
-    if request.is_xhr:
-        data_products = ServiceApi.find_data_products()
-        return jsonify(data=data_products)
-    else:
-        return render_app_template(request.path)
-
-@app.route('/data_products/<data_product_id>/', methods=['GET'])
-def data_product_facepage(data_product_id): 
-    if request.is_xhr:
-        # Add start and stop to data processes
-        data_product = ServiceApi.find_data_product(data_product_id)
-        return jsonify(data=data_product)
-    else:
-        return render_app_template(request.path)
-
-# Request actions
-@app.route('/<resource_type>/request/<request_id>/<request_action>', methods=['GET', 'POST'])
-def take_action_on_request(resource_type, resource_id, request_action):
-    return jsonify(data=True)
-
-# New routes
-@app.route('/<resource_type>/new/', methods=['GET'])
-def new_resource_router(resource_type):
-    if request.is_xhr:        
-        return jsonify(data=True)
-    else:
-        return render_app_template(request.path)
-
-@app.route('/find_tree/<root_type>/<leaf_type>/', methods=['GET'])
-def find_leaves(root_type, leaf_type):
-    tree_list = ServiceApi.find_leaves(root_type, leaf_type)
-    return jsonify(data=tree_list)
-
-@app.route('/find_platform_models/', methods=['GET'])
-def find_platform_models():
-    platform_models = ServiceApi.find_platform_models()
-    return jsonify(data=platform_models)
-
-
+# DEV ROUTES
 # -------------------------------------------------------------------------
-# RESOURCE BROWSER - MUCH REFACTORING NEEDED
-# -------------------------------------------------------------------------
-
-@app.route('/resources', methods=['GET'])
-def resources_index():    
-    if request.args.has_key('type'):
-        resource_type = request.args['type']        
-        service_gateway_call = requests.get('%s/resource_registry/find_resources?restype=%s' % (SERVICE_GATEWAY_BASE_URL, resource_type))
-        resources = json.loads(service_gateway_call.content)
-        resources = resources['data']['GatewayResponse'][0]
-    else:
-        resource_type=None
-        resources=None
-    
-    return render_template('resource_browser/list.html', resource_type=resource_type, resources=resources, menu=fetch_menu())
-    
-
-@app.route('/resources/new', methods=['GET'])
-def new_resource():    
-    if request.args.has_key('type'):
-        resource_type = request.args['type']
-    else:
-        resource_type = None
-        
-    return render_template('resource_browser/new_form.html', resource_type=resource_type, resource=None, menu=fetch_menu())
-
-
-@app.route('/resources/create', methods=['POST'])
-def create_resource():
-    sg_data = SERVICE_REQUEST_TEMPLATE
-    sg_data['serviceRequest']['serviceOp'] = 'create'
-    
-    request_data = request.form
-    resource_type = request.form['restype']
-
-    resource_type_params = {}
-    for (key,value) in request_data.items():
-        if key == 'restype': continue
-        resource_type_params[key] = value
-    
-    sg_data['serviceRequest']['params']['object'] = [resource_type, resource_type_params]
-        
-    service_gateway_call = requests.post(
-        '%s/resource_registry/create' % SERVICE_GATEWAY_BASE_URL, 
-        sg_data
-    )
-        
-    return redirect("%s?type=%s" % (url_for('resources_index'), resource_type))
-
-
-@app.route('/resources/show/<resource_id>')
-def show_resource(resource_id=None):
-    
-    resource_type = request.args.get('type')
-    
-    service_gateway_call = requests.get(
-        '%s/resource_registry/read?object_id=%s' % (SERVICE_GATEWAY_BASE_URL,resource_id)
-    )
-    resource = json.loads(service_gateway_call.content)
-    resource = resource['data']['GatewayResponse']
-    
-    return render_template('resource_browser/show.html', resource_type=resource_type, resource=resource, menu=fetch_menu())
-
-
-@app.route('/resources/edit/<resource_id>', methods=['GET'])
-def edit_reource(resource_id=None):
-    if request.args.has_key('type'):
-        resource_type = request.args['type']
-    else:
-        resource_type = None
-    
-    service_gateway_call = requests.get(
-        '%s/resource_registry/read?object_id=%s' % (SERVICE_GATEWAY_BASE_URL,resource_id)
-    )
-    resource = json.loads(service_gateway_call.content)
-    resource = resource['data']['GatewayResponse']
-
-    return render_template('resource_browser/edit_form.html', resource_type=resource_type, resource=resource, menu=fetch_menu())
-
-
-@app.route('/resources/update/<resource_id>', methods=['POST'])
-def update_resource(resource_id=None):
-    post_data = SERVICE_REQUEST_TEMPLATE
-    post_data['serviceRequest']['serviceOp'] = 'update'
-    
-    request_data = request.form
-    resource_type = request.form['restype']
-    
-    resource_type_params = {}
-    for (key,value) in request_data.items():
-        if key == 'restype': continue
-        resource_type_params[key] = value
-
-    post_data['serviceRequest']['params']['object'] = [resource_type, resource_type_params]
-
-    service_gateway_call = gateway_post_request(
-        '%s/resource_registry/update' % SERVICE_GATEWAY_BASE_URL, 
-        post_data
-    )
-
-    return redirect("%s?type=%s" % (url_for('resources_index'), resource_type))
-
-
-@app.route('/resources/delete/<resource_id>')
-def delete_resource(resource_id=None):
-    pass
-
-
-@app.route('/schema/<resource_type>')
-def get_resource_schema(resource_type):
-    resource_type_schema_response = requests.get(
-        "http://%s/ion-service/resource_type_schema/%s" % (SERVICE_GATEWAY_BASE_URL,resource_type)
-    )
-    resource_type_schema = json.loads(resource_type_schema_response.content)
-    
-    return str(resource_type_schema)
-
-@app.route('/resource_types', methods=['GET'])
-def resource_types():
-    res = fetch_menu()
-    return jsonify(data=res)
-
-
-
 @app.route('/dev/datatable', methods=['GET'])
 def dev_datatable(resource_id=None):
     return render_template('dev_datatable.html')
@@ -550,18 +174,385 @@ def dev_actionmenus(resource_id=None):
     return render_template('dev_actionmenus.html')
 
 
-
-
-
-
-
-# -------------------------------------------------------------------------
 # CATCHALL ROUTE
 # -------------------------------------------------------------------------
-
 @app.route("/<catchall>")
 def catchall(catchall):
     return render_app_template(catchall)
+
+
+
+
+
+
+
+
+
+# Generic index to view any resource type
+# @app.route('/list/<resource_type>/', methods=['GET'])
+# def list(resource_type=None):
+#     resources = ServiceApi.find_by_resource_type(resource_type)
+#     return jsonify(data=json.dumps(resources))
+# 
+# 
+# @app.route('/obs/create/', methods=['GET'])
+# def observatory_create():
+#     observatory = ServiceApi.test_create_marine_facility();
+#     return jsonify(data=observatory)
+# 
+# @app.route('/observatories/', methods=["GET", "POST"])
+# def observatories():
+#     if request.is_xhr:
+#         resp_data = ServiceApi.find_by_resource_type('Observatory')
+#         return jsonify(data=resp_data)
+#     else:
+#         return render_app_template(request.path)
+# 
+# @app.route('/observatories/all_users/', methods=['GET'])
+# def observatories_all_users():
+#     all_users = ServiceApi.find_users()
+#     return jsonify(data=all_users)
+# 
+# @app.route('/observatories/<marine_facility_id>/', methods=['GET', 'POST'])
+# @app.route('/observatories/<marine_facility_id>/edit/', methods=['GET', 'POST'])
+# def observatory_facepage(marine_facility_id):
+#     if request.is_xhr:
+#         marine_facility = ServiceApi.find_observatory(marine_facility_id)
+#         return jsonify(data=marine_facility)
+#     else:
+#         return render_app_template(request.path)
+# 
+# 
+# @app.route('/observatories/<marine_facility_id>/request_enrollment/', methods=['GET'])
+# def enroll_user(marine_facility_id):
+#     request_enrollment = ServiceApi.request_enrollment_in_org(marine_facility_id, session['user_id'])
+#     return str(request_enrollment)
+# 
+# @app.route('/observatories/<marine_facility_id>/user_requests/', methods=['GET'])
+# def observatory_user_requests(marine_facility_id):
+#     if session.has_key('roles'):
+#         if 'ORG_MANAGER' in session['roles']:
+#             user_requests = ServiceApi.find_org_user_requests(marine_facility_id)
+#         else:
+#             user_requests = ServiceApi.find_org_user_requests(marine_facility_id, session['user_id'])
+#     else:
+#         user_requests = []
+# 
+#     return jsonify(data=user_requests)
+#     
+# @app.route('/observatories/<marine_facility_id>/user_requests/<request_id>/<action>/', methods=['GET'])
+# def user_request(marine_facility_id, request_id, action=None):
+#     resp = ServiceApi.handle_user_request(marine_facility_id, request_id, action, reason="because")
+#     return jsonify(data=resp)
+# 
+# 
+# @app.route('/platforms/', methods=['GET', 'POST'])
+# def platforms():
+#     if request.is_xhr:
+#         if request.method == 'POST':
+#             print 'PLATFORM POST'
+#             # Build form
+#             # Service call
+#             # return id
+#         platforms = ServiceApi.find_by_resource_type('PlatformDevice')
+#         return jsonify(data=platforms)
+#     else:
+#         return render_app_template(request.path)
+# 
+# 
+# @app.route('/platforms/<platform_device_id>/', methods=['GET'])
+# def platform_facepage(platform_device_id):
+#     if request.is_xhr:
+#         platform = ServiceApi.find_platform(platform_device_id)
+#         return jsonify(data=platform)
+#     else:
+#         return render_app_template(request.path)
+# 
+# @app.route('/platform_models/', methods=['GET'])
+# def platform_models():
+#     if request.is_xhr:
+#         platform_models = ServiceApi.find_by_resource_type('PlatformModel')
+#         return jsonify(data=platform_models)
+#     else:
+#         return render_app_template(request.path)
+# 
+# 
+# @app.route('/platform_models/<platform_model_id>/', methods=['GET'])
+# def platform_model_facepage(platform_model_id):
+#     if request.is_xhr:
+#         platform_model = ServiceApi.find_platform_model(platform_model_id)
+#         return jsonify(data=platform_model)
+#     else:
+#         return render_app_template(request.path)
+# 
+# @app.route('/instruments/', methods=['GET', 'POST'])
+# def instruments():
+#     if request.is_xhr:
+#         instruments = ServiceApi.find_by_resource_type('InstrumentDevice')
+#         return jsonify(data=instruments)
+#     else:
+#         return render_app_template(request.path)
+# 
+# @app.route('/instruments/<instrument_device_id>/', methods=['GET'])
+# def instrument_facepage(instrument_device_id):
+#     if request.is_xhr:
+#         instrument = ServiceApi.find_instrument(instrument_device_id)
+#         return jsonify(data=instrument)
+#     else:
+#         return render_app_template(request.path)
+# 
+# 
+# @app.route('/instruments/<instrument_device_id>/primary_deployment_off/<logical_instrument_id>/', methods=['GET'])
+# def primary_deployment_off(instrument_device_id, logical_instrument_id):
+#     deployment_off = ServiceApi.instrument_primary_deployment_off(instrument_device_id, logical_instrument_id)
+#     return jsonify(data=True)
+# 
+# @app.route('/instruments/<instrument_device_id>/primary_deployment_on/<logical_instrument_id>/', methods=['GET'])
+# def primary_deployment_off(instrument_device_id, logical_instrument_id):
+#     deployment_off = ServiceApi.instrument_primary_deployment_on(instrument_device_id, logical_instrument_id)
+#     return jsonify(data=True)
+#         
+#         
+# @app.route('/instruments/<instrument_device_id>/command/', methods=['GET'])
+# def instrument_facepage(instrument_device_id):
+#     if request.is_xhr:
+#         instrument = ServiceApi.find_instrument(instrument_device_id)
+#         return jsonify(data=instrument)
+#     else:
+#         return render_app_template(request.path)
+# 
+# @app.route('/instruments/<instrument_device_id>/command/<agent_command>/')
+# def start_instrument_agent(instrument_device_id, agent_command):
+#     if agent_command == 'start':
+#         command_response = ServiceApi.instrument_agent_start(instrument_device_id)
+#         return jsonify(data=command_response)
+#     elif agent_command == 'stop':
+#         command_response = ServiceApi.instrument_agent_stop(instrument_device_id)
+#         return jsonify(data=command_response)
+#     elif agent_command == 'get_capabilities':
+#         command_response = ServiceApi.instrument_agent_get_capabilities(instrument_device_id)
+#         return jsonify(data=True)
+#     else:
+#         command_response = ServiceApi.instrument_execute_agent(instrument_device_id, agent_command)
+#     return jsonify(data=command_response)
+# 
+# 
+# @app.route('/instrument_models/', methods=['GET'])
+# def instrument_models():
+#     if request.is_xhr:
+#         instrument_models = ServiceApi.find_by_resource_type('InstrumentModel')
+#         return jsonify(data=instrument_models)
+#     else:
+#         return render_app_template(request.path)
+# 
+# 
+# @app.route('/instrument_models/<instrument_model_id>/', methods=['GET'])
+# def instrument_model_facepage(instrument_model_id):
+#     if request.is_xhr:
+#         instrument_model = ServiceApi.find_instrument_model(instrument_model_id)
+#         return jsonify(data=instrument_model)
+#     else:
+#         return render_app_template(request.path)
+# 
+# @app.route('/instrument_agents/')
+# def instrument_agents():
+#     if request.is_xhr:
+#         instrument_agents = ServiceApi.find_by_resource_type('InstrumentAgent')
+#         return jsonify(data=instrument_agents)
+#     else:
+#         return render_app_template(request.path)
+# 
+# @app.route('/instrument_agents/<instrument_agent_id>/', methods=['GET'])
+# def instrument_agent_facepage(instrument_agent_id):
+#     if request.is_xhr:
+#         instrument = ServiceApi.find_instrument_agent(instrument_agent_id)
+#         return jsonify(data=instrument)
+#     else:
+#         return render_app_template(request.path)
+# 
+# 
+# @app.route('/data_process_definitions/')
+# def data_process_definitions():
+#     if request.is_xhr:
+#         data_process_definitions = ServiceApi.find_by_resource_type('DataProcessDefinition')
+#         return jsonify(data=data_process_definitions)
+#     else:
+#         return render_app_template(request.path)
+# 
+# @app.route('/data_process_definitions/<data_process_definition_id>/')
+# def data_process_definition_facepage(data_process_definition_id):
+#     if request.is_xhr:    
+#         data_process_definition = ServiceApi.find_data_process_definition(data_process_definition_id)
+#         return jsonify(data=data_process_definition)
+#     else:
+#         return render_app_template(request.path)
+# 
+# @app.route('/data_products/', methods=['GET'])
+# def data_products():
+#     if request.is_xhr:
+#         data_products = ServiceApi.find_data_products()
+#         return jsonify(data=data_products)
+#     else:
+#         return render_app_template(request.path)
+# 
+# @app.route('/data_products/<data_product_id>/', methods=['GET'])
+# def data_product_facepage(data_product_id): 
+#     if request.is_xhr:
+#         # Add start and stop to data processes
+#         data_product = ServiceApi.find_data_product(data_product_id)
+#         return jsonify(data=data_product)
+#     else:
+#         return render_app_template(request.path)
+# 
+# # Request actions
+# @app.route('/<resource_type>/request/<request_id>/<request_action>', methods=['GET', 'POST'])
+# def take_action_on_request(resource_type, resource_id, request_action):
+#     return jsonify(data=True)
+# 
+# # New routes
+# @app.route('/<resource_type>/new/', methods=['GET'])
+# def new_resource_router(resource_type):
+#     if request.is_xhr:        
+#         return jsonify(data=True)
+#     else:
+#         return render_app_template(request.path)
+# 
+# @app.route('/find_tree/<root_type>/<leaf_type>/', methods=['GET'])
+# def find_leaves(root_type, leaf_type):
+#     tree_list = ServiceApi.find_leaves(root_type, leaf_type)
+#     return jsonify(data=tree_list)
+# 
+# @app.route('/find_platform_models/', methods=['GET'])
+# def find_platform_models():
+#     platform_models = ServiceApi.find_platform_models()
+#     return jsonify(data=platform_models)
+
+
+# -------------------------------------------------------------------------
+# RESOURCE BROWSER - MUCH REFACTORING NEEDED
+# -------------------------------------------------------------------------
+
+# @app.route('/resources', methods=['GET'])
+# def resources_index():    
+#     if request.args.has_key('type'):
+#         resource_type = request.args['type']        
+#         service_gateway_call = requests.get('%s/resource_registry/find_resources?restype=%s' % (SERVICE_GATEWAY_BASE_URL, resource_type))
+#         resources = json.loads(service_gateway_call.content)
+#         resources = resources['data']['GatewayResponse'][0]
+#     else:
+#         resource_type=None
+#         resources=None
+#     
+#     return render_template('resource_browser/list.html', resource_type=resource_type, resources=resources, menu=fetch_menu())
+#     
+# 
+# @app.route('/resources/new', methods=['GET'])
+# def new_resource():    
+#     if request.args.has_key('type'):
+#         resource_type = request.args['type']
+#     else:
+#         resource_type = None
+#         
+#     return render_template('resource_browser/new_form.html', resource_type=resource_type, resource=None, menu=fetch_menu())
+# 
+# 
+# @app.route('/resources/create', methods=['POST'])
+# def create_resource():
+#     sg_data = SERVICE_REQUEST_TEMPLATE
+#     sg_data['serviceRequest']['serviceOp'] = 'create'
+#     
+#     request_data = request.form
+#     resource_type = request.form['restype']
+# 
+#     resource_type_params = {}
+#     for (key,value) in request_data.items():
+#         if key == 'restype': continue
+#         resource_type_params[key] = value
+#     
+#     sg_data['serviceRequest']['params']['object'] = [resource_type, resource_type_params]
+#         
+#     service_gateway_call = requests.post(
+#         '%s/resource_registry/create' % SERVICE_GATEWAY_BASE_URL, 
+#         sg_data
+#     )
+#         
+#     return redirect("%s?type=%s" % (url_for('resources_index'), resource_type))
+# 
+# 
+# @app.route('/resources/show/<resource_id>')
+# def show_resource(resource_id=None):
+#     
+#     resource_type = request.args.get('type')
+#     
+#     service_gateway_call = requests.get(
+#         '%s/resource_registry/read?object_id=%s' % (SERVICE_GATEWAY_BASE_URL,resource_id)
+#     )
+#     resource = json.loads(service_gateway_call.content)
+#     resource = resource['data']['GatewayResponse']
+#     
+#     return render_template('resource_browser/show.html', resource_type=resource_type, resource=resource, menu=fetch_menu())
+# 
+# 
+# @app.route('/resources/edit/<resource_id>', methods=['GET'])
+# def edit_reource(resource_id=None):
+#     if request.args.has_key('type'):
+#         resource_type = request.args['type']
+#     else:
+#         resource_type = None
+#     
+#     service_gateway_call = requests.get(
+#         '%s/resource_registry/read?object_id=%s' % (SERVICE_GATEWAY_BASE_URL,resource_id)
+#     )
+#     resource = json.loads(service_gateway_call.content)
+#     resource = resource['data']['GatewayResponse']
+# 
+#     return render_template('resource_browser/edit_form.html', resource_type=resource_type, resource=resource, menu=fetch_menu())
+# 
+# 
+# @app.route('/resources/update/<resource_id>', methods=['POST'])
+# def update_resource(resource_id=None):
+#     post_data = SERVICE_REQUEST_TEMPLATE
+#     post_data['serviceRequest']['serviceOp'] = 'update'
+#     
+#     request_data = request.form
+#     resource_type = request.form['restype']
+#     
+#     resource_type_params = {}
+#     for (key,value) in request_data.items():
+#         if key == 'restype': continue
+#         resource_type_params[key] = value
+# 
+#     post_data['serviceRequest']['params']['object'] = [resource_type, resource_type_params]
+# 
+#     service_gateway_call = gateway_post_request(
+#         '%s/resource_registry/update' % SERVICE_GATEWAY_BASE_URL, 
+#         post_data
+#     )
+# 
+#     return redirect("%s?type=%s" % (url_for('resources_index'), resource_type))
+# 
+# 
+# @app.route('/resources/delete/<resource_id>')
+# def delete_resource(resource_id=None):
+#     pass
+# 
+# 
+# @app.route('/schema/<resource_type>')
+# def get_resource_schema(resource_type):
+#     resource_type_schema_response = requests.get(
+#         "http://%s/ion-service/resource_type_schema/%s" % (SERVICE_GATEWAY_BASE_URL,resource_type)
+#     )
+#     resource_type_schema = json.loads(resource_type_schema_response.content)
+#     
+#     return str(resource_type_schema)
+# 
+# @app.route('/resource_types', methods=['GET'])
+# def resource_types():
+#     res = fetch_menu()
+#     return jsonify(data=res)
+# 
+# 
+
 
 
 # -------------------------------------------------------------------------
