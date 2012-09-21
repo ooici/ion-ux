@@ -73,15 +73,26 @@ def resource_facepage(resource_id=None):
 # START LAYOUT
 # ---------------------------------------------------------------------------
 
-@app.route('/layout/', methods=['GET'])
-def layout():
-    layout_schema = LayoutApi.get_layout_schema()
-    return jsonify(data=layout_schema)
+# @app.route('/layout/', methods=['GET'])
+# def layout():
+#     layout_schema = LayoutApi.get_layout_schema()
+#     return jsonify(data=layout_schema)
+# 
+# @app.route('/layout2/', methods=['GET'])
+# def layout2():
+#     layout = LayoutApi.process_layout()
+#     return layout
 
-@app.route('/layout2/', methods=['GET'])
-def layout2():
-    layout = LayoutApi.process_layout()
-    return layout
+@app.route('/ui/', methods=['GET'])
+def layout3():
+    layout = LayoutApi.get_new_layout_schema()
+    return jsonify(data=layout)
+
+@app.route('/ui/reset/', methods=['GET'])
+def reset_ui():
+    reset_ui = ServiceApi.ui_reset()
+    return jsonify(data=reset_ui)
+
 
 # ---------------------------------------------------------------------------
 # END LAYOUT

@@ -24,7 +24,10 @@ AGENT_REQUEST_TEMPLATE = {
 }
 
 class ServiceApi(object):
-        
+    @staticmethod
+    def ui_reset():
+        return service_gateway_get('directory', 'reset_ui_specs', params={'url': 'http://filemaker.oceanobservatories.org/database-exports/'})
+    
     @staticmethod
     def find_by_resource_type(resource_type):
         return service_gateway_get('resource_registry', 'find_resources', params={'restype': resource_type})[0]
