@@ -571,74 +571,74 @@ def catchall(catchall):
 # common service gateway post request method.
 # handles including user id and expiry in request
 # payload if cookies found in session.
-def gateway_post_request(url, payload):
-    # conditionally add user id and expiry to request
-#    if "user_id" in session:
-#        payload['serviceRequest']['params']['requestor'] = session['user_id']
-#        payload['serviceRequest']['params']['expiry'] = session['valid_until']
-
-    data={'payload': json.dumps(payload)}
-    print "POST request\n  url: %s\n  data: %s" % (url,data)
-    
-    ion_actor_id = ServiceApi.find_tim()['_id']
-    headers = {}
-    headers['ion-actor-id'] = ion_actor_id
-    service_gateway_call = requests.post(url, data, headers=headers)
-
-    print "POST response\n  url: %s\n  content: %s" % (url,service_gateway_call)    
-
-    if service_gateway_call.status_code != 200:
-        # TODO figure out how (if at all) we want to handle 401
-        return "The service gateway returned the following error: %d" % service_gateway_call.status_code
-
-    return service_gateway_call
-
-
-
-def dict_from_form_data(form_data):
-    sub_result_dict = {}
-    for (k, v) in form_data.iteritems():
-        elems = k.split("__")
-        if len(elems) == 1:
-            sub_result_dict[elems[0]] = v
-        if len(elems) == 2:
-            sub_k, sub_v = elems
-            # if sub_k in result_dict:
-            if sub_result_dict.has_key(sub_k):
-                sub_result_dict[sub_k].update({sub_v:v})
-            else:
-                sub_result_dict[sub_k] = {sub_v:v}
-    
-    print "\n\n\nSUBRESULTDICT=====================================\n", str(sub_result_dict)
-    return sub_result_dict
-
-
-def build_schema_from_form(form_data, service="marine_facilities", object_name="marine_facility"):
-    service_name = DEFINED_SERVICES_OPERATIONS[service]['service_name']
-    service_op = DEFINED_SERVICES_OPERATIONS[service]['operation_names']['create']
-    resource_type = DEFINED_SERVICES_OPERATIONS[service]["restype"]
-    result_dict = SERVICE_REQUEST_TEMPLATE
-    result_dict['serviceRequest']['serviceName'] = service_name
-    result_dict['serviceRequest']['serviceOp'] = service_op
-    sub_result_dict = {"type_": resource_type}
-    for (k, v) in form_data.iteritems():
-        elems = k.split("__")
-        if len(elems) == 1:
-            sub_result_dict[elems[0]] = v
-        if len(elems) == 2:
-            sub_k, sub_v = elems
-            # if sub_k in result_dict:
-            if sub_result_dict.has_key(sub_k):
-                sub_result_dict[sub_k].update({sub_v:v})
-            else:
-                sub_result_dict[sub_k] = {sub_v:v}
-    
-    if object_name:
-        result_dict["serviceRequest"]["params"][object_name] = sub_result_dict
-    else:
-        result_dict["serviceRequest"]["params"].append(sub_result_dict)
-
-    return result_dict
+# def gateway_post_request(url, payload):
+#     # conditionally add user id and expiry to request
+# #    if "user_id" in session:
+# #        payload['serviceRequest']['params']['requestor'] = session['user_id']
+# #        payload['serviceRequest']['params']['expiry'] = session['valid_until']
+# 
+#     data={'payload': json.dumps(payload)}
+#     print "POST request\n  url: %s\n  data: %s" % (url,data)
+#     
+#     ion_actor_id = ServiceApi.find_tim()['_id']
+#     headers = {}
+#     headers['ion-actor-id'] = ion_actor_id
+#     service_gateway_call = requests.post(url, data, headers=headers)
+# 
+#     print "POST response\n  url: %s\n  content: %s" % (url,service_gateway_call)    
+# 
+#     if service_gateway_call.status_code != 200:
+#         # TODO figure out how (if at all) we want to handle 401
+#         return "The service gateway returned the following error: %d" % service_gateway_call.status_code
+# 
+#     return service_gateway_call
+# 
+# 
+# 
+# def dict_from_form_data(form_data):
+#     sub_result_dict = {}
+#     for (k, v) in form_data.iteritems():
+#         elems = k.split("__")
+#         if len(elems) == 1:
+#             sub_result_dict[elems[0]] = v
+#         if len(elems) == 2:
+#             sub_k, sub_v = elems
+#             # if sub_k in result_dict:
+#             if sub_result_dict.has_key(sub_k):
+#                 sub_result_dict[sub_k].update({sub_v:v})
+#             else:
+#                 sub_result_dict[sub_k] = {sub_v:v}
+#     
+#     print "\n\n\nSUBRESULTDICT=====================================\n", str(sub_result_dict)
+#     return sub_result_dict
+# 
+# 
+# def build_schema_from_form(form_data, service="marine_facilities", object_name="marine_facility"):
+#     service_name = DEFINED_SERVICES_OPERATIONS[service]['service_name']
+#     service_op = DEFINED_SERVICES_OPERATIONS[service]['operation_names']['create']
+#     resource_type = DEFINED_SERVICES_OPERATIONS[service]["restype"]
+#     result_dict = SERVICE_REQUEST_TEMPLATE
+#     result_dict['serviceRequest']['serviceName'] = service_name
+#     result_dict['serviceRequest']['serviceOp'] = service_op
+#     sub_result_dict = {"type_": resource_type}
+#     for (k, v) in form_data.iteritems():
+#         elems = k.split("__")
+#         if len(elems) == 1:
+#             sub_result_dict[elems[0]] = v
+#         if len(elems) == 2:
+#             sub_k, sub_v = elems
+#             # if sub_k in result_dict:
+#             if sub_result_dict.has_key(sub_k):
+#                 sub_result_dict[sub_k].update({sub_v:v})
+#             else:
+#                 sub_result_dict[sub_k] = {sub_v:v}
+#     
+#     if object_name:
+#         result_dict["serviceRequest"]["params"][object_name] = sub_result_dict
+#     else:
+#         result_dict["serviceRequest"]["params"].append(sub_result_dict)
+# 
+#     return result_dict
 
 
 # def new_build_schema_from_form(form_data, service=None, object_name=None):
@@ -669,11 +669,11 @@ def build_schema_from_form(form_data, service="marine_facilities", object_name="
 #     return result_dict
 
 
-def fetch_menu():        
-    menu_data = requests.get('%s/list_resource_types' % SERVICE_GATEWAY_BASE_URL)
-    menu = json.loads(menu_data.content)
-    print menu
-    return menu['data']['GatewayResponse']
+# def fetch_menu():        
+#     menu_data = requests.get('%s/list_resource_types' % SERVICE_GATEWAY_BASE_URL)
+#     menu = json.loads(menu_data.content)
+#     print menu
+#     return menu['data']['GatewayResponse']
 
 
     
