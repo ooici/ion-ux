@@ -13,6 +13,7 @@ IONUX = {
     Router: {},
     init: function() {
         var router = new IONUX.Router();
+        ROUTER = router;
         Backbone.history.start({pushState:true});
         router.handle_navigation();
         return router;

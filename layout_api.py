@@ -131,10 +131,13 @@ class LayoutApi(object):
                 # Blocks
                 for bl_element in group['embed']:
                     block_elid = bl_element['elid']
-                    block = layout_schema['spec']['elements'][block_elid]
                     block_position = bl_element['pos']
+                    block = layout_schema['spec']['elements'][block_elid]
                     block_res_type = block['ie']['ie_name']
 
+                    block_widget_id = block['wid']
+                    block_widget = layout_schema['spec']['widgets'][block_widget_id]
+                    
                     if not block_res_type in resource_types:
                         resource_types.append(block_res_type)
 
@@ -169,20 +172,34 @@ class LayoutApi(object):
                     block_elmt.attrib['id'] = block_elid
 
                     block_h3_elmt = ET.SubElement(block_elmt, 'h3')
-                    block_h3_elmt.text = block['label'] #block['name'] + ' (' + bl_element['elid'] + ': '+ block_position + ')'
+                    block_h3_elmt.text = 'Block: %s (%s) (%s) (%s)' % (block['label'], block_elid, block_widget['name'], block_position)
 
                     # Attributes
                     for at_element in block['embed']:
-                        attribute = layout_schema['spec']['elements'][at_element['elid']]
+                        attribute_elid = at_element['elid']
                         attribute_position = at_element['pos']
-                        attribute_elmt = ET.SubElement(block_elmt, 'div')
-                        attribute_elmt.text =  attribute['label'] #+ ' (' + at_element['elid'] + ': ' + attribute_position + ')'
+                        attribute = layout_schema['spec']['elements'][attribute_elid]
 
-                        if len(attribute['embed']) > 0:
-                            for att in attribute['embed']:
-                                attr = layout_schema['spec']['elements'][att['elid']]
-                                attr_elmt = ET.SubElement(attribute_elmt, 'div')
-                                attr_elmt.text = attr['label'] #attr['name']
+                        # Widget
+                        attribute_widget_id = attribute['wid']
+                        attribute_widget = layout_schema['spec']['widgets'][attribute_widget_id]
+
+                        attribute_elmt = ET.SubElement(block_elmt, 'div')
+                        attribute_elmt.set('class', attribute_widget['name'].replace(' ', '-'))
+                        attribute_elmt.text = 'Attribute: %s (%s) (%s) (%s)' % (attribute['label'], attribute_elid, attribute_widget['name'], attribute_position)
+                        
+                        if attribute['embed']:
+                            for sub_at_element in attribute['embed']:
+                                sub_attribute_elid = sub_at_element['elid']
+                                sub_attribute_position = sub_at_element['pos']
+                                sub_attribute = layout_schema['spec']['elements'][sub_attribute_elid]
+                                
+                                sub_attribute_widget_id = sub_attribute['wid']
+                                sub_attribute_widget = layout_schema['spec']['widgets'][sub_attribute_widget_id]
+                                
+                                sub_attribute_elmt = ET.SubElement(block_elmt, 'div')
+                                sub_attribute_elmt.set('class', 'SubAttribute')
+                                sub_attribute_elmt.text = '%s (%s) (%s) (%s)' % (sub_attribute['label'], sub_attribute_elid, sub_attribute_widget['name'], sub_attribute_position)
 
 
         layout_elmt = ET.SubElement(body_elmt, 'script')

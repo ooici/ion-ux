@@ -14,7 +14,6 @@ app = Flask(__name__)
 app.secret_key = SECRET_KEY
 SERVICE_GATEWAY_BASE_URL = 'http://%s:%d/ion-service' % (GATEWAY_HOST, GATEWAY_PORT)
 
-
 def render_app_template(current_url):
     """Renders base template for full app, with needed template params"""
     if session.has_key("roles"):
@@ -28,6 +27,18 @@ def render_app_template(current_url):
         tmpl = Template(LayoutApi.process_layout())
     return render_template(tmpl, **{"current_url":"/", "roles":roles, "logged_in":logged_in})
 
+# Collections
+@app.route('/<resource_type>/list/', methods=['GET'])
+def resource_list(resource_type=None):
+    resources = ServiceApi.find_by_resource_type(resource_type)
+    return jsonify(data=resources)
+
+# Instrument extension - TODO: Make dynamic.
+@app.route('/instruments/ext/<instrument_device_id>/', methods=['GET'])
+def instrument_extension(instrument_device_id=None):
+    instrument = ServiceApi.get_instrument_extension(instrument_device_id)
+    return jsonify(data=instrument)
+
 
 # @app.route('/instruments/<type>/<instrument_device_id>/', methods=['GET'])
 # def instrument_facepage_with_extension(type, instrument_device_id):
@@ -36,11 +47,6 @@ def render_app_template(current_url):
 #         return jsonify(data=instrument_extension_data)
 #     else:
 #         return render_app_template(request.path)
-
-@app.route('/instruments/ext/<instrument_device_id>/', methods=['GET'])
-def instrument_extension(instrument_device_id=None):
-    instrument = ServiceApi.get_instrument_extension(instrument_device_id)
-    return jsonify(data=instrument)
 
 # @app.route('/users/', methods=['GET'])
 # def users():

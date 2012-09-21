@@ -1,34 +1,82 @@
+AVAILABLE_LAYOUTS = {
+    'facepage': '2163152',
+    'status': '2163153',
+    'related': '2163154',
+    'dashboard': '2163156'
+};
+
+
 IONUX.Router = Backbone.Router.extend({
     routes: {
         "": "dashboard",
-        "instruments/:instrument_id/command/": "instrument_command_facepage",
-        ":resource_type/:view_type/:resource_id/": "facepage",
-        'interactions/': 'interactions',
+        // "instruments/:instrument_id/command/": "instrument_command_facepage",
+        // "Collection/facepage/:resource_type": '',
+        ":resource_type/list/": 'collection',
+        ":resource_type/:view_type/:resource_id/" : 'page',
+        // ":resource_type/:view_type/:resource_id/": "facepage",
+        // 'interactions/': 'interactions',
 
         // LCA routes
-        "userprofile/": "user_profile",
-        "observatories/": "observatories",
-        "observatories/:marine_facility_id/": "observatory_facepage",
-        "platforms/":"platforms",
-        "platforms/:platform_id/": "platform_facepage",
-        "platform_models/": "platform_models",
-        "platform_models/:platform_model_id/": "platform_model_facepage",
-        "instruments/":"instruments",
-        "instruments/:instrument_id/" : "instrument_facepage",
-        "instrument_models/": "instrument_models",
-        "instrument_models/:instrument_model_id/": "instrument_model_facepage",
-        "instrument_agents/": "instrument_agents",
-        "instrument_agents/:instrument_agent_id/": "instrument_agent_facepage",
-        "data_process_definitions/": "data_process_definitions",
-        "data_process_definitions/:data_process_definition_id/": "data_process_definition_facepage",
-        "data_products/": "data_products",
-        "data_products/:data_product_id/": "data_product_facepage",
-        "users/": "users",
-        "users/:user_id/": "user_facepage",
+        // "userprofile/": "user_profile",
+        // "observatories/": "observatories",
+        // "observatories/:marine_facility_id/": "observatory_facepage",
+        // "platforms/":"platforms",
+        // "platforms/:platform_id/": "platform_facepage",
+        // "platform_models/": "platform_models",
+        // "platform_models/:platform_model_id/": "platform_model_facepage",
+        // "instruments/":"instruments",
+        // "instruments/:instrument_id/" : "instrument_facepage",
+        // "instrument_models/": "instrument_models",
+        // "instrument_models/:instrument_model_id/": "instrument_model_facepage",
+        // "instrument_agents/": "instrument_agents",
+        // "instrument_agents/:instrument_agent_id/": "instrument_agent_facepage",
+        // "data_process_definitions/": "data_process_definitions",
+        // "data_process_definitions/:data_process_definition_id/": "data_process_definition_facepage",
+        // "data_products/": "data_products",
+        // "data_products/:data_product_id/": "data_product_facepage",
+        // "users/": "users",
+        // "users/:user_id/": "user_facepage",
     },
     
     dashboard: function() {
         this._reset();
+    },
+
+    collection: function(resource_type) {
+        var resources = new IONUX.Collections.Resources(null, {resource_type: resource_type});
+
+        $('#dynamic-container').show();
+        $('#dynamic-container').html($('#2163152').html());
+        
+        // Todo: clean this up.
+        $('.span9 li,.span3 li').hide();
+        $('li.Collection ,div.Collection').show();
+        $('.span9 ul').find('li.Collection:first').find('a').click();
+
+        // new IONUX.Views.Collection({collection: resources, resource_type: resource_type});
+        // resources.fetch().success(function(model, resp){
+        //     console.log("success");
+        // });
+    },
+    
+    // collection: function(resource_type) {
+    //     var resources = new IONUX.Collections.Resources(null, {resource_type: resource_type});
+    //     new IONUX.Views.Collection({collection: resources, resource_type: resource_type});
+    //     resources.fetch().success(function(model, resp){
+    //         console.log("success");
+    //     });
+    // },
+    
+    page: function(resource_type, view_type, resource_id){
+        // this._reset();
+        // TEMP: Will be put in the pre-processor
+        
+        var view_tmpl_id = AVAILABLE_LAYOUTS[view_type];
+        $('#dynamic-container').show();
+        $('#dynamic-container').html($('#' + view_tmpl_id).html());
+        $('.span9 li,.span3 li').hide();
+        $('li.' + resource_type + ',div.' + resource_type).show();
+        $('.span9 ul').find('li.' + resource_type + ':first').find('a').click();
     },
     
     facepage: function(resource_type, view_type, resource_id) {

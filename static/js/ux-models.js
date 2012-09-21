@@ -1,3 +1,7 @@
+// For use with collections of Resource Types, i.e. InstrumentDevice, PlatformDevice, etc.
+IONUX.Models.Resource = Backbone.Model.extend({});
+
+
 IONUX.Models.Layout = Backbone.Model.extend({
   url: '/layout',
   parse: function(resp){

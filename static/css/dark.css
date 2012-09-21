@@ -1,3 +1,7 @@
+.SubAttribute {
+  color: #555;
+}
+
 body, p, h1, h2, h3, h4, h5, h6 {
   color: #ccc;
   font-family: Signika Negative;
@@ -12,6 +16,10 @@ body {
 
 #ooi-logo {
   margin-top: 15px;
+}
+
+.v00 ul {
+  display: none;
 }
 
 .textfield {
@@ -99,7 +107,7 @@ a.btn-navigation-plain {
 
 
 .label {
-  text-transform: uppercase;
+/*  text-transform: uppercase;*/
   background: transparent;
   color: #666;
   font-weight: normal;
@@ -142,6 +150,37 @@ a.btn-navigation-plain {
   height: 72px;
 }
 
+.heading {
+  border-bottom: solid 1px #666;
+  padding-bottom: 25px;
+  margin-bottom: 25px;
+}
+
+.heading h1, h2 {
+  font-family: Signika Negative; 
+  font-size: 18px; 
+  font-weight: 300;
+  color: #CCCCCC;
+  text-transform: uppercase;
+}
+
+.heading h2, .heading h3, .heading div {
+  display: inline;
+  margin-right: 10px;
+}
+
+h2 {
+  color: #999;
+  font-size: 18px;
+}
+
+h3 {
+  color: #999;
+  font-size: 14px;
+  font-weight: 300;
+  text-transform: none;
+}
+
 .wrapper-heading {
   color: #666;
   margin: 15px 0;
@@ -169,7 +208,7 @@ a.btn-navigation-plain {
   display: block;
   padding-top: 7px;
   margin-top: 7px;
-  text-transform: uppercase;
+/*  text-transform: uppercase;*/
   font-weight:400; 
   font-size:10px; 
   letter-spacing:2px;

@@ -1,3 +1,18 @@
+// For generic cases
+IONUX.Collections.Resources = Backbone.Collection.extend({
+  model: IONUX.Models.Resource,
+  initialize: function(models, options){
+      this.resource_type = options.resource_type;
+  },
+  url: function() {
+      return '/' + this.resource_type + '/list/'
+  },
+  parse: function(resp) {
+    return resp.data;
+  } 
+});
+
+
 IONUX.Collections.DataProducts = Backbone.Collection.extend({
   model: IONUX.Models.DataProduct,
   url: "/data_products/",
