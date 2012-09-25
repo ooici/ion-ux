@@ -15,20 +15,21 @@ IONUX.Views.Facepage = Backbone.View.extend({
     },
 });
 
-IONUX.Views.Collection = Backbone.View.extend({
-    el:'#dynamic-container',
-    template: _.template($("#collection").html()),
-    initialize: function() {
-        _.bindAll(this, 'render');
-        this.collection.on('reset', this.render);
-        this.resource_type = this.options.resource_type;
-        console.log(this.resource_type);
-    },
-    render: function(){
-        this.$el.html(this.template({collection: this.collection.toJSON(), resource_type: this.resource_type})).show();
-        return this;
-    },
-});
+// IONUX.Views.Collection = Backbone.View.extend({
+//     el:'#dynamic-container',
+//     template: _.template($("#collection").html()),
+//     initialize: function() {
+//         _.bindAll(this, 'render');
+//         this.collection.on('reset', this.render);
+//         this.resource_type = this.options.resource_type;
+//         console.log(this.resource_type);
+//     },
+//     render: function(){
+//         
+//         // this.$el.html(this.template({collection: this.collection.toJSON(), resource_type: this.resource_type})).show();
+//         return this;
+//     },
+// });
 
 
 
@@ -276,6 +277,7 @@ function page_builder(layout, model) {
 //   }
 // });
 
+// LEFT FOR REFERENCE
 // IONUX.Views.UserRegistration = IONUX.Views.CreateNewView.extend({
 //   el: "#user-registration-container",
 //   // template: _.template($("#user-registration-tmpl").html()),

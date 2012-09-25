@@ -185,8 +185,9 @@ class LayoutApi(object):
                         attribute_widget = layout_schema['spec']['widgets'][attribute_widget_id]
 
                         attribute_elmt = ET.SubElement(block_elmt, 'div')
+                        attribute_elmt.set('id', attribute_elid)
                         attribute_elmt.set('class', attribute_widget['name'].replace(' ', '-'))
-                        attribute_elmt.text = 'Attribute: %s (%s) (%s) (%s)' % (attribute['label'], attribute_elid, attribute_widget['name'], attribute_position)
+                        attribute_elmt.text = 'Attribute: %s (%s) (%s) (%s)' % (attribute['name'], attribute_elid, attribute_widget['name'], attribute_position)
                         
                         if attribute['embed']:
                             for sub_at_element in attribute['embed']:

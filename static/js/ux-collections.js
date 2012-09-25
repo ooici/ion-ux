@@ -12,6 +12,25 @@ IONUX.Collections.Resources = Backbone.Collection.extend({
   } 
 });
 
+// Prepare response from server for IONUX.Views.DataTable;
+function prepareTableData(data, columns) {
+    var table = {headers: [], data: []}
+    
+    // Prepare table.headers
+    if (!columns) var columns = _.keys(data[0]);
+    _.each(columns, function(column){
+        table.headers.push({'sTitle': column});
+    });
+    
+    // Prepare table.data
+    _.each(data, function(row) {
+        var values = _.pick(row, columns);
+        var parsed_row = _.toArray(values);
+        table.data.push(parsed_row);
+    });
+    return table
+};
+
 
 IONUX.Collections.DataProducts = Backbone.Collection.extend({
   model: IONUX.Models.DataProduct,

@@ -1,12 +1,13 @@
 IONUX = {
     Interactions: {},
-    DefinedViews:{
-        instruments: {view_id: '2050001', template_id: '#hybrid-instrument-tmpl'},
-        platforms: {view_id: '2050002', template_id: '#hybrid-platform-tmpl'},
-        observatories: {view_id: '2050006', template_id: '#hybrid-observatory-tmpl'},
-        data_products: {view_id: '2050004', template_id: '#hybrid-data-product-tmpl'},
-        users: {view_id: '2050007', template_id: '#hybrid-user-tmpl'}
-    },
+    // KEPT FOR REFERENCE
+    // DefinedViews:{
+    //     instruments: {view_id: '2050001', template_id: '#hybrid-instrument-tmpl'},
+    //     platforms: {view_id: '2050002', template_id: '#hybrid-platform-tmpl'},
+    //     observatories: {view_id: '2050006', template_id: '#hybrid-observatory-tmpl'},
+    //     data_products: {view_id: '2050004', template_id: '#hybrid-data-product-tmpl'},
+    //     users: {view_id: '2050007', template_id: '#hybrid-user-tmpl'}
+    // },
     Models:{},
     Collections:{},
     Views: {},
