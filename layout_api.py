@@ -20,6 +20,7 @@ DEFINED_VIEWS = [
     '2163154', # Related
     '2163156', # Dashboard
     '2163810', # Dashboard 2
+    '2163158', # Direct Command
 ]
 
 class LayoutApi(object):

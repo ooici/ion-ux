@@ -24,9 +24,9 @@ function prepareTableData(data, columns) {
     
     // Prepare table.data
     _.each(data, function(row) {
-        var values = _.pick(row, columns);
-        var parsed_row = _.toArray(values);
-        table.data.push(parsed_row);
+        var row_values = _.pick(row, columns);
+        var row_array = _.toArray(row_values);
+        table.data.push(row_array);
     });
     return table
 };

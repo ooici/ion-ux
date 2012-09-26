@@ -10,6 +10,7 @@ IONUX.Router = Backbone.Router.extend({
     routes: {
         "": "dashboard",
         ":resource_type/list/": "collection",
+        ":resource_type/command/:resource_id/": "command",
         ":resource_type/:view_type/:resource_id/" : "page",
         // "instruments/:instrument_id/command/": "instrument_command_facepage",
         // "userprofile/": "user_profile",
@@ -38,7 +39,6 @@ IONUX.Router = Backbone.Router.extend({
             var elmt_id = $('.Collection .table:first').parent('div').attr('id');
             new IONUX.Views.DataTable({el: '#' + elmt_id, data: table_data});
         });
-
     },
     
     // Handles face, status, related pages
@@ -59,6 +59,12 @@ IONUX.Router = Backbone.Router.extend({
         _.each(tables, function(table) {
             new IONUX.Views.DataTable({el: $(table), data: TABLE_DATA});
         });
+    },
+    
+    command: function(resource_type, resource_id){
+        var fpModel = new IONUX.Models.InstrumentFacepageModel({instrument_id: resource_id});
+        new IONUX.Views.InstrumentCommandFacepage({model: fpModel});
+        fpModel.fetch();        
     },
     
     // KEPT FOR REFERENCE
@@ -125,6 +131,9 @@ IONUX.Router = Backbone.Router.extend({
         var self = this;
         $(document).on("click", "a", function(e) {
             if ($(e.target).hasClass('external')) return true;
+            // Catch Bootstrap's tabs so URL doesn't change, example: "InstrumentDevice/list/" to "/2150593"
+            // Todo: append hash to the end of URL for bookmarkable tabs.
+            if ($(e.target).attr('data-toggle') == 'tab') return true;
             self.navigate($(this).attr('href'), {trigger:true});
             return false;
         });

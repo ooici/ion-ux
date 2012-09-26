@@ -27,17 +27,64 @@ def render_app_template(current_url):
         tmpl = Template(LayoutApi.process_layout())
     return render_template(tmpl, **{"current_url":"/", "roles":roles, "logged_in":logged_in})
 
+
+# Face, status, related pages
+@app.route('/<resource_type>/face/<resource_id>/', methods=['GET'])
+@app.route('/<resource_type>/status/<resource_id>/', methods=['GET'])
+@app.route('/<resource_type>/related/<resource_id>/', methods=['GET'])
+def page(resource_type=None, view_type=None, resource_id=None):
+    if request.is_xhr:
+        return True
+    else:
+        return render_app_template(request.path)
+
 # Collections
 @app.route('/<resource_type>/list/', methods=['GET'])
-def resource_list(resource_type=None):
-    resources = ServiceApi.find_by_resource_type(resource_type)
-    return jsonify(data=resources)
+def collection(resource_type=None):
+    if request.is_xhr:
+        resources = ServiceApi.find_by_resource_type(resource_type)
+        return jsonify(data=resources)
+    else:
+        return render_app_template(request.path)
+
 
 # Instrument extension - TODO: Make dynamic.
 @app.route('/instruments/ext/<instrument_device_id>/', methods=['GET'])
 def instrument_extension(instrument_device_id=None):
     instrument = ServiceApi.get_instrument_extension(instrument_device_id)
     return jsonify(data=instrument)
+
+# Direct Command
+@app.route('/instruments/<instrument_device_id>/', methods=['GET'])
+def instrument_facepage(instrument_device_id):
+    if request.is_xhr:
+        instrument = ServiceApi.find_instrument(instrument_device_id)
+        return jsonify(data=instrument)
+    else:
+        return render_app_template(request.path)
+
+@app.route('/instruments/<instrument_device_id>/command/', methods=['GET'])
+def instrument_facepage(instrument_device_id):
+    if request.is_xhr:
+        instrument = ServiceApi.find_instrument(instrument_device_id)
+        return jsonify(data=instrument)
+    else:
+        return render_app_template(request.path)
+
+@app.route('/InstrumentDevice/command/<instrument_device_id>/<agent_command>/')
+def start_instrument_agent(instrument_device_id, agent_command):
+    if agent_command == 'start':
+        command_response = ServiceApi.instrument_agent_start(instrument_device_id)
+        return jsonify(data=command_response)
+    elif agent_command == 'stop':
+        command_response = ServiceApi.instrument_agent_stop(instrument_device_id)
+        return jsonify(data=command_response)
+    elif agent_command == 'get_capabilities':
+        command_response = ServiceApi.instrument_agent_get_capabilities(instrument_device_id)
+        return jsonify(data=True)
+    else:
+        command_response = ServiceApi.instrument_execute_agent(instrument_device_id, agent_command)
+    return jsonify(data=command_response)
 
 
 # @app.route('/instruments/<type>/<instrument_device_id>/', methods=['GET'])
@@ -299,13 +346,6 @@ def catchall(catchall):
 #     else:
 #         return render_app_template(request.path)
 # 
-# @app.route('/instruments/<instrument_device_id>/', methods=['GET'])
-# def instrument_facepage(instrument_device_id):
-#     if request.is_xhr:
-#         instrument = ServiceApi.find_instrument(instrument_device_id)
-#         return jsonify(data=instrument)
-#     else:
-#         return render_app_template(request.path)
 # 
 # 
 # @app.route('/instruments/<instrument_device_id>/primary_deployment_off/<logical_instrument_id>/', methods=['GET'])
@@ -319,29 +359,6 @@ def catchall(catchall):
 #     return jsonify(data=True)
 #         
 #         
-# @app.route('/instruments/<instrument_device_id>/command/', methods=['GET'])
-# def instrument_facepage(instrument_device_id):
-#     if request.is_xhr:
-#         instrument = ServiceApi.find_instrument(instrument_device_id)
-#         return jsonify(data=instrument)
-#     else:
-#         return render_app_template(request.path)
-# 
-# @app.route('/instruments/<instrument_device_id>/command/<agent_command>/')
-# def start_instrument_agent(instrument_device_id, agent_command):
-#     if agent_command == 'start':
-#         command_response = ServiceApi.instrument_agent_start(instrument_device_id)
-#         return jsonify(data=command_response)
-#     elif agent_command == 'stop':
-#         command_response = ServiceApi.instrument_agent_stop(instrument_device_id)
-#         return jsonify(data=command_response)
-#     elif agent_command == 'get_capabilities':
-#         command_response = ServiceApi.instrument_agent_get_capabilities(instrument_device_id)
-#         return jsonify(data=True)
-#     else:
-#         command_response = ServiceApi.instrument_execute_agent(instrument_device_id, agent_command)
-#     return jsonify(data=command_response)
-# 
 # 
 # @app.route('/instrument_models/', methods=['GET'])
 # def instrument_models():

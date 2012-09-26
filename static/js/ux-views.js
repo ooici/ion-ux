@@ -142,6 +142,86 @@ function page_builder(layout, model) {
     });
 };
 
+
+
+
+IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
+  el: "#dynamic-container",
+  template: _.template($("#instrument-command-facepage-tmpl").html()),
+  
+  events: {
+    'click #start-instrument-agent-instance': 'start_agent',
+    'click #stop-instrument-agent-instance': 'stop_agent',
+    'click .issue_command': 'issue_command'
+  },
+
+  initialize: function(){
+    _.bindAll(this, "render", "start_agent" ); // "stop_agent""issue_command"
+    this.model.bind("change", this.render);
+  },
+
+  render: function(){
+    this.$el.empty().html(this.template(this.model.toJSON())).show();
+    
+    // Check if instrument agent instance is present (running)...
+    // var instrumentAgent = this.model.get('instrument_agent');
+    // if (instrumentAgent.agent_process_id !== '') {
+    //     console.log(instrumentAgent);
+    //     $("#start-instrument-agent-instance").hide();
+    //     $("#stop-instrument-agent-instance").show();
+    //     $(".instrument-commands").show();    
+    // };
+    return this;
+  },
+  
+  issue_command: function(evt) {
+    var command = this.$el.find("option:selected").attr("value");
+    console.log('command');
+    $.ajax({
+      url:command,
+      dataType: 'json',
+      success: function(resp) {
+        var data = resp.data;
+        $(".command-output").append($('<p class="command-success">').html("OK: '" + command + "' was successful. <br />" + JSON.stringify(data.result)));
+      },
+      error: function() {
+        $(".command-output").append($('<p class="command-failure">').text("ALERT: '" + command + "' was unsuccessful."));
+      }
+    });
+    return false;
+  },
+  
+  start_agent: function(evt) {
+    $.ajax({
+        url: 'start/',
+        success: function() {
+          $('.instrument-commands').show();
+          $('#start-instrument-agent-instance').hide();
+          $('#stop-instrument-agent-instance').show();
+        },
+        error: function() {
+        }
+    });    
+    return false;
+  },
+  
+  stop_agent: function(evt) {
+    $.ajax({
+      url: 'stop/',
+      success: function() {
+        $('#stop-instrument-agent-instance').hide();
+        $('#start-instrument-agent-instance').show();
+        $('.instrument-commands').hide();
+      },
+      error: function() {
+        alert("An error occured.");
+      }
+    });
+    return false;
+  }
+});
+
+
 // IONUX.Views.Interactions = IONUX.Views.Base.extend({
 //     initialize: function(){
 //         
@@ -453,79 +533,6 @@ IONUX.Views.UserRequestsView = Backbone.View.extend({
 // });
 
 
-IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
-  el: "#dynamic-container",
-  template: _.template($("#instrument-command-facepage-tmpl").html()),
-  
-  events: {
-    'click #start-instrument-agent-instance': 'start_agent',
-    'click #stop-instrument-agent-instance': 'stop_agent',
-    'click .issue_command': 'issue_command'
-  },
-
-  initialize: function(){
-    _.bindAll(this, "render", "start_agent" ); // "stop_agent""issue_command"
-    this.model.bind("change", this.render);
-  },
-
-  render: function(){
-    this.$el.empty().html(this.template(this.model.toJSON())).show();
-    
-    // Check if instrument agent instance is present (running)...
-    var instrumentAgent = this.model.get('instrument_agent');
-    if (instrumentAgent.agent_process_id !== '') {
-        console.log(instrumentAgent.agent_process_id);
-        $("#start-instrument-agent-instance").hide();
-        $("#stop-instrument-agent-instance").show();
-        $(".instrument-commands").show();    
-    };
-  },
-  
-  issue_command: function(evt) {
-    var command = this.$el.find("option:selected").attr("value");
-    $.ajax({
-      url:command,
-      dataType: 'json',
-      success: function(resp) {
-        var data = resp.data;
-        $(".command-output").append($('<p class="command-success">').html("OK: '" + command + "' was successful. <br />" + JSON.stringify(data.result)));
-      },
-      error: function() {
-        $(".command-output").append($('<p class="command-failure">').text("ALERT: '" + command + "' was unsuccessful."));
-      }
-    });
-    return false;
-  },
-  
-  start_agent: function(evt) {
-    $.ajax({
-        url: 'start/',
-        success: function() {
-          $('.instrument-commands').show();
-          $('#start-instrument-agent-instance').hide();
-          $('#stop-instrument-agent-instance').show();
-        },
-        error: function() {
-        }
-    });    
-    return false;
-  },
-  
-  stop_agent: function(evt) {
-    $.ajax({
-      url: 'stop/',
-      success: function() {
-        $('#stop-instrument-agent-instance').hide();
-        $('#start-instrument-agent-instance').show();
-        $('.instrument-commands').hide();
-      },
-      error: function() {
-        alert("An error occured.");
-      }
-    });
-    return false;
-  }
-});
 
 // IONUX.Views.InstrumentModels = Backbone.View.extend({
 //   el:"#dynamic-container",
