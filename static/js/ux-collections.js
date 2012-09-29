@@ -12,26 +12,6 @@ IONUX.Collections.Resources = Backbone.Collection.extend({
   } 
 });
 
-// Prepare response from server for IONUX.Views.DataTable;
-function prepareTableData(data, columns) {
-    var table = {headers: [], data: []}
-    
-    // Prepare table.headers
-    if (!columns) var columns = _.keys(data[0]);
-    _.each(columns, function(column){
-        table.headers.push({'sTitle': column});
-    });
-    
-    // Prepare table.data
-    _.each(data, function(row) {
-        var row_values = _.pick(row, columns);
-        var row_array = _.toArray(row_values);
-        table.data.push(row_array);
-    });
-    return table
-};
-
-
 IONUX.Collections.DataProducts = Backbone.Collection.extend({
   model: IONUX.Models.DataProduct,
   url: "/data_products/",

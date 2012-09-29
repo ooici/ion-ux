@@ -120,7 +120,9 @@ class LayoutApi(object):
                 group_a_elmt = ET.SubElement(group_li_elmt, 'a')
                 group_a_elmt.attrib['href'] = '#' + group_elid
                 group_a_elmt.attrib['data-toggle'] = 'tab'
-                group_a_elmt.text = group['label'] + ' (' + group_position + ')'
+                # FOR TROUBLESHOOTING
+                # group_a_elmt.text = group['label'] + ' (' + group_position + ')'
+                group_a_elmt.text = group['label']
 
                 # Create group div inside of tab-content
                 group_elmt = ET.SubElement(group_block_container_elmt, 'div')
@@ -138,6 +140,9 @@ class LayoutApi(object):
 
                     block_widget_id = block['wid']
                     block_widget = layout_schema['spec']['widgets'][block_widget_id]
+                    block_widget_type = block_widget['name']
+                    
+                    print 'block widget type: ', block_widget_type
                     
                     if not block_res_type in resource_types:
                         resource_types.append(block_res_type)
@@ -154,6 +159,7 @@ class LayoutApi(object):
                             li_css_class += ' active'
                         if not 'active' in group_css_class:
                             group_css_class += ' active'
+
                     group_li_elmt.attrib['class'] = li_css_class
                     group_elmt.attrib['class'] = group_css_class
 
@@ -165,7 +171,7 @@ class LayoutApi(object):
                     if block_css_class is None:
                         block_css_class = ''
                     if not block_res_type in block_css_class:
-                        block_css_class += ' %s' % block['ie']['ie_name']
+                        block_css_class += ' block %s' % block_res_type
                     if group_is_active:
                         block_css_class += ' active'
                     block_elmt.attrib['class'] = block_css_class
@@ -173,22 +179,36 @@ class LayoutApi(object):
                     block_elmt.attrib['id'] = block_elid
 
                     block_h3_elmt = ET.SubElement(block_elmt, 'h3')
-                    block_h3_elmt.text = 'Block: %s (%s) (%s) (%s)' % (block['label'], block_elid, block_widget['name'], block_position)
+
+                    # FOR TROUBLESHOOTING
+                    # block_h3_elmt.text = 'Block: %s (%s) (%s) (%s)' % (block['label'], block_elid, block_widget['name'], block_position)
+                    block_h3_elmt.text = 'Block: %s' % (block['label'])
 
                     # Attributes
                     for at_element in block['embed']:
                         attribute_elid = at_element['elid']
                         attribute_position = at_element['pos']
+                        attribute_data_path = at_element['dpath']
                         attribute = layout_schema['spec']['elements'][attribute_elid]
 
                         # Widget
                         attribute_widget_id = attribute['wid']
-                        attribute_widget = layout_schema['spec']['widgets'][attribute_widget_id]
+                        attribute_widget_type = layout_schema['spec']['widgets'][attribute_widget_id]['name']
 
                         attribute_elmt = ET.SubElement(block_elmt, 'div')
                         attribute_elmt.set('id', attribute_elid)
-                        attribute_elmt.set('class', attribute_widget['name'].replace(' ', '-'))
-                        attribute_elmt.text = 'Attribute: %s (%s) (%s) (%s)' % (attribute['name'], attribute_elid, attribute_widget['name'], attribute_position)
+                        attribute_elmt.set('class', attribute_widget_type)
+                        attribute_elmt.set('data-position', attribute_position)
+                        attribute_elmt.set('data-path', attribute_data_path)
+                        attribute_elmt.set('data-label', attribute['label'])
+
+                        attribute_elmt.text = 'Attribute: %s (%s) (%s) (%s)' % (attribute['label'], attribute_elid, attribute_widget_type, attribute_position)
+                        
+                        print '\n\nattribute: ', attribute 
+                        print 'attribute widget type: ', attribute_widget_type
+                        
+                        if attribute_widget_type == 'attribute_group':
+                            attribute_elmt.text += ' ZZZZ: %s' % attribute_widget_type 
                         
                         if attribute['embed']:
                             for sub_at_element in attribute['embed']:
@@ -197,11 +217,11 @@ class LayoutApi(object):
                                 sub_attribute = layout_schema['spec']['elements'][sub_attribute_elid]
                                 
                                 sub_attribute_widget_id = sub_attribute['wid']
-                                sub_attribute_widget = layout_schema['spec']['widgets'][sub_attribute_widget_id]
+                                sub_attribute_widget_type = layout_schema['spec']['widgets'][sub_attribute_widget_id]['name']
                                 
                                 sub_attribute_elmt = ET.SubElement(block_elmt, 'div')
-                                sub_attribute_elmt.set('class', 'SubAttribute')
-                                sub_attribute_elmt.text = '%s (%s) (%s) (%s)' % (sub_attribute['label'], sub_attribute_elid, sub_attribute_widget['name'], sub_attribute_position)
+                                sub_attribute_elmt.set('class', sub_attribute_widget_type)
+                                sub_attribute_elmt.text = '%s (%s) (%s) (%s)' % (sub_attribute['label'], sub_attribute_elid, sub_attribute_widget_type, sub_attribute_position)
 
 
         layout_elmt = ET.SubElement(body_elmt, 'script')

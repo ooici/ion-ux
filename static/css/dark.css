@@ -1,10 +1,8 @@
-.SubAttribute {
-  color: #555;
-}
-
 body, p, h1, h2, h3, h4, h5, h6 {
   color: #ccc;
   font-family: Signika Negative;
+  -webkit-font-smoothing: antialiased;
+  font-smoothing: antialiased;
 }
 body {
   background-color:#000;
@@ -243,9 +241,6 @@ h3 {
   text-decoration: none;
 }
 
-
-
-
 .table {
   background: #1e1e1e;
 }
@@ -274,13 +269,18 @@ h3 {
   margin: 0;
 }
 
-.attr_block h3 {
+.block {
+  background: #222;
+  color: #999;
+}
+
+.block h3 {
   background: #4d4d4d;
   color: #ccc;
   font-size: 10px;
   font-weight: normal;
   margin: 0;
-  padding: 1px 15px;
+  padding: 1px 10px;
   text-transform: uppercase;
 }
 

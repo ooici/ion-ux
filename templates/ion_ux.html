@@ -49,14 +49,6 @@
     						<li class="instruments"><a href="/InstrumentDevice/list/">Instrument</a></li>
     						<li class="users"><a href="/UserInfo/list/">User</a></li>
     					</ul>
-    					<span class="sidebar-section">OOI Facepages (Dev)</span>
-    					<ul class="main-nav">
-    						<li class="data"><a href="/DataProduct/face/123/">Data Product</a></li>
-    						<li class="observatories"><a href="/Observatory/face/123/">Observatory</a></li>
-    						<li class="platforms"><a href="/PlatformDevice/face/123/">Platform</a></li>
-    						<li class="instruments"><a href="/InstrumentDevice/face/123/">Instrument</a></li>
-    						<li class="users"><a href="/UserInfo/face/123/">User</a></li>
-    					</ul>
     			    </div> <!-- div#sidebar -->
     				<div id="info" class="span10">
     	                <div id="dynamic-container" class="viewcontainer"> </div>
@@ -76,7 +68,9 @@
 		<script type="text/template" id="instrument-command-facepage-tmpl"><![CDATA[{% include 'partials/instrument_command_facepage.html' %}]]></script>
 		<script type="text/template" id="user-request-item-tmpl"><![CDATA[{% include 'partials/user_request_item.html' %}]]></script>
         <script type="text/template" id="datatable-tmpl">{% include 'partials/datatable.html' %}</script>
-
+        <script type="text/template" id="text-short-tmpl">
+            <![CDATA[<span class="upcase"><%= label %></span>: <%= data %>]]>
+        </script>
         <!-- Widgets -->
         <script type="text/template" id="collection"><![CDATA[{% include 'partials/collection.html' %}]]></script>
 		<script type="text/template" id="dyn-attr-group-tmpl"><![CDATA[{% include 'partials/dyn_attr_group.html' %}]]></script>

@@ -1,5 +1,3 @@
-<h1>Collection</h1>
-
 <% if (_.isEmpty(collection)) { %>
     Nothing here.
 <% } else { %>
@@ -7,9 +5,9 @@
     <% _.each(collection, function(item){ %>
         <tr>
             <td><%= item.name %></td>
-            <td><a href="/<%= resource_type %>/facepage/<%= item._id %>/">Face</a></td>
-            <td>Status</td>
-            <td>Related</td>
+            <td><a href="/<%= resource_type %>/face/<%= item._id %>/">Face</a></td>
+            <td><a href="/<%= resource_type %>/status/<%= item._id %>/">Status</a></td>
+            <td><a href="/<%= resource_type %>/related/<%= item._id %>/">Related</a></td>
         </tr>
     <% }); %>
 </table>
