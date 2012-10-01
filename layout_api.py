@@ -178,11 +178,11 @@ class LayoutApi(object):
                     block_elmt.attrib['style'] = 'display:none;'
                     block_elmt.attrib['id'] = block_elid
 
-                    block_h3_elmt = ET.SubElement(block_elmt, 'h3')
-
                     # FOR TROUBLESHOOTING
                     # block_h3_elmt.text = 'Block: %s (%s) (%s) (%s)' % (block['label'], block_elid, block_widget['name'], block_position)
-                    block_h3_elmt.text = 'Block: %s' % (block['label'])
+                    if not group_position == 'V00':
+                        block_h3_elmt = ET.SubElement(block_elmt, 'h3')
+                        block_h3_elmt.text = 'Block: %s' % (block['label'])
 
                     # Attributes
                     for at_element in block['embed']:
