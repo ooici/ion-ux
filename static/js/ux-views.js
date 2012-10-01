@@ -6,6 +6,17 @@ IONUX.Views.TextShort = Backbone.View.extend({
     }
 });
 
+IONUX.Views.Icon = Backbone.View.extend({
+    template: _.template($('#icon-tmpl').html()),
+    render: function(){
+        this.$el.html(this.template);
+        return this;
+    }
+});
+
+
+
+
 IONUX.Views.Facepage = Backbone.View.extend({
     el: '#dynamic-container',
     initialize: function(){

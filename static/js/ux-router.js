@@ -56,7 +56,7 @@ IONUX.Router = Backbone.Router.extend({
         // Hides all elements, shows elements based on resource_type/CSS class and clicks the first tab.
         $('.span9 li,.span3 li').hide();
         $('li.' + resource_type + ',div.' + resource_type).show();
-        $('.span9 ul').find('li.' + resource_type + ':first').find('a').click();
+        $('.span9 ul, .span3 ul').find('li.' + resource_type + ':first').find('a').click();
         
         // Todo: put this in Backbone View, make generic model, etc.
         if (resource_type == 'InstrumentDevice') {
@@ -65,7 +65,7 @@ IONUX.Router = Backbone.Router.extend({
                 window.model = model.data;
                 
                 // Render text_short widgets with integrated data.
-                var text_short_elmts = $('.InstrumentDevice.block .text_short');
+                var text_short_elmts = $('.InstrumentDevice .text_short');
                 _.each(text_short_elmts, function(ts){
                     var label = $(ts).attr('data-label');
                     var data_path = $(ts).attr('data-path');
@@ -75,6 +75,15 @@ IONUX.Router = Backbone.Router.extend({
                         new IONUX.Views.TextShort({el: $(ts), label: label, data: data}).render().el;
                     };
                 });
+                
+                var icons = $('.InstrumentDevice .icon');
+                _.each(icons, function(icon) {
+                    // Todo: pass in the CSS class for icon.
+                    new IONUX.Views.Icon({el: $(icon)}).render().el;
+                });
+                
+                
+                
             });
         };
         
@@ -83,6 +92,9 @@ IONUX.Router = Backbone.Router.extend({
         _.each(tables, function(table) {
             new IONUX.Views.DataTable({el: $(table), data: TABLE_DATA});
         });
+        
+
+        
     },
     
     command: function(resource_type, resource_id){
