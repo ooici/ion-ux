@@ -1,10 +1,39 @@
-IONUX.Views.TextShort = Backbone.View.extend({
-    template: _.template($('#text-short-tmpl').html()),
+IONUX.Views.AttributeGroup = Backbone.View.extend({
+    template: _.template($('#attribute-group-tmpl').html()),
     render: function(){
-        this.$el.html(this.template({label: this.options.label, data: this.options.data}));
+        var label = this.$el.attr('data-label');
+        if (label) {
+            this.$el.html(this.template({attribute_group_label: label}));
+        };
         return this;
     }
 });
+
+IONUX.Views.TextStatic = Backbone.View.extend({
+    template: _.template($('#text-static-tmpl').html()),
+    render: function(){
+        var label = this.$el.attr('data-label');
+        if (label) {
+            this.$el.html(this.template({text_static: label}));
+        };
+        return this;
+    }
+});
+
+IONUX.Views.TextShort = Backbone.View.extend({
+    template: _.template($('#text-short-tmpl').html()),
+    render: function(){
+        var data_path = this.$el.attr('data-path');
+        if (data_path) {
+            var label = this.$el.attr('data-label');
+            var text_short = getDescendantProp(this.options.data_model, data_path);
+            this.$el.html(this.template({label: label, text_short: text_short}));
+        };
+        return this;
+    }
+});
+
+IONUX.Views.TextExtended = IONUX.Views.TextShort.extend();
 
 IONUX.Views.Icon = Backbone.View.extend({
     template: _.template($('#icon-tmpl').html()),
@@ -14,25 +43,47 @@ IONUX.Views.Icon = Backbone.View.extend({
     }
 });
 
-
-
-
-IONUX.Views.Facepage = Backbone.View.extend({
-    el: '#dynamic-container',
-    initialize: function(){
-        _.bindAll(this, 'render');
-        var rt = this.options.resource_type;
-        this.view_elements = 'li.' + rt + ',div.' + rt;
-        this.li_element = 'li.' + rt + ':first';
-    },
+IONUX.Views.Image = Backbone.View.extend({
+    template: _.template($('#image-tmpl').html()),
     render: function(){
-        this.$el.html($('#2163153').html());
-        $('.span9 li,.span3 li').hide();
-        $(this.view_elements).show();
-        $('.span9 ul').find(this.li_element).find('a').click();
+        this.$el.html(this.template);
         return this;
-    },
+    }
 });
+
+IONUX.Views.Badge = Backbone.View.extend({
+    template: _.template($('#badge-tmpl').html()),
+    render: function(){
+        var data_path = this.$el.attr('data-path');
+        if (data_path) {
+            var badge = getDescendantProp(this.options.data_model, data_path);
+            this.$el.html(this.template({badge: badge}));
+        } else {
+            this.$el.css('color', 'red');
+        };
+        return this;
+    }
+});
+
+
+
+
+// IONUX.Views.Facepage = Backbone.View.extend({
+//     el: '#dynamic-container',
+//     initialize: function(){
+//         _.bindAll(this, 'render');
+//         var rt = this.options.resource_type;
+//         this.view_elements = 'li.' + rt + ',div.' + rt;
+//         this.li_element = 'li.' + rt + ':first';
+//     },
+//     render: function(){
+//         this.$el.html($('#2163153').html());
+//         $('.span9 li,.span3 li').hide();
+//         $(this.view_elements).show();
+//         $('.span9 ul').find(this.li_element).find('a').click();
+//         return this;
+//     },
+// });
 
 IONUX.Views.Collection = Backbone.View.extend({
     // el:'#dynamic-container',
@@ -65,100 +116,100 @@ IONUX.Views.Base = Backbone.View.extend({
         return this;
     }
 });
-
-// UI Representation Views
-IONUX.Views.AttributeGroup = Backbone.View.extend({
-    className: 'attr_block',
-    template: _.template($('#dyn-attr-group-tmpl').html()),
-    events:  {
-        "hover": IONUX.Interactions.action_controls,
-        "click .dropdown-menu li": IONUX.Interactions.action_control_click
-    },
-    initialize: function() {
-        this.render().el;
-    },
-    drill_down_up_interaction: function() {
-        $(this.el).find('.attributes').slideToggle();
-    },
-    render: function() {
-        if (this.className) {this.$el.addClass(this.className)};
-        this.$el.append(this.template({'block': this.options.block, 'data': this.options.data}));
-        return this;
-    }
-});
-
-IONUX.Views.Table = IONUX.Views.Base.extend({
-    events: {
-        "click .dropdown-menu li": IONUX.Interactions.action_control_click
-    },
-    template: _.template($('#dyn-table-tmpl').html()),
-});
-
-IONUX.Views.Chart = IONUX.Views.Base.extend({
-    template: _.template($('#dyn-chart-tmpl').html()),
-});
-
-IONUX.Views.Graph = IONUX.Views.Base.extend({
-    template: _.template($('#dyn-graph-tmpl').html()),
-});
-
-IONUX.Views.Image = IONUX.Views.Base.extend({
-    template: _.template($('#dyn-image-tmpl').html()),
-});
-
-IONUX.Views.Map = IONUX.Views.Base.extend({
-    className: 'map_block',
-    template: _.template($('#dyn-map-tmpl').html()),
-});
-
-IONUX.Views.PDF = IONUX.Views.Base.extend({
-    template: _.template($('#dyn-pdf-tmpl').html()),
-});
-
-IONUX.Views.Text = IONUX.Views.Base.extend({
-    template: _.template($('#dyn-text-tmpl').html()),
-});
-
-IONUX.Views.TextIcon = IONUX.Views.Base.extend({
-    template: _.template($('#dyn-text-icon-tmpl').html()),
-});
-
-IONUX.Views.Undefined = IONUX.Views.Base.extend({
-    template: _.template($('#dyn-undefined-tmpl').html()),
-});
-
-function page_builder(layout, model) {
-    _.each(layout.groups, function(group) {
-        _.each(group.blocks, function(block, idx){
-            var data = model.toJSON();
-            // $('#page_name').html(data['resource']['name']);
-            var ui_representation = block.ui_representation;
-            var el_id = '#' + block.block_id;
-
-            if (ui_representation == 'Attribute Group') {
-                 new IONUX.Views.AttributeGroup({block: block, data: data, el: el_id });
-             } else if (ui_representation == 'Table') {
-                 new IONUX.Views.Table({'block': block, 'data': data, el: el_id});
-             } else if (ui_representation == 'Chart') {
-                 new IONUX.Views.Chart({'block': block, 'data': data, el: el_id});
-             } else if (ui_representation == 'Graph') {
-                 new IONUX.Views.Graph({'block': block, 'data': data, el: el_id});
-             } else if (ui_representation == 'Image') {
-                 new IONUX.Views.Image({'block': block, 'data': data, el: el_id});
-             } else if (ui_representation == 'Map') {
-                 new IONUX.Views.Map({'block': block, 'data': data, el: el_id});
-             } else if (ui_representation == 'PDF') {
-                 new IONUX.Views.PDF({'block': block, 'data': data, el: el_id});
-             } else if (ui_representation == 'Text') {
-                 new IONUX.Views.Text({'block': block, 'data': data, el: el_id});
-             } else if (ui_representation == 'Text & Icon') {
-                 new IONUX.Views.TextIcon({'block': block, 'data': data, el: el_id});
-             } else if (ui_representation == '') {
-                 new IONUX.Views.Undefined({'block': 'nada', 'data': 'nada'});
-             };
-         });
-    });
-};
+// 
+// // UI Representation Views
+// IONUX.Views.AttributeGroup = Backbone.View.extend({
+//     className: 'attr_block',
+//     template: _.template($('#dyn-attr-group-tmpl').html()),
+//     events:  {
+//         "hover": IONUX.Interactions.action_controls,
+//         "click .dropdown-menu li": IONUX.Interactions.action_control_click
+//     },
+//     initialize: function() {
+//         this.render().el;
+//     },
+//     drill_down_up_interaction: function() {
+//         $(this.el).find('.attributes').slideToggle();
+//     },
+//     render: function() {
+//         if (this.className) {this.$el.addClass(this.className)};
+//         this.$el.append(this.template({'block': this.options.block, 'data': this.options.data}));
+//         return this;
+//     }
+// });
+// 
+// IONUX.Views.Table = IONUX.Views.Base.extend({
+//     events: {
+//         "click .dropdown-menu li": IONUX.Interactions.action_control_click
+//     },
+//     template: _.template($('#dyn-table-tmpl').html()),
+// });
+// 
+// IONUX.Views.Chart = IONUX.Views.Base.extend({
+//     template: _.template($('#dyn-chart-tmpl').html()),
+// });
+// 
+// IONUX.Views.Graph = IONUX.Views.Base.extend({
+//     template: _.template($('#dyn-graph-tmpl').html()),
+// });
+// 
+// IONUX.Views.Image = IONUX.Views.Base.extend({
+//     template: _.template($('#dyn-image-tmpl').html()),
+// });
+// 
+// IONUX.Views.Map = IONUX.Views.Base.extend({
+//     className: 'map_block',
+//     template: _.template($('#dyn-map-tmpl').html()),
+// });
+// 
+// IONUX.Views.PDF = IONUX.Views.Base.extend({
+//     template: _.template($('#dyn-pdf-tmpl').html()),
+// });
+// 
+// IONUX.Views.Text = IONUX.Views.Base.extend({
+//     template: _.template($('#dyn-text-tmpl').html()),
+// });
+// 
+// IONUX.Views.TextIcon = IONUX.Views.Base.extend({
+//     template: _.template($('#dyn-text-icon-tmpl').html()),
+// });
+// 
+// IONUX.Views.Undefined = IONUX.Views.Base.extend({
+//     template: _.template($('#dyn-undefined-tmpl').html()),
+// });
+// 
+// function page_builder(layout, model) {
+//     _.each(layout.groups, function(group) {
+//         _.each(group.blocks, function(block, idx){
+//             var data = model.toJSON();
+//             // $('#page_name').html(data['resource']['name']);
+//             var ui_representation = block.ui_representation;
+//             var el_id = '#' + block.block_id;
+// 
+//             if (ui_representation == 'Attribute Group') {
+//                  new IONUX.Views.AttributeGroup({block: block, data: data, el: el_id });
+//              } else if (ui_representation == 'Table') {
+//                  new IONUX.Views.Table({'block': block, 'data': data, el: el_id});
+//              } else if (ui_representation == 'Chart') {
+//                  new IONUX.Views.Chart({'block': block, 'data': data, el: el_id});
+//              } else if (ui_representation == 'Graph') {
+//                  new IONUX.Views.Graph({'block': block, 'data': data, el: el_id});
+//              } else if (ui_representation == 'Image') {
+//                  new IONUX.Views.Image({'block': block, 'data': data, el: el_id});
+//              } else if (ui_representation == 'Map') {
+//                  new IONUX.Views.Map({'block': block, 'data': data, el: el_id});
+//              } else if (ui_representation == 'PDF') {
+//                  new IONUX.Views.PDF({'block': block, 'data': data, el: el_id});
+//              } else if (ui_representation == 'Text') {
+//                  new IONUX.Views.Text({'block': block, 'data': data, el: el_id});
+//              } else if (ui_representation == 'Text & Icon') {
+//                  new IONUX.Views.TextIcon({'block': block, 'data': data, el: el_id});
+//              } else if (ui_representation == '') {
+//                  new IONUX.Views.Undefined({'block': 'nada', 'data': 'nada'});
+//              };
+//          });
+//     });
+// };
 
 
 

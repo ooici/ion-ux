@@ -64,25 +64,40 @@ IONUX.Router = Backbone.Router.extend({
             pageData.fetch().success(function(model, resp) {
                 window.model = model.data;
                 
-                // Render text_short widgets with integrated data.
+                
+                var attribute_group_elmts = $('.InstrumentDevice .attribute_group');
+                console.log('attribute_group_elmts',attribute_group_elmts);
+                
+                var text_static_elmts = $('.InstrumentDevice .text_static');
+                _.each(text_static_elmts, function(el){
+                    new IONUX.Views.TextStatic({el: $(el)}).render().el;
+                });
+                
                 var text_short_elmts = $('.InstrumentDevice .text_short');
-                _.each(text_short_elmts, function(ts){
-                    var label = $(ts).attr('data-label');
-                    var data_path = $(ts).attr('data-path');
-                    if (data_path) {
-                        console.log(data_path); // Used for integration efforts
-                        var data = getDescendantProp(window.model, data_path);
-                        new IONUX.Views.TextShort({el: $(ts), label: label, data: data}).render().el;
-                    };
+                _.each(text_short_elmts, function(el){
+                    new IONUX.Views.TextShort({el: $(el), data_model: window.model}).render().el;
                 });
                 
-                var icons = $('.InstrumentDevice .icon');
-                _.each(icons, function(icon) {
-                    // Todo: pass in the CSS class for icon.
-                    new IONUX.Views.Icon({el: $(icon)}).render().el;
+                var text_extended_elmts = $('.InstrumentDevice .text_extended');
+                _.each(text_extended_elmts, function(el){
+                    new IONUX.Views.TextExtended({el: $(el), data_model: window.model}).render().el;
                 });
                 
                 
+                var icon_elmts = $('.InstrumentDevice .icon');
+                _.each(icon_elmts, function(el) {
+                    new IONUX.Views.Icon({el: $(el)}).render().el;
+                });
+                
+                var image_elmts = $('.InstrumentDevice .image');
+                _.each(image_elmts, function(el) {
+                    new IONUX.Views.Image({el: $(el)}).render().el;
+                });
+                
+                var badge_elmts = $('.InstrumentDevice .badge');
+                _.each(badge_elmts, function(el) {
+                    new IONUX.Views.Badge({el: $(el), data_model: window.model}).render().el;
+                });
                 
             });
         };

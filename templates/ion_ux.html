@@ -69,13 +69,30 @@
 		<script type="text/template" id="user-request-item-tmpl"><![CDATA[{% include 'partials/user_request_item.html' %}]]></script>
         <script type="text/template" id="datatable-tmpl">{% include 'partials/datatable.html' %}</script>
 
+        <script type="text/template" id="attribute-group-tmpl">
+            <![CDATA[<h2><%= attribute_group_label %></h2>]]>
+        </script>
+
+        <script type="text/template" id="text-static-tmpl">
+            <![CDATA[<%= text_static %>]]>
+        </script>
+
         <script type="text/template" id="text-short-tmpl">
-            <![CDATA[<span class="upcase"><%= label %></span>: <%= data %>]]>
+            <![CDATA[<span class="upcase"><%= label %></span>: <%= text_short %>]]>
         </script>
+
         <script type="text/template" id="icon-tmpl">
-            <!-- <i class="passed-in-class"></i>-->
-            <span class="label label-important" style="background:green;color:white;">ICON</span>
+            <i class="icon-cog icon-white"></i>
         </script>
+        
+        <script type="text/template" id="image-tmpl">
+            <i class="icon-picture icon-white"></i>
+        </script>
+        
+        <script type="text/template" id="badge-tmpl">
+            <![CDATA[<span class="label label-important" style="background-color:#3a87ad;color:white;"><%= badge %></span>]]>
+        </script>
+        
         
         <!-- Widgets -->
         <script type="text/template" id="collection"><![CDATA[{% include 'partials/collection.html' %}]]></script>

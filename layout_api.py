@@ -182,7 +182,7 @@ class LayoutApi(object):
                     # block_h3_elmt.text = 'Block: %s (%s) (%s) (%s)' % (block['label'], block_elid, block_widget['name'], block_position)
                     if not group_position == 'V00':
                         block_h3_elmt = ET.SubElement(block_elmt, 'h3')
-                        block_h3_elmt.text = 'Block: %s' % (block['label'])
+                        block_h3_elmt.text = block['label']
 
                     # Attributes
                     for at_element in block['embed']:
@@ -202,7 +202,7 @@ class LayoutApi(object):
                         attribute_elmt.set('data-path', attribute_data_path)
                         attribute_elmt.set('data-label', attribute['label'])
 
-                        attribute_elmt.text = 'Attribute: %s (%s) (%s) (%s)' % (attribute['label'], attribute_elid, attribute_widget_type, attribute_position)
+                        attribute_elmt.text = 'Attribute: %s (%s) (%s) (%s) (%s)' % (attribute['label'], attribute['name'], attribute_elid, attribute_widget_type, attribute_position)
                         
                         print '\n\nattribute: ', attribute 
                         print 'attribute widget type: ', attribute_widget_type
@@ -214,6 +214,7 @@ class LayoutApi(object):
                             for sub_at_element in attribute['embed']:
                                 sub_attribute_elid = sub_at_element['elid']
                                 sub_attribute_position = sub_at_element['pos']
+                                sub_attribute_data_path = sub_at_element['dpath']
                                 sub_attribute = layout_schema['spec']['elements'][sub_attribute_elid]
                                 
                                 sub_attribute_widget_id = sub_attribute['wid']
@@ -221,7 +222,8 @@ class LayoutApi(object):
                                 
                                 sub_attribute_elmt = ET.SubElement(block_elmt, 'div')
                                 sub_attribute_elmt.set('class', sub_attribute_widget_type)
-                                sub_attribute_elmt.text = '%s (%s) (%s) (%s)' % (sub_attribute['label'], sub_attribute_elid, sub_attribute_widget_type, sub_attribute_position)
+                                sub_attribute_elmt.set('data-path', sub_attribute_data_path)
+                                sub_attribute_elmt.text = '%s (%s) (%s) (%s) (%s)' % (sub_attribute['label'], sub_attribute['name'], sub_attribute_elid, sub_attribute_widget_type, sub_attribute_position)
 
 
         layout_elmt = ET.SubElement(body_elmt, 'script')
