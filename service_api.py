@@ -37,11 +37,31 @@ class ServiceApi(object):
         return jsonify(data=resource)
 
     @staticmethod
-    def get_instrument_extension(instrument_device_id):
-        instrument_device = service_gateway_get('instrument_management', 'get_instrument_device_extension', params= {'instrument_device_id': instrument_device_id})
-        return instrument_device
+    def get_extension(resource_type, resource_id):
+        if resource_type == 'InstrumentDevice':
+            extension = service_gateway_get('instrument_management', 'get_instrument_device_extension', params= {'instrument_device_id': resource_id})
+        elif resource_type == 'PlatformDevice':
+            extension = service_gateway_get('instrument_management', 'get_platform_device_extension', params= {'platform_device_id': resource_id})
+        elif resource_type == 'DataProduct``':
+            extension = service_gateway_get('data_product_management', 'get_data_product_extension', params= {'data_product_id': resource_id})
 
+        return extension
 
+    # @staticmethod
+    # def get_instrument_extension(resource_id):
+    #     instrument_device = service_gateway_get('instrument_management', 'get_instrument_device_extension', params= {'instrument_device_id': resource_id})
+    #     return instrument_device
+    # 
+    # @staticmethod
+    # def get_platform_extension(resource_id):
+    #     platform_device = service_gateway_get('instrument_management', 'get_platform_device_extension', params= {'platform_device_id': resource_id})
+    #     return platform_device
+    # 
+    # @staticmethod
+    # def get_data_product_extension(resource_id):
+    #     data_product_extension = service_gateway_get('data_product_management', 'get_data_product_extension', params= {'data_product_id': resource_id})
+    #     return data_product_extension
+        
 
     # USER REQUESTS
     # ---------------------------------------------------------------------------
@@ -101,9 +121,12 @@ class ServiceApi(object):
     def instrument_agent_start(instrument_device_id):
         # instrument_agent_instance_id = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate':'hasAgentInstance'})[0][0]['_id']
         instrument_agent_instance = service_gateway_get('instrument_management', 'find_instrument_agent_instance_by_instrument_device', params={'instrument_device_id': instrument_device_id})
+        print 'COMINST: instrument_agent_instance', instrument_agent_instance
         instrument_agent_instance_id = instrument_agent_instance[0]['_id']
+        print 'COMINST: instrument_agent_instance_id', instrument_agent_instance_id
         agent_request = service_gateway_get('instrument_management', 'start_instrument_agent_instance', params={'instrument_agent_instance_id': str(instrument_agent_instance_id)})
-
+        print 'COMINST: agent_request', agent_request
+        
         return agent_request
 
     @staticmethod

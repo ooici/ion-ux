@@ -1,7 +1,7 @@
 IONUX.Views.AttributeGroup = Backbone.View.extend({
     template: _.template($('#attribute-group-tmpl').html()),
     render: function(){
-        var label = this.$el.attr('data-label');
+        var label = this.$el.data('label');
         if (label) {
             this.$el.html(this.template({attribute_group_label: label}));
         };
@@ -12,7 +12,7 @@ IONUX.Views.AttributeGroup = Backbone.View.extend({
 IONUX.Views.TextStatic = Backbone.View.extend({
     template: _.template($('#text-static-tmpl').html()),
     render: function(){
-        var label = this.$el.attr('data-label');
+        var label = this.$el.data('label');
         if (label) {
             this.$el.html(this.template({text_static: label}));
         };
@@ -23,11 +23,13 @@ IONUX.Views.TextStatic = Backbone.View.extend({
 IONUX.Views.TextShort = Backbone.View.extend({
     template: _.template($('#text-short-tmpl').html()),
     render: function(){
-        var data_path = this.$el.attr('data-path');
+        var data_path = this.$el.data('path');
         if (data_path) {
-            var label = this.$el.attr('data-label');
-            var text_short = getDescendantProp(this.options.data_model, data_path);
+            var label = this.$el.data('label');
+            var text_short = get_descendant_properties(this.options.data_model, data_path);
             this.$el.html(this.template({label: label, text_short: text_short}));
+        } else {
+            this.$el.css('color', 'red');
         };
         return this;
     }
@@ -54,9 +56,9 @@ IONUX.Views.Image = Backbone.View.extend({
 IONUX.Views.Badge = Backbone.View.extend({
     template: _.template($('#badge-tmpl').html()),
     render: function(){
-        var data_path = this.$el.attr('data-path');
+        var data_path = this.$el.data('path');
         if (data_path) {
-            var badge = getDescendantProp(this.options.data_model, data_path);
+            var badge = get_descendant_properties(this.options.data_model, data_path);
             this.$el.html(this.template({badge: badge}));
         } else {
             this.$el.css('color', 'red');

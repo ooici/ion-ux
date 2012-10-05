@@ -12,7 +12,6 @@ IONUX.Models.Layout = Backbone.Model.extend({
 
 // Timestamp conversion methods to call when parsing response.
 // Maybe put these into IONUX.Helpers namespace?
-
 var epochToISO = function(epoch_time) {
     try {
         return new Date(parseInt(epoch_time)).toISOString();        
@@ -35,7 +34,39 @@ var makeISOTimestamps = function(resp) {
 
 
 
-IONUX.Models.DataResource = Backbone.Model.extend({});
+// Extensions
+
+// IONUX.Models.InstrumentDeviceExtension = Backbone.Model.extend({
+//   url: function(){
+//     return "/instruments/ext/"+this.get("resource_id")+"/";
+//   },
+//   parse: function(resp) {
+//     makeISOTimestamps(resp);
+//     return resp.data;
+//   }
+// });
+// 
+// 
+// IONUX.Models.PlatformDeviceExtension = Backbone.Model.extend({
+//   url: function(){
+//     return "/instruments/ext/"+this.get("resource_id")+"/";
+//   },
+//   parse: function(resp) {
+//     makeISOTimestamps(resp);
+//     return resp.data;
+//   }
+// });
+
+IONUX.Models.ResourceExtension = Backbone.Model.extend({
+    url: function(){
+        return '/'+this.get('resource_type')+'/extension/'+this.get('resource_id')+'/';
+    },
+    parse: function(resp){
+        makeISOTimestamps(resp);
+        return resp.data;
+    }
+});
+
 
 
 IONUX.Models.DataResourceDetails = Backbone.Model.extend({
@@ -131,19 +162,6 @@ IONUX.Models.Instrument = Backbone.Model.extend({
 IONUX.Models.InstrumentFacepageModelLegacy = Backbone.Model.extend({
   url: function(){
     return "/instruments/"+this.get("instrument_id")+"/";
-  },
-  
-  parse: function(resp) {
-    makeISOTimestamps(resp);
-    return resp.data;
-  }
-});
-
-
-
-IONUX.Models.InstrumentFacepageModel = Backbone.Model.extend({
-  url: function(){
-    return "/instruments/ext/"+this.get("instrument_id")+"/";
   },
   
   parse: function(resp) {

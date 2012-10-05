@@ -1,4 +1,4 @@
-// Temp: this will come with the preprocessed templates eventually.
+// Temp: this will be delivered via the template preprocessor.
 AVAILABLE_LAYOUTS = {
     'face': '2163152',
     'status': '2163153',
@@ -20,96 +20,42 @@ IONUX.Router = Backbone.Router.extend({
         this._reset();
     },
     
-    // Handles collection 'face pages'
+    // Collection 'face pages'
     collection: function(resource_type){
-        var resources = new IONUX.Collections.Resources(null, {resource_type: resource_type});
-        
-        // Manually insert template
+        $('#error').hide();
         $('#dynamic-container').show();
         $('#dynamic-container').html($('#2163152').html());
         $('.span9 li,.span3 li').hide(); // Hide all elements
         
+        var resources = new IONUX.Collections.Resources(null, {resource_type: resource_type});
         resources.fetch().success(function(data){
             // Todo: clean up.
             $('li.Collection ,div.Collection').show(); // Show elements based on current view/CSS class, i.e. .InstrumentDevice
             $('.span9 ul').find('li.Collection:first').find('a').click(); // Manually Set the first tabs 'active'
             
             // Todo: better way of finding the container for the collection.
-            var elmt_id = $('.Collection .table:first').parent('div').attr('id');
-            
-            // Temp: render hybrid collectionview
-            // var table_data = prepareTableData(data.data, ['name', '_id', 'type_']);
-            // new IONUX.Views.DataTable({el: '#' + elmt_id, data: table_data});
+            var elmt_id = $('.Collection .table_ooi:first').parent('div').attr('id');
 
             var resource_collection = new IONUX.Collections.Resources(data.data, {resource_type: resource_type});
             new IONUX.Views.Collection({el: '#' + elmt_id, collection: resource_collection, resource_type: resource_type}).render().el;
         });
     },
     
-    // Handles face, status, related pages
+    // Face, status, related pages
     page: function(resource_type, view_type, resource_id){
-        // Manually insert template
+        $('#error').hide();
         $('#dynamic-container').show();
-        $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS[view_type]).html());
-        
-        // Todo: clean up.
-        // Hides all elements, shows elements based on resource_type/CSS class and clicks the first tab.
+        $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS[view_type]).html());        
         $('.span9 li,.span3 li').hide();
-        $('li.' + resource_type + ',div.' + resource_type).show();
-        $('.span9 ul, .span3 ul').find('li.' + resource_type + ':first').find('a').click();
         
-        // Todo: put this in Backbone View, make generic model, etc.
-        if (resource_type == 'InstrumentDevice') {
-            var pageData = new IONUX.Models.InstrumentFacepageModel({instrument_id: resource_id});
-            pageData.fetch().success(function(model, resp) {
-                window.model = model.data;
-                
-                
-                var attribute_group_elmts = $('.InstrumentDevice .attribute_group');
-                console.log('attribute_group_elmts',attribute_group_elmts);
-                
-                var text_static_elmts = $('.InstrumentDevice .text_static');
-                _.each(text_static_elmts, function(el){
-                    new IONUX.Views.TextStatic({el: $(el)}).render().el;
-                });
-                
-                var text_short_elmts = $('.InstrumentDevice .text_short');
-                _.each(text_short_elmts, function(el){
-                    new IONUX.Views.TextShort({el: $(el), data_model: window.model}).render().el;
-                });
-                
-                var text_extended_elmts = $('.InstrumentDevice .text_extended');
-                _.each(text_extended_elmts, function(el){
-                    new IONUX.Views.TextExtended({el: $(el), data_model: window.model}).render().el;
-                });
-                
-                
-                var icon_elmts = $('.InstrumentDevice .icon');
-                _.each(icon_elmts, function(el) {
-                    new IONUX.Views.Icon({el: $(el)}).render().el;
-                });
-                
-                var image_elmts = $('.InstrumentDevice .image');
-                _.each(image_elmts, function(el) {
-                    new IONUX.Views.Image({el: $(el)}).render().el;
-                });
-                
-                var badge_elmts = $('.InstrumentDevice .badge');
-                _.each(badge_elmts, function(el) {
-                    new IONUX.Views.Badge({el: $(el), data_model: window.model}).render().el;
-                });
-                
+        var page_model = new IONUX.Models.ResourceExtension({resource_type: resource_type, resource_id: resource_id});
+        page_model.fetch()
+            .success(function(model, resp) {
+                render_page(resource_type, model);
+            })
+            .error(function(model, resp) {
+                render_error();
             });
-        };
-        
-        // Temp: "SLAM!" tables to demonstrate integration.
-        var tables = $('.' + resource_type + ' .table');
-        _.each(tables, function(table) {
-            new IONUX.Views.DataTable({el: $(table), data: TABLE_DATA});
-        });
-        
-
-        
     },
     
     command: function(resource_type, resource_id){
@@ -118,37 +64,6 @@ IONUX.Router = Backbone.Router.extend({
         fpModel.fetch();        
     },
     
-    // KEPT FOR REFERENCE
-    // facepage: function(resource_type, view_type, resource_id) {
-    //     this._reset();
-    //     // Initialize model - TODO: refactor with generic model?
-    //     if (resource_type == 'instruments') {
-    //         var facepage_model = new IONUX.Models.InstrumentFacepageModel({instrument_id: resource_id});
-    //     } else if (resource_type == 'platforms') {
-    //         var facepage_model = new IONUX.Models.PlatformFacepageModel({platform_id: resource_id});
-    //     } else if (resource_type == 'observatories') {
-    //         var facepage_model = new IONUX.Models.ObservatoryFacepageModel({observatory_id: resource_id});
-    //     } else if (resource_type == 'data_products') {
-    //         var facepage_model = new IONUX.Models.DataProductFacepageModel({data_product_id: resource_id});
-    //     } else if (resource_type == 'users') {
-    //         var facepage_model = new IONUX.Models.UserFacepageModel({user_id: resource_id});
-    //     };
-    //     
-    //     // Initialize view.
-    //     var view_id = IONUX.DefinedViews[resource_type]['view_id'];
-    //     if (view_type == 'hybrid') {
-    //         var template_id = IONUX.DefinedViews[resource_type]['template_id'];
-    //         $('#dynamic-container').empty().html($(template_id).html()).show();
-    //     } else {
-    //         $('#dynamic-container').empty().html($('#' + view_id).html()).show();
-    //     };
-    //     
-    //     // Data.
-    //     facepage_model.fetch({success: function() {
-    //         page_builder(LAYOUT_OBJECT[view_id], facepage_model);
-    //     }});
-    // },
-
     // KEPT FOR REFERENCE
     // user_profile: function() {
     //     this._reset();
@@ -169,15 +84,7 @@ IONUX.Router = Backbone.Router.extend({
     //     var userRequestsView = new IONUX.Views.UserRequestsView({collection:urCollection, facepage_model: fpModel});
     //     urCollection.fetch();
     // },
-    
-    // KEPT FOR REFERENCE - COMMAND
-    // instrument_command_facepage : function(instrument_id) {
-    //     this._reset();
-    //     var fpModel = new IONUX.Models.InstrumentFacepageModelLegacy({instrument_id: instrument_id});
-    //     new IONUX.Views.InstrumentCommandFacepage({model: fpModel});
-    //     fpModel.fetch();
-    // },
-    
+        
     handle_navigation: function(){
         var self = this;
         $(document).on("click", "a", function(e) {
@@ -205,16 +112,16 @@ IONUX.Router = Backbone.Router.extend({
 
 
 // Prepare response from server for IONUX.Views.DataTable;
-function prepareTableData(data, columns) {
+function prepare_table_data(data, columns) {
     var table = {headers: [], data: []}
     
-    // Prepare table.headers
+    // Headers
     if (!columns) var columns = _.keys(data[0]);
     _.each(columns, function(column){
         table.headers.push({'sTitle': column});
     });
     
-    // Prepare table.data
+    // Data
     _.each(data, function(row) {
         var row_values = _.pick(row, columns);
         var row_array = _.toArray(row_values);
@@ -223,10 +130,93 @@ function prepareTableData(data, columns) {
     return table
 };
 
+
 // Get values from string notation, example:
-// <div data-path="resource.serial_number">
-function getDescendantProp(obj, desc) {
+// <div data-path="resource.serial_number"> will
+// result in ['resource']['serial_number']
+function get_descendant_properties(obj, desc) {
     var arr = desc.split(".");
     while(arr.length && (obj = obj[arr.shift()]));
     return obj;
-}
+};
+
+
+function render_page(resource_type, model) {
+    // Put in global namespance for development/manual inspection
+    
+    window.model = model.data;
+
+    var attribute_group_elmts = $('.InstrumentDevice .attribute_group_ooi');
+    _.each(attribute_group_elmts, function(el) {
+        new IONUX.Views.AttributeGroup({el: $(el)}).render().el;
+        append_info_level(el);
+    });
+
+    var text_static_elmts = $('.InstrumentDevice .text_static_ooi');
+    _.each(text_static_elmts, function(el){
+        new IONUX.Views.TextStatic({el: $(el)}).render().el;
+        append_info_level(el);
+    });
+
+    var text_short_elmts = $('.InstrumentDevice .text_short_ooi');
+    _.each(text_short_elmts, function(el){
+        new IONUX.Views.TextShort({el: $(el), data_model: window.model}).render().el;
+        append_info_level(el);
+    });
+
+    var text_extended_elmts = $('.InstrumentDevice .text_extended_ooi');
+    _.each(text_extended_elmts, function(el){
+        new IONUX.Views.TextExtended({el: $(el), data_model: window.model}).render().el;
+        append_info_level(el);
+    });
+
+    var icon_elmts = $('.InstrumentDevice .icon_ooi');
+    _.each(icon_elmts, function(el) {
+        new IONUX.Views.Icon({el: $(el)}).render().el;
+        append_info_level(el);
+    });
+
+    var image_elmts = $('.InstrumentDevice .image_ooi');
+    _.each(image_elmts, function(el) {
+        new IONUX.Views.Image({el: $(el)}).render().el;
+        append_info_level(el);
+    });
+
+    var badge_elmts = $('.InstrumentDevice .badge_ooi');
+    _.each(badge_elmts, function(el) {
+        new IONUX.Views.Badge({el: $(el), data_model: window.model}).render().el;
+        append_info_level(el);
+    });
+
+    var table_elmts = $('.InstrumentDevice .table_ooi');
+    _.each(table_elmts, function(el) {
+        var data_path = $(el).data('path');
+        if (data_path) {
+            var raw_table_data = window.model[data_path];
+            var table_data = prepare_table_data(raw_table_data, ['description', 'name', '_id']);
+            var columns = ['description, name, _id'];
+            new IONUX.Views.DataTable({el: $(el), data: table_data});
+        } else {
+            new IONUX.Views.DataTable({el: $(el), data: TABLE_DATA});
+
+            // TEMP: make obvious what's not integrated yet.
+            $(el).find('.filter-header, .dataTables_wrapper').css('background', 'red');
+        };
+    });
+    
+    // Show the relevant elements and click to enable the Bootstrap tabs.
+    $('li.' + resource_type + ',div.' + resource_type).show();
+    $('.span9 ul, .span3 ul').find('li.' + resource_type + ':first').find('a').click();
+};
+
+function render_error(){
+    $('#dynamic-container').hide();
+    $('#error').show();
+};
+
+function append_info_level(el) {
+    var info_level = $(el).data('level');
+    if (info_level || info_level == '0') {
+        $(el).append('<span class="label label-important info-level" style="background:green;color:white;">'+info_level+'</div>');
+    };
+};

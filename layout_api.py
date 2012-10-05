@@ -189,8 +189,9 @@ class LayoutApi(object):
                         attribute_elid = at_element['elid']
                         attribute_position = at_element['pos']
                         attribute_data_path = at_element['dpath']
+                        attribute_level = at_element['olevel']
                         attribute = layout_schema['spec']['elements'][attribute_elid]
-
+                                                
                         # Widget
                         attribute_widget_id = attribute['wid']
                         attribute_widget_type = layout_schema['spec']['widgets'][attribute_widget_id]['name']
@@ -200,21 +201,22 @@ class LayoutApi(object):
                         attribute_elmt.set('class', attribute_widget_type)
                         attribute_elmt.set('data-position', attribute_position)
                         attribute_elmt.set('data-path', attribute_data_path)
+                        attribute_elmt.set('data-level', attribute_level)
                         attribute_elmt.set('data-label', attribute['label'])
-
+                        
                         attribute_elmt.text = 'Attribute: %s (%s) (%s) (%s) (%s)' % (attribute['label'], attribute['name'], attribute_elid, attribute_widget_type, attribute_position)
-                        
-                        print '\n\nattribute: ', attribute 
-                        print 'attribute widget type: ', attribute_widget_type
-                        
+                                                
                         if attribute_widget_type == 'attribute_group':
                             attribute_elmt.text += ' ZZZZ: %s' % attribute_widget_type 
                         
-                        if attribute['embed']:
+                        excluded_sub_attributes = ['table']
+                        
+                        if attribute['embed'] and not attribute_widget_type in excluded_sub_attributes:
                             for sub_at_element in attribute['embed']:
                                 sub_attribute_elid = sub_at_element['elid']
                                 sub_attribute_position = sub_at_element['pos']
                                 sub_attribute_data_path = sub_at_element['dpath']
+                                sub_attribute_level = sub_at_element['olevel']
                                 sub_attribute = layout_schema['spec']['elements'][sub_attribute_elid]
                                 
                                 sub_attribute_widget_id = sub_attribute['wid']
@@ -223,12 +225,13 @@ class LayoutApi(object):
                                 sub_attribute_elmt = ET.SubElement(block_elmt, 'div')
                                 sub_attribute_elmt.set('class', sub_attribute_widget_type)
                                 sub_attribute_elmt.set('data-path', sub_attribute_data_path)
+                                sub_attribute_elmt.set('data-level', sub_attribute_level)
                                 sub_attribute_elmt.text = '%s (%s) (%s) (%s) (%s)' % (sub_attribute['label'], sub_attribute['name'], sub_attribute_elid, sub_attribute_widget_type, sub_attribute_position)
 
 
-        layout_elmt = ET.SubElement(body_elmt, 'script')
-        layout_elmt.set('id', 'layout')
-        layout_elmt.text = "var LAYOUT=%s;" % json.dumps(layout_schema)
+        # layout_elmt = ET.SubElement(body_elmt, 'script')
+        # layout_elmt.set('id', 'layout')
+        # layout_elmt.text = "var LAYOUT=%s;" % json.dumps(layout_schema)
 
         resource_types_elmt = ET.SubElement(body_elmt, 'script')
         resource_types_elmt.set('id', 'resource_types')

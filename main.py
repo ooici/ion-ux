@@ -28,11 +28,11 @@ def render_app_template(current_url):
     return render_template(tmpl, **{"current_url":"/", "roles":roles, "logged_in":logged_in})
 
 
-# Face, status, related pages
+# Face, status, related pages catch-all
+@app.route('/<resource_type>/static/<resource_id>/', methods=['GET'])
 @app.route('/<resource_type>/face/<resource_id>/', methods=['GET'])
-@app.route('/<resource_type>/status/<resource_id>/', methods=['GET'])
 @app.route('/<resource_type>/related/<resource_id>/', methods=['GET'])
-def page(resource_type=None, view_type=None, resource_id=None):
+def page(resource_type, resource_id):
     if request.is_xhr:
         return True
     else:
@@ -47,14 +47,35 @@ def collection(resource_type=None):
     else:
         return render_app_template(request.path)
 
+# Extension API
+@app.route('/<resource_type>/extension/<resource_id>/', methods=['GET'])
+def extension(resource_type, resource_id):
+    extension = ServiceApi.get_extension(resource_type, resource_id)
+    return jsonify(data=extension)
 
-# Instrument extension - TODO: Make dynamic.
-@app.route('/instruments/ext/<instrument_device_id>/', methods=['GET'])
-def instrument_extension(instrument_device_id=None):
-    instrument = ServiceApi.get_instrument_extension(instrument_device_id)
-    return jsonify(data=instrument)
 
-# Direct Command
+# # Instrument
+# @app.route('/instruments/ext/<resource_id>/', methods=['GET'])
+# def instrument_extension(resource_id):
+#     instrument_extension = ServiceApi.get_instrument_extension(resource_id)
+#     return jsonify(data=instrument_extension)
+# 
+# # Platform
+# @app.route('/platforms/ext/<resource_id>/', methods=['GET'])
+# def platform_extension(resource_id):
+#     platform_extension = ServiceApi.get_instrument_extension(resource_id)
+#     return jsonify(data=platform_extension)
+# 
+# # DataProduct
+# @app.route('/data_products/ext/<resource_id>/', methods=['GET'])
+# def data_product_extension(resource_id):
+#     data_product_extension = ServiceApi.get_data_product_extension(resource_id)
+#     return jsonify(data=data_product_extension)
+    
+
+# DIRECT COMMAND
+
+# Instrument
 @app.route('/instruments/<instrument_device_id>/', methods=['GET'])
 def instrument_facepage(instrument_device_id):
     if request.is_xhr:
