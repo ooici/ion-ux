@@ -137,6 +137,7 @@ class ServiceApi(object):
 
     @staticmethod
     def instrument_execute_agent(instrument_device_id, agent_command):
+        print 'xxxx agent_command in serviceapi', agent_command
         agent_op = "execute_agent"
         params = {"command": {"type_": "AgentCommand", "command": agent_command}}
         if agent_command == 'go_direct_access':
@@ -365,6 +366,7 @@ def build_agent_request(agent_id, operation_name, params={}):
 
 def service_gateway_agent_request(agent_id, operation_name, params={}):
     url, data = build_agent_request(agent_id, operation_name, params)
+    print 'yyy data', data
     resp = requests.post(url, data)
     pretty_console_log('SERVICE GATEWAY AGENT REQUEST POST RESPONSE', resp.content)
 

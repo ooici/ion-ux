@@ -25,17 +25,15 @@ IONUX.Router = Backbone.Router.extend({
         $('#error').hide();
         $('#dynamic-container').show();
         $('#dynamic-container').html($('#2163152').html());
-        $('.span9 li,.span3 li').hide(); // Hide all elements
+        $('.span9 li,.span3 li').hide();
         
         var resources = new IONUX.Collections.Resources(null, {resource_type: resource_type});
         resources.fetch().success(function(data){
-            // Todo: clean up.
             $('li.Collection ,div.Collection').show(); // Show elements based on current view/CSS class, i.e. .InstrumentDevice
             $('.span9 ul').find('li.Collection:first').find('a').click(); // Manually Set the first tabs 'active'
             
             // Todo: better way of finding the container for the collection.
             var elmt_id = $('.Collection .table_ooi:first').parent('div').attr('id');
-
             var resource_collection = new IONUX.Collections.Resources(data.data, {resource_type: resource_type});
             new IONUX.Views.Collection({el: '#' + elmt_id, collection: resource_collection, resource_type: resource_type}).render().el;
         });
@@ -59,9 +57,10 @@ IONUX.Router = Backbone.Router.extend({
     },
     
     command: function(resource_type, resource_id){
-        var fpModel = new IONUX.Models.InstrumentFacepageModel({instrument_id: resource_id});
-        new IONUX.Views.InstrumentCommandFacepage({model: fpModel});
-        fpModel.fetch();        
+        console.log('command', resource_type, resource_id);
+        var page_model = new IONUX.Models.ResourceExtension({resource_type: 'InstrumentDevice', resource_id: resource_id});
+        new IONUX.Views.InstrumentCommandFacepage({model: page_model});
+        page_model.fetch();
     },
     
     // KEPT FOR REFERENCE
@@ -143,7 +142,6 @@ function get_descendant_properties(obj, desc) {
 
 function render_page(resource_type, model) {
     // Put in global namespance for development/manual inspection
-    
     window.model = model.data;
 
     var attribute_group_elmts = $('.InstrumentDevice .attribute_group_ooi');

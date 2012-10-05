@@ -94,6 +94,8 @@ def instrument_facepage(instrument_device_id):
 
 @app.route('/InstrumentDevice/command/<instrument_device_id>/<agent_command>/')
 def start_instrument_agent(instrument_device_id, agent_command):
+    print 'agent_command', agent_command
+
     if agent_command == 'start':
         command_response = ServiceApi.instrument_agent_start(instrument_device_id)
         return jsonify(data=command_response)
