@@ -223,7 +223,8 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
   events: {
     'click #start-instrument-agent-instance': 'start_agent',
     'click #stop-instrument-agent-instance': 'stop_agent',
-    'click .issue_command': 'issue_command'
+    'click .issue_command': 'issue_command',
+    'click .get_capabilities': 'get_capabilities'
   },
 
   initialize: function(){
@@ -247,7 +248,6 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
   
   issue_command: function(evt) {
     var command = this.$el.find("option:selected").attr("value");
-    console.log('command');
     $.ajax({
       url:command,
       dataType: 'json',
@@ -263,17 +263,45 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
   },
   
   start_agent: function(evt) {
+    var self = this;
     $.ajax({
         url: 'start/',
         success: function() {
           $('.instrument-commands').show();
           $('#start-instrument-agent-instance').hide();
           $('#stop-instrument-agent-instance').show();
+          
         },
         error: function() {
         }
     });    
     return false;
+  },
+  
+  get_capabilities: function(evt) {
+      var self = this;
+      
+      $.ajax({
+        url: 'get_capabilities',
+        dataType: 'json',
+        success: function(resp) {
+            var select_elmt = $('#new-commands');
+            select_elmt.empty()
+
+            var data = resp.data;
+            var option_tmpl = '<option value="<%= name %>"><%= name %></option>'
+            _.each(data, function(option) {
+                if (option.name != 'example') {
+                    select_elmt.append(_.template(option_tmpl, option));
+                };
+            });
+            
+        },
+        error: function() {
+            console.log('Error: ', resp);
+        }
+      });
+      
   },
   
   stop_agent: function(evt) {

@@ -104,7 +104,7 @@ def start_instrument_agent(instrument_device_id, agent_command):
         return jsonify(data=command_response)
     elif agent_command == 'get_capabilities':
         command_response = ServiceApi.instrument_agent_get_capabilities(instrument_device_id)
-        return jsonify(data=True)
+        return jsonify(data=command_response)
     else:
         command_response = ServiceApi.instrument_execute_agent(instrument_device_id, agent_command)
     return jsonify(data=command_response)
