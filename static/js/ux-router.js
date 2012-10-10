@@ -140,7 +140,7 @@ function get_descendant_properties(obj, desc) {
 
 function render_page(resource_type, model) {
     // Put in global namespance for development/manual inspection
-    window.MODEL_DATADATA = model.data;
+    window.MODEL_DATA = model.data;
 
     var attribute_group_elmts = $('.InstrumentDevice .attribute_group_ooi');
     _.each(attribute_group_elmts, function(el) {
