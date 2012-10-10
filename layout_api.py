@@ -136,7 +136,11 @@ class LayoutApi(object):
                     block_elid = bl_element['elid']
                     block_position = bl_element['pos']
                     block = layout_schema['spec']['elements'][block_elid]
-                    block_res_type = block['ie']['ie_name']
+                    
+                    if block.has_key('ie'):
+                        block_res_type = block['ie']['ie_name']
+                    else:
+                        block_res_type = ''
 
                     block_widget_id = block['wid']
                     block_widget = layout_schema['spec']['widgets'][block_widget_id]
