@@ -46,8 +46,8 @@ IONUX.Router = Backbone.Router.extend({
         $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS[view_type]).html());        
         $('.span9 li,.span3 li').hide();
         
-        var page_model = new IONUX.Models.ResourceExtension({resource_type: resource_type, resource_id: resource_id});
-        page_model.fetch()
+        var resource_extension = new IONUX.Models.ResourceExtension({resource_type: resource_type, resource_id: resource_id});
+        resource_extension.fetch()
             .success(function(model, resp) {
                 render_page(resource_type, model);
             })
@@ -57,9 +57,9 @@ IONUX.Router = Backbone.Router.extend({
     },
     
     command: function(resource_type, resource_id){
-        var page_model = new IONUX.Models.ResourceExtension({resource_type: 'InstrumentDevice', resource_id: resource_id});
+        var resource_extension = new IONUX.Models.ResourceExtension({resource_type: 'InstrumentDevice', resource_id: resource_id});
         new IONUX.Views.InstrumentCommandFacepage({model: page_model});
-        page_model.fetch();
+        resource_extension.fetch();
     },
     
     // KEPT FOR REFERENCE
@@ -87,8 +87,8 @@ IONUX.Router = Backbone.Router.extend({
         var self = this;
         $(document).on("click", "a", function(e) {
             if ($(e.target).hasClass('external')) return true;
-            // Catch Bootstrap's tabs so URL doesn't change, example: "InstrumentDevice/list/" to "/2150593"
-            // Todo: append hash to the end of URL for bookmarkable tabs.
+            
+            // Catch Bootstrap's tabs hash so URL doesn't change, example: "InstrumentDevice/list/" to "/2150593"
             if ($(e.target).attr('data-toggle') == 'tab') return true;
             self.navigate($(this).attr('href'), {trigger:true});
             return false;
@@ -138,10 +138,9 @@ function get_descendant_properties(obj, desc) {
     return obj;
 };
 
-
 function render_page(resource_type, model) {
     // Put in global namespance for development/manual inspection
-    window.model = model.data;
+    window.MODEL_DATADATA = model.data;
 
     var attribute_group_elmts = $('.InstrumentDevice .attribute_group_ooi');
     _.each(attribute_group_elmts, function(el) {
@@ -157,13 +156,13 @@ function render_page(resource_type, model) {
 
     var text_short_elmts = $('.InstrumentDevice .text_short_ooi');
     _.each(text_short_elmts, function(el){
-        new IONUX.Views.TextShort({el: $(el), data_model: window.model}).render().el;
+        new IONUX.Views.TextShort({el: $(el), data_model: window.MODEL_DATA}).render().el;
         append_info_level(el);
     });
 
     var text_extended_elmts = $('.InstrumentDevice .text_extended_ooi');
     _.each(text_extended_elmts, function(el){
-        new IONUX.Views.TextExtended({el: $(el), data_model: window.model}).render().el;
+        new IONUX.Views.TextExtended({el: $(el), data_model: window.MODEL_DATA}).render().el;
         append_info_level(el);
     });
 
@@ -181,7 +180,7 @@ function render_page(resource_type, model) {
 
     var badge_elmts = $('.InstrumentDevice .badge_ooi');
     _.each(badge_elmts, function(el) {
-        new IONUX.Views.Badge({el: $(el), data_model: window.model}).render().el;
+        new IONUX.Views.Badge({el: $(el), data_model: window.MODEL_DATA}).render().el;
         append_info_level(el);
     });
 
@@ -189,7 +188,7 @@ function render_page(resource_type, model) {
     _.each(table_elmts, function(el) {
         var data_path = $(el).data('path');
         if (data_path) {
-            var raw_table_data = window.model[data_path];
+            var raw_table_data = window.MODEL_DATA[data_path];
             var table_data = prepare_table_data(raw_table_data, ['description', 'name', '_id']);
             var columns = ['description, name, _id'];
             new IONUX.Views.DataTable({el: $(el), data: table_data});
