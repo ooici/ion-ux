@@ -67,6 +67,20 @@ IONUX.Views.Badge = Backbone.View.extend({
     }
 });
 
+IONUX.Views.List = Backbone.View.extend({
+    template: _.template($('#list-tmpl').html()),
+    render: function(){
+        console.log(this.$el);
+        var data_path = this.$el.data('path');
+        if (data_path) {
+            var label = this.$el.data('label');
+            var list_items = get_descendant_properties(this.options.data_model, data_path);
+            this.$el.html(this.template({list_items: list_items, label: label}));
+        };
+        return this;
+    }
+});
+
 
 
 

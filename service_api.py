@@ -42,8 +42,9 @@ class ServiceApi(object):
             extension = service_gateway_get('instrument_management', 'get_instrument_device_extension', params= {'instrument_device_id': resource_id})
         elif resource_type == 'PlatformDevice':
             extension = service_gateway_get('instrument_management', 'get_platform_device_extension', params= {'platform_device_id': resource_id})
-        elif resource_type == 'DataProduct``':
-            extension = service_gateway_get('data_product_management', 'get_data_product_extension', params= {'data_product_id': resource_id})
+        elif resource_type == 'DataProduct':
+            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'DataProductExtension'})
+            # extension = service_gateway_get('data_product_management', 'get_data_product_extension', params= {'data_product_id': resource_id})
 
         return extension
 

@@ -3,6 +3,18 @@
   color: white;
 }
 
+
+
+
+
+/* LISTS */
+
+.list-item {
+  line-height: 20px;
+}
+
+
+
 body, p, h1, h2, h3, h4, h5, h6 {
   color: #ccc;
   font-family: Signika Negative;

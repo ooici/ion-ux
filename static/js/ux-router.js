@@ -183,7 +183,12 @@ function render_page(resource_type, model) {
         new IONUX.Views.Badge({el: $(el), data_model: window.MODEL_DATA}).render().el;
         append_info_level(el);
     });
-
+    
+    var list_elmts = $('.InstrumentDevice .list_ooi');
+    _.each(list_elmts, function(el) {
+        new IONUX.Views.List({el: $(el), data_model: window.MODEL_DATA}).render().el;
+    });
+    
     var table_elmts = $('.InstrumentDevice .table_ooi');
     _.each(table_elmts, function(el) {
         var data_path = $(el).data('path');
@@ -193,8 +198,8 @@ function render_page(resource_type, model) {
             var columns = ['description, name, _id'];
             new IONUX.Views.DataTable({el: $(el), data: table_data});
         } else {
-            new IONUX.Views.DataTable({el: $(el), data: TABLE_DATA});
-
+            new IONUX.Views.DataTable({el: $(el), data: {headers:[null], data: []}});
+    
             // TEMP: make obvious what's not integrated yet.
             $(el).find('.filter-header, .dataTables_wrapper').css('background', 'red');
         };
