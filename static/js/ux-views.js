@@ -70,7 +70,6 @@ IONUX.Views.Badge = Backbone.View.extend({
 IONUX.Views.List = Backbone.View.extend({
     template: _.template($('#list-tmpl').html()),
     render: function(){
-        console.log(this.$el);
         var data_path = this.$el.data('path');
         if (data_path) {
             var label = this.$el.data('label');
