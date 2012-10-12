@@ -13,8 +13,8 @@ todo:
 
 INTERACTIONS_OBJECT = {};
 INTERACTIONS_OBJECT.block_interactions = ['More Info', 'Detailed View', 'Hide', 'Edit'];
-INTERACTIONS_OBJECT.group_interactions = ['More Info', 'Detailed View', 'Submenu Toggle', 'Edit'];
-INTERACTIONS_OBJECT.view_interactions = ['Subscribe', 'Detailed View', 'Submenu Toggle', 'Command'];
+INTERACTIONS_OBJECT.group_interactions = ['More Info', 'Detailed View', 'Submenu', 'Edit'];
+INTERACTIONS_OBJECT.view_interactions = ['Subscribe', 'Detailed View', 'Submenu', 'Subscribe', 'Command', 'Direct Command'];
 
 
 IONUX.Views.ActionMenu = Backbone.View.extend({
