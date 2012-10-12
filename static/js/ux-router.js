@@ -1,227 +1,95 @@
+// Temp: this will be delivered via the template preprocessor.
+AVAILABLE_LAYOUTS = {
+    'face': '2163152',
+    'status': '2163153',
+    'related': '2163154',
+    'dashboard': '2163156'
+};
+
 IONUX.Router = Backbone.Router.extend({
     routes: {
         "": "dashboard",
-        "instruments/:instrument_id/command/": "instrument_command_facepage",
-        ":resource_type/:view_type/:resource_id/": "facepage",
-        'interactions/': 'interactions',
-
-        // LCA routes
-        "userprofile/": "user_profile",
-        "observatories/": "observatories",
-        "observatories/:marine_facility_id/": "observatory_facepage",
-        "platforms/":"platforms",
-        "platforms/:platform_id/": "platform_facepage",
-        "platform_models/": "platform_models",
-        "platform_models/:platform_model_id/": "platform_model_facepage",
-        "instruments/":"instruments",
-        "instruments/:instrument_id/" : "instrument_facepage",
-        "instrument_models/": "instrument_models",
-        "instrument_models/:instrument_model_id/": "instrument_model_facepage",
-        "instrument_agents/": "instrument_agents",
-        "instrument_agents/:instrument_agent_id/": "instrument_agent_facepage",
-        "data_process_definitions/": "data_process_definitions",
-        "data_process_definitions/:data_process_definition_id/": "data_process_definition_facepage",
-        "data_products/": "data_products",
-        "data_products/:data_product_id/": "data_product_facepage",
-        "users/": "users",
-        "users/:user_id/": "user_facepage",
+        ":resource_type/list/": "collection",
+        ":resource_type/command/:resource_id/": "command",
+        ":resource_type/:view_type/:resource_id/" : "page",
+        // "instruments/:instrument_id/command/": "instrument_command_facepage",
+        // "userprofile/": "user_profile",
     },
     
-    dashboard: function() {
+    dashboard: function(){
         this._reset();
     },
     
-    facepage: function(resource_type, view_type, resource_id) {
-        this._reset();
-        // Initialize model - TODO: refactor with generic model?
-        if (resource_type == 'instruments') {
-            var facepage_model = new IONUX.Models.InstrumentFacepageModel({instrument_id: resource_id});
-        } else if (resource_type == 'platforms') {
-            var facepage_model = new IONUX.Models.PlatformFacepageModel({platform_id: resource_id});
-        } else if (resource_type == 'observatories') {
-            var facepage_model = new IONUX.Models.ObservatoryFacepageModel({observatory_id: resource_id});
-        } else if (resource_type == 'data_products') {
-            var facepage_model = new IONUX.Models.DataProductFacepageModel({data_product_id: resource_id});
-        } else if (resource_type == 'users') {
-            var facepage_model = new IONUX.Models.UserFacepageModel({user_id: resource_id});
-        };
+    // Collection 'face pages'
+    collection: function(resource_type){
+        $('#error').hide();
+        $('#dynamic-container').show();
+        $('#dynamic-container').html($('#2163152').html());
+        $('.span9 li,.span3 li').hide();
         
-        // Initialize view.
-        var view_id = IONUX.DefinedViews[resource_type]['view_id'];
-        if (view_type == 'hybrid') {
-            var template_id = IONUX.DefinedViews[resource_type]['template_id'];
-            $('#dynamic-container').empty().html($(template_id).html()).show();
-        } else {
-            $('#dynamic-container').empty().html($('#' + view_id).html()).show();
-        };
+        var resources = new IONUX.Collections.Resources(null, {resource_type: resource_type});
+        resources.fetch().success(function(data){
+            $('li.Collection ,div.Collection').show(); // Show elements based on current view/CSS class, i.e. .InstrumentDevice
+            $('.span9 ul').find('li.Collection:first').find('a').click(); // Manually Set the first tabs 'active'
+            
+            // Todo: better way of finding the container for the collection.
+            var elmt_id = $('.Collection .table_ooi:first').parent('div').attr('id');
+            var resource_collection = new IONUX.Collections.Resources(data.data, {resource_type: resource_type});
+            new IONUX.Views.Collection({el: '#' + elmt_id, collection: resource_collection, resource_type: resource_type}).render().el;
+        });
+    },
+    
+    // Face, status, related pages
+    page: function(resource_type, view_type, resource_id){
+        $('#error').hide();
+        $('#dynamic-container').show();
+        $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS[view_type]).html());        
+        $('.span9 li,.span3 li').hide();
         
-        // Data.
-        facepage_model.fetch({success: function() {
-            page_builder(LAYOUT_OBJECT[view_id], facepage_model);
-        }});
-    },
-
-
-    // BEGIN LCA demo routes    
-    data_products: function() {
-        this._reset();
-        this.dataProductsList = new IONUX.Collections.DataProducts();
-        this.dataProductsListView = new IONUX.Views.DataProducts({collection: this.dataProductsList});
-        this.dataProductsList.fetch();
-    },
-  
-    user_profile: function() {
-        this._reset();
-        var fpModel = new IONUX.Models.UserRegistrationModel();
-        new IONUX.Views.UserRegistration({model:fpModel});
-        fpModel.fetch();
-    },
-  
-    observatories: function(){
-        this._reset();
-        $("#observatories-container").show();
-        this.observatoriesList = new IONUX.Collections.ObservatoryCollection();
-        this.observatoriesListView = new IONUX.Views.ObservatoriesView({collection:this.observatoriesList});
-        this.observatoriesList.fetch();
-    },
-  
-    observatory_facepage: function(observatory_id){
-        this._reset();
-        var fpModel = new IONUX.Models.ObservatoryFacepageModel({observatory_id:observatory_id});
-        new IONUX.Views.ObservatoryFacepage({model:fpModel});
-        fpModel.fetch();
-
-        var urCollection = new IONUX.Collections.UserRequestCollection();
-        urCollection.observatory_id = observatory_id; //XXX better way to set this?
-        var userRequestsView = new IONUX.Views.UserRequestsView({collection:urCollection, facepage_model: fpModel});
-        urCollection.fetch();
-    },
-
-    platforms: function(){
-        this._reset();
-        // $("#platforms-container").show();
-        this.platformsList = new IONUX.Collections.Platforms();
-        var platformsView = new IONUX.Views.PlatformsView({collection:this.platformsList});
-        this.platformsList.fetch();
-    },
-
-    platform_facepage: function(platform_id) {
-        this._reset();
-        var fpModel = new IONUX.Models.PlatformFacepageModel({platform_id: platform_id});
-        new IONUX.Views.PlatformFacepage({model:fpModel});
-        fpModel.fetch();
-    },
-
-    platform_models: function(){
-        this._reset();
-        $("#platform-models-container").show();
-        this.platformModelsList = new IONUX.Collections.PlatformModels();
-        var platformModelsView = new IONUX.Views.PlatformModelsView({collection:this.platformModelsList});
-        this.platformModelsList.fetch();
-    },
-
-    platform_model_facepage: function(platform_model_id) {
-        this._reset();
-        var fpModel = new IONUX.Models.PlatformModelFacepageModel({platform_model_id: platform_model_id});
-        new IONUX.Views.PlatformModelFacepage({model: fpModel});
-        fpModel.fetch();
-    }, 
-
-    instruments: function(){
-        this._reset();
-        $("#instruments-container").show();
-        this.instrumentsList = new IONUX.Collections.Instruments();
-        var instrumentsView = new IONUX.Views.InstrumentsView({collection: this.instrumentsList});
-        this.instrumentsList.fetch();
-    },
-
-    instrument_facepage: function(instrument_id) {
-        this._reset();
-        var fpModel = new IONUX.Models.InstrumentFacepageModel({instrument_id: instrument_id});
-        window.view = new IONUX.Views.InstrumentFacepage({model:fpModel});
-        fpModel.fetch();
-    },
-
-    instrument_command_facepage : function(instrument_id) {
-        this._reset();
-        var fpModel = new IONUX.Models.InstrumentFacepageModelLegacy({instrument_id: instrument_id});
-        new IONUX.Views.InstrumentCommandFacepage({model: fpModel});
-        fpModel.fetch();
-    },
-
-    instrument_models: function() {
-        this._reset();
-        this.instrumentModelsList = new IONUX.Collections.InstrumentModels();
-        var instrumentModelsView = new IONUX.Views.InstrumentModels({collection: this.instrumentModelsList});
-        this.instrumentModelsList.fetch();
-        $("#instrument-models-container").show();
-    },
-
-    instrument_model_facepage: function(instrument_model_id) {
-        this._reset();
-        var fpModel = new IONUX.Models.InstrumentModelFacepageModel({instrument_model_id: instrument_model_id});
-        new IONUX.Views.InstrumentModelFacepage({model: fpModel});
-        fpModel.fetch();
-    },
-
-    instrument_agents: function() {
-        this._reset();
-        $("#instrument-agents-container").show();
-        this.instrumentAgentsList = new IONUX.Collections.InstrumentAgents();
-        var instrumentAgentsView = new IONUX.Views.InstrumentAgents({collection: this.instrumentAgentsList});
-        this.instrumentAgentsList.fetch();
-    },
-
-    instrument_agent_facepage: function(instrument_agent_id) {
-        this._reset();
-        var fpModel = new IONUX.Models.InstrumentAgentFacepageModel({instrument_agent_id: instrument_agent_id});
-        new IONUX.Views.InstrumentAgentFacepage({model: fpModel});
-        fpModel.fetch();
-    },
-
-    data_process_definitions: function() {
-        this._reset();
-        $("#data-process-definitions-container").show();
-        this.dataProcessDefinitionsList = new IONUX.Collections.DataProcessDefinitions();
-        var dataProcessDefinitionsView = new IONUX.Views.DataProcessDefinitions({collection: this.dataProcessDefinitionsList});
-        this.dataProcessDefinitionsList.fetch();
-    },
-
-    data_process_definition_facepage: function(data_process_definition_id) {
-        this._reset();
-        var fpModel = new IONUX.Models.DataProcessDefinitionFacepageModel({data_process_definition_id: data_process_definition_id});
-        new IONUX.Views.DataProcessDefinitionFacepage({model: fpModel});
-        fpModel.fetch();
-    },
-
-    data_product_facepage: function(data_product_id) {
-        this._reset();
-        var fpModel = new IONUX.Models.DataProductFacepageModel({data_product_id: data_product_id});
-        new IONUX.Views.DataProductFacepage({model: fpModel});
-        fpModel.fetch();
-    },
-
-    users: function() {
-        this._reset();
-        $("#users-container").show();
-        this.usersList = new IONUX.Collections.Users();
-        this.usersListView = new IONUX.Views.UsersView({collection: this.usersList});
-        this.usersList.fetch();
+        var resource_extension = new IONUX.Models.ResourceExtension({resource_type: resource_type, resource_id: resource_id});
+        resource_extension.fetch()
+            .success(function(model, resp) {
+                render_page(resource_type, model);
+            })
+            .error(function(model, resp) {
+                render_error();
+            });
     },
     
-    user_facepage : function(user_id) {
-        this._reset();
-        var fpModel = new IONUX.Models.UserFacepageModel({user_id: user_id});
-        new IONUX.Views.UserFacepage({model: fpModel});
-        fpModel.fetch();
+    command: function(resource_type, resource_id){
+        var resource_extension = new IONUX.Models.ResourceExtension({resource_type: 'InstrumentDevice', resource_id: resource_id});
+        new IONUX.Views.InstrumentCommandFacepage({model: resource_extension});
+        resource_extension.fetch();
     },
     
-    // END LCA demo routes
-    
+    // KEPT FOR REFERENCE
+    // user_profile: function() {
+    //     this._reset();
+    //     var fpModel = new IONUX.Models.UserRegistrationModel();
+    //     new IONUX.Views.UserRegistration({model:fpModel});
+    //     fpModel.fetch();
+    // },
+  
+    // KEPT FOR REFERENCE - ALEX'S USER REQUESTS
+    // observatory_facepage: function(observatory_id){
+    //     this._reset();
+    //     var fpModel = new IONUX.Models.ObservatoryFacepageModel({observatory_id:observatory_id});
+    //     new IONUX.Views.ObservatoryFacepage({model:fpModel});
+    //     fpModel.fetch();
+    // 
+    //     var urCollection = new IONUX.Collections.UserRequestCollection();
+    //     urCollection.observatory_id = observatory_id; //XXX better way to set this?
+    //     var userRequestsView = new IONUX.Views.UserRequestsView({collection:urCollection, facepage_model: fpModel});
+    //     urCollection.fetch();
+    // },
+        
     handle_navigation: function(){
         var self = this;
         $(document).on("click", "a", function(e) {
             if ($(e.target).hasClass('external')) return true;
+            
+            // Catch Bootstrap's tabs hash so URL doesn't change, example: "InstrumentDevice/list/" to "/2150593"
+            if ($(e.target).attr('data-toggle') == 'tab') return true;
             self.navigate($(this).attr('href'), {trigger:true});
             return false;
         });
@@ -239,3 +107,117 @@ IONUX.Router = Backbone.Router.extend({
     }
 
 });
+
+
+// Prepare response from server for IONUX.Views.DataTable;
+function prepare_table_data(data, columns) {
+    var table = {headers: [], data: []}
+    
+    // Headers
+    if (!columns) var columns = _.keys(data[0]);
+    _.each(columns, function(column){
+        table.headers.push({'sTitle': column});
+    });
+    
+    // Data
+    _.each(data, function(row) {
+        var row_values = _.pick(row, columns);
+        var row_array = _.toArray(row_values);
+        table.data.push(row_array);
+    });
+    return table
+};
+
+
+// Get values from string notation, example:
+// <div data-path="resource.serial_number"> will
+// result in ['resource']['serial_number']
+function get_descendant_properties(obj, desc) {
+    var arr = desc.split(".");
+    while(arr.length && (obj = obj[arr.shift()]));
+    return obj;
+};
+
+function render_page(resource_type, model) {
+    // Put in global namespance for development/manual inspection
+    window.MODEL_DATA = model.data;
+
+    var attribute_group_elmts = $('.InstrumentDevice .attribute_group_ooi');
+    _.each(attribute_group_elmts, function(el) {
+        new IONUX.Views.AttributeGroup({el: $(el)}).render().el;
+        append_info_level(el);
+    });
+
+    var text_static_elmts = $('.InstrumentDevice .text_static_ooi');
+    _.each(text_static_elmts, function(el){
+        new IONUX.Views.TextStatic({el: $(el)}).render().el;
+        append_info_level(el);
+    });
+
+    var text_short_elmts = $('.InstrumentDevice .text_short_ooi');
+    _.each(text_short_elmts, function(el){
+        new IONUX.Views.TextShort({el: $(el), data_model: window.MODEL_DATA}).render().el;
+        append_info_level(el);
+    });
+
+    var text_extended_elmts = $('.InstrumentDevice .text_extended_ooi');
+    _.each(text_extended_elmts, function(el){
+        new IONUX.Views.TextExtended({el: $(el), data_model: window.MODEL_DATA}).render().el;
+        append_info_level(el);
+    });
+
+    var icon_elmts = $('.InstrumentDevice .icon_ooi');
+    _.each(icon_elmts, function(el) {
+        new IONUX.Views.Icon({el: $(el)}).render().el;
+        append_info_level(el);
+    });
+
+    var image_elmts = $('.InstrumentDevice .image_ooi');
+    _.each(image_elmts, function(el) {
+        new IONUX.Views.Image({el: $(el)}).render().el;
+        append_info_level(el);
+    });
+
+    var badge_elmts = $('.InstrumentDevice .badge_ooi');
+    _.each(badge_elmts, function(el) {
+        new IONUX.Views.Badge({el: $(el), data_model: window.MODEL_DATA}).render().el;
+        append_info_level(el);
+    });
+    
+    var list_elmts = $('.InstrumentDevice .list_ooi');
+    _.each(list_elmts, function(el) {
+        new IONUX.Views.List({el: $(el), data_model: window.MODEL_DATA}).render().el;
+    });
+    
+    var table_elmts = $('.InstrumentDevice .table_ooi');
+    _.each(table_elmts, function(el) {
+        var data_path = $(el).data('path');
+        if (data_path) {
+            var raw_table_data = window.MODEL_DATA[data_path];
+            var table_data = prepare_table_data(raw_table_data, ['description', 'name', '_id']);
+            var columns = ['description, name, _id'];
+            new IONUX.Views.DataTable({el: $(el), data: table_data});
+        } else {
+            new IONUX.Views.DataTable({el: $(el), data: {headers:[null], data: []}});
+    
+            // TEMP: make obvious what's not integrated yet.
+            $(el).find('.filter-header, .dataTables_wrapper').css('background', 'red');
+        };
+    });
+    
+    // Show the relevant elements and click to enable the Bootstrap tabs.
+    $('li.' + resource_type + ',div.' + resource_type).show();
+    $('.span9 ul, .span3 ul').find('li.' + resource_type + ':first').find('a').click();
+};
+
+function render_error(){
+    $('#dynamic-container').hide();
+    $('#error').show();
+};
+
+function append_info_level(el) {
+    var info_level = $(el).data('level');
+    if (info_level || info_level == '0') {
+        $(el).append('<span class="label label-important info-level" style="background:green;color:white;">'+info_level+'</div>');
+    };
+};

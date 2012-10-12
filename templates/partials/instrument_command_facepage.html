@@ -24,7 +24,7 @@
 	    </div>
 		<div class="attr_block">
 			<h3>Description</h3>
-			<p><%= description %></p>
+			<p>Placeholder</p>
 		</div>
 		<div class="attr_block">
 			<h3>Contacts</h3>
@@ -43,9 +43,17 @@
             			<h3>Start/Stop Instance</h3>
             			<input type="submit" id="start-instrument-agent-instance" value="Start Instrument Agent" class="btn btn-success"/>
             			<input type="submit" id="stop-instrument-agent-instance" value="Stop Instrument Agent" class="btn btn-danger stop-instrument-agent-instance" style="display:none;"/>
-            		</div>            
+            		</div>
+            		
             		<div class="instrument-commands attr_block" style="display: asdfnone;">
-            			<div class="xcommand">
+            		    <div class="xcommand">
+            		      <h3>New Commands</h3>
+                          <button class=" btn get_capabilities">Get Capabilities</button>
+            		      <select id="new-commands"> </select>
+                          <input type="submit" name="Send Command" class="btn issue_command"/>
+            		    </div>
+            		    
+            			<div class="xcommand" style="display:none;">
             				<section class="wrapper">
             					<h3 class="wrapper-heading">Instrument Instance Agent Commands</h3>
             				<form>
@@ -57,8 +65,8 @@
             					<option value='go_active'>Activate (start logger and connect to instrument)</option>
             					<option value='go_inactive'>Deactivate (stop logger and disconnect from instrument)</option>
             					<option value='run'>Run (enter observatory mode from active mode)</option>
-            					<option value='go_streaming'>Go Streaming (being streaming data)</option>
-            					<option value='go_direct_access'>Direct Access (enter direct access mode)</option>
+            					<option value='go_streaming'>Streaming (begin streaming data)</option>
+            					<option value='direct_access'>Direct Access (enter direct access mode)</option>
             					<option value='go_observatory'>Go Observatory (enter observatory mode from streaming or direct access)</option>
             					<!-- <option value='get_param'>Get parameters (get all configurable parameters)</option>
             					<option value='set_param'>Set parameters (save changes to parameters)</option> 

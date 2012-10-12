@@ -1,29 +1,6 @@
 // For development use only
-window.UI_OBJECT = new IONUX.Models.Layout();
-window.UI_OBJECT.fetch();
-
-/* rename and put in seperate file: */
-// function dyn_do_layout(){
-//     console.log('dyn_do_layout');
-//     var _id = "b62348314_2250001";
-//     var uirefid = _id.split("_")[1];
-//     var instr_facepage_data = LAYOUT_OBJECT[_id]; 
-//     _.each(instr_facepage_data, function(group){
-//         _.each(group.blocks, function(block){
-//             if (block.ui_representation == "Table"){
-//                 var tmpl = _.template($("#dyn-table-tmpl").html());
-//                 console.log("'Table' BLOCK: ", block);
-//                 var tmpl_res = tmpl({"block":block, "uirefid":uirefid});
-//                 $("#main-container").append(tmpl_res);
-//                 console.log("'Table' BLOCK  tmpl: ", tmpl_res);
-//                 /* _.each(block.attributes, function(attr){
-//                     console.log("attr: ", attr);
-//                 });*/
-//             }
-//         });
-//     });
-//     //console.log(tmpl.render({}));
-// }
+// window.UI_OBJECT = new IONUX.Models.Layout();
+// window.UI_OBJECT.fetch();
 
 function dyn_do_init(){
     // Temporary hack to set background
