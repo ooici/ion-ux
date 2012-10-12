@@ -23,7 +23,6 @@ TABLE_DATA = {
         {"sTitle":"Last Comm."},
         {"sTitle":"Last Data"},
         {"sTitle":"Last Note"},
-        {"sTitle":"Open Tkt"}
     ],
     "data":[
         ["+", "Normal", "Platform AS02CPSM", 274500, "OOI", "05:12:33", 1000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note1..", 1],
@@ -77,6 +76,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
     render: function() {
         this.$el.html(this.template());
         this.datatable = this.$el.find(".datatable-container table").dataTable({
+            "sDom":"Rlfrtip",
             "aaData":this.options.data.data,
             "aoColumns":this.options.data.headers
         });
