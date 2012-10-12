@@ -259,8 +259,16 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
     return this;
   },
   
-  issue_command: function(evt) {
-    var command = this.$el.find("option:selected").attr("value");
+  issue_command: function(evt){
+    var selected_option = this.$el.find('option:selected');
+      
+    var command = selected_option.attr("value");
+    var cap_type = selected_option.data('cap-type');
+    if (cap_type) command += '?cap_type=' + cap_type;
+    
+    console.log('cap_type', cap_type)
+    console.log('command', command);
+    
     $.ajax({
       url:command,
       dataType: 'json',
@@ -293,24 +301,30 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
   
   get_capabilities: function(evt) {
       var self = this;
-      
       $.ajax({
-        url: 'get_capabilities',
+        url: 'get_capabilities?cap_type=abc123',
         dataType: 'json',
-        success: function(resp) {
-            var select_elmt = $('#new-commands');
-            select_elmt.empty()
-
-            var data = resp.data;
-            var option_tmpl = '<option value="<%= name %>"><%= name %></option>'
-            _.each(data, function(option) {
-                if (option.name != 'example') {
-                    select_elmt.append(_.template(option_tmpl, option));
+        success: function(resp){
+            var agent_options = [];
+            var resource_options = [];
+            
+            _.each(resp.data, function(option) {
+                if (option.name != 'example'){
+                    if (option.cap_type == 1) agent_options.push(option);
+                    if (option.cap_type == 3) resource_options.push(option);
                 };
             });
             
+            var select_elmt = $('#new-commands');
+            select_elmt.empty();
+            
+            var option_elmts = agent_options.concat(resource_options);
+            var option_tmpl = '<option data-cap-type="<%= cap_type %>" value="<%= name %>"><%= name %></option>'
+            _.each(option_elmts, function(option){
+                select_elmt.append(_.template(option_tmpl, option));
+            });
         },
-        error: function() {
+        error: function(resp) {
             console.log('Error: ', resp);
         }
       });
