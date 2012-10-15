@@ -44,8 +44,9 @@ class LayoutApi(object):
         layout_schema = LayoutApi.get_new_layout_schema()
 
         resource_types = []
-        for view_id in DEFINED_VIEWS:
+        tables_processed = []
 
+        for view_id in DEFINED_VIEWS:
             view = layout_schema['spec']['elements'][view_id] 
             script_elmt = ET.SubElement(body_elmt, 'script')
             script_elmt.set('id', view_id)
@@ -214,6 +215,21 @@ class LayoutApi(object):
                             attribute_elmt.text += ' ZZZZ: %s' % attribute_widget_type 
                         
                         excluded_sub_attributes = ['table']
+                        
+                        
+                        if attribute_widget_type == 'table_ooi' and attribute_elid not in tables_processed:
+                            tables_processed.append(attribute_elid)
+                            table_columns = []
+                            for column in attribute['embed']:
+                                column_object = layout_schema['spec']['elements'][column['elid']]
+                                column_widget_type = layout_schema['spec']['widgets'][column['wid']]['name']
+                                table_columns.append([column_widget_type, column_object['label'], column['dpath'], column['pos'], column['olevel']])
+                    
+                            # Add table columns to body as a JSON script
+                            table_columns_elmt_id = 'TABLE_' + attribute_elid
+                            table_columns_elmt = ET.SubElement(body_elmt, 'script')
+                            table_columns_elmt.set('id', table_columns_elmt_id)
+                            table_columns_elmt.text = "var %s=%s" % (table_columns_elmt_id, json.dumps(table_columns))
                         
                         if attribute['embed'] and not attribute_widget_type in excluded_sub_attributes:
                             for sub_at_element in attribute['embed']:

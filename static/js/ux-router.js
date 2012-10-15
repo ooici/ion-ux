@@ -194,14 +194,14 @@ function render_page(resource_type, model) {
         var data_path = $(el).data('path');
         if (data_path) {
             var raw_table_data = window.MODEL_DATA[data_path];
-            var table_data = prepare_table_data(raw_table_data, ['description', 'name', '_id']);
+            var table_data = prepare_table_data(raw_table_data, ['_id', 'name', 'description']);
             var columns = ['description, name, _id'];
             new IONUX.Views.DataTable({el: $(el), data: table_data});
         } else {
             new IONUX.Views.DataTable({el: $(el), data: {headers:[null], data: []}});
     
             // TEMP: make obvious what's not integrated yet.
-            $(el).find('.filter-header, .dataTables_wrapper').css('background', 'red');
+            // $(el).find('.filter-header, .dataTables_wrapper').css('background', 'red');
         };
     });
     
