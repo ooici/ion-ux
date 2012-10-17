@@ -1,16 +1,17 @@
-IONUX.Views.Geospatial = Backbone.View.extend({
-    template: _.template($('#geospatial-tmpl').html()),
+IONUX.Views.ExtentGeospatial = Backbone.View.extend({
+    template: _.template($('#extent-geospatial-tmpl').html()),
     render: function(){
-        var label = this.$el.data('label');
-        var data = this.$el.data('path');
         
+        var label = this.$el.data('label');
         if (!label) {
             label = "Geospatial Bounds"
         };
         
+        var data = this.$el.data('path');
         if (!data) {
             var integration_info = this.$el.text();
         };
+        
         this.$el.html(this.template({label: label, integration_info: integration_info}));
         return this;
     }

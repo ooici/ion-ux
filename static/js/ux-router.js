@@ -199,15 +199,12 @@ function render_page(resource_type, model) {
             new IONUX.Views.DataTable({el: $(el), data: table_data});
         } else {
             new IONUX.Views.DataTable({el: $(el), data: {headers:[null], data: []}});
-    
-            // TEMP: make obvious what's not integrated yet.
-            // $(el).find('.filter-header, .dataTables_wrapper').css('background', 'red');
         };
     });
     
     var extent_geospatial_elmts = $('.InstrumentDevice .extent_geospatial_ooi');
     _.each(extent_geospatial_elmts, function(el) {
-        new IONUX.Views.Geospatial({el: $(el)}).render().el;
+        new IONUX.Views.ExtentGeospatial({el: $(el)}).render().el;
     });
     
     // Show the relevant elements and click to enable the Bootstrap tabs.
