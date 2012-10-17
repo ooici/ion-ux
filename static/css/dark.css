@@ -190,13 +190,13 @@ h2 {
   font-size: 18px;
 }
 
-h3 {
+/*h3 {
   color: #999;
   font-size: 14px;
   font-weight: 300;
   text-transform: none;
 }
-
+*/
 .wrapper-heading {
   color: #666;
   margin: 15px 0;
@@ -287,19 +287,47 @@ h3 {
   margin: 0;
 }
 
-.block {
-  background: #222;
-  color: #999;
+
+
+.v01 h3, .v01 .block h3,
+.v02 h3, .v02 .block h3 {
+  background: #4D4D4D; 
+  border-left:#666666 solid 1px; 
+  border-top:#666666 solid 1px; 
+  -webkitbox-shadow: 1px 1px #000000; 
+  -mozbox-shadow: 1px 1px #000000; 
+  box-shadow: 1px 1px #000000; 
+  padding: 5px 10px 5px 10px; 
+  letter-spacing: 3px; 
+  font-size:10px; 
+  font-weight: 600; 
+  color:#CCCCCC;
+  text-transform: uppercase;
 }
 
-.block h3 {
-  background: #4d4d4d;
-  color: #ccc;
-  font-size: 10px;
-  font-weight: normal;
+
+.tab-pane .row-fluid {
+  padding: 0;
+}
+
+.v01 .block, .v02 .block { 
+  background:#1E1E1E;
+/*  padding: 5px 30px 5px 10px; */
+  color:#CCCCCC; 
+  font-size:12px; 
+  font-weight:300; 
+  line-height:20px;
+  border-left:#333333 solid 1px; 
+  -webkit-box-shadow: 1px 1px #000000; 
+  -moz-box-shadow: 1px 1px #000000;
+  box-shadow: 1px 1px #000000;
+  margin-bottom: 20px;
+}
+
+.v01 .block div,
+.v02 .block div {
   margin: 0;
-  padding: 1px 10px;
-  text-transform: uppercase;
+/*  margin: 5px 30px 5px 10px;*/
 }
 
 .attr_block p {

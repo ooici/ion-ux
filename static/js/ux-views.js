@@ -29,7 +29,7 @@ IONUX.Views.TextShort = Backbone.View.extend({
             var text_short = get_descendant_properties(this.options.data_model, data_path);
             this.$el.html(this.template({label: label, text_short: text_short}));
         } else {
-            this.$el.css('color', 'red');
+            // this.$el.css('color', 'red');
         };
         return this;
     }
@@ -61,7 +61,7 @@ IONUX.Views.Badge = Backbone.View.extend({
             var badge = get_descendant_properties(this.options.data_model, data_path);
             this.$el.html(this.template({badge: badge}));
         } else {
-            this.$el.css('color', 'red');
+            // this.$el.css('color', 'red');
         };
         return this;
     }

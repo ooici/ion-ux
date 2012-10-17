@@ -216,8 +216,8 @@ function render_error(){
 };
 
 function append_info_level(el) {
-    var info_level = $(el).data('level');
-    if (info_level || info_level == '0') {
-        $(el).append('<span class="label label-important info-level" style="background:green;color:white;">'+info_level+'</div>');
-    };
+    // var info_level = $(el).data('level');
+    // if (info_level || info_level == '0') {
+    //     $(el).append('<span class="label label-important info-level" style="background:green;color:white;">'+info_level+'</div>');
+    // };
 };
