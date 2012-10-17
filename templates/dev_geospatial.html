@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block extra_templates %}
-    <script type="text/template" id="geospatial-tmpl">{% include 'partials/geospatial.html' %}</script>
+    <script type="text/template" id="extent-geospatial-tmpl">{% include 'partials/extent_geospatial.html' %}</script>
 {% endblock %}
 
 
@@ -20,6 +20,6 @@
 
 {% block document_ready %}
   $(function(){
-      new IONUX.Views.Geospatial({el: '#dynamic-container'}).render().el;
+      new IONUX.Views.ExtentGeospatial({el: '#dynamic-container'}).render().el;
   });
 {% endblock %}

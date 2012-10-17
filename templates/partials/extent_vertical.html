@@ -1,0 +1,13 @@
+<h4><%= label %></h4>
+<div class="upper-bound">
+    <%= upper_bound %> <i class="icon-arrow-up icon-white"></i>
+</div>
+<div class="lower-bound">
+    <%= lower_bound %> <i class="icon-arrow-down icon-white"></i>
+</div>
+
+<% if (integration_info) { %>
+    <div class="integration_info">
+        <%= integration_info %>
+    </div>
+<% }; %>

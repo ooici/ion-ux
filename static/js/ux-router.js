@@ -206,6 +206,18 @@ function render_page(resource_type, model) {
     _.each(extent_geospatial_elmts, function(el) {
         new IONUX.Views.ExtentGeospatial({el: $(el)}).render().el;
     });
+
+
+    var extent_vertical_elmts = $('.InstrumentDevice .extent_vertical_ooi');
+    _.each(extent_vertical_elmts, function(el) {
+        new IONUX.Views.ExtentVertical({el: $(el)}).render().el;
+    });
+
+
+    var extent_temporal_elmts = $('.InstrumentDevice .extent_temporal_ooi');
+    _.each(extent_temporal_elmts, function(el) {
+        new IONUX.Views.ExtentTemporal({el: $(el)}).render().el;
+    });
     
     // Show the relevant elements and click to enable the Bootstrap tabs.
     $('li.' + resource_type + ',div.' + resource_type).show();

@@ -8,11 +8,62 @@ IONUX.Views.ExtentGeospatial = Backbone.View.extend({
         };
         
         var data = this.$el.data('path');
-        if (!data) {
+        if (data) {
+            this.$el.html(this.template({label: label}));
+        
+        // For integration effort only
+        } else {
             var integration_info = this.$el.text();
+            this.$el.html(this.template({label: label, integration_info: integration_info}));
+            console.log('ID: ' + this.$el.attr('id') + ' -- ' + integration_info);
         };
         
-        this.$el.html(this.template({label: label, integration_info: integration_info}));
+        return this;
+    }
+});
+
+
+IONUX.Views.ExtentVertical = Backbone.View.extend({
+    template: _.template($('#extent-vertical-tmpl').html()),
+    render: function(){
+
+        var label = this.$el.data('label');
+        if (!label) {
+            label = "Vertical Bounds"
+        }; 
+        var data = this.$el.data('path');
+        if (data) {
+            this.$el.html(this.template({label: label, upper_bound: '', lower_bound: ''}));
+        
+        // For integration effort only
+        } else {
+            var integration_info = this.$el.text();
+            this.$el.html(this.template({label: label, upper_bound: '', lower_bound: '', integration_info: integration_info}));
+            console.log('ID: ' + this.$el.attr('id') + ' -- ' + integration_info);
+        };
+        return this;
+    }
+});
+
+IONUX.Views.ExtentTemporal = Backbone.View.extend({
+    template: _.template($('#extent-temporal-tmpl').html()),
+    render: function(){
+
+        var label = this.$el.data('label');
+        if (!label) {
+            label = "Temporal Bounds"
+        }; 
+        var data = this.$el.data('path');
+        if (data) {
+            var temporal_from, temporal_to;
+            this.$el.html(this.template({label: label, temporal_from: temporal_from, temporal_to: temporal_from}));
+        
+        // For integration effort only
+        } else {
+            var integration_info = this.$el.text();
+            this.$el.html(this.template({label: label, temporal_from: '', temporal_to: '', integration_info: integration_info}));
+            console.log('ID: ' + this.$el.attr('id') + ' -- ' + integration_info);
+        };
         return this;
     }
 });
