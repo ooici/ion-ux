@@ -205,6 +205,11 @@ function render_page(resource_type, model) {
         };
     });
     
+    var extent_geospatial_elmts = $('.InstrumentDevice .extent_geospatial_ooi');
+    _.each(extent_geospatial_elmts, function(el) {
+        new IONUX.Views.Geospatial({el: $(el)}).render().el;
+    });
+    
     // Show the relevant elements and click to enable the Bootstrap tabs.
     $('li.' + resource_type + ',div.' + resource_type).show();
     $('.span9 ul, .span3 ul').find('li.' + resource_type + ':first').find('a').click();

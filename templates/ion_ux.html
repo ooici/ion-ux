@@ -13,6 +13,10 @@
 		<!-- CSS themes will be a user preference (light and dark) -->
 		<link rel="stylesheet" href="/static/css/dark.css" type="text/css" />
 		<link rel="stylesheet" href="/static/css/dark-datatable.css" type="text/css" />
+        <link rel="stylesheet" href="/static/css/dark-geospatial.css" type="text/css" />
+        
+        <!-- Development styles -->
+        <link rel="stylesheet" href="/static/css/dark-integration.css" type="text/css" />
 		{% block extra_css %}{% endblock %}
 	</head>
 	<body>
@@ -71,7 +75,7 @@
         <script type="text/template" id="datatable-tmpl">{% include 'partials/datatable.html' %}</script>
 
         <script type="text/template" id="attribute-group-tmpl">
-            <![CDATA[<h2><%= attribute_group_label %></h2>]]>
+            <![CDATA[<h2><%= label %></h2>]]>
         </script>
 
         <script type="text/template" id="text-static-tmpl">
@@ -102,6 +106,8 @@
                 <% }); %>
             ]]>
         </script>
+        
+        <script type="text/template" id="geospatial-tmpl"><![CDATA[{% include 'partials/geospatial.html' %}]]></script>
         
         
         

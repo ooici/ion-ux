@@ -1,9 +1,29 @@
+IONUX.Views.Geospatial = Backbone.View.extend({
+    template: _.template($('#geospatial-tmpl').html()),
+    render: function(){
+        var label = this.$el.data('label');
+        var data = this.$el.data('path');
+        
+        if (!label) {
+            label = "Geospatial Bounds"
+        };
+        
+        if (!data) {
+            var integration_info = this.$el.text();
+        };
+        this.$el.html(this.template({label: label, integration_info: integration_info}));
+        return this;
+    }
+});
+
+
+
 IONUX.Views.AttributeGroup = Backbone.View.extend({
     template: _.template($('#attribute-group-tmpl').html()),
     render: function(){
         var label = this.$el.data('label');
         if (label) {
-            this.$el.html(this.template({attribute_group_label: label}));
+            this.$el.html(this.template({label: label}));
         };
         return this;
     }
