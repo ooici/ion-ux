@@ -1,12 +1,14 @@
 <h4><%= label %></h4>
 <div class="upper-bound">
-    <%= upper_bound %> <i class="icon-arrow-up icon-white"></i>
+    Upper bound <br />
+    <input type="text" class="textfield_geo" value="<%= upper_bound %>" /> <i class="icon-arrow-up icon-white"></i>
 </div>
 <div class="lower-bound">
-    <%= lower_bound %> <i class="icon-arrow-down icon-white"></i>
+    <input type="text" class="textfield_geo" value="<%= lower_bound %>" /> <i class="icon-arrow-down icon-white"></i><br />
+    Lower bound
 </div>
 
-<% if (integration_info) { %>
+<% if (typeof(integration_info) != 'undefined') { %>
     <div class="integration_info">
         <%= integration_info %>
     </div>

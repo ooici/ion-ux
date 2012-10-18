@@ -207,16 +207,20 @@ function render_page(resource_type, model) {
         new IONUX.Views.ExtentGeospatial({el: $(el)}).render().el;
     });
 
-
     var extent_vertical_elmts = $('.InstrumentDevice .extent_vertical_ooi');
     _.each(extent_vertical_elmts, function(el) {
         new IONUX.Views.ExtentVertical({el: $(el)}).render().el;
     });
 
-
     var extent_temporal_elmts = $('.InstrumentDevice .extent_temporal_ooi');
     _.each(extent_temporal_elmts, function(el) {
         new IONUX.Views.ExtentTemporal({el: $(el)}).render().el;
+    });
+
+
+    var checkbox_elmts = $('.InstrumentDevice .checkbox_ooi');
+    _.each(checkbox_elmts, function(el) {
+        new IONUX.Views.Checkbox({el: $(el), data_model: window.MODEL_DATA}).render().el;
     });
     
     // Show the relevant elements and click to enable the Bootstrap tabs.

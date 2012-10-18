@@ -1,3 +1,30 @@
+IONUX.Views.Checkbox = Backbone.View.extend({
+    template: _.template($('#checkbox-tmpl').html()),
+    render: function(){
+
+        var label = this.$el.data('label');
+        if (!label) {
+            label = "Checkbox"
+        }; 
+        
+        var data_path = this.$el.data('path');
+        var data = get_descendant_properties(this.options.data_model, data_path);
+        var checked = data === true ? 'checked' : '';
+        
+        if (data_path) {
+            this.$el.html(this.template({label: label, checked: checked}));
+
+        // For integration effort only
+        } else {
+            var integration_info = this.$el.text();
+            this.$el.html(this.template({label: label, integration_info: integration_info}));
+            console.log('ID: ' + this.$el.attr('id') + ' -- ' + integration_info);
+        };
+        return this;
+    }
+});
+
+
 IONUX.Views.ExtentGeospatial = Backbone.View.extend({
     template: _.template($('#extent-geospatial-tmpl').html()),
     render: function(){
@@ -7,8 +34,8 @@ IONUX.Views.ExtentGeospatial = Backbone.View.extend({
             label = "Geospatial Bounds"
         };
         
-        var data = this.$el.data('path');
-        if (data) {
+        var data_path = this.$el.data('path');
+        if (data_path) {
             this.$el.html(this.template({label: label}));
         
         // For integration effort only
@@ -22,7 +49,6 @@ IONUX.Views.ExtentGeospatial = Backbone.View.extend({
     }
 });
 
-
 IONUX.Views.ExtentVertical = Backbone.View.extend({
     template: _.template($('#extent-vertical-tmpl').html()),
     render: function(){
@@ -31,8 +57,8 @@ IONUX.Views.ExtentVertical = Backbone.View.extend({
         if (!label) {
             label = "Vertical Bounds"
         }; 
-        var data = this.$el.data('path');
-        if (data) {
+        var data_path = this.$el.data('path');
+        if (data_path) {
             this.$el.html(this.template({label: label, upper_bound: '', lower_bound: ''}));
         
         // For integration effort only
@@ -53,8 +79,8 @@ IONUX.Views.ExtentTemporal = Backbone.View.extend({
         if (!label) {
             label = "Temporal Bounds"
         }; 
-        var data = this.$el.data('path');
-        if (data) {
+        var data_path = this.$el.data('path');
+        if (data_path) {
             var temporal_from, temporal_to;
             this.$el.html(this.template({label: label, temporal_from: temporal_from, temporal_to: temporal_from}));
         
@@ -67,8 +93,6 @@ IONUX.Views.ExtentTemporal = Backbone.View.extend({
         return this;
     }
 });
-
-
 
 IONUX.Views.AttributeGroup = Backbone.View.extend({
     template: _.template($('#attribute-group-tmpl').html()),
@@ -101,7 +125,9 @@ IONUX.Views.TextShort = Backbone.View.extend({
             var text_short = get_descendant_properties(this.options.data_model, data_path);
             this.$el.html(this.template({label: label, text_short: text_short}));
         } else {
-            // this.$el.css('color', 'red');
+            this.$el.css('color', 'orange');
+            var integration_info = this.$el.text();
+            console.log('ID: ' + this.$el.attr('id') + ' -- ' + integration_info);
         };
         return this;
     }
@@ -133,7 +159,8 @@ IONUX.Views.Badge = Backbone.View.extend({
             var badge = get_descendant_properties(this.options.data_model, data_path);
             this.$el.html(this.template({badge: badge}));
         } else {
-            // this.$el.css('color', 'red');
+            console.log('ID: ' + this.$el.attr('id') + ' -- ' + integration_info);
+            this.$el.css('color', 'orange');
         };
         return this;
     }
@@ -142,11 +169,15 @@ IONUX.Views.Badge = Backbone.View.extend({
 IONUX.Views.List = Backbone.View.extend({
     template: _.template($('#list-tmpl').html()),
     render: function(){
+        var label = this.$el.data('label');
+        
         var data_path = this.$el.data('path');
         if (data_path) {
-            var label = this.$el.data('label');
             var list_items = get_descendant_properties(this.options.data_model, data_path);
             this.$el.html(this.template({list_items: list_items, label: label}));
+        } else {
+            var integration_info = this.$el.text();
+            this.$el.html(this.template({list_items: [], label: label, integration_info: integration_info}));
         };
         return this;
     }

@@ -1,12 +1,14 @@
 <h4><%= label %></h4>
 <div class="temporal-from">
-    From: <%= temporal_from %>
+    From:<br />
+    <input type="text" class="textfield_geo" value="<%= temporal_from %>" /> <i class="icon-calendar icon-white"></i>
 </div>
 <div class="temporal-to">
-    To: <%= temporal_to %>
+    To:<br />
+    <input type="text" class="textfield_geo" value="<%= temporal_to %>" /> <i class="icon-calendar icon-white"></i>
 </div>
 
-<% if (integration_info) { %>
+<% if (typeof(integration_info) != 'undefined') { %>
     <div class="integration_info">
         <%= integration_info %>
     </div>

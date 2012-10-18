@@ -31,7 +31,7 @@ body {
 
 /* BLOCK/ATTRIBUTE STYLES*/
 
-h4 {
+h4, .h4-span {
   color: #CCC;
   font-size: 12px;
   font-weight: normal;

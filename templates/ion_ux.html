@@ -75,7 +75,7 @@
         <script type="text/template" id="datatable-tmpl">{% include 'partials/datatable.html' %}</script>
 
         <script type="text/template" id="attribute-group-tmpl">
-            <![CDATA[<h2><%= label %></h2>]]>
+            <![CDATA[<h4><%= label %></h4>]]>
         </script>
 
         <script type="text/template" id="text-static-tmpl">
@@ -98,14 +98,8 @@
             <![CDATA[<span class="label label-important" style="background-color:#3a87ad;color:white;"><%= badge %></span>]]>
         </script>
         
-        <script type="text/template" id="list-tmpl">
-            <![CDATA[
-                <h3><%= label %></h3>
-                <% _.each(list_items, function(item) { %>
-                    <span class="list-item"><%= item %></span>
-                <% }); %>
-            ]]>
-        </script>
+        <script type="text/template" id="list-tmpl"><![CDATA[{% include 'partials/list.html' %}]]></script>
+        <script type="text/template" id="checkbox-tmpl"><![CDATA[{% include 'partials/checkbox.html' %}]]></script>
         
         <script type="text/template" id="extent-geospatial-tmpl"><![CDATA[{% include 'partials/extent_geospatial.html' %}]]></script>
         <script type="text/template" id="extent-vertical-tmpl"><![CDATA[{% include 'partials/extent_vertical.html' %}]]></script>
