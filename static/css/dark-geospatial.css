@@ -27,10 +27,12 @@
 
 .textfield_geo {
 /*  height:12px;*/
+  font-size: 10px;
+  font-weight: normal;
   background: #333;
-  width: 50px;
-  border:1px solid #555;
-  color:#000;
+  width: 66px;
+  border: 1px solid #555;
+  color: #ccc;
   margin: 5px;
 }
 
@@ -39,7 +41,7 @@
 
 .textfield {
   height:12px;
-  width: 66px;
+  width: 60px;
   border:1px solid #DDDDDD;
   color:#000;
   margin: 5px;
