@@ -18,7 +18,7 @@ IONUX.Views.Checkbox = Backbone.View.extend({
         } else {
             var integration_info = this.$el.text();
             this.$el.html(this.template({label: label, integration_info: integration_info}));
-            console.log('ID: ' + this.$el.attr('id') + ' -- ' + integration_info);
+            console.log('ID: ' + this.$el.attr('id') + ' -- DB-PATH: ' + this.$el.data('path') + ' -- ' + integration_info);
         };
         return this;
     }
@@ -42,7 +42,7 @@ IONUX.Views.ExtentGeospatial = Backbone.View.extend({
         } else {
             var integration_info = this.$el.text();
             this.$el.html(this.template({label: label, integration_info: integration_info}));
-            console.log('ID: ' + this.$el.attr('id') + ' -- ' + integration_info);
+            console.log('ID: ' + this.$el.attr('id') + ' -- DB-PATH: ' + this.$el.data('path') + ' -- ' + integration_info);
         };
         
         return this;
@@ -65,7 +65,7 @@ IONUX.Views.ExtentVertical = Backbone.View.extend({
         } else {
             var integration_info = this.$el.text();
             this.$el.html(this.template({label: label, upper_bound: '', lower_bound: '', integration_info: integration_info}));
-            console.log('ID: ' + this.$el.attr('id') + ' -- ' + integration_info);
+            console.log('ID: ' + this.$el.attr('id') + ' -- DB-PATH: ' + this.$el.data('path') + ' -- ' + integration_info);
         };
         return this;
     }
@@ -88,7 +88,7 @@ IONUX.Views.ExtentTemporal = Backbone.View.extend({
         } else {
             var integration_info = this.$el.text();
             this.$el.html(this.template({label: label, temporal_from: '', temporal_to: '', integration_info: integration_info}));
-            console.log('ID: ' + this.$el.attr('id') + ' -- ' + integration_info);
+            console.log('ID: ' + this.$el.attr('id') + ' -- DB-PATH: ' + this.$el.data('path') + ' -- ' + integration_info);
         };
         return this;
     }
@@ -120,14 +120,14 @@ IONUX.Views.TextShort = Backbone.View.extend({
     template: _.template($('#text-short-tmpl').html()),
     render: function(){
         var data_path = this.$el.data('path');
-        if (data_path) {
+        if (data_path && data_path.substring(0,7) != 'unknown'){
             var label = this.$el.data('label');
             var text_short = get_descendant_properties(this.options.data_model, data_path);
             this.$el.html(this.template({label: label, text_short: text_short}));
         } else {
             this.$el.css('color', 'orange');
             var integration_info = this.$el.text();
-            console.log('ID: ' + this.$el.attr('id') + ' -- ' + integration_info);
+            console.log('ID: ' + this.$el.attr('id') + ' -- DB-PATH: ' + this.$el.data('path') + ' -- ' + integration_info);
         };
         return this;
     }
