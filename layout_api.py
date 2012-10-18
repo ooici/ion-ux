@@ -275,6 +275,7 @@ class LayoutApi(object):
                                 sub_attribute_elmt.set('class', sub_attribute_widget_type)
                                 sub_attribute_elmt.set('data-path', sub_attribute_data_path)
                                 sub_attribute_elmt.set('data-level', sub_attribute_level)
+                                sub_attribute_elmt.set('data-label', sub_attribute['label'])
 
                                 # sub_attribute_elmt.text = '%s (%s) (%s) (%s) (%s)' % (sub_attribute['label'], sub_attribute['name'], sub_attribute_elid, sub_attribute_widget_type, sub_attribute_position)
                                 sub_attribute_elmt.text = '%s (%s)' % (sub_attribute['label'], sub_attribute['name'])

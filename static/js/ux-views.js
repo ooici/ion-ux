@@ -118,9 +118,11 @@ IONUX.Views.TextStatic = Backbone.View.extend({
 
 IONUX.Views.TextShort = Backbone.View.extend({
     template: _.template($('#text-short-tmpl').html()),
+
     render: function(){
         var data_path = this.$el.data('path');
-        if (data_path && data_path.substring(0,7) != 'unknown') {
+
+        if (data_path && data_path.substring(0,7) != 'unknown'){
             var label = this.$el.data('label');
             var text_short = get_descendant_properties(this.options.data_model, data_path);
             this.$el.html(this.template({label: label, text_short: text_short}));
