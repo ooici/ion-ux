@@ -35,7 +35,7 @@ IONUX.Views.ExtentGeospatial = Backbone.View.extend({
         };
         
         var data_path = this.$el.data('path');
-        if (data_path) {
+        if (data_path && data_path.substring(0,7) != 'unknown') {
             this.$el.html(this.template({label: label}));
         
         // For integration effort only
@@ -58,7 +58,7 @@ IONUX.Views.ExtentVertical = Backbone.View.extend({
             label = "Vertical Bounds"
         }; 
         var data_path = this.$el.data('path');
-        if (data_path) {
+        if (data_path && data_path.substring(0,7) != 'unknown') {
             this.$el.html(this.template({label: label, upper_bound: '', lower_bound: ''}));
         
         // For integration effort only
@@ -80,7 +80,7 @@ IONUX.Views.ExtentTemporal = Backbone.View.extend({
             label = "Temporal Bounds"
         }; 
         var data_path = this.$el.data('path');
-        if (data_path) {
+        if (data_path && data_path.substring(0,7) != 'unknown') {
             var temporal_from, temporal_to;
             this.$el.html(this.template({label: label, temporal_from: temporal_from, temporal_to: temporal_from}));
         
@@ -120,7 +120,7 @@ IONUX.Views.TextShort = Backbone.View.extend({
     template: _.template($('#text-short-tmpl').html()),
     render: function(){
         var data_path = this.$el.data('path');
-        if (data_path && data_path.substring(0,7) != 'unknown'){
+        if (data_path && data_path.substring(0,7) != 'unknown') {
             var label = this.$el.data('label');
             var text_short = get_descendant_properties(this.options.data_model, data_path);
             this.$el.html(this.template({label: label, text_short: text_short}));
@@ -155,7 +155,7 @@ IONUX.Views.Badge = Backbone.View.extend({
     template: _.template($('#badge-tmpl').html()),
     render: function(){
         var data_path = this.$el.data('path');
-        if (data_path) {
+        if (data_path && data_path.substring(0,7) != 'unknown') {
             var badge = get_descendant_properties(this.options.data_model, data_path);
             this.$el.html(this.template({badge: badge}));
         } else {
@@ -172,7 +172,7 @@ IONUX.Views.List = Backbone.View.extend({
         var label = this.$el.data('label');
         
         var data_path = this.$el.data('path');
-        if (data_path) {
+        if (data_path && data_path.substring(0,7) != 'unknown') {
             var list_items = get_descendant_properties(this.options.data_model, data_path);
             this.$el.html(this.template({list_items: list_items, label: label}));
         } else {
