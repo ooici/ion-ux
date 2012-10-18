@@ -271,6 +271,7 @@ class LayoutApi(object):
                                 sub_attribute_widget_type = layout_schema['spec']['widgets'][sub_attribute_widget_id]['name']
                                 
                                 sub_attribute_elmt = ET.SubElement(block_elmt, 'div')
+                                sub_attribute_elmt.set('id', sub_attribute_elid)
                                 sub_attribute_elmt.set('class', sub_attribute_widget_type)
                                 sub_attribute_elmt.set('data-path', sub_attribute_data_path)
                                 sub_attribute_elmt.set('data-level', sub_attribute_level)
