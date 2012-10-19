@@ -9,53 +9,17 @@
 
 */
 
-TEST_TABLE_DATA = {
-    "headers":[
-        {"sTitle":"", "sClass": "center"}, 
-        {"sTitle":"", "sClass": "center", "sType":"title", "fnRender":status_indicator},
-        {"sTitle":"Name"}, 
-        {"sTitle":"Id"},
-        {"sTitle":"Type"},
-        {"sTitle":"Uptime"},
-        {"sTitle":"Port"},
-        {"sTitle":"Last Comm."},
-        {"sTitle":"Last Data"},
-        {"sTitle":"Last Note"},
-    ],
-    "data":[
-        ["+", "Normal", "Platform AS02CPSM", 274500, "OOI", "05:12:33", 1000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note1..", 1],
-        ["+", "Alarm", "Platform AS02CPSM", 174501, "OOI", "05:12:33", 3000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note2..", 1],
-        ["+", "Unknown", "Platform AS02CPSM", 275504, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note3..", 1],
-        ["+", "Normal", "Platform AS02CPSM", 274503, "OOI", "05:12:33", 4000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note4..", 1],
-        ["+", "Normal", "Platform AS02CPSM", 473508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note5..", 1],
-        ["+", "Alert", "Platform AS02CPSM", 274508, "OOI", "05:12:33", 7000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note6..", 1],
-        ["+", "Normal", "Platform AS02CPSM", 974508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note7..", 1],
-        ["+", "Normal", "Platform AS02CPSM", 271501, "OOI", "05:12:33", 9000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note8..", 1],
-        ["+", "Normal", "Platform AS02CPSM", 274508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note9..", 1],
-        ["+", "Normal", "Platform AS02CPSM", 274508, "OOI", "05:12:33", 1000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note10.", 1],
-        ["+", "Normal", "Platform AS02CPSM", 471508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note11.", 1],
-        ["+", "Normal", "Platform AS02CPSM", 970508, "OOI", "05:12:33", 3000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note12.", 1],
-        ["+", "Normal", "Platform AS02CPSM", 374508, "OOI", "05:12:33", 7000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note13.", 1],
-        ["+", "Normal", "Platform AS02CPSM", 274508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note14.", 1],
-    ]
-}
-
-
-TEST_TABLE_DATA2 = {
-    "headers":[ ],
-    "data":[
-        {'aggregated_status':"Normal", 'name':"Platform AS02CPSM", 'uuid':274503, 'last_calibration_datetime':"05:12:33", 'description':"Last Note4.."},
-        {'aggregated_status':"Alarm", 'name':"Platform AS02CPSM", 'uuid':174501,  'last_calibration_datetime':"05:12:33", 'description':"Last Note2.."},
-        {'aggregated_status':"Normal", 'name':"Platform AS02CPSM", 'uuid':473508, 'last_calibration_datetime':"05:12:33", 'description':"Last Note5.."},
-        {'aggregated_status':"Normal", 'name':"Platform AS02CPSM", 'uuid':271501, 'last_calibration_datetime':"05:12:33", 'description':"Last Note8.."},
-        {'aggregated_status':"Unknown", 'name':"Platform AS02CPSM", 'uuid':275504, 'last_calibration_datetime':"05:12:33", 'description':"Last Note3.."},
-        {'aggregated_status':"Normal", 'name':"Platform AS02CPSM", 'uuid':274500, 'last_calibration_datetime':"05:12:33", 'description':"Last Note1.."},
-        {'aggregated_status':"Normal", 'name':"Platform AS02CPSM", 'uuid':974508, 'last_calibration_datetime':"05:12:33", 'description':"Last Note7.."},
-        {'aggregated_status':"Alert", 'name':"Platform AS02CPSM", 'uuid':274508, 'last_calibration_datetime':"05:12:33",  'description':"Last Note6.."},
-        {'aggregated_status':"Unknown", 'name':"Platform AS02CPSM", 'uuid':275504, 'last_calibration_datetime':"05:12:33", 'description':"Last Note3.."}
-    ]
-}
-
+TEST_TABLE_DATA = [
+    {'aggregated_status':"Normal", 'name':"Platform AS02CPSM", 'uuid':274503, 'last_calibration_datetime':"05:12:33", 'description':"Last Note4.."},
+    {'aggregated_status':"Alarm", 'name':"Platform AS02CPSM", 'uuid':174501,  'last_calibration_datetime':"05:12:33", 'description':"Last Note2.."},
+    {'aggregated_status':"Normal", 'name':"Platform AS02CPSM", 'uuid':473508, 'last_calibration_datetime':"05:12:33", 'description':"Last Note5.."},
+    {'aggregated_status':"Normal", 'name':"Platform AS02CPSM", 'uuid':271501, 'last_calibration_datetime':"05:12:33", 'description':"Last Note8.."},
+    {'aggregated_status':"Unknown", 'name':"Platform AS02CPSM", 'uuid':275504, 'last_calibration_datetime':"05:12:33", 'description':"Last Note3.."},
+    {'aggregated_status':"Normal", 'name':"Platform AS02CPSM", 'uuid':274500, 'last_calibration_datetime':"05:12:33", 'description':"Last Note1.."},
+    {'aggregated_status':"Normal", 'name':"Platform AS02CPSM", 'uuid':974508, 'last_calibration_datetime':"05:12:33", 'description':"Last Note7.."},
+    {'aggregated_status':"Alert", 'name':"Platform AS02CPSM", 'uuid':274508, 'last_calibration_datetime':"05:12:33",  'description':"Last Note6.."},
+    {'aggregated_status':"Unknown", 'name':"Platform AS02CPSM", 'uuid':275504, 'last_calibration_datetime':"05:12:33", 'description':"Last Note3.."}
+]
 
 
 
@@ -92,7 +56,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
     render: function() {
         this.$el.html(this.template());
         var header_data = this.header_data();
-        var table_data = this.table_data(this.options.data.data);
+        var table_data = this.table_data(this.options.data);
         this.datatable = this.$el.find(".datatable-container table").dataTable({
             "sDom":"Rlfrtip",
             "aaData":table_data,
@@ -122,21 +86,20 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         return data;
     },
 
-    table_data: function(data_obj){
+    table_data: function(data_objs){
         var data = [];
         var table_metadata = this._get_table_metadata();
         var data_keys = _.map(table_metadata, function(arr){return arr[2];});
         var self = this;
-        _.each(data_obj, function(data_arr){
+        _.each(data_objs, function(data_obj){
             var data_row = []
             _.each(data_keys, function(key){
-                data_row.push(data_arr[key]);
+                data_row.push(data_obj[key]);
             });
             data.push(data_row);
         });
         return data;
     },
-
 
     preproccesor: function(data_type){
         switch(data_type){
