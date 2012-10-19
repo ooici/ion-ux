@@ -1,0 +1,25 @@
+{% extends "ion_ux.html" %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="/static/css/dark-geospatial.css" type="text/css" />
+{% endblock %}
+
+{% block extra_templates %}
+    <script type="text/template" id="extent-geospatial-tmpl">{% include 'partials/extent_geospatial.html' %}</script>
+{% endblock %}
+
+
+{% block extra_vendor_js %}
+{% endblock %}
+
+
+{% block extra_ionux_js %}
+
+{% endblock %}
+
+
+{% block document_ready %}
+  $(function(){
+      new IONUX.Views.ExtentGeospatial({el: '#dynamic-container'}).render().el;
+  });
+{% endblock %}

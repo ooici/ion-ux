@@ -249,6 +249,11 @@ def dev_datatable(resource_id=None):
 @app.route('/dev/actionmenus', methods=['GET'])
 def dev_actionmenus(resource_id=None):
     return render_template('dev_actionmenus.html')
+    
+@app.route('/dev/geospatial', methods=['GET'])
+def dev_datatable(resource_id=None):
+    return render_template('dev_geospatial.html')
+    
 
 
 # CATCHALL ROUTE

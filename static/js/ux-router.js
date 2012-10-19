@@ -194,15 +194,33 @@ function render_page(resource_type, model) {
         var data_path = $(el).data('path');
         if (data_path) {
             var raw_table_data = window.MODEL_DATA[data_path];
-            var table_data = prepare_table_data(raw_table_data, ['description', 'name', '_id']);
+            var table_data = prepare_table_data(raw_table_data, ['_id', 'name', 'description']);
             var columns = ['description, name, _id'];
             new IONUX.Views.DataTable({el: $(el), data: table_data});
         } else {
             new IONUX.Views.DataTable({el: $(el), data: {headers:[null], data: []}});
-    
-            // TEMP: make obvious what's not integrated yet.
-            $(el).find('.filter-header, .dataTables_wrapper').css('background', 'red');
         };
+    });
+    
+    var extent_geospatial_elmts = $('.InstrumentDevice .extent_geospatial_ooi');
+    _.each(extent_geospatial_elmts, function(el) {
+        new IONUX.Views.ExtentGeospatial({el: $(el)}).render().el;
+    });
+
+    var extent_vertical_elmts = $('.InstrumentDevice .extent_vertical_ooi');
+    _.each(extent_vertical_elmts, function(el) {
+        new IONUX.Views.ExtentVertical({el: $(el)}).render().el;
+    });
+
+    var extent_temporal_elmts = $('.InstrumentDevice .extent_temporal_ooi');
+    _.each(extent_temporal_elmts, function(el) {
+        new IONUX.Views.ExtentTemporal({el: $(el)}).render().el;
+    });
+
+
+    var checkbox_elmts = $('.InstrumentDevice .checkbox_ooi');
+    _.each(checkbox_elmts, function(el) {
+        new IONUX.Views.Checkbox({el: $(el), data_model: window.MODEL_DATA}).render().el;
     });
     
     // Show the relevant elements and click to enable the Bootstrap tabs.
@@ -216,8 +234,8 @@ function render_error(){
 };
 
 function append_info_level(el) {
-    var info_level = $(el).data('level');
-    if (info_level || info_level == '0') {
-        $(el).append('<span class="label label-important info-level" style="background:green;color:white;">'+info_level+'</div>');
-    };
+    // var info_level = $(el).data('level');
+    // if (info_level || info_level == '0') {
+    //     $(el).append('<span class="label label-important info-level" style="background:green;color:white;">'+info_level+'</div>');
+    // };
 };

@@ -132,9 +132,11 @@ class ServiceApi(object):
 
     @staticmethod
     def instrument_agent_stop(instrument_device_id):
-        instrument_agent_instance_id = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate':'hasAgentInstance'})[0][0]['_id']
-        agent_request = service_gateway_get('instrument_management', 'stop_instrument_agent_instance', params={'instrument_agent_instance_id': str(instrument_agent_instance_id)})
-        return agent_request
+        # instrument_agent_instance_id = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate':'hasAgentInstance'})[0][0]['_id']
+        # agent_request = service_gateway_get('instrument_management', 'stop_instrument_agent_instance', params={'instrument_agent_instance_id': str(instrument_agent_instance_id)})
+        # return agent_request
+        
+        pass
 
     @staticmethod
     def instrument_execute(instrument_device_id, command, cap_type):
@@ -147,28 +149,6 @@ class ServiceApi(object):
             params['command'].update({'kwargs': {'session_type': 3, 'session_timeout':600, 'inactivity_timeout': 600}})
         agent_response = service_gateway_agent_request(instrument_device_id, agent_op, params)
         return agent_response
-
-    # @staticmethod
-    # def instrument_execute_agent(instrument_device_id, command):
-    #     agent_op = "execute_agent"
-    #     params = {"command": {"type_": "AgentCommand", "command": command}}
-    #     # params = {}
-    #     if command == 'go_direct_access':
-    #         params['command'].update({'kwargs': {'session_type': 3, 'session_timeout':600, 'inactivity_timeout': 600}})
-    #     agent_response = service_gateway_agent_request(instrument_device_id, agent_op, params)
-    #     return agent_response
-    # 
-    # 
-    # @staticmethod
-    # def instrument_execute_resource(instrument_device_id, command):
-    #     agent_op = "execute_agent"
-    #     params = {"command": {"type_": "AgentCommand", "command": command}}
-    #     # params = {}
-    #     if command == 'go_direct_access':
-    #         params['command'].update({'kwargs': {'session_type': 3, 'session_timeout':600, 'inactivity_timeout': 600}})
-    #     agent_response = service_gateway_agent_request(instrument_device_id, agent_op, params)
-    #     return agent_response
-
 
     @staticmethod
     def instrument_agent_get_capabilities(instrument_device_id):

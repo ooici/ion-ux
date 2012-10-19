@@ -1,0 +1,141 @@
+.geo-north-text, .geo-north, .geo-south-text, .geo-south {
+  text-align: center;
+  margin-left: -1%;
+}
+
+.geo-east {
+  text-align: right;
+}
+
+.geo-north-text {
+  margin-bottom: 20px;
+}
+.geo-north-text, .geo-east-text, .geo-west-text, .geo-south-text {
+  background: #333;
+  padding: 1px 5px;
+  border: solid 1px #444;
+}
+
+.geo-east-text {
+  margin-top: -16px;
+}
+
+.geo-south {
+  padding-top: 0;
+  margin-top: 0;
+}
+
+.textfield_geo {
+/*  height:12px;*/
+  font-size: 10px;
+  font-weight: normal;
+  background: #333;
+  width: 66px;
+  border: 1px solid #555;
+  color: #ccc;
+  margin: 5px;
+}
+
+
+/* Original geospatial styles */
+
+.textfield {
+  height:12px;
+  width: 60px;
+  border:1px solid #DDDDDD;
+  color:#000;
+  margin: 5px;
+}
+
+
+#geospatialContainer {
+	height:160px;
+	position: relative;
+	display: block;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+
+.boundingBoxControls {
+	position:absolute;
+	top:52px;
+	left:-10px;
+	width:180px;
+	height: 85px;
+}
+
+
+.bb_direction {
+    cursor:pointer;
+    border: 1px solid #CCCCCC;
+    padding: 0 2px;
+    margin-bottom:1px;
+}
+
+
+.Ntext {
+	position:inherit;
+	top:-6px;
+	left:88px;
+	font-weight:bold;
+	z-index:4;
+}
+
+.north {
+	position: inherit;
+	top: 13px;
+	left:60px;
+	z-index: 4;
+}
+
+.Stext {
+	position:inherit;
+	top:68px;
+	left:89px;
+	font-weight:bold;
+	z-index:4;
+}
+
+.south {
+	position: inherit;	
+  height: 14px;
+	width: 50px;
+	top: 50px;
+	left:60px;
+	z-index: 4;
+}
+
+.Wtext {
+	position:inherit;
+	top:31px;
+	left:4px;
+	font-weight:bold;
+	z-index:4;
+}
+
+.west {
+  height: 14px;
+  width: 50px;
+	position:inherit;
+	top:31px;
+	left: 23px;
+	z-index: 4;
+}
+
+.Etext {
+	position:inherit;
+	top:31px;
+	left:168px;
+	font-weight:bold;
+	z-index:4;
+}
+
+.east {
+    height: 14px;
+    width: 50px;
+	position:inherit;
+	top: 31px;
+	left:95px;
+	z-index: 4;
+}
