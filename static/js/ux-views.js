@@ -18,7 +18,7 @@ IONUX.Views.Checkbox = Backbone.View.extend({
         } else {
             var integration_info = this.$el.text();
             this.$el.html(this.template({label: label, integration_info: integration_info}));
-            console.log('ID: ' + this.$el.attr('id') + ' -- DB-PATH: ' + this.$el.data('path') + ' -- ' + integration_info);
+            integration_log(this.$el.attr('id'), this.$el.data('path'), integration_info);
         };
         return this;
     }
@@ -129,7 +129,7 @@ IONUX.Views.TextShort = Backbone.View.extend({
         } else {
             this.$el.css('color', 'orange');
             var integration_info = this.$el.text();
-            console.log('ID: ' + this.$el.attr('id') + ' -- DB-PATH: ' + this.$el.data('path') + ' -- ' + integration_info);
+            integration_log(this.$el.attr('id'), this.$el.data('path'), integration_info);
         };
         return this;
     }
@@ -161,7 +161,8 @@ IONUX.Views.Badge = Backbone.View.extend({
             var badge = get_descendant_properties(this.options.data_model, data_path);
             this.$el.html(this.template({badge: badge}));
         } else {
-            console.log('ID: ' + this.$el.attr('id') + ' -- ' + integration_info);
+            var integration_info = this.$el.text();
+            integration_log(this.$el.attr('id'), this.$el.data('path'), integration_info);
             this.$el.css('color', 'orange');
         };
         return this;
@@ -179,13 +180,16 @@ IONUX.Views.List = Backbone.View.extend({
             this.$el.html(this.template({list_items: list_items, label: label}));
         } else {
             var integration_info = this.$el.text();
+            integration_log(this.$el.attr('id'), this.$el.data('path'), integration_info);
             this.$el.html(this.template({list_items: [], label: label, integration_info: integration_info}));
         };
         return this;
     }
 });
 
-
+function integration_log(id, db_path, integration_info ) {
+    console.log('ID: ' + id + ' --DB-PATH: ' + db_path + ' --INTEGRATION-INFO: ' + integration_info);
+};
 
 
 // IONUX.Views.Facepage = Backbone.View.extend({
