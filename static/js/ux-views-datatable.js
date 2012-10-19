@@ -1,6 +1,4 @@
 /*
-TODO:
-
 - Show/Hide 
 
 - how will filter specific data/datypes be passed/used?
@@ -46,15 +44,15 @@ TEST_TABLE_DATA = {
 TEST_TABLE_DATA2 = {
     "headers":[ ],
     "data":[
-        ["Normal", "Platform AS02CPSM", 274503, "05:12:33", "Last Note4.."],
-        ["Alarm", "Platform AS02CPSM", 174501,  "05:12:33", "Last Note2.."],
-        ["Normal", "Platform AS02CPSM", 473508, "05:12:33", "Last Note5.."],
-        ["Normal", "Platform AS02CPSM", 271501, "05:12:33", "Last Note8.."],
-        ["Unknown", "Platform AS02CPSM", 275504, "05:12:33", "Last Note3.."],
-        ["Normal", "Platform AS02CPSM", 274500, "05:12:33", "Last Note1.."],
-        ["Normal", "Platform AS02CPSM", 974508, "05:12:33", "Last Note7.."],
-        ["Alert", "Platform AS02CPSM", 274508, "05:12:33",  "Last Note6.."],
-        ["Unknown", "Platform AS02CPSM", 275504, "05:12:33", "Last Note3.."],
+        {'aggregated_status':"Normal", 'name':"Platform AS02CPSM", 'uuid':274503, 'last_calibration_datetime':"05:12:33", 'description':"Last Note4.."},
+        {'aggregated_status':"Alarm", 'name':"Platform AS02CPSM", 'uuid':174501,  'last_calibration_datetime':"05:12:33", 'description':"Last Note2.."},
+        {'aggregated_status':"Normal", 'name':"Platform AS02CPSM", 'uuid':473508, 'last_calibration_datetime':"05:12:33", 'description':"Last Note5.."},
+        {'aggregated_status':"Normal", 'name':"Platform AS02CPSM", 'uuid':271501, 'last_calibration_datetime':"05:12:33", 'description':"Last Note8.."},
+        {'aggregated_status':"Unknown", 'name':"Platform AS02CPSM", 'uuid':275504, 'last_calibration_datetime':"05:12:33", 'description':"Last Note3.."},
+        {'aggregated_status':"Normal", 'name':"Platform AS02CPSM", 'uuid':274500, 'last_calibration_datetime':"05:12:33", 'description':"Last Note1.."},
+        {'aggregated_status':"Normal", 'name':"Platform AS02CPSM", 'uuid':974508, 'last_calibration_datetime':"05:12:33", 'description':"Last Note7.."},
+        {'aggregated_status':"Alert", 'name':"Platform AS02CPSM", 'uuid':274508, 'last_calibration_datetime':"05:12:33",  'description':"Last Note6.."},
+        {'aggregated_status':"Unknown", 'name':"Platform AS02CPSM", 'uuid':275504, 'last_calibration_datetime':"05:12:33", 'description':"Last Note3.."}
     ]
 }
 
@@ -93,23 +91,25 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
     },
     render: function() {
         this.$el.html(this.template());
-        if (this.options.data.headers.length){
-            var header_data = this.options.data.headers;
-        } else {
-            var header_data = this.header_data();
-        }
+        var header_data = this.header_data();
+        var table_data = this.table_data(this.options.data.data);
         this.datatable = this.$el.find(".datatable-container table").dataTable({
             "sDom":"Rlfrtip",
-            "aaData":this.options.data.data,
+            "aaData":table_data,
             "aoColumns":header_data
         });
         return this;
     },
 
-    header_data: function(){
-        var data = [];
+    _get_table_metadata: function(){
         var table_metadata_id = "TABLE_"+this.$el.attr("id");
         var table_metadata = window[table_metadata_id];
+        return table_metadata;
+    },
+
+    header_data: function(){
+        var data = [];
+        var table_metadata = this._get_table_metadata();
         var self = this;
         _.each(table_metadata, function(item){
             var data_item = {};
@@ -121,6 +121,22 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         });
         return data;
     },
+
+    table_data: function(data_obj){
+        var data = [];
+        var table_metadata = this._get_table_metadata();
+        var data_keys = _.map(table_metadata, function(arr){return arr[2];});
+        var self = this;
+        _.each(data_obj, function(data_arr){
+            var data_row = []
+            _.each(data_keys, function(key){
+                data_row.push(data_arr[key]);
+            });
+            data.push(data_row);
+        });
+        return data;
+    },
+
 
     preproccesor: function(data_type){
         switch(data_type){
