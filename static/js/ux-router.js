@@ -113,11 +113,11 @@ IONUX.Router = Backbone.Router.extend({
 function prepare_table_data(data, columns) {
     var table = {headers: [], data: []}
     
-    // Headers
-    if (!columns) var columns = _.keys(data[0]);
-    _.each(columns, function(column){
-        table.headers.push({'sTitle': column});
-    });
+    // // Headers
+    // if (!columns) var columns = _.keys(data[0]);
+    // _.each(columns, function(column){
+    //     table.headers.push({'sTitle': column});
+    // });
     
     // Data
     _.each(data, function(row) {
@@ -194,7 +194,7 @@ function render_page(resource_type, model) {
         var data_path = $(el).data('path');
         if (data_path) {
             var raw_table_data = window.MODEL_DATA[data_path];
-            var table_data = prepare_table_data(raw_table_data, ['_id', 'name', 'description']);
+            var table_data = prepare_table_data(raw_table_data, []);
             var columns = ['description, name, _id'];
             new IONUX.Views.DataTable({el: $(el), data: table_data});
         } else {
