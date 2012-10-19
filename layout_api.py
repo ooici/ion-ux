@@ -44,7 +44,7 @@ class LayoutApi(object):
         layout_schema = LayoutApi.get_new_layout_schema()
 
         resource_types = []
-        tables_processed = []
+        metadata_processed = []
         
         # Do not create HTML elmts for subattributes
         excluded_sub_attributes = ['table_ooi', 'chart_ooi']
@@ -245,8 +245,9 @@ class LayoutApi(object):
                         # attribute_elmt.text = 'Attribute: %s (%s) (%s) (%s) (%s)' % (attribute['label'], attribute['name'], attribute_elid, attribute_widget_type, attribute_position)
                         attribute_elmt.text = '%s (%s)' % (attribute['label'], attribute['name'])
                         
-                        if attribute_widget_type == 'table_ooi' and attribute_elid not in tables_processed:
-                            tables_processed.append(attribute_elid)
+                        # Generate metadata for nested elements, ex. tables and attribute groups
+                        if attribute_widget_type == 'table_ooi' and attribute_elid not in metadata_processed:
+                            metadata_processed.append(attribute_elid)
                             table_columns = []
                             for column in attribute['embed']:
                                 column_object = layout_schema['spec']['elements'][column['elid']]

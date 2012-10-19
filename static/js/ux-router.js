@@ -110,23 +110,23 @@ IONUX.Router = Backbone.Router.extend({
 
 
 // Prepare response from server for IONUX.Views.DataTable;
-function prepare_table_data(data, columns) {
-    var table = {headers: [], data: []}
-    
-    // // Headers
-    // if (!columns) var columns = _.keys(data[0]);
-    // _.each(columns, function(column){
-    //     table.headers.push({'sTitle': column});
-    // });
-    
-    // Data
-    _.each(data, function(row) {
-        var row_values = _.pick(row, columns);
-        var row_array = _.toArray(row_values);
-        table.data.push(row_array);
-    });
-    return table
-};
+// function prepare_table_data(data, columns) {
+//     var table = {headers: [], data: []}
+//     
+//     // // Headers
+//     // if (!columns) var columns = _.keys(data[0]);
+//     // _.each(columns, function(column){
+//     //     table.headers.push({'sTitle': column});
+//     // });
+//     
+//     // Data
+//     _.each(data, function(row) {
+//         var row_values = _.pick(row, columns);
+//         var row_array = _.toArray(row_values);
+//         table.data.push(row_array);
+//     });
+//     return table
+// };
 
 
 // Get values from string notation, example:
@@ -194,11 +194,9 @@ function render_page(resource_type, model) {
         var data_path = $(el).data('path');
         if (data_path) {
             var raw_table_data = window.MODEL_DATA[data_path];
-            var table_data = prepare_table_data(raw_table_data, []);
-            var columns = ['description, name, _id'];
-            new IONUX.Views.DataTable({el: $(el), data: table_data});
+            new IONUX.Views.DataTable({el: $(el), data: raw_table_data});
         } else {
-            new IONUX.Views.DataTable({el: $(el), data: {headers:[null], data: []}});
+            new IONUX.Views.DataTable({el: $(el), data: []});
         };
     });
     
