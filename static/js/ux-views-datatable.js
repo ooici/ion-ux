@@ -11,7 +11,7 @@ TODO:
 
 */
 
-TABLE_DATA = {
+TEST_TABLE_DATA = {
     "headers":[
         {"sTitle":"", "sClass": "center"}, 
         {"sTitle":"", "sClass": "center", "sType":"title", "fnRender":status_indicator},
@@ -43,9 +43,27 @@ TABLE_DATA = {
 }
 
 
+TEST_TABLE_DATA2 = {
+    "headers":[ ],
+    "data":[
+        ["Normal", "Platform AS02CPSM", 274503, "05:12:33", "Last Note4.."],
+        ["Alarm", "Platform AS02CPSM", 174501,  "05:12:33", "Last Note2.."],
+        ["Normal", "Platform AS02CPSM", 473508, "05:12:33", "Last Note5.."],
+        ["Normal", "Platform AS02CPSM", 271501, "05:12:33", "Last Note8.."],
+        ["Unknown", "Platform AS02CPSM", 275504, "05:12:33", "Last Note3.."],
+        ["Normal", "Platform AS02CPSM", 274500, "05:12:33", "Last Note1.."],
+        ["Normal", "Platform AS02CPSM", 974508, "05:12:33", "Last Note7.."],
+        ["Alert", "Platform AS02CPSM", 274508, "05:12:33",  "Last Note6.."],
+        ["Unknown", "Platform AS02CPSM", 275504, "05:12:33", "Last Note3.."],
+    ]
+}
+
+
+
+
 /* The below will be View instance attrs: */
 OPERATORS = ['CONTAINS', 'NEWER THAN', 'OLDER THAN', 'GREATER THAN', 'LESS THAN'];
-COLUMNS = _.map(TABLE_DATA.headers, function(e){return e['sTitle']});
+COLUMNS = _.map(TEST_TABLE_DATA.headers, function(e){return e['sTitle']});
 COLUMNS_FILTERABLE = _.reject(COLUMNS, function(e){return e==""}); 
 
 
@@ -75,12 +93,46 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
     },
     render: function() {
         this.$el.html(this.template());
+        if (this.options.data.headers.length){
+            var header_data = this.options.data.headers;
+        } else {
+            var header_data = this.header_data();
+        }
         this.datatable = this.$el.find(".datatable-container table").dataTable({
             "sDom":"Rlfrtip",
             "aaData":this.options.data.data,
-            "aoColumns":this.options.data.headers
+            "aoColumns":header_data
         });
         return this;
+    },
+
+    header_data: function(){
+        var data = [];
+        var table_metadata_id = "TABLE_"+this.$el.attr("id");
+        var table_metadata = window[table_metadata_id];
+        var self = this;
+        _.each(table_metadata, function(item){
+            var data_item = {};
+            data_item["sTitle"] = item[1];
+            data_item["sType"] = "title";
+            data_item["fnRender"] = self.preproccesor(item[0]);
+            data_item["sClass"] = "center"; //TODO choose dependant on 'item[0]'
+            data.push(data_item);
+        });
+        return data;
+    },
+
+    preproccesor: function(data_type){
+        switch(data_type){
+            case "icon_ooi":
+                return status_indicator; //TODO namespace these
+            case "text_short_ooi":
+                return function(obj){return obj.aData[obj.iDataColumn];}; //noop
+            case "text_extended_ooi":
+                return function(obj){return obj.aData[obj.iDataColumn];}; //noop
+            default:
+                return function(obj){return obj.aData[obj.iDataColumn];};
+        }
     },
 
     add_filter_item: function(evt){
