@@ -17,11 +17,27 @@
 
 {% block extra_ionux_js %}
     <script type="text/javascript" src="/static/js/ux-views-datatable.js"></script>
-{% endblock %}
 
+    <script id="TABLE_12345">
+    var TABLE_12345=[["icon_ooi", "Aggregated Status", "aggregated_status", "T03", "0"], ["icon_ooi", "NO LABEL", "power_status_roll_up", "T04", "1"], ["icon_ooi", "NO LABEL", "communications_status_roll_up", "T05", "1"], ["icon_ooi", "NO LABEL", "data_status_roll_up", "T06", "1"], ["icon_ooi", "NO LABEL", "location_status_roll_up", "T07", "1"], ["text_short_ooi", "Instrument Family", "instrument_family", "T10", "0"], ["text_short_ooi", "Name", "name", "T11", "0"], ["text_short_ooi", "UUID", "uuid", "T12", "2"], ["text_short_ooi", "Last Data Recieved", "last_data_received_datetime", "T13", "0"], ["text_short_ooi", "Calibrated", "last_calibration_datetime", "T14", "2"], ["text_extended_ooi", "Description", "description", "T16", "2"], ["text_short_ooi", "Modified", "ts_updated", "T17", "2"], ["text_short_ooi", "Lifecycle State", "lcstate", "T18", "0"], ["text_short_ooi", "Name", "name", "T19", "0"], ["text_short_ooi", "NO LABEL", "name", "T20", "2"]]
+    </script>
+    <script id="TABLE_56789">
+    var TABLE_56789=[
+        ["icon_ooi", "Aggregated Status", "aggregated_status", "T03", "0"],
+        ["text_short_ooi", "Name", "name", "T11", "0"],
+        ["text_short_ooi", "UUID", "uuid", "T12", "2"], 
+        ["text_short_ooi", "Calibrated", "last_calibration_datetime", "T14", "2"],
+        ["text_extended_ooi", "Description", "description", "T16", "2"]
+    ];
+    </script>
+{% endblock %}
 
 {% block document_ready %}
   $(function(){
-    new IONUX.Views.DataTable({data:TABLE_DATA, el:'#dynamic-container'});
+    $("#dynamic-container").append($("<div>").attr("id", "12345").css("margin-bottom", "50px"));
+    new IONUX.Views.DataTable({data:TEST_TABLE_DATA, el:'#12345'});
+
+    $("#dynamic-container").append($("<div>").attr("id", "56789"));
+    new IONUX.Views.DataTable({data:TEST_TABLE_DATA2, el:'#56789'});
   });
 {% endblock %}
