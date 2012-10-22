@@ -66,7 +66,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
     },
 
     _get_table_metadata: function(){
-        var table_metadata_id = "TABLE_"+this.$el.attr("id");
+        var table_metadata_id = "META_"+this.$el.attr("id");
         var table_metadata = window[table_metadata_id];
         return table_metadata;
     },

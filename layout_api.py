@@ -49,8 +49,6 @@ class LayoutApi(object):
         # Do not create HTML elmts for subattributes
         excluded_sub_attributes = ['table_ooi', 'chart_ooi']
         
-        # float_
-        
         for view_id in DEFINED_VIEWS:
             view = layout_schema['spec']['elements'][view_id] 
             script_elmt = ET.SubElement(body_elmt, 'script')
@@ -182,10 +180,10 @@ class LayoutApi(object):
                         block_css_class += ' active'
                     
                   
-                    ##########################################################################################################################
+                    ##################################################################
                     # BLOCK LAYOUT 
                     # Determine layout structure of blocks within group
-                    ##########################################################################################################################
+                    ##################################################################
 
                     wide_container = False
                     if block['embed']:
@@ -204,7 +202,6 @@ class LayoutApi(object):
                         block_css_class += ' block'
                         if group_position not in ('V00','V01'):
                             block_css_class += ' span3'
-
                     
                     # Set block class based on attribute widget type
                     # if group_position not in ('V00', 'V01') and attribute_widget_type not in ('table_ooi', 'chart_ooi'):
@@ -242,23 +239,24 @@ class LayoutApi(object):
                         attribute_elmt.set('data-level', attribute_level)
                         attribute_elmt.set('data-label', attribute['label'])
                         
+                        # FOR TROUBLESHOOTING                        
                         # attribute_elmt.text = 'Attribute: %s (%s) (%s) (%s) (%s)' % (attribute['label'], attribute['name'], attribute_elid, attribute_widget_type, attribute_position)
                         attribute_elmt.text = '%s (%s)' % (attribute['label'], attribute['name'])
                         
                         # Generate metadata for nested elements, ex. tables and attribute groups
                         if attribute_widget_type == 'table_ooi' and attribute_elid not in metadata_processed:
                             metadata_processed.append(attribute_elid)
-                            table_columns = []
+                            metadata = []
                             for column in attribute['embed']:
                                 column_object = layout_schema['spec']['elements'][column['elid']]
                                 column_widget_type = layout_schema['spec']['widgets'][column['wid']]['name']
-                                table_columns.append([column_widget_type, column_object['label'], column_object['ie']['ie_name'], column['pos'], column['olevel']])
+                                metadata.append([column_widget_type, column_object['label'], column_object['ie']['ie_name'], column['pos'], column['olevel']])
                     
-                            # Add table columns to body as a JSON script
-                            table_columns_elmt_id = 'TABLE_' + attribute_elid
-                            table_columns_elmt = ET.SubElement(body_elmt, 'script')
-                            table_columns_elmt.set('id', table_columns_elmt_id)
-                            table_columns_elmt.text = "var %s=%s" % (table_columns_elmt_id, json.dumps(table_columns))
+                            # Append metadata to body as a JSON script
+                            meta_elmt_id = 'META_' + attribute_elid
+                            meta_elmt = ET.SubElement(body_elmt, 'script')
+                            meta_elmt.set('id', meta_elmt_id)
+                            meta_elmt.text = "var %s=%s" % (meta_elmt_id, json.dumps(metadata))
                         
                         if attribute['embed'] and not attribute_widget_type in excluded_sub_attributes:
                             for sub_at_element in attribute['embed']:
@@ -277,7 +275,7 @@ class LayoutApi(object):
                                 sub_attribute_elmt.set('data-path', sub_attribute_data_path)
                                 sub_attribute_elmt.set('data-level', sub_attribute_level)
                                 sub_attribute_elmt.set('data-label', sub_attribute['label'])
-
+                        
                                 # sub_attribute_elmt.text = '%s (%s) (%s) (%s) (%s)' % (sub_attribute['label'], sub_attribute['name'], sub_attribute_elid, sub_attribute_widget_type, sub_attribute_position)
                                 sub_attribute_elmt.text = '%s (%s)' % (sub_attribute['label'], sub_attribute['name'])
 
