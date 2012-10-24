@@ -75,7 +75,11 @@
         <script type="text/template" id="datatable-tmpl">{% include 'partials/datatable.html' %}</script>
 
         <script type="text/template" id="attribute-group-tmpl">
-            <![CDATA[<h4><%= label %></h4>]]>
+            <![CDATA[
+                <% if (label != 'NO LABEL') { %>
+                    <h4><%= label %></h4>
+                <% } %>
+            ]]>
         </script>
 
         <script type="text/template" id="text-static-tmpl">
@@ -141,6 +145,7 @@
 		<script src="/static/js/ux-router.js" type="text/javascript"> </script>
 		<script src="/static/js/init.js" type="text/javascript"> </script>
         <script type="text/javascript" src="/static/js/ux-views-datatable.js"> </script>
+        <script type="text/javascript" src="/static/js/ux-views-actionmenu.js"> </script>
         
         {% block extra_ionux_js %} {% endblock %}
 		

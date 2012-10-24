@@ -66,7 +66,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
     },
 
     _get_table_metadata: function(){
-        var table_metadata_id = "META_"+this.$el.attr("id");
+        var table_metadata_id = "TABLE_"+this.$el.attr("id");
         var table_metadata = window[table_metadata_id];
         return table_metadata;
     },
@@ -94,7 +94,9 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         _.each(data_objs, function(data_obj){
             var data_row = []
             _.each(data_keys, function(key){
-                data_row.push(data_obj[key]);
+                var value = data_obj[key];
+                if (_.isUndefined(value)) value = "MISSING";
+                data_row.push(value);
             });
             data.push(data_row);
         });

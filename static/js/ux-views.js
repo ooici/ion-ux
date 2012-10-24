@@ -97,9 +97,70 @@ IONUX.Views.ExtentTemporal = Backbone.View.extend({
 IONUX.Views.AttributeGroup = Backbone.View.extend({
     template: _.template($('#attribute-group-tmpl').html()),
     render: function(){
-        var label = this.$el.data('label');
-        if (label) {
-            this.$el.html(this.template({label: label}));
+        this.$el.html(this.template({label: this.$el.data('label')}));
+
+        var data = this.options.data;
+        var metadata = this._get_attribute_group_metadata();
+        
+        if (data && metadata) {
+            this._build_attribute_group(metadata, data);
+        } else {
+            this.$el.append("Attribute Group missing.");
+            if (metadata) this.$el.append('<br />Metadata found: ATTRIBUTE_GROUP_' + this.$el.attr('id'));
+            this.$el.css('color', 'orange');
+        };
+
+        return this;
+    },
+    
+    _build_attribute_group: function(metadata, data){
+        var self = this;
+        _.each(this.options.data, function(data_item) {
+            _.each(metadata, function(meta_item) {
+
+                // create subelement
+                switch(meta_item[0]){
+                    case "text_short_ooi":
+                        var subelement_view = new IONUX.Views.TextShort({data_model: data_item});
+                }
+                
+                subelement_view.$el.attr('id', meta_item[5]);
+                subelement_view.$el.attr('data-position', meta_item[3]);
+                subelement_view.$el.attr('data-level', meta_item[4]);
+                subelement_view.$el.attr('data-label', meta_item[1]);
+
+                var path = meta_item[2];
+                if (path == 'phone_number' || path == 'phone_type') path = 'phones.0.' + path;
+                subelement_view.$el.attr('data-path', path);
+                
+                self.$el.append(subelement_view.render().el);
+            });
+        });
+    },
+
+    _get_attribute_group_metadata: function(){
+        var attribute_group_metadata_id = "ATTRIBUTE_GROUP_"+this.$el.attr("id");
+        var attribute_metadata = window[attribute_group_metadata_id];
+        return attribute_metadata;
+    },
+    
+    
+});
+
+IONUX.Views.TextShort = Backbone.View.extend({
+    template: _.template($('#text-short-tmpl').html()),
+
+    render: function(){
+        var data_path = this.$el.data('path');
+        
+        if (data_path){
+            var label = this.$el.data('label');
+            var text_short = get_descendant_properties(this.options.data_model, data_path);
+            this.$el.html(this.template({label: label, text_short: text_short}));
+        } else {
+            this.$el.css('color', 'orange');
+            var integration_info = this.$el.text();
+            integration_log(this.$el.attr('id'), this.$el.data('path'), integration_info);
         };
         return this;
     }
@@ -111,25 +172,6 @@ IONUX.Views.TextStatic = Backbone.View.extend({
         var label = this.$el.data('label');
         if (label) {
             this.$el.html(this.template({text_static: label}));
-        };
-        return this;
-    }
-});
-
-IONUX.Views.TextShort = Backbone.View.extend({
-    template: _.template($('#text-short-tmpl').html()),
-
-    render: function(){
-        var data_path = this.$el.data('path');
-
-        if (data_path && data_path.substring(0,7) != 'unknown'){
-            var label = this.$el.data('label');
-            var text_short = get_descendant_properties(this.options.data_model, data_path);
-            this.$el.html(this.template({label: label, text_short: text_short}));
-        } else {
-            this.$el.css('color', 'orange');
-            var integration_info = this.$el.text();
-            integration_log(this.$el.attr('id'), this.$el.data('path'), integration_info);
         };
         return this;
     }
@@ -192,23 +234,6 @@ function integration_log(id, db_path, integration_info ) {
 };
 
 
-// IONUX.Views.Facepage = Backbone.View.extend({
-//     el: '#dynamic-container',
-//     initialize: function(){
-//         _.bindAll(this, 'render');
-//         var rt = this.options.resource_type;
-//         this.view_elements = 'li.' + rt + ',div.' + rt;
-//         this.li_element = 'li.' + rt + ':first';
-//     },
-//     render: function(){
-//         this.$el.html($('#2163153').html());
-//         $('.span9 li,.span3 li').hide();
-//         $(this.view_elements).show();
-//         $('.span9 ul').find(this.li_element).find('a').click();
-//         return this;
-//     },
-// });
-
 IONUX.Views.Collection = Backbone.View.extend({
     // el:'#dynamic-container',
     template: _.template($("#collection").html()),
@@ -240,101 +265,6 @@ IONUX.Views.Base = Backbone.View.extend({
         return this;
     }
 });
-// 
-// // UI Representation Views
-// IONUX.Views.AttributeGroup = Backbone.View.extend({
-//     className: 'attr_block',
-//     template: _.template($('#dyn-attr-group-tmpl').html()),
-//     events:  {
-//         "hover": IONUX.Interactions.action_controls,
-//         "click .dropdown-menu li": IONUX.Interactions.action_control_click
-//     },
-//     initialize: function() {
-//         this.render().el;
-//     },
-//     drill_down_up_interaction: function() {
-//         $(this.el).find('.attributes').slideToggle();
-//     },
-//     render: function() {
-//         if (this.className) {this.$el.addClass(this.className)};
-//         this.$el.append(this.template({'block': this.options.block, 'data': this.options.data}));
-//         return this;
-//     }
-// });
-// 
-// IONUX.Views.Table = IONUX.Views.Base.extend({
-//     events: {
-//         "click .dropdown-menu li": IONUX.Interactions.action_control_click
-//     },
-//     template: _.template($('#dyn-table-tmpl').html()),
-// });
-// 
-// IONUX.Views.Chart = IONUX.Views.Base.extend({
-//     template: _.template($('#dyn-chart-tmpl').html()),
-// });
-// 
-// IONUX.Views.Graph = IONUX.Views.Base.extend({
-//     template: _.template($('#dyn-graph-tmpl').html()),
-// });
-// 
-// IONUX.Views.Image = IONUX.Views.Base.extend({
-//     template: _.template($('#dyn-image-tmpl').html()),
-// });
-// 
-// IONUX.Views.Map = IONUX.Views.Base.extend({
-//     className: 'map_block',
-//     template: _.template($('#dyn-map-tmpl').html()),
-// });
-// 
-// IONUX.Views.PDF = IONUX.Views.Base.extend({
-//     template: _.template($('#dyn-pdf-tmpl').html()),
-// });
-// 
-// IONUX.Views.Text = IONUX.Views.Base.extend({
-//     template: _.template($('#dyn-text-tmpl').html()),
-// });
-// 
-// IONUX.Views.TextIcon = IONUX.Views.Base.extend({
-//     template: _.template($('#dyn-text-icon-tmpl').html()),
-// });
-// 
-// IONUX.Views.Undefined = IONUX.Views.Base.extend({
-//     template: _.template($('#dyn-undefined-tmpl').html()),
-// });
-// 
-// function page_builder(layout, model) {
-//     _.each(layout.groups, function(group) {
-//         _.each(group.blocks, function(block, idx){
-//             var data = model.toJSON();
-//             // $('#page_name').html(data['resource']['name']);
-//             var ui_representation = block.ui_representation;
-//             var el_id = '#' + block.block_id;
-// 
-//             if (ui_representation == 'Attribute Group') {
-//                  new IONUX.Views.AttributeGroup({block: block, data: data, el: el_id });
-//              } else if (ui_representation == 'Table') {
-//                  new IONUX.Views.Table({'block': block, 'data': data, el: el_id});
-//              } else if (ui_representation == 'Chart') {
-//                  new IONUX.Views.Chart({'block': block, 'data': data, el: el_id});
-//              } else if (ui_representation == 'Graph') {
-//                  new IONUX.Views.Graph({'block': block, 'data': data, el: el_id});
-//              } else if (ui_representation == 'Image') {
-//                  new IONUX.Views.Image({'block': block, 'data': data, el: el_id});
-//              } else if (ui_representation == 'Map') {
-//                  new IONUX.Views.Map({'block': block, 'data': data, el: el_id});
-//              } else if (ui_representation == 'PDF') {
-//                  new IONUX.Views.PDF({'block': block, 'data': data, el: el_id});
-//              } else if (ui_representation == 'Text') {
-//                  new IONUX.Views.Text({'block': block, 'data': data, el: el_id});
-//              } else if (ui_representation == 'Text & Icon') {
-//                  new IONUX.Views.TextIcon({'block': block, 'data': data, el: el_id});
-//              } else if (ui_representation == '') {
-//                  new IONUX.Views.Undefined({'block': 'nada', 'data': 'nada'});
-//              };
-//          });
-//     });
-// };
-
 
 
 

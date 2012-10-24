@@ -143,8 +143,14 @@ function render_page(resource_type, model) {
     window.MODEL_DATA = model.data;
 
     var attribute_group_elmts = $('.InstrumentDevice .attribute_group_ooi');
-    _.each(attribute_group_elmts, function(el) {
-        new IONUX.Views.AttributeGroup({el: $(el)}).render().el;
+    _.each(attribute_group_elmts, function(el){
+        var data_path = $(el).data('path');
+        var data = get_descendant_properties(window.MODEL_DATA, data_path);
+        
+        console.log('data_path', data_path);
+        console.log('data', data);
+        
+        new IONUX.Views.AttributeGroup({el: $(el), data: data}).render().el;
         append_info_level(el);
     });
 
@@ -224,6 +230,9 @@ function render_page(resource_type, model) {
     // Show the relevant elements and click to enable the Bootstrap tabs.
     $('li.' + resource_type + ',div.' + resource_type).show();
     $('.span9 ul, .span3 ul').find('li.' + resource_type + ':first').find('a').click();
+    
+    
+    $('.tab-pane').find('.'+resource_type+':visible:first').css('margin-left', 0)
 };
 
 function render_error(){

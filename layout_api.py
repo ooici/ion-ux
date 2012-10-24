@@ -104,6 +104,7 @@ class LayoutApi(object):
 
                     group_container_elmt = ET.SubElement(parent_elmt, 'div')
                     group_container_elmt.attrib['id'] = group_elid
+                    group_container_elmt.attrib['class'] = 'group'
 
                     # Create ul for navigation
                     group_ul_elmt = ET.SubElement(group_container_elmt, 'ul')
@@ -243,41 +244,47 @@ class LayoutApi(object):
                         # attribute_elmt.text = 'Attribute: %s (%s) (%s) (%s) (%s)' % (attribute['label'], attribute['name'], attribute_elid, attribute_widget_type, attribute_position)
                         attribute_elmt.text = '%s (%s)' % (attribute['label'], attribute['name'])
                         
-                        # Generate metadata for nested elements, ex. tables and attribute groups
-                        if attribute_widget_type == 'table_ooi' and attribute_elid not in metadata_processed:
+                        # Generate metadata for nested elements, ex. tables and attribute groups                        
+                        if attribute_widget_type in ('table_ooi', 'attribute_group_ooi') and attribute_elid not in metadata_processed:
                             metadata_processed.append(attribute_elid)
                             metadata = []
-                            for column in attribute['embed']:
-                                column_object = layout_schema['spec']['elements'][column['elid']]
-                                column_widget_type = layout_schema['spec']['widgets'][column['wid']]['name']
-                                metadata.append([column_widget_type, column_object['label'], column_object['ie']['ie_name'], column['pos'], column['olevel']])
-                    
+                            for embedded_attribute in attribute['embed']:
+                                embedded_object = layout_schema['spec']['elements'][embedded_attribute['elid']]
+                                embedded_widget_type = layout_schema['spec']['widgets'][embedded_attribute['wid']]['name']
+
+                                metadata_items = [embedded_widget_type, embedded_object['label'], embedded_object['ie']['ie_name'], embedded_attribute['pos'], embedded_attribute['olevel']]
+                                if attribute_widget_type == 'attribute_group_ooi':
+                                    meta_elmt_id = 'ATTRIBUTE_GROUP_' + attribute_elid
+                                    metadata_items.append(embedded_attribute['elid'])
+                                elif attribute_widget_type == 'table_ooi':
+                                    meta_elmt_id = 'TABLE_' + attribute_elid                                
+                                metadata.append(metadata_items)
+                                
                             # Append metadata to body as a JSON script
-                            meta_elmt_id = 'META_' + attribute_elid
                             meta_elmt = ET.SubElement(body_elmt, 'script')
                             meta_elmt.set('id', meta_elmt_id)
                             meta_elmt.text = "var %s=%s" % (meta_elmt_id, json.dumps(metadata))
                         
-                        if attribute['embed'] and not attribute_widget_type in excluded_sub_attributes:
-                            for sub_at_element in attribute['embed']:
-                                sub_attribute_elid = sub_at_element['elid']
-                                sub_attribute_position = sub_at_element['pos']
-                                sub_attribute_data_path = sub_at_element['dpath']
-                                sub_attribute_level = sub_at_element['olevel']
-                                sub_attribute = layout_schema['spec']['elements'][sub_attribute_elid]
-                                
-                                sub_attribute_widget_id = sub_attribute['wid']
-                                sub_attribute_widget_type = layout_schema['spec']['widgets'][sub_attribute_widget_id]['name']
-                                
-                                sub_attribute_elmt = ET.SubElement(block_elmt, 'div')
-                                sub_attribute_elmt.set('id', sub_attribute_elid)
-                                sub_attribute_elmt.set('class', sub_attribute_widget_type)
-                                sub_attribute_elmt.set('data-path', sub_attribute_data_path)
-                                sub_attribute_elmt.set('data-level', sub_attribute_level)
-                                sub_attribute_elmt.set('data-label', sub_attribute['label'])
-                        
-                                # sub_attribute_elmt.text = '%s (%s) (%s) (%s) (%s)' % (sub_attribute['label'], sub_attribute['name'], sub_attribute_elid, sub_attribute_widget_type, sub_attribute_position)
-                                sub_attribute_elmt.text = '%s (%s)' % (sub_attribute['label'], sub_attribute['name'])
+                        # if attribute['embed'] and not attribute_widget_type in excluded_sub_attributes:
+                        #     for sub_at_element in attribute['embed']:
+                        #         sub_attribute_elid = sub_at_element['elid']
+                        #         sub_attribute_position = sub_at_element['pos']
+                        #         sub_attribute_data_path = sub_at_element['dpath']
+                        #         sub_attribute_level = sub_at_element['olevel']
+                        #         sub_attribute = layout_schema['spec']['elements'][sub_attribute_elid]
+                        #         
+                        #         sub_attribute_widget_id = sub_attribute['wid']
+                        #         sub_attribute_widget_type = layout_schema['spec']['widgets'][sub_attribute_widget_id]['name']
+                        #         
+                        #         sub_attribute_elmt = ET.SubElement(block_elmt, 'div')
+                        #         sub_attribute_elmt.set('id', sub_attribute_elid)
+                        #         sub_attribute_elmt.set('class', sub_attribute_widget_type)
+                        #         sub_attribute_elmt.set('data-path', sub_attribute_data_path)
+                        #         sub_attribute_elmt.set('data-level', sub_attribute_level)
+                        #         sub_attribute_elmt.set('data-label', sub_attribute['label'])
+                        # 
+                        #         # sub_attribute_elmt.text = '%s (%s) (%s) (%s) (%s)' % (sub_attribute['label'], sub_attribute['name'], sub_attribute_elid, sub_attribute_widget_type, sub_attribute_position)
+                        #         sub_attribute_elmt.text = '%s (%s)' % (sub_attribute['label'], sub_attribute['name'])
 
 
         # layout_elmt = ET.SubElement(body_elmt, 'script')
