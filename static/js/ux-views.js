@@ -128,12 +128,15 @@ IONUX.Views.AttributeGroup = Backbone.View.extend({
             subelement_view.$el.attr('data-level', meta_item[4]);
             subelement_view.$el.attr('data-label', meta_item[1]);
             
-            var path = meta_item[2];                
-            if (path == 'phone_number' || path == 'phone_type') {
-                path = root_path + '.phones.0.' + path;
-            } else {
-                path = root_path + '.' + path;
-            };
+            // LEFT FOR REFERENCE
+            // var path = meta_item[2];
+            // if (path == 'phone_number' || path == 'phone_type') {
+            //     path = root_path + '.phones.0.' + path;
+            // } else {
+            //     path = root_path + '.' + path;
+            // };
+            
+            path = root_path + '.' + meta_item[6];
             subelement_view.$el.attr('data-path', path);
             
             self.$el.append(subelement_view.render().el);
