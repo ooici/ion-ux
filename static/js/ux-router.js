@@ -146,11 +146,8 @@ function render_page(resource_type, model) {
     _.each(attribute_group_elmts, function(el){
         var data_path = $(el).data('path');
         var data = get_descendant_properties(window.MODEL_DATA, data_path);
-        
-        console.log('data_path', data_path);
-        console.log('data', data);
-        
-        new IONUX.Views.AttributeGroup({el: $(el), data: data}).render().el;
+                
+        new IONUX.Views.AttributeGroup({el: $(el), data: window.MODEL_DATA}).render().el;
         append_info_level(el);
     });
 

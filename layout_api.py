@@ -256,6 +256,7 @@ class LayoutApi(object):
                                 if attribute_widget_type == 'attribute_group_ooi':
                                     meta_elmt_id = 'ATTRIBUTE_GROUP_' + attribute_elid
                                     metadata_items.append(embedded_attribute['elid'])
+                                    metadata_items.append(embedded_attribute['dpath'])
                                 elif attribute_widget_type == 'table_ooi':
                                     meta_elmt_id = 'TABLE_' + attribute_elid                                
                                 metadata.append(metadata_items)

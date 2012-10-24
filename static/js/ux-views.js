@@ -99,11 +99,12 @@ IONUX.Views.AttributeGroup = Backbone.View.extend({
     render: function(){
         this.$el.html(this.template({label: this.$el.data('label')}));
 
-        var data = this.options.data;
+        var root_path = this.$el.data('path');
+        var data = get_descendant_properties(this.options.data, root_path)
         var metadata = this._get_attribute_group_metadata();
         
         if (data && metadata) {
-            this._build_attribute_group(metadata, data);
+            this._build_attribute_group(data, metadata, root_path);
         } else {
             this.$el.append("Attribute Group missing.");
             if (metadata) this.$el.append('<br />Metadata found: ATTRIBUTE_GROUP_' + this.$el.attr('id'));
@@ -113,28 +114,29 @@ IONUX.Views.AttributeGroup = Backbone.View.extend({
         return this;
     },
     
-    _build_attribute_group: function(metadata, data){
-        var self = this;
-        _.each(this.options.data, function(data_item) {
-            _.each(metadata, function(meta_item) {
-
-                // create subelement
-                switch(meta_item[0]){
-                    case "text_short_ooi":
-                        var subelement_view = new IONUX.Views.TextShort({data_model: data_item});
-                }
-                
-                subelement_view.$el.attr('id', meta_item[5]);
-                subelement_view.$el.attr('data-position', meta_item[3]);
-                subelement_view.$el.attr('data-level', meta_item[4]);
-                subelement_view.$el.attr('data-label', meta_item[1]);
-
-                var path = meta_item[2];
-                if (path == 'phone_number' || path == 'phone_type') path = 'phones.0.' + path;
-                subelement_view.$el.attr('data-path', path);
-                
-                self.$el.append(subelement_view.render().el);
-            });
+    _build_attribute_group: function(data, metadata, root_path){
+        var self = this;        
+        _.each(metadata, function(meta_item) {
+    
+            switch(meta_item[0]){
+                case "text_short_ooi":
+                    var subelement_view = new IONUX.Views.TextShort({data_model: self.options.data});
+            }
+            
+            subelement_view.$el.attr('id', meta_item[5]);
+            subelement_view.$el.attr('data-position', meta_item[3]);
+            subelement_view.$el.attr('data-level', meta_item[4]);
+            subelement_view.$el.attr('data-label', meta_item[1]);
+            
+            var path = meta_item[2];                
+            if (path == 'phone_number' || path == 'phone_type') {
+                path = root_path + '.phones.0.' + path;
+            } else {
+                path = root_path + '.' + path;
+            };
+            subelement_view.$el.attr('data-path', path);
+            
+            self.$el.append(subelement_view.render().el);
         });
     },
 
