@@ -40,12 +40,21 @@ class ServiceApi(object):
     def get_extension(resource_type, resource_id):
         if resource_type == 'InstrumentDevice':
             extension = service_gateway_get('instrument_management', 'get_instrument_device_extension', params= {'instrument_device_id': resource_id})
+        elif resource_type == 'InstrumentModel':
+            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'DeviceModelExtension'})
         elif resource_type == 'PlatformDevice':
             extension = service_gateway_get('instrument_management', 'get_platform_device_extension', params= {'platform_device_id': resource_id})
+        elif resource_type == 'PlatformModel':
+            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'DeviceModelExtension'})
         elif resource_type == 'DataProduct':
-            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'DataProductExtension'})
-            # extension = service_gateway_get('data_product_management', 'get_data_product_extension', params= {'data_product_id': resource_id})
-
+            extension = service_gateway_get('data_product_management', 'get_data_product_extension', params= {'data_product_id': resource_id})
+        elif resource_type == 'Org':
+            extension = service_gateway_get('observatory_management', 'get_observatory_extension', params= {'resource_id': resource_id})
+        elif resource_type == 'UserInfo':
+            # NameError: global name 'user_id' is not defined
+            # extension = service_gateway_get('identity_management', 'get_actor_identity_extension', params= {'resource_id': resource_id, user_id: ''})
+            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'ActorIdentityExtension'})
+        
         return extension
 
     # @staticmethod

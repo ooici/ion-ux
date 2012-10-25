@@ -139,7 +139,12 @@ function get_descendant_properties(obj, desc) {
 };
 
 function render_page(resource_type, model) {
-    // Put in global namespance for development/manual inspection
+    
+    // Catch specific routes that need generic resources...
+    if (resource_type == 'InstrumentModel' || resource_type == ('PlatformModel')) {
+        var resource_type = 'DeviceModel';
+    };
+    
     window.MODEL_DATA = model.data;
 
     var attribute_group_elmts = $('.'+resource_type+' .attribute_group_ooi');
@@ -196,7 +201,8 @@ function render_page(resource_type, model) {
     _.each(table_elmts, function(el) {
         var data_path = $(el).data('path');
         if (data_path) {
-            var raw_table_data = window.MODEL_DATA[data_path];
+            // var raw_table_data = window.MODEL_DATA[data_path];
+            var raw_table_data = get_descendant_properties(window.MODEL_DATA, data_path);
             new IONUX.Views.DataTable({el: $(el), data: raw_table_data});
         } else {
             new IONUX.Views.DataTable({el: $(el), data: []});
