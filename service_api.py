@@ -48,29 +48,13 @@ class ServiceApi(object):
             extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'DeviceModelExtension'})
         elif resource_type == 'DataProduct':
             extension = service_gateway_get('data_product_management', 'get_data_product_extension', params= {'data_product_id': resource_id})
-        elif resource_type == 'Org':
-            extension = service_gateway_get('observatory_management', 'get_observatory_extension', params= {'resource_id': resource_id})
+        elif resource_type == 'Observatory':
+            # extension = service_gateway_get('observatory_management', 'get_observatory_extension', params= {'observatory_id': resource_id})
+            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'MarineFacilityOrgExtension'})
         elif resource_type == 'UserInfo':
-            # NameError: global name 'user_id' is not defined
-            # extension = service_gateway_get('identity_management', 'get_actor_identity_extension', params= {'resource_id': resource_id, user_id: ''})
-            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'ActorIdentityExtension'})
+            extension = service_gateway_get('identity_management', 'get_actor_identity_extension', params= {'user_id': resource_id})
         
         return extension
-
-    # @staticmethod
-    # def get_instrument_extension(resource_id):
-    #     instrument_device = service_gateway_get('instrument_management', 'get_instrument_device_extension', params= {'instrument_device_id': resource_id})
-    #     return instrument_device
-    # 
-    # @staticmethod
-    # def get_platform_extension(resource_id):
-    #     platform_device = service_gateway_get('instrument_management', 'get_platform_device_extension', params= {'platform_device_id': resource_id})
-    #     return platform_device
-    # 
-    # @staticmethod
-    # def get_data_product_extension(resource_id):
-    #     data_product_extension = service_gateway_get('data_product_management', 'get_data_product_extension', params= {'data_product_id': resource_id})
-    #     return data_product_extension
         
 
     # USER REQUESTS

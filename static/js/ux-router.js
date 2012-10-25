@@ -143,7 +143,11 @@ function render_page(resource_type, model) {
     // Catch specific routes that need generic resources...
     if (resource_type == 'InstrumentModel' || resource_type == ('PlatformModel')) {
         var resource_type = 'DeviceModel';
+    } else if (resource_type == 'Observatory') {
+        var resource_type = 'Org'
     };
+    
+    console.log(resource_type);
     
     window.MODEL_DATA = model.data;
 
