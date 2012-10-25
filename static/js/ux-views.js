@@ -140,8 +140,6 @@ IONUX.Views.AttributeGroup = Backbone.View.extend({
         var attribute_metadata = window[attribute_group_metadata_id];
         return attribute_metadata;
     },
-    
-    
 });
 
 IONUX.Views.TextShort = Backbone.View.extend({

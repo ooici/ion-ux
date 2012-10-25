@@ -142,7 +142,7 @@ function render_page(resource_type, model) {
     // Put in global namespance for development/manual inspection
     window.MODEL_DATA = model.data;
 
-    var attribute_group_elmts = $('.InstrumentDevice .attribute_group_ooi');
+    var attribute_group_elmts = $('.'+resource_type+' .attribute_group_ooi');
     _.each(attribute_group_elmts, function(el){
         var data_path = $(el).data('path');
         var data = get_descendant_properties(window.MODEL_DATA, data_path);
@@ -151,48 +151,48 @@ function render_page(resource_type, model) {
         append_info_level(el);
     });
 
-    var text_static_elmts = $('.InstrumentDevice .text_static_ooi');
+    var text_static_elmts = $('.'+resource_type+' .text_static_ooi');
     _.each(text_static_elmts, function(el){
         new IONUX.Views.TextStatic({el: $(el)}).render().el;
         append_info_level(el);
     });
 
-    var text_short_elmts = $('.InstrumentDevice .text_short_ooi');
+    var text_short_elmts = $('.'+resource_type+' .text_short_ooi');
     _.each(text_short_elmts, function(el){
         new IONUX.Views.TextShort({el: $(el), data_model: window.MODEL_DATA}).render().el;
         append_info_level(el);
     });
 
-    var text_extended_elmts = $('.InstrumentDevice .text_extended_ooi');
+    var text_extended_elmts = $('.'+resource_type+' .text_extended_ooi');
     _.each(text_extended_elmts, function(el){
         new IONUX.Views.TextExtended({el: $(el), data_model: window.MODEL_DATA}).render().el;
         append_info_level(el);
     });
 
-    var icon_elmts = $('.InstrumentDevice .icon_ooi');
+    var icon_elmts = $('.'+resource_type+' .icon_ooi');
     _.each(icon_elmts, function(el) {
         new IONUX.Views.Icon({el: $(el)}).render().el;
         append_info_level(el);
     });
 
-    var image_elmts = $('.InstrumentDevice .image_ooi');
+    var image_elmts = $('.'+resource_type+' .image_ooi');
     _.each(image_elmts, function(el) {
         new IONUX.Views.Image({el: $(el)}).render().el;
         append_info_level(el);
     });
 
-    var badge_elmts = $('.InstrumentDevice .badge_ooi');
+    var badge_elmts = $('.'+resource_type+' .badge_ooi');
     _.each(badge_elmts, function(el) {
         new IONUX.Views.Badge({el: $(el), data_model: window.MODEL_DATA}).render().el;
         append_info_level(el);
     });
     
-    var list_elmts = $('.InstrumentDevice .list_ooi');
+    var list_elmts = $('.'+resource_type+' .list_ooi');
     _.each(list_elmts, function(el) {
         new IONUX.Views.List({el: $(el), data_model: window.MODEL_DATA}).render().el;
     });
     
-    var table_elmts = $('.InstrumentDevice .table_ooi');
+    var table_elmts = $('.'+resource_type+' .table_ooi');
     _.each(table_elmts, function(el) {
         var data_path = $(el).data('path');
         if (data_path) {
@@ -203,23 +203,22 @@ function render_page(resource_type, model) {
         };
     });
     
-    var extent_geospatial_elmts = $('.InstrumentDevice .extent_geospatial_ooi');
+    var extent_geospatial_elmts = $('.'+resource_type+' .extent_geospatial_ooi');
     _.each(extent_geospatial_elmts, function(el) {
         new IONUX.Views.ExtentGeospatial({el: $(el)}).render().el;
     });
 
-    var extent_vertical_elmts = $('.InstrumentDevice .extent_vertical_ooi');
+    var extent_vertical_elmts = $('.'+resource_type+' .extent_vertical_ooi');
     _.each(extent_vertical_elmts, function(el) {
         new IONUX.Views.ExtentVertical({el: $(el)}).render().el;
     });
 
-    var extent_temporal_elmts = $('.InstrumentDevice .extent_temporal_ooi');
+    var extent_temporal_elmts = $('.'+resource_type+' .extent_temporal_ooi');
     _.each(extent_temporal_elmts, function(el) {
         new IONUX.Views.ExtentTemporal({el: $(el)}).render().el;
     });
 
-
-    var checkbox_elmts = $('.InstrumentDevice .checkbox_ooi');
+    var checkbox_elmts = $('.'+resource_type+' .checkbox_ooi');
     _.each(checkbox_elmts, function(el) {
         new IONUX.Views.Checkbox({el: $(el), data_model: window.MODEL_DATA}).render().el;
     });
@@ -227,7 +226,6 @@ function render_page(resource_type, model) {
     // Show the relevant elements and click to enable the Bootstrap tabs.
     $('li.' + resource_type + ', div.' + resource_type).show();
     $('.span9 ul, .span3 ul').find('li.' + resource_type + ':first').find('a').click();
-    
     
     $('.tab-pane').find('.'+resource_type+':visible:first').css('margin-left', 0)
 };
