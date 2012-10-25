@@ -225,7 +225,7 @@ function render_page(resource_type, model) {
     });
     
     // Show the relevant elements and click to enable the Bootstrap tabs.
-    $('li.' + resource_type + ',div.' + resource_type).show();
+    $('li.' + resource_type + ', div.' + resource_type).show();
     $('.span9 ul, .span3 ul').find('li.' + resource_type + ':first').find('a').click();
     
     
