@@ -147,8 +147,6 @@ function render_page(resource_type, model) {
         var resource_type = 'Org'
     };
     
-    console.log(resource_type);
-    
     window.MODEL_DATA = model.data;
 
     var attribute_group_elmts = $('.'+resource_type+' .attribute_group_ooi');

@@ -281,7 +281,7 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
 
   render: function(){
     this.$el.empty().html(this.template(this.model.toJSON())).show();
-    
+    this.get_capabilities();
     // Check if instrument agent instance is present (running)...
     // var instrumentAgent = this.model.get('instrument_agent');
     // if (instrumentAgent.agent_process_id !== '') {
@@ -294,6 +294,12 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
   },
   
   issue_command: function(evt){
+    var button_elmt = $(evt.target);
+    button_elmt.attr("disabled", "disabled");
+    
+    var select_elmt = this.$el.find('select');
+    select_elmt.attr("disabled", "disabled");
+    
     var selected_option = this.$el.find('option:selected');
       
     var command = selected_option.attr("value");
@@ -302,7 +308,8 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
     
     console.log('cap_type', cap_type)
     console.log('command', command);
-    
+    var self = this;
+
     $.ajax({
       url:command,
       dataType: 'json',
@@ -312,8 +319,14 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
       },
       error: function() {
         $(".command-output").append($('<p class="command-failure">').text("ALERT: '" + command + "' was unsuccessful."));
+      },
+      complete: function(resp){
+          button_elmt.removeAttr("disabled");
+          select_elmt.removeAttr("disabled");
+          self.get_capabilities();
       }
     });
+    
     return false;
   },
   
