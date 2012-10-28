@@ -55,8 +55,16 @@ class ServiceApi(object):
             extension = service_gateway_get('identity_management', 'get_actor_identity_extension', params= {'user_id': resource_id})
         
         return extension
-        
 
+
+    @staticmethod
+    def initiate_realtime_visualization(data_product_id):
+        real_time_data = service_gateway_get('visualization_service', 'initiate_realtime_visualization', params= {'data_product_id': data_product_id, 'callback': 'chart.init_realtime_visualization_cb', 'return_format': 'raw_json'})
+    
+    @staticmethod
+    def get_realtime_visualization_data(query_token):
+        real_time_data = service_gateway_get('visualization_service', 'get_realtime_visualization_data', params= {'query_token': query_token, 'return_format': 'raw_json'})
+        
     # USER REQUESTS
     # ---------------------------------------------------------------------------
 
@@ -299,6 +307,7 @@ def service_gateway_get(service_name, operation_name, params={}):
     pretty_console_log('SERVICE GATEWAY GET RESPONSE', resp.content)
     
     if resp.status_code == 200:
+        print 'XXXXXX', type(resp.content)
         resp = json.loads(resp.content)
         
         if type(resp) == dict:

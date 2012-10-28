@@ -50,33 +50,12 @@
             		      <h3>Command</h3>
             		      <select id="new-commands"> </select>
                           <input type="submit" name="Send Command" class="btn issue_command"/>
+                          
+                          <br />
+                          <br />
+                          <button class=" btn get_capabilities">Get Capabilities</button>
+                          
             		    </div>
-            		    
-            			<div class="xcommand" style="display:none;">
-            				<section class="wrapper">
-            					<h3 class="wrapper-heading">Instrument Instance Agent Commands</h3>
-            				<form>
-            				<p>Command</p>
-            				<select>
-            					<option value='initialize'>Initialize (start driver)</option>
-            					<option value='reset'>Reset (stop driver)</option>
-            					<option value='get_capabilities'>Capabilities (get instrument capabilities)</option>
-            					<option value='go_active'>Activate (start logger and connect to instrument)</option>
-            					<option value='go_inactive'>Deactivate (stop logger and disconnect from instrument)</option>
-            					<option value='run'>Run (enter observatory mode from active mode)</option>
-            					<option value='go_streaming'>Streaming (begin streaming data)</option>
-            					<option value='direct_access'>Direct Access (enter direct access mode)</option>
-            					<option value='go_observatory'>Go Observatory (enter observatory mode from streaming or direct access)</option>
-            					<!-- <option value='get_param'>Get parameters (get all configurable parameters)</option>
-            					<option value='set_param'>Set parameters (save changes to parameters)</option> 
-            					<option value='start'>Start sampling (start auto-sample of data collection)</option>
-            					<option value='stop'>Stop sampling (stop auto-sample of data collection)</option> -->
-            				</select>
-
-            				<input type="submit" name="Send Command" class="btn issue_command"/>
-            			</form>
-            			</section>
-            			</div>
             		</div>
                 </div>
 	       </div> <!-- div.span5 -->

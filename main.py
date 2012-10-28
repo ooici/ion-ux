@@ -54,6 +54,34 @@ def extension(resource_type, resource_id):
     return jsonify(data=extension)
 
 
+# Visualization
+# @app.route('/visualization/initiate_realtime_visualization/<data_product_id>/', methods=['GET'])
+# def initiate_realtime_visualization(data_product_id):
+#     query_response = ServiceApi.initiate_realtime_visualization(data_product_id)
+#     print 'VVVVV', query_response
+#     return jsonify(data=query_response)
+# 
+# @app.route('/visualization/get_realtime_visualization_data/<query_token>/', methods=['GET'])
+# def get_realtime_visualization_data(query_token):
+#     query_response = ServiceApi.get_realtime_visualization_data(query_token)
+#     print 'TTTTTT', query_response
+#     return jsonify(data=query_response)
+
+
+@app.route('/viz/initiate_realtime_visualization/<data_product_id>/', methods=['GET'])
+def initiate_realtime_visualization2(data_product_id):
+    resp = requests.get("http://localhost:5000/ion-service/visualization_service/initiate_realtime_visualization?data_product_id=" + data_product_id + "&callback=chart_instance.init_realtime_visualization_cb&return_format=raw_json")
+    print 'YYY-RESP.CONTENT ', resp.content
+    return resp.content
+    
+@app.route('/viz/get_realtime_visualization_data/<query_token>/', methods=['GET'])
+def get_realtime_visualization_data2(query_token):
+    resp = requests.get("http://localhost:5000/ion-service/visualization_service/get_realtime_visualization_data?query_token=" + query_token +"&return_format=raw_json")
+    print 'ZZZ-RESP.CONTENT ', resp.content
+    return resp.content
+
+
+
 # # Instrument
 # @app.route('/instruments/ext/<resource_id>/', methods=['GET'])
 # def instrument_extension(resource_id):
@@ -254,6 +282,9 @@ def dev_actionmenus(resource_id=None):
 def geospatial(resource_id=None):
     return render_template('dev_geospatial.html')
     
+@app.route('/dev/chart', methods=['GET'])
+def chart(resource_id=None):
+    return render_template('dev_chart.html')
 
 
 # CATCHALL ROUTE

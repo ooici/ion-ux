@@ -143,7 +143,7 @@ IONUX.Views.AttributeGroup = Backbone.View.extend({
 });
 
 IONUX.Views.TextShort = Backbone.View.extend({
-    template: _.template($('#text-short-tmpl').html()),
+    template: _.template('<span class="upcase"><%= label %></span>: <%= text_short %>'),
 
     render: function(){
         var data_path = this.$el.data('path');
@@ -281,7 +281,7 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
 
   render: function(){
     this.$el.empty().html(this.template(this.model.toJSON())).show();
-    this.get_capabilities();
+    this.get_capabilities();    
     // Check if instrument agent instance is present (running)...
     // var instrumentAgent = this.model.get('instrument_agent');
     // if (instrumentAgent.agent_process_id !== '') {
@@ -290,7 +290,7 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
     //     $("#stop-instrument-agent-instance").show();
     //     $(".instrument-commands").show();    
     // };
-    return this;
+    // return this;
   },
   
   issue_command: function(evt){
@@ -338,7 +338,7 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
           $('.instrument-commands').show();
           $('#start-instrument-agent-instance').hide();
           $('#stop-instrument-agent-instance').show();
-          
+          self.get_capabilities();
         },
         error: function() {
         }
