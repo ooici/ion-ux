@@ -60,6 +60,7 @@ IONUX.Router = Backbone.Router.extend({
         var resource_extension = new IONUX.Models.ResourceExtension({resource_type: 'InstrumentDevice', resource_id: resource_id});
         var instrument_command = new IONUX.Views.InstrumentCommandFacepage({model: resource_extension});
         resource_extension.fetch();
+        window.MODEL_DATA = resource_extension;
     },
     
     // KEPT FOR REFERENCE

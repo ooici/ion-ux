@@ -29,7 +29,7 @@ def render_app_template(current_url):
 
 
 # Face, status, related pages catch-all
-@app.route('/<resource_type>/static/<resource_id>/', methods=['GET'])
+@app.route('/<resource_type>/status/<resource_id>/', methods=['GET'])
 @app.route('/<resource_type>/face/<resource_id>/', methods=['GET'])
 @app.route('/<resource_type>/related/<resource_id>/', methods=['GET'])
 def page(resource_type, resource_id):
