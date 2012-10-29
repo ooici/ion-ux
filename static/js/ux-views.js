@@ -337,7 +337,7 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
         success: function() {
           $('.instrument-commands').show();
           $('#start-instrument-agent-instance').hide();
-          $('#stop-instrument-agent-instance').show();
+          $(' #stop-instrument-agent-instance').show();
           self.get_capabilities();
         },
         error: function() {
