@@ -202,15 +202,10 @@ function render_page(resource_type, model) {
     
     var table_elmts = $('.'+resource_type+' .table_ooi');
     _.each(table_elmts, function(el) {
-        var data_path = $(el).data('path');
-        
-        if (data_path) {
-            var raw_table_data = window.MODEL_DATA[data_path];
-            var raw_table_data = get_descendant_properties(window.MODEL_DATA, data_path);
-            new IONUX.Views.DataTable({el: $(el), data: raw_table_data});
-        } else {
-            // new IONUX.Views.DataTable({el: $(el), data: []});
-        };
+        var data_path = $(el).data('path');        
+
+        if (data_path.substring(0,6) !== 'unknown') var raw_table_data = get_descendant_properties(window.MODEL_DATA, data_path);        
+        if (raw_table_data) new IONUX.Views.DataTable({el: $(el), data: raw_table_data});
     });
     
     var extent_geospatial_elmts = $('.'+resource_type+' .extent_geospatial_ooi');
