@@ -49,7 +49,7 @@ IONUX.Router = Backbone.Router.extend({
         var resource_extension = new IONUX.Models.ResourceExtension({resource_type: resource_type, resource_id: resource_id});
         resource_extension.fetch()
             .success(function(model, resp) {
-                render_page(resource_type, model);
+                render_page(resource_type, resource_id, model);
             })
             .error(function(model, resp) {
                 render_error();
@@ -58,8 +58,9 @@ IONUX.Router = Backbone.Router.extend({
     
     command: function(resource_type, resource_id){
         var resource_extension = new IONUX.Models.ResourceExtension({resource_type: 'InstrumentDevice', resource_id: resource_id});
-        new IONUX.Views.InstrumentCommandFacepage({model: resource_extension});
+        var instrument_command = new IONUX.Views.InstrumentCommandFacepage({model: resource_extension});
         resource_extension.fetch();
+        window.MODEL_DATA = resource_extension;
     },
     
     // KEPT FOR REFERENCE
@@ -110,23 +111,23 @@ IONUX.Router = Backbone.Router.extend({
 
 
 // Prepare response from server for IONUX.Views.DataTable;
-function prepare_table_data(data, columns) {
-    var table = {headers: [], data: []}
-    
-    // Headers
-    if (!columns) var columns = _.keys(data[0]);
-    _.each(columns, function(column){
-        table.headers.push({'sTitle': column});
-    });
-    
-    // Data
-    _.each(data, function(row) {
-        var row_values = _.pick(row, columns);
-        var row_array = _.toArray(row_values);
-        table.data.push(row_array);
-    });
-    return table
-};
+// function prepare_table_data(data, columns) {
+//     var table = {headers: [], data: []}
+//     
+//     // // Headers
+//     // if (!columns) var columns = _.keys(data[0]);
+//     // _.each(columns, function(column){
+//     //     table.headers.push({'sTitle': column});
+//     // });
+//     
+//     // Data
+//     _.each(data, function(row) {
+//         var row_values = _.pick(row, columns);
+//         var row_array = _.toArray(row_values);
+//         table.data.push(row_array);
+//     });
+//     return table
+// };
 
 
 // Get values from string notation, example:
@@ -138,76 +139,105 @@ function get_descendant_properties(obj, desc) {
     return obj;
 };
 
-function render_page(resource_type, model) {
-    // Put in global namespance for development/manual inspection
+function render_page(resource_type, resource_id, model) {
+    
+    // Catch and set derivative resources
+    if (resource_type == 'InstrumentModel' || resource_type == ('PlatformModel')) {
+        var resource_type = 'DeviceModel';
+    } else if (resource_type == 'Observatory') {
+        var resource_type = 'Org'
+    } else if (resource_type == 'InstrumentSite' || resource_type == 'PlatformSite' || resource_type == 'SubSite') {
+        var resource_type = 'Site'
+    };
+    
     window.MODEL_DATA = model.data;
 
-    var attribute_group_elmts = $('.InstrumentDevice .attribute_group_ooi');
-    _.each(attribute_group_elmts, function(el) {
-        new IONUX.Views.AttributeGroup({el: $(el)}).render().el;
+    var attribute_group_elmts = $('.'+resource_type+' .attribute_group_ooi');
+    _.each(attribute_group_elmts, function(el){
+        var data_path = $(el).data('path');
+        var data = get_descendant_properties(window.MODEL_DATA, data_path);
+                
+        new IONUX.Views.AttributeGroup({el: $(el), data: window.MODEL_DATA}).render().el;
         append_info_level(el);
     });
 
-    var text_static_elmts = $('.InstrumentDevice .text_static_ooi');
+    var text_static_elmts = $('.'+resource_type+' .text_static_ooi');
     _.each(text_static_elmts, function(el){
         new IONUX.Views.TextStatic({el: $(el)}).render().el;
         append_info_level(el);
     });
 
-    var text_short_elmts = $('.InstrumentDevice .text_short_ooi');
+    var text_short_elmts = $('.'+resource_type+' .text_short_ooi');
     _.each(text_short_elmts, function(el){
         new IONUX.Views.TextShort({el: $(el), data_model: window.MODEL_DATA}).render().el;
         append_info_level(el);
     });
 
-    var text_extended_elmts = $('.InstrumentDevice .text_extended_ooi');
+    var text_extended_elmts = $('.'+resource_type+' .text_extended_ooi');
     _.each(text_extended_elmts, function(el){
         new IONUX.Views.TextExtended({el: $(el), data_model: window.MODEL_DATA}).render().el;
         append_info_level(el);
     });
 
-    var icon_elmts = $('.InstrumentDevice .icon_ooi');
+    var icon_elmts = $('.'+resource_type+' .icon_ooi');
     _.each(icon_elmts, function(el) {
         new IONUX.Views.Icon({el: $(el)}).render().el;
         append_info_level(el);
     });
 
-    var image_elmts = $('.InstrumentDevice .image_ooi');
+    var image_elmts = $('.'+resource_type+' .image_ooi');
     _.each(image_elmts, function(el) {
         new IONUX.Views.Image({el: $(el)}).render().el;
         append_info_level(el);
     });
 
-    var badge_elmts = $('.InstrumentDevice .badge_ooi');
+    var badge_elmts = $('.'+resource_type+' .badge_ooi');
     _.each(badge_elmts, function(el) {
         new IONUX.Views.Badge({el: $(el), data_model: window.MODEL_DATA}).render().el;
         append_info_level(el);
     });
     
-    var list_elmts = $('.InstrumentDevice .list_ooi');
+    var list_elmts = $('.'+resource_type+' .list_ooi');
     _.each(list_elmts, function(el) {
         new IONUX.Views.List({el: $(el), data_model: window.MODEL_DATA}).render().el;
     });
     
-    var table_elmts = $('.InstrumentDevice .table_ooi');
+    var table_elmts = $('.'+resource_type+' .table_ooi');
     _.each(table_elmts, function(el) {
-        var data_path = $(el).data('path');
-        if (data_path) {
-            var raw_table_data = window.MODEL_DATA[data_path];
-            var table_data = prepare_table_data(raw_table_data, ['_id', 'name', 'description']);
-            var columns = ['description, name, _id'];
-            new IONUX.Views.DataTable({el: $(el), data: table_data});
-        } else {
-            new IONUX.Views.DataTable({el: $(el), data: {headers:[null], data: []}});
-    
-            // TEMP: make obvious what's not integrated yet.
-            // $(el).find('.filter-header, .dataTables_wrapper').css('background', 'red');
-        };
+        var data_path = $(el).data('path');        
+
+        if (data_path.substring(0,6) !== 'unknown') var raw_table_data = get_descendant_properties(window.MODEL_DATA, data_path);        
+        if (raw_table_data) new IONUX.Views.DataTable({el: $(el), data: raw_table_data});
     });
     
+    var extent_geospatial_elmts = $('.'+resource_type+' .extent_geospatial_ooi');
+    _.each(extent_geospatial_elmts, function(el) {
+        var data_path = $(el).data('path');
+        var data = get_descendant_properties(window.MODEL_DATA, data_path);
+        new IONUX.Views.ExtentGeospatial({el: $(el), data: data}).render().el;
+    });
+
+    var extent_vertical_elmts = $('.'+resource_type+' .extent_vertical_ooi');
+    _.each(extent_vertical_elmts, function(el) {
+        new IONUX.Views.ExtentVertical({el: $(el)}).render().el;
+    });
+
+    var extent_temporal_elmts = $('.'+resource_type+' .extent_temporal_ooi');
+    _.each(extent_temporal_elmts, function(el) {
+        new IONUX.Views.ExtentTemporal({el: $(el)}).render().el;
+    });
+
+    var checkbox_elmts = $('.'+resource_type+' .checkbox_ooi');
+    _.each(checkbox_elmts, function(el) {
+        new IONUX.Views.Checkbox({el: $(el), data_model: window.MODEL_DATA}).render().el;
+    });
+    
+    
     // Show the relevant elements and click to enable the Bootstrap tabs.
-    $('li.' + resource_type + ',div.' + resource_type).show();
-    $('.span9 ul, .span3 ul').find('li.' + resource_type + ':first').find('a').click();
+    $('li.' + resource_type + ', div.' + resource_type).show();
+    $('.span9 ul, .span3 ul').find('li.' + resource_type + ':first').find('a').click();  
+    
+    $('.tab-pane').find('.'+resource_type+':visible:first').css('margin-left', 0)
 };
 
 function render_error(){
@@ -216,8 +246,8 @@ function render_error(){
 };
 
 function append_info_level(el) {
-    var info_level = $(el).data('level');
-    if (info_level || info_level == '0') {
-        $(el).append('<span class="label label-important info-level" style="background:green;color:white;">'+info_level+'</div>');
-    };
+    // var info_level = $(el).data('level');
+    // if (info_level || info_level == '0') {
+    //     $(el).append('<span class="label label-important info-level" style="background:green;color:white;">'+info_level+'</div>');
+    // };
 };

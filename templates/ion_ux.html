@@ -13,6 +13,10 @@
 		<!-- CSS themes will be a user preference (light and dark) -->
 		<link rel="stylesheet" href="/static/css/dark.css" type="text/css" />
 		<link rel="stylesheet" href="/static/css/dark-datatable.css" type="text/css" />
+        <link rel="stylesheet" href="/static/css/dark-geospatial.css" type="text/css" />
+        
+        <!-- Development styles -->
+        <link rel="stylesheet" href="/static/css/dark-integration.css" type="text/css" />
 		{% block extra_css %}{% endblock %}
 	</head>
 	<body>
@@ -43,11 +47,31 @@
                         <a class="btn-advanced-search" href="#">Advanced Search</a>
                         <span class="sidebar-section">OOI Collections (Dev)</span>
     					<ul class="main-nav">
-    						<li class="data"><a href="/DataProduct/list/">Data Product</a></li>
-    						<li class="observatories"><a href="/Observatory/list/">Observatory</a></li>
-    						<li class="platforms"><a href="/PlatformDevice/list/">Platform</a></li>
-    						<li class="instruments"><a href="/InstrumentDevice/list/">Instrument</a></li>
-    						<li class="users"><a href="/UserInfo/list/">User</a></li>
+    						<li><a href="/DataProduct/list/">Data Product</a></li>
+    						<li><a href="/DataProcessDefinition/list/">Data Process Definition</a></li>
+    						
+    						<br />
+    						
+    						<li><a href="/Observatory/list/">Observatory</a></li>
+    						<li><a href="/PlatformDevice/list/">Platform</a></li>
+    						<li><a href="/PlatformModel/list/">Platform Model</a></li>
+    						<li><a href="/InstrumentDevice/list/">Instrument</a></li>
+    						<li><a href="/InstrumentModel/list/">Instrument Model</a></li>
+    						<li><a href="/UserInfo/list/">User</a></li>
+    						
+    						<br />
+    						
+    						<li><a href="/Site/list/">Site</a></li>
+    						<li><a href="/SubSite/list/">SubSite</a></li>
+    						<li><a href="/PlatformSite/list/">Platform Site</a></li>
+    						<li><a href="/InstrumentSite/list/">Instrument Site</a></li>
+    						
+    						<br />
+    						
+    						<li><a href="/Resource/list/">Resource</a></li>
+    						<li><a href="/InformationResource/list/">Information Resource</a></li>
+    						<li><a href="/TaskableResource/list/">Taskable Resource</a></li>
+    						<li><a href="/NotificationRequest/list/">Notification Request</a></li>
     					</ul>
     			    </div> <!-- div#sidebar -->
     				<div id="info" class="span10">
@@ -71,7 +95,11 @@
         <script type="text/template" id="datatable-tmpl">{% include 'partials/datatable.html' %}</script>
 
         <script type="text/template" id="attribute-group-tmpl">
-            <![CDATA[<h2><%= attribute_group_label %></h2>]]>
+            <![CDATA[
+                <% if (label != 'NO LABEL') { %>
+                    <h4><%= label %></h4>
+                <% } %>
+            ]]>
         </script>
 
         <script type="text/template" id="text-static-tmpl">
@@ -94,17 +122,12 @@
             <![CDATA[<span class="label label-important" style="background-color:#3a87ad;color:white;"><%= badge %></span>]]>
         </script>
         
-        <script type="text/template" id="list-tmpl">
-            <![CDATA[
-                <h3><%= label %></h3>
-                <% _.each(list_items, function(item) { %>
-                    <span class="list-item"><%= item %></span>
-                <% }); %>
-            ]]>
-        </script>
+        <script type="text/template" id="list-tmpl"><![CDATA[{% include 'partials/list.html' %}]]></script>
+        <script type="text/template" id="checkbox-tmpl"><![CDATA[{% include 'partials/checkbox.html' %}]]></script>
         
-        
-        
+        <script type="text/template" id="extent-geospatial-tmpl"><![CDATA[{% include 'partials/extent_geospatial.html' %}]]></script>
+        <script type="text/template" id="extent-vertical-tmpl"><![CDATA[{% include 'partials/extent_vertical.html' %}]]></script>
+        <script type="text/template" id="extent-temporal-tmpl"><![CDATA[{% include 'partials/extent_temporal.html' %}]]></script>
         
         <!-- Widgets -->
         <script type="text/template" id="collection"><![CDATA[{% include 'partials/collection.html' %}]]></script>
@@ -142,6 +165,7 @@
 		<script src="/static/js/ux-router.js" type="text/javascript"> </script>
 		<script src="/static/js/init.js" type="text/javascript"> </script>
         <script type="text/javascript" src="/static/js/ux-views-datatable.js"> </script>
+        <script type="text/javascript" src="/static/js/ux-views-actionmenu.js"> </script>
         
         {% block extra_ionux_js %} {% endblock %}
 		

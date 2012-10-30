@@ -19,7 +19,7 @@ DEFINED_VIEWS = [
     '2163153', # Status
     '2163154', # Related
     '2163156', # Dashboard
-    '2163810', # Dashboard 2
+    # '2163810', # Dashboard 2
     '2163158', # Direct Command
 ]
 
@@ -44,8 +44,10 @@ class LayoutApi(object):
         layout_schema = LayoutApi.get_new_layout_schema()
 
         resource_types = []
-        tables_processed = []
-        excluded_sub_attributes = ['table_ooi']
+        metadata_processed = []
+        
+        # Do not create HTML elmts for subattributes
+        excluded_sub_attributes = ['table_ooi', 'chart_ooi']
         
         for view_id in DEFINED_VIEWS:
             view = layout_schema['spec']['elements'][view_id] 
@@ -67,15 +69,15 @@ class LayoutApi(object):
 
             # Page heading
             v00_elmt = ET.SubElement(row_heading, 'div')
-            v00_elmt.set('class', 'span12 v00')
+            v00_elmt.set('class', 'v00 span12')
             group_h1_elmt = ET.SubElement(v00_elmt, 'h1')
             group_h1_elmt.text = view['label']
 
             # Page content - left and right columns
             v01_elmt = ET.SubElement(row_container, 'div')
-            v01_elmt.set('class', 'span3')
+            v01_elmt.set('class', 'v01 span3')
             v02_elmt = ET.SubElement(row_container, 'div')
-            v02_elmt.set('class', 'span9')
+            v02_elmt.set('class', 'v02 span9')
 
             # END BASIC PAGE STRUCTURE
 
@@ -102,6 +104,7 @@ class LayoutApi(object):
 
                     group_container_elmt = ET.SubElement(parent_elmt, 'div')
                     group_container_elmt.attrib['id'] = group_elid
+                    group_container_elmt.attrib['class'] = 'group'
 
                     # Create ul for navigation
                     group_ul_elmt = ET.SubElement(group_container_elmt, 'ul')
@@ -129,7 +132,7 @@ class LayoutApi(object):
                 # Create group div inside of tab-content
                 group_elmt = ET.SubElement(group_block_container_elmt, 'div')
                 group_elmt.attrib['id'] = group_elid
-                group_elmt.attrib['class'] = 'tab-pane'
+                group_elmt.attrib['class'] = 'tab-pane row-fluid'
 
             # END GROUPS -------------------------------------------------------------------
 
@@ -148,8 +151,6 @@ class LayoutApi(object):
                     block_widget = layout_schema['spec']['widgets'][block_widget_id]
                     block_widget_type = block_widget['name']
                     
-                    print 'block widget type: ', block_widget_type
-                    
                     if not block_res_type in resource_types:
                         resource_types.append(block_res_type)
 
@@ -165,21 +166,50 @@ class LayoutApi(object):
                             li_css_class += ' active'
                         if not 'active' in group_css_class:
                             group_css_class += ' active'
-
+                    
                     group_li_elmt.attrib['class'] = li_css_class
                     group_elmt.attrib['class'] = group_css_class
 
-                    # Set block div
-                    block_elmt = ET.SubElement(group_elmt, 'div')
-
                     # Set div class based on block_res_type
-                    block_css_class = group_elmt.get('class')
+                    # block_css_class = group_elmt.get('class')
+                    block_css_class = None
                     if block_css_class is None:
                         block_css_class = ''
                     if not block_res_type in block_css_class:
-                        block_css_class += ' block %s' % block_res_type
+                        block_css_class += ' %s' % block_res_type
                     if group_is_active:
                         block_css_class += ' active'
+                    
+                  
+                    ##################################################################
+                    # BLOCK LAYOUT 
+                    # Determine layout structure of blocks within group
+                    ##################################################################
+
+                    wide_container = False
+                    if block['embed']:
+                        for at_element in block['embed']:
+                            attribute = layout_schema['spec']['elements'][at_element['elid']]
+                            attribute_widget_type = layout_schema['spec']['widgets'][attribute['wid']]['name']
+                            if attribute_widget_type in ('table_ooi', 'chart_ooi'):
+                                wide_container = True
+                    if wide_container:
+                        block_container = ET.SubElement(group_elmt, 'div')
+                        block_container.attrib['class'] = 'row-fluid'
+                        block_elmt = ET.SubElement(block_container, 'div')
+                        block_css_class += ' span12'
+                    else:
+                        block_elmt = ET.SubElement(group_elmt, 'div')
+                        block_css_class += ' block'
+                        if group_position not in ('V00','V01'):
+                            block_css_class += ' span3'
+                    
+                    # Set block class based on attribute widget type
+                    # if group_position not in ('V00', 'V01') and attribute_widget_type not in ('table_ooi', 'chart_ooi'):
+                    #     block_css_class += ' span3'
+                    # elif attribute_widget_type in ('table_ooi', 'chart_ooi'):
+                    #     block_css_class += ' clear span12'
+                            
                     block_elmt.attrib['class'] = block_css_class
                     block_elmt.attrib['style'] = 'display:none;'
                     block_elmt.attrib['id'] = block_elid
@@ -210,41 +240,52 @@ class LayoutApi(object):
                         attribute_elmt.set('data-level', attribute_level)
                         attribute_elmt.set('data-label', attribute['label'])
                         
-                        attribute_elmt.text = 'Attribute: %s (%s) (%s) (%s) (%s)' % (attribute['label'], attribute['name'], attribute_elid, attribute_widget_type, attribute_position)
-                                                
-                        if attribute_widget_type == 'attribute_group':
-                            attribute_elmt.text += ' ZZZZ: %s' % attribute_widget_type 
+                        # FOR TROUBLESHOOTING                        
+                        # attribute_elmt.text = 'Attribute: %s (%s) (%s) (%s) (%s)' % (attribute['label'], attribute['name'], attribute_elid, attribute_widget_type, attribute_position)
+                        attribute_elmt.text = '%s (%s)' % (attribute['label'], attribute['name'])
                         
-                        if attribute_widget_type == 'table_ooi' and attribute_elid not in tables_processed:
-                            tables_processed.append(attribute_elid)
-                            table_columns = []
-                            for column in attribute['embed']:
-                                column_object = layout_schema['spec']['elements'][column['elid']]
-                                column_widget_type = layout_schema['spec']['widgets'][column['wid']]['name']
-                                table_columns.append([column_widget_type, column_object['label'], column_object['ie']['ie_name'], column['pos'], column['olevel']])
-                    
-                            # Add table columns to body as a JSON script
-                            table_columns_elmt_id = 'TABLE_' + attribute_elid
-                            table_columns_elmt = ET.SubElement(body_elmt, 'script')
-                            table_columns_elmt.set('id', table_columns_elmt_id)
-                            table_columns_elmt.text = "var %s=%s" % (table_columns_elmt_id, json.dumps(table_columns))
+                        # Generate metadata for nested elements, ex. tables and attribute groups                        
+                        if attribute_widget_type in ('table_ooi', 'attribute_group_ooi') and attribute_elid not in metadata_processed:
+                            metadata_processed.append(attribute_elid)
+                            metadata = []
+                            for embedded_attribute in attribute['embed']:
+                                embedded_object = layout_schema['spec']['elements'][embedded_attribute['elid']]
+                                embedded_widget_type = layout_schema['spec']['widgets'][embedded_attribute['wid']]['name']
+
+                                metadata_items = [embedded_widget_type, embedded_object['label'], embedded_object['ie']['ie_name'], embedded_attribute['pos'], embedded_attribute['olevel']]
+                                if attribute_widget_type == 'attribute_group_ooi':
+                                    meta_elmt_id = 'ATTRIBUTE_GROUP_' + attribute_elid
+                                    metadata_items.append(embedded_attribute['elid'])
+                                    metadata_items.append(embedded_attribute['dpath'])
+                                elif attribute_widget_type == 'table_ooi':
+                                    meta_elmt_id = 'TABLE_' + attribute_elid                                
+                                metadata.append(metadata_items)
+                                
+                            # Append metadata to body as a JSON script
+                            meta_elmt = ET.SubElement(body_elmt, 'script')
+                            meta_elmt.set('id', meta_elmt_id)
+                            meta_elmt.text = "var %s=%s" % (meta_elmt_id, json.dumps(metadata))
                         
-                        if attribute['embed'] and not attribute_widget_type in excluded_sub_attributes:
-                            for sub_at_element in attribute['embed']:
-                                sub_attribute_elid = sub_at_element['elid']
-                                sub_attribute_position = sub_at_element['pos']
-                                sub_attribute_data_path = sub_at_element['dpath']
-                                sub_attribute_level = sub_at_element['olevel']
-                                sub_attribute = layout_schema['spec']['elements'][sub_attribute_elid]
-                                
-                                sub_attribute_widget_id = sub_attribute['wid']
-                                sub_attribute_widget_type = layout_schema['spec']['widgets'][sub_attribute_widget_id]['name']
-                                
-                                sub_attribute_elmt = ET.SubElement(block_elmt, 'div')
-                                sub_attribute_elmt.set('class', sub_attribute_widget_type)
-                                sub_attribute_elmt.set('data-path', sub_attribute_data_path)
-                                sub_attribute_elmt.set('data-level', sub_attribute_level)
-                                sub_attribute_elmt.text = '%s (%s) (%s) (%s) (%s)' % (sub_attribute['label'], sub_attribute['name'], sub_attribute_elid, sub_attribute_widget_type, sub_attribute_position)
+                        # if attribute['embed'] and not attribute_widget_type in excluded_sub_attributes:
+                        #     for sub_at_element in attribute['embed']:
+                        #         sub_attribute_elid = sub_at_element['elid']
+                        #         sub_attribute_position = sub_at_element['pos']
+                        #         sub_attribute_data_path = sub_at_element['dpath']
+                        #         sub_attribute_level = sub_at_element['olevel']
+                        #         sub_attribute = layout_schema['spec']['elements'][sub_attribute_elid]
+                        #         
+                        #         sub_attribute_widget_id = sub_attribute['wid']
+                        #         sub_attribute_widget_type = layout_schema['spec']['widgets'][sub_attribute_widget_id]['name']
+                        #         
+                        #         sub_attribute_elmt = ET.SubElement(block_elmt, 'div')
+                        #         sub_attribute_elmt.set('id', sub_attribute_elid)
+                        #         sub_attribute_elmt.set('class', sub_attribute_widget_type)
+                        #         sub_attribute_elmt.set('data-path', sub_attribute_data_path)
+                        #         sub_attribute_elmt.set('data-level', sub_attribute_level)
+                        #         sub_attribute_elmt.set('data-label', sub_attribute['label'])
+                        # 
+                        #         # sub_attribute_elmt.text = '%s (%s) (%s) (%s) (%s)' % (sub_attribute['label'], sub_attribute['name'], sub_attribute_elid, sub_attribute_widget_type, sub_attribute_position)
+                        #         sub_attribute_elmt.text = '%s (%s)' % (sub_attribute['label'], sub_attribute['name'])
 
 
         # layout_elmt = ET.SubElement(body_elmt, 'script')

@@ -7,9 +7,18 @@ table.table tr.even td {
 table.table tr.odd td {
     background-color:#1E1E1E;
 }
-
+.datatable-container {
+    border:1px solid #4f4f4f;
+}
 .dataTables_wrapper {
-    background-color:#3FA9F5;
+    background-color:#5D5D5D;
+}
+.dataTables_wrapper label {
+    color:#ccc;
+}
+.dataTable {
+    border:none;
+    clear:both;
 }
 .dataTables_filter {
     float:right;
@@ -30,9 +39,16 @@ table.table tr.odd td {
     display:inline;
     margin-bottom:0px;
 }
-
+.dataTables_paginate a {
+    cursor:pointer;
+    margin:2px 4px 2px 0px;
+    color:#ccc;
+}
+.table-bordered tr th {
+    border-left:1px solid #6f6f6f;
+}
 .filter-header {
-    background-color:#056691;
+    background-color:#4D4D4D;
     text-transform:uppercase;
     padding:4px 8px;
 }
@@ -57,8 +73,9 @@ table.table tr.odd td {
 
 .filter-items {
     display:none;
-    background-color:#3FA9F5;
-    border-bottom:1px solid #f0f0f0;
+    background-color:#4d4d4d;
+    border-bottom:1px solid #6f6f6f;
+    border-top:1px solid #6f6f6f;
 }
 .filter-item {
     font-size:10px;
@@ -75,7 +92,7 @@ table.table tr.odd td {
     font-size:18px;
     padding:0px 6px;
     margin:5px;
-    background-color:#056691;
+    background-color:#6f6f6f;
     cursor:pointer;
     position:relative;
     top:4px;

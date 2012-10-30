@@ -17,11 +17,21 @@
 
 {% block extra_ionux_js %}
     <script type="text/javascript" src="/static/js/ux-views-datatable.js"></script>
-{% endblock %}
 
+    <script id="TABLE_56789">
+    var TABLE_56789=[
+        ["icon_ooi", "Aggregated Status", "aggregated_status", "T03", "0"],
+        ["text_short_ooi", "Name", "name", "T11", "0"],
+        ["text_short_ooi", "UUID", "uuid", "T12", "2"], 
+        ["text_short_ooi", "Calibrated", "last_calibration_datetime", "T14", "2"],
+        ["text_extended_ooi", "Description", "description", "T16", "2"]
+    ];
+    </script>
+{% endblock %}
 
 {% block document_ready %}
   $(function(){
-    new IONUX.Views.DataTable({data:TABLE_DATA, el:'#dynamic-container'});
+    $("#dynamic-container").append($("<div>").attr("id", "56789"));
+    new IONUX.Views.DataTable({data:TEST_TABLE_DATA, el:'#56789'});
   });
 {% endblock %}

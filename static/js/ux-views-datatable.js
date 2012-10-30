@@ -1,6 +1,4 @@
 /*
-TODO:
-
 - Show/Hide 
 
 - how will filter specific data/datypes be passed/used?
@@ -11,41 +9,23 @@ TODO:
 
 */
 
-TABLE_DATA = {
-    "headers":[
-        {"sTitle":"", "sClass": "center"}, 
-        {"sTitle":"", "sClass": "center", "sType":"title", "fnRender":status_indicator},
-        {"sTitle":"Name"}, 
-        {"sTitle":"Id"},
-        {"sTitle":"Type"},
-        {"sTitle":"Uptime"},
-        {"sTitle":"Port"},
-        {"sTitle":"Last Comm."},
-        {"sTitle":"Last Data"},
-        {"sTitle":"Last Note"},
-    ],
-    "data":[
-        ["+", "Normal", "Platform AS02CPSM", 274500, "OOI", "05:12:33", 1000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note1..", 1],
-        ["+", "Alarm", "Platform AS02CPSM", 174501, "OOI", "05:12:33", 3000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note2..", 1],
-        ["+", "Unknown", "Platform AS02CPSM", 275504, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note3..", 1],
-        ["+", "Normal", "Platform AS02CPSM", 274503, "OOI", "05:12:33", 4000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note4..", 1],
-        ["+", "Normal", "Platform AS02CPSM", 473508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note5..", 1],
-        ["+", "Alert", "Platform AS02CPSM", 274508, "OOI", "05:12:33", 7000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note6..", 1],
-        ["+", "Normal", "Platform AS02CPSM", 974508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note7..", 1],
-        ["+", "Normal", "Platform AS02CPSM", 271501, "OOI", "05:12:33", 9000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note8..", 1],
-        ["+", "Normal", "Platform AS02CPSM", 274508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note9..", 1],
-        ["+", "Normal", "Platform AS02CPSM", 274508, "OOI", "05:12:33", 1000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note10.", 1],
-        ["+", "Normal", "Platform AS02CPSM", 471508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note11.", 1],
-        ["+", "Normal", "Platform AS02CPSM", 970508, "OOI", "05:12:33", 3000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note12.", 1],
-        ["+", "Normal", "Platform AS02CPSM", 374508, "OOI", "05:12:33", 7000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note13.", 1],
-        ["+", "Normal", "Platform AS02CPSM", 274508, "OOI", "05:12:33", 2000, "12:10:14 10.15.30", "10:10:14 11.25.20", "Last Note14.", 1],
-    ]
-}
+TEST_TABLE_DATA = [
+    {'aggregated_status':"Normal", 'name':"Platform AS02CPSM", 'uuid':274503, 'last_calibration_datetime':"05:12:33", 'description':"Last Note4.."},
+    {'aggregated_status':"Alarm", 'name':"Platform AS02CPSM", 'uuid':174501,  'last_calibration_datetime':"05:12:33", 'description':"Last Note2.."},
+    {'aggregated_status':"Normal", 'name':"Platform AS02CPSM", 'uuid':473508, 'last_calibration_datetime':"05:12:33", 'description':"Last Note5.."},
+    {'aggregated_status':"Normal", 'name':"Platform AS02CPSM", 'uuid':271501, 'last_calibration_datetime':"05:12:33", 'description':"Last Note8.."},
+    {'aggregated_status':"Unknown", 'name':"Platform AS02CPSM", 'uuid':275504, 'last_calibration_datetime':"05:12:33", 'description':"Last Note3.."},
+    {'aggregated_status':"Normal", 'name':"Platform AS02CPSM", 'uuid':274500, 'last_calibration_datetime':"05:12:33", 'description':"Last Note1.."},
+    {'aggregated_status':"Normal", 'name':"Platform AS02CPSM", 'uuid':974508, 'last_calibration_datetime':"05:12:33", 'description':"Last Note7.."},
+    {'aggregated_status':"Alert", 'name':"Platform AS02CPSM", 'uuid':274508, 'last_calibration_datetime':"05:12:33",  'description':"Last Note6.."},
+    {'aggregated_status':"Unknown", 'name':"Platform AS02CPSM", 'uuid':275504, 'last_calibration_datetime':"05:12:33", 'description':"Last Note3.."}
+]
+
 
 
 /* The below will be View instance attrs: */
 OPERATORS = ['CONTAINS', 'NEWER THAN', 'OLDER THAN', 'GREATER THAN', 'LESS THAN'];
-COLUMNS = _.map(TABLE_DATA.headers, function(e){return e['sTitle']});
+COLUMNS = _.map(TEST_TABLE_DATA.headers, function(e){return e['sTitle']});
 COLUMNS_FILTERABLE = _.reject(COLUMNS, function(e){return e==""}); 
 
 
@@ -75,12 +55,67 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
     },
     render: function() {
         this.$el.html(this.template());
+        var header_data = this.header_data();
+        var table_data = this.table_data(this.options.data);
         this.datatable = this.$el.find(".datatable-container table").dataTable({
             "sDom":"Rlfrtip",
-            "aaData":this.options.data.data,
-            "aoColumns":this.options.data.headers
+            "aaData":table_data,
+            "aoColumns":header_data
         });
         return this;
+    },
+
+    _get_table_metadata: function(){
+        var table_metadata_id = "TABLE_"+this.$el.attr("id");
+        var table_metadata = window[table_metadata_id];
+        return table_metadata;
+    },
+
+    header_data: function(){
+        var data = [];
+        var table_metadata = this._get_table_metadata();
+        var self = this;
+        _.each(table_metadata, function(item){
+            if (item[4] == "0"){ //only show LEVEL 0 data right now.
+                var data_item = {};
+                data_item["sTitle"] = item[1];
+                data_item["sType"] = "title";
+                data_item["fnRender"] = self.preproccesor(item[0]);
+                data_item["sClass"] = "center"; //TODO choose dependant on 'item[0]'
+                data.push(data_item);
+            }
+        });
+        return data;
+    },
+
+    table_data: function(data_objs){
+        var data = [];
+        var table_metadata = this._get_table_metadata();
+        var data_keys = _.map(table_metadata, function(arr){return arr[2];});
+        var self = this;
+        _.each(data_objs, function(data_obj){
+            var data_row = []
+            _.each(data_keys, function(key){
+                var value = data_obj[key];
+                if (_.isUndefined(value)) value = "MISSING";
+                data_row.push(value);
+            });
+            data.push(data_row);
+        });
+        return data;
+    },
+
+    preproccesor: function(data_type){
+        switch(data_type){
+            case "icon_ooi":
+                return status_indicator; //TODO namespace these
+            case "text_short_ooi":
+                return function(obj){return obj.aData[obj.iDataColumn];}; //noop
+            case "text_extended_ooi":
+                return function(obj){return obj.aData[obj.iDataColumn];}; //noop
+            default:
+                return function(obj){return obj.aData[obj.iDataColumn];};
+        }
     },
 
     add_filter_item: function(evt){

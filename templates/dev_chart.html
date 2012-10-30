@@ -1,0 +1,31 @@
+{% extends "ion_ux.html" %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="/static/css/dark-datatable.css" type="text/css" />
+{% endblock %}
+
+{% block extra_templates %}
+    <script type="text/template" id="datatable-tmpl">{% include 'partials/chart.html' %}</script>
+{% endblock %}
+
+
+{% block extra_vendor_js %}
+<script type='text/javascript' src='http://www.google.com/jsapi'> </script>
+<script type="text/javascript" src='https://www.google.com/jsapi?autoload={"modules":[{"name":"visualization","version":"1"}]}'> </script>
+<script type="text/javascript" charset="utf-8">
+    google.load('visualization', '1', {'packages':['annotatedtimeline']});
+</script>
+
+{% endblock %}
+
+
+{% block extra_ionux_js %}
+    <script type="text/javascript" src="/static/js/ux-views-chart.js"></script>
+{% endblock %}
+
+{% block document_ready %}
+  $(function(){
+      chart_instance = new IONUX.Views.Chart({resource_id: 'c39f580940cd48a88dcced50ce6e03d3'});
+      chart_instance.render().el;
+  });
+{% endblock %}
