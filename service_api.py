@@ -40,30 +40,35 @@ class ServiceApi(object):
     def get_extension(resource_type, resource_id):
         if resource_type == 'InstrumentDevice':
             extension = service_gateway_get('instrument_management', 'get_instrument_device_extension', params= {'instrument_device_id': resource_id})
+        elif resource_type == 'InstrumentModel':
+            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'DeviceModelExtension'})
         elif resource_type == 'PlatformDevice':
             extension = service_gateway_get('instrument_management', 'get_platform_device_extension', params= {'platform_device_id': resource_id})
+        elif resource_type == 'PlatformModel':
+            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'DeviceModelExtension'})
         elif resource_type == 'DataProduct':
-            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'DataProductExtension'})
-            # extension = service_gateway_get('data_product_management', 'get_data_product_extension', params= {'data_product_id': resource_id})
+            extension = service_gateway_get('data_product_management', 'get_data_product_extension', params= {'data_product_id': resource_id})
+        elif resource_type == 'Observatory':
+            # extension = service_gateway_get('observatory_management', 'get_observatory_extension', params= {'observatory_id': resource_id})
+            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'MarineFacilityOrgExtension'})
+        elif resource_type == 'UserInfo':
+            extension = service_gateway_get('identity_management', 'get_actor_identity_extension', params= {'user_id': resource_id})
+        elif resource_type == 'DataProcessDefinition':
+            extension = service_gateway_get('data_process_management', 'get_data_process_definition_extension', params= {'data_process_definition_id': resource_id})
+        else:
+            extension = 'Service API call not implemented.'
 
         return extension
 
-    # @staticmethod
-    # def get_instrument_extension(resource_id):
-    #     instrument_device = service_gateway_get('instrument_management', 'get_instrument_device_extension', params= {'instrument_device_id': resource_id})
-    #     return instrument_device
-    # 
-    # @staticmethod
-    # def get_platform_extension(resource_id):
-    #     platform_device = service_gateway_get('instrument_management', 'get_platform_device_extension', params= {'platform_device_id': resource_id})
-    #     return platform_device
-    # 
-    # @staticmethod
-    # def get_data_product_extension(resource_id):
-    #     data_product_extension = service_gateway_get('data_product_management', 'get_data_product_extension', params= {'data_product_id': resource_id})
-    #     return data_product_extension
-        
 
+    @staticmethod
+    def initiate_realtime_visualization(data_product_id):
+        real_time_data = service_gateway_get('visualization_service', 'initiate_realtime_visualization', params= {'data_product_id': data_product_id, 'callback': 'chart.init_realtime_visualization_cb', 'return_format': 'raw_json'})
+    
+    @staticmethod
+    def get_realtime_visualization_data(query_token):
+        real_time_data = service_gateway_get('visualization_service', 'get_realtime_visualization_data', params= {'query_token': query_token, 'return_format': 'raw_json'})
+        
     # USER REQUESTS
     # ---------------------------------------------------------------------------
 
@@ -306,6 +311,7 @@ def service_gateway_get(service_name, operation_name, params={}):
     pretty_console_log('SERVICE GATEWAY GET RESPONSE', resp.content)
     
     if resp.status_code == 200:
+        print 'XXXXXX', type(resp.content)
         resp = json.loads(resp.content)
         
         if type(resp) == dict:
