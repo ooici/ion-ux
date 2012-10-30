@@ -52,7 +52,7 @@ class ServiceApi(object):
             # extension = service_gateway_get('observatory_management', 'get_observatory_extension', params= {'observatory_id': resource_id})
             extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'MarineFacilityOrgExtension'})
         elif resource_type == 'UserInfo':
-            extension = service_gateway_get('identity_management', 'get_actor_identity_extension', params= {'user_id': resource_id})
+            extension = service_gateway_get('identity_management', 'get_user_info_extension', params= {'user_info_id': resource_id})
         elif resource_type == 'DataProcessDefinition':
             extension = service_gateway_get('data_process_management', 'get_data_process_definition_extension', params= {'data_process_definition_id': resource_id})
         else:
