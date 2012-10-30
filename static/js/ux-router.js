@@ -49,7 +49,7 @@ IONUX.Router = Backbone.Router.extend({
         var resource_extension = new IONUX.Models.ResourceExtension({resource_type: resource_type, resource_id: resource_id});
         resource_extension.fetch()
             .success(function(model, resp) {
-                render_page(resource_type, model);
+                render_page(resource_type, resource_id, model);
             })
             .error(function(model, resp) {
                 render_error();
@@ -139,13 +139,15 @@ function get_descendant_properties(obj, desc) {
     return obj;
 };
 
-function render_page(resource_type, model) {
+function render_page(resource_type, resource_id, model) {
     
-    // Catch specific routes that need generic resources...
+    // Catch and set derivative resources
     if (resource_type == 'InstrumentModel' || resource_type == ('PlatformModel')) {
         var resource_type = 'DeviceModel';
     } else if (resource_type == 'Observatory') {
         var resource_type = 'Org'
+    } else if (resource_type == 'InstrumentSite' || resource_type == 'PlatformSite' || resource_type == 'SubSite') {
+        var resource_type = 'Site'
     };
     
     window.MODEL_DATA = model.data;
@@ -210,7 +212,9 @@ function render_page(resource_type, model) {
     
     var extent_geospatial_elmts = $('.'+resource_type+' .extent_geospatial_ooi');
     _.each(extent_geospatial_elmts, function(el) {
-        new IONUX.Views.ExtentGeospatial({el: $(el)}).render().el;
+        var data_path = $(el).data('path');
+        var data = get_descendant_properties(window.MODEL_DATA, data_path);
+        new IONUX.Views.ExtentGeospatial({el: $(el), data: data}).render().el;
     });
 
     var extent_vertical_elmts = $('.'+resource_type+' .extent_vertical_ooi');
@@ -228,9 +232,10 @@ function render_page(resource_type, model) {
         new IONUX.Views.Checkbox({el: $(el), data_model: window.MODEL_DATA}).render().el;
     });
     
+    
     // Show the relevant elements and click to enable the Bootstrap tabs.
     $('li.' + resource_type + ', div.' + resource_type).show();
-    $('.span9 ul, .span3 ul').find('li.' + resource_type + ':first').find('a').click();
+    $('.span9 ul, .span3 ul').find('li.' + resource_type + ':first').find('a').click();  
     
     $('.tab-pane').find('.'+resource_type+':visible:first').css('margin-left', 0)
 };

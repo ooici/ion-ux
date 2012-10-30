@@ -1,3 +1,17 @@
+IONUX.Views.FooterButton = Backbone.View.extend({
+    template: '<a class="<%= css_class %>" href="/<%= resource_type %>/<%= view_type %>/<%= resource_id %>/"><%= label %></a>',
+    render: function(){
+        $('#dynamic-container').append(_.template(this.template, {css_class: 'Yolo', label: 'Yo'}));
+        return this;
+    }
+});
+
+
+IONUX.Views.ContextMap = Backbone.View.extend({});
+
+
+IONUX.Views.Map = Backbone.View.extend({});
+
 IONUX.Views.Checkbox = Backbone.View.extend({
     template: _.template($('#checkbox-tmpl').html()),
     render: function(){
@@ -28,7 +42,6 @@ IONUX.Views.Checkbox = Backbone.View.extend({
 IONUX.Views.ExtentGeospatial = Backbone.View.extend({
     template: _.template($('#extent-geospatial-tmpl').html()),
     render: function(){
-        
         var label = this.$el.data('label');
         if (!label) {
             label = "Geospatial Bounds"
@@ -37,7 +50,6 @@ IONUX.Views.ExtentGeospatial = Backbone.View.extend({
         var data_path = this.$el.data('path');
         if (data_path && data_path.substring(0,7) != 'unknown') {
             this.$el.html(this.template({label: label}));
-        
         // For integration effort only
         } else {
             var integration_info = this.$el.text();
@@ -52,13 +64,14 @@ IONUX.Views.ExtentGeospatial = Backbone.View.extend({
 IONUX.Views.ExtentVertical = Backbone.View.extend({
     template: _.template($('#extent-vertical-tmpl').html()),
     render: function(){
-
         var label = this.$el.data('label');
         if (!label) {
             label = "Vertical Bounds"
         }; 
+
         var data_path = this.$el.data('path');
         if (data_path && data_path.substring(0,7) != 'unknown') {
+            console.log(data_path);
             this.$el.html(this.template({label: label, upper_bound: '', lower_bound: ''}));
         
         // For integration effort only
@@ -281,7 +294,7 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
 
   render: function(){
     this.$el.empty().html(this.template(this.model.toJSON())).show();
-    this.get_capabilities();    
+    // this.get_capabilities();    
     // Check if instrument agent instance is present (running)...
     // var instrumentAgent = this.model.get('instrument_agent');
     // if (instrumentAgent.agent_process_id !== '') {

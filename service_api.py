@@ -56,6 +56,8 @@ class ServiceApi(object):
         elif resource_type == 'DataProcessDefinition':
             extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'DataProcessDefinitionExtension'})
             # extension = service_gateway_get('resource_registry', 'read', params={'object_id': resource_id})
+        else:
+            extension = 'Service API call not implemented.'
 
         return extension
 
