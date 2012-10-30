@@ -76,12 +76,14 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         var table_metadata = this._get_table_metadata();
         var self = this;
         _.each(table_metadata, function(item){
-            var data_item = {};
-            data_item["sTitle"] = item[1];
-            data_item["sType"] = "title";
-            data_item["fnRender"] = self.preproccesor(item[0]);
-            data_item["sClass"] = "center"; //TODO choose dependant on 'item[0]'
-            data.push(data_item);
+            if (item[4] == "0"){ //only show LEVEL 0 data right now.
+                var data_item = {};
+                data_item["sTitle"] = item[1];
+                data_item["sType"] = "title";
+                data_item["fnRender"] = self.preproccesor(item[0]);
+                data_item["sClass"] = "center"; //TODO choose dependant on 'item[0]'
+                data.push(data_item);
+            }
         });
         return data;
     },
