@@ -69,7 +69,7 @@ h4, .h4-span {
   background: -moz-linear-gradient(center top, #e0e0e0 0%, #e6e3e6 25%, #e6e3e6 25%, #ffffff 100%);
 }
 
-a.btn-advanced-search {
+a.btn-footer, a.btn-advanced-search {
   color:#999; font-size:11px;
   font-weight:400;
   letter-spacing:2px;
@@ -91,6 +91,19 @@ a.btn-advanced-search {
 
 a.btn-advanced-search:hover {background: #666666; color:#fff; border: solid #fff 1px;}
 a.btn-advanced-search:active {background: #333333; color:#fff; border: solid #fff 1px;} 
+
+a.btn-footer {
+  margin-right: 10px;
+  width: 100px;
+}
+
+.footer {
+  width: 100%;
+  background: #000;
+  height: 50px;
+  text-align: right;
+  padding-top: 15px;
+}
 
 .navigation {
   padding-top: 43px;

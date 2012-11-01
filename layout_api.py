@@ -12,14 +12,15 @@ from jinja2.environment import Environment
 
 from dummy_data_layout import LAYOUT_SCHEMA
 from service_api import service_gateway_get
-from config import CACHED_LAYOUT
+from config import CACHED_LAYOUT, PORTAL_ROOT
 
 DEFINED_VIEWS = [
     '2163152', # Facepage
     '2163153', # Status
     '2163154', # Related
     '2163156', # Dashboard
-    # '2163810', # Dashboard 2
+    # '2163810', # Dashboard 2,
+    '2163157', # Command
     '2163158', # Direct Command
 ]
 
@@ -34,7 +35,8 @@ class LayoutApi(object):
     @staticmethod
     def process_layout(layout_schema=None, interactions=None):
         env = Environment()
-        env.loader = FileSystemLoader('templates')
+        
+        env.loader = FileSystemLoader(PORTAL_ROOT+'/templates')
         tmpl_unparsed = env.get_template('ion_ux.html').render()
         tmpl = ET.fromstring(tmpl_unparsed.encode('utf-8'))
 
@@ -252,7 +254,7 @@ class LayoutApi(object):
                                 embedded_object = layout_schema['spec']['elements'][embedded_attribute['elid']]
                                 embedded_widget_type = layout_schema['spec']['widgets'][embedded_attribute['wid']]['name']
 
-                                metadata_items = [embedded_widget_type, embedded_object['label'], embedded_object['ie']['ie_name'], embedded_attribute['pos'], embedded_attribute['olevel']]
+                                metadata_items = [embedded_widget_type, embedded_object['label'], embedded_attribute['dpath'], embedded_attribute['pos'], embedded_attribute['olevel']]
                                 if attribute_widget_type == 'attribute_group_ooi':
                                     meta_elmt_id = 'ATTRIBUTE_GROUP_' + attribute_elid
                                     metadata_items.append(embedded_attribute['elid'])

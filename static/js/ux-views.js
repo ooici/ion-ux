@@ -1,14 +1,38 @@
-IONUX.Views.FooterButton = Backbone.View.extend({
-    template: '<a class="<%= css_class %>" href="/<%= resource_type %>/<%= view_type %>/<%= resource_id %>/"><%= label %></a>',
+IONUX.Views.Footer = Backbone.View.extend({
+    tagName: 'div',
+    className: 'footer',
     render: function(){
-        $('#dynamic-container').append(_.template(this.template, {css_class: 'Yolo', label: 'Yo'}));
+        // Hack to prevent multiple instances until I figure out exactly where to call. 
+        // Investigating collections and dashboard implementation issues.
+        $('.footer').empty();
+        
+        $('body').append(this.$el);
+        this.render_buttons();
         return this;
-    }
+    },
+    render_buttons: function(){
+        var resource_id = this.options.resource_id;
+        var resource_type = this.options.resource_type;
+        var buttons = [['Dashboard'], ['Facepage', 'face'], ['Related', 'related'], ['Status', 'status']];
+        var button_tmpl = '<a class="btn-footer" href="<%= url %>"><%= label %></a>'
+        
+        var self = this;
+        _.each(buttons, function(button){
+            var label = button[0];
+            var view_type = button[1];
+            if (label == 'Dashboard'){
+                var url = '/';
+            } else if  (!resource_id || !resource_type) {
+                var url = '.'
+            } else {
+                var url = '/'+resource_type+'/'+view_type+'/'+resource_id+'/';
+            };
+            self.$el.append(_.template(button_tmpl)({url: url, label: label}));
+        });
+    },
 });
 
-
 IONUX.Views.ContextMap = Backbone.View.extend({});
-
 
 IONUX.Views.Map = Backbone.View.extend({});
 
@@ -294,16 +318,12 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
 
   render: function(){
     this.$el.empty().html(this.template(this.model.toJSON())).show();
-    // this.get_capabilities();    
-    // Check if instrument agent instance is present (running)...
-    // var instrumentAgent = this.model.get('instrument_agent');
-    // if (instrumentAgent.agent_process_id !== '') {
-    //     console.log(instrumentAgent);
-    //     $("#start-instrument-agent-instance").hide();
-    //     $("#stop-instrument-agent-instance").show();
-    //     $(".instrument-commands").show();    
-    // };
-    // return this;
+    var agent_process_id = this.model.get('agent_instance')['agent_process_id'];
+    if (agent_process_id) {
+        $("#start-instrument-agent-instance").hide();
+        $("#stop-instrument-agent-instance, .instrument-commands").show();
+        this.get_capabilities();
+    };
   },
   
   issue_command: function(evt){
@@ -319,8 +339,6 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
     var cap_type = selected_option.data('cap-type');
     if (cap_type) command += '?cap_type=' + cap_type;
     
-    console.log('cap_type', cap_type)
-    console.log('command', command);
     var self = this;
 
     $.ajax({

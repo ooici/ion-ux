@@ -12,6 +12,7 @@ from jinja2 import Template
 
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
+app.debug = True
 SERVICE_GATEWAY_BASE_URL = 'http://%s:%d/ion-service' % (GATEWAY_HOST, GATEWAY_PORT)
 
 def render_app_template(current_url):
@@ -20,18 +21,22 @@ def render_app_template(current_url):
         roles = session["roles"]
     else:
         roles = ""
+    
     if session.has_key("user_id"):
         logged_in = "True"
     else:
         logged_in = "False"
-        tmpl = Template(LayoutApi.process_layout())
+    
+    tmpl = Template(LayoutApi.process_layout())
     return render_template(tmpl, **{"current_url":"/", "roles":roles, "logged_in":logged_in})
 
 
-# Face, status, related pages catch-all
+# Face, status, related, command pages catch-all
 @app.route('/<resource_type>/status/<resource_id>/', methods=['GET'])
 @app.route('/<resource_type>/face/<resource_id>/', methods=['GET'])
 @app.route('/<resource_type>/related/<resource_id>/', methods=['GET'])
+@app.route('/<resource_type>/command/<resource_id>/', methods=['GET'])
+@app.route('/<resource_type>/command2/<resource_id>/', methods=['GET'])
 def page(resource_type, resource_id):
     if request.is_xhr:
         return True

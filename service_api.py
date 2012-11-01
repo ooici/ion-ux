@@ -52,7 +52,7 @@ class ServiceApi(object):
             # extension = service_gateway_get('observatory_management', 'get_observatory_extension', params= {'observatory_id': resource_id})
             extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'MarineFacilityOrgExtension'})
         elif resource_type == 'UserInfo':
-            extension = service_gateway_get('identity_management', 'get_actor_identity_extension', params= {'user_id': resource_id})
+            extension = service_gateway_get('identity_management', 'get_user_info_extension', params= {'user_info_id': resource_id})
         elif resource_type == 'DataProcessDefinition':
             extension = service_gateway_get('data_process_management', 'get_data_process_definition_extension', params= {'data_process_definition_id': resource_id})
         else:
@@ -125,21 +125,19 @@ class ServiceApi(object):
     
     @staticmethod
     def instrument_agent_start(instrument_device_id):
-        # instrument_agent_instance_id = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate':'hasAgentInstance'})[0][0]['_id']
         instrument_agent_instance = service_gateway_get('instrument_management', 'find_instrument_agent_instance_by_instrument_device', params={'instrument_device_id': instrument_device_id})
-        print 'COMINST: instrument_agent_instance', instrument_agent_instance
         instrument_agent_instance_id = instrument_agent_instance[0]['_id']
-        print 'COMINST: instrument_agent_instance_id', instrument_agent_instance_id
         agent_request = service_gateway_get('instrument_management', 'start_instrument_agent_instance', params={'instrument_agent_instance_id': str(instrument_agent_instance_id)})
-        print 'COMINST: agent_request', agent_request
         
         return agent_request
 
     @staticmethod
     def instrument_agent_stop(instrument_device_id):
-        # instrument_agent_instance_id = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate':'hasAgentInstance'})[0][0]['_id']
-        # agent_request = service_gateway_get('instrument_management', 'stop_instrument_agent_instance', params={'instrument_agent_instance_id': str(instrument_agent_instance_id)})
-        # return agent_request
+        instrument_agent_instance = service_gateway_get('instrument_management', 'find_instrument_agent_instance_by_instrument_device', params={'instrument_device_id': instrument_device_id})
+        instrument_agent_instance_id = instrument_agent_instance[0]['_id']
+        agent_request = service_gateway_get('instrument_management', 'stop_instrument_agent_instance', params={'instrument_agent_instance_id': str(instrument_agent_instance_id)})
+        
+        return agent_request
         
         pass
 
@@ -150,7 +148,7 @@ class ServiceApi(object):
         elif cap_type == '3':
             agent_op = "execute_resource"
         params = {"command": {"type_": "AgentCommand", "command": command}}
-        if command == 'go_direct_access':
+        if command == 'RESOURCE_AGENT_EVENT_GO_DIRECT_ACCESS':
             params['command'].update({'kwargs': {'session_type': 3, 'session_timeout':600, 'inactivity_timeout': 600}})
         agent_response = service_gateway_agent_request(instrument_device_id, agent_op, params)
         return agent_response

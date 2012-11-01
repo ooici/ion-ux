@@ -3,7 +3,8 @@ AVAILABLE_LAYOUTS = {
     'face': '2163152',
     'status': '2163153',
     'related': '2163154',
-    'dashboard': '2163156'
+    'dashboard': '2163156',
+    'command': '2163157'
 };
 
 IONUX.Router = Backbone.Router.extend({
@@ -18,6 +19,9 @@ IONUX.Router = Backbone.Router.extend({
     
     dashboard: function(){
         this._reset();
+        
+        // Insert footer and buttons
+        new IONUX.Views.Footer({resource_id: null, resource_type: null}).render().el;
     },
     
     // Collection 'face pages'
@@ -37,6 +41,10 @@ IONUX.Router = Backbone.Router.extend({
             var resource_collection = new IONUX.Collections.Resources(data.data, {resource_type: resource_type});
             new IONUX.Views.Collection({el: '#' + elmt_id, collection: resource_collection, resource_type: resource_type}).render().el;
         });
+        
+        // Insert footer and buttons
+        new IONUX.Views.Footer({resource_id: null, resource_type: resource_type}).render().el;
+        
     },
     
     // Face, status, related pages
@@ -54,13 +62,40 @@ IONUX.Router = Backbone.Router.extend({
             .error(function(model, resp) {
                 render_error();
             });
+
+        // Insert footer and buttons
+        new IONUX.Views.Footer({resource_id: resource_id, resource_type: resource_type}).render().el;
+
     },
     
+    // Old command
+    // command: function(resource_type, resource_id){
+    //     var resource_extension = new IONUX.Models.ResourceExtension({resource_type: 'InstrumentDevice', resource_id: resource_id});
+    //     var instrument_command = new IONUX.Views.InstrumentCommandFacepage({model: resource_extension});
+    //     resource_extension.fetch();
+    //     window.MODEL_DATA = resource_extension;
+    // },
+
+
     command: function(resource_type, resource_id){
-        var resource_extension = new IONUX.Models.ResourceExtension({resource_type: 'InstrumentDevice', resource_id: resource_id});
-        var instrument_command = new IONUX.Views.InstrumentCommandFacepage({model: resource_extension});
-        resource_extension.fetch();
-        window.MODEL_DATA = resource_extension;
+        $('#error').hide();
+        $('#dynamic-container').show();
+        $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS['command']).html());        
+        $('.span9 li,.span3 li').hide();
+        
+        var resource_extension = new IONUX.Models.ResourceExtension({resource_type: resource_type, resource_id: resource_id});
+
+        $('.v02').empty() // Hack to remove all unused dynamic elements, to be replaced with IONUX.Views.InstrumentCommandFacepage below.
+        var instrument_command = new IONUX.Views.InstrumentCommandFacepage({model: resource_extension, el: '.v02'});
+        resource_extension.fetch()
+            .success(function(model, resp) {
+                render_page(resource_type, resource_id, model);
+                
+                // $('li.' + resource_type + ', div.' + resource_type).show();
+                // $('.span9 ul, .span3 ul').find('li.' + resource_type + ':first').find('a').click();
+                // $('.tab-pane').find('.'+resource_type+':visible:first').css('margin-left', 0);
+                // window.MODEL_DATA = model.data;
+            });
     },
     
     // KEPT FOR REFERENCE
@@ -140,7 +175,7 @@ function get_descendant_properties(obj, desc) {
 };
 
 function render_page(resource_type, resource_id, model) {
-    
+    console.log('render_page');
     // Catch and set derivative resources
     if (resource_type == 'InstrumentModel' || resource_type == ('PlatformModel')) {
         var resource_type = 'DeviceModel';
@@ -151,6 +186,7 @@ function render_page(resource_type, resource_id, model) {
     };
     
     window.MODEL_DATA = model.data;
+    window.MODEL_DATA['resource_type'] = resource_type;
 
     var attribute_group_elmts = $('.'+resource_type+' .attribute_group_ooi');
     _.each(attribute_group_elmts, function(el){
@@ -232,7 +268,15 @@ function render_page(resource_type, resource_id, model) {
         new IONUX.Views.Checkbox({el: $(el), data_model: window.MODEL_DATA}).render().el;
     });
     
-    
+    // if (resource_type == 'DataProduct') {
+    //     console.log('DataProduct Chart');
+    //     var chart_elmts = $('.'+resource_type+' .chart_ooi');
+    //     _.each(chart_ooi, function(el) {
+    //         chart_instance = new IONUX.Views.Chart({resource_id: resource_id});
+    //         chart_instance.render().el;
+    //     });
+    // };
+
     // Show the relevant elements and click to enable the Bootstrap tabs.
     $('li.' + resource_type + ', div.' + resource_type).show();
     $('.span9 ul, .span3 ul').find('li.' + resource_type + ':first').find('a').click();  

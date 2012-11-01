@@ -4,7 +4,7 @@ ION-UX Setup
 Getting ION-UX up and running is straightforward once you have a Capability Container running. In a nutshell, there are three steps with an optional fourth step:
 
 1.) Create virtualenv and install dependencies
-2.) Configure FLASK and GATEWAY settings
+2.) Configure FLASK, GATEWAY and PORTAL_ROOT settings
 3.) Launch Flask web application
 4.) Load "preload data" (test data) into COI Servies
 
@@ -33,12 +33,13 @@ For the most common scenario (i.e. running the UI on your development environmen
 * FLASK_PORT = 3000
 * GATEWAY_HOST = 'localhost'
 * GATEWAY_PORT = 5000
+* PORTAL_ROOT = 'working/path/to/ion-ux/'
 
 
 3. Run Local
 ------------
 
-To run locally, simply excute the main module.
+To run locally, simply execute the main module, be sure that PORTAL_ROOT is specified in config.py.
 
 	python main.py
 
