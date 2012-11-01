@@ -12,7 +12,7 @@ from jinja2.environment import Environment
 
 from dummy_data_layout import LAYOUT_SCHEMA
 from service_api import service_gateway_get
-from config import CACHED_LAYOUT
+from config import CACHED_LAYOUT, PORTAL_ROOT
 
 DEFINED_VIEWS = [
     '2163152', # Facepage
@@ -35,7 +35,8 @@ class LayoutApi(object):
     @staticmethod
     def process_layout(layout_schema=None, interactions=None):
         env = Environment()
-        env.loader = FileSystemLoader(os.environ['PORTAL_ROOT']+'templates')
+        
+        env.loader = FileSystemLoader(PORTAL_ROOT+'templates')
         tmpl_unparsed = env.get_template('ion_ux.html').render()
         tmpl = ET.fromstring(tmpl_unparsed.encode('utf-8'))
 
