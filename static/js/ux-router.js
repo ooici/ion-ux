@@ -83,16 +83,18 @@ IONUX.Router = Backbone.Router.extend({
         $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS['command']).html());        
         $('.span9 li,.span3 li').hide();
         
-        $('.v02').empty() // remove all unused dynamic elements.
+        $('.v02').empty() // Hack to remove all unused dynamic elements, to be replaced with IONUX.Views.InstrumentCommandFacepage below.
         
         var resource_extension = new IONUX.Models.ResourceExtension({resource_type: resource_type, resource_id: resource_id});
         var instrument_command = new IONUX.Views.InstrumentCommandFacepage({model: resource_extension, el: '.v02'});
         resource_extension.fetch()
             .success(function(model, resp) {
-                $('li.' + resource_type + ', div.' + resource_type).show();
-                $('.span9 ul, .span3 ul').find('li.' + resource_type + ':first').find('a').click();
-                $('.tab-pane').find('.'+resource_type+':visible:first').css('margin-left', 0);
-                window.MODEL_DATA = model.data;
+                render_page(resource_type, resource_id, model);
+                
+                // $('li.' + resource_type + ', div.' + resource_type).show();
+                // $('.span9 ul, .span3 ul').find('li.' + resource_type + ':first').find('a').click();
+                // $('.tab-pane').find('.'+resource_type+':visible:first').css('margin-left', 0);
+                // window.MODEL_DATA = model.data;
             });
     },
     
