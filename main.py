@@ -12,6 +12,7 @@ from jinja2 import Template
 
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
+app.debug = True
 SERVICE_GATEWAY_BASE_URL = 'http://%s:%d/ion-service' % (GATEWAY_HOST, GATEWAY_PORT)
 
 def render_app_template(current_url):
