@@ -1,14 +1,14 @@
 IONUX.Views.Chart = IONUX.Views.Base.extend({
     tagName: 'div',
     events: {},
-    template: '<div id="chart_ui_div" class="chart_ui_div" style=""></div><div id="chart_div" style="width:600px;height:750px;"></div>', 
+    template: '<div id="chart_ui_div" class="chart_ui_div" style=""></div><div id="chart_div" style="width:500px;height:250px;"></div>', 
     initialize: function() {
         // this.render().el;
         this.resource_id = this.options.resource_id;
     },
 
     render: function() {
-        $('#info').append(this.$el.html(this.template));
+        $('#dynamic-container').append(this.$el.html(this.template));
         this.draw_chart();
         return this;
     },

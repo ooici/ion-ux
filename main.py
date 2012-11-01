@@ -28,10 +28,11 @@ def render_app_template(current_url):
     return render_template(tmpl, **{"current_url":"/", "roles":roles, "logged_in":logged_in})
 
 
-# Face, status, related pages catch-all
+# Face, status, related, command pages catch-all
 @app.route('/<resource_type>/status/<resource_id>/', methods=['GET'])
 @app.route('/<resource_type>/face/<resource_id>/', methods=['GET'])
 @app.route('/<resource_type>/related/<resource_id>/', methods=['GET'])
+@app.route('/<resource_type>/command/<resource_id>/', methods=['GET'])
 def page(resource_type, resource_id):
     if request.is_xhr:
         return True

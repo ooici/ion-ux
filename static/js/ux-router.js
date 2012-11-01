@@ -18,6 +18,9 @@ IONUX.Router = Backbone.Router.extend({
     
     dashboard: function(){
         this._reset();
+        
+        // Insert footer and buttons
+        new IONUX.Views.Footer({resource_id: null, resource_type: null}).render().el;
     },
     
     // Collection 'face pages'
@@ -37,6 +40,10 @@ IONUX.Router = Backbone.Router.extend({
             var resource_collection = new IONUX.Collections.Resources(data.data, {resource_type: resource_type});
             new IONUX.Views.Collection({el: '#' + elmt_id, collection: resource_collection, resource_type: resource_type}).render().el;
         });
+        
+        // Insert footer and buttons
+        new IONUX.Views.Footer({resource_id: null, resource_type: resource_type}).render().el;
+        
     },
     
     // Face, status, related pages
@@ -54,6 +61,10 @@ IONUX.Router = Backbone.Router.extend({
             .error(function(model, resp) {
                 render_error();
             });
+
+        // Insert footer and buttons
+        new IONUX.Views.Footer({resource_id: resource_id, resource_type: resource_type}).render().el;
+
     },
     
     command: function(resource_type, resource_id){
@@ -151,6 +162,7 @@ function render_page(resource_type, resource_id, model) {
     };
     
     window.MODEL_DATA = model.data;
+    window.MODEL_DATA['resource_type'] = resource_type;
 
     var attribute_group_elmts = $('.'+resource_type+' .attribute_group_ooi');
     _.each(attribute_group_elmts, function(el){
@@ -232,7 +244,15 @@ function render_page(resource_type, resource_id, model) {
         new IONUX.Views.Checkbox({el: $(el), data_model: window.MODEL_DATA}).render().el;
     });
     
-    
+    // if (resource_type == 'DataProduct') {
+    //     console.log('DataProduct Chart');
+    //     var chart_elmts = $('.'+resource_type+' .chart_ooi');
+    //     _.each(chart_ooi, function(el) {
+    //         chart_instance = new IONUX.Views.Chart({resource_id: resource_id});
+    //         chart_instance.render().el;
+    //     });
+    // };
+
     // Show the relevant elements and click to enable the Bootstrap tabs.
     $('li.' + resource_type + ', div.' + resource_type).show();
     $('.span9 ul, .span3 ul').find('li.' + resource_type + ':first').find('a').click();  

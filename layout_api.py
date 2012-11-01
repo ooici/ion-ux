@@ -19,7 +19,8 @@ DEFINED_VIEWS = [
     '2163153', # Status
     '2163154', # Related
     '2163156', # Dashboard
-    # '2163810', # Dashboard 2
+    # '2163810', # Dashboard 2,
+    '2163157', # Command
     '2163158', # Direct Command
 ]
 

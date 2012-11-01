@@ -125,21 +125,19 @@ class ServiceApi(object):
     
     @staticmethod
     def instrument_agent_start(instrument_device_id):
-        # instrument_agent_instance_id = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate':'hasAgentInstance'})[0][0]['_id']
         instrument_agent_instance = service_gateway_get('instrument_management', 'find_instrument_agent_instance_by_instrument_device', params={'instrument_device_id': instrument_device_id})
-        print 'COMINST: instrument_agent_instance', instrument_agent_instance
         instrument_agent_instance_id = instrument_agent_instance[0]['_id']
-        print 'COMINST: instrument_agent_instance_id', instrument_agent_instance_id
         agent_request = service_gateway_get('instrument_management', 'start_instrument_agent_instance', params={'instrument_agent_instance_id': str(instrument_agent_instance_id)})
-        print 'COMINST: agent_request', agent_request
         
         return agent_request
 
     @staticmethod
     def instrument_agent_stop(instrument_device_id):
-        # instrument_agent_instance_id = service_gateway_get('resource_registry', 'find_objects', params={'subject': instrument_device_id, 'predicate':'hasAgentInstance'})[0][0]['_id']
-        # agent_request = service_gateway_get('instrument_management', 'stop_instrument_agent_instance', params={'instrument_agent_instance_id': str(instrument_agent_instance_id)})
-        # return agent_request
+        instrument_agent_instance = service_gateway_get('instrument_management', 'find_instrument_agent_instance_by_instrument_device', params={'instrument_device_id': instrument_device_id})
+        instrument_agent_instance_id = instrument_agent_instance[0]['_id']
+        agent_request = service_gateway_get('instrument_management', 'stop_instrument_agent_instance', params={'instrument_agent_instance_id': str(instrument_agent_instance_id)})
+        
+        return agent_request
         
         pass
 
