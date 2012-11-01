@@ -36,7 +36,7 @@ class LayoutApi(object):
     def process_layout(layout_schema=None, interactions=None):
         env = Environment()
         
-        env.loader = FileSystemLoader(PORTAL_ROOT+'templates')
+        env.loader = FileSystemLoader(PORTAL_ROOT+'/templates')
         tmpl_unparsed = env.get_template('ion_ux.html').render()
         tmpl = ET.fromstring(tmpl_unparsed.encode('utf-8'))
 
