@@ -148,7 +148,7 @@ class ServiceApi(object):
         elif cap_type == '3':
             agent_op = "execute_resource"
         params = {"command": {"type_": "AgentCommand", "command": command}}
-        if command == 'go_direct_access':
+        if command == 'RESOURCE_AGENT_EVENT_GO_DIRECT_ACCESS':
             params['command'].update({'kwargs': {'session_type': 3, 'session_timeout':600, 'inactivity_timeout': 600}})
         agent_response = service_gateway_agent_request(instrument_device_id, agent_op, params)
         return agent_response

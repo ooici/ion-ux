@@ -83,9 +83,9 @@ IONUX.Router = Backbone.Router.extend({
         $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS['command']).html());        
         $('.span9 li,.span3 li').hide();
         
-        $('.v02').empty() // Hack to remove all unused dynamic elements, to be replaced with IONUX.Views.InstrumentCommandFacepage below.
-        
         var resource_extension = new IONUX.Models.ResourceExtension({resource_type: resource_type, resource_id: resource_id});
+
+        $('.v02').empty() // Hack to remove all unused dynamic elements, to be replaced with IONUX.Views.InstrumentCommandFacepage below.
         var instrument_command = new IONUX.Views.InstrumentCommandFacepage({model: resource_extension, el: '.v02'});
         resource_extension.fetch()
             .success(function(model, resp) {
