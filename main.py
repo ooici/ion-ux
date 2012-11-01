@@ -20,11 +20,13 @@ def render_app_template(current_url):
         roles = session["roles"]
     else:
         roles = ""
+    
     if session.has_key("user_id"):
         logged_in = "True"
     else:
         logged_in = "False"
-        tmpl = Template(LayoutApi.process_layout())
+    
+    tmpl = Template(LayoutApi.process_layout())
     return render_template(tmpl, **{"current_url":"/", "roles":roles, "logged_in":logged_in})
 
 

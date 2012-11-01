@@ -253,7 +253,7 @@ class LayoutApi(object):
                                 embedded_object = layout_schema['spec']['elements'][embedded_attribute['elid']]
                                 embedded_widget_type = layout_schema['spec']['widgets'][embedded_attribute['wid']]['name']
 
-                                metadata_items = [embedded_widget_type, embedded_object['label'], embedded_object['ie']['ie_name'], embedded_attribute['pos'], embedded_attribute['olevel']]
+                                metadata_items = [embedded_widget_type, embedded_object['label'], embedded_attribute['dpath'], embedded_attribute['pos'], embedded_attribute['olevel'], embedded_attribute['elid']]
                                 if attribute_widget_type == 'attribute_group_ooi':
                                     meta_elmt_id = 'ATTRIBUTE_GROUP_' + attribute_elid
                                     metadata_items.append(embedded_attribute['elid'])
