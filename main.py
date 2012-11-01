@@ -33,6 +33,7 @@ def render_app_template(current_url):
 @app.route('/<resource_type>/face/<resource_id>/', methods=['GET'])
 @app.route('/<resource_type>/related/<resource_id>/', methods=['GET'])
 @app.route('/<resource_type>/command/<resource_id>/', methods=['GET'])
+@app.route('/<resource_type>/command2/<resource_id>/', methods=['GET'])
 def page(resource_type, resource_id):
     if request.is_xhr:
         return True

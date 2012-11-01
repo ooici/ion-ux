@@ -3,7 +3,8 @@ AVAILABLE_LAYOUTS = {
     'face': '2163152',
     'status': '2163153',
     'related': '2163154',
-    'dashboard': '2163156'
+    'dashboard': '2163156',
+    'command': '2163157'
 };
 
 IONUX.Router = Backbone.Router.extend({
@@ -67,11 +68,32 @@ IONUX.Router = Backbone.Router.extend({
 
     },
     
+    // Old command
+    // command: function(resource_type, resource_id){
+    //     var resource_extension = new IONUX.Models.ResourceExtension({resource_type: 'InstrumentDevice', resource_id: resource_id});
+    //     var instrument_command = new IONUX.Views.InstrumentCommandFacepage({model: resource_extension});
+    //     resource_extension.fetch();
+    //     window.MODEL_DATA = resource_extension;
+    // },
+
+
     command: function(resource_type, resource_id){
-        var resource_extension = new IONUX.Models.ResourceExtension({resource_type: 'InstrumentDevice', resource_id: resource_id});
-        var instrument_command = new IONUX.Views.InstrumentCommandFacepage({model: resource_extension});
-        resource_extension.fetch();
-        window.MODEL_DATA = resource_extension;
+        $('#error').hide();
+        $('#dynamic-container').show();
+        $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS['command']).html());        
+        $('.span9 li,.span3 li').hide();
+        
+        $('.v02').empty() // remove all unused dynamic elements.
+        
+        var resource_extension = new IONUX.Models.ResourceExtension({resource_type: resource_type, resource_id: resource_id});
+        var instrument_command = new IONUX.Views.InstrumentCommandFacepage({model: resource_extension, el: '.v02'});
+        resource_extension.fetch()
+            .success(function(model, resp) {
+                $('li.' + resource_type + ', div.' + resource_type).show();
+                $('.span9 ul, .span3 ul').find('li.' + resource_type + ':first').find('a').click();
+                $('.tab-pane').find('.'+resource_type+':visible:first').css('margin-left', 0);
+                window.MODEL_DATA = model.data;
+            });
     },
     
     // KEPT FOR REFERENCE
@@ -151,7 +173,7 @@ function get_descendant_properties(obj, desc) {
 };
 
 function render_page(resource_type, resource_id, model) {
-    
+    console.log('render_page');
     // Catch and set derivative resources
     if (resource_type == 'InstrumentModel' || resource_type == ('PlatformModel')) {
         var resource_type = 'DeviceModel';
