@@ -25,8 +25,6 @@ TEST_TABLE_DATA = [
 
 /* The below will be View instance attrs: */
 OPERATORS = ['CONTAINS', 'NEWER THAN', 'OLDER THAN', 'GREATER THAN', 'LESS THAN'];
-COLUMNS = _.map(TEST_TABLE_DATA.headers, function(e){return e['sTitle']});
-COLUMNS_FILTERABLE = _.reject(COLUMNS, function(e){return e==""}); 
 
 
 function status_indicator(obj){
@@ -68,7 +66,9 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
     _get_table_metadata: function(){
         var table_metadata_id = "TABLE_"+this.$el.attr("id");
         var table_metadata = window[table_metadata_id];
-        return table_metadata;
+        var visibility_level = this.options.visibility_level?this.options.visibility_level:0;
+        var table_metadata_for_level = _.filter(table_metadata, function(l){return parseInt(l[4]) <= visibility_level});
+        return table_metadata_for_level;
     },
 
     header_data: function(){
@@ -76,14 +76,12 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         var table_metadata = this._get_table_metadata();
         var self = this;
         _.each(table_metadata, function(item){
-            if (item[4] == "0"){ //only show LEVEL 0 data right now.
-                var data_item = {};
-                data_item["sTitle"] = item[1];
-                data_item["sType"] = "title";
-                data_item["fnRender"] = self.preproccesor(item[0]);
-                data_item["sClass"] = "center"; //TODO choose dependant on 'item[0]'
-                data.push(data_item);
-            }
+            var data_item = {};
+            data_item["sTitle"] = item[1];
+            data_item["sType"] = "title";
+            data_item["fnRender"] = self.preproccesor(item[0]);
+            data_item["sClass"] = "center"; //TODO choose dependant on 'item[0]'
+            data.push(data_item);
         });
         return data;
     },
@@ -118,6 +116,12 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         }
     },
 
+    get_filter_columns:function(){
+        var table_metadata = this._get_table_metadata();
+        var columns = _.map(table_metadata, function(l){return l[1];});
+        return columns;
+    },
+
     add_filter_item: function(evt){
         var filter_item_tmpl = [
           '<div class="filter-item">',
@@ -126,7 +130,8 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
             '<input class="argument" type="text" value="">',
             '<span class="filter-add">+</span><span class="filter-remove">-</span>',
           '</div>'].join('');
-        var data = {"columns":COLUMNS_FILTERABLE, "operators":OPERATORS};
+        var columns = this.get_filter_columns();
+        var data = {"columns":columns, "operators":OPERATORS};
         var filter_item = _.template(filter_item_tmpl)(data);
         if (evt == null){
             var filter_items = this.$el.find(".filter-item");
@@ -169,7 +174,8 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         var self = this;
         filter_items.find(".filter-item").each(function(i, filter_item){
             var selected_val = $(filter_item).find("select.column option:selected").text();
-            var selected_index = _.indexOf(COLUMNS, selected_val);
+            var columns = self.get_filter_columns();
+            var selected_index = _.indexOf(columns, selected_val);
             var filter_val = $(filter_item).find("input").val();
             self.datatable.fnFilter(filter_val, selected_index);
         });
