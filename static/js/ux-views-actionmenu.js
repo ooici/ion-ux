@@ -19,11 +19,10 @@ INTERACTIONS_OBJECT.view_interactions = ['Subscribe', 'Detailed View', 'Submenu'
 
 IONUX.Views.ActionMenu = Backbone.View.extend({
     events:  {
-        "hover": "action_controls",
         "click .dropdown-menu li": "action_control_click"
     },
 
-    action_controls: function(evt){
+    action_controls_onhover: function(evt){
         if (evt.type == 'mouseenter') {
             var btn = $(this.el).find(".btn-group");
             if (btn.length) {
@@ -35,7 +34,10 @@ IONUX.Views.ActionMenu = Backbone.View.extend({
             $(this.el).find(".btn-group").hide();
             return;
         }
+        this.create_actionmenu();
+    },
 
+    create_actionmenu: function(){
         var dropdown_button_tmpl =
             '<div class="btn-group">'+
             '<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">Actions<span class="caret"></span></a>'+
@@ -59,6 +61,7 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
 
     initialize: function() {
         this.interaction_items = INTERACTIONS_OBJECT.view_interactions;
+        this.create_actionmenu();
         this.on("action__subscribe", this.action__subscribe);
         this.on("action__detailed_view", this.action__detailed_view);
         this.on("action__submenu_toggle", this.action__submenu_toggle);
@@ -81,6 +84,10 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
 
 
 IONUX.Views.GroupActions = IONUX.Views.ActionMenu.extend({
+
+    "events": _.extend({
+        "hover": "action_controls_onhover",
+    }, IONUX.Views.ActionMenu.prototype.events),
 
     initialize: function() {
         this.interaction_items = INTERACTIONS_OBJECT.group_interactions;
@@ -115,6 +122,10 @@ IONUX.Views.GroupActions = IONUX.Views.ActionMenu.extend({
 
 IONUX.Views.BlockActions = IONUX.Views.ActionMenu.extend({
 
+    "events": _.extend({
+        "hover": "action_controls_onhover",
+    }, IONUX.Views.ActionMenu.prototype.events),
+
     initialize: function() {
         this.interaction_items = INTERACTIONS_OBJECT.block_interactions;
         this.on("action__more_info", this.action__more_info);
@@ -135,8 +146,6 @@ IONUX.Views.BlockActions = IONUX.Views.ActionMenu.extend({
     action__edit:function(){
         alert("IONUX.Views.BlockActions - ACTION: edit");
     }
-
-
 
 });
 
