@@ -1,3 +1,5 @@
+import os
+
 ##
 # IMPORTANT: Don't edit this file. Copy this file into 'config.py' and change values as needed.
 #            This file is also used by fab to generate config.py 
@@ -28,4 +30,8 @@ GATEWAY_PORT = 'GATEWAY_HOST_VALUE'
 LOGGED_IN = True
 PRODUCTION = False
 CACHED_LAYOUT = True
-PORTAL_ROOT = 'PATH_TO_ROOT'
+
+if 'PORTAL_ROOT' in os.environ:
+    PORTAL_ROOT = os.environ['PORTAL_ROOT']
+else:
+    PORTAL_ROOT = 'PATH_TO_ION_UX'
