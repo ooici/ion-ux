@@ -175,7 +175,6 @@ function get_descendant_properties(obj, desc) {
 };
 
 function render_page(resource_type, resource_id, model) {
-    console.log('render_page');
     // Catch and set derivative resources
     if (resource_type == 'InstrumentModel' || resource_type == ('PlatformModel')) {
         var resource_type = 'DeviceModel';
@@ -276,12 +275,26 @@ function render_page(resource_type, resource_id, model) {
     //         chart_instance.render().el;
     //     });
     // };
-
+    
     // Show the relevant elements and click to enable the Bootstrap tabs.
     $('li.' + resource_type + ', div.' + resource_type).show();
     $('.span9 ul, .span3 ul').find('li.' + resource_type + ':first').find('a').click();  
     
-    $('.tab-pane').find('.'+resource_type+':visible:first').css('margin-left', 0)
+    $('.tab-pane').find('.'+resource_type+':visible:first').css('margin-left', 0);
+
+    _.each($('.group .nav'), function(el) {
+        new IONUX.Views.GroupActions({el:$(el)});
+    });
+
+    _.each($('.'+resource_type+'.block'), function(el) {
+        new IONUX.Views.BlockActions({el:$(el)});
+    });
+    
+    new IONUX.Views.ViewActions({el: '.v00'});
+    
+    
+    
+    
 };
 
 function render_error(){
