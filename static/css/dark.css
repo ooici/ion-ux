@@ -98,11 +98,11 @@ a.btn-footer {
 }
 
 .footer {
-  width: 100%;
+/*  width: 100%;*/
   background: #000;
-  height: 50px;
+/*  height: 50px;*/
   text-align: right;
-  padding-top: 15px;
+/*  padding-top: 15px;*/
 }
 
 .navigation {
@@ -195,6 +195,24 @@ a.btn-navigation-plain {
   border-bottom: solid 1px #666;
   padding-bottom: 25px;
   margin-bottom: 25px;
+}
+
+
+.wrapper {
+  min-height: 100%;
+  margin-bottom: 180px;
+}
+
+
+#footr {
+  background: black;
+  position: fixed;
+  bottom:0;
+/*  margin-top: -150px;*/
+  height: 30px;
+  clear: both;
+  padding-top: 13px;
+  width: 100%;
 }
 
 .heading h1, h2 {

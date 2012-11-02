@@ -6,7 +6,7 @@ IONUX.Views.Footer = Backbone.View.extend({
         // Investigating collections and dashboard implementation issues.
         $('.footer').empty();
         
-        $('body').append(this.$el);
+        $('#footr').html(this.$el);
         this.render_buttons();
         return this;
     },

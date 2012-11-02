@@ -21,7 +21,7 @@ IONUX.Router = Backbone.Router.extend({
         this._reset();
         
         // Insert footer and buttons
-        new IONUX.Views.Footer({resource_id: null, resource_type: null}).render().el;
+        // new IONUX.Views.Footer({resource_id: null, resource_type: null}).render().el;
     },
     
     // Collection 'face pages'
@@ -43,7 +43,7 @@ IONUX.Router = Backbone.Router.extend({
         });
         
         // Insert footer and buttons
-        new IONUX.Views.Footer({resource_id: null, resource_type: resource_type}).render().el;
+        // new IONUX.Views.Footer({resource_id: null, resource_type: resource_type}).render().el;
         
     },
     
@@ -220,11 +220,11 @@ function render_page(resource_type, resource_id, model) {
         append_info_level(el);
     });
 
-    var image_elmts = $('.'+resource_type+' .image_ooi');
-    _.each(image_elmts, function(el) {
-        new IONUX.Views.Image({el: $(el)}).render().el;
-        append_info_level(el);
-    });
+    // var image_elmts = $('.'+resource_type+' .image_ooi');
+    // _.each(image_elmts, function(el) {
+    //     new IONUX.Views.Image({el: $(el)}).render().el;
+    //     append_info_level(el);
+    // });
 
     var badge_elmts = $('.'+resource_type+' .badge_ooi');
     _.each(badge_elmts, function(el) {
