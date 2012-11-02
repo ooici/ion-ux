@@ -175,14 +175,21 @@ function get_descendant_properties(obj, desc) {
     return obj;
 };
 
+// Observatory -> Org #marine_facility_extension
+// Site -> Observatory (called Observatory sites) #site_extension
+
+
+
 function render_page(resource_type, resource_id, model) {
     // Catch and set derivative resources
-    if (resource_type == 'InstrumentModel' || resource_type == ('PlatformModel')) {
+    if (resource_type == 'InstrumentModel' || resource_type == 'PlatformModel' || resource_type == 'SensorModel') {
         var resource_type = 'DeviceModel';
     } else if (resource_type == 'Observatory') {
-        var resource_type = 'Org'
-    } else if (resource_type == 'InstrumentSite' || resource_type == 'PlatformSite' || resource_type == 'SubSite') {
-        var resource_type = 'Site'
+        var resource_type = 'Site';
+    } else if (resource_type == 'InstrumentSite' || resource_type == 'PlatformSite' || resource_type == 'Subsite') {
+        var resource_type = 'Site';
+    } else if (resource_type == 'SensorDevice') {
+        var resource_type = 'Device';
     };
     
     window.MODEL_DATA = model.data;
@@ -289,10 +296,10 @@ function render_page(resource_type, resource_id, model) {
     });
 
     // ActionMenus
-    _.each($('.group .nav'), function(el) {
+    _.each($('.v01 .group .nav, .v02 .group .nav'), function(el) {
         new IONUX.Views.GroupActions({el:$(el)});
     });
-    _.each($('.'+resource_type+'.block'), function(el) {
+    _.each($('.v01 .'+resource_type+'.block, .v02 .'+resource_type+'.block'), function(el) {
         new IONUX.Views.BlockActions({el:$(el)});
     });    
     new IONUX.Views.ViewActions({el: '.v00'});
