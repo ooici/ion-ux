@@ -21,7 +21,7 @@ IONUX.Router = Backbone.Router.extend({
         this._reset();
         
         // Insert footer and buttons
-        // new IONUX.Views.Footer({resource_id: null, resource_type: null}).render().el;
+        new IONUX.Views.Footer({resource_id: null, resource_type: null}).render().el;
     },
     
     // Collection 'face pages'
@@ -34,16 +34,17 @@ IONUX.Router = Backbone.Router.extend({
         var resources = new IONUX.Collections.Resources(null, {resource_type: resource_type});
         resources.fetch().success(function(data){
             $('li.Collection ,div.Collection').show(); // Show elements based on current view/CSS class, i.e. .InstrumentDevice
-            $('.span9 ul').find('li.Collection:first').find('a').click(); // Manually Set the first tabs 'active'
+            $('.span9').find('li.Collection:first').find('a').click(); // Manually Set the first tabs 'active'
             
             // Todo: better way of finding the container for the collection.
-            var elmt_id = $('.Collection .table_ooi:first').parent('div').attr('id');
+            var elmt_id = $('.v02 .Collection .table_ooi').first();
+            console.log(elmt_id);
             var resource_collection = new IONUX.Collections.Resources(data.data, {resource_type: resource_type});
-            new IONUX.Views.Collection({el: '#' + elmt_id, collection: resource_collection, resource_type: resource_type}).render().el;
+            new IONUX.Views.Collection({el: elmt_id, collection: resource_collection, resource_type: resource_type}).render().el;
         });
         
         // Insert footer and buttons
-        // new IONUX.Views.Footer({resource_id: null, resource_type: resource_type}).render().el;
+        new IONUX.Views.Footer({resource_id: null, resource_type: resource_type}).render().el;
         
     },
     
