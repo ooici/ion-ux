@@ -281,18 +281,20 @@ function render_page(resource_type, resource_id, model) {
     $('.span9 ul, .span3 ul').find('li.' + resource_type + ':first').find('a').click();  
     
     $('.tab-pane').find('.'+resource_type+':visible:first').css('margin-left', 0);
+    
+    // jScrollpane
+    _.each($('.v02 .'+resource_type+' .content-wrapper'), function(el){
+        $(el).css('height', '200px').jScrollPane({autoReinitialise: true});
+    });
 
+    // ActionMenus
     _.each($('.group .nav'), function(el) {
         new IONUX.Views.GroupActions({el:$(el)});
     });
-
     _.each($('.'+resource_type+'.block'), function(el) {
         new IONUX.Views.BlockActions({el:$(el)});
-    });
-    
+    });    
     new IONUX.Views.ViewActions({el: '.v00'});
-    
-    
     
     
 };

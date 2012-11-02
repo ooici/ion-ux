@@ -330,6 +330,9 @@ h2 {
   text-transform: uppercase;
 }
 
+.block h3 {
+  white-space: nowrap;
+}
 
 .tab-pane .row-fluid {
   padding: 0;

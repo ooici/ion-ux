@@ -55,7 +55,7 @@ IONUX.Views.Checkbox = Backbone.View.extend({
         // For integration effort only
         } else {
             var integration_info = this.$el.text();
-            this.$el.html(this.template({label: label, integration_info: integration_info}));
+            this.$el.find('.content-wrapper').html(this.template({label: label, integration_info: integration_info}));
             integration_log(this.$el.attr('id'), this.$el.data('path'), integration_info);
         };
         return this;
@@ -77,7 +77,7 @@ IONUX.Views.ExtentGeospatial = Backbone.View.extend({
         // For integration effort only
         } else {
             var integration_info = this.$el.text();
-            this.$el.html(this.template({label: label, integration_info: integration_info}));
+            this.$el.find('.content-wrapper').html(this.template({label: label, integration_info: integration_info}));
             console.log('ID: ' + this.$el.attr('id') + ' -- DB-PATH: ' + this.$el.data('path') + ' -- ' + integration_info);
         };
         
@@ -95,7 +95,6 @@ IONUX.Views.ExtentVertical = Backbone.View.extend({
 
         var data_path = this.$el.data('path');
         if (data_path && data_path.substring(0,7) != 'unknown') {
-            console.log(data_path);
             this.$el.html(this.template({label: label, upper_bound: '', lower_bound: ''}));
         
         // For integration effort only
@@ -124,7 +123,7 @@ IONUX.Views.ExtentTemporal = Backbone.View.extend({
         // For integration effort only
         } else {
             var integration_info = this.$el.text();
-            this.$el.html(this.template({label: label, temporal_from: '', temporal_to: '', integration_info: integration_info}));
+            this.$el.find('.content-wrapper').html(this.template({label: label, temporal_from: '', temporal_to: '', integration_info: integration_info}));
             console.log('ID: ' + this.$el.attr('id') + ' -- DB-PATH: ' + this.$el.data('path') + ' -- ' + integration_info);
         };
         return this;
@@ -143,8 +142,8 @@ IONUX.Views.AttributeGroup = Backbone.View.extend({
         if (data && metadata) {
             this._build_attribute_group(data, metadata, root_path);
         } else {
-            this.$el.append("Attribute Group missing.");
-            if (metadata) this.$el.append('<br />Metadata found: ATTRIBUTE_GROUP_' + this.$el.attr('id'));
+            this.$el.find('.content-wrapper').append("Attribute Group missing.");
+            if (metadata) this.$el.find('.content-wrapper').append('<br />Metadata found: ATTRIBUTE_GROUP_' + this.$el.attr('id'));
             this.$el.css('color', 'orange');
         };
 
@@ -152,7 +151,7 @@ IONUX.Views.AttributeGroup = Backbone.View.extend({
     },
     
     _build_attribute_group: function(data, metadata, root_path){
-        var self = this;        
+        var self = this;
         _.each(metadata, function(meta_item) {
     
             switch(meta_item[0]){
