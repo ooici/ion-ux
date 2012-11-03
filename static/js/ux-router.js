@@ -19,8 +19,8 @@ IONUX.Router = Backbone.Router.extend({
     
     dashboard: function(){
         this._reset();
-        
-        // Insert footer and buttons
+        $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS['dashboard']).html()).show();
+        $('.Collection').show();
         new IONUX.Views.Footer({resource_id: null, resource_type: null}).render().el;
     },
     
@@ -52,7 +52,7 @@ IONUX.Router = Backbone.Router.extend({
     page: function(resource_type, view_type, resource_id){
         $('#error').hide();
         $('#dynamic-container').show();
-        $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS[view_type]).html());        
+        $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS[view_type]).html());
         $('.span9 li,.span3 li').hide();
         
         var resource_extension = new IONUX.Models.ResourceExtension({resource_type: resource_type, resource_id: resource_id});
@@ -184,12 +184,14 @@ function render_page(resource_type, resource_id, model) {
     // Catch and set derivative resources
     if (resource_type == 'InstrumentModel' || resource_type == 'PlatformModel' || resource_type == 'SensorModel') {
         var resource_type = 'DeviceModel';
-    } else if (resource_type == 'Observatory') {
-        var resource_type = 'Site';
-    } else if (resource_type == 'InstrumentSite' || resource_type == 'PlatformSite' || resource_type == 'Subsite') {
+    } else if (resource_type == 'Observatory' || resource_type == 'InstrumentSite' || resource_type == 'PlatformSite' || resource_type == 'Subsite') {
         var resource_type = 'Site';
     } else if (resource_type == 'SensorDevice') {
         var resource_type = 'Device';
+    } else if (resource_type == 'DataProcess') {
+        var resource_type = 'TaskableResource';
+    } else if (resource_type == 'UserRole') {
+        var resource_type = 'InformationResource';
     };
     
     window.MODEL_DATA = model.data;
