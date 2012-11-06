@@ -19,10 +19,12 @@ def setup_env():
     global web_host
     if not web_host:
         web_host = prompt('Fully qualified web application host name: ', default='ux.oceanobservatories.org')
+    print "Deploy hostname: ", web_host
 
     global web_port
     if not web_port:
         web_port = prompt('Web service port: ', default=3000)
+    print "Deploy web service port:: ", web_port
 
     global extract_dir
     if not extract_dir:
@@ -31,15 +33,17 @@ def setup_env():
     global deploy_dir
     if not deploy_dir:
         deploy_dir = prompt('Root deploy dir on web host: ', default='/www/ux')
-    print "deploy_dir: " + deploy_dir
+    print "deploy directory: " + deploy_dir
 
     global gateway_host
     if not gateway_host:
-        gateway_host = prompt('Service Gateway Service host: ', default='localhost')
+        gateway_host = prompt('Service Gateway Service hostname: ', default='192.168.4.112')
+    print "Deploy service gateway hostname: ", gateway_host
 
     global gateway_port
     if not gateway_port:
         gateway_port = prompt('Service Gateway Service port: ', default=5000)
+    print "Deploy service gateway port: ", gateway_port
 
     global ssh_user
     if not ssh_user:
@@ -76,20 +80,11 @@ def ux_dev():
     env.user = ssh_user
     env.hosts = ['ux-dev.oceanobservatories.org']
 
-# Not used, but in theory they could be ...
-def stop_apache():
+def restart_apache():
     setup_env()
-
-    # Stop apache
-    run('sudo apachectl stop')
-    print 'Waiting for Apache to fully stop'
-    time.sleep(10);
-
-def start_apache():
-    setup_env()
-
-    # Start apache
-    run('apachectl start')
+    run('sudo apachectl restart')
+    print 'Restarting Apache...'
+    time.sleep(4);
 
 # Sets up CILogon portal config values and then tars up the portal
 def config_cilogon():
@@ -156,11 +151,11 @@ def config_flask():
     global secret_key
     if not secret_key:
         secret_key = prompt('Enter a session encryption secret key to be used between browser and flask app: ')
-
+   
     # Remove any existing ion-ux.html file
-    local('rm -f templates/ion-ux.html')
-    o = open('templates/ion-ux.html', 'w')
-    ion_ux_cfg = open('templates/ion-ux.html.template').read()
+    #local('rm -f templates/ion-ux.html')
+    ion_ux_cfg = open('templates/ion_ux.html').read()
+    o = open('templates/ion_ux.html', 'w')
     o.write( re.sub('FLASK_HOST_VALUE', web_host, ion_ux_cfg) )
     o.close()
 
@@ -213,6 +208,24 @@ def deploy_ui():
     sudo('chgrp -R root %s' % deploy_dir, shell=False)
     sudo('chown -R root %s' % deploy_dir, shell=False)
 
+# This is just for testing...
+def deploy_test():
+    global web_host
+    global web_port
+    global gateway_host
+    global gateway_port
+    global extract_dir
+    global deploy_dir
+
+    web_host='ux-test.oceanobservatories.org'
+    web_port=3000
+    gateway_port=5000
+    extract_dir='/tmp/ux'
+    deploy_dir='/www/test'
+
+    deploy_cilogon()
+    deploy_ui()
+    restart_apache()
 # Helper methods that just set all the default values for you.  Use as follows:
 #  > fab ux_test deploy_ux_test
 def deploy_ux_test():
@@ -224,13 +237,13 @@ def deploy_ux_test():
     global deploy_dir
     web_host='ux-test.oceanobservatories.org'
     web_port=3000
-    gateway_host='pub106.oceanobservatories.org'
     gateway_port=5000
     extract_dir='/tmp/ux'
     deploy_dir='/www/ux'
 
     deploy_cilogon()
     deploy_ui()
+    restart_apache()
 
 # Use as follows:
 #  > fab ux_dev deploy_ux_dev
@@ -243,10 +256,10 @@ def deploy_ux_dev():
     global deploy_dir
     web_host='ux-dev.oceanobservatories.org'
     web_port=3000
-    gateway_host='pub106.oceanobservatories.org'
     gateway_port=5000
     extract_dir='/tmp/ux'
     deploy_dir='/www/ux'
 
     deploy_cilogon()
     deploy_ui()
+    restart_apache()

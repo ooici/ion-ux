@@ -14,6 +14,8 @@ from dummy_data_layout import LAYOUT_SCHEMA
 from service_api import service_gateway_get
 from config import CACHED_LAYOUT, PORTAL_ROOT
 
+from random import randint
+
 DEFINED_VIEWS = [
     '2163152', # Facepage
     '2163153', # Status
@@ -22,6 +24,7 @@ DEFINED_VIEWS = [
     # '2163810', # Dashboard 2,
     '2163157', # Command
     '2163158', # Direct Command
+    # '2163927', # Callout
 ]
 
 class LayoutApi(object):
@@ -88,6 +91,7 @@ class LayoutApi(object):
             groups = {}
             for gr_idx, gr_element in enumerate(view['embed']):
                 group_elid = gr_element['elid']
+                group_link_id = group_elid + str(randint(0,1000))
                 group_position = gr_element['pos']
                 group = layout_schema['spec']['elements'][group_elid]
 
@@ -125,7 +129,7 @@ class LayoutApi(object):
                 # Create li and a elements
                 group_li_elmt = ET.SubElement(group_ul_elmt, 'li')
                 group_a_elmt = ET.SubElement(group_li_elmt, 'a')
-                group_a_elmt.attrib['href'] = '#' + group_elid
+                group_a_elmt.attrib['href'] = '#' + group_link_id
                 group_a_elmt.attrib['data-toggle'] = 'tab'
                 # FOR TROUBLESHOOTING
                 # group_a_elmt.text = group['label'] + ' (' + group_position + ')'
@@ -133,7 +137,7 @@ class LayoutApi(object):
 
                 # Create group div inside of tab-content
                 group_elmt = ET.SubElement(group_block_container_elmt, 'div')
-                group_elmt.attrib['id'] = group_elid
+                group_elmt.attrib['id'] = group_link_id
                 group_elmt.attrib['class'] = 'tab-pane row-fluid'
 
             # END GROUPS -------------------------------------------------------------------
@@ -221,6 +225,10 @@ class LayoutApi(object):
                     if not group_position == 'V00':
                         block_h3_elmt = ET.SubElement(block_elmt, 'h3')
                         block_h3_elmt.text = block['label']
+                    
+                    block_container_elmt = ET.SubElement(block_elmt, 'div')
+                    block_container_elmt.set('class', 'content-wrapper')
+                    
 
                     # Attributes
                     for at_element in block['embed']:
@@ -229,22 +237,32 @@ class LayoutApi(object):
                         attribute_data_path = at_element['dpath']
                         attribute_level = at_element['olevel']
                         attribute = layout_schema['spec']['elements'][attribute_elid]
-                                                
+
                         # Widget
                         attribute_widget_id = attribute['wid']
                         attribute_widget_type = layout_schema['spec']['widgets'][attribute_widget_id]['name']
+                                                
+                        attribute_elmt = ET.SubElement(block_container_elmt, 'div')
 
-                        attribute_elmt = ET.SubElement(block_elmt, 'div')
                         attribute_elmt.set('id', attribute_elid)
-                        attribute_elmt.set('class', attribute_widget_type)
                         attribute_elmt.set('data-position', attribute_position)
                         attribute_elmt.set('data-path', attribute_data_path)
                         attribute_elmt.set('data-level', attribute_level)
                         attribute_elmt.set('data-label', attribute['label'])
                         
-                        # FOR TROUBLESHOOTING                        
-                        # attribute_elmt.text = 'Attribute: %s (%s) (%s) (%s) (%s)' % (attribute['label'], attribute['name'], attribute_elid, attribute_widget_type, attribute_position)
-                        attribute_elmt.text = '%s (%s)' % (attribute['label'], attribute['name'])
+                        # Set additional class based on spec['graphics] name
+                        # corresponding CSS class applies the sprite.
+                        if attribute_widget_type == 'image_ooi':
+                            image_class = layout_schema['spec']['graphics'][attribute['gfx']]['name']
+                            attribute_elmt.set('class', '%s %s' % (attribute_widget_type, image_class))
+                            attribute_elmt.text = 'xxxx'
+                        else:
+                            attribute_elmt.set('class', attribute_widget_type)
+                            # FOR TROUBLESHOOTING
+                            # attribute_elmt.text = 'Attribute: %s (%s) (%s) (%s) (%s)' % (attribute['label'], attribute['name'], attribute_elid, attribute_widget_type, attribute_position)
+                            attribute_elmt.text = '%s (%s)' % (attribute['label'], attribute['name'])
+                            
+                        
                         
                         # Generate metadata for nested elements, ex. tables and attribute groups                        
                         if attribute_widget_type in ('table_ooi', 'attribute_group_ooi') and attribute_elid not in metadata_processed:
@@ -260,7 +278,8 @@ class LayoutApi(object):
                                     metadata_items.append(embedded_attribute['elid'])
                                     metadata_items.append(embedded_attribute['dpath'])
                                 elif attribute_widget_type == 'table_ooi':
-                                    meta_elmt_id = 'TABLE_' + attribute_elid                                
+                                    meta_elmt_id = 'TABLE_' + attribute_elid
+                                
                                 metadata.append(metadata_items)
                                 
                             # Append metadata to body as a JSON script
@@ -290,9 +309,9 @@ class LayoutApi(object):
                         #         sub_attribute_elmt.text = '%s (%s)' % (sub_attribute['label'], sub_attribute['name'])
 
 
-        # layout_elmt = ET.SubElement(body_elmt, 'script')
-        # layout_elmt.set('id', 'layout')
-        # layout_elmt.text = "var LAYOUT=%s;" % json.dumps(layout_schema)
+        layout_elmt = ET.SubElement(body_elmt, 'script')
+        layout_elmt.set('id', 'layout')
+        layout_elmt.text = "var LAYOUT=%s;" % json.dumps(layout_schema)
 
         resource_types_elmt = ET.SubElement(body_elmt, 'script')
         resource_types_elmt.set('id', 'resource_types')

@@ -9,6 +9,9 @@ from config import FLASK_HOST, FLASK_PORT, GATEWAY_HOST, GATEWAY_PORT, LOGGED_IN
 from service_api import ServiceApi
 from layout_api import LayoutApi
 from jinja2 import Template
+from urlparse import urlparse
+import re
+
 
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
@@ -233,6 +236,15 @@ def signon():
     else:
         return redirect('/')
 
+@app.route('/login/', methods=['GET'])
+def login():
+    url = urlparse(request.url)
+    if url.scheme == 'http':
+        https_url = re.sub('http://','https://',request.url)
+        return redirect(https_url)
+    else:
+        return "This page should redirect to a secure login page"
+
 @app.route('/userprofile/', methods=['GET', 'POST', 'PUT'])
 def userprofile():
     if not session.has_key('user_id'):
@@ -290,6 +302,10 @@ def geospatial(resource_id=None):
 @app.route('/dev/chart', methods=['GET'])
 def chart(resource_id=None):
     return render_template('dev_chart.html')
+
+@app.route('/dev/image', methods=['GET'])
+def dev_image(resource_id=None):
+    return render_template('dev_image.html')
 
 
 # CATCHALL ROUTE

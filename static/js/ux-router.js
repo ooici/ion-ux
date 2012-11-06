@@ -19,8 +19,8 @@ IONUX.Router = Backbone.Router.extend({
     
     dashboard: function(){
         this._reset();
-        
-        // Insert footer and buttons
+        $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS['dashboard']).html()).show();
+        $('.Collection').show();
         new IONUX.Views.Footer({resource_id: null, resource_type: null}).render().el;
     },
     
@@ -34,12 +34,13 @@ IONUX.Router = Backbone.Router.extend({
         var resources = new IONUX.Collections.Resources(null, {resource_type: resource_type});
         resources.fetch().success(function(data){
             $('li.Collection ,div.Collection').show(); // Show elements based on current view/CSS class, i.e. .InstrumentDevice
-            $('.span9 ul').find('li.Collection:first').find('a').click(); // Manually Set the first tabs 'active'
+            $('.span9').find('li.Collection:first').find('a').click(); // Manually Set the first tabs 'active'
             
             // Todo: better way of finding the container for the collection.
-            var elmt_id = $('.Collection .table_ooi:first').parent('div').attr('id');
+            var elmt_id = $('.v02 .Collection .table_ooi').first();
+            console.log(elmt_id);
             var resource_collection = new IONUX.Collections.Resources(data.data, {resource_type: resource_type});
-            new IONUX.Views.Collection({el: '#' + elmt_id, collection: resource_collection, resource_type: resource_type}).render().el;
+            new IONUX.Views.Collection({el: elmt_id, collection: resource_collection, resource_type: resource_type}).render().el;
         });
         
         // Insert footer and buttons
@@ -51,7 +52,7 @@ IONUX.Router = Backbone.Router.extend({
     page: function(resource_type, view_type, resource_id){
         $('#error').hide();
         $('#dynamic-container').show();
-        $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS[view_type]).html());        
+        $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS[view_type]).html());
         $('.span9 li,.span3 li').hide();
         
         var resource_extension = new IONUX.Models.ResourceExtension({resource_type: resource_type, resource_id: resource_id});
@@ -174,15 +175,23 @@ function get_descendant_properties(obj, desc) {
     return obj;
 };
 
+// Observatory -> Org #marine_facility_extension
+// Site -> Observatory (called Observatory sites) #site_extension
+
+
+
 function render_page(resource_type, resource_id, model) {
-    console.log('render_page');
     // Catch and set derivative resources
-    if (resource_type == 'InstrumentModel' || resource_type == ('PlatformModel')) {
+    if (resource_type == 'InstrumentModel' || resource_type == 'PlatformModel' || resource_type == 'SensorModel') {
         var resource_type = 'DeviceModel';
-    } else if (resource_type == 'Observatory') {
-        var resource_type = 'Org'
-    } else if (resource_type == 'InstrumentSite' || resource_type == 'PlatformSite' || resource_type == 'SubSite') {
-        var resource_type = 'Site'
+    } else if (resource_type == 'Observatory' || resource_type == 'InstrumentSite' || resource_type == 'PlatformSite' || resource_type == 'Subsite') {
+        var resource_type = 'Site';
+    } else if (resource_type == 'SensorDevice') {
+        var resource_type = 'Device';
+    } else if (resource_type == 'DataProcess') {
+        var resource_type = 'TaskableResource';
+    } else if (resource_type == 'UserRole') {
+        var resource_type = 'InformationResource';
     };
     
     window.MODEL_DATA = model.data;
@@ -221,11 +230,11 @@ function render_page(resource_type, resource_id, model) {
         append_info_level(el);
     });
 
-    var image_elmts = $('.'+resource_type+' .image_ooi');
-    _.each(image_elmts, function(el) {
-        new IONUX.Views.Image({el: $(el)}).render().el;
-        append_info_level(el);
-    });
+    // var image_elmts = $('.'+resource_type+' .image_ooi');
+    // _.each(image_elmts, function(el) {
+    //     new IONUX.Views.Image({el: $(el)}).render().el;
+    //     append_info_level(el);
+    // });
 
     var badge_elmts = $('.'+resource_type+' .badge_ooi');
     _.each(badge_elmts, function(el) {
@@ -276,12 +285,28 @@ function render_page(resource_type, resource_id, model) {
     //         chart_instance.render().el;
     //     });
     // };
-
+    
     // Show the relevant elements and click to enable the Bootstrap tabs.
     $('li.' + resource_type + ', div.' + resource_type).show();
     $('.span9 ul, .span3 ul').find('li.' + resource_type + ':first').find('a').click();  
     
-    $('.tab-pane').find('.'+resource_type+':visible:first').css('margin-left', 0)
+    $('.tab-pane').find('.'+resource_type+':visible:first').css('margin-left', 0);
+    
+    // jScrollpane
+    _.each($('.v02 .'+resource_type+' .content-wrapper'), function(el){
+        $(el).css('height', '200px').jScrollPane({autoReinitialise: true});
+    });
+
+    // ActionMenus
+    _.each($('.v01 .group .nav, .v02 .group .nav'), function(el) {
+        new IONUX.Views.GroupActions({el:$(el)});
+    });
+    _.each($('.v01 .'+resource_type+'.block, .v02 .'+resource_type+'.block'), function(el) {
+        new IONUX.Views.BlockActions({el:$(el)});
+    });    
+    new IONUX.Views.ViewActions({el: '.v00'});
+    
+    
 };
 
 function render_error(){
