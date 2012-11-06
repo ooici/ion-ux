@@ -24,6 +24,7 @@ DEFINED_VIEWS = [
     # '2163810', # Dashboard 2,
     '2163157', # Command
     '2163158', # Direct Command
+    # '2163927', # Callout
 ]
 
 class LayoutApi(object):
@@ -236,23 +237,32 @@ class LayoutApi(object):
                         attribute_data_path = at_element['dpath']
                         attribute_level = at_element['olevel']
                         attribute = layout_schema['spec']['elements'][attribute_elid]
-                                                
+
                         # Widget
                         attribute_widget_id = attribute['wid']
                         attribute_widget_type = layout_schema['spec']['widgets'][attribute_widget_id]['name']
-                        
+                                                
                         attribute_elmt = ET.SubElement(block_container_elmt, 'div')
 
                         attribute_elmt.set('id', attribute_elid)
-                        attribute_elmt.set('class', attribute_widget_type)
                         attribute_elmt.set('data-position', attribute_position)
                         attribute_elmt.set('data-path', attribute_data_path)
                         attribute_elmt.set('data-level', attribute_level)
                         attribute_elmt.set('data-label', attribute['label'])
                         
-                        # FOR TROUBLESHOOTING                        
-                        # attribute_elmt.text = 'Attribute: %s (%s) (%s) (%s) (%s)' % (attribute['label'], attribute['name'], attribute_elid, attribute_widget_type, attribute_position)
-                        attribute_elmt.text = '%s (%s)' % (attribute['label'], attribute['name'])
+                        # Set additional class based on spec['graphics] name
+                        # corresponding CSS class applies the sprite.
+                        if attribute_widget_type == 'image_ooi':
+                            image_class = layout_schema['spec']['graphics'][attribute['gfx']]['name']
+                            attribute_elmt.set('class', '%s %s' % (attribute_widget_type, image_class))
+                            attribute_elmt.text = 'xxxx'
+                        else:
+                            attribute_elmt.set('class', attribute_widget_type)
+                            # FOR TROUBLESHOOTING
+                            # attribute_elmt.text = 'Attribute: %s (%s) (%s) (%s) (%s)' % (attribute['label'], attribute['name'], attribute_elid, attribute_widget_type, attribute_position)
+                            attribute_elmt.text = '%s (%s)' % (attribute['label'], attribute['name'])
+                            
+                        
                         
                         # Generate metadata for nested elements, ex. tables and attribute groups                        
                         if attribute_widget_type in ('table_ooi', 'attribute_group_ooi') and attribute_elid not in metadata_processed:
@@ -299,9 +309,9 @@ class LayoutApi(object):
                         #         sub_attribute_elmt.text = '%s (%s)' % (sub_attribute['label'], sub_attribute['name'])
 
 
-        # layout_elmt = ET.SubElement(body_elmt, 'script')
-        # layout_elmt.set('id', 'layout')
-        # layout_elmt.text = "var LAYOUT=%s;" % json.dumps(layout_schema)
+        layout_elmt = ET.SubElement(body_elmt, 'script')
+        layout_elmt.set('id', 'layout')
+        layout_elmt.text = "var LAYOUT=%s;" % json.dumps(layout_schema)
 
         resource_types_elmt = ET.SubElement(body_elmt, 'script')
         resource_types_elmt.set('id', 'resource_types')

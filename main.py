@@ -303,6 +303,10 @@ def geospatial(resource_id=None):
 def chart(resource_id=None):
     return render_template('dev_chart.html')
 
+@app.route('/dev/image', methods=['GET'])
+def dev_image(resource_id=None):
+    return render_template('dev_image.html')
+
 
 # CATCHALL ROUTE
 # -------------------------------------------------------------------------
