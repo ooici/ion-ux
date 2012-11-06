@@ -31,6 +31,7 @@ function status_indicator(obj){
     var stat = obj.aData[obj.iDataColumn];
     var pos_map = {"Uknown":"0px 0px", "Normal":"0px -20px", "Alert":"0px -40px", "Alarm":"0px 18px"};
     var stat_pos = pos_map[stat];
+    if (_.isUndefined(stat_pos)) stat_pos = pos_map["Normal"];
     var html = "<div class='status_indicator_sprite' style='background-position:"+stat_pos+"' title='"+stat+"'>&nbsp;</div>";
     return html;
 }
@@ -58,7 +59,8 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         this.datatable = this.$el.find(".datatable-container table").dataTable({
             "sDom":"Rlfrtip",
             "aaData":table_data,
-            "aoColumns":header_data
+            "aoColumns":header_data,
+            "bInfo":false
         });
         return this;
     },
