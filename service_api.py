@@ -56,6 +56,8 @@ class ServiceApi(object):
             extension = service_gateway_get('org_management', 'get_org_extension', params= {'org_id': resource_id})
         elif resource_type in ('Observatory', 'Subsite', 'PlatformSite', 'InstrumentSite'):
             extension = service_gateway_get('observatory_management', 'get_site_extension', params= {'site_id': resource_id})
+        elif resource_type in ('UserRole', 'DataProcess', 'NotificationRequest', 'SensorModel'):
+            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'DeviceModelExtension'})
         else:
             extension = 'Service API call not implemented.'
 
