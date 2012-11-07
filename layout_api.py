@@ -223,8 +223,9 @@ class LayoutApi(object):
                     # FOR TROUBLESHOOTING
                     # block_h3_elmt.text = 'Block: %s (%s) (%s) (%s)' % (block['label'], block_elid, block_widget['name'], block_position)
                     if not group_position == 'V00':
-                        block_h3_elmt = ET.SubElement(block_elmt, 'h3')
-                        block_h3_elmt.text = block['label']
+                        if not attribute_widget_type == 'table_ooi':
+                            block_h3_elmt = ET.SubElement(block_elmt, 'h3')
+                            block_h3_elmt.text = block['label']
                     
                     block_container_elmt = ET.SubElement(block_elmt, 'div')
                     block_container_elmt.set('class', 'content-wrapper')

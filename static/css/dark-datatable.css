@@ -39,6 +39,11 @@ table.table tr.odd td {
     display:inline;
     margin-bottom:0px;
 }
+
+.dataTables_paginate {
+  display: none;
+}
+
 .dataTables_paginate a {
     cursor:pointer;
     margin:2px 4px 2px 0px;
@@ -47,6 +52,7 @@ table.table tr.odd td {
 .table-bordered tr th {
     border-left:1px solid #6f6f6f;
 }
+
 .filter-header {
     background-color:#4D4D4D;
     text-transform:uppercase;

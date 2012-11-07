@@ -141,8 +141,6 @@ class ServiceApi(object):
         agent_request = service_gateway_get('instrument_management', 'stop_instrument_agent_instance', params={'instrument_agent_instance_id': str(instrument_agent_instance_id)})
         
         return agent_request
-        
-        pass
 
     @staticmethod
     def instrument_execute(instrument_device_id, command, cap_type):
@@ -161,6 +159,47 @@ class ServiceApi(object):
         agent_command = "get_capabilities"
         params = {}
         agent_response = service_gateway_agent_request(instrument_device_id, agent_command, params)
+        return agent_response
+
+
+
+    # PLATFORM COMMAND
+    # ---------------------------------------------------------------------------
+
+    @staticmethod
+    def platform_agent_start(platform_device_id):
+        pass
+        # instrument_agent_instance = service_gateway_get('instrument_management', 'find_instrument_agent_instance_by_instrument_device', params={'instrument_device_id': instrument_device_id})
+        # instrument_agent_instance_id = instrument_agent_instance[0]['_id']
+        # agent_request = service_gateway_get('instrument_management', 'start_instrument_agent_instance', params={'instrument_agent_instance_id': str(instrument_agent_instance_id)})
+        # 
+        # return agent_request
+
+    @staticmethod
+    def platform_agent_stop(platform_device_id):
+        instrument_agent_instance = service_gateway_get('instrument_management', 'find_instrument_agent_instance_by_instrument_device', params={'instrument_device_id': instrument_device_id})
+        instrument_agent_instance_id = instrument_agent_instance[0]['_id']
+        agent_request = service_gateway_get('instrument_management', 'stop_instrument_agent_instance', params={'instrument_agent_instance_id': str(instrument_agent_instance_id)})
+
+        return agent_request
+
+    @staticmethod
+    def platform_execute(platform_device_id, command, cap_type):
+        if cap_type == '1':
+            agent_op = "execute_agent"
+        elif cap_type == '3':
+            agent_op = "execute_resource"
+        params = {"command": {"type_": "AgentCommand", "command": command}}
+        if command == 'RESOURCE_AGENT_EVENT_GO_DIRECT_ACCESS':
+            params['command'].update({'kwargs': {'session_type': 3, 'session_timeout':600, 'inactivity_timeout': 600}})
+        agent_response = service_gateway_agent_request(platform_device_id, agent_op, params)
+        return agent_response
+
+    @staticmethod
+    def platform_agent_get_capabilities(platform_device_id):
+        agent_command = "get_capabilities"
+        params = {}
+        agent_response = service_gateway_agent_request(platform_device_id, agent_command, params)
         return agent_response
     
 

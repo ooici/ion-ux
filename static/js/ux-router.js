@@ -175,10 +175,6 @@ function get_descendant_properties(obj, desc) {
     return obj;
 };
 
-// Observatory -> Org #marine_facility_extension
-// Site -> Observatory (called Observatory sites) #site_extension
-
-
 
 function render_page(resource_type, resource_id, model) {
     // Catch and set derivative resources
@@ -258,7 +254,9 @@ function render_page(resource_type, resource_id, model) {
     var extent_geospatial_elmts = $('.'+resource_type+' .extent_geospatial_ooi');
     _.each(extent_geospatial_elmts, function(el) {
         var data_path = $(el).data('path');
+        console.log('extent_geospatial path: ', data_path)
         var data = get_descendant_properties(window.MODEL_DATA, data_path);
+        console.log('extent_geospatial data: ', data);
         new IONUX.Views.ExtentGeospatial({el: $(el), data: data}).render().el;
     });
 
