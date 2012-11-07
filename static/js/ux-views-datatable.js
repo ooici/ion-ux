@@ -60,7 +60,8 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
             "sDom":"Rlfrtip",
             "aaData":table_data,
             "aoColumns":header_data,
-            "bInfo":false
+            "bInfo":false,
+            'bPaginate': false
         });
         return this;
     },
