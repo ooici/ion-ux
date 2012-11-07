@@ -294,6 +294,11 @@ def dev_datatable(resource_id=None):
 @app.route('/dev/actionmenus', methods=['GET'])
 def dev_actionmenus(resource_id=None):
     return render_template('dev_actionmenus.html')
+
+@app.route('/dev/subscribe', methods=['GET'])
+def dev_subscribe():
+    time.sleep(2)
+    return "ok"
     
 @app.route('/dev/geospatial', methods=['GET'])
 def geospatial(resource_id=None):

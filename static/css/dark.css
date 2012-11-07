@@ -503,3 +503,10 @@ ul.nav {
   border: solid #B3B3B3 1px;
   background: #666666;
 }
+
+.modal {
+    padding:10px;
+}
+.modal-backdrop.fade {
+  opacity:0.5;
+}

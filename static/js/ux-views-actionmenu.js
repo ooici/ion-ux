@@ -13,8 +13,8 @@ todo:
 
 INTERACTIONS_OBJECT = {};
 INTERACTIONS_OBJECT.block_interactions = ['More Info', 'Detailed View', 'Hide', 'Edit'];
-INTERACTIONS_OBJECT.group_interactions = ['More Info', 'Detailed View', 'Submenu', 'Edit'];
-INTERACTIONS_OBJECT.view_interactions = ['Subscribe', 'Detailed View', 'Submenu', 'Subscribe', 'Command', 'Direct Command'];
+INTERACTIONS_OBJECT.group_interactions = ['More Info', 'Detailed View', /*'Submenu',*/ 'Edit'];
+INTERACTIONS_OBJECT.view_interactions = ['Subscribe', 'Detailed View', /*'Submenu',*/ 'Command', 'Direct Command'];
 
 
 IONUX.Views.ActionMenu = Backbone.View.extend({
@@ -66,18 +66,36 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
         this.on("action__detailed_view", this.action__detailed_view);
         this.on("action__submenu_toggle", this.action__submenu_toggle);
         this.on("action__command", this.action__command);
+        this.on("action__direct_command", this.action__direct_command);
     },
     action__subscribe:function(){
-        alert("IONUX.Views.ViewActions - ACTION: subscribe");
+        var url = "/dev/subscribe"; //FIXME
+        var modal_html = '<div id="subscribe-modal" class="modal hide fade""><h1>Subscribing...</h1></div>';
+        $(modal_html).modal({keyboard:false});
+        $.ajax({url:url,
+            success: function(resp) {
+                $("#subscribe-modal").find("h1").text("Subscription Complete.");
+                setTimeout(function(){$("#subscribe-modal").modal("hide").remove()}, 800);
+            },
+            error: function(){
+                $("#subscribe-modal").find("h1").text("Subscription Failed.");
+                setTimeout(function(){$("#subscribe-modal").modal("hide").remove();}, 800);
+            },
+        });
     },
     action__detailed_view:function(){
-        alert("IONUX.Views.ViewActions - ACTION: detailed_view - this.el:" + this.el);
+        var modal_tmpl = '<div class="modal hide fade"><h1>Detailed View</h1><h3>Element: <%= elem_id %></h3></div>';
+        var modal_html = _.template(modal_tmpl, {"elem_id":this.$el.attr("id")});
+        $(modal_html).modal();
     },
     action__submenu_toggle:function(){
         alert("IONUX.Views.ViewActions - ACTION: submenu_toggle");
     },
     action__command:function(){
-        alert("IONUX.Views.ViewActions - ACTION: command");
+        alert("Command");
+    },
+    action__direct_command:function(){
+        alert("Direct Command");
     }
 
 });
@@ -98,11 +116,8 @@ IONUX.Views.GroupActions = IONUX.Views.ActionMenu.extend({
     },
 
     action__more_info:function(){
-        var modal_tmpl = 
-            '<div class="modal hide fade" style="padding:10px">' +
-            '<h1><%= classname %> - ID: <%= elem_id %><h1><br><h3>ACTION:</h3><h2><%= action %></h2>' +
-            '</div>';
-        var modal_html = _.template(modal_tmpl, {"classname":"IONUX.Views.GroupActions", "action":"'More Info'", "elem_id":this.$el.attr("id")});
+        var modal_tmpl = '<div class="modal hide fade"><h1>More Info</h1><h3>Element: <%= elem_id %></h3></div>';
+        var modal_html = _.template(modal_tmpl, {"elem_id":this.$el.attr("id")});
         $(modal_html).modal();
     },
 
