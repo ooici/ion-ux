@@ -274,14 +274,24 @@ function render_page(resource_type, resource_id, model) {
         new IONUX.Views.Checkbox({el: $(el), data_model: window.MODEL_DATA}).render().el;
     });
     
-    if (resource_type == 'DataProduct') {
-        console.log('DataProduct Chart');
     
-        // var chart_elmts = $('.'+resource_type+' .chart_ooi');
-        // _.each(chart_ooi, function(el) {
-        //     chart_instance = new IONUX.Views.Chart({resource_id: resource_id});
-        //     chart_instance.render().el;
-        // });
+
+    if (resource_type == 'DataProduct') {
+        //$('body').append($('<script>').attr('src', 'https://www.google.com/jsapi'));
+        var chart_elmt = $('.'+resource_type+' .chart_ooi').first();        
+        $('body').append($('<script>').attr('src', 'https://www.google.com/jsapi?callback=c').attr("type", "text/javascript"));
+        
+        c = function(){
+        chart_instance = new IONUX.Views.Chart({resource_id: resource_id, el: chart_elmt});
+        chart_instance.render().el;
+        }
+        
+        /*
+        var chart_elmts = $('.'+resource_type+' .chart_ooi');
+        _.each(chart_elmts, function(el) {
+            //chart_instance = new IONUX.Views.Chart({resource_id: resource_id});
+            //chart_instance.render().el;
+        });*/
     };
     
     // Show the relevant elements and click to enable the Bootstrap tabs.

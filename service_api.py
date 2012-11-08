@@ -53,7 +53,7 @@ class ServiceApi(object):
         elif resource_type == 'DataProcessDefinition':
             extension = service_gateway_get('data_process_management', 'get_data_process_definition_extension', params= {'data_process_definition_id': resource_id})
         elif resource_type == 'Org':
-            extension = service_gateway_get('org_management', 'get_org_extension', params= {'org_id': resource_id})
+            extension = service_gateway_get('org_management', 'get_marine_facility_extension', params= {'org_id': resource_id})
         elif resource_type in ('Observatory', 'Subsite', 'PlatformSite', 'InstrumentSite'):
             extension = service_gateway_get('observatory_management', 'get_site_extension', params= {'site_id': resource_id})
         elif resource_type in ('UserRole', 'DataProcess', 'NotificationRequest', 'SensorModel'):

@@ -5,32 +5,45 @@ IONUX.Views.Chart = IONUX.Views.Base.extend({
     initialize: function() {
         // this.render().el;
         this.resource_id = this.options.resource_id;
+        console.log(google);
+        // google.load('visualization', '1', {'packages': ['annotatedtimeline']});
+        // google.load('visualization', '1');
+        // google.setOnLoadCallback(function() {console.log('something.')});
+        
     },
 
     render: function() {
-        $('#dynamic-container').append(this.$el.html(this.template));
-        this.draw_chart();
+        console.log('chart render');
+        //google.setOnLoadCallback(function() {console.log("!!!!!!")});
+        var self = this;
+        this.$el.html(this.template);
+        google.load('visualization', '1', {'packages': ['annotatedtimeline'], "callback":function(){self.draw_chart(self)}});
+
+        // this.draw_chart();
         return this;
     },
     
-    draw_chart: function(){
+    draw_chart: function(self){
+        // console.log(self);
+        // console.log("DRAW CHART!!!!!!")
+        self.data_table = new google.visualization.DataTable();
+        console.log(self.data_table);
+        //console.log(this.$el.find('.chart_ui_div')[0]);
+        self.chart = new google.visualization.AnnotatedTimeLine(document.getElementById('chart_div'));
+        console.log('this.chart', self.chart, self.on_ready)
         
-        this.data_table = new google.visualization.DataTable();
-        console.log(this.data_table);
-        console.log(this.$el.find('.chart_ui_div')[0]);
-        this.chart = new google.visualization.AnnotatedTimeLine(document.getElementById('chart_div'));
-        console.log('this.chart', this.chart)
-        
-        // set callback for ready event before calling draw on the chart
-        google.visualization.events.addListener(this.chart, 'ready', this.on_ready);
 
-        var self = this;
+        // var self = this;
         $.ajax ({
             // TODO 
-            url: "http://localhost:3000/viz/initiate_realtime_visualization/" + this.resource_id + "/",
+            url: "http://localhost:3000/viz/initiate_realtime_visualization/" + self.resource_id + "/",
             dataType: 'jsonp',
             jsonpCallback: 'init_realtime_visualization_cb'  // Has to correspond with the server side response
         });
+        
+        // set callback for ready event before calling draw on the chart
+        google.visualization.events.addListener(self.chart, 'ready', self.on_ready);
+        
     },
     
     init_realtime_visualization_cb: function(query_token) {
@@ -55,7 +68,7 @@ IONUX.Views.Chart = IONUX.Views.Base.extend({
 	},
 	
 	on_ready: function() {
-
+        console.log('on_ready')
 		//set callbacks for events here. Why ? no idea !
 		google.visualization.events.addListener(this.chart, 'select', this.on_select);
 		google.visualization.events.addListener(this.chart, 'rangechange', this.on_range_change);
