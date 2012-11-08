@@ -38,7 +38,6 @@ IONUX.Router = Backbone.Router.extend({
             
             // Todo: better way of finding the container for the collection.
             var elmt_id = $('.v02 .Collection .table_ooi').first();
-            console.log(elmt_id);
             var resource_collection = new IONUX.Collections.Resources(data.data, {resource_type: resource_type});
             new IONUX.Views.Collection({el: elmt_id, collection: resource_collection, resource_type: resource_type}).render().el;
         });
@@ -254,15 +253,15 @@ function render_page(resource_type, resource_id, model) {
     var extent_geospatial_elmts = $('.'+resource_type+' .extent_geospatial_ooi');
     _.each(extent_geospatial_elmts, function(el) {
         var data_path = $(el).data('path');
-        console.log('extent_geospatial path: ', data_path)
         var data = get_descendant_properties(window.MODEL_DATA, data_path);
-        console.log('extent_geospatial data: ', data);
         new IONUX.Views.ExtentGeospatial({el: $(el), data: data}).render().el;
     });
 
     var extent_vertical_elmts = $('.'+resource_type+' .extent_vertical_ooi');
-    _.each(extent_vertical_elmts, function(el) {
-        new IONUX.Views.ExtentVertical({el: $(el)}).render().el;
+    _.each(extent_vertical_elmts, function(el){
+        var data_path = $(el).data('path');
+        var data = get_descendant_properties(window.MODEL_DATA, data_path);
+        new IONUX.Views.ExtentVertical({el: $(el), data: data}).render().el;
     });
 
     var extent_temporal_elmts = $('.'+resource_type+' .extent_temporal_ooi');
@@ -275,14 +274,15 @@ function render_page(resource_type, resource_id, model) {
         new IONUX.Views.Checkbox({el: $(el), data_model: window.MODEL_DATA}).render().el;
     });
     
-    // if (resource_type == 'DataProduct') {
-    //     console.log('DataProduct Chart');
-    //     var chart_elmts = $('.'+resource_type+' .chart_ooi');
-    //     _.each(chart_ooi, function(el) {
-    //         chart_instance = new IONUX.Views.Chart({resource_id: resource_id});
-    //         chart_instance.render().el;
-    //     });
-    // };
+    if (resource_type == 'DataProduct') {
+        console.log('DataProduct Chart');
+    
+        // var chart_elmts = $('.'+resource_type+' .chart_ooi');
+        // _.each(chart_ooi, function(el) {
+        //     chart_instance = new IONUX.Views.Chart({resource_id: resource_id});
+        //     chart_instance.render().el;
+        // });
+    };
     
     // Show the relevant elements and click to enable the Bootstrap tabs.
     $('li.' + resource_type + ', div.' + resource_type).show();

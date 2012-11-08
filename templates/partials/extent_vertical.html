@@ -1,12 +1,16 @@
 <h4><%= label %></h4>
-<div class="upper-bound">
-    Upper bound <br />
-    <input type="text" class="textfield_geo" value="<%= upper_bound %>" /> <i class="icon-arrow-up icon-white"></i>
-</div>
-<div class="lower-bound">
-    <input type="text" class="textfield_geo" value="<%= lower_bound %>" /> <i class="icon-arrow-down icon-white"></i><br />
-    Lower bound
-</div>
+
+
+<% if (data) { %>
+    <div class="upper-bound">
+        Upper bound <br />
+        <input type="text" class="textfield_geo" value="<%= data.geospatial_vertical_max %>" /> <i class="icon-arrow-up icon-white"></i>
+    </div>
+    <div class="lower-bound">
+        <input type="text" class="textfield_geo" value="<%= data.geospatial_vertical_min %>" /> <i class="icon-arrow-down icon-white"></i><br />
+        Lower bound
+    </div>
+<% } %>
 
 <% if (typeof(integration_info) != 'undefined') { %>
     <div class="integration_info">

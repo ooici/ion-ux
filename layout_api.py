@@ -310,6 +310,17 @@ class LayoutApi(object):
                         #         sub_attribute_elmt.text = '%s (%s)' % (sub_attribute['label'], sub_attribute['name'])
 
 
+        
+        # google_jsapi_elmt = ET.SubElement(body_elmt, 'script')
+        # google_jsapi_elmt.set('type', 'text/javascript')
+        # google_jsapi_elmt.set('src', 'http://www.google.com/jsapi')
+        # 
+        # 
+        # google_autoload_elmt = ET.SubElement(body_elmt, 'script')
+        # google_autoload_elmt.set('type', 'text/javascript')
+        # google_autoload_elmt.set('src', 'https://www.google.com/jsapi?autoload={"modules":[{"name":"visualization","version":"1"}]}')
+
+        
         layout_elmt = ET.SubElement(body_elmt, 'script')
         layout_elmt.set('id', 'layout')
         layout_elmt.text = "var LAYOUT=%s;" % json.dumps(layout_schema)

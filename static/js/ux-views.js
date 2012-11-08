@@ -72,9 +72,8 @@ IONUX.Views.ExtentGeospatial = Backbone.View.extend({
         };
         
         var data_path = this.$el.data('path');
-        if (data_path && data_path.substring(0,7) != 'unknown') {
-            this.$el.html(this.template({label: label}));
-        // For integration effort only
+        if (data_path && data_path.substring(0,7) != 'unknown'){            
+            this.$el.html(this.template({label: label, data: this.options.data}));
         } else {
             var integration_info = this.$el.text();
             this.$el.find('.content-wrapper').html(this.template({label: label, integration_info: integration_info}));
@@ -89,13 +88,11 @@ IONUX.Views.ExtentVertical = Backbone.View.extend({
     template: _.template($('#extent-vertical-tmpl').html()),
     render: function(){
         var label = this.$el.data('label');
-        if (!label) {
-            label = "Vertical Bounds"
-        }; 
-
+        if (!label) label = "Vertical Bounds";
+            
         var data_path = this.$el.data('path');
         if (data_path && data_path.substring(0,7) != 'unknown') {
-            this.$el.html(this.template({label: label, upper_bound: '', lower_bound: ''}));
+            this.$el.html(this.template({label: label, data: this.options.data}));
         
         // For integration effort only
         } else {
