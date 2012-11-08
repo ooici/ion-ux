@@ -311,14 +311,14 @@ class LayoutApi(object):
 
 
         
-        # google_jsapi_elmt = ET.SubElement(body_elmt, 'script')
-        # google_jsapi_elmt.set('type', 'text/javascript')
-        # google_jsapi_elmt.set('src', 'http://www.google.com/jsapi')
-        # 
-        # 
-        # google_autoload_elmt = ET.SubElement(body_elmt, 'script')
-        # google_autoload_elmt.set('type', 'text/javascript')
-        # google_autoload_elmt.set('src', 'https://www.google.com/jsapi?autoload={"modules":[{"name":"visualization","version":"1"}]}')
+        google_jsapi_elmt = ET.SubElement(body_elmt, 'script')
+        google_jsapi_elmt.set('type', 'text/javascript')
+        google_jsapi_elmt.set('src', 'http://www.google.com/jsapi')
+        
+        
+        google_autoload_elmt = ET.SubElement(body_elmt, 'script')
+        google_autoload_elmt.set('type', 'text/javascript')
+        google_autoload_elmt.set('src', 'https://www.google.com/jsapi?autoload={"modules":[{"name":"visualization","version":"1"}]}')
 
         
         layout_elmt = ET.SubElement(body_elmt, 'script')
