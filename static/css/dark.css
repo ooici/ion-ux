@@ -6,15 +6,16 @@
 /*  width: 60px;
   height: 60px;
 */  
-  padding: 3px 12px;
+  padding: 3px 10px;
   display: block;
   color: transparent;
 }
 
 .image_ooi span {
   position: relative;
-  padding: 4px;
+  padding: 4px 8px 4px 4px;
   top: -5px;
+/*  left: 0px;*/
 }
 
 
