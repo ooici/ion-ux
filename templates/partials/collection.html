@@ -9,7 +9,7 @@
             <td><a href="/<%= resource_type %>/face/<%= item._id %>/">Face</a></td>
             <td><a href="/<%= resource_type %>/status/<%= item._id %>/">Status</a></td>
             <td><a href="/<%= resource_type %>/related/<%= item._id %>/">Related</a></td>
-            <% if (resource_type == 'InstrumentDevice') { %>
+            <% if (resource_type == 'InstrumentDevice' || resource_type == 'PlatformDevice') { %>
             <td><a href="/<%= resource_type %>/command/<%= item._id %>/">Command</a></td>
             <% }; %>
         </tr>

@@ -33,7 +33,7 @@ def render_app_template(current_url):
 @app.route('/<resource_type>/face/<resource_id>/', methods=['GET'])
 @app.route('/<resource_type>/related/<resource_id>/', methods=['GET'])
 @app.route('/<resource_type>/command/<resource_id>/', methods=['GET'])
-@app.route('/<resource_type>/command2/<resource_id>/', methods=['GET'])
+# @app.route('/<resource_type>/command2/<resource_id>/', methods=['GET'])
 def page(resource_type, resource_id):
     if request.is_xhr:
         return True
@@ -61,7 +61,6 @@ def extension(resource_type, resource_id):
 @app.route('/InstrumentDevice/command/<instrument_device_id>/<agent_command>/')
 def start_instrument_agent(instrument_device_id, agent_command, cap_type=None):
     cap_type = request.args.get('cap_type')
-    print 'cap_type', cap_type
 
     if agent_command == 'start':
         command_response = ServiceApi.instrument_agent_start(instrument_device_id)
@@ -75,6 +74,30 @@ def start_instrument_agent(instrument_device_id, agent_command, cap_type=None):
     else:
         command_response = ServiceApi.instrument_execute(instrument_device_id, agent_command, cap_type)
     return jsonify(data=command_response)
+
+
+
+
+@app.route('/PlatformDevice/command/<platform_device_id>/<agent_command>/')
+@app.route('/PlatformDevice/command/<platform_device_id>/<agent_command>/<agent_instance_id>/')
+def start_platform_agent(platform_device_id, agent_command, cap_type=None, agent_instance_id=None):
+    cap_type = request.args.get('cap_type')
+
+    if agent_command == 'start':
+        command_response = ServiceApi.platform_agent_start(agent_instance_id)
+        return jsonify(data=command_response)
+    elif agent_command == 'stop':
+        command_response = ServiceApi.platform_agent_stop(agent_instance_id)
+        return jsonify(data=command_response)
+    elif agent_command == 'get_capabilities':
+        command_response = ServiceApi.platform_agent_get_capabilities(platform_device_id)
+        return jsonify(data=command_response)
+    else:
+        command_response = ServiceApi.platform_execute(platform_device_id, agent_command, cap_type)
+    
+    return jsonify(data=command_response)
+
+
 
 
 # @app.route('/PlatformDevice/command/<platform_device_id>/<agent_command>/')
