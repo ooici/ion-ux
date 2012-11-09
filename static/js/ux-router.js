@@ -225,11 +225,10 @@ function render_page(resource_type, resource_id, model) {
         append_info_level(el);
     });
 
-    // var image_elmts = $('.'+resource_type+' .image_ooi');
-    // _.each(image_elmts, function(el) {
-    //     new IONUX.Views.Image({el: $(el)}).render().el;
-    //     append_info_level(el);
-    // });
+    _.each($('.'+resource_type+' .image_ooi'), function(el) {
+        console.log('image');
+        $(el).html($('<span>').addClass('status_ok_mini').html('&nbsp;'));
+    });
 
     var badge_elmts = $('.'+resource_type+' .badge_ooi');
     _.each(badge_elmts, function(el) {

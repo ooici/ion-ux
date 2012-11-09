@@ -223,21 +223,21 @@ IONUX.Views.Image = Backbone.View.extend({
     }
 });
 
-IONUX.Views.Badge = Backbone.View.extend({
-    template: _.template($('#badge-tmpl').html()),
-    render: function(){
-        var data_path = this.$el.data('path');
-        if (data_path && data_path.substring(0,7) != 'unknown') {
-            var badge = get_descendant_properties(this.options.data_model, data_path);
-            this.$el.html(this.template({badge: badge}));
-        } else {
-            var integration_info = this.$el.text();
-            integration_log(this.$el.attr('id'), this.$el.data('path'), integration_info);
-            this.$el.css('color', 'orange');
-        };
-        return this;
-    }
-});
+// IONUX.Views.Badge = Backbone.View.extend({
+//     template: _.template($('#badge-tmpl').html()),
+//     render: function(){
+//         var data_path = this.$el.data('path');
+//         if (data_path && data_path.substring(0,7) != 'unknown') {
+//             var badge = get_descendant_properties(this.options.data_model, data_path);
+//             this.$el.html(this.template({badge: badge}));
+//         } else {
+//             var integration_info = this.$el.text();
+//             integration_log(this.$el.attr('id'), this.$el.data('path'), integration_info);
+//             this.$el.css('color', 'orange');
+//         };
+//         return this;
+//     }
+// });
 
 IONUX.Views.List = Backbone.View.extend({
     template: _.template($('#list-tmpl').html()),

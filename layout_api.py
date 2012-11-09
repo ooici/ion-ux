@@ -256,7 +256,7 @@ class LayoutApi(object):
                         if attribute_widget_type == 'image_ooi':
                             image_class = layout_schema['spec']['graphics'][attribute['gfx']]['name']
                             attribute_elmt.set('class', '%s %s' % (attribute_widget_type, image_class))
-                            attribute_elmt.text = 'xxxx'
+                            attribute_elmt.text = '&nbsp;'
                         else:
                             attribute_elmt.set('class', attribute_widget_type)
                             # FOR TROUBLESHOOTING

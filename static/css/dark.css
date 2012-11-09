@@ -3,8 +3,20 @@
 }
 
 .image_ooi {
+/*  width: 60px;
+  height: 60px;
+*/  
+  padding: 3px 12px;
+  display: block;
   color: transparent;
 }
+
+.image_ooi span {
+  position: relative;
+  padding: 4px;
+  top: -5px;
+}
+
 
 /* Development CSS overrides */
 .integration_info {
@@ -194,8 +206,8 @@ a.btn-navigation-plain {
 
 /* Temp header */
 #header {
-  background: #004978 url('/static/img/lca-header.png') no-repeat 0 0;
-  height: 72px;
+  background: #004978 url('/static/img/banner.png') no-repeat 0 0;
+  height: 70px;
 }
 
 .heading {
