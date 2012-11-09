@@ -37,7 +37,7 @@ def setup_env():
 
     global gateway_host
     if not gateway_host:
-        gateway_host = prompt('Service Gateway Service hostname: ', default='192.168.4.112')
+        gateway_host = prompt('Service Gateway Service hostname: ', default='sg.a.oceanobservatories.org')
     print "Deploy service gateway hostname: ", gateway_host
 
     global gateway_port
