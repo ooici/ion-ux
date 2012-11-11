@@ -98,7 +98,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
             var data_row = []
             _.each(data_keys, function(key){
                 var value = data_obj[key];
-                if (_.isUndefined(value)) value = "MISSING";
+                if (_.isUndefined(value)) value = "[" + key + "]";
                 data_row.push(value);
             });
             data.push(data_row);
