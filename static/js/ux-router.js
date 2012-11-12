@@ -21,6 +21,8 @@ IONUX.Router = Backbone.Router.extend({
         this._reset();
         $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS['dashboard']).html()).show();
         $('.Collection').show();
+        
+        $('.Collection .map_ooi').html('<iframe width="100%" height="600" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/?q=http:%2F%2F67.58.49.196:3000%2Fmap.kml&amp;ie=UTF8&amp;t=h&amp;ll=22.268764,-62.753906&amp;spn=88.6783,158.027344&amp;z=3&amp;output=embed"></iframe><br /><small><a href="https://maps.google.com/?q=http:%2F%2F67.58.49.196:3000%2Fmap.kml&amp;ie=UTF8&amp;t=h&amp;ll=22.268764,-62.753906&amp;spn=88.6783,158.027344&amp;z=3&amp;source=embed" style="color:#0000FF;text-align:left">View Larger Map</a></small>')
         new IONUX.Views.Footer({resource_id: null, resource_type: null}).render().el;
     },
     
@@ -272,19 +274,12 @@ function render_page(resource_type, resource_id, model) {
     
     if (resource_type == 'DataProduct') {
         var chart_elmt = $('.'+resource_type+' .chart_ooi').first();        
-        $('body').append($('<script>').attr('src', 'https://www.google.com/jsapi?callback=c').attr("type", "text/javascript"));
+        $('body').append($('<script>').attr('src', 'https://www.google.com/jsapi?callback=chart_callback').attr("type", "text/javascript"));
         
-        c = function(){
+        chart_callback = function(){
             chart_instance = new IONUX.Views.Chart({resource_id: resource_id, el: chart_elmt});
             chart_instance.render().el;
         };
-        
-        /*
-        var chart_elmts = $('.'+resource_type+' .chart_ooi');
-        _.each(chart_elmts, function(el) {
-            //chart_instance = new IONUX.Views.Chart({resource_id: resource_id});
-            //chart_instance.render().el;
-        });*/
     };
     
     // Show the relevant elements and click to enable the Bootstrap tabs.

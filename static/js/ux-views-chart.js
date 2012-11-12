@@ -38,7 +38,10 @@ IONUX.Views.Chart = IONUX.Views.Base.extend({
             // TODO 
             url: "http://localhost:3000/viz/initiate_realtime_visualization/" + self.resource_id + "/",
             dataType: 'jsonp',
-            jsonpCallback: 'init_realtime_visualization_cb'  // Has to correspond with the server side response
+            jsonpCallback: 'init_realtime_visualization_cb',  // Has to correspond with the server side response
+            complete: function() {
+                console.log('ajax complete');
+            }
         });
         
         // set callback for ready event before calling draw on the chart

@@ -63,7 +63,6 @@ class ServiceApi(object):
 
         return extension
 
-
     @staticmethod
     def initiate_realtime_visualization(data_product_id):
         real_time_data = service_gateway_get('visualization_service', 'initiate_realtime_visualization', params= {'data_product_id': data_product_id, 'callback': 'chart.init_realtime_visualization_cb', 'return_format': 'raw_json'})
@@ -121,7 +120,10 @@ class ServiceApi(object):
             res = service_gateway_get('org_management', 'deny_request', params={'org_id': org_id, 'request_id': request_id, 'reason': reason})
         return res
 
-
+    @staticmethod
+    def fetch_map():
+        map_kml = requests.get('http://localhost:5000/ion-service/visualization_service/get_dataproduct_kml')
+        return json.loads(map_kml.content)["data"]['GatewayResponse']
     
     # INSTRUMENT COMMAND
     # ---------------------------------------------------------------------------

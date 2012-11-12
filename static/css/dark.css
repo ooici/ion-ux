@@ -1,3 +1,42 @@
+.block .btn-group {
+  top: 3px;
+}
+
+.block .btn-group .btn {
+/*  padding: -6px;*/
+  color: red;
+  line-height: 14px;
+  background: transparent;
+  border: none;
+  color: #ccc;
+  text-shadow: none;
+  box-shadow: none;
+}
+
+.block .btn .caret  {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  text-indent: -99999px;
+  vertical-align: top;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid #ccc;
+  margin-left: 2px;
+  opacity: 1;
+  filter: alpha(opacity=30);
+  content: "\2193";
+}
+
+.v02 .row-fluid {
+  background: #1E1E1E;
+  border-left:#333333 solid 1px; 
+  -webkit-box-shadow: 1px 1px #000000; 
+  -moz-box-shadow: 1px 1px #000000;
+  box-shadow: 1px 1px #000000;
+  
+}
+
 .textfield_geo {
   text-align: center;
 }
@@ -355,15 +394,16 @@ h2 {
 .v01 h3, .v01 .block h3,
 .v02 h3, .v02 .block h3 {
   background: #4D4D4D; 
-  border-left:#666666 solid 1px; 
+/*  border-left:#666666 solid 1px; */
   border-top:#666666 solid 1px; 
   -webkitbox-shadow: 1px 1px #000000; 
   -mozbox-shadow: 1px 1px #000000; 
-  box-shadow: 1px 1px #000000; 
-  padding: 5px 10px 5px 10px; 
+/*  box-shadow: 1px 1px #000000; */
+  padding: 0px 10px 0px 10px; 
   letter-spacing: 3px; 
-  font-size:10px; 
-  font-weight: 600; 
+  font-size:9px; 
+  font-weight: 600;
+  line-height: 18px;
   color:#CCCCCC;
   text-transform: uppercase;
 }
@@ -383,10 +423,6 @@ h2 {
   font-size:12px; 
   font-weight:300; 
   line-height:20px;
-  border-left:#333333 solid 1px; 
-  -webkit-box-shadow: 1px 1px #000000; 
-  -moz-box-shadow: 1px 1px #000000;
-  box-shadow: 1px 1px #000000;
   margin-bottom: 20px;
 }
 
@@ -444,7 +480,7 @@ ul.nav {
   border-radius: 5px 5px 0px 0px;
   padding: 5px 30px 5px 10px;
   font-family: Signika;
-  font-size: 15px;
+  font-size: 13px;
   color: #808080;
   letter-spacing:1px;
   margin-right:10px;
@@ -462,10 +498,10 @@ ul.nav {
   -webkit-border-radius: 5px 5px 0px 0px;
   -moz-border-radius: 5px 5px 0px 0px;
   border-radius: 5px 5px 0px 0px;
-  text-shadow: 1px 1px 0px #333333;
+/*  text-shadow: 1px 1px 0px #333333;*/
   padding:5px 30px 5px 10px;
   font-family: Signika;
-  font-size: 15px;
+  font-size: 13px;
   color: #FFFFFF;
   letter-spacing:1px;
   margin-right: 10px;

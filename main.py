@@ -56,6 +56,12 @@ def extension(resource_type, resource_id):
     return jsonify(data=extension)
 
 
+@app.route('/map.kml', methods=['GET'])
+def map():
+    kml = ServiceApi.fetch_map()
+    return kml
+
+
 
 # Command - these can probably be combined in the future but leaving separate for now.
 @app.route('/InstrumentDevice/command/<instrument_device_id>/<agent_command>/')
@@ -74,8 +80,6 @@ def start_instrument_agent(instrument_device_id, agent_command, cap_type=None):
     else:
         command_response = ServiceApi.instrument_execute(instrument_device_id, agent_command, cap_type)
     return jsonify(data=command_response)
-
-
 
 
 @app.route('/PlatformDevice/command/<platform_device_id>/<agent_command>/')
