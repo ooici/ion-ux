@@ -254,12 +254,13 @@ function render_page(resource_type, resource_id, model) {
         var data = get_descendant_properties(window.MODEL_DATA, data_path);
         new IONUX.Views.ExtentGeospatial({el: $(el), data: data}).render().el;
     });
-
+    
     var extent_vertical_elmts = $('.'+resource_type+' .extent_vertical_ooi');
     _.each(extent_vertical_elmts, function(el){
         var data_path = $(el).data('path');
         var data = get_descendant_properties(window.MODEL_DATA, data_path);
-        new IONUX.Views.ExtentVertical({el: $(el), data: data}).render().el;
+        console.log(data);
+        if (data) new IONUX.Views.ExtentVertical({el: $(el), data: data}).render().el;
     });
 
     var extent_temporal_elmts = $('.'+resource_type+' .extent_temporal_ooi');
