@@ -259,7 +259,6 @@ function render_page(resource_type, resource_id, model) {
     _.each(extent_vertical_elmts, function(el){
         var data_path = $(el).data('path');
         var data = get_descendant_properties(window.MODEL_DATA, data_path);
-        console.log(data);
         if (data) new IONUX.Views.ExtentVertical({el: $(el), data: data}).render().el;
     });
 
