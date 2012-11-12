@@ -156,15 +156,17 @@ IONUX.Views.AttributeGroup = Backbone.View.extend({
                     var subelement_view = new IONUX.Views.TextShort({data_model: self.options.data});
             }
             
-            subelement_view.$el.attr('id', meta_item[5]);
-            subelement_view.$el.attr('data-position', meta_item[3]);
-            subelement_view.$el.attr('data-level', meta_item[4]);
-            subelement_view.$el.attr('data-label', meta_item[1]);
-
-            path = root_path + '.' + meta_item[6];
-            subelement_view.$el.attr('data-path', path);
-            
-            self.$el.append(subelement_view.render().el);
+            try {
+                subelement_view.$el.attr('id', meta_item[5]);
+                subelement_view.$el.attr('data-position', meta_item[3]);
+                subelement_view.$el.attr('data-level', meta_item[4]);
+                subelement_view.$el.attr('data-label', meta_item[1]);
+                path = root_path + '.' + meta_item[6];
+                subelement_view.$el.attr('data-path', path);
+                self.$el.append(subelement_view.render().el);
+            } catch(e) {
+                console.log('$el error id=' + meta_item[5] + ' path=' + meta_item[6] + ' root=' + root_path)
+            }
         });
     },
 
