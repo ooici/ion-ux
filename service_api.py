@@ -70,6 +70,12 @@ class ServiceApi(object):
     @staticmethod
     def get_realtime_visualization_data(query_token):
         real_time_data = service_gateway_get('visualization_service', 'get_realtime_visualization_data', params= {'query_token': query_token, 'return_format': 'raw_json'})
+    
+    @staticmethod
+    def get_overview_visualization_data(data_product_id):
+        overview_data = service_gateway_get('visualization_service', 'get_visualization_data', params={'data_product_id': data_product_id, 'return_format': 'raw_json'})
+        return overview_data
+        
         
     # USER REQUESTS
     # ---------------------------------------------------------------------------

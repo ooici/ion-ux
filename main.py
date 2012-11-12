@@ -55,14 +55,6 @@ def extension(resource_type, resource_id):
     extension = ServiceApi.get_extension(resource_type, resource_id)
     return jsonify(data=extension)
 
-
-@app.route('/map.kml', methods=['GET'])
-def map():
-    kml = ServiceApi.fetch_map()
-    return kml
-
-
-
 # Command - these can probably be combined in the future but leaving separate for now.
 @app.route('/InstrumentDevice/command/<instrument_device_id>/<agent_command>/')
 def start_instrument_agent(instrument_device_id, agent_command, cap_type=None):
@@ -103,6 +95,29 @@ def start_platform_agent(platform_device_id, agent_command, cap_type=None, agent
 
 
 
+@app.route('/map.kml', methods=['GET'])
+def map():
+    kml = ServiceApi.fetch_map()
+    return kml
+
+@app.route('/viz/overview/<data_product_id>/')
+def viz_overview(data_product_id):
+    # Need to move into ServiceApi
+    resp = requests.get('http://%s:%s/ion-service/visualization_service/get_visualization_data?data_product_id=%s&return_format=raw_json' % (GATEWAY_HOST, str(GATEWAY_PORT), data_product_id))
+    return resp.content
+
+@app.route('/viz/initiate_realtime_visualization/<data_product_id>/', methods=['GET'])
+def initiate_realtime_visualization2(data_product_id):
+    resp = requests.get("http://localhost:5000/ion-service/visualization_service/initiate_realtime_visualization?data_product_id=" + data_product_id + "&callback=chart_instance.init_realtime_visualization_cb&return_format=raw_json")
+    return resp.content
+
+@app.route('/viz/get_realtime_visualization_data/<query_token>/', methods=['GET'])
+def get_realtime_visualization_data2(query_token):
+    resp = requests.get("http://localhost:5000/ion-service/visualization_service/get_realtime_visualization_data?query_token=" + query_token +"&return_format=raw_json")
+    return resp.content
+
+
+
 
 # @app.route('/PlatformDevice/command/<platform_device_id>/<agent_command>/')
 # def start_platfom_agent(platform_device_id, agent_command, cap_type=None):
@@ -137,17 +152,6 @@ def start_platform_agent(platform_device_id, agent_command, cap_type=None, agent
 #     return jsonify(data=query_response)
 
 
-@app.route('/viz/initiate_realtime_visualization/<data_product_id>/', methods=['GET'])
-def initiate_realtime_visualization2(data_product_id):
-    resp = requests.get("http://localhost:5000/ion-service/visualization_service/initiate_realtime_visualization?data_product_id=" + data_product_id + "&callback=chart_instance.init_realtime_visualization_cb&return_format=raw_json")
-    print 'YYY-RESP.CONTENT ', resp.content
-    return resp.content
-    
-@app.route('/viz/get_realtime_visualization_data/<query_token>/', methods=['GET'])
-def get_realtime_visualization_data2(query_token):
-    resp = requests.get("http://localhost:5000/ion-service/visualization_service/get_realtime_visualization_data?query_token=" + query_token +"&return_format=raw_json")
-    print 'ZZZ-RESP.CONTENT ', resp.content
-    return resp.content
 
 
 

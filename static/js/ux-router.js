@@ -273,7 +273,7 @@ function render_page(resource_type, resource_id, model) {
     });
     
     if (resource_type == 'DataProduct') {
-        var chart_elmt = $('.'+resource_type+' .chart_ooi').first();        
+        var chart_elmt = $('.'+resource_type+' .chart_ooi').first();
         $('body').append($('<script>').attr('src', 'https://www.google.com/jsapi?callback=chart_callback').attr("type", "text/javascript"));
         
         chart_callback = function(){
