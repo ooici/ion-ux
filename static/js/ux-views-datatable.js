@@ -1,4 +1,7 @@
 /*
+
+- Need a way to create links, see items marked KEEPING FOR REFERENCE below.
+
 - Show/Hide 
 
 - how will filter specific data/datypes be passed/used?
@@ -36,6 +39,19 @@ function status_indicator(obj){
     return html;
 }
 
+// KEEPING FOR REFERENCE
+// function facepage_link(obj) {
+//     if (obj.iDataColumn == 1) {
+//         var name = obj.aData[obj.iDataColumn];
+//         var resource_id = obj.aData[9];
+//         var resource_type = obj.aData[3];
+//         var url = "/"+resource_type+"/face/"+resource_id+"/";
+//         var html = '<a href="'+url+'">'+name+'</a>';
+//         return html;
+//     } else {
+//         return obj.aData[obj.iDataColumn];
+//     };
+// };
 
 IONUX.Views.DataTable = IONUX.Views.Base.extend({
 
@@ -51,6 +67,14 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
 
     initialize: function() {
         this.render().el;
+        
+        // KEEPING FOR REFERENCE
+        // this.name_index = 0;
+        // var self = this;
+        // _.each(_.keys(this.options.data[0]), function(column, index) {
+        //     if (column=='name') {self.name_index = index};
+        //     // if (column !== 'name') name_index += 1;
+        // });
     },
     render: function() {
         this.$el.html(this.template());
@@ -101,6 +125,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
                 if (_.isUndefined(value)) value = "[" + key + "]";
                 data_row.push(value);
             });
+            // data_row.push(data_obj["_id"]); // KEEPING FOR REFERENCE
             data.push(data_row);
         });
         return data;
@@ -111,6 +136,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
             case "icon_ooi":
                 return status_indicator; //TODO namespace these
             case "text_short_ooi":
+                // return facepage_flink; // KEEPING FOR REFERENCE
                 return function(obj){return obj.aData[obj.iDataColumn];}; //noop
             case "text_extended_ooi":
                 return function(obj){return obj.aData[obj.iDataColumn];}; //noop

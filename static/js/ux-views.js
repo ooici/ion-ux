@@ -274,7 +274,7 @@ IONUX.Views.Collection = Backbone.View.extend({
         // console.log(this.resource_type);
     },
     render: function(){
-        this.$el.html(this.template({collection: this.collection.toJSON(), resource_type: this.resource_type})).show();
+        this.$el.append(this.template({collection: this.collection.toJSON(), resource_type: this.resource_type})).show();
         return this;
     },
 });

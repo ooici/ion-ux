@@ -39,9 +39,19 @@ IONUX.Router = Backbone.Router.extend({
             $('.span9').find('li.Collection:first').find('a').click(); // Manually Set the first tabs 'active'
             
             // Todo: better way of finding the container for the collection.
-            var elmt_id = $('.v02 .Collection .table_ooi').first();
+            var table_elmt = $('.v02 .Collection .table_ooi').first();
+            var table_id = table_elmt.attr('id');
+            
             var resource_collection = new IONUX.Collections.Resources(data.data, {resource_type: resource_type});
-            new IONUX.Views.Collection({el: elmt_id, collection: resource_collection, resource_type: resource_type}).render().el;
+            resource_collection.fetch()
+                .success(function(data) {
+                    new IONUX.Views.DataTable({el: $(table_elmt), data: data.data});
+                });
+            
+            
+            // Temporary hack to append navigable table...
+            var parent_elmt = table_elmt.parent('div');
+            new IONUX.Views.Collection({el: parent_elmt, collection: resource_collection, resource_type: resource_type}).render().el;
         });
         
         // Insert footer and buttons
@@ -244,8 +254,11 @@ function render_page(resource_type, resource_id, model) {
     var table_elmts = $('.'+resource_type+' .table_ooi');
     _.each(table_elmts, function(el) {
         var data_path = $(el).data('path');
-        if (data_path.substring(0,6) !== 'unknown') var raw_table_data = get_descendant_properties(window.MODEL_DATA, data_path);        
-        if (raw_table_data) new IONUX.Views.DataTable({el: $(el), data: raw_table_data});
+        // if (data_path.substring(0,6) !== 'unknown') var raw_table_data = get_descendant_properties(window.MODEL_DATA, data_path);
+        // cosnole.log()
+        var raw_table_data = get_descendant_properties(window.MODEL_DATA, data_path);
+        console.log('raw_table_data', raw_table_data);
+        if (!_.isEmpty(raw_table_data)) new IONUX.Views.DataTable({el: $(el), data: raw_table_data});
     });
     
     var extent_geospatial_elmts = $('.'+resource_type+' .extent_geospatial_ooi');
