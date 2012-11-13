@@ -14,7 +14,7 @@ todo:
 INTERACTIONS_OBJECT = {};
 INTERACTIONS_OBJECT.block_interactions = ['More Info', 'Detailed View', 'Hide', 'Edit'];
 INTERACTIONS_OBJECT.group_interactions = ['More Info', 'Detailed View', /*'Submenu',*/ 'Edit'];
-INTERACTIONS_OBJECT.view_interactions = ['Subscribe', 'Detailed View', /*'Submenu',*/ 'Command', 'Direct Command'];
+INTERACTIONS_OBJECT.view_interactions = ['Subscribe', 'Detailed View', /*'Submenu',*/ 'Command', 'Direct Command', 'Download'];
 
 
 IONUX.Views.ActionMenu = Backbone.View.extend({
@@ -92,7 +92,14 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
         alert("IONUX.Views.ViewActions - ACTION: submenu_toggle");
     },
     action__command:function(){
-        alert("Command");
+        var resource_type = window.MODEL_DATA['resource_type'];
+        var resource_id = window.MODEL_DATA['_id'];
+        if (resource_type == 'InstrumentDevice' || resource_type == 'PlatformDevice'){
+            var router = new IONUX.Router();
+            router.navigate('/'+resource_type+'/command/'+resource_id+'/', {trigger:true});
+        } else {
+            alert("Command not supported for " + resource_type + '.');
+        };
     },
     action__direct_command:function(){
         alert("Direct Command");
