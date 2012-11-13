@@ -125,18 +125,19 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
                 if (_.isUndefined(value)) value = "[" + key + "]";
                 data_row.push(value);
             });
-            // data_row.push(data_obj["_id"]); // KEEPING FOR REFERENCE
+            data_row.push(data_obj["_id"]); // KEEPING FOR REFERENCE
             data.push(data_row);
         });
         return data;
     },
 
     preproccesor: function(data_type){
+        var self = this;
         switch(data_type){
             case "icon_ooi":
                 return status_indicator; //TODO namespace these
             case "text_short_ooi":
-                // return facepage_flink; // KEEPING FOR REFERENCE
+                // return this.facepage_link; // KEEPING FOR REFERENCE
                 return function(obj){return obj.aData[obj.iDataColumn];}; //noop
             case "text_extended_ooi":
                 return function(obj){return obj.aData[obj.iDataColumn];}; //noop
@@ -149,6 +150,25 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         var table_metadata = this._get_table_metadata();
         var columns = _.map(table_metadata, function(l){return l[1];});
         return columns;
+    },
+    
+    facepage_link: function (obj) {
+        var self = this;
+        console.log('obj', obj);
+        if (obj.iDataColumn == 1) {
+            // console.log('obj', obj);
+    
+            var id_position = obj.aData.length -1;
+            var name = obj.aData[obj.iDataColumn];
+    
+            var resource_id = obj.aData[id_position];
+            var resource_type = obj.aData[3];
+            var url = "/"+resource_type+"/face/"+resource_id+"/";
+            var html = '<a href="'+url+'">'+name+'</a>';
+            return html;
+        } else {
+            return obj.aData[obj.iDataColumn];
+        };
     },
 
     add_filter_item: function(evt){

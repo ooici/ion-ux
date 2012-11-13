@@ -35,28 +35,61 @@ IONUX.Router = Backbone.Router.extend({
         
         var resources = new IONUX.Collections.Resources(null, {resource_type: resource_type});
         resources.fetch().success(function(data){
-            $('li.Collection ,div.Collection').show(); // Show elements based on current view/CSS class, i.e. .InstrumentDevice
+            $('li.Collection ,div.Collection').show(); // Show elements based on current view/CSS class
             $('.span9').find('li.Collection:first').find('a').click(); // Manually Set the first tabs 'active'
             
             // Todo: better way of finding the container for the collection.
             var table_elmt = $('.v02 .Collection .table_ooi').first();
             var table_id = table_elmt.attr('id');
             
-            var resource_collection = new IONUX.Collections.Resources(data.data, {resource_type: resource_type});
-            resource_collection.fetch()
+            window.MODEL_DATA = new IONUX.Collections.Resources(data.data, {resource_type: resource_type});
+            window.MODEL_DATA.fetch()
                 .success(function(data) {
                     new IONUX.Views.DataTable({el: $(table_elmt), data: data.data});
                 });
             
-            
             // Temporary hack to append navigable table...
             var parent_elmt = table_elmt.parent('div');
-            new IONUX.Views.Collection({el: parent_elmt, collection: resource_collection, resource_type: resource_type}).render().el;
+            new IONUX.Views.Collection({el: parent_elmt, collection: window.MODEL_DATA, resource_type: resource_type}).render().el;
         });
+        
+        var self = this;
+        setTimeout(function(){self.testr()},500);
         
         // Insert footer and buttons
         new IONUX.Views.Footer({resource_id: null, resource_type: resource_type}).render().el;
+    },
+    
+    testr: function(){
         
+        // var link_index;
+        // _.each($('table:first tr:first th'), function(th, index){
+        //     name_found = false;
+        //     var name = $(th).text();
+        //     
+        //     if (name == 'Name' && name_found) {
+        //         link_index = index;
+        //         name_found = true;
+        //     } else {
+        //         link_index = 0;
+        //     };
+        // });
+        
+        var trs = $('table:first tr');
+        trs.splice(0,1);
+        var resource_type = window.MODEL_DATA.models[0].get('type_');
+        
+        _.each(trs, function(tr, index){
+            var td = $(tr).find('td')[1];
+            var text = $(td).text();
+                
+            var resource_id = window.MODEL_DATA.models[index].get('_id');
+            
+            var url = "/"+resource_type+"/face/"+resource_id+"/";
+            var link_tmpl = '<a href="<%= url %>"><%= text %></a>';
+            
+            $(td).html(_.template(link_tmpl, {url: url, text:text}));
+        });
     },
     
     // Face, status, related pages
