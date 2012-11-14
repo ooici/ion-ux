@@ -255,13 +255,14 @@ function render_page(resource_type, resource_id, model) {
     var table_elmts = $('.'+resource_type+' .table_ooi');
     _.each(table_elmts, function(el) {
         var data_path = $(el).data('path');
-        // if (data_path.substring(0,6) !== 'unknown') var raw_table_data = get_descendant_properties(window.MODEL_DATA, data_path);
         var raw_table_data = get_descendant_properties(window.MODEL_DATA, data_path);
         if (!_.isEmpty(raw_table_data)) {
             new IONUX.Views.DataTable({el: $(el), data: raw_table_data});
             if (!data_path.match('recent_events')) {
                 table_links(el, raw_table_data);    
             };
+        } else {
+            new IONUX.Views.DataTable({el: $(el), data: []});
         };
     });
     
@@ -333,25 +334,22 @@ function append_info_level(el) {
 };
 
 function table_links(table_elmt, table_data){
-    var link_name, link_index = 0;
     var table_columns = $(table_elmt + 'tr:first th');
-    
+
+    var names = []
     _.each(table_columns, function(column, index){
-        var column_name = $(column).text();
-        if (column_name == 'Name' && !link_name && !link_index) {
-            link_name = column_name;
-            link_index = index;
-        };
+        names.push($(column).text());
     });
+    var link_index = _.indexOf(names, 'Name');
     
-    console.log('index, name', link_index, link_name)
+    console.log('index, name', link_index)
     
     var table_rows = $(table_elmt).find('table tr');
     table_rows.splice(0,1); 
     var resource_type = table_data[0]['type_'];
     var link_tmpl = '<a href="<%= url %>"><%= text %></a>';
     
-    console.log('TD: ', resource_type, link_name, link_index);
+    // console.log('TD: ', resource_type, link_index);
     
     _.each(table_rows, function(tr, index){
         var resource_id = table_data[index]['_id'];
@@ -359,7 +357,7 @@ function table_links(table_elmt, table_data){
         var td = $(tr).find('td:nth-child('+child_index+')');
         var text = $(td).text();
         var url = "/"+resource_type+"/face/"+resource_id+"/";
-        console.log('URL', url);
+        // console.log('URL', url);
         $(td).html(_.template(link_tmpl, {url: url, text:text}));
     });
 };
