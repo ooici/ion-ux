@@ -265,16 +265,13 @@ function integration_log(id, db_path, integration_info ) {
 
 
 IONUX.Views.Collection = Backbone.View.extend({
-    // el:'#dynamic-container',
     template: _.template($("#collection").html()),
     initialize: function() {
         _.bindAll(this, 'render');
-        this.collection.on('reset', this.render);
         this.resource_type = this.options.resource_type;
-        // console.log(this.resource_type);
     },
     render: function(){
-        this.$el.append(this.template({collection: this.collection.toJSON(), resource_type: this.resource_type})).show();
+        this.$el.append(this.template({collection: this.collection.toJSON(), resource_type: this.resource_type}));
         return this;
     },
 });
@@ -437,10 +434,11 @@ IONUX.Views.PlatformCommandFacepage = Backbone.View.extend({
   initialize: function(){
     _.bindAll(this, "render", "start_agent" );
     this.model.bind("change", this.render);
+    
+    // console.log($('#start-instrument-agent-instance'));
   },
 
   render: function(){
-      console.log('this.model', this.model.get('agent_instance')['_id']);
     this.$el.empty().html(this.template(this.model.toJSON())).show();
     var agent_process_id = this.model.get('agent_instance')['agent_process_id'];
     if (agent_process_id) {
@@ -448,6 +446,9 @@ IONUX.Views.PlatformCommandFacepage = Backbone.View.extend({
         $("#stop-instrument-agent-instance, .instrument-commands").show();
         this.get_capabilities();
     };
+    
+    $('#start-instrument-agent-instance').attr('value', 'Start Platform Agent');
+    $('#stop-instrument-agent-instance').attr('value', 'Stop Platform Agent');
   },
   
   issue_command: function(evt){

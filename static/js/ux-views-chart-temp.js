@@ -1,7 +1,8 @@
 IONUX.Views.Chart = IONUX.Views.Base.extend({
     tagName: 'div',
     events: {},
-    template: '<div id="chart_ui_div" class="chart_ui_div" style=""></div><div id="chart_div" style="width:500px;height:250px;"></div>', 
+    template: '<div class="row-fluid"><div class="span8"><div id="chart_ui_div" class="chart_ui_div" style=""></div></div><div class="span4"><div id="chart_div" style="width:500px;height:250px;"></div></div></div>', 
+    // template:'<table border="0" style="width:100%;height:95%"><tr><td><div id="chart_div" style="width:100%;height:100%" ></div></td><td><form><div id="chart_ui_div" style="width:100%;height:100%"></div></form></td></tr></table>',
     initialize: function() {
         this.resource_id = this.options.resource_id;
     },
@@ -23,7 +24,8 @@ IONUX.Views.Chart = IONUX.Views.Base.extend({
         window.chart = new google.visualization.AnnotatedTimeLine(document.getElementById('chart_div'));
         
         // set callback for ready event before calling draw on the chart
-        google.visualization.events.addListener(chart, 'ready', self.on_ready);
+        google.visualization.events.addListener(window.chart, 'ready', self.on_ready);
+        
         self.query = new google.visualization.Query('http://localhost:3000/viz/overview/' + data_product_id + '/');
         self.query.send(self.handle_query_response);
     },
@@ -41,36 +43,49 @@ IONUX.Views.Chart = IONUX.Views.Base.extend({
 		},
 	
 	on_ready: function() {
+	    console.log('on_ready FIRED!');
+	    console.log(window.chart);
         //set callbacks for events here. Why ? no idea !
-		google.visualization.events.addListener(chart, 'select', onSelect);
-		google.visualization.events.addListener(chart, 'rangechange', onRangechange);
+        // google.visualization.events.addListener(window.chart, 'select', onSelect);
+        // google.visualization.events.addListener(window.chart, 'rangechange', onRangechange);
 		
+		console.log(google.visualization.events.addListener);
+		console.log(google.visualization.events.addListener(window.chart, 'select', onSelect));
+		
+        // google.visualization.events.addListener(window.chart, 'select', onSelect);
+        // google.visualization.events.addListener(window.chart, 'rangechange', onDateRangechange);
+		
+		
+		console.log('after visualization');
 		// get the number of columns
-		var numOfCols = data.getNumberOfColumns();
-		var i;
+        var numOfCols = data.getNumberOfColumns();
+        var i;
+        
+        // Populate UI components
+        var chartUiDiv = document.getElementById("chart_ui_div");
+        console.log('chartUiDiv', chartUiDiv);
+        console.log('after chartUiDiv');
 
-		// Populate UI components
-		var chartUiDiv = document.getElementById("chart_ui_div");
-		var chkBox, columnIdx;
-		for (i=1; i<numOfCols; i++) {
-
-			columnIdx = i - 1;
-			// create a checkBox and add to the charts' UI div
-			chkBox = document.createElement('input');
-			chkBox.type = 'checkBox';
-			
-			chkBox.setAttribute("name", "columnSelect");
-			chkBox.setAttribute("value", columnIdx);
-			chkBox.setAttribute("checked","checked");
-			chkBox.setAttribute("onClick","toggleColumnVisibility(this," + columnIdx + ")");
-			
-
-			chartUiDiv.appendChild(chkBox);
-			chartUiDiv.appendChild(document.createTextNode('    ' + data.getColumnLabel(i)));
-			
-			chartUiDiv.appendChild(document.createElement('br'));
-
-		};
+        var chkBox, columnIdx;
+        for (i=1; i<numOfCols; i++) {
+        
+         columnIdx = i - 1;
+         // create a checkBox and add to the charts' UI div
+         chkBox = document.createElement('input');
+         chkBox.type = 'checkBox';
+         
+         chkBox.setAttribute("name", "columnSelect");
+         chkBox.setAttribute("value", columnIdx);
+         chkBox.setAttribute("checked","checked");
+         chkBox.setAttribute("onClick","toggleColumnVisibility(this," + columnIdx + ")");
+         
+        
+         chartUiDiv.appendChild(chkBox);
+         chartUiDiv.appendChild(document.createTextNode('    ' + data.getColumnLabel(i)));
+         
+         chartUiDiv.appendChild(document.createElement('br'));
+        
+        };
         
         
         

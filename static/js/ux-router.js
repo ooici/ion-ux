@@ -49,8 +49,8 @@ IONUX.Router = Backbone.Router.extend({
                 });
             
             // Temporary hack to append navigable table...
-            var parent_elmt = table_elmt.parent('div');
-            new IONUX.Views.Collection({el: parent_elmt, collection: window.MODEL_DATA, resource_type: resource_type}).render().el;
+            // var parent_elmt = table_elmt.parent('div');
+            // new IONUX.Views.Collection({el: parent_elmt, collection: window.MODEL_DATA, resource_type: resource_type}).render().el;
         });
         
         var self = this;
@@ -237,8 +237,21 @@ function render_page(resource_type, resource_id, model) {
     });
 
     _.each($('.'+resource_type+' .image_ooi'), function(el) {
-        console.log('image');
-        $(el).html($('<span>').addClass('status_ok_mini').html('&nbsp;'));
+        var data_path = $(el).data('path');
+        var data = get_descendant_properties(window.MODEL_DATA, data_path);
+        switch(data){
+            case 1:
+                $(el).html($('<span>').addClass('status_ok_mini').html('&nbsp;'));
+                break;
+            case 2:
+                $(el).html($('<span>').addClass('status_warning_alert_mini').html('&nbsp;'));
+                break;
+            case 3:
+                $(el).html($('<span>').addClass('status_critical_mini').html('&nbsp;'));
+                break;
+            default:
+                $(el).html($('<span>').addClass('status_unknown_mini').html('&nbsp;'));
+        };
     });
 
     var badge_elmts = $('.'+resource_type+' .badge_ooi');
@@ -305,6 +318,14 @@ function render_page(resource_type, resource_id, model) {
     $('.span9 ul, .span3 ul').find('li.' + resource_type + ':first').find('a').click();  
     
     $('.tab-pane').find('.'+resource_type+':visible:first').css('margin-left', 0);
+
+    // jScrollpane
+    // _.each($('.v02 .'+resource_type), function(el){
+    //     var cw = $(el).find('content-wrapper:first');
+    //     console.log('CWWWW', cw);
+    //     $(el).css('height', '200px').jScrollPane({autoReinitialise: true});
+    // });
+
     
     // jScrollpane
     _.each($('.v02 .'+resource_type+' .content-wrapper'), function(el){

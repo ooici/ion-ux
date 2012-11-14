@@ -100,11 +100,19 @@ def map():
     kml = ServiceApi.fetch_map()
     return kml
 
+
 @app.route('/viz/overview/<data_product_id>/')
 def viz_overview(data_product_id):
     # Need to move into ServiceApi
     resp = requests.get('http://%s:%s/ion-service/visualization_service/get_visualization_data?data_product_id=%s&return_format=raw_json' % (GATEWAY_HOST, str(GATEWAY_PORT), data_product_id))
     return resp.content
+
+
+# @app.route('/viz/overview/<data_product_id>/')
+# def viz_overview(data_product_id):
+#     # Need to move into ServiceApi
+#     resp = requests.get('http://%s:%s/ion-service/visualization_service/get_visualization_data?data_product_id=%s&return_format=raw_json' % (GATEWAY_HOST, str(GATEWAY_PORT), data_product_id))
+#     return resp.content
 
 @app.route('/viz/initiate_realtime_visualization/<data_product_id>/', methods=['GET'])
 def initiate_realtime_visualization2(data_product_id):
