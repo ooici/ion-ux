@@ -54,42 +54,10 @@ IONUX.Router = Backbone.Router.extend({
         });
         
         var self = this;
-        setTimeout(function(){self.testr()},500);
+        setTimeout(function(){collection_links()},1000);
         
         // Insert footer and buttons
         new IONUX.Views.Footer({resource_id: null, resource_type: resource_type}).render().el;
-    },
-    
-    testr: function(){
-        
-        // var link_index;
-        // _.each($('table:first tr:first th'), function(th, index){
-        //     name_found = false;
-        //     var name = $(th).text();
-        //     
-        //     if (name == 'Name' && name_found) {
-        //         link_index = index;
-        //         name_found = true;
-        //     } else {
-        //         link_index = 0;
-        //     };
-        // });
-        
-        var trs = $('table:first tr');
-        trs.splice(0,1);
-        var resource_type = window.MODEL_DATA.models[0].get('type_');
-        
-        _.each(trs, function(tr, index){
-            var td = $(tr).find('td')[1];
-            var text = $(td).text();
-                
-            var resource_id = window.MODEL_DATA.models[index].get('_id');
-            
-            var url = "/"+resource_type+"/face/"+resource_id+"/";
-            var link_tmpl = '<a href="<%= url %>"><%= text %></a>';
-            
-            $(td).html(_.template(link_tmpl, {url: url, text:text}));
-        });
     },
     
     // Face, status, related pages
@@ -288,10 +256,13 @@ function render_page(resource_type, resource_id, model) {
     _.each(table_elmts, function(el) {
         var data_path = $(el).data('path');
         // if (data_path.substring(0,6) !== 'unknown') var raw_table_data = get_descendant_properties(window.MODEL_DATA, data_path);
-        // cosnole.log()
         var raw_table_data = get_descendant_properties(window.MODEL_DATA, data_path);
-        console.log('raw_table_data', raw_table_data);
-        if (!_.isEmpty(raw_table_data)) new IONUX.Views.DataTable({el: $(el), data: raw_table_data});
+        if (!_.isEmpty(raw_table_data)) {
+            new IONUX.Views.DataTable({el: $(el), data: raw_table_data});
+            if (!data_path.match('recent_events')) {
+                table_links(el, raw_table_data);    
+            };
+        };
     });
     
     var extent_geospatial_elmts = $('.'+resource_type+' .extent_geospatial_ooi');
@@ -359,4 +330,54 @@ function append_info_level(el) {
     // if (info_level || info_level == '0') {
     //     $(el).append('<span class="label label-important info-level" style="background:green;color:white;">'+info_level+'</div>');
     // };
+};
+
+function table_links(table_elmt, table_data){
+    var link_name, link_index = 0;
+    var table_columns = $(table_elmt + 'tr:first th');
+    
+    _.each(table_columns, function(column, index){
+        var column_name = $(column).text();
+        if (column_name == 'Name' && !link_name && !link_index) {
+            link_name = column_name;
+            link_index = index;
+        };
+    });
+    
+    console.log('index, name', link_index, link_name)
+    
+    var table_rows = $(table_elmt).find('table tr');
+    table_rows.splice(0,1); 
+    var resource_type = table_data[0]['type_'];
+    var link_tmpl = '<a href="<%= url %>"><%= text %></a>';
+    
+    console.log('TD: ', resource_type, link_name, link_index);
+    
+    _.each(table_rows, function(tr, index){
+        var resource_id = table_data[index]['_id'];
+        var child_index = link_index + 1;
+        var td = $(tr).find('td:nth-child('+child_index+')');
+        var text = $(td).text();
+        var url = "/"+resource_type+"/face/"+resource_id+"/";
+        console.log('URL', url);
+        $(td).html(_.template(link_tmpl, {url: url, text:text}));
+    });
+};
+
+function collection_links(){
+    var trs = $('table:first tr');
+    trs.splice(0,1);
+    var resource_type = window.MODEL_DATA.models[0].get('type_');
+    
+    _.each(trs, function(tr, index){
+        var td = $(tr).find('td')[1];
+        var text = $(td).text();
+            
+        var resource_id = window.MODEL_DATA.models[index].get('_id');
+        
+        var url = "/"+resource_type+"/face/"+resource_id+"/";
+        var link_tmpl = '<a href="<%= url %>"><%= text %></a>';
+        
+        $(td).html(_.template(link_tmpl, {url: url, text:text}));
+    });
 };

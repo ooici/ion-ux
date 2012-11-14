@@ -121,7 +121,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         _.each(data_objs, function(data_obj){
             var data_row = []
             _.each(data_keys, function(key){
-                var value = data_obj[key];
+                var value = get_descendant_properties(data_obj, key)
                 if (_.isUndefined(value)) value = "[" + key + "]";
                 data_row.push(value);
             });
@@ -137,7 +137,6 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
             case "icon_ooi":
                 return status_indicator; //TODO namespace these
             case "text_short_ooi":
-                // return this.facepage_link; // KEEPING FOR REFERENCE
                 return function(obj){return obj.aData[obj.iDataColumn];}; //noop
             case "text_extended_ooi":
                 return function(obj){return obj.aData[obj.iDataColumn];}; //noop
