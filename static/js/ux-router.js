@@ -46,6 +46,7 @@ IONUX.Router = Backbone.Router.extend({
             window.MODEL_DATA.fetch()
                 .success(function(data) {
                     new IONUX.Views.DataTable({el: $(table_elmt), data: data.data});
+                    // collection_links();
                 });
             
             // Temporary hack to append navigable table...
@@ -53,9 +54,7 @@ IONUX.Router = Backbone.Router.extend({
             // new IONUX.Views.Collection({el: parent_elmt, collection: window.MODEL_DATA, resource_type: resource_type}).render().el;
         });
         
-        var self = this;
         setTimeout(function(){collection_links()},1000);
-        
         // Insert footer and buttons
         new IONUX.Views.Footer({resource_id: null, resource_type: resource_type}).render().el;
     },
@@ -320,17 +319,19 @@ function render_page(resource_type, resource_id, model) {
     $('.tab-pane').find('.'+resource_type+':visible:first').css('margin-left', 0);
 
     // jScrollpane
-    // _.each($('.v02 .'+resource_type), function(el){
-    //     var cw = $(el).find('content-wrapper:first');
-    //     console.log('CWWWW', cw);
-    //     $(el).css('height', '200px').jScrollPane({autoReinitialise: true});
-    // });
+    _.each($('.v02 .'+resource_type), function(el){
+        // $(el).find('content-wrapper:first').css('background', 'red');
+        
+        $(el).find('.content-wrapper:first').css('height', '200px').jScrollPane({autoReinitialise: true});
+        // console.log('CWWWW', cw);
+        // $(el).css('height', '200px').jScrollPane({autoReinitialise: true});
+    });
 
     
     // jScrollpane
-    _.each($('.v02 .'+resource_type+' .content-wrapper'), function(el){
-        $(el).css('height', '200px').jScrollPane({autoReinitialise: true});
-    });
+    // _.each($('.v02 .'+resource_type+' .content-wrapper'), function(el){
+    //     $(el).css('height', '200px').jScrollPane({autoReinitialise: true});
+    // });
 
     // ActionMenus
     _.each($('.v01 .group .nav, .v02 .group .nav'), function(el) {
