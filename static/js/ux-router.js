@@ -310,6 +310,10 @@ function render_page(resource_type, resource_id, model) {
             chart_instance = new IONUX.Views.Chart({resource_id: resource_id, el: chart_elmt});
             chart_instance.render().el;
         };
+        
+        // TEMP
+        var data_url_text = $('#2164346').text();
+        $('#2164346').html(replace_url_with_html_links(data_url_text));
     };
     
     // Show the relevant elements and click to enable the Bootstrap tabs.
@@ -401,3 +405,9 @@ function collection_links(){
         $(td).html(_.template(link_tmpl, {url: url, text:text}));
     });
 };
+
+
+function replace_url_with_html_links(text) {
+    var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+    return text.replace(exp,"<a class='external' href='$1'>$1</a>"); 
+}

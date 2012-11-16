@@ -67,6 +67,7 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
         this.on("action__submenu_toggle", this.action__submenu_toggle);
         this.on("action__command", this.action__command);
         this.on("action__direct_command", this.action__direct_command);
+        this.on("action__download", this.action__download);
     },
     action__subscribe:function(){
         var url = "/dev/subscribe"; //FIXME
@@ -103,8 +104,9 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
     },
     action__direct_command:function(){
         alert("Direct Command");
-    }
-
+    },
+    action__download: function(){
+    },
 });
 
 
