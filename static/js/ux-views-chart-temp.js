@@ -26,7 +26,8 @@ IONUX.Views.Chart = IONUX.Views.Base.extend({
         // set callback for ready event before calling draw on the chart
         google.visualization.events.addListener(window.chart, 'ready', self.on_ready);
         
-        self.query = new google.visualization.Query('http://localhost:3000/viz/overview/' + data_product_id + '/');
+        // self.query = new google.visualization.Query('http://localhost:3000/viz/overview/' + data_product_id + '/');
+        self.query = new google.visualization.Query('http://'+window.location.host+'/viz/overview/' + data_product_id + '/');
         self.query.send(self.handle_query_response);
     },
     

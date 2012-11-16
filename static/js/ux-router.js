@@ -409,5 +409,5 @@ function collection_links(){
 
 function replace_url_with_html_links(text) {
     var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-    return text.replace(exp,"<a class='external' href='$1'>$1</a>"); 
+    return text.replace(exp,"<a class='external' target='_blank' href='$1'>$1</a>"); 
 }

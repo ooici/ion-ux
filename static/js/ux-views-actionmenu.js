@@ -105,7 +105,13 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
     action__direct_command:function(){
         alert("Direct Command");
     },
-    action__download: function(){
+    action__download: function(evt){
+        if (window.location.pathname.match(/DataProduct/g)){
+            var url = get_descendant_properties(window.MODEL_DATA, $('#2164346').data('path'));
+            window.open(url, '_blank');
+        } else {
+            alert("Download not available for this resource.");
+        };
     },
 });
 
