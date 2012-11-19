@@ -33,28 +33,23 @@ IONUX.Router = Backbone.Router.extend({
         $('#dynamic-container').html($('#2163152').html());
         $('.span9 li,.span3 li').hide();
         
-        var resources = new IONUX.Collections.Resources(null, {resource_type: resource_type});
-        resources.fetch().success(function(data){
+        window.MODEL_DATA = new IONUX.Collections.Resources(null, {resource_type: resource_type});
+        window.MODEL_DATA.fetch().success(function(data){
             $('li.Collection ,div.Collection').show(); // Show elements based on current view/CSS class
             $('.span9').find('li.Collection:first').find('a').click(); // Manually Set the first tabs 'active'
             
             // Todo: better way of finding the container for the collection.
             var table_elmt = $('.v02 .Collection .table_ooi').first();
             var table_id = table_elmt.attr('id');
-            
-            window.MODEL_DATA = new IONUX.Collections.Resources(data.data, {resource_type: resource_type});
-            window.MODEL_DATA.fetch()
-                .success(function(data) {
-                    new IONUX.Views.DataTable({el: $(table_elmt), data: data.data});
-                    // collection_links();
-                });
+            new IONUX.Views.DataTable({el: $(table_elmt), data: data.data});
+            collection_links();
             
             // Temporary hack to append navigable table...
             // var parent_elmt = table_elmt.parent('div');
             // new IONUX.Views.Collection({el: parent_elmt, collection: window.MODEL_DATA, resource_type: resource_type}).render().el;
         });
         
-        setTimeout(function(){collection_links()},1000);
+        // setTimeout(function(){collection_links()},1000);
         // Insert footer and buttons
         new IONUX.Views.Footer({resource_id: null, resource_type: resource_type}).render().el;
     },
