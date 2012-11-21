@@ -13,16 +13,16 @@ IONUX.Router = Backbone.Router.extend({
         ":resource_type/list/": "collection",
         ":resource_type/command/:resource_id/": "command",
         ":resource_type/:view_type/:resource_id/" : "page",
-        // "instruments/:instrument_id/command/": "instrument_command_facepage",
-        // "userprofile/": "user_profile",
     },
     
     dashboard: function(){
         this._reset();
         $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS['dashboard']).html()).show();
         $('.Collection').show();
-        
-        $('.Collection .map_ooi').html('<iframe width="100%" height="600" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/?q=http:%2F%2F67.58.49.196:3000%2Fmap.kml&amp;ie=UTF8&amp;t=h&amp;ll=22.268764,-62.753906&amp;spn=88.6783,158.027344&amp;z=3&amp;output=embed"></iframe><br /><small><a href="https://maps.google.com/?q=http:%2F%2F67.58.49.196:3000%2Fmap.kml&amp;ie=UTF8&amp;t=h&amp;ll=22.268764,-62.753906&amp;spn=88.6783,158.027344&amp;z=3&amp;source=embed" style="color:#0000FF;text-align:left">View Larger Map</a></small>')
+            
+        new IONUX.Views.DashboardMap({el: '.Collection .map_ooi'}).render().el;
+
+        // $('.Collection .map_ooi').append('<iframe width="100%" height="600" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/?q=http:%2F%2F67.58.49.196:3000%2Fmap.kml&amp;ie=UTF8&amp;t=h&amp;ll=22.268764,-62.753906&amp;spn=88.6783,158.027344&amp;z=3&amp;output=embed"></iframe><br /><small><a href="https://maps.google.com/?q=http:%2F%2F'+window.location.host+'%2Fmap.kml&amp;ie=UTF8&amp;t=h&amp;ll=22.268764,-62.753906&amp;spn=88.6783,158.027344&amp;z=3&amp;source=embed" style="color:#0000FF;text-align:left">View Larger Map</a></small>')
         new IONUX.Views.Footer({resource_id: null, resource_type: null}).render().el;
     },
     
@@ -42,6 +42,9 @@ IONUX.Router = Backbone.Router.extend({
             var table_elmt = $('.v02 .Collection .table_ooi').first();
             var table_id = table_elmt.attr('id');
             new IONUX.Views.DataTable({el: $(table_elmt), data: data.data});
+            
+            // Manually create links.
+            // setTimeout(function(){collection_links()},1000);
             collection_links();
             
             // Temporary hack to append navigable table...
@@ -49,7 +52,6 @@ IONUX.Router = Backbone.Router.extend({
             // new IONUX.Views.Collection({el: parent_elmt, collection: window.MODEL_DATA, resource_type: resource_type}).render().el;
         });
         
-        // setTimeout(function(){collection_links()},1000);
         // Insert footer and buttons
         new IONUX.Views.Footer({resource_id: null, resource_type: resource_type}).render().el;
     },
@@ -362,8 +364,6 @@ function table_links(table_elmt, table_data){
         names.push($(column).text());
     });
     var link_index = _.indexOf(names, 'Name');
-    
-    console.log('index, name', link_index)
     
     var table_rows = $(table_elmt).find('table tr');
     table_rows.splice(0,1); 
