@@ -1,5 +1,14 @@
-table.table thead tr th {
+.table th, .table td {
+    padding:4px;
     cursor:pointer;
+}
+table.table thead {
+    border-top:1px solid #888;
+}
+table.table thead tr th {
+    border:none;
+    cursor:pointer;
+    background-color:#333;
 }
 table.table tr.even td {
     background-color:#282828;
@@ -21,9 +30,10 @@ table.table tr.odd td {
     clear:both;
 }
 .dataTables_filter {
-    float:right;
+    display:none;
+    /*float:right;
     margin:10px;
-    margin-bottom:0px;
+    margin-bottom:0px;*/
 }
 .dataTables_filter label {
     margin-bottom:0px;
@@ -50,7 +60,6 @@ table.table tr.odd td {
     color:#ccc;
 }
 .table-bordered tr th {
-    border-left:1px solid #6f6f6f;
 }
 
 .filter-header {

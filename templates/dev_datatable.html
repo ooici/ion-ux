@@ -31,6 +31,7 @@
 
 {% block document_ready %}
   $(function(){
+    IONUX.init();
     $("#dynamic-container").append($("<div>").attr("id", "56789"));
     new IONUX.Views.DataTable({data:TEST_TABLE_DATA, el:'#56789', visibility_level:2});
   });
