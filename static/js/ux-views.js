@@ -1,28 +1,20 @@
 IONUX.Views.DashboardMap = Backbone.View.extend({
     initialize: function(){
-        // this.ui_server = window.location.host;
+        this.$el.css({'height': '400px', 'width': '100%'});
     },
-        
     render: function(){
         var mapOptions, mao;
-        var container_server = "http://128.54.6.73:5000";
-        var initialZoom = 4;
-        var viz_params = {};
+        var initialZoom = 2;
         var oms;
-        
         mapOptions = {
             center: new google.maps.LatLng(0, 0),
             zoom: initialZoom,
             mapTypeId: google.maps.MapTypeId.SATELLITE
         };
-        
         map = new google.maps.Map(this.$el[0], mapOptions);
-        
-        
-        
-        // this.$el.html('Yo~~~~');
+        var georssLayer = new google.maps.KmlLayer('http://'+window.location.host+'/map2.kml?ui_server=http://'+window.location.host+'&unique_key='+this.create_random_id()+'&return_format=raw_json');
+        georssLayer.setMap(map);
         return this;
-
     },
     
     // Kept from Raj's code

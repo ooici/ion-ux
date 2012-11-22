@@ -304,6 +304,7 @@ function render_page(resource_type, resource_id, model) {
         $('body').append($('<script>').attr('src', 'https://www.google.com/jsapi?callback=chart_callback').attr("type", "text/javascript"));
         
         chart_callback = function(){
+            console.log('chart_callback');
             chart_instance = new IONUX.Views.Chart({resource_id: resource_id, el: chart_elmt});
             chart_instance.render().el;
         };
