@@ -119,14 +119,20 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         var table_metadata = this._get_table_metadata();
         var data_keys = _.map(table_metadata, function(arr){return arr[2];});
         var self = this;
-        _.each(data_objs, function(data_obj){
-            var data_row = []
+        _.each(data_objs, function(data_obj, index){
+            var data_row = [];
             _.each(data_keys, function(key){
-                var value = get_descendant_properties(data_obj, key)
+                // Needed to check for variable and look up full path if found.
+                if (key.match('@index')) {
+                    var new_key = key.replace(/@index/, index);
+                    var value = get_descendant_properties(window.MODEL_DATA, new_key);
+                } else {
+                    var value = get_descendant_properties(data_obj, key);
+                };
                 if (_.isUndefined(value)) value = "[" + key + "]";
                 data_row.push(value);
             });
-            data_row.push(data_obj["_id"]); // KEEPING FOR REFERENCE
+            // data_row.push(data_obj["_id"]); // KEEPING FOR REFERENCE
             data.push(data_row);
         });
         return data;
@@ -154,10 +160,9 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
     
     facepage_link: function (obj) {
         var self = this;
-        console.log('obj', obj);
+        // console.log('obj', obj);
         if (obj.iDataColumn == 1) {
             // console.log('obj', obj);
-    
             var id_position = obj.aData.length -1;
             var name = obj.aData[obj.iDataColumn];
     

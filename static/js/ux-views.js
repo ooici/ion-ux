@@ -1,3 +1,43 @@
+IONUX.Views.DashboardMap = Backbone.View.extend({
+    initialize: function(){
+        // this.ui_server = window.location.host;
+    },
+        
+    render: function(){
+        var mapOptions, mao;
+        var container_server = "http://128.54.6.73:5000";
+        var initialZoom = 4;
+        var viz_params = {};
+        var oms;
+        
+        mapOptions = {
+            center: new google.maps.LatLng(0, 0),
+            zoom: initialZoom,
+            mapTypeId: google.maps.MapTypeId.SATELLITE
+        };
+        
+        map = new google.maps.Map(this.$el[0], mapOptions);
+        
+        
+        
+        // this.$el.html('Yo~~~~');
+        return this;
+
+    },
+    
+    // Kept from Raj's code
+    create_random_id: function(){
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        var text = "";
+        for ( var i=0; i < 16; i++ ) {
+            text += possible.charAt(Math.floor(Math.random() * possible.length))
+        };
+        return text;
+    },
+});
+
+var tmp_map = '<iframe width="425" height="350" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/?q=http:%2F%2F67.58.49.196:3000%2Fmap2.kml%3Fui_server%3Dhttp:%2F%2Fhttp:%2F%2F67.58.49.196:3000%2F&amp;ie=UTF8&amp;t=h&amp;ll=65.512963,-139.570312&amp;spn=56.353099,149.414063&amp;z=2&amp;iwloc=lyrftr:kml:cO2v7Ri9AUthkCHKZZYaNnFiB8Jrkdztr-0YvQFLYZAhymRIB,g9d9eb12dfa679399,44.590467,-125.332031,0,-32&amp;output=embed"></iframe><br /><small><a href="https://maps.google.com/?q=http:%2F%2F67.58.49.196:3000%2Fmap2.kml%3Fui_server%3Dhttp:%2F%2Fhttp:%2F%2F67.58.49.196:3000%2F&amp;ie=UTF8&amp;t=h&amp;ll=65.512963,-139.570312&amp;spn=56.353099,149.414063&amp;z=2&amp;iwloc=lyrftr:kml:cO2v7Ri9AUthkCHKZZYaNnFiB8Jrkdztr-0YvQFLYZAhymRIB,g9d9eb12dfa679399,44.590467,-125.332031,0,-32&amp;source=embed" style="color:#0000FF;text-align:left">View Larger Map</a></small>'
+
 IONUX.Views.Footer = Backbone.View.extend({
     tagName: 'div',
     className: 'footer',

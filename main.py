@@ -97,7 +97,15 @@ def start_platform_agent(platform_device_id, agent_command, cap_type=None, agent
 
 @app.route('/map.kml', methods=['GET'])
 def map():
-    kml = ServiceApi.fetch_map()
+    kml = ServiceApi.fetch_map(ui_server=request.args.get('ui_server'), unique_key=request.args.get('unique_key'))
+    return kml
+
+@app.route('/map2.kml', methods=['GET'])
+def map2():
+    ui_server = request.args.get('ui_server')
+    unique_key = request.args.get('unique_key')
+    
+    kml = ServiceApi.fetch_map(ui_server=ui_server, unique_key=unique_key)
     return kml
 
 
