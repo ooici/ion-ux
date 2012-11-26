@@ -45,7 +45,7 @@ IONUX.Router = Backbone.Router.extend({
             
             // Manually create links.
             // setTimeout(function(){collection_links()},1000);
-            collection_links();
+            // collection_links();
             
             // Temporary hack to append navigable table...
             // var parent_elmt = table_elmt.parent('div');
@@ -130,7 +130,9 @@ IONUX.Router = Backbone.Router.extend({
         var self = this;
         $(document).on("click", "a", function(e) {
             if ($(e.target).hasClass('external')) return true;
-            
+
+            // TEMP: catching links in Google Maps, also catching download links.
+            if ($(e.target).attr('href').match(/^http/)) return true;
             // Catch Bootstrap's tabs hash so URL doesn't change, example: "InstrumentDevice/list/" to "/2150593"
             if ($(e.target).attr('data-toggle') == 'tab') return true;
             self.navigate($(this).attr('href'), {trigger:true});
@@ -237,16 +239,16 @@ function render_page(resource_type, resource_id, model) {
         var data = get_descendant_properties(window.MODEL_DATA, data_path);
         switch(data){
             case 1:
-                $(el).html($('<span>').addClass('status_ok_mini').html('&nbsp;'));
+                $(el).html($('<span>').addClass('badge_status_graphic_ok').html('&nbsp;'));
                 break;
             case 2:
-                $(el).html($('<span>').addClass('status_warning_alert_mini').html('&nbsp;'));
+                $(el).html($('<span>').addClass('badge_status_graphic_warning').html('&nbsp;'));
                 break;
             case 3:
-                $(el).html($('<span>').addClass('status_critical_mini').html('&nbsp;'));
+                $(el).html($('<span>').addClass('badge_status_graphic_critical').html('&nbsp;'));
                 break;
             default:
-                $(el).html($('<span>').addClass('status_unknown_mini').html('&nbsp;'));
+                $(el).html($('<span>').addClass('badge_status_graphic_unknown').html('&nbsp;'));
         };
     });
 
@@ -267,9 +269,9 @@ function render_page(resource_type, resource_id, model) {
         var raw_table_data = get_descendant_properties(window.MODEL_DATA, data_path);
         if (!_.isEmpty(raw_table_data)) {
             new IONUX.Views.DataTable({el: $(el), data: raw_table_data});
-            if (!data_path.match('recent_events')) {
-                table_links(el, raw_table_data);    
-            };
+            // if (!data_path.match('recent_events')) {
+            //     table_links(el, raw_table_data);    
+            // };
         } else {
             new IONUX.Views.DataTable({el: $(el), data: []});
         };
@@ -324,7 +326,7 @@ function render_page(resource_type, resource_id, model) {
     _.each($('.v02 .'+resource_type), function(el){
         // $(el).find('content-wrapper:first').css('background', 'red');
         
-        $(el).find('.content-wrapper:first').css('height', '200px').jScrollPane({autoReinitialise: true});
+        // $(el).find('.content-wrapper:first').css('height', '200px').jScrollPane({autoReinitialise: true});
         // console.log('CWWWW', cw);
         // $(el).css('height', '200px').jScrollPane({autoReinitialise: true});
     });

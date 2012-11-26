@@ -12,7 +12,9 @@ IONUX.Views.DashboardMap = Backbone.View.extend({
             mapTypeId: google.maps.MapTypeId.SATELLITE
         };
         map = new google.maps.Map(this.$el[0], mapOptions);
-        var georssLayer = new google.maps.KmlLayer('http://'+window.location.host+'/map2.kml?ui_server=http://'+window.location.host+'&unique_key='+this.create_random_id()+'&return_format=raw_json');
+        kml_path = 'http://'+window.location.host+'/map2.kml?ui_server=http://'+window.location.host+'&unique_key='+this.create_random_id()+'&return_format=raw_json';
+        console.log('KML_PATH: ', kml_path);
+        var georssLayer = new google.maps.KmlLayer(kml_path);
         georssLayer.setMap(map);
         return this;
     },
