@@ -70,23 +70,14 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
         this.on("action__download", this.action__download);
     },
     action__subscribe:function(){
-        var url = "/dev/subscribe"; //FIXME
-        var modal_html = '<div id="subscribe-modal" class="modal hide fade""><h1>Subscribing...</h1></div>';
+        var modal_html = '<div id="subscribe-modal" class="modal hide fade""></div>';
         $(modal_html).modal({keyboard:false})
-            .on('shown', function() {
+            .on('shown', function(){
                 new IONUX.Views.Subscribe().render().el;
+            })
+            .on('hidden',function(){
+                $('#subscribe-modal').remove();
             });
-
-        // $.ajax({url:url,
-        //     success: function(resp) {
-        //         $("#subscribe-modal").find("h1").text("Subscription Complete.");
-        //         setTimeout(function(){$("#subscribe-modal").modal("hide").remove()}, 800);
-        //     },
-        //     error: function(){
-        //         $("#subscribe-modal").find("h1").text("Subscription Failed.");
-        //         setTimeout(function(){$("#subscribe-modal").modal("hide").remove();}, 800);
-        //     },
-        // });
     },
     action__detailed_view:function(){
         var modal_tmpl = '<div class="modal hide fade"><h1>Detailed View</h1><h3>Element: <%= elem_id %></h3></div>';

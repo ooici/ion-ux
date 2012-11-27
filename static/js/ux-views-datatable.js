@@ -86,7 +86,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
             "aaData":table_data,
             "aoColumns":header_data,
             "bInfo":false,
-            'bPaginate':false
+            'bPaginate':false,
         });
         return this;
     },

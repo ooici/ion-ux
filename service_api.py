@@ -23,6 +23,19 @@ AGENT_REQUEST_TEMPLATE = {
 }
 
 class ServiceApi(object):
+
+    @staticmethod
+    def subscribe(resource_type, resource_id, event_type, user_id):
+        notification = {
+            "type_": "NotificationRequest", 
+            "lcstate": "DRAFT", 
+            "description": "%s - Notification" % resource_type, 
+            "name": "NotificationTest", 
+            "origin": resource_id, 
+            "origin_type": resource_type}
+        # params = {'notification': notification, 'user_id': user_id}
+        return service_gateway_post('user_notification', 'create_notification', params={'notification': notification, 'user_id': user_id})
+
     @staticmethod
     def get_event_types():
         events_url = 'http://%s:%s/ion-service/list_resource_types?type=Event' % (GATEWAY_HOST, GATEWAY_PORT)
@@ -239,7 +252,7 @@ class ServiceApi(object):
 
     @staticmethod
     def signon_user_testmode(user_name):
-        user_identities = ServiceApi.find_by_resource_type("ActorIdentity")
+        user_identities = ServiceApi.find_by_resource_type("UserInfo")
         for user_identity in user_identities:
             if 'Tim Ampe' in user_identity['name']:
                 user_id = user_identity['_id']

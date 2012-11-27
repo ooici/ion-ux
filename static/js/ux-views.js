@@ -4,13 +4,11 @@ IONUX.Views.Subscribe = Backbone.View.extend({
     events: {
         'click #btn-subscribe': 'subscribe'
     },
-    
     render: function() {
         this.$el.html(this.template);
         this.get_event_types();
         return this;
     },
-    
     subscribe: function(evt){
         evt.preventDefault();
         var button_elmt = $(evt.target);
@@ -21,9 +19,20 @@ IONUX.Views.Subscribe = Backbone.View.extend({
         // button_elmt.attr("disabled", "disabled");
         // select_elmt.attr("disabled", "disabled");
         
-        console.log(event_type);
+        var self = this;
+        $.ajax({
+          url: 'subscribe/'+event_type+'/',
+          dataType: 'json',
+          success: function(resp){
+              self.$el.find('.modal-body').prepend('<div class="alert alert-success">Subscription successful.</div>');
+          },
+          error: function() {
+              self.$el.find('.modal-body').prepend('<div class="alert alert-error">Subscription error.</div>');
+          },
+          complete: function(resp){
+          }
+        });
     },
-    
     get_event_types: function(evt) {
          var self = this;
          $.ajax({
@@ -40,11 +49,8 @@ IONUX.Views.Subscribe = Backbone.View.extend({
            error: function(resp) {
                console.log('Error: ', resp);
            }
-         });
+         }); 
      },
-    
-    
-    
 });
 
 

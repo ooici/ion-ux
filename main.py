@@ -35,8 +35,12 @@ def event_types():
 @app.route('/<resource_type>/face/<resource_id>/subscribe/<event_type>/', methods=['GET'])
 @app.route('/<resource_type>/related/<resource_id>/subscribe/<event_type>/', methods=['GET'])
 def subscribe_to_resource(resource_type, resource_id, event_type):
-    
-    return jsonify(data='Success')
+    user_id = session.get('user_id')
+    if user_id:
+        resp = ServiceApi.subscribe(resource_type, resource_id, event_type, user_id)
+        return jsonify(data=resp)
+    else:
+        return jsonify(data='No user_id.')
 
 # Face, status, related, command pages catch-all
 @app.route('/<resource_type>/status/<resource_id>/', methods=['GET'])
