@@ -28,7 +28,7 @@ def render_app_template(current_url):
 
 @app.route('/event_types/', methods=['GET'])
 def event_types():
-    event_types = ServiceApi.get_event_types() #['data']['GatewayResponse']
+    event_types = ServiceApi.get_event_types()
     return jsonify(data=event_types)
 
 @app.route('/<resource_type>/status/<resource_id>/subscribe/<event_type>/', methods=['GET'])

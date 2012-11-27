@@ -31,27 +31,34 @@ OPERATORS = ['CONTAINS', 'NEWER THAN', 'OLDER THAN', 'GREATER THAN', 'LESS THAN'
 
 
 function status_indicator(obj){
-    var stat = obj.aData[obj.iDataColumn];
-    var pos_map = {"Uknown":"0px 0px", "Normal":"0px -20px", "Alert":"0px -40px", "Alarm":"0px 18px"};
-    var stat_pos = pos_map[stat];
-    if (_.isUndefined(stat_pos)) stat_pos = pos_map["Normal"];
-    var html = "<div class='status_indicator_sprite' style='background-position:"+stat_pos+"' title='"+stat+"'>&nbsp;</div>";
-    return html;
-}
+    switch(obj.aData[obj.iDataColumn]){
+        case 1:
+            var status = 'STATUS: OK';
+            var status_css = 'status_ok_mini';
+            break;
+        case 2:
+            var status = 'STATUS: WARNING';
+            var status_css = 'status_warning_alert_mini';
+            break;
+        case 3:
+            var status = 'STATUS: CRITICAL';
+            var status_css = 'status_critical_alert_mini';
+            break;
+        default:
+            var status = 'STATUS: UNKNOWN';
+            var status_css = 'status_unknown_mini';
+    };
 
-// KEEPING FOR REFERENCE
-// function facepage_link(obj) {
-//     if (obj.iDataColumn == 1) {
-//         var name = obj.aData[obj.iDataColumn];
-//         var resource_id = obj.aData[9];
-//         var resource_type = obj.aData[3];
-//         var url = "/"+resource_type+"/face/"+resource_id+"/";
-//         var html = '<a href="'+url+'">'+name+'</a>';
-//         return html;
-//     } else {
-//         return obj.aData[obj.iDataColumn];
-//     };
-// };
+    var html = "<div class='"+status_css+"' title='"+status+"'>&nbsp;</div>";
+    return html;    
+
+    // var stat = obj.aData[obj.iDataColumn];
+    // var pos_map = {"Uknown":"0px 0px", "Normal":"0px -20px", "Alert":"0px -40px", "Alarm":"0px 18px"};
+    // var stat_pos = pos_map[stat];
+    // if (_.isUndefined(stat_pos)) stat_pos = pos_map["Normal"];
+    // var html = "<div class='status_indicator_sprite' style='background-position:"+stat_pos+"' title='"+stat+"'>&nbsp;</div>";
+    // return html;
+}
 
 IONUX.Views.DataTable = IONUX.Views.Base.extend({
 
