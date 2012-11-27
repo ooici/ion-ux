@@ -20,13 +20,23 @@ SERVICE_GATEWAY_BASE_URL = 'http://%s:%d/ion-service' % (GATEWAY_HOST, GATEWAY_P
 
 def render_app_template(current_url):
     """Renders base template for full app, with needed template params"""
-
     roles = session["roles"] if session.has_key("roles") else ""
-    logged_in = "True" if session.has_key('user') else "False"
-    
+    logged_in = "True" if session.has_key('user_id') else "False"
     tmpl = Template(LayoutApi.process_layout())
     return render_template(tmpl, **{"current_url":"/", "roles":roles, "logged_in":logged_in})
 
+
+@app.route('/event_types/', methods=['GET'])
+def event_types():
+    event_types = ServiceApi.get_event_types() #['data']['GatewayResponse']
+    return jsonify(data=event_types)
+
+@app.route('/<resource_type>/status/<resource_id>/subscribe/<event_type>/', methods=['GET'])
+@app.route('/<resource_type>/face/<resource_id>/subscribe/<event_type>/', methods=['GET'])
+@app.route('/<resource_type>/related/<resource_id>/subscribe/<event_type>/', methods=['GET'])
+def subscribe_to_resource(resource_type, resource_id, event_type):
+    
+    return jsonify(data='Success')
 
 # Face, status, related, command pages catch-all
 @app.route('/<resource_type>/status/<resource_id>/', methods=['GET'])
@@ -283,7 +293,7 @@ def signon():
     if user_name:
         ServiceApi.signon_user_testmode(user_name)
         return redirect('/')
-
+    
     # carriage returns were removed on the cilogon portal side,
     # restore them before processing
     raw_cert = request.args.get('cert')
@@ -350,6 +360,10 @@ def logout():
     session.pop('is_registered', None)
     return redirect('/')
 
+
+@app.route('/session/check/', methods=['GET'])
+def sessions_check():
+    return 'user_id: %s, roles: %s, is_registered: %s' % (session['user_id'], session['roles'], session['is_registered'])
 
 # DEV ROUTES
 # -------------------------------------------------------------------------

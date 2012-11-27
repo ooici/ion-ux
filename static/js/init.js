@@ -10,13 +10,14 @@ function dyn_do_init(){
 
     IONUX.set_roles("{{ roles }}");
     // Handle conditionally displaying login, user profile and logout links
-    if ("{{ logged_in }}" == "True") {
+    if ("{{ logged_in }}" == "True"){
+        console.log('logged_in true');
         $("#login").hide();
     } else {
         $("#logout").hide();
         $("#userprofile").hide();
     };
-
+    
     var ionux_router = IONUX.init();
 
     // dyn_do_layout();

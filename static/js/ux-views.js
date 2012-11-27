@@ -1,3 +1,54 @@
+IONUX.Views.Subscribe = Backbone.View.extend({
+    el: '#subscribe-modal',
+    template: _.template($('#subscribe-tmpl').html()),
+    events: {
+        'click #btn-subscribe': 'subscribe'
+    },
+    
+    render: function() {
+        this.$el.html(this.template);
+        this.get_event_types();
+        return this;
+    },
+    
+    subscribe: function(evt){
+        evt.preventDefault();
+        var button_elmt = $(evt.target);
+        var select_elmt = this.$el.find('select');
+        var selected_option = this.$el.find('option:selected');
+        var event_type = selected_option.attr("value");
+        
+        // button_elmt.attr("disabled", "disabled");
+        // select_elmt.attr("disabled", "disabled");
+        
+        console.log(event_type);
+    },
+    
+    get_event_types: function(evt) {
+         var self = this;
+         $.ajax({
+           url: '/event_types/',
+           dataType: 'json',
+           success: function(resp){
+               var select_elmt = $('#event-types');
+               select_elmt.empty();
+               var option_tmpl = '<option value="<%= event_type_name %>"><%= event_type_name %></option>'
+               _.each(resp.data, function(event_type_name){
+                   select_elmt.append(_.template(option_tmpl, {event_type_name: event_type_name}));
+               });
+           },
+           error: function(resp) {
+               console.log('Error: ', resp);
+           }
+         });
+     },
+    
+    
+    
+});
+
+
+
 IONUX.Views.DashboardMap = Backbone.View.extend({
     initialize: function(){
         this.$el.css({'height': '400px', 'width': '100%'});

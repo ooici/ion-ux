@@ -49,6 +49,9 @@
     		<div id="container" class="container-fluid">
     		    <div class="row-fluid">
     				<div id="sidebar" class="span2">
+    				    <div>
+    				        LOGGED IN: {{logged_in}}
+    				    </div>
     					<div class="sidebar-map">
     						<img src="/static/img/r2/placeholder_map.png" />
     					</div>
@@ -148,6 +151,7 @@
         <script type="text/template" id="list-tmpl"><![CDATA[{% include 'partials/list.html' %}]]></script>
         <script type="text/template" id="checkbox-tmpl"><![CDATA[{% include 'partials/checkbox.html' %}]]></script>
         
+        <script type="text/template" id="subscribe-tmpl"><![CDATA[{% include 'partials/subscribe.html' %}]]></script>
         <script type="text/template" id="extent-geospatial-tmpl"><![CDATA[{% include 'partials/extent_geospatial.html' %}]]></script>
         <script type="text/template" id="extent-vertical-tmpl"><![CDATA[{% include 'partials/extent_vertical.html' %}]]></script>
         <script type="text/template" id="extent-temporal-tmpl"><![CDATA[{% include 'partials/extent_temporal.html' %}]]></script>
@@ -199,6 +203,5 @@
             {% block document_ready %}
             {% endblock %}
 		</script>
-		
 	</body>
 </html>

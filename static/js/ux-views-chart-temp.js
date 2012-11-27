@@ -39,12 +39,12 @@ IONUX.Views.Chart = IONUX.Views.Base.extend({
 		}
 
 		this.data = response.getDataTable();
+		console.log('this.data', this.data);
 		window.chart.draw(this.data);
 		
 		},
 	
 	on_ready: function() {
-	    console.log('on_ready FIRED!');
 	    console.log(window.chart);
         //set callbacks for events here. Why ? no idea !
         // google.visualization.events.addListener(window.chart, 'select', onSelect);
@@ -64,8 +64,6 @@ IONUX.Views.Chart = IONUX.Views.Base.extend({
         
         // Populate UI components
         var chartUiDiv = document.getElementById("chart_ui_div");
-        console.log('chartUiDiv', chartUiDiv);
-        console.log('after chartUiDiv');
 
         var chkBox, columnIdx;
         for (i=1; i<numOfCols; i++) {
@@ -80,7 +78,6 @@ IONUX.Views.Chart = IONUX.Views.Base.extend({
          chkBox.setAttribute("checked","checked");
          chkBox.setAttribute("onClick","toggleColumnVisibility(this," + columnIdx + ")");
          
-        
          chartUiDiv.appendChild(chkBox);
          chartUiDiv.appendChild(document.createTextNode('    ' + data.getColumnLabel(i)));
          

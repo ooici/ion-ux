@@ -1,3 +1,7 @@
+.list-item {
+  display: block;
+}
+
 .map_ooi img {
 max-width: none;
 }

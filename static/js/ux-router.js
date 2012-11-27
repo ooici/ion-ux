@@ -21,7 +21,7 @@ IONUX.Router = Backbone.Router.extend({
         $('.Collection').show();
             
         new IONUX.Views.DashboardMap({el: '.Collection .map_ooi'}).render().el;
-
+        
         // $('.Collection .map_ooi').append('<iframe width="100%" height="600" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/?q=http:%2F%2F67.58.49.196:3000%2Fmap.kml&amp;ie=UTF8&amp;t=h&amp;ll=22.268764,-62.753906&amp;spn=88.6783,158.027344&amp;z=3&amp;output=embed"></iframe><br /><small><a href="https://maps.google.com/?q=http:%2F%2F'+window.location.host+'%2Fmap.kml&amp;ie=UTF8&amp;t=h&amp;ll=22.268764,-62.753906&amp;spn=88.6783,158.027344&amp;z=3&amp;source=embed" style="color:#0000FF;text-align:left">View Larger Map</a></small>')
         new IONUX.Views.Footer({resource_id: null, resource_type: null}).render().el;
     },
@@ -42,14 +42,6 @@ IONUX.Router = Backbone.Router.extend({
             var table_elmt = $('.v02 .Collection .table_ooi').first();
             var table_id = table_elmt.attr('id');
             new IONUX.Views.DataTable({el: $(table_elmt), data: data.data});
-            
-            // Manually create links.
-            // setTimeout(function(){collection_links()},1000);
-            // collection_links();
-            
-            // Temporary hack to append navigable table...
-            // var parent_elmt = table_elmt.parent('div');
-            // new IONUX.Views.Collection({el: parent_elmt, collection: window.MODEL_DATA, resource_type: resource_type}).render().el;
         });
         
         // Insert footer and buttons
@@ -141,11 +133,11 @@ IONUX.Router = Backbone.Router.extend({
     },
 
     // graceful Backbone handling of full page refresh on non '/' url.
-    handle_url: function(current_url){
-        if (current_url != "/"){
-            this.navigate(current_url, {trigger:true});
-        }
-    },
+    // handle_url: function(current_url){
+    //     if (current_url != "/"){
+    //         this.navigate(current_url, {trigger:true});
+    //     }
+    // },
 
     _reset: function(){ //reset the UI
         $(".viewcontainer").hide();
@@ -306,7 +298,6 @@ function render_page(resource_type, resource_id, model) {
         $('body').append($('<script>').attr('src', 'https://www.google.com/jsapi?callback=chart_callback').attr("type", "text/javascript"));
         
         chart_callback = function(){
-            console.log('chart_callback');
             chart_instance = new IONUX.Views.Chart({resource_id: resource_id, el: chart_elmt});
             chart_instance.render().el;
         };
@@ -359,50 +350,50 @@ function append_info_level(el) {
     // };
 };
 
-function table_links(table_elmt, table_data){
-    var table_columns = $(table_elmt + 'tr:first th');
-
-    var names = []
-    _.each(table_columns, function(column, index){
-        names.push($(column).text());
-    });
-    var link_index = _.indexOf(names, 'Name');
-    
-    var table_rows = $(table_elmt).find('table tr');
-    table_rows.splice(0,1); 
-    var resource_type = table_data[0]['type_'];
-    var link_tmpl = '<a href="<%= url %>"><%= text %></a>';
-    
-    // console.log('TD: ', resource_type, link_index);
-    
-    _.each(table_rows, function(tr, index){
-        var resource_id = table_data[index]['_id'];
-        var child_index = link_index + 1;
-        var td = $(tr).find('td:nth-child('+child_index+')');
-        var text = $(td).text();
-        var url = "/"+resource_type+"/face/"+resource_id+"/";
-        // console.log('URL', url);
-        $(td).html(_.template(link_tmpl, {url: url, text:text}));
-    });
-};
-
-function collection_links(){
-    var trs = $('table:first tr');
-    trs.splice(0,1);
-    var resource_type = window.MODEL_DATA.models[0].get('type_');
-    
-    _.each(trs, function(tr, index){
-        var td = $(tr).find('td')[1];
-        var text = $(td).text();
-            
-        var resource_id = window.MODEL_DATA.models[index].get('_id');
-        
-        var url = "/"+resource_type+"/face/"+resource_id+"/";
-        var link_tmpl = '<a href="<%= url %>"><%= text %></a>';
-        
-        $(td).html(_.template(link_tmpl, {url: url, text:text}));
-    });
-};
+// function table_links(table_elmt, table_data){
+//     var table_columns = $(table_elmt + 'tr:first th');
+// 
+//     var names = []
+//     _.each(table_columns, function(column, index){
+//         names.push($(column).text());
+//     });
+//     var link_index = _.indexOf(names, 'Name');
+//     
+//     var table_rows = $(table_elmt).find('table tr');
+//     table_rows.splice(0,1); 
+//     var resource_type = table_data[0]['type_'];
+//     var link_tmpl = '<a href="<%= url %>"><%= text %></a>';
+//     
+//     // console.log('TD: ', resource_type, link_index);
+//     
+//     _.each(table_rows, function(tr, index){
+//         var resource_id = table_data[index]['_id'];
+//         var child_index = link_index + 1;
+//         var td = $(tr).find('td:nth-child('+child_index+')');
+//         var text = $(td).text();
+//         var url = "/"+resource_type+"/face/"+resource_id+"/";
+//         // console.log('URL', url);
+//         $(td).html(_.template(link_tmpl, {url: url, text:text}));
+//     });
+// };
+// 
+// function collection_links(){
+//     var trs = $('table:first tr');
+//     trs.splice(0,1);
+//     var resource_type = window.MODEL_DATA.models[0].get('type_');
+//     
+//     _.each(trs, function(tr, index){
+//         var td = $(tr).find('td')[1];
+//         var text = $(td).text();
+//             
+//         var resource_id = window.MODEL_DATA.models[index].get('_id');
+//         
+//         var url = "/"+resource_type+"/face/"+resource_id+"/";
+//         var link_tmpl = '<a href="<%= url %>"><%= text %></a>';
+//         
+//         $(td).html(_.template(link_tmpl, {url: url, text:text}));
+//     });
+// };
 
 
 function replace_url_with_html_links(text) {

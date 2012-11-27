@@ -1,6 +1,12 @@
 // For use with collections of Resource Types, i.e. InstrumentDevice, PlatformDevice, etc.
 IONUX.Models.Resource = Backbone.Model.extend({});
 
+IONUX.Models.EventType = Backbone.Model.extend({
+    url: '/event_types/',
+    parse: function(resp){
+        return resp.data;
+    },
+});
 
 IONUX.Models.Layout = Backbone.Model.extend({
   url: '/layout',
