@@ -306,9 +306,20 @@ function render_page(resource_type, resource_id, model) {
     
 
     // jScrollpane
-    _.each($('.v02 .'+resource_type+' .content-wrapper'), function(el){
-        $(el).css('height', '200px').jScrollPane({autoReinitialise: true});
+    // _.each($('.v02 .'+resource_type+' .content-wrapper'), function(el){
+    //     // $(el).css('height', '200px').jScrollPane({autoReinitialise: true});
+    //     $(el).find('.content-wrapper:first').css('height', '200px').jScrollPane({autoReinitialise: true});
+    // });
+    
+    
+    _.each($('.v02 .'+resource_type), function(el){
+        // $(el).find('content-wrapper:first').css('background', 'red');
+        
+        $(el).find('.content-wrapper:first').css('height', '200px').jScrollPane({autoReinitialise: true});
+        // console.log('CWWWW', cw);
+        // $(el).css('height', '200px').jScrollPane({autoReinitialise: true});
     });
+    
 
     // ActionMenus
     _.each($('.v01 .group .nav, .v02 .group .nav'), function(el) {
