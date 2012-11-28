@@ -261,9 +261,6 @@ function render_page(resource_type, resource_id, model) {
         var raw_table_data = get_descendant_properties(window.MODEL_DATA, data_path);
         if (!_.isEmpty(raw_table_data)) {
             new IONUX.Views.DataTable({el: $(el), data: raw_table_data});
-            // if (!data_path.match('recent_events')) {
-            //     table_links(el, raw_table_data);    
-            // };
         } else {
             new IONUX.Views.DataTable({el: $(el), data: []});
         };
@@ -307,22 +304,7 @@ function render_page(resource_type, resource_id, model) {
         $('#2164346').html(replace_url_with_html_links(data_url_text));
     };
     
-    // Show the relevant elements and click to enable the Bootstrap tabs.
-    $('li.' + resource_type + ', div.' + resource_type).show();
-    $('.span9 ul, .span3 ul').find('li.' + resource_type + ':first').find('a').click();  
-    
-    $('.tab-pane').find('.'+resource_type+':visible:first').css('margin-left', 0);
 
-    // jScrollpane
-    _.each($('.v02 .'+resource_type), function(el){
-        // $(el).find('content-wrapper:first').css('background', 'red');
-        
-        // $(el).find('.content-wrapper:first').css('height', '200px').jScrollPane({autoReinitialise: true});
-        // console.log('CWWWW', cw);
-        // $(el).css('height', '200px').jScrollPane({autoReinitialise: true});
-    });
-
-    
     // jScrollpane
     _.each($('.v02 .'+resource_type+' .content-wrapper'), function(el){
         $(el).css('height', '200px').jScrollPane({autoReinitialise: true});
@@ -336,6 +318,22 @@ function render_page(resource_type, resource_id, model) {
         new IONUX.Views.BlockActions({el:$(el)});
     });    
     new IONUX.Views.ViewActions({el: '.v00'});
+
+    // Show the relevant elements and click to enable the Bootstrap tabs.
+    $('li.' + resource_type + ', div.' + resource_type).show();
+    $('.span9 ul, .span3 ul').find('li.' + resource_type + ':first').find('a').click();  
+    
+    $('.tab-pane').find('.'+resource_type+':visible:first').css('margin-left', 0);
+
+    // Todo fix DataTable thead width
+    _.each($('table thead'), function(thead){
+        $(thead).find('th').first().click();
+    });
+    
+    // _.each($('table thead:hidden'), function(thead){
+    //     $(thead).find('th').first().show().click().hide();
+    // });
+    // 
 };
 
 function render_error(){

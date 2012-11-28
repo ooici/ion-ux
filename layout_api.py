@@ -228,7 +228,7 @@ class LayoutApi(object):
                             block_h3_elmt.text = block['label']
                     
                     block_container_elmt = ET.SubElement(block_elmt, 'div')
-                    block_container_elmt.set('class', 'content-wrapper')
+                    # block_container_elmt.set('class', 'content-wrapper')
                     
 
                     # Attributes
@@ -263,7 +263,8 @@ class LayoutApi(object):
                             # attribute_elmt.text = 'Attribute: %s (%s) (%s) (%s) (%s)' % (attribute['label'], attribute['name'], attribute_elid, attribute_widget_type, attribute_position)
                             attribute_elmt.text = '%s (%s)' % (attribute['label'], attribute['name'])
                             
-                        
+                        if attribute_widget_type not in ('table_ooi', 'chart_ooi'):
+                            block_container_elmt.set('class', 'content-wrapper')
                         
                         # Generate metadata for nested elements, ex. tables and attribute groups                        
                         if attribute_widget_type in ('table_ooi', 'attribute_group_ooi') and attribute_elid not in metadata_processed:

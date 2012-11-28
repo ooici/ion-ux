@@ -94,9 +94,10 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
             "aoColumns":header_data,
             "bInfo":false,
             'bPaginate':false,
-            // 'sScrollY': '300px',
-            // 'sScrollYInner': "110%",
-            // "bScrollCollapse": true
+            'sScrollY': '300px',
+            'sScrollYInner': "110%",
+            "bScrollCollapse": true,
+            "sScrollXInner": "100%",
         });
         return this;
     },
