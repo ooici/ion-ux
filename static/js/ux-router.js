@@ -324,9 +324,9 @@ function render_page(resource_type, resource_id, model) {
 
     
     // jScrollpane
-    // _.each($('.v02 .'+resource_type+' .content-wrapper'), function(el){
-    //     $(el).css('height', '200px').jScrollPane({autoReinitialise: true});
-    // });
+    _.each($('.v02 .'+resource_type+' .content-wrapper'), function(el){
+        $(el).css('height', '200px').jScrollPane({autoReinitialise: true});
+    });
 
     // ActionMenus
     _.each($('.v01 .group .nav, .v02 .group .nav'), function(el) {
