@@ -32,8 +32,8 @@ class ServiceApi(object):
             "description": "%s - Notification" % resource_type, 
             "name": "NotificationTest", 
             "origin": resource_id, 
-            "origin_type": resource_type}
-        # params = {'notification': notification, 'user_id': user_id}
+            "origin_type": resource_type,
+            "event_type": event_type}
         return service_gateway_post('user_notification', 'create_notification', params={'notification': notification, 'user_id': user_id})
 
     @staticmethod
