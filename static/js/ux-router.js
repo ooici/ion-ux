@@ -24,6 +24,10 @@ IONUX.Router = Backbone.Router.extend({
         
         // $('.Collection .map_ooi').append('<iframe width="100%" height="600" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/?q=http:%2F%2F67.58.49.196:3000%2Fmap.kml&amp;ie=UTF8&amp;t=h&amp;ll=22.268764,-62.753906&amp;spn=88.6783,158.027344&amp;z=3&amp;output=embed"></iframe><br /><small><a href="https://maps.google.com/?q=http:%2F%2F'+window.location.host+'%2Fmap.kml&amp;ie=UTF8&amp;t=h&amp;ll=22.268764,-62.753906&amp;spn=88.6783,158.027344&amp;z=3&amp;source=embed" style="color:#0000FF;text-align:left">View Larger Map</a></small>')
         new IONUX.Views.Footer({resource_id: null, resource_type: null}).render().el;
+        
+        // Temp beta badge.
+        beta_tmpl = '<div class="alert alert-warning">This is beta software.</div>'
+        $('.v00').html(beta_tmpl).css('margin-top', '15px');
     },
     
     // Collection 'face pages'
