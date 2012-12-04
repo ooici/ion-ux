@@ -68,6 +68,19 @@ def ux_test():
     env.hosts = ['ux-test.oceanobservatories.org']
 
 # See comment above
+# eg. fab ux_stage deploy_ux_stage
+def ux_stage():
+    global web_host
+    web_host = 'r2-ux-stage.oceanobservatories.org'
+
+    global ssh_user
+    if not ssh_user:
+        ssh_user = prompt('User login on web application host: ', default=getpass.getuser())
+
+    env.user = ssh_user
+    env.hosts = ['r2-ux-stage.oceanobservatories.org']
+
+# See comment above
 # eg. fab ux_dev deploy_ux_dev
 def ux_dev():
     global web_host
@@ -236,6 +249,25 @@ def deploy_ux_test():
     global extract_dir
     global deploy_dir
     web_host='ux-test.oceanobservatories.org'
+    web_port=3000
+    gateway_port=5000
+    extract_dir='/tmp/ux'
+    deploy_dir='/www/ux'
+
+    deploy_cilogon()
+    deploy_ui()
+    restart_apache()
+
+# Helper methods that just set all the default values for you.  Use as follows:
+#  > fab ux_stage deploy_ux_stage
+def deploy_ux_stage():
+    global web_host
+    global web_port
+    global gateway_host
+    global gateway_port
+    global extract_dir
+    global deploy_dir
+    web_host='r2-ux-stage.oceanobservatories.org'
     web_port=3000
     gateway_port=5000
     extract_dir='/tmp/ux'
