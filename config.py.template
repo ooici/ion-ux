@@ -31,6 +31,13 @@ LOGGED_IN = True
 PRODUCTION = False
 CACHED_LAYOUT = True
 
+# Config the UI as either 'PRODUCTION', 'DEVELOPMENT' OR 'INTEGRATION'
+# 'PRODUCTION' option for end-user UI
+# 'DEVELOPMENT' option for end-user UI and development sidebar
+# 'INTEGRATION' option for development sidebar and disabled info-level filtering
+UI_MODE = 'PRODUCTION'
+
+
 if 'PORTAL_ROOT' in os.environ:
     PORTAL_ROOT = os.environ['PORTAL_ROOT']
 else:

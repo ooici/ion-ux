@@ -151,14 +151,6 @@ function render_error(){
     $('#error').show();
 };
 
-// Render basic error on AJAX error
-function append_info_level(el) {
-    // var info_level = $(el).data('level');
-    // if (info_level || info_level == '0') {
-    //     $(el).append('<span class="label label-important info-level" style="background:green;color:white;">'+info_level+'</div>');
-    // };
-};
-
 // Create <a href> from text
 function replace_url_with_html_links(text) {
     var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
@@ -190,33 +182,27 @@ function render_page(resource_type, resource_id, model) {
     _.each(attribute_group_elmts, function(el){
         var data_path = $(el).data('path');
         var data = get_descendant_properties(window.MODEL_DATA, data_path);
-                
         new IONUX.Views.AttributeGroup({el: $(el), data: window.MODEL_DATA}).render().el;
-        append_info_level(el);
     });
 
     var text_static_elmts = $('.'+resource_type+' .text_static_ooi');
     _.each(text_static_elmts, function(el){
         new IONUX.Views.TextStatic({el: $(el)}).render().el;
-        append_info_level(el);
     });
 
     var text_short_elmts = $('.'+resource_type+' .text_short_ooi');
     _.each(text_short_elmts, function(el){
         new IONUX.Views.TextShort({el: $(el), data_model: window.MODEL_DATA}).render().el;
-        append_info_level(el);
     });
 
     var text_extended_elmts = $('.'+resource_type+' .text_extended_ooi');
     _.each(text_extended_elmts, function(el){
         new IONUX.Views.TextExtended({el: $(el), data_model: window.MODEL_DATA}).render().el;
-        append_info_level(el);
     });
 
     var icon_elmts = $('.'+resource_type+' .icon_ooi');
     _.each(icon_elmts, function(el) {
         new IONUX.Views.Icon({el: $(el)}).render().el;
-        append_info_level(el);
     });
 
     _.each($('.'+resource_type+' .image_ooi'), function(el) {
@@ -240,7 +226,6 @@ function render_page(resource_type, resource_id, model) {
     var badge_elmts = $('.'+resource_type+' .badge_ooi');
     _.each(badge_elmts, function(el) {
         new IONUX.Views.Badge({el: $(el), data_model: window.MODEL_DATA}).render().el;
-        append_info_level(el);
     });
     
     var list_elmts = $('.'+resource_type+' .list_ooi');
@@ -291,8 +276,7 @@ function render_page(resource_type, resource_id, model) {
             chart_instance = new IONUX.Views.Chart({resource_id: resource_id, el: chart_elmt});
             chart_instance.render().el;
         };
-        
-        // TEMP
+        // Todo: manually setting the ERDAP download link
         var data_url_text = $('#2164346').text();
         $('#2164346').html(replace_url_with_html_links(data_url_text));
     };
@@ -316,7 +300,7 @@ function render_page(resource_type, resource_id, model) {
     
     $('.tab-pane').find('.'+resource_type+':visible:first').css('margin-left', 0);
 
-    // Todo fix DataTable thead width
+    // Todo: fix DataTable thead width
     _.each($('table thead'), function(thead){
         $(thead).find('th').first().click();
     });

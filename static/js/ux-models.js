@@ -1,4 +1,18 @@
 // For use with collections of Resource Types, i.e. InstrumentDevice, PlatformDevice, etc.
+IONUX.Models.Session = Backbone.Model.extend({
+    defaults: {
+        user_id: null,
+        is_logged_in: false,
+        is_registered: null,
+        roles: [],
+        ui_mode: 'PRODUCTION',
+    },
+    url: '/session/',
+    parse: function(resp){
+        return resp.data;
+    }    
+});
+
 IONUX.Models.Resource = Backbone.Model.extend({});
 
 IONUX.Models.EventType = Backbone.Model.extend({
