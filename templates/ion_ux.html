@@ -1,45 +1,36 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-		<title>OOI Integrated Observatory Network</title>
-		<link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico" />
-		<link rel="stylesheet" href="/static/css/jquery-ui-1.8.6.custom.css" type="text/css" />
-		<link rel="stylesheet" href="/static/css/jscrollpane.css" type="text/css" />
-		<link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css" type="text/css" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title>OOI Integrated Observatory Network</title>
+        <link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico" />
+        <link rel="stylesheet" href="/static/css/jquery-ui-1.8.6.custom.css" type="text/css" />
+        <link rel="stylesheet" href="/static/css/jscrollpane.css" type="text/css" />
+        <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css" type="text/css" />
         <link href='http://fonts.googleapis.com/css?family=Signika:300,400,600,700' rel='stylesheet' type='text/css'/>
-		<link href='http://fonts.googleapis.com/css?family=Signika+Negative:300,400,600,700' rel='stylesheet' type='text/css' />
-		
-		<!-- CSS themes will be a user preference (light and dark) -->
-		<link rel="stylesheet" href="/static/css/dark.css" type="text/css" />
-		<link rel="stylesheet" href="/static/css/dark-datatable.css" type="text/css" />
+        <link href='http://fonts.googleapis.com/css?family=Signika+Negative:300,400,600,700' rel='stylesheet' type='text/css' />
+
+        <!-- CSS themes will be a user preference (light and dark) -->
+        <link rel="stylesheet" href="/static/css/dark.css" type="text/css" />
+        <link rel="stylesheet" href="/static/css/dark-datatable.css" type="text/css" />
         <link rel="stylesheet" href="/static/css/dark-geospatial.css" type="text/css" />
         <link rel="stylesheet/less" href="/static/css/images.less" />
         <!-- Development styles -->
         <link rel="stylesheet" href="/static/css/dark-integration.css" type="text/css" />
         
-        <!-- Vendor Visualization -->
-         <!-- 
-        <script type='text/javascript' src='http://www.google.com/jsapi'> </script>
-        
-       <script type="text/javascript" src='https://www.google.com/jsapi?autoload={"modules":[{"name":"visualization","version":"1"}]}'> </script>
-        <script type="text/javascript" charset="utf-8"> google.load('visualization', '1', {'packages':['annotatedtimeline']}); </script> -->
-        
-                
-		{% block extra_css %}{% endblock %}
-	</head>
-	<body>
-	    
-	    <div class="wrapper">
-    		<div class="loader">Loading...</div>
+        {% block extra_css %}{% endblock %}
+    </head>
+    <body>
+        <div class="wrapper">
+            <div class="loader">Loading...</div>
             <div id="header" class="navbar navbar-fixed-top">
                 <div class="container-fluid">
                     <div class="row-fluid">
                         <div class="span6"><br /><!-- <img id="ooi-logo" src="/static/img/ooi-logo.png" alt="OOI" width="100" /> --></div>
                         <div class="span6 navigation">
                             <a id="signup" href="#" class="btn-navigation filter">Create Account</a>
-                            <a id="login" href="login" class="external btn-navigation filter">Sign In</a>
-    						<a id="userprofile" href="/userprofile/" class="btn-navigation filter">User Profile</a>
+                            <a id="login" href="https://ux-test.oceanobservatories.org/login" class="external btn-navigation filter">Sign In</a>
+                            <a id="userprofile" href="/userprofile/" class="btn-navigation filter">User Profile</a>
                             <a id="logout" href="/logout/" class="btn-navigation filter">Logout</a>
                             <a id="help" href="https://confluence.oceanobservatories.org/display/CIUserDoc/User+Documentation" target="_ooi_help" class="btn-navigation-plain external">Help</a>
                         </div>
@@ -105,19 +96,9 @@
         <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCCcEp2hQdftRhaYgonh1Vyv0JYi5KVvFI&amp;sensor=false"> </script>
         <script type='text/javascript' src='http://www.google.com/jsapi'> </script>
         <script type="text/javascript" src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization','version':'1'}]}"> </script>
-        
-        <!-- Kept for reference/use -->
-		<script type="text/template" id="hybrid-instrument-tmpl"><![CDATA[{% include 'partials/hybrid_instrument_facepage.html' %}]]></script>
-		<script type="text/template" id="hybrid-platform-tmpl"><![CDATA[{% include 'partials/hybrid_platform_facepage.html' %}]]></script>
-		<script type="text/template" id="hybrid-observatory-tmpl"><![CDATA[{% include 'partials/hybrid_observatory_facepage.html' %}]]></script>
-        <script type="text/template" id="hybrid-data-product-tmpl"><![CDATA[{% include 'partials/hybrid_data_product_facepage.html' %}]]></script>
-        <script type="text/template" id="hybrid-user-tmpl"><![CDATA[{% include 'partials/hybrid_user_facepage.html' %}]]></script>
-        <script type="text/template" id="hybrid-resource-tmpl"><![CDATA[{% include 'partials/hybrid_resource_facepage.html' %}]]></script>
-        <script type="text/template" id="hybrid-information-resource-tmpl"><![CDATA[{% include 'partials/hybrid_information_resource_facepage.html' %}]]></script>
-		<script type="text/template" id="instrument-command-facepage-tmpl"><![CDATA[{% include 'partials/instrument_command_facepage.html' %}]]></script>
-		<script type="text/template" id="user-request-item-tmpl"><![CDATA[{% include 'partials/user_request_item.html' %}]]></script>
+        <script type="text/template" id="instrument-command-facepage-tmpl"><![CDATA[{% include 'partials/instrument_command_facepage.html' %}]]></script>
+        <script type="text/template" id="user-request-item-tmpl"><![CDATA[{% include 'partials/user_request_item.html' %}]]></script>
         <script type="text/template" id="datatable-tmpl">{% include 'partials/datatable.html' %}</script>
-
         <script type="text/template" id="attribute-group-tmpl">
             <![CDATA[
                 <div class="content-wrapper">
@@ -127,47 +108,27 @@
                 </div>
             ]]>
         </script>
-
         <script type="text/template" id="text-static-tmpl">
             <![CDATA[<%= text_static %>]]>
         </script>
-
         <script type="text/template" id="text-short-tmpl">
             <![CDATA[<span class="upcase"><%= label %></span>: <%= text_short %>]]>
         </script>
-
         <script type="text/template" id="icon-tmpl">
             <i class="icon-cog icon-white"></i>
         </script>
-        
         <script type="text/template" id="image-tmpl">
             <i class="icon-picture icon-white"></i>
         </script>
-        
         <script type="text/template" id="badge-tmpl">
             <![CDATA[<span class="label label-important" style="background-color:#3a87ad;color:white;"><%= badge %></span>]]>
         </script>
-        
         <script type="text/template" id="list-tmpl"><![CDATA[{% include 'partials/list.html' %}]]></script>
         <script type="text/template" id="checkbox-tmpl"><![CDATA[{% include 'partials/checkbox.html' %}]]></script>
-        
         <script type="text/template" id="subscribe-tmpl"><![CDATA[{% include 'partials/subscribe.html' %}]]></script>
         <script type="text/template" id="extent-geospatial-tmpl"><![CDATA[{% include 'partials/extent_geospatial.html' %}]]></script>
         <script type="text/template" id="extent-vertical-tmpl"><![CDATA[{% include 'partials/extent_vertical.html' %}]]></script>
         <script type="text/template" id="extent-temporal-tmpl"><![CDATA[{% include 'partials/extent_temporal.html' %}]]></script>
-        
-        <!-- Widgets -->
-        <script type="text/template" id="collection"><![CDATA[{% include 'partials/collection.html' %}]]></script>
-		<script type="text/template" id="dyn-attr-group-tmpl"><![CDATA[{% include 'partials/dyn_attr_group.html' %}]]></script>
-		<script type="text/template" id="dyn-table-tmpl"><![CDATA[{% include 'partials/dyn_table.html' %}]]></script>
-		<script type="text/template" id="dyn-chart-tmpl"><![CDATA[{% include 'partials/dyn_chart.html' %}]]></script>
-		<script type="text/template" id="dyn-graph-tmpl"><![CDATA[{% include 'partials/dyn_graph.html' %}]]></script>
-		<script type="text/template" id="dyn-image-tmpl"><![CDATA[{% include 'partials/dyn_image.html' %}]]></script>
-		<script type="text/template" id="dyn-map-tmpl"><![CDATA[{% include 'partials/dyn_map.html' %}]]></script>
-		<script type="text/template" id="dyn-pdf-tmpl"><![CDATA[{% include 'partials/dyn_pdf.html' %}]]></script>
-		<script type="text/template" id="dyn-text-tmpl"><![CDATA[{% include 'partials/dyn_text.html' %}]]></script>
-		<script type="text/template" id="dyn-text-icon-tmpl"><![CDATA[{% include 'partials/dyn_text_icon.html' %}]]></script>
-		<script type="text/template" id="dyn-undefined-tmpl"><![CDATA[{% include 'partials/dyn_undefined.html' %}]]></script>
         {% block extra_templates %} {% endblock %}
 
 		<!-- Vendor JavaScripts -->

@@ -27,17 +27,11 @@ IONUX = {
         }
     },
     set_logged_in:function(logged_in){
-        if (logged_in == "True"){
-            IONUX.LOGGED_IN = "True";
-        } else {
-            IONUX.LOGGED_IN = "False";
-        }
+        console.log('set_logged_in', logged_in);
+        IONUX.LOGGED_IN = logged_in == "True" ? "True" : "False";
     },
     set_is_registered:function(is_registered){
-        if (is_registered == "True"){
-            IONUX.IS_REGISTERED = "True";
-        } else {
-            IONUX.IS_REGISTERED = "False";
-        }
+        console.log('set_is_registered', is_registered);
+        IONUX.IS_REGISTERED = is_registered == "True" ? "True" : "False";
     }
 }

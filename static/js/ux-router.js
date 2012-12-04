@@ -14,20 +14,13 @@ IONUX.Router = Backbone.Router.extend({
         ":resource_type/command/:resource_id/": "command",
         ":resource_type/:view_type/:resource_id/" : "page",
     },
-    
     dashboard: function(){
-        this._reset();
+        // this._reset();
         $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS['dashboard']).html()).show();
         $('.Collection').show();
-            
         new IONUX.Views.DashboardMap({el: '.Collection .map_ooi'}).render().el;
-        
-        // $('.Collection .map_ooi').append('<iframe width="100%" height="600" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/?q=http:%2F%2F67.58.49.196:3000%2Fmap.kml&amp;ie=UTF8&amp;t=h&amp;ll=22.268764,-62.753906&amp;spn=88.6783,158.027344&amp;z=3&amp;output=embed"></iframe><br /><small><a href="https://maps.google.com/?q=http:%2F%2F'+window.location.host+'%2Fmap.kml&amp;ie=UTF8&amp;t=h&amp;ll=22.268764,-62.753906&amp;spn=88.6783,158.027344&amp;z=3&amp;source=embed" style="color:#0000FF;text-align:left">View Larger Map</a></small>')
         new IONUX.Views.Footer({resource_id: null, resource_type: null}).render().el;
-        
-        // Temp beta badge.
-        beta_tmpl = '<div class="alert alert-warning">This is beta software.</div>'
-        $('.v00').html(beta_tmpl).css('margin-top', '15px');
+        $('.v00').html('<div class="alert alert-warning">This is beta software.</div>').css('margin-top', '15px');
     },
     
     // Collection 'face pages'
@@ -79,11 +72,7 @@ IONUX.Router = Backbone.Router.extend({
         $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS['command']).html());        
         $('.span9 li,.span3 li').hide();
         
-        // Hack to remove all unused dynamic elements, to be replaced 
-        // with Backbone views below.
-        $('.v02').empty() 
-        
-        // Determine Instrument or Platform command page is called.
+        $('.v02').empty();
         var resource_extension = new IONUX.Models.ResourceExtension({resource_type: resource_type, resource_id: resource_id});
         if (resource_type == 'InstrumentDevice') {
             new IONUX.Views.InstrumentCommandFacepage({model: resource_extension, el: '.v02'});
@@ -94,10 +83,6 @@ IONUX.Router = Backbone.Router.extend({
         resource_extension.fetch()
             .success(function(model, resp) {
                 render_page(resource_type, resource_id, model);
-                // $('li.' + resource_type + ', div.' + resource_type).show();
-                // $('.span9 ul, .span3 ul').find('li.' + resource_type + ':first').find('a').click();
-                // $('.tab-pane').find('.'+resource_type+':visible:first').css('margin-left', 0);
-                // window.MODEL_DATA = model.data;
             });
     },
     
@@ -126,7 +111,6 @@ IONUX.Router = Backbone.Router.extend({
         var self = this;
         $(document).on("click", "a", function(e) {
             if ($(e.target).hasClass('external')) return true;
-
             // TEMP: catching links in Google Maps, also catching download links.
             if ($(e.target).attr('href').match(/^http/)) return true;
             // Catch Bootstrap's tabs hash so URL doesn't change, example: "InstrumentDevice/list/" to "/2150593"
@@ -135,6 +119,8 @@ IONUX.Router = Backbone.Router.extend({
             return false;
         });
     },
+    
+    
 
     // graceful Backbone handling of full page refresh on non '/' url.
     // handle_url: function(current_url){
@@ -308,23 +294,10 @@ function render_page(resource_type, resource_id, model) {
         $('#2164346').html(replace_url_with_html_links(data_url_text));
     };
     
-
-    // jScrollpane
-    // _.each($('.v02 .'+resource_type+' .content-wrapper'), function(el){
-    //     // $(el).css('height', '200px').jScrollPane({autoReinitialise: true});
-    //     $(el).find('.content-wrapper:first').css('height', '200px').jScrollPane({autoReinitialise: true});
-    // });
-    
-    
     _.each($('.v02 .'+resource_type), function(el){
-        // $(el).find('content-wrapper:first').css('background', 'red');
-        
         $(el).find('.content-wrapper:first').css('height', '200px').jScrollPane({autoReinitialise: true});
-        // console.log('CWWWW', cw);
-        // $(el).css('height', '200px').jScrollPane({autoReinitialise: true});
     });
     
-
     // ActionMenus
     _.each($('.v01 .group .nav, .v02 .group .nav'), function(el) {
         new IONUX.Views.GroupActions({el:$(el)});
@@ -341,14 +314,9 @@ function render_page(resource_type, resource_id, model) {
     $('.tab-pane').find('.'+resource_type+':visible:first').css('margin-left', 0);
 
     // Todo fix DataTable thead width
-    _.each($('table thead'), function(thead){
-        $(thead).find('th').first().click();
-    });
-    
-    // _.each($('table thead:hidden'), function(thead){
-    //     $(thead).find('th').first().show().click().hide();
+    // _.each($('table thead'), function(thead){
+    //     $(thead).find('th').first().click();
     // });
-    // 
 };
 
 function render_error(){

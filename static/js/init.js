@@ -7,11 +7,10 @@ function dyn_do_init(){
     // $('body').css('background-color', '#000');
     $('.container').css('opacity', 0);
     $('.loader').show();
-
+    
     IONUX.set_roles("{{ roles }}");
     // Handle conditionally displaying login, user profile and logout links
     if ("{{ logged_in }}" == "True"){
-        console.log('logged_in true');
         $("#login").hide();
     } else {
         $("#logout").hide();

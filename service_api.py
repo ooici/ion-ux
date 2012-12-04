@@ -254,7 +254,7 @@ class ServiceApi(object):
     def signon_user_testmode(user_name):
         user_identities = ServiceApi.find_by_resource_type("UserInfo")
         for user_identity in user_identities:
-            if 'Tim Ampe' in user_identity['name']:
+            if user_name == user_identity['name']:
                 user_id = user_identity['_id']
                 session['user_id'] = user_id
                 session['valid_until'] = str(int(time.time()) * 100000)
@@ -262,6 +262,7 @@ class ServiceApi(object):
 
                 # get roles and stash
                 roles = service_gateway_get('org_management', 'find_all_roles_by_user', params={'user_id': user_id})
+
                 # roles_str = ""
                 # first_time = True
                 # for role in roles['RSN_Demo_org']:
@@ -271,6 +272,7 @@ class ServiceApi(object):
                 #         first_time = False
                 #     roles_str = roles_str + str(role["name"])
                 # session['roles'] = roles_str
+
                 session['roles'] = 'roles'
                 return
 

@@ -20,7 +20,7 @@ SERVICE_GATEWAY_BASE_URL = 'http://%s:%d/ion-service' % (GATEWAY_HOST, GATEWAY_P
 
 def render_app_template(current_url):
     """Renders base template for full app, with needed template params"""
-    roles = session["roles"] if session.has_key("roles") else ""
+    roles = session["roles"] if session.has_key("roles") else "roles"
     logged_in = "True" if session.has_key('user_id') else "False"
     tmpl = Template(LayoutApi.process_layout())
     return render_template(tmpl, **{"current_url":"/", "roles":roles, "logged_in":logged_in})
@@ -285,10 +285,12 @@ def tim():
 
 @app.route('/')
 def index():
-    if LOGGED_IN: #XXX for development
-        return render_app_template(request.path)
-    else:
-        return render_template("index.html")
+    # if LOGGED_IN: #XXX for development
+    #     return render_app_template(request.path)
+    # else:
+    #     return render_app_template(request.path)
+    return render_app_template(request.path)
+    
 
 # TODO fix this to be a post
 @app.route('/signon/', methods=['GET'])
@@ -366,7 +368,7 @@ def logout():
 
 
 @app.route('/session/check/', methods=['GET'])
-def sessions_check():
+def session_check():
     return 'user_id: %s, roles: %s, is_registered: %s' % (session['user_id'], session['roles'], session['is_registered'])
 
 # DEV ROUTES

@@ -355,17 +355,18 @@ function integration_log(id, db_path, integration_info ) {
 };
 
 
-IONUX.Views.Collection = Backbone.View.extend({
-    template: _.template($("#collection").html()),
-    initialize: function() {
-        _.bindAll(this, 'render');
-        this.resource_type = this.options.resource_type;
-    },
-    render: function(){
-        this.$el.append(this.template({collection: this.collection.toJSON(), resource_type: this.resource_type}));
-        return this;
-    },
-});
+
+// IONUX.Views.Collection = Backbone.View.extend({
+//     template: _.template($("#collection").html()),
+//     initialize: function() {
+//         _.bindAll(this, 'render');
+//         this.resource_type = this.options.resource_type;
+//     },
+//     render: function(){
+//         this.$el.append(this.template({collection: this.collection.toJSON(), resource_type: this.resource_type}));
+//         return this;
+//     },
+// });
 
 
 
