@@ -320,7 +320,7 @@ class LayoutApi(object):
 
         init_script_elmt = ET.Element('script')
         init_script_elmt.set('type', 'text/javascript')
-        init_script_elmt.text = "$(function(){dyn_do_init();});"
+        init_script_elmt.text = "$(function(){initialize_app();});"
         body_elmt.append(init_script_elmt)
 
         tmpl = ET.tostring(tmpl)

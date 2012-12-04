@@ -121,8 +121,6 @@ IONUX.Router = Backbone.Router.extend({
         });
     },
     
-    
-
     // graceful Backbone handling of full page refresh on non '/' url.
     // handle_url: function(current_url){
     //     if (current_url != "/"){
@@ -133,42 +131,46 @@ IONUX.Router = Backbone.Router.extend({
     _reset: function(){ //reset the UI
         $(".viewcontainer").hide();
     }
-
 });
 
 
-// Prepare response from server for IONUX.Views.DataTable;
-// function prepare_table_data(data, columns) {
-//     var table = {headers: [], data: []}
-//     
-//     // // Headers
-//     // if (!columns) var columns = _.keys(data[0]);
-//     // _.each(columns, function(column){
-//     //     table.headers.push({'sTitle': column});
-//     // });
-//     
-//     // Data
-//     _.each(data, function(row) {
-//         var row_values = _.pick(row, columns);
-//         var row_array = _.toArray(row_values);
-//         table.data.push(row_array);
-//     });
-//     return table
-// };
+// ----------------------------------------------------------------------------
+// HELPER METHODS - TODO: move into IONUX namespace
+// ----------------------------------------------------------------------------
 
-
-// Get values from string notation, example:
-// <div data-path="resource.serial_number"> will
-// result in ['resource']['serial_number']
+// Look up chained values found in data-path
 function get_descendant_properties(obj, desc) {
     var arr = desc.split(".");
     while(arr.length && (obj = obj[arr.shift()]));
     return obj;
 };
 
+// Render basic error on AJAX error
+function render_error(){
+    $('#dynamic-container').hide();
+    $('#error').show();
+};
 
+// Render basic error on AJAX error
+function append_info_level(el) {
+    // var info_level = $(el).data('level');
+    // if (info_level || info_level == '0') {
+    //     $(el).append('<span class="label label-important info-level" style="background:green;color:white;">'+info_level+'</div>');
+    // };
+};
+
+// Create <a href> from text
+function replace_url_with_html_links(text) {
+    var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+    return text.replace(exp,"<a class='external' target='_blank' href='$1'>$1</a>"); 
+};
+
+// Renders a page based on resource_type
 function render_page(resource_type, resource_id, model) {
-    // Catch and set derivative resources
+    // Catch and set derivative resources;
+    // it should be moved into it's own function
+    // so that we can develop more logic to handle
+    // heirarchy in face, status and related pages.
     if (resource_type == 'InstrumentModel' || resource_type == 'PlatformModel' || resource_type == 'SensorModel') {
         var resource_type = 'DeviceModel';
     } else if (resource_type == 'Observatory' || resource_type == 'InstrumentSite' || resource_type == 'PlatformSite' || resource_type == 'Subsite') {
@@ -319,66 +321,3 @@ function render_page(resource_type, resource_id, model) {
         $(thead).find('th').first().click();
     });
 };
-
-function render_error(){
-    $('#dynamic-container').hide();
-    $('#error').show();
-};
-
-function append_info_level(el) {
-    // var info_level = $(el).data('level');
-    // if (info_level || info_level == '0') {
-    //     $(el).append('<span class="label label-important info-level" style="background:green;color:white;">'+info_level+'</div>');
-    // };
-};
-
-// function table_links(table_elmt, table_data){
-//     var table_columns = $(table_elmt + 'tr:first th');
-// 
-//     var names = []
-//     _.each(table_columns, function(column, index){
-//         names.push($(column).text());
-//     });
-//     var link_index = _.indexOf(names, 'Name');
-//     
-//     var table_rows = $(table_elmt).find('table tr');
-//     table_rows.splice(0,1); 
-//     var resource_type = table_data[0]['type_'];
-//     var link_tmpl = '<a href="<%= url %>"><%= text %></a>';
-//     
-//     // console.log('TD: ', resource_type, link_index);
-//     
-//     _.each(table_rows, function(tr, index){
-//         var resource_id = table_data[index]['_id'];
-//         var child_index = link_index + 1;
-//         var td = $(tr).find('td:nth-child('+child_index+')');
-//         var text = $(td).text();
-//         var url = "/"+resource_type+"/face/"+resource_id+"/";
-//         // console.log('URL', url);
-//         $(td).html(_.template(link_tmpl, {url: url, text:text}));
-//     });
-// };
-// 
-// function collection_links(){
-//     var trs = $('table:first tr');
-//     trs.splice(0,1);
-//     var resource_type = window.MODEL_DATA.models[0].get('type_');
-//     
-//     _.each(trs, function(tr, index){
-//         var td = $(tr).find('td')[1];
-//         var text = $(td).text();
-//             
-//         var resource_id = window.MODEL_DATA.models[index].get('_id');
-//         
-//         var url = "/"+resource_type+"/face/"+resource_id+"/";
-//         var link_tmpl = '<a href="<%= url %>"><%= text %></a>';
-//         
-//         $(td).html(_.template(link_tmpl, {url: url, text:text}));
-//     });
-// };
-
-
-function replace_url_with_html_links(text) {
-    var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-    return text.replace(exp,"<a class='external' target='_blank' href='$1'>$1</a>"); 
-}
