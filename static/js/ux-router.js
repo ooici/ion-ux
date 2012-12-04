@@ -26,7 +26,7 @@ IONUX.Router = Backbone.Router.extend({
         new IONUX.Views.Footer({resource_id: null, resource_type: null}).render().el;
         
         // Temp beta badge.
-        beta_tmpl = '<div class="alert alert-warning">This is beta software.</div>'
+        beta_tmpl = '<div class="alert alert-warning">This is Release 2 Beta Software.  To access Release 1 software, please click <a href="http://ion-beta-r1.oceanobservatories.org">here</a></div>'
         $('.v00').html(beta_tmpl).css('margin-top', '15px');
     },
     
