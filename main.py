@@ -5,7 +5,7 @@ import base64
 import hashlib
 import time
 
-from config import FLASK_HOST, FLASK_PORT, GATEWAY_HOST, GATEWAY_PORT, LOGGED_IN, PRODUCTION, SECRET_KEY
+from config import FLASK_HOST, FLASK_PORT, GATEWAY_HOST, GATEWAY_PORT, LOGGED_IN, PRODUCTION, SECRET_KEY, UI_MODE
 from service_api import ServiceApi
 from layout_api import LayoutApi
 from jinja2 import Template
@@ -19,10 +19,14 @@ SERVICE_GATEWAY_BASE_URL = 'http://%s:%d/ion-service' % (GATEWAY_HOST, GATEWAY_P
 
 def render_app_template(current_url):
     """Renders base template for full app, with needed template params"""
-    roles = session["roles"] if session.has_key("roles") else "roles"
-    logged_in = "True" if session.has_key('user_id') else "False"
+    # roles = session["roles"] if session.has_key("roles") else "roles"
+    # logged_in = "True" if session.has_key('user_id') else "False"
+    # tmpl = Template(LayoutApi.process_layout())
+    # return render_template(tmpl, **{"current_url":"/", "roles":roles, "logged_in":logged_in})
+
     tmpl = Template(LayoutApi.process_layout())
-    return render_template(tmpl, **{"current_url":"/", "roles":roles, "logged_in":logged_in})
+    return render_template(tmpl)
+    
 
 @app.route('/')
 def index():
@@ -245,19 +249,19 @@ def userprofile():
     else:
         return render_app_template(request.path)
 
-@app.route('/signout/', methods=['GET'])
+@app.route('/signoff/', methods=['GET'])
 def logout():
     session.pop('roles', None)
     session.pop('user_id', None)
     session.pop('is_registered', None)
     return redirect('/')
 
-@app.route('/session/check/', methods=['GET'])
-def session_check():
-    if session['user_id']:
-        return 'user_id: %s, roles: %s, is_registered: %s' % (session['user_id'], session['roles'], session['is_registered'])
-    else:
-        return 'No user session found.'
+@app.route('/session/', methods=['GET'])
+def session_info():
+    session_values = {'user_id': None, 'roles': None, 'is_registered': False, 'is_logged_in': False, 'ui_mode': UI_MODE}
+    if session.has_key('user_id'):
+        session_values.update({'user_id': session['user_id'], 'roles': session['roles'], 'is_registered': session['is_registered'], 'is_logged_in': True})
+    return jsonify(data=session_values)
 
 
 # -----------------------------------------------------------------------------

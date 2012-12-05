@@ -19,6 +19,10 @@ IONUX = {
         router.handle_navigation();
         return router;
     },
+    init_session: function() {
+        IONUX.SESSION_MODEL = new IONUX.Models.Session();
+        var sidebar_view, user_profile_view;
+    },
     set_roles:function(roles){
         if (roles){
             IONUX.ROLES = roles.split(",");
