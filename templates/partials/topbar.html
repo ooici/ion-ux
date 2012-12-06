@@ -1,0 +1,9 @@
+<% if (is_logged_in) { %>
+  <a id="userprofile" href="#" class="btn-navigation filter">User Profile</a>
+  <a id="signoff" href="http://<%= window.location.host %>/signoff/" class="btn-navigation filter external">Logout</a>
+<% } else { %>
+  <a id="signup" href="#" class="btn-navigation filter">Create Account</a>
+  <a id="signin" href="https://ux-test.oceanobservatories.org/login" class="external btn-navigation filter">Sign In</a>
+<% } %>
+
+<a id="help" href="https://confluence.oceanobservatories.org/display/CIUserDoc/User+Documentation" target="_ooi_help" class="btn-navigation-plain external">Help</a>

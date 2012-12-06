@@ -1,0 +1,89 @@
+<div class="sidebar-map">
+	<img src="/static/img/r2/placeholder_map.png" />
+</div>
+
+<div class="sidebar-search">
+  <input id="sidebar-search" class="textfield-search" type="text" /><br />
+  <a class="btn-advanced-search" href="#">Advanced Search</a>  
+</div>
+
+<% if (is_logged_in){ %>
+  <div class="sidebar-nav">
+    <h5>My Recent Searches</h5>
+    <ul class="main-nav">
+      <li><div class="saved_search_mini nav-icon"></div><a href="#">Placeholder</a></li>
+      <li><div class="saved_search_mini nav-icon"></div><a href="#">Placeholder</a></li>
+    </ul>    
+  </div>
+  <div class="sidebar-nav">
+    <h5>My Smart Searches</h5>
+    <ul class="main-nav">
+      <li><div class="saved_search_mini nav-icon"></div><a href="#">Placeholder</a></li>
+      <li><div class="saved_search_mini nav-icon"></div><a href="#">Placeholder</a></li>
+    </ul>    
+  </div>
+  <div class="sidebar-nav">
+    <h5>OOI Resources</h5>
+    <ul class="main-nav">
+      <li><div class="resources_all_mini nav-icon"></div><a href="#">All Resources</a></li>
+      <li><div class="data_product_mini nav-icon"></div><a href="/DataProduct/list/">Data Products</a></li>
+      <li><div class="observatory_mini nav-icon"></div><a href="/Observatory/list/">Observatories</a></li>
+      <li><div class="platform_mini nav-icon"></div><a href="/PlatformDevice/list/">Platforms</a></li>
+      <li><div class="instrument_mini nav-icon"></div><a href="/InstrumentDevice/list/">Instruments</a></li>
+    </ul>    
+  </div>
+  <div class="sidebar-nav">
+    <h5>My Resources</h5>
+    <ul class="main-nav">
+      <li><div class="resource_mini nav-icon"></div><a href="#">Notifications</a></li>
+      <li><div class="observatory_mini nav-icon"></div><a href="/Observatory/list/">Observatories</a></li>
+      <li><div class="platform_mini nav-icon"></div><a href="/PlatformDevice/list/">Platforms</a></li>
+      <li><div class="instrument_mini nav-icon"></div><a href="/InstrumentDevice/list/">Instruments</a></li>
+      <li><div class="data_product_mini nav-icon"></div><a href="/DataProduct/list/">Data Products</a></li>
+    </ul>    
+  </div>
+  <div class="sidebar-nav">
+    <h5>My Collections</h5>
+    <ul class="main-nav">
+      <li><div class="collection_mini nav-icon"></div><a href="#">Placeholder</a></li>
+      <li><div class="collection_mini nav-icon"></div><a href="#">Placeholder</a></li>
+    </ul>    
+  </div>
+
+<% } else { %>
+  <div class="sidebar-nav">
+    <h5>Resources</h5>
+    <ul class="main-nav">
+      <li><div class="resources_all_mini nav-icon"></div><a href="#">All Resources</a></li>
+      <li><div class="data_product_mini nav-icon"></div><a href="/DataProduct/list/">Data Products</a></li>
+      <li><div class="observatory_mini nav-icon"></div><a href="/Observatory/list/">Observatories</a></li>
+      <li><div class="platform_mini nav-icon"></div><a href="/PlatformDevice/list/">Platforms</a></li>
+      <li><div class="instrument_mini nav-icon"></div><a href="/InstrumentDevice/list/">Instruments</a></li>
+    </ul>    
+  </div>
+  <div class="sidebar-welcome">
+    <p>
+      Welcome to Release 2 of the Ocean Observatories Initiative Observatory (OOI).
+      You already have access to many OOI features and real-time data. Just click on something that
+      looks interesting on this page to start using the OOI as our Guest.
+    </p>
+    <p>
+      For personalized services, such as setting notifications and preserving settings for you next visit,
+      create a free account by clicking on "Create Account" at the top of the page.
+    </p>
+    <div class="sidebar-logos">
+      <span class="logo_nsf sidebar-logo">&nbsp;</span>
+      <span class="logo_col sidebar-logo">&nbsp;</span>
+    </div>
+    <p><em>National Science Foundation</em> working with <em>Consortium for Ocean Leadership</em></p>
+    <p class="blue-text">
+      Funding for the Ocean Observatories Initiative is provided by the National Science Foundation through a 
+      Cooperative Agreement with the Consortium for Ocean Leadership. The OOI Program Implementing Organizations are
+      funded trhough sub-awards from the Consortium for Ocean Leadership.
+    </p>
+    <p>
+      This is Release 2 Beta Software.<br />
+      <a href="http://ion-beta-r1.oceanobservatories.org">Release 1 Software</a>
+    </p>
+  </div>
+<% } %>
