@@ -138,7 +138,7 @@ IONUX.Views.Footer = Backbone.View.extend({
     render_buttons: function(){
         var resource_id = this.options.resource_id;
         var resource_type = this.options.resource_type;
-        var buttons = [['Dashboard'], ['Facepage', 'face'], ['Related', 'related'], ['Status', 'status']];
+        var buttons = [['Dashboard'], ['Facepage', 'face'], ['Status', 'status'], ['Related', 'related']];
         var button_tmpl = '<a class="btn-footer" href="<%= url %>"><%= label %></a>'
         
         var self = this;
