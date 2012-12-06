@@ -27,56 +27,13 @@
                 <div class="container-fluid">
                     <div class="row-fluid">
                         <div class="span6"><br /><!-- <img id="ooi-logo" src="/static/img/ooi-logo.png" alt="OOI" width="100" /> --></div>
-                        <div class="span6 navigation">
-                            <a id="signup" href="#" class="btn-navigation filter">Create Account</a>
-                            <a id="login" href="https://ux-test.oceanobservatories.org/login" class="external btn-navigation filter">Sign In</a>
-                            <a id="userprofile" href="/userprofile/" class="btn-navigation filter">User Profile</a>
-                            <a id="logout" href="/logout/" class="btn-navigation filter">Logout</a>
-                            <a id="help" href="https://confluence.oceanobservatories.org/display/CIUserDoc/User+Documentation" target="_ooi_help" class="btn-navigation-plain external">Help</a>
-                        </div>
+                        <div id="topbar" class="span6 user-nav"> </div> <!-- User navigation -->
                     </div>                
                 </div>
             </div>
     		<div id="container" class="container-fluid">
     		    <div class="row-fluid">
-    				<div id="sidebar" class="span2">
-    					<div class="sidebar-map">
-    						<img src="/static/img/r2/placeholder_map.png" />
-    					</div>
-    					<input id="sidebar-search" class="textfield" type="text" /><br />
-                        <a class="btn-advanced-search" href="#">Advanced Search</a>
-                        <span class="sidebar-section">OOI Collections (Dev)</span>
-              <ul class="main-nav">
-                <li><a href="/DataProduct/list/">Data Product</a></li>
-                <li><a href="/DataProcessDefinition/list/">Data Process Definition</a></li>
-
-                <br />
-
-                <li><a href="/Org/list/">Observatory</a></li>
-                <li><a href="/PlatformDevice/list/">Platform</a></li>
-                <li><a href="/PlatformModel/list/">Platform Model</a></li>
-                <li><a href="/InstrumentDevice/list/">Instrument</a></li>
-                <li><a href="/InstrumentModel/list/">Instrument Model</a></li>
-                <li><a href="/UserInfo/list/">User</a></li>
-
-                <br />
-
-                <li><a href="/Observatory/list/">Observatory Site</a></li>
-                <li><a href="/Subsite/list/">Subsite</a></li>
-                <li><a href="/PlatformSite/list/">Platform Site</a></li>
-                <li><a href="/InstrumentSite/list/">Instrument Site</a></li>
-
-                <br />
-
-                <li><a href="/Resource/list/">Resource</a></li>
-                <li><a href="/UserRole/list/">Information Resource</a></li>
-                <li><a href="/DataProcess/list/">Taskable Resource</a></li>
-                <li><a href="/NotificationRequest/list/">Notification Request</a></li>
-
-                <br />
-                <li><a href="/SensorModel/list/">SensorModel</a></li>
-              </ul>
-            </div> <!-- div#sidebar -->
+    				<div id="sidebar" class="span2"> </div> <!-- div#sidebar -->
     				<div id="info" class="span10">
     				    <div id="error" style="display:none;"><h1>Error occurred.</h1></div>
     	                <div id="dynamic-container" class="viewcontainer"> </div>
@@ -86,37 +43,19 @@
 	    </div> <!-- div.wrapper -->
         
         <div id="footr"> </div>
-        
-        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCCcEp2hQdftRhaYgonh1Vyv0JYi5KVvFI&amp;sensor=false"> </script>
-        <script type='text/javascript' src='http://www.google.com/jsapi'> </script>
-        <script type="text/javascript" src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization','version':'1'}]}"> </script>
+
+        <script type="text/template" id="topbar-tmpl"><![CDATA[{% include 'partials/topbar.html' %}]]></script>
+        <script type="text/template" id="sidebar-production-tmpl"><![CDATA[{% include 'partials/sidebar_production.html' %}]]></script>
+        <script type="text/template" id="sidebar-development-tmpl"><![CDATA[{% include 'partials/sidebar_development.html' %}]]></script>
         <script type="text/template" id="instrument-command-facepage-tmpl"><![CDATA[{% include 'partials/instrument_command_facepage.html' %}]]></script>
         <script type="text/template" id="user-request-item-tmpl"><![CDATA[{% include 'partials/user_request_item.html' %}]]></script>
         <script type="text/template" id="datatable-tmpl">{% include 'partials/datatable.html' %}</script>
-        <script type="text/template" id="attribute-group-tmpl">
-            <![CDATA[
-                <div class="content-wrapper">
-                    <% if (label != 'NO LABEL') { %>
-                        <h4><%= label %></h4>
-                    <% } %>
-                </div>
-            ]]>
-        </script>
-        <script type="text/template" id="text-static-tmpl">
-            <![CDATA[<%= text_static %>]]>
-        </script>
-        <script type="text/template" id="text-short-tmpl">
-            <![CDATA[<span class="upcase"><%= label %></span>: <%= text_short %>]]>
-        </script>
-        <script type="text/template" id="icon-tmpl">
-            <i class="icon-cog icon-white"></i>
-        </script>
-        <script type="text/template" id="image-tmpl">
-            <i class="icon-picture icon-white"></i>
-        </script>
-        <script type="text/template" id="badge-tmpl">
-            <![CDATA[<span class="label label-important" style="background-color:#3a87ad;color:white;"><%= badge %></span>]]>
-        </script>
+        <script type="text/template" id="attribute-group-tmpl"><![CDATA[<div class="content-wrapper"><% if (label != 'NO LABEL') { %><h4><%= label %></h4><% } %></div>]]></script>
+        <script type="text/template" id="text-static-tmpl"><![CDATA[<%= text_static %>]]></script>
+        <script type="text/template" id="text-short-tmpl"><![CDATA[<span class="upcase"><%= label %></span>: <%= text_short %>]]></script>
+        <script type="text/template" id="icon-tmpl"><i class="icon-cog icon-white"></i></script>
+        <script type="text/template" id="image-tmpl"><i class="icon-picture icon-white"></i></script>
+        <script type="text/template" id="badge-tmpl"><![CDATA[<span class="label label-important" style="background-color:#3a87ad;color:white;"><%= badge %></span>]]></script>
         <script type="text/template" id="list-tmpl"><![CDATA[{% include 'partials/list.html' %}]]></script>
         <script type="text/template" id="checkbox-tmpl"><![CDATA[{% include 'partials/checkbox.html' %}]]></script>
         <script type="text/template" id="subscribe-tmpl"><![CDATA[{% include 'partials/subscribe.html' %}]]></script>
@@ -126,6 +65,10 @@
         {% block extra_templates %} {% endblock %}
         
         <!-- Vendor JavaScripts -->
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCCcEp2hQdftRhaYgonh1Vyv0JYi5KVvFI&amp;sensor=false"> </script>
+        <script type='text/javascript' src='http://www.google.com/jsapi'> </script>
+        <script type="text/javascript" src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization','version':'1'}]}"> </script>
+      
         <script type="text/javascript" src="/static/js/jquery-1.7.1.min.js"> </script>
         <script type="text/javascript" src="/static/js/bootstrap.min.js"> </script>
         <script type="text/javascript" src="/static/js/json2.js"> </script>
@@ -136,7 +79,6 @@
         <script type="text/javascript" src="/static/js/jquery.jscrollpane.min.js"> </script>
         <script type="text/javascript" src="/static/js/jquery.mousewheel.js"> </script>
         <script src="/static/js/less-1.2.1.min.js" type="text/javascript"> </script>
-        
         {% block extra_vendor_js %} {% endblock %}
         
         <!-- UX JavaScripts -->	
@@ -150,8 +92,6 @@
         <script type="text/javascript" src="/static/js/ux-views-datatable.js"> </script>
         <script type="text/javascript" src="/static/js/ux-views-actionmenu.js"> </script>
         <script type="text/javascript" src="/static/js/ux-views-chart-temp.js"> </script>
-        
-        
         {% block extra_ionux_js %} {% endblock %}
         
         <script type="text/javascript" charset="utf-8">

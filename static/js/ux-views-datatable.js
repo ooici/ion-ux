@@ -261,6 +261,6 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         var resource_type = table_data[0]['type_'];
         var resource_id = table_data[row_index]['_id'];
         var url = "/"+resource_type+"/face/"+resource_id+"/";
-        ROUTER.navigate(url, {trigger:true});
+        IONUX.ROUTER.navigate(url, {trigger:true});
     }
 });

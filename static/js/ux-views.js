@@ -1,3 +1,38 @@
+IONUX.Views.Topbar = Backbone.View.extend({
+    el: '#topbar',
+    template: _.template($('#topbar-tmpl').html()),
+    events: {
+        'click #userprofile': 'userprofile'
+    },
+    initialize: function(){
+        _.bindAll(this, "render");
+        this.model.on('change', this.render);
+    },
+    render: function(){
+        this.$el.html(this.template(this.model.toJSON()));
+        return this;
+    },
+    userprofile: function(e){
+        e.preventDefault();
+        var modal_html = '<div id="userprofile-modal" class="modal hide fade""><h1>User Profile Here.</h1></div>';
+        $(modal_html).modal({keyboard:false});
+    },
+});
+
+IONUX.Views.Sidebar = Backbone.View.extend({
+    el: '#sidebar',
+    initialize: function(){
+        _.bindAll(this, "render");
+        this.model.on('change', this.render);
+    },
+    render: function(){
+        var ui_mode = this.model.get('ui_mode').toLowerCase();
+        this.template = _.template($('#sidebar-'+ui_mode+'-tmpl').html());
+        this.$el.html(this.template(this.model.toJSON()));
+        return this;
+    },
+});
+
 IONUX.Views.Subscribe = Backbone.View.extend({
     el: '#subscribe-modal',
     template: _.template($('#subscribe-tmpl').html()),
@@ -15,7 +50,6 @@ IONUX.Views.Subscribe = Backbone.View.extend({
         var select_elmt = this.$el.find('select');
         var selected_option = this.$el.find('option:selected');
         var event_type = selected_option.attr("value");
-        
         // button_elmt.attr("disabled", "disabled");
         // select_elmt.attr("disabled", "disabled");
         

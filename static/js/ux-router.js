@@ -14,17 +14,19 @@ IONUX.Router = Backbone.Router.extend({
         ":resource_type/command/:resource_id/": "command",
         ":resource_type/:view_type/:resource_id/" : "page",
     },
+    
     dashboard: function(){
-        // this._reset();
         $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS['dashboard']).html()).show();
         $('.Collection').show();
+        
+        // Temp: element positioning
+        $('.heading, .v01').remove();
+        $('.v02').removeClass('span9').addClass('span12');
+        
         new IONUX.Views.DashboardMap({el: '.Collection .map_ooi'}).render().el;
         new IONUX.Views.Footer({resource_id: null, resource_type: null}).render().el;
-        beta_tmpl = '<div class="alert alert-warning">This is Release 2 Beta Software.  To access Release 1 software, please click <a href="http://ion-beta-r1.oceanobservatories.org">here</a></div>'
-        $('.v00').html(beta_tmpl).css('margin-top', '15px');
     },
     
-    // Collection 'face pages'
     collection: function(resource_type){
         $('#error').hide();
         $('#dynamic-container').show();

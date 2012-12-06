@@ -12,7 +12,7 @@ from jinja2.environment import Environment
 
 from dummy_data_layout import LAYOUT_SCHEMA
 from service_api import service_gateway_get
-from config import CACHED_LAYOUT, PORTAL_ROOT
+from config import PORTAL_ROOT, UI_MODE
 
 from random import randint
 
@@ -21,10 +21,8 @@ DEFINED_VIEWS = [
     '2163153', # Status
     '2163154', # Related
     '2163156', # Dashboard
-    # '2163810', # Dashboard 2,
     '2163157', # Command
     '2163158', # Direct Command
-    # '2163927', # Callout
 ]
 
 class LayoutApi(object):
@@ -75,8 +73,8 @@ class LayoutApi(object):
             # Page heading
             v00_elmt = ET.SubElement(row_heading, 'div')
             v00_elmt.set('class', 'v00 span12')
-            group_h1_elmt = ET.SubElement(v00_elmt, 'h1')
-            group_h1_elmt.text = view['label']
+            # group_h1_elmt = ET.SubElement(v00_elmt, 'h1')
+            # group_h1_elmt.text = view['label']
 
             # Page content - left and right columns
             v01_elmt = ET.SubElement(row_container, 'div')
@@ -259,9 +257,11 @@ class LayoutApi(object):
                             attribute_elmt.text = '&nbsp;'
                         else:
                             attribute_elmt.set('class', attribute_widget_type)
-                            # FOR TROUBLESHOOTING
-                            # attribute_elmt.text = 'Attribute: %s (%s) (%s) (%s) (%s)' % (attribute['label'], attribute['name'], attribute_elid, attribute_widget_type, attribute_position)
-                            attribute_elmt.text = '%s (%s)' % (attribute['label'], attribute['name'])
+                            # FOR INTEGRATION
+                            if UI_MODE == 'DEVELOPMENT':
+                                # attribute_elmt.text = '%s (%s)' % (attribute['label'], attribute['name'])
+                                attribute_elmt.text = 'Attribute: %s (%s) (%s) (%s) (%s)' % (attribute['label'], attribute['name'], attribute_elid, attribute_widget_type, attribute_position)
+                            
                             
                         if attribute_widget_type not in ('table_ooi', 'chart_ooi'):
                             block_container_elmt.set('class', 'content-wrapper')
@@ -289,26 +289,6 @@ class LayoutApi(object):
                             meta_elmt.set('id', meta_elmt_id)
                             meta_elmt.text = "var %s=%s" % (meta_elmt_id, json.dumps(metadata))
                         
-                        # if attribute['embed'] and not attribute_widget_type in excluded_sub_attributes:
-                        #     for sub_at_element in attribute['embed']:
-                        #         sub_attribute_elid = sub_at_element['elid']
-                        #         sub_attribute_position = sub_at_element['pos']
-                        #         sub_attribute_data_path = sub_at_element['dpath']
-                        #         sub_attribute_level = sub_at_element['olevel']
-                        #         sub_attribute = layout_schema['spec']['elements'][sub_attribute_elid]
-                        #         
-                        #         sub_attribute_widget_id = sub_attribute['wid']
-                        #         sub_attribute_widget_type = layout_schema['spec']['widgets'][sub_attribute_widget_id]['name']
-                        #         
-                        #         sub_attribute_elmt = ET.SubElement(block_elmt, 'div')
-                        #         sub_attribute_elmt.set('id', sub_attribute_elid)
-                        #         sub_attribute_elmt.set('class', sub_attribute_widget_type)
-                        #         sub_attribute_elmt.set('data-path', sub_attribute_data_path)
-                        #         sub_attribute_elmt.set('data-level', sub_attribute_level)
-                        #         sub_attribute_elmt.set('data-label', sub_attribute['label'])
-                        # 
-                        #         # sub_attribute_elmt.text = '%s (%s) (%s) (%s) (%s)' % (sub_attribute['label'], sub_attribute['name'], sub_attribute_elid, sub_attribute_widget_type, sub_attribute_position)
-                        #         sub_attribute_elmt.text = '%s (%s)' % (sub_attribute['label'], sub_attribute['name'])
 
         layout_elmt = ET.SubElement(body_elmt, 'script')
         layout_elmt.set('id', 'layout')
