@@ -150,7 +150,7 @@ class ServiceApi(object):
     def fetch_map(ui_server, unique_key):
         print '\n\nFETCH_MAP', ui_server, unique_key, '\n\n'
         # TODO: service_gateway_get to support dict arguments
-        map_kml = requests.get('http://localhost:5000/ion-service/visualization_service/get_dataproduct_kml?visualization_parameters={"unique_key":"%s","ui_server":"%s"}&return_format=raw_json' % (unique_key, ui_server))
+        map_kml = requests.get('http://%s:%d/ion-service/visualization_service/get_dataproduct_kml?visualization_parameters={"unique_key":"%s","ui_server":"%s"}&return_format=raw_json' % (GATEWAY_HOST, GATEWAY_PORT, unique_key, ui_server))
         return map_kml.content
         
         # map_kml = requests.get('http://localhost:5000/ion-service/visualization_service/get_dataproduct_kml')
