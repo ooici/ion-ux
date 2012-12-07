@@ -30,18 +30,15 @@ class LayoutApi(object):
     def get_new_layout_schema():
         layout_schema = service_gateway_get('directory', 'get_ui_specs', params={'user_id': 'tboteler'})
         return layout_schema
-
+    
     # Brute force method to quickly experiment with different rendering strategies
     # with CSS rules, etc. Optimizations/refactoring will be underway soon.
     @staticmethod
     def process_layout(layout_schema=None, interactions=None):
         env = Environment()
-        
         env.loader = FileSystemLoader(PORTAL_ROOT+'/templates')
         tmpl_unparsed = env.get_template('ion_ux.html').render()
         tmpl = ET.fromstring(tmpl_unparsed.encode('utf-8'))
-
-        # Body element for appending scripts/templates
         body_elmt = tmpl.find('body')
 
         layout_schema = LayoutApi.get_new_layout_schema()
@@ -62,24 +59,18 @@ class LayoutApi(object):
             # Creating page structure via Twitter Bootstrap
             # conventions. This will be optimized.
 
-            # Fluid row to hold page heading
-            row_heading = ET.SubElement(script_elmt, 'div')
-            row_heading.set('class', 'row-fluid heading')
-
-            # Fluid row to hold columns for main page
-            row_container = ET.SubElement(script_elmt, 'div')
-            row_container.set('class', 'row-fluid')
-
             # Page heading
-            v00_elmt = ET.SubElement(row_heading, 'div')
+            row_heading_elmt = ET.SubElement(script_elmt, 'div')
+            row_heading_elmt.set('class', 'row-fluid heading')
+            v00_elmt = ET.SubElement(row_heading_elmt, 'div')
             v00_elmt.set('class', 'v00 span12')
-            # group_h1_elmt = ET.SubElement(v00_elmt, 'h1')
-            # group_h1_elmt.text = view['label']
 
             # Page content - left and right columns
-            v01_elmt = ET.SubElement(row_container, 'div')
+            row_page_elmt = ET.SubElement(script_elmt, 'div')
+            row_page_elmt.set('class', 'row-fluid')
+            v01_elmt = ET.SubElement(row_page_elmt, 'div')
             v01_elmt.set('class', 'v01 span3')
-            v02_elmt = ET.SubElement(row_container, 'div')
+            v02_elmt = ET.SubElement(row_page_elmt, 'div')
             v02_elmt.set('class', 'v02 span9')
 
             # END BASIC PAGE STRUCTURE

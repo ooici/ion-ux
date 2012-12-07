@@ -1,3 +1,26 @@
+IONUX.Views.Search = Backbone.View.extend({
+    template: _.template('XXXX<input id="sidebar-search" class="textfield-search" type="text" /><br /><a class="btn-advanced-search" href="#">Advanced Search</a>'),
+    events: {
+        'click .btn-advanced-search': 'search'
+    },
+    initialize: function(){
+        _.bindAll(this, "render");
+    },
+    render: function(){
+        console.log('search#render');
+        $('#sidebar-search').html('howdy');
+        $('#sidebar-search input').css('background-color', 'red');
+        return this;
+    },
+    search: function(e){
+        e.preventDefault();
+        console.log('search');
+    },
+});
+
+
+
+
 IONUX.Views.Topbar = Backbone.View.extend({
     el: '#topbar',
     template: _.template($('#topbar-tmpl').html()),
@@ -52,7 +75,6 @@ IONUX.Views.Subscribe = Backbone.View.extend({
         var event_type = selected_option.attr("value");
         // button_elmt.attr("disabled", "disabled");
         // select_elmt.attr("disabled", "disabled");
-        
         var self = this;
         $.ajax({
           url: 'subscribe/'+event_type+'/',
@@ -303,7 +325,7 @@ IONUX.Views.AttributeGroup = Backbone.View.extend({
 });
 
 IONUX.Views.TextShort = Backbone.View.extend({
-    template: _.template('<span class="upcase"><%= label %></span>: <%= text_short %>'),
+    template: _.template('<span><%= label %>: <%= text_short %>'),
 
     render: function(){
         var data_path = this.$el.data('path');

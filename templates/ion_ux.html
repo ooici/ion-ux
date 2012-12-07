@@ -52,7 +52,7 @@
         <script type="text/template" id="datatable-tmpl">{% include 'partials/datatable.html' %}</script>
         <script type="text/template" id="attribute-group-tmpl"><![CDATA[<div class="content-wrapper"><% if (label != 'NO LABEL') { %><h4><%= label %></h4><% } %></div>]]></script>
         <script type="text/template" id="text-static-tmpl"><![CDATA[<%= text_static %>]]></script>
-        <script type="text/template" id="text-short-tmpl"><![CDATA[<span class="upcase"><%= label %></span>: <%= text_short %>]]></script>
+        <script type="text/template" id="text-short-tmpl"><![CDATA[<span class="upcase" style="width: 100px; display:inline;"><%= label %></span>: <%= text_short %>]]></script>
         <script type="text/template" id="icon-tmpl"><i class="icon-cog icon-white"></i></script>
         <script type="text/template" id="image-tmpl"><i class="icon-picture icon-white"></i></script>
         <script type="text/template" id="badge-tmpl"><![CDATA[<span class="label label-important" style="background-color:#3a87ad;color:white;"><%= badge %></span>]]></script>

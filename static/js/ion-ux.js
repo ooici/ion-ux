@@ -12,7 +12,7 @@ IONUX = {
         IONUX.SESSION_MODEL.fetch().complete(function(resp) {
             Backbone.history.start({pushState:true, hashChange: false});
             new IONUX.Views.Sidebar({model: IONUX.SESSION_MODEL}).render().el;
-            new IONUX.Views.Topbar({model: IONUX.SESSION_MODEL}).render().el;
+            new IONUX.Views.Topbar({model: IONUX.SESSION_MODEL}).render().el
         });
         router.handle_navigation();
         return router;

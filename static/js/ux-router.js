@@ -13,6 +13,11 @@ IONUX.Router = Backbone.Router.extend({
         ":resource_type/list/": "collection",
         ":resource_type/command/:resource_id/": "command",
         ":resource_type/:view_type/:resource_id/" : "page",
+        "/search/": "search"
+    },
+    
+    search: function(){
+        console.log("router#search");
     },
     
     dashboard: function(){
