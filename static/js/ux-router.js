@@ -27,11 +27,11 @@ IONUX.Router = Backbone.Router.extend({
         // Temp: element positioning
         $('.heading, .v01').remove();
         $('.v02').removeClass('span9').addClass('span12');
-        
+
+        $('ul:visible').find('li:first').find('a').click();
+
         new IONUX.Views.DashboardMap({el: '.Collection .map_ooi'}).render().el;
-        new IONUX.Views.Footer({resource_id: null, resource_type: null}).render().el;
-        
-        
+        new IONUX.Views.Footer({resource_id: null, resource_type: null}).render().el;        
     },
     
     collection: function(resource_type){
@@ -39,6 +39,7 @@ IONUX.Router = Backbone.Router.extend({
         $('#dynamic-container').show();
         $('#dynamic-container').html($('#2163152').html());
         $('.span9 li,.span3 li').hide();
+        $('ul:visible').find('li:first').find('a').click();
         
         window.MODEL_DATA = new IONUX.Collections.Resources(null, {resource_type: resource_type});
         window.MODEL_DATA.fetch().success(function(data){
@@ -300,9 +301,8 @@ function render_page(resource_type, resource_id, model) {
     });
     _.each($('.v01 .'+resource_type+'.block, .v02 .'+resource_type+'.block'), function(el) {
         new IONUX.Views.BlockActions({el:$(el)});
-    });    
-
-    new IONUX.Views.ViewActions({el: '.v00 .heading-right'});
+    });
+    new IONUX.Views.ViewActions({el: '.'+resource_type+' .heading-right'});
 
     // Show the relevant elements and click to enable the Bootstrap tabs.
     $('li.' + resource_type + ', div.' + resource_type).show();
