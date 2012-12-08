@@ -30,6 +30,8 @@ IONUX.Router = Backbone.Router.extend({
         
         new IONUX.Views.DashboardMap({el: '.Collection .map_ooi'}).render().el;
         new IONUX.Views.Footer({resource_id: null, resource_type: null}).render().el;
+        
+        
     },
     
     collection: function(resource_type){
@@ -299,11 +301,12 @@ function render_page(resource_type, resource_id, model) {
     _.each($('.v01 .'+resource_type+'.block, .v02 .'+resource_type+'.block'), function(el) {
         new IONUX.Views.BlockActions({el:$(el)});
     });    
-    new IONUX.Views.ViewActions({el: '.v00'});
+
+    new IONUX.Views.ViewActions({el: '.v00 .heading-right'});
 
     // Show the relevant elements and click to enable the Bootstrap tabs.
     $('li.' + resource_type + ', div.' + resource_type).show();
-    $('.span9 ul, .span3 ul').find('li.' + resource_type + ':first').find('a').click();  
+    $('.span9 ul, .span3 ul, .span12 ul').find('li.' + resource_type + ':first').find('a').click();  
     
     $('.tab-pane').find('.'+resource_type+':visible:first').css('margin-left', 0);
 

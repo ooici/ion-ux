@@ -326,6 +326,7 @@ IONUX.Views.AttributeGroup = Backbone.View.extend({
 
 IONUX.Views.TextShort = Backbone.View.extend({
     template: _.template('<span><%= label %>: <%= text_short %>'),
+    template_title: _.template('<%= text_short %>'),
 
     render: function(){
         var data_path = this.$el.data('path');
@@ -333,7 +334,14 @@ IONUX.Views.TextShort = Backbone.View.extend({
         if (data_path){
             var label = this.$el.data('label');
             var text_short = get_descendant_properties(this.options.data_model, data_path);
-            this.$el.html(this.template({label: label, text_short: text_short}));
+            
+            // Work around formatting issue in UI database
+            if (this.$el.parent().is('.heading-left')) {
+                this.$el.html(this.template_title({text_short: text_short}));
+            } else {
+                this.$el.html(this.template({label: label, text_short: text_short}));
+            }
+            
         } else {
             this.$el.css('color', 'orange');
             var integration_info = this.$el.text();
@@ -348,6 +356,8 @@ IONUX.Views.TextStatic = Backbone.View.extend({
     render: function(){
         var label = this.$el.data('label');
         if (label) {
+            // Work around formatting issue in UI database
+            if (this.$el.parent().is('.heading-left')) label = label + ': ';
             this.$el.html(this.template({text_static: label}));
         };
         return this;
