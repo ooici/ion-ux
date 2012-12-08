@@ -440,6 +440,7 @@ a.btn-navigation-plain {
 /* Temp header */
 #header {
   background: #004978 url('/static/img/banner.png') no-repeat 0 0;
+  border-bottom: solid 1px #0079af;
   height: 70px;
 }
 
