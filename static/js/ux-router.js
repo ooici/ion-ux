@@ -27,8 +27,8 @@ IONUX.Router = Backbone.Router.extend({
         // Temp: element positioning
         $('.heading, .v01').remove();
         $('.v02').removeClass('span9').addClass('span12');
-
-        $('ul:visible').find('li:first').find('a').click();
+        
+        $('.v01 ul:visible, .v02 ul:visible').find('li:first').find('a').click();
 
         new IONUX.Views.DashboardMap({el: '.Collection .map_ooi'}).render().el;
         new IONUX.Views.Footer({resource_id: null, resource_type: null}).render().el;        
@@ -39,7 +39,7 @@ IONUX.Router = Backbone.Router.extend({
         $('#dynamic-container').show();
         $('#dynamic-container').html($('#2163152').html());
         $('.span9 li,.span3 li').hide();
-        $('ul:visible').find('li:first').find('a').click();
+        $('.v01 ul:visible, .v02 ul:visible').find('li:first').find('a').click();
         
         window.MODEL_DATA = new IONUX.Collections.Resources(null, {resource_type: resource_type});
         window.MODEL_DATA.fetch().success(function(data){
