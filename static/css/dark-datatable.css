@@ -68,12 +68,21 @@ table.table tr.odd td {
     padding:4px 8px;
 }
 
-.filter-header button {
+.show-hide-filters {
     float:right;
     position:relative;
     top:-1px;
     padding:1px;
     font-size:10px;
+    width:15px;
+    height:15px;
+    cursor:pointer;
+}
+.filter_passive {
+    background-position:-240px -60px !important; /* fixme */
+}
+.filter_passive:hover {
+    background-position:-300px -60px !important; /* fixme */
 }
 
 .filter-controls {
