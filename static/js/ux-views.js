@@ -37,8 +37,9 @@ IONUX.Views.Topbar = Backbone.View.extend({
     },
     userprofile: function(e){
         e.preventDefault();
-        var modal_html = '<div id="userprofile-modal" class="modal hide fade""><h1>User Profile Here.</h1></div>';
-        $(modal_html).modal({keyboard:false});
+        user_info_url = '/UserInfo/face/'+IONUX.SESSION_MODEL.get('user_id')+'/';
+        IONUX.ROUTER.navigate(user_info_url, {trigger: true});
+        return false;
     },
 });
 
