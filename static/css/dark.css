@@ -100,6 +100,17 @@
   position: relative;
 }
 
+/*.main-nav li:before {
+  background-image: url(/static/img/css_sprite_pepper.png);
+  background-position: 0px -60px;
+  content: '';
+  height: 15px;
+  width: 15px;
+  left:0;
+  display:block;
+  position:absolute;
+}
+*/
 .main-nav li a {
   width: 100%;
   font-weight:300; 
@@ -590,6 +601,7 @@ ul.nav {
   border: none;
   margin-bottom: 0;
 }
+
 
 .nav-tabs li a {
   background: #1A1A1A;

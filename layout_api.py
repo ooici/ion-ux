@@ -221,7 +221,6 @@ class LayoutApi(object):
                             attribute_elmt.set('class', attribute_widget_type)
                             # FOR INTEGRATION
                             if UI_MODE == 'DEVELOPMENT':
-                                # attribute_elmt.text = '%s (%s)' % (attribute['label'], attribute['name'])
                                 attribute_elmt.text = 'Attribute: %s (%s) (%s) (%s) (%s)' % (attribute['label'], attribute['name'], attribute_elid, attribute_widget_type, attribute_position)
                         
                         # CHECK FOR TITLE BAR

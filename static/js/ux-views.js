@@ -18,9 +18,6 @@ IONUX.Views.Search = Backbone.View.extend({
     },
 });
 
-
-
-
 IONUX.Views.Topbar = Backbone.View.extend({
     el: '#topbar',
     template: _.template($('#topbar-tmpl').html()),

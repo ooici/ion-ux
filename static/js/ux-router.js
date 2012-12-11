@@ -311,7 +311,7 @@ function render_page(resource_type, resource_id, model) {
     $('.tab-pane').find('.'+resource_type+':visible:first').css('margin-left', 0);
 
     // Todo: fix DataTable thead width
-    _.each($('table thead'), function(thead){
-        $(thead).find('th').first().click();
-    });
+    // _.each($('table thead'), function(thead){
+    //     $(thead).find('th').first().click();
+    // });
 };

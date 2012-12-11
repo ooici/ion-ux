@@ -1,11 +1,42 @@
 @xwidth: 60px;
 @ywidth: 60px;
 
+.sprite(@width:0px, @height:0px) {  
+  &:before {
+    background-image: url(/static/img/css_sprite_pepper.png);
+    background-position: @width @height;
+    content: '';
+    height: 15px;
+    width: 15px;
+    left:0;
+    display:block;
+    position:absolute;
+    
+  }
+}
+
+.saved_search_mini {.sprite(@xwidth*0, @ywidth*-1);}
+.data_product_mini {.sprite(@xwidth*-1, @ywidth*-3);}
+.observatory_mini {.sprite(@xwidth*-1, @ywidth*-8);}
+.platform_mini {.sprite(@xwidth*-1, @ywidth*-9);}
+.instrument_mini {.sprite(@xwidth*-1, @ywidth*-7);}
+.resource_mini {.sprite(@xwidth*-1, @ywidth*-10);}
+.collection_mini {.sprite(@xwidth*0, @ywidth*0);}
+
+.device_mini {.sprite(@xwidth*-1, @ywidth*-6);}
+.sensor_mini {.sprite(@xwidth*-1, @ywidth*-11);}
+.site_mini {.sprite(@xwidth*-1, @ywidth*-12);}
+
+
+/*
 @collection_mini: @xwidth*0 @ywidth*0;
 .collection_mini {background-image: url(/static/img/css_sprite_pepper.png); background-position: @collection_mini}
+*/
 
+/*
 @saved_search_mini: @xwidth*0 @ywidth*-1; 
 .saved_search_mini {background-image: url(/static/img/css_sprite_pepper.png); background-position: @saved_search_mini}
+*/
 
 @resources_all_mini: @xwidth*0 @ywidth*-2; 
 .resources_all_mini {background-image: url(/static/img/css_sprite_pepper.png); background-position: @resources_all_mini;}
@@ -58,8 +89,10 @@
 @data_producer_mini: @xwidth*-1 @ywidth*-2;
 .data_producer_mini {background-image: url(/static/img/css_sprite_pepper.png); background-position: @data_producer_mini}
 
+/*
 @data_product_mini: @xwidth*-1 @ywidth*-3;
 .data_product_mini {background-image: url(/static/img/css_sprite_pepper.png); background-position: @data_product_mini}
+*/
 
 @data_set_mini: @xwidth*-1 @ywidth*-4; 
 .data_set_mini {background-image: url(/static/img/css_sprite_pepper.png); background-position: @data_set_mini}
@@ -67,6 +100,7 @@
 @deployment_mini: @xwidth*-1 @ywidth*-5;
 .deployment_mini {background-image: url(/static/img/css_sprite_pepper.png); background-position: @deployment_mini}
 
+/*
 @device_mini: @xwidth*-1 @ywidth*-6;
 .device_mini {background-image: url(/static/img/css_sprite_pepper.png); background-position: @device_mini}
 
@@ -87,7 +121,8 @@
 
 @site_mini: @xwidth*-1 @ywidth*-12;
 .site_mini {background-image: url(/static/img/css_sprite_pepper.png); background-position: @site_mini}
-	
+*/	
+
 @badge_status_graphic_critical: @xwidth*-2 @ywidth*0;
 .badge_status_graphic_critical {background-image: url(/static/img/css_sprite_pepper.png); background-position: @badge_status_graphic_critical}
 
