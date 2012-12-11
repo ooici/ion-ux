@@ -53,6 +53,7 @@ class LayoutApi(object):
         resource_types = []
         metadata_processed = []
         exclude_sub_attributes = ['table_ooi', 'chart_ooi']
+        attribute_levels = ['level-zero', 'level-one', 'level-two', 'level-three', 'level-four', 'level-five', 'level-six']
 
         # --------------------------------------------------------------------------        
         # VIEWS
@@ -175,8 +176,7 @@ class LayoutApi(object):
                     if group_position != 'V00':
                         # Hide table headers for now.
                         if not attribute_widget_type == 'table_ooi':
-                            block_h3_elmt = ET.SubElement(block_elmt, 'h3')
-                            block_h3_elmt.text = block['label']
+                            block_h3_elmt = _make_element(block_elmt, 'h3', content=block['label'])
                     if group_position == 'V00':
                         block_container_elmt = block_elmt
                         left_elmt = _make_element(block_container_elmt, 'div', css='span4 heading-left')
@@ -190,42 +190,43 @@ class LayoutApi(object):
                         attribute_position = at_element['pos']
                         attribute_data_path = at_element['dpath']
                         attribute_level = at_element['olevel']
+                        attribute_css = attribute_levels[int(attribute_level)] if attribute_level else ''                        
+                        
                         attribute = layout_schema['spec']['elements'][attribute_elid]
-                        
-                        
-                        # Widget
                         attribute_widget_id = attribute['wid']
                         attribute_widget_type = layout_schema['spec']['widgets'][attribute_widget_id]['name']
-                        
-                        if group_position == 'V00':
-                            if attribute_position == 'B01' or attribute_position == 'B02':
-                                attribute_elmt = _make_element(left_elmt, 'div')
-                            else:
-                                attribute_elmt = _make_element(right_elmt, 'div')
-                        else:
-                            attribute_elmt = ET.SubElement(block_container_elmt, 'div')
-                        
-                        attribute_elmt.set('id', attribute_elid)
-                        attribute_elmt.set('data-position', attribute_position)
-                        attribute_elmt.set('data-path', attribute_data_path)
-                        attribute_elmt.set('data-level', attribute_level)
-                        attribute_elmt.set('data-label', attribute['label'])
-                        
-                        # Set additional class based on spec['graphics] name
-                        # corresponding CSS class applies the sprite.
+                                                
                         if attribute_widget_type == 'image_ooi':
                             image_class = layout_schema['spec']['graphics'][attribute['gfx']]['name']
-                            attribute_elmt.set('class', '%s %s' % (attribute_widget_type, image_class))
-                            attribute_elmt.text = '&nbsp;'
+                            attribute_css += ' %s %s' % (attribute_widget_type, image_class)
                         else:
-                            attribute_elmt.set('class', attribute_widget_type)
-                            # FOR INTEGRATION
-                            if UI_MODE == 'DEVELOPMENT':
-                                attribute_elmt.text = 'Attribute: %s (%s) (%s) (%s) (%s)' % (attribute['label'], attribute['name'], attribute_elid, attribute_widget_type, attribute_position)
-                        
+                            attribute_css += ' %s' % attribute_widget_type
+
                         # CHECK FOR TITLE BAR
                         if attribute_widget_type not in ('table_ooi', 'chart_ooi') and group_position != 'V00':
                             block_container_elmt.set('class', 'content-wrapper')
+                        
+                        attribute_options = {
+                            'id': attribute_elid, 
+                            'data-position': attribute_position,
+                            'data-path': attribute_data_path,
+                            'data-level': attribute_level,
+                            'data-label': attribute['label'],
+                            'css': attribute_css
+                        }
+                        
+                        if group_position == 'V00':
+                            if attribute_position == 'B01' or attribute_position == 'B02':
+                                attribute_elmt = _make_element(left_elmt, 'div', **attribute_options)
+                            else:
+                                attribute_elmt = _make_element(right_elmt, 'div', **attribute_options)
+                        else:
+                            attribute_elmt = _make_element(block_container_elmt, 'div', **attribute_options)
+                        
+                        # FOR INTEGRATION
+                        # if UI_MODE == 'DEVELOPMENT':
+                        #     attribute_elmt.text = 'Attribute: %s (%s) (%s) (%s) (%s)' % (attribute['label'], attribute['name'], attribute_elid, attribute_widget_type, attribute_position)
+                        
                         
                         # Generate metadata for nested elements, ex. tables and attribute groups                        
                         if attribute_widget_type in ('table_ooi', 'attribute_group_ooi') and attribute_elid not in metadata_processed:
@@ -234,8 +235,12 @@ class LayoutApi(object):
                             for embedded_attribute in attribute['embed']:
                                 embedded_object = layout_schema['spec']['elements'][embedded_attribute['elid']]
                                 embedded_widget_type = layout_schema['spec']['widgets'][embedded_attribute['wid']]['name']
+                                
+                                embedded_info_level = embedded_attribute['olevel']
+                                if embedded_info_level:
+                                    embedded_info_level_index = int(embedded_info_level) 
 
-                                metadata_items = [embedded_widget_type, embedded_object['label'], embedded_attribute['dpath'], embedded_attribute['pos'], embedded_attribute['olevel']]
+                                metadata_items = [embedded_widget_type, embedded_object['label'], embedded_attribute['dpath'], embedded_attribute['pos'], embedded_info_level, attribute_levels[embedded_info_level_index]]
                                 if attribute_widget_type == 'attribute_group_ooi':
                                     meta_elmt_id = 'ATTRIBUTE_GROUP_' + attribute_elid
                                     metadata_items.append(embedded_attribute['elid'])
@@ -274,6 +279,7 @@ def _make_element(parent_elmt, elmt_type, **kwargs):
     for (key, value) in kwargs.items():
         if key == 'css':
             elmt.set('class', value)
+            print "CLASSSS!", value
         elif key.startswith('data'):
             elmt.set(key.replace('_','-'), value)
         elif key == 'content':

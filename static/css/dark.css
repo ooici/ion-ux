@@ -1,3 +1,9 @@
+.level-two {
+  display: none;
+}
+.show-all .level-two {
+  display: block;
+}
 /*.heading {
   border-bottom: solid 1px #444;
   padding-bottom: 15px;

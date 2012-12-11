@@ -51,7 +51,7 @@ IONUX.Views.ActionMenu = Backbone.View.extend({
     action_control_click: function(evt) {
         var action_name = $(evt.target).text();
         var action_event = "action__" + action_name.replace(/ /g, "_").toLowerCase()
-        this.trigger(action_event);
+        this.trigger(action_event, $(evt.target));
     }
 
 });
@@ -154,14 +154,22 @@ IONUX.Views.BlockActions = IONUX.Views.ActionMenu.extend({
     initialize: function() {
         this.interaction_items = INTERACTIONS_OBJECT.block_interactions;
         this.on("action__more_info", this.action__more_info);
+        this.on("action__less_info", this.action__less_info);
         this.on("action__detailed_view", this.action__detailed_view);
         this.on("action__hide", this.action__hide);
         this.on("action__edit", this.action__edit);
     },
 
-    action__more_info:function(){
-        alert("IONUX.Views.BlockActions - ACTION: more_info");
+    action__more_info:function(target){
+      this.$el.addClass('show-all');
+      target.text('Less Info');
     },
+    
+    action__less_info:function(target){
+      this.$el.removeClass('show-all');
+      target.text('More Info');
+    },
+    
     action__detailed_view:function(){
         alert("IONUX.Views.BlockActions - ACTION: detailed_view");
     },
@@ -171,7 +179,6 @@ IONUX.Views.BlockActions = IONUX.Views.ActionMenu.extend({
     action__edit:function(){
         alert("IONUX.Views.BlockActions - ACTION: edit");
     }
-
 });
 
 
