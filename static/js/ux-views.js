@@ -284,9 +284,9 @@ IONUX.Views.AttributeGroup = Backbone.View.extend({
         if (data && metadata) {
             this._build_attribute_group(data, metadata, root_path);
         } else {
-            this.$el.find('.content-wrapper').append("Attribute Group missing.");
-            if (metadata) this.$el.find('.content-wrapper').append('<br />Metadata found: ATTRIBUTE_GROUP_' + this.$el.attr('id'));
-            this.$el.css('color', 'orange');
+            // this.$el.find('.content-wrapper').append("Attribute Group missing.");
+            // if (metadata) this.$el.find('.content-wrapper').append('<br />Metadata found: ATTRIBUTE_GROUP_' + this.$el.attr('id'));
+            // this.$el.css('color', 'orange');
         };
 
         return this;
@@ -295,12 +295,10 @@ IONUX.Views.AttributeGroup = Backbone.View.extend({
     _build_attribute_group: function(data, metadata, root_path){
         var self = this;
         _.each(metadata, function(meta_item) {
-    
             switch(meta_item[0]){
                 case "text_short_ooi":
-                    var subelement_view = new IONUX.Views.TextShort({data_model: self.options.data});
+                    var subelement_view = new IONUX.Views.TextShort({data_model: self.options.data, attribute_group: true});
             }
-            
             try {
                 subelement_view.$el.attr('id', meta_item[6]);
                 subelement_view.$el.attr('data-position', meta_item[3]);
@@ -324,31 +322,33 @@ IONUX.Views.AttributeGroup = Backbone.View.extend({
 });
 
 IONUX.Views.TextShort = Backbone.View.extend({
-    template: _.template('<span><%= label %>: <%= text_short %>'),
+    template: _.template('<span><%= label %>:</span>&nbsp;<%= text_short %>'),
     template_title: _.template('<%= text_short %>'),
+    template_attr_group: _.template('<div class="row-fluid"><div class="span5 text-short-label"><%= label %>:&nbsp;</div><div class="span7 text-short-value"><%= text_short %></div></div>'),
 
     render: function(){
         var data_path = this.$el.data('path');
-        
         if (data_path){
             var label = this.$el.data('label');
             var text_short = get_descendant_properties(this.options.data_model, data_path);
-            
-            // Work around formatting issue in UI database
+                        
             if (this.$el.parent().is('.heading-left')) {
-                this.$el.html(this.template_title({text_short: text_short}));
+              this.$el.html(this.template_title({text_short: text_short}));
+            } else if (this.$el.parent().is('.heading-right')) {
+              this.$el.html(this.template({label: label, text_short: text_short}));
             } else {
-                this.$el.html(this.template({label: label, text_short: text_short}));
-            }
-            
+              this.$el.html(this.template_attr_group({label: label, text_short: text_short}));
+            };
+
         } else {
-            this.$el.css('color', 'orange');
-            var integration_info = this.$el.text();
-            integration_log(this.$el.attr('id'), this.$el.data('path'), integration_info);
+            // this.$el.css('color', 'orange');
+            // var integration_info = this.$el.text();
+            // integration_log(this.$el.attr('id'), this.$el.data('path'), integration_info);
         };
         return this;
     }
 });
+
 
 IONUX.Views.TextStatic = Backbone.View.extend({
     template: _.template($('#text-static-tmpl').html()),

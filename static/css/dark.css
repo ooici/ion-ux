@@ -1,22 +1,26 @@
+.v01 .text-short-label, .v02 .text-short-label {
+  text-transform: uppercase;
+  color:#CCCCCC; 
+  font-size:9px; 
+  font-weight:300; 
+  line-height:20px; 
+}
+
+.v01 .text-short-value, .v02 .text-short-value {
+  color:#CCCCCC; 
+  font-size:12px; 
+  font-weight:300; 
+  line-height:20px; 
+}
+
+/* Information Level Filtering */
 .level-two {
   display: none;
 }
+
 .show-all .level-two {
   display: block;
 }
-/*.heading {
-  border-bottom: solid 1px #444;
-  padding-bottom: 15px;
-  margin: 15px 0 15px;
-  overflow: visible;
-}
-
-.heading-left {
-  font-size: 24px;
-  color: white;
-  padding-bottom: 15px;
-}
-*/
 
 .v00 {
   padding: 15px 0 30px;
@@ -219,6 +223,13 @@ max-width: none;
   -moz-box-shadow: 1px 1px #000000;
   box-shadow: 1px 1px #000000;
   
+}
+
+.block .row-fluid {
+  border-left:none;
+  -webkit-box-shadow:none; 
+  -moz-box-shadow:none;
+  box-shadow:none
 }
 
 .textfield_geo {

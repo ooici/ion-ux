@@ -286,9 +286,14 @@ function render_page(resource_type, resource_id, model) {
             chart_instance = new IONUX.Views.Chart({resource_id: resource_id, el: chart_elmt});
             chart_instance.render().el;
         };
+        
         // Todo: manually setting the ERDAP download link
         var data_url_text = $('#2164346').text();
         $('#2164346').html(replace_url_with_html_links(data_url_text));
+        
+        // Todo: find the cause of double content-wrapping on these two items
+        $('#2163118 .content-wrapper:last').remove();
+        $('#2164400 .content-wrapper:last').remove();
     };
     
     _.each($('.v02 .'+resource_type), function(el){
@@ -311,7 +316,7 @@ function render_page(resource_type, resource_id, model) {
     $('.tab-pane').find('.'+resource_type+':visible:first').css('margin-left', 0);
 
     // Todo: fix DataTable thead width
-    // _.each($('table thead'), function(thead){
-    //     $(thead).find('th').first().click();
-    // });
+    _.each($('table thead'), function(thead){
+        $(thead).find('th').first().click();
+    });
 };
