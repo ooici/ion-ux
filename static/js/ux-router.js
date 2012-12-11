@@ -7,6 +7,8 @@ AVAILABLE_LAYOUTS = {
     'command': '2163157'
 };
 
+LOADING_TEMPLATE = '<div style="text-align: center; padding-top: 100px;"><img src="/static/img/busy_indicator.gif"</div>'
+
 IONUX.Router = Backbone.Router.extend({
     routes: {
         "": "dashboard",
@@ -36,15 +38,16 @@ IONUX.Router = Backbone.Router.extend({
     
     collection: function(resource_type){
         $('#error').hide();
-        $('#dynamic-container').show();
-        $('#dynamic-container').html($('#2163152').html());
-        $('.span9 li,.span3 li').hide();
-        $('.v01 ul:visible, .v02 ul:visible').find('li:first').find('a').click();
+        $('#dynamic-container').show().html(LOADING_TEMPLATE);
         
         window.MODEL_DATA = new IONUX.Collections.Resources(null, {resource_type: resource_type});
         window.MODEL_DATA.fetch().success(function(data){
-            $('li.Collection ,div.Collection').show(); // Show elements based on current view/CSS class
-            $('.span9').find('li.Collection:first').find('a').click(); // Manually Set the first tabs 'active'
+            $('#dynamic-container').html($('#2163152').html());
+            $('.span9 li,.span3 li').hide();
+            $('.v01 ul:visible, .v02 ul:visible').find('li:first').find('a').click();
+          
+            $('li.Collection ,div.Collection').show();
+            $('.span9').find('li.Collection:first').find('a').click();
             
             // Todo: better way of finding the container for the collection.
             var table_elmt = $('.v02 .Collection .table_ooi').first();
@@ -59,13 +62,14 @@ IONUX.Router = Backbone.Router.extend({
     // Face, status, related pages
     page: function(resource_type, view_type, resource_id){
         $('#error').hide();
-        $('#dynamic-container').show();
-        $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS[view_type]).html());
-        $('.span9 li,.span3 li').hide();
+        $('#dynamic-container').show().html(LOADING_TEMPLATE);
         
         var resource_extension = new IONUX.Models.ResourceExtension({resource_type: resource_type, resource_id: resource_id});
         resource_extension.fetch()
             .success(function(model, resp) {
+                $('#dynamic-container').show();
+                $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS[view_type]).html());
+                $('.span9 li,.span3 li').hide();
                 render_page(resource_type, resource_id, model);
             })
             .error(function(model, resp) {
@@ -79,11 +83,14 @@ IONUX.Router = Backbone.Router.extend({
 
     command: function(resource_type, resource_id){
         $('#error').hide();
+        // $('#dynamic-container').show().html(LOADING_TEMPLATE);
+        
         $('#dynamic-container').show();
         $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS['command']).html());        
         $('.span9 li,.span3 li').hide();
         
         $('.v02').empty();
+        
         var resource_extension = new IONUX.Models.ResourceExtension({resource_type: resource_type, resource_id: resource_id});
         if (resource_type == 'InstrumentDevice') {
             new IONUX.Views.InstrumentCommandFacepage({model: resource_extension, el: '.v02'});
@@ -92,7 +99,7 @@ IONUX.Router = Backbone.Router.extend({
         };
         
         resource_extension.fetch()
-            .success(function(model, resp) {
+            .success(function(model, resp){
                 render_page(resource_type, resource_id, model);
             });
     },
