@@ -99,6 +99,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
             "bScrollCollapse": true,
             "sScrollXInner": "100%",
         });
+        if (this.options.data.length == 0){this.$el.find(".dataTables_scrollBody").css("overflow", "hidden")};
         return this;
     },
 
