@@ -1,5 +1,5 @@
 import requests, json, time, pprint
-from flask import session
+from flask import session, jsonify
 from config import GATEWAY_HOST, GATEWAY_PORT
 
 SERVICE_GATEWAY_BASE_URL = 'http://%s:%d/ion-service' % (GATEWAY_HOST, GATEWAY_PORT)
@@ -23,6 +23,20 @@ AGENT_REQUEST_TEMPLATE = {
 }
 
 class ServiceApi(object):
+
+    @staticmethod
+    def search(search_query):
+        search_url = "http://%s:%d/ion-service/discovery/parse?search_request=SEARCH'_all'LIKE'%s'FROM'resources_index'" % (GATEWAY_HOST, GATEWAY_PORT, search_query)
+        search_results = requests.get(search_url)
+        search_json = json.loads(search_results.content)
+        
+        # TO DO - Figure out why this is not working.
+        # search_json = json.loads(search_results.content)
+        # return search_json['data']
+        
+        return jsonify(data=search_json['data']['GatewayResponse'])
+
+    
 
     @staticmethod
     def subscribe(resource_type, resource_id, event_type, user_id):

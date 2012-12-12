@@ -279,7 +279,6 @@ def _make_element(parent_elmt, elmt_type, **kwargs):
     for (key, value) in kwargs.items():
         if key == 'css':
             elmt.set('class', value)
-            print "CLASSSS!", value
         elif key.startswith('data'):
             elmt.set(key.replace('_','-'), value)
         elif key == 'content':

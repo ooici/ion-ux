@@ -138,13 +138,15 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
                 if (key.match('@index')) {
                     var new_key = key.replace(/@index/, index);
                     var value = get_descendant_properties(window.MODEL_DATA, new_key);
+                // Todo subclass, check if search result...
+                } else if (data_obj['_source']) {
+                    var value = data_obj['_source'][key];
                 } else {
                     var value = get_descendant_properties(data_obj, key);
                 };
                 if (_.isUndefined(value)) value = "[" + key + "]";
                 data_row.push(value);
             });
-            // data_row.push(data_obj["_id"]); // KEEPING FOR REFERENCE
             data.push(data_row);
         });
         return data;

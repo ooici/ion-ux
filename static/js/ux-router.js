@@ -12,14 +12,39 @@ LOADING_TEMPLATE = '<div style="text-align: center; padding-top: 100px;"><img sr
 IONUX.Router = Backbone.Router.extend({
     routes: {
         "": "dashboard",
+        "search/?:query": "search",
         ":resource_type/list/": "collection",
         ":resource_type/command/:resource_id/": "command",
         ":resource_type/:view_type/:resource_id/" : "page",
-        "/search/": "search"
     },
-    
-    search: function(){
-        console.log("router#search");
+        
+    search: function(query) {
+        console.log('Search query: ', query);
+        $('#error').hide();
+        $('#dynamic-container').show().html(LOADING_TEMPLATE);
+        
+        var search_model = new IONUX.Models.Search({search_query: query});
+        search_model.fetch()
+            .success(function(resp){
+                console.log('Search success::', resp);
+                $('#dynamic-container').html($('#2163152').html());
+                $('.span9 li,.span3 li').hide();
+                $('.v01 ul:visible, .v02 ul:visible').find('li:first').find('a').click();
+              
+                $('li.Collection ,div.Collection').show();
+                $('.span9').find('li.Collection:first').find('a').click();
+                
+                // Todo: better way of finding the container for the collection.
+                var table_elmt = $('.v02 .Collection .table_ooi').first();
+                var table_id = table_elmt.attr('id');
+                new IONUX.Views.DataTable({el: $(table_elmt), data: resp.data});
+                $('.heading').html('<h1>Search Results</h1>').css('padding-bottom', '15px');
+            })
+            .error(function(resp) {console.log('Search error: ', resp)})
+            .complete(function(resp) {console.log('Search complete: ', resp)})
+
+        // Insert footer and buttons
+        new IONUX.Views.Footer({resource_id: null, resource_type: null}).render().el;
     },
     
     dashboard: function(){
@@ -33,7 +58,8 @@ IONUX.Router = Backbone.Router.extend({
         $('.v01 ul:visible, .v02 ul:visible').find('li:first').find('a').click();
 
         new IONUX.Views.DashboardMap({el: '.Collection .map_ooi'}).render().el;
-        new IONUX.Views.Footer({resource_id: null, resource_type: null}).render().el;        
+        new IONUX.Views.Footer({resource_id: null, resource_type: null}).render().el;
+        new IONUX.Views.Search({el: '#search'}).render().el;
     },
     
     collection: function(resource_type){
