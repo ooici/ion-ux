@@ -370,8 +370,8 @@ a.btn-footer {
   width: 100px;
 }
 
-a.btn-footer .active {
-  color: #FFFFFF; border: solid #FFFFFF 1px; background: #666666;
+.footer .active {
+  color: #FFFFFF; border: solid #FFFFFF 1px; background: #999999;
 }
 
 .footer {
