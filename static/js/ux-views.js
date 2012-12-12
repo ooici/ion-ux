@@ -316,7 +316,7 @@ IONUX.Views.AttributeGroup = Backbone.View.extend({
                 subelement_view.$el.attr('data-level', meta_item[4]);
                 subelement_view.$el.attr('data-label', meta_item[1]);
                 subelement_view.$el.addClass(meta_item[5]);
-                path = root_path + '.' + meta_item[6];
+                path = root_path + '.' + meta_item[7];
                 subelement_view.$el.attr('data-path', path);
                 self.$el.append(subelement_view.render().el);
             } catch(e) {
