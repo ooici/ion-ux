@@ -38,13 +38,13 @@ IONUX.Router = Backbone.Router.extend({
                 var table_elmt = $('.v02 .Collection .table_ooi').first();
                 var table_id = table_elmt.attr('id');
                 new IONUX.Views.DataTable({el: $(table_elmt), data: resp.data});
+                $('.heading').html('<h1>Search Results</h1>');
             })
             .error(function(resp) {console.log('Search error: ', resp)})
             .complete(function(resp) {console.log('Search complete: ', resp)})
 
         // Insert footer and buttons
         new IONUX.Views.Footer({resource_id: null, resource_type: null}).render().el;
-        $('.heading').html('<h1>Search Results</h1>');
     },
     
     dashboard: function(){
