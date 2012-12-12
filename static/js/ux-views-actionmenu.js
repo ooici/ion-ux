@@ -12,7 +12,7 @@ todo:
 */
 
 INTERACTIONS_OBJECT = {};
-INTERACTIONS_OBJECT.block_interactions = ['More Info', 'Detailed View', 'Hide', 'Edit'];
+INTERACTIONS_OBJECT.block_interactions = ['More Info', 'Hide', 'Edit'];
 INTERACTIONS_OBJECT.group_interactions = ['More Info', 'Detailed View', /*'Submenu',*/ 'Edit'];
 INTERACTIONS_OBJECT.view_interactions = ['Subscribe', 'Detailed View', /*'Submenu',*/ 'Command', 'Direct Command', 'Download'];
 
@@ -120,7 +120,6 @@ IONUX.Views.GroupActions = IONUX.Views.ActionMenu.extend({
     initialize: function() {
         this.interaction_items = INTERACTIONS_OBJECT.group_interactions;
         this.on("action__more_info", this.action__more_info);
-        this.on("action__detailed_view", this.action__detailed_view);
         this.on("action__submenu_toggle", this.action__submenu_toggle);
         this.on("action__edit", this.action__edit);
     },
@@ -129,10 +128,6 @@ IONUX.Views.GroupActions = IONUX.Views.ActionMenu.extend({
         var modal_tmpl = '<div class="modal hide fade"><h1>More Info</h1><h3>Element: <%= elem_id %></h3></div>';
         var modal_html = _.template(modal_tmpl, {"elem_id":this.$el.attr("id")});
         $(modal_html).modal();
-    },
-
-    action__detailed_view:function(){
-        alert("IONUX.Views.GroupActions - ACTION: detailed_view");
     },
 
     action__submenu_toggle:function(){
