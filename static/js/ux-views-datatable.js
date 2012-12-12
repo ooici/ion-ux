@@ -111,7 +111,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
     },
 
     header_data: function(){
-        var data = [];
+        var data = [{"bSearchable": false, "bVisible":false}]; //Initialize with hidden 'row info' element header element.
         var table_metadata = this._get_table_metadata();
         var self = this;
         _.each(table_metadata, function(item){
@@ -131,7 +131,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         var data_keys = _.map(table_metadata, function(arr){return arr[2];});
         var self = this;
         _.each(data_objs, function(data_obj, index){
-            var data_row = [];
+            var data_row = [data_obj['_id'] + "::" + data_obj['type_']]; //Initialize with hidden 'row info' element data element.
             _.each(data_keys, function(key){
                 // Needed to check for variable and look up full path if found.
                 if (key.match('@index')) {
@@ -168,7 +168,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         var columns = _.map(table_metadata, function(l){return l[1];});
         return columns;
     },
-    
+
     facepage_link: function (obj) {
         var self = this;
         // console.log('obj', obj);
@@ -257,9 +257,10 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
     table_row_click: function(evt){
         var target = $(evt.target);
         var row_index = target.parent().index();
-        var table_data = this.options.data;
-        var resource_type = table_data[0]['type_'];
-        var resource_id = table_data[row_index]['_id'];
+        var table_row_data = this.datatable.fnGetData(row_index);
+        var row_info_list = table_row_data[0].split("::");
+        var resource_id = row_info_list[0];
+        var resource_type = row_info_list[1];
         var url = "/"+resource_type+"/face/"+resource_id+"/";
         IONUX.ROUTER.navigate(url, {trigger:true});
     }
