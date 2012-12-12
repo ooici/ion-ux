@@ -78,7 +78,6 @@ IONUX.Router = Backbone.Router.extend({
 
         // Insert footer and buttons
         new IONUX.Views.Footer({resource_id: resource_id, resource_type: resource_type}).render().el;
-
     },
 
     command: function(resource_type, resource_id){
@@ -86,7 +85,7 @@ IONUX.Router = Backbone.Router.extend({
         // $('#dynamic-container').show().html(LOADING_TEMPLATE);
         
         $('#dynamic-container').show();
-        $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS['command']).html());        
+        $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS['command']).html());
         $('.span9 li,.span3 li').hide();
         
         $('.v02').empty();

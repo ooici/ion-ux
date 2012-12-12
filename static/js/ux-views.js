@@ -159,12 +159,14 @@ IONUX.Views.Footer = Backbone.View.extend({
         var resource_id = this.options.resource_id;
         var resource_type = this.options.resource_type;
         var buttons = [['Dashboard'], ['Facepage', 'face'], ['Status', 'status'], ['Related', 'related']];
-        var button_tmpl = '<a class="btn-footer" href="<%= url %>"><%= label %></a>'
+        var button_tmpl = '<a class="btn-footer <%= view_type %>" href="<%= url %>"><%= label %></a>'
         
         var self = this;
         _.each(buttons, function(button){
             var label = button[0];
             var view_type = button[1];
+            
+            // Determine URL
             if (label == 'Dashboard'){
                 var url = '/';
             } else if  (!resource_id || !resource_type) {
@@ -172,7 +174,13 @@ IONUX.Views.Footer = Backbone.View.extend({
             } else {
                 var url = '/'+resource_type+'/'+view_type+'/'+resource_id+'/';
             };
-            self.$el.append(_.template(button_tmpl)({url: url, label: label}));
+            
+            // Determine active button
+            var path = window.location.pathname;
+            if (path.match(/\/face\//) && view_type == 'face') {
+                
+            };
+            self.$el.append(_.template(button_tmpl)({view_type: view_type, url: url, label: label}));
         });
     },
 });
