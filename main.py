@@ -1,9 +1,12 @@
-from flask import Flask, request, session, jsonify, render_template, redirect, url_for
+from flask import Flask, request, session, jsonify, render_template, redirect, url_for, escape
 import requests, json
 from functools import wraps
 import base64
 import hashlib
 import time
+
+
+from urllib import quote
 
 from config import FLASK_HOST, FLASK_PORT, GATEWAY_HOST, GATEWAY_PORT, LOGGED_IN, PRODUCTION, SECRET_KEY, UI_MODE
 from service_api import ServiceApi
@@ -31,6 +34,21 @@ def render_app_template(current_url):
 @app.route('/')
 def index():
     return render_app_template(request.path)
+
+
+# -----------------------------------------------------------------------------
+# SEARCH
+# -----------------------------------------------------------------------------
+
+@app.route('/search/', methods=['GET'])
+def search(query=None):
+    if request.is_xhr:
+        search_query = escape(request.args.get('query'))
+        search_results = ServiceApi.search(quote(search_query))
+        return search_results
+    else:
+        return render_app_template(request.path)
+
 
 # -----------------------------------------------------------------------------
 # EVENT SUBSCRIPTIONS
