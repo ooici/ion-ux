@@ -2,7 +2,7 @@ IONUX.Views.Search = Backbone.View.extend({
     el: '#search-production',
     template: _.template('<input id="sidebar-search" class="textfield-search" type="text" /><br /><a class="btn-advanced-search" href="#">Advanced Search</a>'),
     events: {
-        'click .btn-advanced-search': 'search'
+        'click .btn-advanced-search': 'search',
     },
     initialize: function(){
         _.bindAll(this, "render");
@@ -15,7 +15,7 @@ IONUX.Views.Search = Backbone.View.extend({
         e.preventDefault();
         var search_term = this.$el.find('#sidebar-search').attr('value');
         IONUX.ROUTER.navigate('/search/?'+ encodeURI(search_term), {trigger:true});
-        return false;
+        return false; 
     },
 });
 

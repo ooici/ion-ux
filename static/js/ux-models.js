@@ -1,14 +1,11 @@
 IONUX.Models.Search = Backbone.Model.extend({
     url: function(){
-      return "/search/?"+this.get("search_query");
+        return "/search/?query="+this.get("search_query");
     },
     parse: function(resp){
         return resp.data;
     }    
 });
-
-
-
 
 // For use with collections of Resource Types, i.e. InstrumentDevice, PlatformDevice, etc.
 IONUX.Models.Session = Backbone.Model.extend({
