@@ -5,7 +5,7 @@ IONUX.Views.Search = Backbone.View.extend({
         'click .btn-advanced-search': 'search',
     },
     initialize: function(){
-        _.bindAll(this, "render");
+        // _.bindAll(this, "render");
     },
     render: function(){
         this.$el.html(this.template);
