@@ -38,7 +38,7 @@ IONUX.Router = Backbone.Router.extend({
                 var table_elmt = $('.v02 .Collection .table_ooi').first();
                 var table_id = table_elmt.attr('id');
                 new IONUX.Views.DataTable({el: $(table_elmt), data: resp.data});
-                $('.heading').html('<h1>Search Results</h1>').css('padding-bottom', '15px');
+                $('.heading').html('<h1>Search Results</h1>').css('padding-bottom', '15px'); // Temp: css hack to make layout nice.
             })
             .error(function(resp) {console.log('Search error: ', resp)})
             .complete(function(resp) {console.log('Search complete: ', resp)})
@@ -280,10 +280,12 @@ function render_page(resource_type, resource_id, model) {
         var data_path = $(el).data('path');
         var raw_table_data = get_descendant_properties(window.MODEL_DATA, data_path);
         if (!_.isEmpty(raw_table_data)) {
-            new IONUX.Views.DataTable({el: $(el), data: raw_table_data});
+            var table = new IONUX.Views.DataTable({el: $(el), data: raw_table_data});
         } else {
-            new IONUX.Views.DataTable({el: $(el), data: []});
+            var table = new IONUX.Views.DataTable({el: $(el), data: []});
         };
+        
+        $(el).find('table').last().dataTable().fnAdjustColumnSizing();
     });
     
     var extent_geospatial_elmts = $('.'+resource_type+' .extent_geospatial_ooi');
@@ -346,9 +348,14 @@ function render_page(resource_type, resource_id, model) {
     $('.span9 ul, .span3 ul, .span12 ul').find('li.' + resource_type + ':first').find('a').click();  
     
     $('.tab-pane').find('.'+resource_type+':visible:first').css('margin-left', 0);
-
-    // Todo: fix DataTable thead width
-    _.each($('table thead'), function(thead){
-        $(thead).find('th').first().click();
+    
+    
+    // DataTables column sizing
+    $('a[data-toggle="tab"]').on('shown', function (e){
+        var table = $($(e.target).attr('href')).find('.'+resource_type+' .table_ooi');
+        if (table.length) $(table).find('table').last().dataTable().fnAdjustColumnSizing();
+    });
+    _.each($('.'+resource_type+' .table_ooi'), function(table){
+        $(table).find('table').last().dataTable().fnAdjustColumnSizing();
     });
 };
