@@ -10,6 +10,7 @@ IONUX.Models.Search = Backbone.Model.extend({
 // For use with collections of Resource Types, i.e. InstrumentDevice, PlatformDevice, etc.
 IONUX.Models.Session = Backbone.Model.extend({
     defaults: {
+        actor_id: null,
         user_id: null,
         is_logged_in: false,
         is_registered: null,

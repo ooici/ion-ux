@@ -266,7 +266,10 @@ class ServiceApi(object):
         for user_identity in user_identities:
             if user_name == user_identity['name']:
                 user_id = user_identity['_id']
+                actor_id = service_gateway_get('resource_registry', 'find_subjects', params={'predicate': 'hasInfo', 'object': user_id})[0][0]['_id']
+                
                 session['user_id'] = user_id
+                session['actor_id'] = actor_id
                 session['valid_until'] = str(int(time.time()) * 100000)
                 session['is_registered'] = True
 
