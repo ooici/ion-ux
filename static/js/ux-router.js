@@ -79,6 +79,9 @@ IONUX.Router = Backbone.Router.extend({
             var table_elmt = $('.v02 .Collection .table_ooi').first();
             var table_id = table_elmt.attr('id');
             new IONUX.Views.DataTable({el: $(table_elmt), data: data.data});
+
+            // console.log(table_elmt.find('table').last());
+            // table_elmt.find('table').last().dataTable().fnAdjustColumnSizing();
         });
         
         // Insert footer and buttons
