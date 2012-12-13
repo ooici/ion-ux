@@ -73,6 +73,9 @@ def ux_stage():
     global web_host
     web_host = 'r2-ux-stage.oceanobservatories.org'
 
+    global gateway_host
+    gateway_host = 'sg.b.oceanobservatories.org'
+
     global ssh_user
     if not ssh_user:
         ssh_user = prompt('User login on web application host: ', default=getpass.getuser())
@@ -95,7 +98,7 @@ def ux_dev():
 
 def restart_apache():
     setup_env()
-    run('sudo apachectl restart')
+    run('sudo /etc/init.d/httpd restart')
     print 'Restarting Apache...'
     time.sleep(4);
 
@@ -139,7 +142,7 @@ def deploy_cilogon():
     config_cilogon()
 
     # Remove/recreate web app extract and install dirs
-    run('rm -rf %s' % extract_dir)
+    run('sudo rm -rf %s' % extract_dir)
     with settings(warn_only=True):
         run('mkdir %s' % extract_dir)
     with settings(warn_only=True):
