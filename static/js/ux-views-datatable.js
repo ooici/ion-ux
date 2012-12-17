@@ -13,15 +13,15 @@
 */
 
 TEST_TABLE_DATA = [
-    {'aggregated_status':"Normal", 'name':"Platform AS02CPSM", 'uuid':274503, 'last_calibration_datetime':"05:12:33", 'description':"Last Note4..", "_id":"abc123", "type_":"InstrumentDevice"},
-    {'aggregated_status':"Alarm", 'name':"Platform AS02CPSM", 'uuid':174501,  'last_calibration_datetime':"05:12:33", 'description':"Last Note2..", "_id":"abc123", "type_":"InstrumentDevice"},
-    {'aggregated_status':"Normal", 'name':"Platform AS02CPSM", 'uuid':473508, 'last_calibration_datetime':"05:12:33", 'description':"Last Note5..", "_id":"abc123", "type_":"InstrumentDevice"},
-    {'aggregated_status':"Normal", 'name':"Platform AS02CPSM", 'uuid':271501, 'last_calibration_datetime':"05:12:33", 'description':"Last Note8..", "_id":"abc123", "type_":"InstrumentDevice"},
-    {'aggregated_status':"Unknown", 'name':"Platform AS02CPSM", 'uuid':275504, 'last_calibration_datetime':"05:12:33", 'description':"Last Note3..", "_id":"abc123", "type_":"InstrumentDevice"},
-    {'aggregated_status':"Normal", 'name':"Platform AS02CPSM", 'uuid':274500, 'last_calibration_datetime':"05:12:33", 'description':"Last Note1..", "_id":"abc123", "type_":"InstrumentDevice"},
-    {'aggregated_status':"Normal", 'name':"Platform AS02CPSM", 'uuid':974508, 'last_calibration_datetime':"05:12:33", 'description':"Last Note7..", "_id":"abc123", "type_":"InstrumentDevice"},
-    {'aggregated_status':"Alert", 'name':"Platform AS02CPSM", 'uuid':274508, 'last_calibration_datetime':"05:12:33",  'description':"Last Note6..", "_id":"abc123", "type_":"InstrumentDevice"},
-    {'aggregated_status':"Unknown", 'name':"Platform AS02CPSM", 'uuid':275504, 'last_calibration_datetime':"05:12:33", 'description':"Last Note3..", "_id":"abc123", "type_":"InstrumentDevice"}
+    {'aggregated_status':"Normal", 'name':"Platform 0 -AS02CPSM", 'uuid':274503, 'last_calibration_datetime':"05:12:33", 'description':"Last Note4..", "_id":"a0bc123", "type_":"000InstrumentDevice"},
+    {'aggregated_status':"Alarm", 'name':"Platform 1 - AS02CPSM", 'uuid':174501,  'last_calibration_datetime':"05:12:33", 'description':"Last Note2..", "_id":"a1bc123", "type_":"111InstrumentDevice"},
+    {'aggregated_status':"Normal", 'name':"Platform 2 - AS02CPSM", 'uuid':473508, 'last_calibration_datetime':"05:12:33", 'description':"Last Note5..", "_id":"a2bc123", "type_":"222InstrumentDevice"},
+    {'aggregated_status':"Normal", 'name':"Platform 3 -AS02CPSM", 'uuid':271501, 'last_calibration_datetime':"05:12:33", 'description':"Last Note8..", "_id":"a3bc123", "type_":"333InstrumentDevice"},
+    {'aggregated_status':"Unknown", 'name':"Platform 4 - AS02CPSM", 'uuid':275504, 'last_calibration_datetime':"05:12:33", 'description':"Last Note3..", "_id":"a4bc123", "type_":"444InstrumentDevice"},
+    {'aggregated_status':"Normal", 'name':"Platform 5 - AS02CPSM", 'uuid':274500, 'last_calibration_datetime':"05:12:33", 'description':"Last Note1..", "_id":"a5bc123", "type_":"555InstrumentDevice"},
+    {'aggregated_status':"Normal", 'name':"Platform 6 - AS02CPSM", 'uuid':974508, 'last_calibration_datetime':"05:12:33", 'description':"Last Note7..", "_id":"a6bc123", "type_":"666InstrumentDevice"},
+    {'aggregated_status':"Alert", 'name':"Platform 7 - AS02CPSM", 'uuid':274508, 'last_calibration_datetime':"05:12:33",  'description':"Last Note6..", "_id":"a7bc123", "type_":"777InstrumentDevice"},
+    {'aggregated_status':"Unknown", 'name':"Platform 8 - AS02CPSM", 'uuid':275504, 'last_calibration_datetime':"05:12:33", 'description':"Last Note3..", "_id":"a8bc123", "type_":"888InstrumentDevice"}
 ]
 
 
@@ -98,7 +98,6 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
             'sScrollYInner': "110%",
             "bScrollCollapse": true,
             "sScrollXInner": "100%",
-            "bSort": false
         });
         if (this.options.data.length == 0){this.$el.find(".dataTables_scrollBody").css("overflow", "hidden")};
         return this;
@@ -261,7 +260,8 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
     table_row_click: function(evt){
         var target = $(evt.target);
         var row_index = target.parent().index();
-        var table_row_data = this.datatable.fnGetData(row_index);
+        var data_index = this.datatable.fnSettings().aiDisplay[row_index];
+        var table_row_data = this.datatable.fnGetData(data_index);
         var row_info_list = table_row_data[0].split("::");
         var resource_id = row_info_list[0];
         var resource_type = row_info_list[1];
