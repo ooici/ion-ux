@@ -378,7 +378,7 @@ def build_get_request(service_name, operation_name, params={}):
     url = '%s/%s/%s' % (SERVICE_GATEWAY_BASE_URL, service_name, operation_name)
     param_string = '?'
     
-    requester = session['actor_id'] if session.has_key('actor_id') else ''
+    requester = session['actor_id'] if session.has_key('actor_id') else 'None'
     param_string += 'requester=%s' % requester
     if params:
         for (k, v) in params.iteritems():
