@@ -253,41 +253,38 @@ class ServiceApi(object):
         # TODO might need to address issues that arise with using
         # session to set cookie when web server ends up being a pool
         # of web servers?
-        session['user_id'] = user_id
+        session['actor_id'] = actor_id
         session['valid_until'] = valid_until
         session['is_registered'] = is_registered
 
-        # get roles and stash
-        session['roles'] = service_gateway_get('org_management', 'find_all_roles_by_user', params={'user_id': user_id})
-
+        user_id = service_gateway_get('identity_management', 'find_user_info_by_id', params={'actor_id': actor_id})['_id']
+        session['user_id'] = user_id
+        
+        session['roles'] = ServiceApi.get_roles_by_actor_id(actor_id)
+        
+        
     @staticmethod
     def signon_user_testmode(user_name):
         user_identities = ServiceApi.find_by_resource_type("UserInfo")
         for user_identity in user_identities:
             if user_name == user_identity['name']:
                 user_id = user_identity['_id']
-                actor_id = service_gateway_get('resource_registry', 'find_subjects', params={'predicate': 'hasInfo', 'object': user_id})[0][0]['_id']
+                actor_id = service_gateway_get('resource_registry', 'find_subjects', params={'predicate': 'hasInfo', 'object': user_id, 'id_only': True})[0][0]
                 
                 session['user_id'] = user_id
                 session['actor_id'] = actor_id
                 session['valid_until'] = str(int(time.time()) * 100000)
                 session['is_registered'] = True
-
-                # get roles and stash
-                roles = service_gateway_get('org_management', 'find_all_roles_by_user', params={'user_id': user_id})
-
-                # roles_str = ""
-                # first_time = True
-                # for role in roles['RSN_Demo_org']:
-                #     if not first_time:
-                #         roles_str = roles_str + ","
-                #     else:
-                #         first_time = False
-                #     roles_str = roles_str + str(role["name"])
-                # session['roles'] = roles_str
-
-                session['roles'] = 'roles'
+                
+                session['roles'] = ServiceApi.get_roles_by_actor_id(actor_id)
+                
                 return
+
+    @staticmethod
+    def get_roles_by_actor_id(actor_id):
+        roles_request = requests.get('http://%s:%d/ion-service/org_roles/%s' % (GATEWAY_HOST, GATEWAY_PORT, actor_id))
+        roles = json.loads(roles_request.content)
+        return roles['data']['GatewayResponse']
 
     @staticmethod
     def find_tim():
@@ -378,15 +375,19 @@ class ServiceApi(object):
 # ---------------------------------------------------------------------------
 
 def build_get_request(service_name, operation_name, params={}):
-    url = '%s/%s/%s' % (SERVICE_GATEWAY_BASE_URL, service_name, operation_name)    
-    if len(params) > 0:
-        param_string = '?'
+    url = '%s/%s/%s' % (SERVICE_GATEWAY_BASE_URL, service_name, operation_name)
+    param_string = '?'
+    
+    requester = session['actor_id'] if session.has_key('actor_id') else ''
+    param_string += 'requester=%s' % requester
+    if params:
         for (k, v) in params.iteritems():
-            param_string += '%s=%s&' % (k,v)
-        url += param_string[:-1]
+            param_string += '&%s=%s' % (k,v)
+    url += param_string
+    
 
     pretty_console_log('SERVICE GATEWAY GET URL', url)
-
+    
     return url
 
 def service_gateway_get(service_name, operation_name, params={}):    
@@ -394,7 +395,6 @@ def service_gateway_get(service_name, operation_name, params={}):
     pretty_console_log('SERVICE GATEWAY GET RESPONSE', resp.content)
     
     if resp.status_code == 200:
-        print 'XXXXXX', type(resp.content)
         resp = json.loads(resp.content)
         
         if type(resp) == dict:
@@ -406,14 +406,15 @@ def build_post_request(service_name, operation_name, params={}):
     url = '%s/%s/%s' % (SERVICE_GATEWAY_BASE_URL, service_name, operation_name)    
 
     post_data = SERVICE_REQUEST_TEMPLATE
-    post_data['serviceRequest']['serviceName'] = service_name   
-    post_data['serviceRequest']['serviceOp'] = operation_name   
-    if len(params) > 0:
+    post_data['serviceRequest']['serviceName'] = service_name
+    post_data['serviceRequest']['serviceOp'] = operation_name
+        
+    if params:
         post_data['serviceRequest']['params'] = params
 
     # conditionally add user id and expiry to request
-    if "user_id" in session:
-        post_data['serviceRequest']['requester'] = session['user_id']
+    if "actor_id" in session:
+        post_data['serviceRequest']['requester'] = session['actor_id']
         post_data['serviceRequest']['expiry'] = session['valid_until']
 
     data={'payload': json.dumps(post_data)}
