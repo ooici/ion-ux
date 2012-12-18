@@ -247,7 +247,7 @@ class ServiceApi(object):
     @staticmethod
     def signon_user(certificate):
         params={'certificate': certificate}
-        user_id, valid_until, is_registered = service_gateway_post('identity_management', 'signon', params)
+        actor_id, valid_until, is_registered = service_gateway_post('identity_management', 'signon', params)
 
         # set user id, valid until and is registered info in session
         # TODO might need to address issues that arise with using
