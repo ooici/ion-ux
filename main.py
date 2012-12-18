@@ -319,8 +319,6 @@ def dev_image(resource_id=None):
 def catchall(catchall):
     return render_app_template(catchall)
 
-
-
     
 if __name__ == '__main__':
     app.run(debug=True, host=FLASK_HOST, port=FLASK_PORT)
