@@ -71,7 +71,7 @@ IONUX.Views.Chart = IONUX.Views.Base.extend({
 	},
 	
 	on_ready: function() {
-        console.log('on_ready')
+    console.log('on_ready')
 		//set callbacks for events here. Why ? no idea !
 		google.visualization.events.addListener(this.chart, 'select', this.on_select);
 		google.visualization.events.addListener(this.chart, 'rangechange', this.on_range_change);

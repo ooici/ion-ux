@@ -44,9 +44,10 @@ IONUX.Models.Layout = Backbone.Model.extend({
 // Maybe put these into IONUX.Helpers namespace?
 var epochToISO = function(epoch_time) {
     try {
-        return new Date(parseInt(epoch_time)).toISOString();        
+      // Return ISO timestamp without T or milliseconds.
+      return new Date(parseInt(epoch_time)).toISOString().replace(/T/, ' ').replace(/.\d{3}Z$/, 'Z');
     } catch (err) {
-        return epoch_time;
+      return epoch_time;
     };
 };
 
