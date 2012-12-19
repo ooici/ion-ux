@@ -440,22 +440,24 @@ def service_gateway_post(service_name, operation_name, params={}):
                 return resp['data']['GatewayResponse'][0]
 
 def build_agent_request(agent_id, operation_name, params={}):
-    url = '%s/%s/%s' % (AGENT_GATEWAY_BASE_URL, agent_id, operation_name)    
-
+    url = '%s/%s/%s' % (AGENT_GATEWAY_BASE_URL, agent_id, operation_name)
+    
     post_data = AGENT_REQUEST_TEMPLATE
-    post_data['agentRequest']['agentId'] = agent_id   
-    post_data['agentRequest']['agentOp'] = operation_name   
-    if len(params) > 0:
+    post_data['agentRequest']['agentId'] = agent_id
+    post_data['agentRequest']['agentOp'] = operation_name
+    
+    if params:
         post_data['agentRequest']['params'] = params
 
     # conditionally add user id and expiry to request
-    if "user_id" in session:
-        post_data['agentRequest']['requester'] = session['user_id']
+    if session.has_key('actor_id'):
+        post_data['agentRequest']['requester'] = session['actor_id']
         post_data['agentRequest']['expiry'] = session['valid_until']
 
     data={'payload': json.dumps(post_data)}
-
+    
     pretty_console_log('SERVICE GATEWAY AGENT REQUEST POST URL/DATA', url, data)
+    print 'SERVICE AGENT REQUEST POST DATA: ', data
 
     return url, data
 
