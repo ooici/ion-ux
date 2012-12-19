@@ -75,14 +75,10 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
 
     initialize: function() {
         this.render().el;
-        
-        // KEEPING FOR REFERENCE
-        // this.name_index = 0;
-        // var self = this;
-        // _.each(_.keys(this.options.data[0]), function(column, index) {
-        //     if (column=='name') {self.name_index = index};
-        //     // if (column !== 'name') name_index += 1;
-        // });
+        var self = this;
+        $(window).resize(function(){
+           self.datatable.fnAdjustColumnSizing();
+        });
     },
     render: function() {
         this.$el.html(this.template());
