@@ -1,21 +1,31 @@
 IONUX.Views.Search = Backbone.View.extend({
     el: '#search-production',
-    template: _.template('<input id="sidebar-search" class="textfield-search" type="text" /><br /><a class="btn-advanced-search" href="#">Advanced Search</a>'),
+    template: _.template('<div id="input-search-button" class="btn-input-search saved_search_mini"></div><input id="sidebar-search" class="textfield-search" type="text" /><br /><a class="btn-advanced-search" href="#">Advanced Search</a>'),
     events: {
-        'click .btn-advanced-search': 'search',
-    },
-    initialize: function(){
-        // _.bindAll(this, "render");
+        'click .btn-input-search': 'search_on_click',
+        'keypress #sidebar-search': 'search_on_enter',
+        'click .btn-advanced-search': 'advanced_search'
     },
     render: function(){
         this.$el.html(this.template);
         return this;
     },
-    search: function(e){
-        e.preventDefault();
-        var search_term = this.$el.find('#sidebar-search').attr('value');
-        IONUX.ROUTER.navigate('/search/?'+ encodeURI(search_term), {trigger:true});
-        return false; 
+    search_on_click: function(e){
+      e.preventDefault();
+      this.navigate_to_search_results();
+      return false; 
+    },
+    search_on_enter: function(e) {
+      if (e.keyCode == 13) this.navigate_to_search_results();
+    },
+    navigate_to_search_results: function() {
+      var search_term = this.$el.find('#sidebar-search').attr('value');
+      IONUX.ROUTER.navigate('/search/?'+ encodeURI(search_term), {trigger:true});
+    },
+    advanced_search: function(e){
+      e.preventDefault();
+      alert("Advanced search is not available.");
+      return false;
     },
 });
 

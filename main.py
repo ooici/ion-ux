@@ -277,7 +277,7 @@ def logout():
 def session_info():
     session_values = {'user_id': None, 'roles': None, 'is_registered': False, 'is_logged_in': False, 'ui_mode': UI_MODE}
     if session.has_key('user_id'):
-        session_values.update({'actor_id': session['actor_id'], 'user_id': session['user_id'], 'roles': session['roles'], 'is_registered': session['is_registered'], 'is_logged_in': True})
+        session_values.update({'user_id': session['user_id'], 'roles': session['roles'], 'is_registered': session['is_registered'], 'is_logged_in': True})
     return jsonify(data=session_values)
 
 
@@ -318,8 +318,6 @@ def dev_image(resource_id=None):
 @app.route("/<catchall>")
 def catchall(catchall):
     return render_app_template(catchall)
-
-
 
     
 if __name__ == '__main__':

@@ -1,3 +1,7 @@
+
+
+
+
 /* Table */
 
 
@@ -309,6 +313,18 @@ h4, .h4-span {
   display: none;
 }
 
+
+#search-production {
+  position:relative;
+}
+
+.btn-input-search {
+  cursor:pointer;
+  position:absolute;
+  top:11px;
+  right:20px;
+}
+
 .textfield-search {
   width: 100%;
   color: #666666;
@@ -317,7 +333,7 @@ h4, .h4-span {
   letter-spacing:2px;
   padding-top: 3px;
   padding-bottom: 2px;
-  padding-right: 10px;
+  padding-right: 25px;
   padding-left: 10px;
   margin-top: 10px;
   text-decoration: none;
