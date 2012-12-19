@@ -239,7 +239,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         filter_items.find(".filter-item").each(function(i, filter_item){
             var selected_val = $(filter_item).find("select.column option:selected").text();
             var columns = self.get_filter_columns();
-            var selected_index = _.indexOf(columns, selected_val);
+            var selected_index = _.indexOf(columns, selected_val)+1; // '+1' because of the hidden metadata table;
             var filter_val = $(filter_item).find("input").val();
             self.datatable.fnFilter(filter_val, selected_index);
         });
