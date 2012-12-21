@@ -1,5 +1,34 @@
+/* Chart */
 
+#chart-placeholder {
+  text-align: center;
+  padding: auto;
+}
 
+.checkbox-input label {
+  display: inline;
+  text-transform: uppercase;
+  font-size: 10px;
+  color: #999;
+  cursor:pointer;
+}
+
+.chart-google {
+  position: relative;
+}
+
+#chart_ui_div {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 19%;
+}
+
+#chart_div {
+  width: 80%;
+  margin-right: 165px;
+  height: 300px;
+}
 
 
 /* Table */
@@ -13,7 +42,7 @@
   color:#CCCCCC; 
   font-size:9px; 
   font-weight:300; 
-  line-height:20px; 
+  line-height:20px;
 }
 
 .v01 .text-short-value, .v02 .text-short-value {
@@ -485,10 +514,6 @@ a.btn-navigation-plain {
   padding-top: 10px;
 }
 
-#chart-placeholder {
-  text-align: center;
-  padding: auto;
-}
 
 /* Temp header */
 #header {

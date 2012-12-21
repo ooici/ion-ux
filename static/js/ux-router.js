@@ -317,12 +317,7 @@ function render_page(resource_type, resource_id, model) {
     
     if (resource_type == 'DataProduct') {
         var chart_elmt = $('.'+resource_type+' .chart_ooi').first();
-        $('body').append($('<script>').attr('src', 'https://www.google.com/jsapi?callback=chart_callback').attr("type", "text/javascript"));
-        
-        chart_callback = function(){
-            chart_instance = new IONUX.Views.Chart({resource_id: resource_id, el: chart_elmt});
-            chart_instance.render().el;
-        };
+        new IONUX.Views.Chart({resource_id: resource_id, el: chart_elmt}).render().el;
         
         // Todo: manually setting the ERDAP download link
         var data_url_text = $('#2164346').text();
