@@ -88,5 +88,5 @@ A fab script has been provided to facilitate deployment to a remote VM.  To prep
 
 Now you run the fab script, which will prompt you for necessary information to complete the deployment.  Currently, the script supports deployment to ux-test and ux-dev.  Utilize one of the following command lines to deploy to ux-dev or ux-test.
 
-        > fab ux_dev deploy_ux_dev
-        > fab ux_test deploy_ux_test
+        > fab ux_dev deploy
+        > fab ux_test deploy
