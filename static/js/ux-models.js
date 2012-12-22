@@ -63,31 +63,6 @@ var make_iso_timestamps = function(resp) {
   return;
 };
 
-
-
-// Extensions
-
-// IONUX.Models.InstrumentDeviceExtension = Backbone.Model.extend({
-//   url: function(){
-//     return "/instruments/ext/"+this.get("resource_id")+"/";
-//   },
-//   parse: function(resp) {
-//     make_iso_timestamps(resp);
-//     return resp.data;
-//   }
-// });
-// 
-// 
-// IONUX.Models.PlatformDeviceExtension = Backbone.Model.extend({
-//   url: function(){
-//     return "/instruments/ext/"+this.get("resource_id")+"/";
-//   },
-//   parse: function(resp) {
-//     make_iso_timestamps(resp);
-//     return resp.data;
-//   }
-// });
-
 IONUX.Models.ResourceExtension = Backbone.Model.extend({
     url: function(){
         return '/'+this.get('resource_type')+'/extension/'+this.get('resource_id')+'/';
@@ -100,12 +75,6 @@ IONUX.Models.ResourceExtension = Backbone.Model.extend({
 
 
 
-
-IONUX.Models.DataResourceDetails = Backbone.Model.extend({
-  url: function(){
-    return "/dataresource/"+this.get("data_resource_id")+"/";
-  }
-});
 
 
 IONUX.Models.Observatory = Backbone.Model.extend({
