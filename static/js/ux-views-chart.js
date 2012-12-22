@@ -4,11 +4,11 @@ IONUX.Views.Chart = IONUX.Views.Base.extend({
                         <input id="<%= checkbox_label %>" class="chart_checkbox" type="checkbox" name="columnSelect" value="<%= checkbox_index %>" checked /> \
                         <label for="<%= checkbox_label %>"><%= checkbox_label %></label></div>',
     events: {
-        'click input[name="columnSelect"]': 'toggle_column_visibility',
+        'click .chart_checkbox': 'toggle_column_visibility',
     },
     
     initialize: function(){
-        _.bindAll(this, 'render', 'draw_chart', 'handle_query_response', 'on_ready', 'on_select', 'on_range_change', 'toggle_column_visibility');
+        _.bindAll(this);
         this.resource_id = this.options.resource_id;
     },
     
@@ -44,7 +44,7 @@ IONUX.Views.Chart = IONUX.Views.Base.extend({
         var chart_div_elmt = $('#chart_ui_div');
         var self = this;
         _.each(_.range(1, number_of_columns), function(index){
-            checkbox_index = index - 1;
+            checkbox_index = index -1;
             var checkbox_label = self.chart_data.getColumnLabel(index);
             chart_div_elmt.append(_.template(self.template_checkbox, {checkbox_label: checkbox_label, checkbox_index: checkbox_index}));
         });

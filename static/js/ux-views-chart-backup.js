@@ -2,7 +2,7 @@ IONUX.Views.Chart = IONUX.Views.Base.extend({
     tagName: 'div',
     events: {},
     template: '<div id="chart_ui_div" class="chart_ui_div" style=""></div><div id="chart_div" style="width:500px;height:250px;"></div>', 
-    initialize: function() {
+    initialize: function(){
         // this.render().el;
         this.resource_id = this.options.resource_id;
         console.log(google);
@@ -18,7 +18,6 @@ IONUX.Views.Chart = IONUX.Views.Base.extend({
         var self = this;
         this.$el.html(this.template);
         google.load('visualization', '1', {'packages': ['annotatedtimeline'], "callback":function(){self.draw_chart(self)}});
-
         // this.draw_chart();
         return this;
     },
@@ -27,7 +26,6 @@ IONUX.Views.Chart = IONUX.Views.Base.extend({
         self.data_table = new google.visualization.DataTable();
         self.chart = new google.visualization.AnnotatedTimeLine(document.getElementById('chart_div'));
         // console.log('this.chart', self.chart, self.on_ready)
-        
 
         // var self = this;
         $.ajax ({
