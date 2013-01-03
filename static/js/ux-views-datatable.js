@@ -152,15 +152,12 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
 
     preproccesor: function(element_type, element_name){
         var self = this;
+        // console.log('element_name', element_name);
         switch(element_type){
             case "icon_ooi":
                 return status_indicator; //TODO namespace these
             case "text_short_ooi":
-                if (element_name == "Modified"){
-                    return function(obj){return epoch_to_iso(obj.aData[obj.iDataColumn])};
-                } else {
-                    return type_indicator; //TODO namespace these
-                }
+              if (element_name != "Modified") return type_indicator;
             case "text_extended_ooi":
                 return type_indicator; //TODO namespace these
             default:

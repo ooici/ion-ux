@@ -3,6 +3,7 @@ IONUX.Models.Search = Backbone.Model.extend({
         return "/search/?query="+this.get("search_query");
     },
     parse: function(resp){
+        make_iso_timestamps(resp);
         return resp.data;
     }    
 });
@@ -42,9 +43,8 @@ IONUX.Models.Layout = Backbone.Model.extend({
 
 // Timestamp conversion methods to call when parsing response.
 // Maybe put these into IONUX.Helpers namespace?
-var epoch_to_iso = function(epoch_time) {
+var epoch_to_iso = function(epoch_time){
     try {
-      // Return ISO timestamp without T or milliseconds.
       return new Date(parseInt(epoch_time)).toISOString().replace(/T/, ' ').replace(/.\d{3}Z$/, 'Z');
     } catch (err) {
       return epoch_time;
@@ -53,7 +53,7 @@ var epoch_to_iso = function(epoch_time) {
 
 var make_iso_timestamps = function(resp) {    
   _.each(resp, function(val, key) {      
-      if (key == 'ts_created' || key == 'ts_updated') {
+      if (key == 'ts_created' || key == 'ts_updated'){
         resp[key] = epoch_to_iso(val);
       };      
       if (typeof val == 'object') {

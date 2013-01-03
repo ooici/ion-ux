@@ -191,7 +191,6 @@ class LayoutApi(object):
                         attribute_data_path = at_element['dpath']
                         attribute_level = at_element['olevel']
                         attribute_css = attribute_levels[int(attribute_level)] if attribute_level else ''                        
-                        
                         attribute = layout_schema['spec']['elements'][attribute_elid]
                         attribute_widget_id = attribute['wid']
                         attribute_widget_type = layout_schema['spec']['widgets'][attribute_widget_id]['name']
@@ -201,7 +200,7 @@ class LayoutApi(object):
                             attribute_css += ' %s %s' % (attribute_widget_type, image_class)
                         else:
                             attribute_css += ' %s' % attribute_widget_type
-
+                        
                         # CHECK FOR TITLE BAR
                         if attribute_widget_type not in ('table_ooi', 'chart_ooi') and group_position != 'V00':
                             block_container_elmt.set('class', 'content-wrapper')
@@ -235,7 +234,7 @@ class LayoutApi(object):
                             for embedded_attribute in attribute['embed']:
                                 embedded_object = layout_schema['spec']['elements'][embedded_attribute['elid']]
                                 embedded_widget_type = layout_schema['spec']['widgets'][embedded_attribute['wid']]['name']
-                                
+                                                                
                                 embedded_info_level = embedded_attribute['olevel']
                                 if embedded_info_level:
                                     embedded_info_level_index = int(embedded_info_level) 
