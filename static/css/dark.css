@@ -1,3 +1,19 @@
+
+.table-heading {
+  font-family: Signika Negative; 
+  position:relative;
+  top:0;
+  left:0;
+  width:75%;
+  float:left;
+  letter-spacing: 3px;
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 18px;
+  color: #CCC;
+  text-transform: uppercase;
+}
+
 /* Chart */
 
 #chart-placeholder {

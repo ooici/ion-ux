@@ -156,7 +156,7 @@ class LayoutApi(object):
                             wide_container = True if attribute_widget_type in ('table_ooi', 'chart_ooi') else False
 
                     if wide_container:
-                        block_container = _make_element(group_elmt, 'div', css="row-fluid")
+                        block_container = _make_element(group_elmt, 'div', css='row-fluid')
                         block_elmt = _make_element(block_container, 'div', style="display:none;", id=block_elid)
                         block_css_class += ' span12'
                     else:

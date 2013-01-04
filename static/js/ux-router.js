@@ -79,9 +79,6 @@ IONUX.Router = Backbone.Router.extend({
             var table_elmt = $('.v02 .Collection .table_ooi').first();
             var table_id = table_elmt.attr('id');
             new IONUX.Views.DataTable({el: $(table_elmt), data: data.data});
-
-            // console.log(table_elmt.find('table').last());
-            // table_elmt.find('table').last().dataTable().fnAdjustColumnSizing();
         });
         
         // Insert footer and buttons
@@ -288,8 +285,17 @@ function render_page(resource_type, resource_id, model) {
             var table = new IONUX.Views.DataTable({el: $(el), data: []});
         };
         
+        
+        // TODO: find a better way of putting a header in table that is not
+        // the first/only item in a .tab-pane.
+        var table_idx = $(el).closest('.tab-pane').children('.'+resource_type).index();
+        if (table_idx != -1){
+          var heading = $(el).data('label');
+          $(el).find('.filter-header').prepend('<div class="table-heading">'+heading+'</div>');
+        };
+      
         $(el).find('table').last().dataTable().fnAdjustColumnSizing();
-    });
+      });
     
     var extent_geospatial_elmts = $('.'+resource_type+' .extent_geospatial_ooi');
     _.each(extent_geospatial_elmts, function(el) {
