@@ -43,7 +43,6 @@ IONUX.Router = Backbone.Router.extend({
             .error(function(resp) {console.log('Search error: ', resp)})
             .complete(function(resp) {console.log('Search complete: ', resp)})
 
-        // Insert footer and buttons
         new IONUX.Views.Footer({resource_id: null, resource_type: null}).render().el;
     },
     
@@ -102,7 +101,6 @@ IONUX.Router = Backbone.Router.extend({
                 render_error();
             });
 
-        // Insert footer and buttons
         new IONUX.Views.Footer({resource_id: resource_id, resource_type: resource_type}).render().el;
     },
 
@@ -287,8 +285,8 @@ function render_page(resource_type, resource_id, model) {
         
         // TODO: find a better way of putting a header in table that is not
         // the first/only item in a .tab-pane.
-        var table_idx = $(el).closest('.tab-pane').find('.'+resource_type).length;
-        if (table_idx > 1){
+        var elements_len = $(el).closest('.tab-pane').find('.'+resource_type).length;
+        if (elements_len > 1){
           var heading = $(el).data('label');
           $(el).find('.filter-header').prepend('<div class="table-heading">'+heading+'</div>');
         };

@@ -51,14 +51,14 @@ var epoch_to_iso = function(epoch_time){
     };
 };
 
-var make_iso_timestamps = function(resp) {    
-  _.each(resp, function(val, key) {      
+var make_iso_timestamps = function(resp) {
+  _.each(resp, function(val, key) {
       if (key == 'ts_created' || key == 'ts_updated'){
         resp[key] = epoch_to_iso(val);
       };      
       if (typeof val == 'object') {
         make_iso_timestamps(val);
-      };          
+      };
   });
   return;
 };

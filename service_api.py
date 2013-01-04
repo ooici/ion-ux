@@ -27,6 +27,7 @@ class ServiceApi(object):
     @staticmethod
     def search(search_query):
         search_url = "http://%s:%d/ion-service/discovery/parse?search_request=SEARCH'_all'LIKE'%s'FROM'resources_index'LIMIT'100'" % (GATEWAY_HOST, GATEWAY_PORT, search_query)
+        print 'search_url', search_url
         search_results = requests.get(search_url)
         search_json = json.loads(search_results.content)
         
@@ -74,12 +75,10 @@ class ServiceApi(object):
     def get_extension(resource_type, resource_id):
         if resource_type == 'InstrumentDevice':
             extension = service_gateway_get('instrument_management', 'get_instrument_device_extension', params= {'instrument_device_id': resource_id})
-        elif resource_type == 'InstrumentModel':
+        elif resource_type in ('InstrumentModel', 'SensorModel', 'PlatformModel'):
             extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'DeviceModelExtension'})
         elif resource_type == 'PlatformDevice':
             extension = service_gateway_get('instrument_management', 'get_platform_device_extension', params= {'platform_device_id': resource_id})
-        elif resource_type == 'PlatformModel':
-            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'DeviceModelExtension'})
         elif resource_type == 'DataProduct':
             extension = service_gateway_get('data_product_management', 'get_data_product_extension', params= {'data_product_id': resource_id})
         elif resource_type == 'UserInfo':
@@ -90,8 +89,12 @@ class ServiceApi(object):
             extension = service_gateway_get('org_management', 'get_marine_facility_extension', params= {'org_id': resource_id})
         elif resource_type in ('Observatory', 'Subsite', 'PlatformSite', 'InstrumentSite'):
             extension = service_gateway_get('observatory_management', 'get_site_extension', params= {'site_id': resource_id})
-        elif resource_type in ('UserRole', 'DataProcess', 'NotificationRequest', 'SensorModel'):
-            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'DeviceModelExtension'})
+        elif resource_type == 'NotificationRequest':
+            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'NotificationRequestExtension'})
+        elif resource_type == 'DataProcess':
+            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'DataProcessExtension'})
+        elif resource_type in ('UserRole'):
+            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'ExtendedInformationResource'})
         else:
             extension = 'Service API call not implemented.'
 
