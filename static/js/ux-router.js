@@ -287,8 +287,8 @@ function render_page(resource_type, resource_id, model) {
         
         // TODO: find a better way of putting a header in table that is not
         // the first/only item in a .tab-pane.
-        var table_idx = $(el).closest('.tab-pane').children('.'+resource_type).index();
-        if (table_idx != -1){
+        var table_idx = $(el).closest('.tab-pane').find('.'+resource_type).length;
+        if (table_idx > 1){
           var heading = $(el).data('label');
           $(el).find('.filter-header').prepend('<div class="table-heading">'+heading+'</div>');
         };
