@@ -285,7 +285,6 @@ function render_page(resource_type, resource_id, model) {
             var table = new IONUX.Views.DataTable({el: $(el), data: []});
         };
         
-        
         // TODO: find a better way of putting a header in table that is not
         // the first/only item in a .tab-pane.
         var table_idx = $(el).closest('.tab-pane').children('.'+resource_type).index();

@@ -27,7 +27,6 @@ TEST_TABLE_DATA = [
 
 /* The below will be View instance attrs: */
 OPERATORS = ['CONTAINS', 'NEWER THAN', 'OLDER THAN', 'GREATER THAN', 'LESS THAN'];
-RESTRICTED_RESOURCE_TYPES = ['UserRoleModifiedEvent']
 
 function status_indicator(obj){
     switch(obj.aData[obj.iDataColumn]){
@@ -263,7 +262,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         var resource_id = row_info_list[0];
         var resource_type = row_info_list[1];
         
-        if (_.contains(RESTRICTED_RESOURCE_TYPES, resource_type)) return false;
+        if (resource_type.match(/Event$/)) return false;
         
         var url = "/"+resource_type+"/face/"+resource_id+"/";
         IONUX.ROUTER.navigate(url, {trigger:true});
