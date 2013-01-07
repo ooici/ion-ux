@@ -26,7 +26,7 @@ class ServiceApi(object):
 
     @staticmethod
     def search(search_query):
-        search_url = "http://%s:%d/ion-service/discovery/parse?search_request=SEARCH'_all'LIKE'%s'FROM'resources_index'LIMIT'100'" % (GATEWAY_HOST, GATEWAY_PORT, search_query)
+        search_url = "http://%s:%d/ion-service/discovery/parse?search_request=SEARCH'_all'LIKE'%s'FROM'resources_index'LIMIT100" % (GATEWAY_HOST, GATEWAY_PORT, search_query)
         print 'search_url', search_url
         search_results = requests.get(search_url)
         search_json = json.loads(search_results.content)
