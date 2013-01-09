@@ -1,6 +1,7 @@
 import requests, json, time, pprint
 from flask import session, jsonify
 from config import GATEWAY_HOST, GATEWAY_PORT
+from copy import deepcopy
 
 SERVICE_GATEWAY_BASE_URL = 'http://%s:%d/ion-service' % (GATEWAY_HOST, GATEWAY_PORT)
 AGENT_GATEWAY_BASE_URL = 'http://%s:%d/ion-agent' % (GATEWAY_HOST, GATEWAY_PORT)
@@ -137,7 +138,7 @@ class ServiceApi(object):
     @staticmethod
     def request_enrollment_in_org(marine_facility_id, user_id):
         org_id = service_gateway_get('marine_facility_management', 'find_marine_facility_org', params={'marine_facility_id': marine_facility_id})
-        enrollment = SERVICE_REQUEST_TEMPLATE
+        enrollment = deepcopy(SERVICE_REQUEST_TEMPLATE)
         enrollment['serviceRequest']['serviceName'] = 'org_management'
         enrollment['serviceRequest']['serviceOp'] = 'request_enroll'
         enrollment['serviceRequest']['params'] = {'org_id': org_id, 'user_id': user_id}
@@ -408,7 +409,7 @@ def service_gateway_get(service_name, operation_name, params={}):
 def build_post_request(service_name, operation_name, params={}):
     url = '%s/%s/%s' % (SERVICE_GATEWAY_BASE_URL, service_name, operation_name)    
 
-    post_data = SERVICE_REQUEST_TEMPLATE
+    post_data = deepcopy(SERVICE_REQUEST_TEMPLATE)
     post_data['serviceRequest']['serviceName'] = service_name
     post_data['serviceRequest']['serviceOp'] = operation_name
         
@@ -445,7 +446,7 @@ def service_gateway_post(service_name, operation_name, params={}):
 def build_agent_request(agent_id, operation_name, params={}):
     url = '%s/%s/%s' % (AGENT_GATEWAY_BASE_URL, agent_id, operation_name)
     
-    post_data = AGENT_REQUEST_TEMPLATE
+    post_data = deepcopy(AGENT_REQUEST_TEMPLATE)
     post_data['agentRequest']['agentId'] = agent_id
     post_data['agentRequest']['agentOp'] = operation_name
     
