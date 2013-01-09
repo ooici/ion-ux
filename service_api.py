@@ -185,10 +185,21 @@ class ServiceApi(object):
     def instrument_agent_stop(instrument_device_id):
         instrument_agent_instance = service_gateway_get('instrument_management', 'find_instrument_agent_instance_by_instrument_device', params={'instrument_device_id': instrument_device_id})
         instrument_agent_instance_id = instrument_agent_instance[0]['_id']
+        ServiceApi.reset_driver(instrument_device_id)
         agent_request = service_gateway_get('instrument_management', 'stop_instrument_agent_instance', params={'instrument_agent_instance_id': str(instrument_agent_instance_id)})
         
         return agent_request
-
+    
+    # Used to ensure that driver is reset prior to an agent being stopped.
+    @staticmethod
+    def reset_driver(instrument_device_id):
+        capabilities = ServiceApi.instrument_agent_get_capabilities(instrument_device_id)
+        reset_cmd = 'RESOURCE_AGENT_EVENT_RESET'
+        reset_state = bool([True for c in capabilities if c['name'] == reset_cmd])
+        if reset_state:
+            ServiceApi.instrument_execute(instrument_device_id, reset_cmd, '1')
+        return
+        
     @staticmethod
     def instrument_execute(instrument_device_id, command, cap_type):
         if cap_type == '1':

@@ -129,8 +129,8 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         var data_keys = _.map(table_metadata, function(arr){return arr[2];});
         var self = this;
         _.each(data_objs, function(data_obj, index){
-            var type = data_obj['type_'] ? data_obj['type_'] : data_obj['_type']; // Elasticsearch results give the object type as '_type'.
-            var data_row = [data_obj['_id'] + "::" + type]; //Initialize with hidden 'row info' element data element.
+            var resource_type = data_obj['type_'] ? data_obj['type_'] : data_obj['_type']; // Elasticsearch results give the object type as '_type'.
+            var data_row = [data_obj['_id'] + "::" + resource_type]; //Initialize with hidden 'row info' element data element.
             _.each(data_keys, function(key){
                 // Needed to check for variable and look up full path if found.
                 if (key.match('@index')) {
@@ -145,7 +145,10 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
                 if (_.isUndefined(value)) value = "[" + key + "]";
                 data_row.push(value);
             });
-            data.push(data_row);
+            
+            // Temp fix to block associations from appearing in search results.
+            // Need to sub-class this view eventually.
+            if (resource_type != 'Association') data.push(data_row);
         });
         return data;
     },
@@ -262,6 +265,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         var row_info_list = table_row_data[0].split("::");
         var resource_id = row_info_list[0];
         var resource_type = row_info_list[1];
+        console.log(resource_type);
         
         if (resource_type.match(/Event$/)) return false;
         
