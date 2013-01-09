@@ -203,6 +203,7 @@ function render_page(resource_type, resource_id, model) {
     // it should be moved into it's own function
     // so that we can develop more logic to handle
     // heirarchy in face, status and related pages.
+    
     if (resource_type == 'InstrumentModel' || resource_type == 'PlatformModel' || resource_type == 'SensorModel') {
         var resource_type = 'DeviceModel';
     } else if (resource_type == 'Observatory' || resource_type == 'InstrumentSite' || resource_type == 'PlatformSite' || resource_type == 'Subsite') {
@@ -298,7 +299,7 @@ function render_page(resource_type, resource_id, model) {
     _.each(extent_geospatial_elmts, function(el) {
         var data_path = $(el).data('path');
         var data = get_descendant_properties(window.MODEL_DATA, data_path);
-        new IONUX.Views.ExtentGeospatial({el: $(el), data: data}).render().el;
+        if (data) new IONUX.Views.ExtentGeospatial({el: $(el), data: data}).render().el;
     });
     
     var extent_vertical_elmts = $('.'+resource_type+' .extent_vertical_ooi');
