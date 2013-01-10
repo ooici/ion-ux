@@ -265,11 +265,15 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         var row_info_list = table_row_data[0].split("::");
         var resource_id = row_info_list[0];
         var resource_type = row_info_list[1];
-        console.log(resource_type);
         
         if (resource_type.match(/Event$/)) return false;
-        
-        var url = "/"+resource_type+"/face/"+resource_id+"/";
-        IONUX.ROUTER.navigate(url, {trigger:true});
+
+        if (resource_type == 'Attachment') {
+          var url = "/attachment/"+resource_id
+          window.open(url)
+        } else {
+          var url = "/"+resource_type+"/face/"+resource_id+"/";
+          IONUX.ROUTER.navigate(url, {trigger:true});
+        };
     }
 });

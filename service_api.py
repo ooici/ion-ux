@@ -38,8 +38,6 @@ class ServiceApi(object):
         
         return jsonify(data=search_json['data']['GatewayResponse'])
 
-    
-
     @staticmethod
     def subscribe(resource_type, resource_id, event_type, user_id):
         notification = {

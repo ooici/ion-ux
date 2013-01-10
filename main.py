@@ -1,4 +1,4 @@
-from flask import Flask, request, session, jsonify, render_template, redirect, url_for, escape
+from flask import Flask, request, session, jsonify, render_template, redirect, url_for, escape, send_file
 import requests, json
 from functools import wraps
 import base64
@@ -14,6 +14,10 @@ from layout_api import LayoutApi
 from jinja2 import Template
 from urlparse import urlparse
 import re
+
+# Attachments
+from StringIO import StringIO
+from mimetypes import guess_extension
 
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
@@ -37,7 +41,7 @@ def index():
 
 
 # -----------------------------------------------------------------------------
-# SEARCH
+# SEARCH & ATTACHMENTS
 # -----------------------------------------------------------------------------
 
 @app.route('/search/', methods=['GET'])
@@ -48,6 +52,17 @@ def search(query=None):
         return search_results
     else:
         return render_app_template(request.path)
+
+@app.route('/attachment/<attachment_id>/', methods=['GET'])
+def attachment(attachment_id):
+    url = 'http://%s:%d/ion-service/attachment/%s' % (GATEWAY_HOST, GATEWAY_PORT, attachment_id)
+    attachment_response = requests.get(url)
+    
+    attachment = StringIO(attachment_response.content)
+    attachment_ext = guess_extension(attachment_response.headers.get('content-type'))
+    attachment_name = 'OOI_%s%s' % (attachment_id, attachment_ext)
+
+    return send_file(attachment, attachment_filename=attachment_name, as_attachment=True)
 
 
 # -----------------------------------------------------------------------------

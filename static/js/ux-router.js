@@ -18,15 +18,14 @@ IONUX.Router = Backbone.Router.extend({
         ":resource_type/:view_type/:resource_id/" : "page",
     },
         
-    search: function(query) {
-        console.log('Search query: ', query);
+    search: function(query){
         $('#error').hide();
         $('#dynamic-container').show().html(LOADING_TEMPLATE);
         
         var search_model = new IONUX.Models.Search({search_query: query});
         search_model.fetch()
             .success(function(resp){
-                console.log('Search success::', resp);
+                console.log('Search success:', resp);
                 $('#dynamic-container').html($('#2163152').html());
                 $('.span9 li,.span3 li').hide();
                 $('.v01 ul:visible, .v02 ul:visible').find('li:first').find('a').click();
@@ -350,7 +349,6 @@ function render_page(resource_type, resource_id, model) {
     $('.span9 ul, .span3 ul, .span12 ul').find('li.' + resource_type + ':first').find('a').click();  
     
     $('.tab-pane').find('.'+resource_type+':visible:first').css('margin-left', 0);
-    
     
     // DataTables column sizing
     $('a[data-toggle="tab"]').on('shown', function (e){
