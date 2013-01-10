@@ -40,7 +40,7 @@ IONUX.Router = Backbone.Router.extend({
                 $('.heading').html('<h1>Search Results</h1>').css('padding-bottom', '15px'); // Temp: css hack to make layout nice.
             })
             .error(function(resp) {console.log('Search error: ', resp)})
-            .complete(function(resp) {console.log('Search complete: ', resp)})
+            .complete(function(resp) {});
 
         new IONUX.Views.Footer({resource_id: null, resource_type: null}).render().el;
     },
@@ -65,7 +65,10 @@ IONUX.Router = Backbone.Router.extend({
         $('#dynamic-container').show().html(LOADING_TEMPLATE);
         
         window.MODEL_DATA = new IONUX.Collections.Resources(null, {resource_type: resource_type});
-        window.MODEL_DATA.fetch().success(function(data){
+        window.MODEL_DATA.fetch()
+          .success(function(data){
+            if (_.has(data['data'], 'GatewayError')) {alert('An error occurred.')};
+
             $('#dynamic-container').html($('#2163152').html());
             $('.span9 li,.span3 li').hide();
             $('.v01 ul:visible, .v02 ul:visible').find('li:first').find('a').click();

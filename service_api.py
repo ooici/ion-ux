@@ -63,7 +63,8 @@ class ServiceApi(object):
     
     @staticmethod
     def find_by_resource_type(resource_type):
-        return service_gateway_get('resource_registry', 'find_resources', params={'restype': resource_type})[0]
+        req = service_gateway_get('resource_registry', 'find_resources', params={'restype': resource_type})
+        return req[0]
     
     @staticmethod
     def find_by_resource_id(resource_id):
@@ -410,10 +411,13 @@ def service_gateway_get(service_name, operation_name, params={}):
     if resp.status_code == 200:
         resp = json.loads(resp.content)
         
-        if type(resp) == dict:
-            return resp['data']['GatewayResponse']
-        elif type(resp) == list:
-            return resp['data']['GatewayResponse'][0]
+        if resp['data'].has_key('GatewayError'):
+            return resp['data']
+        else:
+            if type(resp) == dict:
+                return resp['data']['GatewayResponse']
+            elif type(resp) == list:
+                return resp['data']['GatewayResponse'][0]
 
 def build_post_request(service_name, operation_name, params={}):
     url = '%s/%s/%s' % (SERVICE_GATEWAY_BASE_URL, service_name, operation_name)    
