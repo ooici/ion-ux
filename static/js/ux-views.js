@@ -107,9 +107,9 @@ IONUX.Views.Subscribe = Backbone.View.extend({
            success: function(resp){
                var select_elmt = $('#event-types');
                select_elmt.empty();
-               var option_tmpl = '<option value="<%= event_type_name %>"><%= event_type_name %></option>'
+               var event_tmpl = '<tr><td><%= event_type_name %></td><td><button class="btn btn-small">Subscribe</button></td></tr>'
                _.each(resp.data, function(event_type_name){
-                   select_elmt.append(_.template(option_tmpl, {event_type_name: event_type_name}));
+                   select_elmt.append(_.template(event_tmpl, {event_type_name: event_type_name}));
                });
            },
            error: function(resp) {
@@ -517,6 +517,7 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
 
     $.ajax({
       url:command,
+      global: false,
       dataType: 'json',
       success: function(resp) {
         var data = resp.data;
@@ -539,6 +540,7 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
     var self = this;
     $.ajax({
         url: 'start/',
+        global: false,
         success: function() {
           $('.instrument-commands').show();
           $('#start-instrument-agent-instance').hide();
@@ -555,6 +557,7 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
       var self = this;
       $.ajax({
         url: 'get_capabilities?cap_type=abc123',
+        global: false,
         dataType: 'json',
         success: function(resp){
             var agent_options = [];

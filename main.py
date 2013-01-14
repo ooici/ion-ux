@@ -1,4 +1,4 @@
-from flask import Flask, request, session, jsonify, render_template, redirect, url_for, escape, send_file
+from flask import Flask, request, session, jsonify, render_template, redirect, url_for, escape, send_file, make_response
 import requests, json
 from functools import wraps
 import base64
@@ -22,24 +22,30 @@ from mimetypes import guess_extension
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
 app.debug = True
-# SERVICE_GATEWAY_BASE_URL = 'http://%s:%d/ion-service' % (GATEWAY_HOST, GATEWAY_PORT)
 
 def render_app_template(current_url):
-    """Renders base template for full app, with needed template params"""
-    # roles = session["roles"] if session.has_key("roles") else "roles"
-    # logged_in = "True" if session.has_key('user_id') else "False"
-    # tmpl = Template(LayoutApi.process_layout())
-    # return render_template(tmpl, **{"current_url":"/", "roles":roles, "logged_in":logged_in})
-
     tmpl = Template(LayoutApi.process_layout())
     return render_template(tmpl)
     
+
+def render_json_response(service_api_response):
+    if isinstance(service_api_response, dict) and service_api_response.has_key('GatewayError'):
+        error_response = make_response(json.dumps(service_api_response), 400)
+        error_response.headers['Content-Type'] = 'application/json'
+        return error_response
+    else:
+        return jsonify(data=service_api_response)
+
+
+# -----------------------------------------------------------------------------
+# ROUTES
+# -----------------------------------------------------------------------------
 
 @app.route('/')
 def index():
     return render_app_template(request.path)
 
-
+    
 # -----------------------------------------------------------------------------
 # SEARCH & ATTACHMENTS
 # -----------------------------------------------------------------------------
@@ -107,7 +113,7 @@ def page(resource_type, resource_id):
 def collection(resource_type=None):
     if request.is_xhr:
         resources = ServiceApi.find_by_resource_type(resource_type)
-        return jsonify(data=resources)
+        return render_json_response(resources)
     else:
         return render_app_template(request.path)
 

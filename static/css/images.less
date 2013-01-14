@@ -1,7 +1,8 @@
 @xwidth: 60px;
 @ywidth: 60px;
 
-.sprite(@width:0px, @height:0px) {  
+.sprite(@width:0px, @height:0px) {
+  position: relative;
   &:before {
     background-image: url(/static/img/css_sprite_pepper.png);
     background-position: @width @height;

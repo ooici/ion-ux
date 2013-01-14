@@ -63,8 +63,8 @@ class ServiceApi(object):
     
     @staticmethod
     def find_by_resource_type(resource_type):
-        req = service_gateway_get('resource_registry', 'find_resources', params={'restype': resource_type})
-        return req[0]
+        req = service_gateway_get('resource_registrya', 'find_resources', params={'restype': resource_type})
+        return req
     
     @staticmethod
     def find_by_resource_id(resource_id):
@@ -399,7 +399,6 @@ def build_get_request(service_name, operation_name, params={}):
             param_string += '&%s=%s' % (k,v)
     url += param_string
     
-
     pretty_console_log('SERVICE GATEWAY GET URL', url)
     
     return url
@@ -414,13 +413,13 @@ def service_gateway_get(service_name, operation_name, params={}):
         if resp['data'].has_key('GatewayError'):
             return resp['data']
         else:
-            if type(resp) == dict:
+            if isinstance(resp, dict):
                 return resp['data']['GatewayResponse']
-            elif type(resp) == list:
+            elif isinstance(resp, list):
                 return resp['data']['GatewayResponse'][0]
 
 def build_post_request(service_name, operation_name, params={}):
-    url = '%s/%s/%s' % (SERVICE_GATEWAY_BASE_URL, service_name, operation_name)    
+    url = '%s/%s/%s' % (SERVICE_GATEWAY_BASE_URL, service_name, operation_name)
 
     post_data = deepcopy(SERVICE_REQUEST_TEMPLATE)
     post_data['serviceRequest']['serviceName'] = service_name

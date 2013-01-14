@@ -5,18 +5,25 @@ IONUX = {
     Views: {},
     Router: {},
     init: function(){
-        var router = new IONUX.Router();
-        IONUX.ROUTER = router; // Is this too close to IONUX.Router?
+      var router = new IONUX.Router();
+      IONUX.ROUTER = router; // Is this too close to IONUX.Router?
+      
+      IONUX.setup_ajax_error();
 
-        IONUX.SESSION_MODEL = new IONUX.Models.Session();
-        IONUX.SESSION_MODEL.fetch().complete(function(resp) {
-            Backbone.history.start({pushState:true, hashChange: false});
-            new IONUX.Views.Sidebar({model: IONUX.SESSION_MODEL}).render().el;
-            new IONUX.Views.Topbar({model: IONUX.SESSION_MODEL}).render().el
-            new IONUX.Views.Search().render().el;
-        });
-        router.handle_navigation();
-        return router;
+      IONUX.SESSION_MODEL = new IONUX.Models.Session();
+      IONUX.SESSION_MODEL.fetch().complete(function(resp) {
+          Backbone.history.start({pushState:true, hashChange: false});
+          new IONUX.Views.Sidebar({model: IONUX.SESSION_MODEL}).render().el;
+          new IONUX.Views.Topbar({model: IONUX.SESSION_MODEL}).render().el
+          new IONUX.Views.Search().render().el;
+      });
+      router.handle_navigation();
+      return router;
+    },
+    setup_ajax_error: function(){
+      $(document).ajaxError(function(){
+        console.log('GLOBAL ERROR!!!');
+      });
     },
     // set_roles:function(roles){
     //     if (roles){

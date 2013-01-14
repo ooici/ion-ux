@@ -94,6 +94,19 @@ class LayoutApi(object):
                     parent_elmt = v01_elmt
                 else:
                     parent_elmt = v02_elmt
+
+                if group.has_key('label'):
+                    label = group['label']
+                else:
+                    label = None
+
+                if gr_element.has_key('olabel'):
+                    olabel = gr_element['olabel']
+                else:
+                    olabel = None
+
+                if label and olabel:
+                    print 'xxxxxx', label, olabel
                 
                 # CHECK FOR TITLE BAR (V00), creates tabs for V01 and V02 groups
                 if group_position == 'V00':
@@ -139,6 +152,21 @@ class LayoutApi(object):
                         if not block_res_type in li_css_class:
                             li_css_class += ' %s' % block_res_type
                             group_li_elmt.attrib['class'] = li_css_class
+                    
+                    
+                    if block.has_key('label'):
+                        label = block['label']
+                    else:
+                        label = None
+
+                    if bl_element.has_key('olabel'):
+                        olabel = bl_element['olabel']
+                    else:
+                        olabel = None
+
+                    if label and olabel:
+                        print 'yyyyy', label, olabel
+                    
                     
                     
                     block_css_class = block_res_type
@@ -190,10 +218,23 @@ class LayoutApi(object):
                         attribute_position = at_element['pos']
                         attribute_data_path = at_element['dpath']
                         attribute_level = at_element['olevel']
-                        attribute_css = attribute_levels[int(attribute_level)] if attribute_level else ''                        
+                        attribute_css = attribute_levels[int(attribute_level)] if attribute_level else ''
                         attribute = layout_schema['spec']['elements'][attribute_elid]
                         attribute_widget_id = attribute['wid']
                         attribute_widget_type = layout_schema['spec']['widgets'][attribute_widget_id]['name']
+                        
+                        if attribute.has_key('label'):
+                            label = attribute['label']
+                        else:
+                            label = None
+                        
+                        if at_element.has_key('olabel'):
+                            olabel = at_element['olabel']
+                        else:
+                            olabel = None
+                        
+                        if label and olabel:
+                            print 'zzzzz', label, olabel
                                                 
                         if attribute_widget_type == 'image_ooi':
                             image_class = layout_schema['spec']['graphics'][attribute['gfx']]['name']
@@ -234,6 +275,20 @@ class LayoutApi(object):
                             for embedded_attribute in attribute['embed']:
                                 embedded_object = layout_schema['spec']['elements'][embedded_attribute['elid']]
                                 embedded_widget_type = layout_schema['spec']['widgets'][embedded_attribute['wid']]['name']
+                                
+                                
+                                if embedded_object.has_key('label'):
+                                    label = embedded_object['label']
+                                else:
+                                    label = None
+
+                                if embedded_attribute.has_key('olabel'):
+                                    olabel = embedded_attribute['olabel']
+                                else:
+                                    olabel = None
+
+                                if label and olabel:
+                                    print 'aaaaaa', label, olabel
                                                                 
                                 embedded_info_level = embedded_attribute['olevel']
                                 if embedded_info_level:

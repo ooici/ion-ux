@@ -773,8 +773,41 @@ ul.nav {
 }
 
 .modal {
-    padding:10px;
+/*    padding:10px;*/
+/*    background: #4D4D4D;*/
 }
+
 .modal-backdrop.fade {
   opacity:0.5;
 }
+
+.modal-header {
+  border-bottom:none;
+}
+
+.modal-header h3 {
+  font-weight: normal;
+  text-transform:uppercase;
+}
+.modal-body {
+  color:black;
+  border:none;
+}
+
+.modal-footer {
+  border-top:none;
+  background:#4D4D4D;
+}
+
+#subscribe-modal {
+  background:black;
+}
+
+#event-types tbody tr:nth-child(even) td {
+  background:#1e1e1e;
+}
+
+#event-types tbody tr:nth-child(odd) td {
+  background:#333333;
+}
+
