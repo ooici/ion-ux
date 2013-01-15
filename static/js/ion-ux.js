@@ -7,9 +7,7 @@ IONUX = {
     init: function(){
       var router = new IONUX.Router();
       IONUX.ROUTER = router; // Is this too close to IONUX.Router?
-      
       IONUX.setup_ajax_error();
-
       IONUX.SESSION_MODEL = new IONUX.Models.Session();
       IONUX.SESSION_MODEL.fetch().complete(function(resp) {
           Backbone.history.start({pushState:true, hashChange: false});
@@ -21,8 +19,9 @@ IONUX = {
       return router;
     },
     setup_ajax_error: function(){
-      $(document).ajaxError(function(){
-        console.log('GLOBAL ERROR!!!');
+      $(document).ajaxError(function(evt, resp){
+        var error_obj = JSON.parse(resp['responseText'])['data']['GatewayError'];
+        new IONUX.Views.Error({error_obj: error_obj}).render().el;
       });
     },
     // set_roles:function(roles){

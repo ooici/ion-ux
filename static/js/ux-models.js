@@ -1,3 +1,5 @@
+IONUX.Models.Search = Backbone.Model.extend();
+
 IONUX.Models.Search = Backbone.Model.extend({
     url: function(){
         return "/search/?query="+this.get("search_query");

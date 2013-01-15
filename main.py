@@ -27,10 +27,11 @@ def render_app_template(current_url):
     tmpl = Template(LayoutApi.process_layout())
     return render_template(tmpl)
     
-
 def render_json_response(service_api_response):
     if isinstance(service_api_response, dict) and service_api_response.has_key('GatewayError'):
-        error_response = make_response(json.dumps(service_api_response), 400)
+        if PRODUCTION:
+            del service_api_response['GatewayError']['Trace']
+        error_response = make_response(json.dumps({'data': service_api_response}), 400)
         error_response.headers['Content-Type'] = 'application/json'
         return error_response
     else:
@@ -55,7 +56,7 @@ def search(query=None):
     if request.is_xhr:
         search_query = escape(request.args.get('query'))
         search_results = ServiceApi.search(quote(search_query))
-        return search_results
+        return render_json_response(search_results)
     else:
         return render_app_template(request.path)
 
@@ -113,6 +114,7 @@ def page(resource_type, resource_id):
 def collection(resource_type=None):
     if request.is_xhr:
         resources = ServiceApi.find_by_resource_type(resource_type)
+        # return jsonify(data=resources)
         return render_json_response(resources)
     else:
         return render_app_template(request.path)
@@ -292,7 +294,7 @@ def userprofile():
 @app.route('/signoff/', methods=['GET'])
 def logout():
     for key in session.keys():
-        session.pop(key, None)
+        g.pop(key, None)
     return redirect('/')
 
 @app.route('/session/', methods=['GET'])

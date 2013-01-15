@@ -28,15 +28,8 @@ class ServiceApi(object):
     @staticmethod
     def search(search_query):
         search_url = "http://%s:%d/ion-service/discovery/parse?search_request=SEARCH'_all'LIKE'%s'FROM'resources_index'LIMIT100" % (GATEWAY_HOST, GATEWAY_PORT, search_query)
-        print 'search_url', search_url
         search_results = requests.get(search_url)
-        search_json = json.loads(search_results.content)
-        
-        # TO DO - Figure out why this is not working.
-        # search_json = json.loads(search_results.content)
-        # return search_json['data']
-        
-        return jsonify(data=search_json['data']['GatewayResponse'])
+        return render_service_gateway_response(search_results)
 
     @staticmethod
     def subscribe(resource_type, resource_id, event_type, user_id):
@@ -380,9 +373,7 @@ class ServiceApi(object):
             user_info = service_gateway_get('identity_management', 'find_user_info_by_id', params={'user_id': user_id})
         except:
             user_info = {'contact': {'name': '(Not Registered)', 'email': '(Not Registered)', 'phone': '???'}}
-        return user_info    
-
-
+        return user_info
 
 
 # HELPER METHODS
@@ -404,19 +395,23 @@ def build_get_request(service_name, operation_name, params={}):
     return url
 
 def service_gateway_get(service_name, operation_name, params={}):    
-    resp = requests.get(build_get_request(service_name, operation_name, params))
-    pretty_console_log('SERVICE GATEWAY GET RESPONSE', resp.content)
-    
-    if resp.status_code == 200:
-        resp = json.loads(resp.content)
-        
-        if resp['data'].has_key('GatewayError'):
+    service_gateway_resp = requests.get(build_get_request(service_name, operation_name, params))
+    pretty_console_log('SERVICE GATEWAY GET RESPONSE', service_gateway_resp.content)
+    return render_service_gateway_response(service_gateway_resp)
+
+def render_service_gateway_response(service_gateway_resp):
+    if service_gateway_resp.status_code == 200:
+        resp = json.loads(service_gateway_resp.content)
+        try:
+            response = resp['data']['GatewayResponse']
+            if isinstance(response, list):
+                return response[0]
+            else:
+                return response
+        except Exception, e:
             return resp['data']
-        else:
-            if isinstance(resp, dict):
-                return resp['data']['GatewayResponse']
-            elif isinstance(resp, list):
-                return resp['data']['GatewayResponse'][0]
+    else:
+        return json.dumps({'GatewayError': {'Message': 'An error occurred communicating with the Service Gateway'}})
 
 def build_post_request(service_name, operation_name, params={}):
     url = '%s/%s/%s' % (SERVICE_GATEWAY_BASE_URL, service_name, operation_name)
