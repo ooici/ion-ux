@@ -63,7 +63,7 @@ class ServiceApi(object):
     
     @staticmethod
     def find_by_resource_type(resource_type):
-        req = service_gateway_get('resource_registrya', 'find_resources', params={'restype': resource_type})
+        req = service_gateway_get('resource_registry', 'find_resources', params={'restype': resource_type})
         return req
     
     @staticmethod

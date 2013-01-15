@@ -13,53 +13,20 @@
 */
 
 TEST_TABLE_DATA = [
-    {'aggregated_status':"Normal", 'name':"Platform 0 -AS02CPSM", 'uuid':274503, 'last_calibration_datetime':"05:12:33", 'description':"Last Note4..", "_id":"a0bc123", "type_":"000InstrumentDevice", 'timestamp':1156049834855},
-    {'aggregated_status':"Alarm", 'name':"Platform 1 - AS02CPSM", 'uuid':174501,  'last_calibration_datetime':"05:12:33", 'description':"Last Note2..", "_id":"a1bc123", "type_":"111InstrumentDevice", 'timestamp':1256049834855},
-    {'aggregated_status':"Normal", 'name':"Platform 2 - AS02CPSM", 'uuid':473508, 'last_calibration_datetime':"05:12:33", 'description':"Last Note5..", "_id":"a2bc123", "type_":"222InstrumentDevice", 'timestamp':1356049834855},
-    {'aggregated_status':"Normal", 'name':"Platform 3 -AS02CPSM", 'uuid':271501, 'last_calibration_datetime':"05:12:33", 'description':"Last Note8..", "_id":"a3bc123", "type_":"333InstrumentDevice", 'timestamp':1456049834855},
-    {'aggregated_status':"Unknown", 'name':"Platform 4 - AS02CPSM", 'uuid':275504, 'last_calibration_datetime':"05:12:33", 'description':"Last Note3..", "_id":"a4bc123", "type_":"444InstrumentDevice", 'timestamp':1336049834855},
-    {'aggregated_status':"Normal", 'name':"Platform 5 - AS02CPSM", 'uuid':274500, 'last_calibration_datetime':"05:12:33", 'description':"Last Note1..", "_id":"a5bc123", "type_":"555InstrumentDevice", 'timestamp':1136049834855},
-    {'aggregated_status':"Normal", 'name':"Platform 6 - AS02CPSM", 'uuid':974508, 'last_calibration_datetime':"05:12:33", 'description':"Last Note7..", "_id":"a6bc123", "type_":"666InstrumentDevice", 'timestamp':1806049834855},
-    {'aggregated_status':"Alert", 'name':"Platform 7 - AS02CPSM", 'uuid':274508, 'last_calibration_datetime':"05:12:33",  'description':"Last Note6..", "_id":"a7bc123", "type_":"777InstrumentDevice", 'timestamp':1726049834855},
-    {'aggregated_status':"Unknown", 'name':"Platform 8 - AS02CPSM", 'uuid':275504, 'last_calibration_datetime':"05:12:33", 'description':"Last Note3..", "_id":"a8bc123", "type_":"888InstrumentDevice", 'timestamp':1056049834855}
+    {'aggregated_status':"Normal", 'name':"Platform 0 -AS02CPSM", 'uuid':274503, 'last_calibration_datetime':"05:12:33", 'description':"Last Note4..", "_id":"a0bc123", "type_":"InstrumentDevice", 'timestamp':1156049834855},
+    {'aggregated_status':"Alarm", 'name':"Platform 1 - AS02CPSM", 'uuid':174501,  'last_calibration_datetime':"05:12:33", 'description':"Last Note2..", "_id":"a1bc123", "type_":"PlatformDevice", 'timestamp':1256049834855},
+    {'aggregated_status':"Normal", 'name':"Platform 2 - AS02CPSM", 'uuid':473508, 'last_calibration_datetime':"05:12:33", 'description':"Last Note5..", "_id":"a2bc123", "type_":"InstrumentDevice", 'timestamp':1356049834855},
+    {'aggregated_status':"Normal", 'name':"Platform 3 -AS02CPSM", 'uuid':271501, 'last_calibration_datetime':"05:12:33", 'description':"Last Note8..", "_id":"a3bc123", "type_":"PlatformDevice", 'timestamp':1456049834855},
+    {'aggregated_status':"Unknown", 'name':"Platform 4 - AS02CPSM", 'uuid':275504, 'last_calibration_datetime':"05:12:33", 'description':"Last Note3..", "_id":"a4bc123", "type_":"InstrumentDevice", 'timestamp':1336049834855},
+    {'aggregated_status':"Normal", 'name':"Platform 5 - AS02CPSM", 'uuid':274500, 'last_calibration_datetime':"05:12:33", 'description':"Last Note1..", "_id":"a5bc123", "type_":"InstrumentDevice", 'timestamp':1136049834855},
+    {'aggregated_status':"Normal", 'name':"Platform 6 - AS02CPSM", 'uuid':974508, 'last_calibration_datetime':"05:12:33", 'description':"Last Note7..", "_id":"a6bc123", "type_":"InstrumentDevice", 'timestamp':1806049834855},
+    {'aggregated_status':"Alert", 'name':"Platform 7 - AS02CPSM", 'uuid':274508, 'last_calibration_datetime':"05:12:33",  'description':"Last Note6..", "_id":"a7bc123", "type_":"PlatformDevice", 'timestamp':1726049834855},
+    {'aggregated_status':"Unknown", 'name':"Platform 8 - AS02CPSM", 'uuid':275504, 'last_calibration_datetime':"05:12:33", 'description':"Last Note3..", "_id":"a8bc123", "type_":"PlatformDevice", 'timestamp':1056049834855}
 ]
 
 
 /* The below will be View instance attrs: */
 OPERATORS = ['CONTAINS', 'NEWER THAN', 'OLDER THAN', 'GREATER THAN', 'LESS THAN'];
-
-function status_indicator(obj){
-    switch(obj.aData[obj.iDataColumn]){
-        case 1:
-            var status = 'STATUS: OK';
-            var status_css = 'status_ok_mini';
-            break;
-        case 2:
-            var status = 'STATUS: WARNING';
-            var status_css = 'status_warning_alert_mini';
-            break;
-        case 3:
-            var status = 'STATUS: CRITICAL';
-            var status_css = 'status_critical_alert_mini';
-            break;
-        default:
-            var status = 'STATUS: UNKNOWN';
-            var status_css = 'status_unknown_mini';
-    };
-
-    var html = "<div class='"+status_css+"' title='"+status+"'>&nbsp;</div>";
-    return html;    
-
-    // var stat = obj.aData[obj.iDataColumn];
-    // var pos_map = {"Uknown":"0px 0px", "Normal":"0px -20px", "Alert":"0px -40px", "Alarm":"0px 18px"};
-    // var stat_pos = pos_map[stat];
-    // if (_.isUndefined(stat_pos)) stat_pos = pos_map["Normal"];
-    // var html = "<div class='status_indicator_sprite' style='background-position:"+stat_pos+"' title='"+stat+"'>&nbsp;</div>";
-    // return html;
-}
-function type_indicator(obj){
-    return obj.aData[obj.iDataColumn];
-}
 
 IONUX.Views.DataTable = IONUX.Views.Base.extend({
 
@@ -141,7 +108,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
                     var value = data_obj['_source'][key];
                 } else {
                     var value = get_descendant_properties(data_obj, key);
-                };
+                }
                 if (_.isUndefined(value)) value = "[" + key + "]";
                 data_row.push(value);
             });
@@ -153,19 +120,63 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         return data;
     },
 
+    status_indicator: function(obj){
+        switch(obj.aData[obj.iDataColumn]){
+            case 1:
+                var status = 'STATUS: OK';
+                var status_css = 'status_ok_mini';
+                break;
+            case 2:
+                var status = 'STATUS: WARNING';
+                var status_css = 'status_warning_alert_mini';
+                break;
+            case 3:
+                var status = 'STATUS: CRITICAL';
+                var status_css = 'status_critical_alert_mini';
+                break;
+            default:
+                var status = 'STATUS: UNKNOWN';
+                var status_css = 'status_unknown_mini';
+        };
+
+        var html = "<div class='sprite "+status_css+"' title='"+status+"'>&nbsp;</div>";
+        return html;    
+    },
+
+    type_indicator: function(obj){
+        var resource_type = obj.aData[1];
+        switch(resource_type){
+            case "InstrumentDevice":
+                var status_css = 'instrument_mini';
+                break;
+            case "PlatformDevice":
+                var status_css = 'platform_mini';
+                break;
+        };
+        var html = "<div class='sprite "+status_css+"' title='"+resource_type+"'>&nbsp;</div>";
+        return html;
+    },
+
     preproccesor: function(element_type, element_name){
         var self = this;
-        // console.log('element_name', element_name);
-        switch(element_type){
-            case "icon_ooi":
-                return status_indicator; //TODO namespace these
-            case "text_short_ooi":
-              if (element_name != "Modified") return type_indicator;
-            case "text_extended_ooi":
-                return type_indicator; //TODO namespace these
-            default:
-                return function(obj){return obj.aData[obj.iDataColumn];};
+        if (element_type == "icon_ooi" && element_name == "NO LABEL"){
+            return self.status_indicator;
         }
+        if (element_type == "icon_ooi" && element_name == "Type"){
+           return self.type_indicator 
+        }
+        if (element_type == "icon_ooi"){
+            return self.status_indicator;
+        }
+        /*
+        var named_type_indicator = function(data){return self.type_indicator(element_name, data)};
+        if (element_type == "text_short_ooi"){
+              if (element_name != "Modified") return named_type_indicator;
+        }
+        if (element_type == "text_extended_ooi"){
+                return named_type_indicator;
+        }*/
+        return function(obj){return obj.aData[obj.iDataColumn];};
     },
 
     get_filter_columns:function(){
