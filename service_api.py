@@ -29,7 +29,11 @@ class ServiceApi(object):
     def search(search_query):
         search_url = "http://%s:%d/ion-service/discovery/parse?search_request=SEARCH'_all'LIKE'%s'FROM'resources_index'LIMIT100" % (GATEWAY_HOST, GATEWAY_PORT, search_query)
         search_results = requests.get(search_url)
-        return render_service_gateway_response(search_results)
+        search_json = json.loads(search_results.content)
+        if search_json['data'].has_key('GatewayResponse'):
+            return search_json['data']['GatewayResponse']
+        else:
+            return search_json['data']
 
     @staticmethod
     def subscribe(resource_type, resource_id, event_type, user_id, resource_name=None):
