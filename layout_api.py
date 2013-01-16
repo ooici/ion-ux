@@ -25,9 +25,6 @@ DEFINED_VIEWS = [
     '2163158', # Direct Command
 ]
 
-
-
-
 class LayoutApi(object):
     @staticmethod
     def get_new_layout_schema():
@@ -94,19 +91,13 @@ class LayoutApi(object):
                     parent_elmt = v01_elmt
                 else:
                     parent_elmt = v02_elmt
-
-                if group.has_key('label'):
-                    label = group['label']
-                else:
-                    label = None
-
+                
+                # LABEL OVERRIDES
                 if gr_element.has_key('olabel'):
-                    olabel = gr_element['olabel']
+                    print 'group label override:', group['label'], '->', gr_element['olabel'], group_elid 
+                    group_label = gr_element['olabel']
                 else:
-                    olabel = None
-
-                if label and olabel:
-                    print 'xxxxxx', label, olabel
+                    group_label = group['label']
                 
                 # CHECK FOR TITLE BAR (V00), creates tabs for V01 and V02 groups
                 if group_position == 'V00':
@@ -124,7 +115,7 @@ class LayoutApi(object):
                     
                     # <li>, <a> and group element
                     group_li_elmt = _make_element(group_ul_elmt, 'li', css='')
-                    group_a_elmt = _make_element(group_li_elmt, 'a', href="#%s" % group_link_id, data_toggle='tab', content=group['label'])
+                    group_a_elmt = _make_element(group_li_elmt, 'a', href="#%s" % group_link_id, data_toggle='tab', content=group_label)
                     group_elmt = _make_element(group_block_container_elmt, 'div', id=group_link_id, css='tab-pane row-fluid')
                     
 
@@ -153,21 +144,12 @@ class LayoutApi(object):
                             li_css_class += ' %s' % block_res_type
                             group_li_elmt.attrib['class'] = li_css_class
                     
-                    
-                    if block.has_key('label'):
-                        label = block['label']
-                    else:
-                        label = None
-
+                    # LABEL OVERRIDES
                     if bl_element.has_key('olabel'):
-                        olabel = bl_element['olabel']
+                        print 'block label override:', block['label'], '->', bl_element['olabel'], block_elid
+                        block_label = bl_element['olabel']
                     else:
-                        olabel = None
-
-                    if label and olabel:
-                        print 'yyyyy', label, olabel
-                    
-                    
+                        block_label = block['label']
                     
                     block_css_class = block_res_type
                     
@@ -204,7 +186,7 @@ class LayoutApi(object):
                     if group_position != 'V00':
                         # Hide table headers for now.
                         if not attribute_widget_type == 'table_ooi':
-                            block_h3_elmt = _make_element(block_elmt, 'h3', content=block['label'])
+                            block_h3_elmt = _make_element(block_elmt, 'h3', content=block_label)
                     if group_position == 'V00':
                         block_container_elmt = block_elmt
                         left_elmt = _make_element(block_container_elmt, 'div', css='span4 heading-left')
@@ -223,19 +205,13 @@ class LayoutApi(object):
                         attribute_widget_id = attribute['wid']
                         attribute_widget_type = layout_schema['spec']['widgets'][attribute_widget_id]['name']
                         
-                        if attribute.has_key('label'):
-                            label = attribute['label']
-                        else:
-                            label = None
-                        
+                        # LABEL OVERRIDES
                         if at_element.has_key('olabel'):
-                            olabel = at_element['olabel']
+                            print 'attribute label override:', attribute['label'], '->', at_element['olabel'], attribute_elid
+                            attribute_label = at_element['olabel']
                         else:
-                            olabel = None
+                            attribute_label = attribute['label']
                         
-                        if label and olabel:
-                            print 'zzzzz', label, olabel
-                                                
                         if attribute_widget_type == 'image_ooi':
                             image_class = layout_schema['spec']['graphics'][attribute['gfx']]['name']
                             attribute_css += ' %s %s' % (attribute_widget_type, image_class)
@@ -251,7 +227,7 @@ class LayoutApi(object):
                             'data-position': attribute_position,
                             'data-path': attribute_data_path,
                             'data-level': attribute_level,
-                            'data-label': attribute['label'],
+                            'data-label': attribute_label,
                             'css': attribute_css
                         }
                         
@@ -275,26 +251,19 @@ class LayoutApi(object):
                             for embedded_attribute in attribute['embed']:
                                 embedded_object = layout_schema['spec']['elements'][embedded_attribute['elid']]
                                 embedded_widget_type = layout_schema['spec']['widgets'][embedded_attribute['wid']]['name']
-                                
-                                
-                                if embedded_object.has_key('label'):
-                                    label = embedded_object['label']
-                                else:
-                                    label = None
 
+                                # LABEL OVERRIDE
                                 if embedded_attribute.has_key('olabel'):
-                                    olabel = embedded_attribute['olabel']
+                                    print 'sub-attribute label override:', embedded_object['label'], '->', embedded_attribute['olabel'], attribute_elid
+                                    embedded_object_label = embedded_attribute['olabel']
                                 else:
-                                    olabel = None
-
-                                if label and olabel:
-                                    print 'aaaaaa', label, olabel
+                                    embedded_object_label = embedded_object['label']
                                                                 
                                 embedded_info_level = embedded_attribute['olevel']
                                 if embedded_info_level:
                                     embedded_info_level_index = int(embedded_info_level) 
 
-                                metadata_items = [embedded_widget_type, embedded_object['label'], embedded_attribute['dpath'], embedded_attribute['pos'], embedded_info_level, attribute_levels[embedded_info_level_index]]
+                                metadata_items = [embedded_widget_type, embedded_object_label, embedded_attribute['dpath'], embedded_attribute['pos'], embedded_info_level, attribute_levels[embedded_info_level_index]]
                                 if attribute_widget_type == 'attribute_group_ooi':
                                     meta_elmt_id = 'ATTRIBUTE_GROUP_' + attribute_elid
                                     metadata_items.append(embedded_attribute['elid'])
