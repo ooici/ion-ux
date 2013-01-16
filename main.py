@@ -294,7 +294,7 @@ def userprofile():
 @app.route('/signoff/', methods=['GET'])
 def logout():
     for key in session.keys():
-        g.pop(key, None)
+        session.pop(key, None)
     return redirect('/')
 
 @app.route('/session/', methods=['GET'])
