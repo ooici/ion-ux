@@ -87,7 +87,8 @@ def event_types():
 def subscribe_to_resource(resource_type, resource_id, event_type):
     user_id = session.get('user_id')
     if user_id:
-        resp = ServiceApi.subscribe(resource_type, resource_id, event_type, user_id)
+        resource_name = request.args.get('resource_name')
+        resp = ServiceApi.subscribe(resource_type, resource_id, event_type, user_id, resource_name)
         return jsonify(data=resp)
     else:
         return jsonify(data='No user_id.')

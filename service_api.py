@@ -32,12 +32,14 @@ class ServiceApi(object):
         return render_service_gateway_response(search_results)
 
     @staticmethod
-    def subscribe(resource_type, resource_id, event_type, user_id):
+    def subscribe(resource_type, resource_id, event_type, user_id, resource_name=None):
+        name = 'Notification for %s' % resource_name if resource_name else 'NotificationTest'
+        description = '%s - %s - Notification Request' % (resource_type, event_type)
         notification = {
             "type_": "NotificationRequest", 
             "lcstate": "DRAFT", 
-            "description": "%s - Notification" % resource_type, 
-            "name": "NotificationTest", 
+            "description": description, 
+            "name": name, 
             "origin": resource_id, 
             "origin_type": resource_type,
             "event_type": event_type}
