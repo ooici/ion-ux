@@ -156,7 +156,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
                 var status_css = 'observatory_mini';
                 break;
             case "DataProduct":
-                var status_css = 'data_product_min';
+                var status_css = 'data_product_mini';
                 break;
             case "SensorDevice":
                 var status_css = 'sensor_mini';
@@ -189,9 +189,8 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
                 var status_css = 'deployment_mini';
                 break;
         };
-        // Temp: reverting to status_unknown_mini temporarily to avoid 'double-rendering' bug.
-        // var html = "<div class='sprite "+status_css+"' title='"+resource_type+"'>&nbsp;</div>";
-        var html = "<div class='sprite status_unknown_mini'>&nbsp;</div>";
+        
+        var html = "<div class='sprite "+status_css+"' title='"+resource_type+"'>&nbsp;</div>";
         return html;
     },
 
