@@ -1,69 +1,80 @@
+IONUX.Views.Error = Backbone.View.extend({
+  template: _.template($('#error-tmpl').html()),
+  initialize: function(){
+    _.bindAll(this);
+  },
+  render: function(){
+    $('#dynamic-container').html(this.template({error_obj: this.options.error_obj}));
+    return this;
+  },
+});
+
 IONUX.Views.Search = Backbone.View.extend({
-    el: '#search-production',
-    template: _.template('<div id="input-search-button" class="btn-input-search saved_search_mini"></div><input id="sidebar-search" class="textfield-search" type="text" /><br /><a class="btn-advanced-search" href="#">Advanced Search</a>'),
-    events: {
-        'click .btn-input-search': 'search_on_click',
-        'keypress #sidebar-search': 'search_on_enter',
-        'click .btn-advanced-search': 'advanced_search'
-    },
-    render: function(){
-        this.$el.html(this.template);
-        return this;
-    },
-    search_on_click: function(e){
-      e.preventDefault();
-      this.navigate_to_search_results();
-      return false; 
-    },
-    search_on_enter: function(e) {
-      if (e.keyCode == 13) this.navigate_to_search_results();
-    },
-    navigate_to_search_results: function() {
-      var search_term = this.$el.find('#sidebar-search').attr('value');
-      IONUX.ROUTER.navigate('/search/?'+ encodeURI(search_term), {trigger:true});
-    },
-    advanced_search: function(e){
-      e.preventDefault();
-      alert("Advanced search is not available.");
-      return false;
-    },
+  el: '#search-production',
+  template: _.template('<div id="input-search-button" class="btn-input-search saved_search_mini_input"></div><input id="sidebar-search" class="textfield-search" type="text" /><br /><a class="btn-advanced-search" href="#">Advanced Search</a>'),
+  events: {
+    'click .btn-input-search': 'search_on_click',
+    'keypress #sidebar-search': 'search_on_enter',
+    'click .btn-advanced-search': 'advanced_search'
+  },
+  render: function(){
+    this.$el.html(this.template);
+    return this;
+  },
+  search_on_click: function(e){
+    e.preventDefault();
+    this.navigate_to_search_results();
+    return false; 
+  },
+  search_on_enter: function(e) {
+    if (e.keyCode == 13) this.navigate_to_search_results();
+  },
+  navigate_to_search_results: function() {
+    var search_term = this.$el.find('#sidebar-search').attr('value');
+    IONUX.ROUTER.navigate('/search/?'+ encodeURI(search_term), {trigger:true});
+  },
+  advanced_search: function(e){
+    e.preventDefault();
+    alert("Advanced search is not available.");
+    return false;
+  },
 });
 
 
 IONUX.Views.Topbar = Backbone.View.extend({
-    el: '#topbar',
-    template: _.template($('#topbar-tmpl').html()),
-    events: {
-        'click #userprofile': 'userprofile'
-    },
-    initialize: function(){
-        _.bindAll(this, "render");
-        this.model.on('change', this.render);
-    },
-    render: function(){
-        this.$el.html(this.template(this.model.toJSON()));
-        return this;
-    },
-    userprofile: function(e){
-        e.preventDefault();
-        user_info_url = '/UserInfo/face/'+IONUX.SESSION_MODEL.get('user_id')+'/';
-        IONUX.ROUTER.navigate(user_info_url, {trigger: true});
-        return false;
-    },
+  el: '#topbar',
+  template: _.template($('#topbar-tmpl').html()),
+  events: {
+    'click #userprofile': 'userprofile'
+  },
+  initialize: function(){
+    _.bindAll(this, "render");
+    this.model.on('change', this.render);
+  },
+  render: function(){
+    this.$el.html(this.template(this.model.toJSON()));
+    return this;
+  },
+  userprofile: function(e){
+    e.preventDefault();
+    user_info_url = '/UserInfo/face/'+IONUX.SESSION_MODEL.get('user_id')+'/';
+    IONUX.ROUTER.navigate(user_info_url, {trigger: true});
+    return false;
+  },
 });
 
 IONUX.Views.Sidebar = Backbone.View.extend({
-    el: '#sidebar',
-    initialize: function(){
-        _.bindAll(this, "render");
-        this.model.on('change', this.render);
-    },
-    render: function(){
-        var ui_mode = this.model.get('ui_mode').toLowerCase();
-        this.template = _.template($('#sidebar-'+ui_mode+'-tmpl').html());
-        this.$el.html(this.template(this.model.toJSON()));
-        return this;
-    },
+  el: '#sidebar',
+  initialize: function(){
+    _.bindAll(this, "render");
+    this.model.on('change', this.render);
+  },
+  render: function(){
+    var ui_mode = this.model.get('ui_mode').toLowerCase();
+    this.template = _.template($('#sidebar-'+ui_mode+'-tmpl').html());
+    this.$el.html(this.template(this.model.toJSON()));
+    return this;
+  },
 });
 
 IONUX.Views.Subscribe = Backbone.View.extend({
@@ -83,11 +94,12 @@ IONUX.Views.Subscribe = Backbone.View.extend({
         var select_elmt = this.$el.find('select');
         var selected_option = this.$el.find('option:selected');
         var event_type = selected_option.attr("value");
+        var resource_name = window.MODEL_DATA['resource']['name'];
         // button_elmt.attr("disabled", "disabled");
         // select_elmt.attr("disabled", "disabled");
         var self = this;
         $.ajax({
-          url: 'subscribe/'+event_type+'/',
+          url: 'subscribe/'+event_type+'/?resource_name='+resource_name,
           dataType: 'json',
           success: function(resp){
               self.$el.find('.modal-body').prepend('<div class="alert alert-success">Subscription successful.</div>');
@@ -120,84 +132,83 @@ IONUX.Views.Subscribe = Backbone.View.extend({
 });
 
 
-
 IONUX.Views.DashboardMap = Backbone.View.extend({
-    initialize: function(){
-        this.$el.css({'height': '400px', 'width': '100%'});
-    },
-    render: function(){
-        var mapOptions, mao;
-        var initialZoom = 2;
-        var oms;
-        mapOptions = {
-            center: new google.maps.LatLng(0, 0),
-            zoom: initialZoom,
-            mapTypeId: google.maps.MapTypeId.SATELLITE
-        };
-        map = new google.maps.Map(this.$el[0], mapOptions);
-        kml_path = 'http://'+window.location.host+'/map2.kml?ui_server=http://'+window.location.host+'&unique_key='+this.create_random_id()+'&return_format=raw_json';
-        console.log('KML_PATH: ', kml_path);
-        var georssLayer = new google.maps.KmlLayer(kml_path);
-        georssLayer.setMap(map);
-        return this;
-    },
-    
-    // Kept from Raj's code
-    create_random_id: function(){
-        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        var text = "";
-        for ( var i=0; i < 16; i++ ) {
-            text += possible.charAt(Math.floor(Math.random() * possible.length))
-        };
-        return text;
-    },
+  initialize: function(){
+      this.$el.css({'height': '400px', 'width': '100%'});
+  },
+  render: function(){
+    var mapOptions, mao;
+    var initialZoom = 2;
+    var oms;
+    mapOptions = {
+      center: new google.maps.LatLng(0, 0),
+      zoom: initialZoom,
+      mapTypeId: google.maps.MapTypeId.SATELLITE
+    };
+    map = new google.maps.Map(this.$el[0], mapOptions);
+    kml_path = 'http://'+window.location.host+'/map2.kml?ui_server=http://'+window.location.host+'&unique_key='+this.create_random_id()+'&return_format=raw_json';
+    console.log('KML_PATH: ', kml_path);
+    var georssLayer = new google.maps.KmlLayer(kml_path);
+    georssLayer.setMap(map);
+    return this;
+  },
+  
+  // Kept from Raj's code
+  create_random_id: function(){
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    var text = "";
+    for ( var i=0; i < 16; i++ ) {
+      text += possible.charAt(Math.floor(Math.random() * possible.length))
+    };
+    return text;
+  },
 });
 
 var tmp_map = '<iframe width="425" height="350" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/?q=http:%2F%2F67.58.49.196:3000%2Fmap2.kml%3Fui_server%3Dhttp:%2F%2Fhttp:%2F%2F67.58.49.196:3000%2F&amp;ie=UTF8&amp;t=h&amp;ll=65.512963,-139.570312&amp;spn=56.353099,149.414063&amp;z=2&amp;iwloc=lyrftr:kml:cO2v7Ri9AUthkCHKZZYaNnFiB8Jrkdztr-0YvQFLYZAhymRIB,g9d9eb12dfa679399,44.590467,-125.332031,0,-32&amp;output=embed"></iframe><br /><small><a href="https://maps.google.com/?q=http:%2F%2F67.58.49.196:3000%2Fmap2.kml%3Fui_server%3Dhttp:%2F%2Fhttp:%2F%2F67.58.49.196:3000%2F&amp;ie=UTF8&amp;t=h&amp;ll=65.512963,-139.570312&amp;spn=56.353099,149.414063&amp;z=2&amp;iwloc=lyrftr:kml:cO2v7Ri9AUthkCHKZZYaNnFiB8Jrkdztr-0YvQFLYZAhymRIB,g9d9eb12dfa679399,44.590467,-125.332031,0,-32&amp;source=embed" style="color:#0000FF;text-align:left">View Larger Map</a></small>'
 
 IONUX.Views.Footer = Backbone.View.extend({
-    tagName: 'div',
-    className: 'footer',
-    render: function(){
-        // Hack to prevent multiple instances until I figure out exactly where to call. 
-        // Investigating collections and dashboard implementation issues.
-        $('.footer').empty();
-        
-        $('#footr').html(this.$el);
-        this.render_buttons();
-        return this;
-    },
-    render_buttons: function(){
-        var resource_id = this.options.resource_id;
-        var resource_type = this.options.resource_type;
-        var buttons = [['Dashboard', 'dashboard'], ['Facepage', 'face'], ['Status', 'status'], ['Related', 'related']];
-        var button_tmpl = '<a class="btn-footer <%= view_type %>" href="<%= url %>"><%= label %></a>'
-        
-        var self = this;
-        _.each(buttons, function(button){
-            var label = button[0];
-            var view_type = button[1];
-            
-            // Determine URL
-            if (label == 'Dashboard'){
-                var url = '/';
-            } else if  (!resource_id || !resource_type) {
-                var url = '.'
-            } else {
-                var url = '/'+resource_type+'/'+view_type+'/'+resource_id+'/';
-            };
-            
-            // Determine active button
-            var path = window.location.pathname.split('/');
-            if (path.length == 2 && view_type == 'dashboard'){
-                view_type += ' active';
-            } else if (path[2] == view_type) {
-                view_type += ' active';
-            };
-            
-            self.$el.append(_.template(button_tmpl)({view_type: view_type, url: url, label: label}));
-        });
-    },
+  tagName: 'div',
+  className: 'footer',
+  render: function(){
+    // Hack to prevent multiple instances until I figure out exactly where to call. 
+    // Investigating collections and dashboard implementation issues.
+    $('.footer').empty();
+    
+    $('#footr').html(this.$el);
+    this.render_buttons();
+    return this;
+  },
+  render_buttons: function(){
+    var resource_id = this.options.resource_id;
+    var resource_type = this.options.resource_type;
+    var buttons = [['Dashboard', 'dashboard'], ['Facepage', 'face'], ['Status', 'status'], ['Related', 'related']];
+    var button_tmpl = '<a class="btn-footer <%= view_type %>" href="<%= url %>"><%= label %></a>'
+    
+    var self = this;
+    _.each(buttons, function(button){
+      var label = button[0];
+      var view_type = button[1];
+      
+      // Determine URL
+      if (label == 'Dashboard'){
+        var url = '/';
+      } else if  (!resource_id || !resource_type) {
+        var url = '.'
+      } else {
+        var url = '/'+resource_type+'/'+view_type+'/'+resource_id+'/';
+      };
+      
+      // Determine active button
+      var path = window.location.pathname.split('/');
+      if (path.length == 2 && view_type == 'dashboard'){
+        view_type += ' active';
+      } else if (path[2] == view_type) {
+        view_type += ' active';
+      };
+      
+      self.$el.append(_.template(button_tmpl)({view_type: view_type, url: url, label: label}));
+    });
+  },
 });
 
 IONUX.Views.ContextMap = Backbone.View.extend({});
@@ -517,6 +528,7 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
 
     $.ajax({
       url:command,
+      global: false,
       dataType: 'json',
       success: function(resp) {
         var data = resp.data;
@@ -539,6 +551,7 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
     var self = this;
     $.ajax({
         url: 'start/',
+        global: false,
         success: function() {
           $('.instrument-commands').show();
           $('#start-instrument-agent-instance').hide();
@@ -555,6 +568,7 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
       var self = this;
       $.ajax({
         url: 'get_capabilities?cap_type=abc123',
+        global: false,
         dataType: 'json',
         success: function(resp){
             var agent_options = [];

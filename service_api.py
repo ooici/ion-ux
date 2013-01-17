@@ -28,23 +28,22 @@ class ServiceApi(object):
     @staticmethod
     def search(search_query):
         search_url = "http://%s:%d/ion-service/discovery/parse?search_request=SEARCH'_all'LIKE'%s'FROM'resources_index'LIMIT100" % (GATEWAY_HOST, GATEWAY_PORT, search_query)
-        print 'search_url', search_url
         search_results = requests.get(search_url)
         search_json = json.loads(search_results.content)
-        
-        # TO DO - Figure out why this is not working.
-        # search_json = json.loads(search_results.content)
-        # return search_json['data']
-        
-        return jsonify(data=search_json['data']['GatewayResponse'])
+        if search_json['data'].has_key('GatewayResponse'):
+            return search_json['data']['GatewayResponse']
+        else:
+            return search_json['data']
 
     @staticmethod
-    def subscribe(resource_type, resource_id, event_type, user_id):
+    def subscribe(resource_type, resource_id, event_type, user_id, resource_name=None):
+        name = 'Notification for %s' % resource_name if resource_name else 'NotificationTest'
+        description = '%s - %s - Notification Request' % (resource_type, event_type)
         notification = {
             "type_": "NotificationRequest", 
             "lcstate": "DRAFT", 
-            "description": "%s - Notification" % resource_type, 
-            "name": "NotificationTest", 
+            "description": description, 
+            "name": name, 
             "origin": resource_id, 
             "origin_type": resource_type,
             "event_type": event_type}
@@ -62,8 +61,15 @@ class ServiceApi(object):
         return service_gateway_get('directory', 'reset_ui_specs', params={'url': 'http://filemaker.oceanobservatories.org/database-exports/'})
     
     @staticmethod
-    def find_by_resource_type(resource_type):
-        return service_gateway_get('resource_registry', 'find_resources', params={'restype': resource_type})[0]
+    def find_by_resource_type(resource_type, user_info_id=None):
+        # Todo - Implement "My Resources" as a separate call when they are available (observatories, platforms, etc.)...
+        if resource_type == 'NotificationRequest':
+            if user_info_id:
+                req = service_gateway_get('user_notification', 'get_user_notifications', params={'user_info_id': user_info_id})
+            else:
+                return []
+        req = service_gateway_get('resource_registry', 'find_resources', params={'restype': resource_type})
+        return req
     
     @staticmethod
     def find_by_resource_id(resource_id):
@@ -174,7 +180,7 @@ class ServiceApi(object):
     @staticmethod
     def instrument_agent_start(instrument_device_id):
         instrument_agent_instance = service_gateway_get('instrument_management', 'find_instrument_agent_instance_by_instrument_device', params={'instrument_device_id': instrument_device_id})
-        instrument_agent_instance_id = instrument_agent_instance[0]['_id']
+        instrument_agent_instance_id = instrument_agent_instance['_id']
         agent_request = service_gateway_get('instrument_management', 'start_instrument_agent_instance', params={'instrument_agent_instance_id': str(instrument_agent_instance_id)})
         
         return agent_request
@@ -182,7 +188,7 @@ class ServiceApi(object):
     @staticmethod
     def instrument_agent_stop(instrument_device_id):
         instrument_agent_instance = service_gateway_get('instrument_management', 'find_instrument_agent_instance_by_instrument_device', params={'instrument_device_id': instrument_device_id})
-        instrument_agent_instance_id = instrument_agent_instance[0]['_id']
+        instrument_agent_instance_id = instrument_agent_instance['_id']
         ServiceApi.reset_driver(instrument_device_id)
         agent_request = service_gateway_get('instrument_management', 'stop_instrument_agent_instance', params={'instrument_agent_instance_id': str(instrument_agent_instance_id)})
         
@@ -379,9 +385,7 @@ class ServiceApi(object):
             user_info = service_gateway_get('identity_management', 'find_user_info_by_id', params={'user_id': user_id})
         except:
             user_info = {'contact': {'name': '(Not Registered)', 'email': '(Not Registered)', 'phone': '???'}}
-        return user_info    
-
-
+        return user_info
 
 
 # HELPER METHODS
@@ -398,25 +402,31 @@ def build_get_request(service_name, operation_name, params={}):
             param_string += '&%s=%s' % (k,v)
     url += param_string
     
-
     pretty_console_log('SERVICE GATEWAY GET URL', url)
     
     return url
 
 def service_gateway_get(service_name, operation_name, params={}):    
-    resp = requests.get(build_get_request(service_name, operation_name, params))
-    pretty_console_log('SERVICE GATEWAY GET RESPONSE', resp.content)
-    
-    if resp.status_code == 200:
-        resp = json.loads(resp.content)
-        
-        if type(resp) == dict:
-            return resp['data']['GatewayResponse']
-        elif type(resp) == list:
-            return resp['data']['GatewayResponse'][0]
+    service_gateway_resp = requests.get(build_get_request(service_name, operation_name, params))
+    pretty_console_log('SERVICE GATEWAY GET RESPONSE', service_gateway_resp.content)
+    return render_service_gateway_response(service_gateway_resp)
+
+def render_service_gateway_response(service_gateway_resp):
+    if service_gateway_resp.status_code == 200:
+        resp = json.loads(service_gateway_resp.content)
+        try:
+            response = resp['data']['GatewayResponse']
+            if isinstance(response, list):
+                return response[0]
+            else:
+                return response
+        except Exception, e:
+            return resp['data']
+    else:
+        return json.dumps({'GatewayError': {'Message': 'An error occurred communicating with the Service Gateway'}})
 
 def build_post_request(service_name, operation_name, params={}):
-    url = '%s/%s/%s' % (SERVICE_GATEWAY_BASE_URL, service_name, operation_name)    
+    url = '%s/%s/%s' % (SERVICE_GATEWAY_BASE_URL, service_name, operation_name)
 
     post_data = deepcopy(SERVICE_REQUEST_TEMPLATE)
     post_data['serviceRequest']['serviceName'] = service_name

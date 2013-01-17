@@ -189,7 +189,9 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
                 var status_css = 'deployment_mini';
                 break;
         };
-        var html = "<div class='sprite "+status_css+"' title='"+resource_type+"'>&nbsp;</div>";
+        // Temp: reverting to status_unknown_mini temporarily to avoid 'double-rendering' bug.
+        // var html = "<div class='sprite "+status_css+"' title='"+resource_type+"'>&nbsp;</div>";
+        var html = "<div class='sprite status_unknown_mini'>&nbsp;</div>";
         return html;
     },
 

@@ -339,6 +339,13 @@ body {
 
 /* BLOCK/ATTRIBUTE STYLES*/
 
+h1 {
+  font-size: 18px; 
+  font-weight: 300;
+  color: #CCCCCC;
+  text-transform: uppercase;
+}
+
 h4, .h4-span {
   color: #CCC;
   font-size: 12px;
@@ -408,7 +415,7 @@ h4, .h4-span {
   background: -moz-linear-gradient(center top, #e0e0e0 0%, #e6e3e6 25%, #e6e3e6 25%, #ffffff 100%);
 }
 
-a.btn-footer, a.btn-advanced-search {
+a.btn-general, a.btn-footer, a.btn-advanced-search {
   color:#999; font-size:11px;
   font-weight:400;
   letter-spacing:2px;
@@ -428,8 +435,8 @@ a.btn-footer, a.btn-advanced-search {
   background: -moz-linear-gradient(center top, #3d3d3d 0%, #333333 75%, #333333 75%, #2e2e2e 100%);
 }
 
-a.btn-advanced-search:hover {background: #666666; color:#fff; border: solid #fff 1px;}
-a.btn-advanced-search:active {background: #333333; color:#fff; border: solid #fff 1px;} 
+a.btn-general:hover, a.btn-advanced-search:hover {background: #666666; color:#fff; border: solid #fff 1px;}
+a.btn-general:hover, a.btn-advanced-search:active {background: #333333; color:#fff; border: solid #fff 1px;} 
 
 a.btn-footer {
   margin-right: 10px;
@@ -773,8 +780,37 @@ ul.nav {
 }
 
 .modal {
-    padding:10px;
+/*    padding:10px;*/
+/*    background: #4D4D4D;*/
 }
+
 .modal-backdrop.fade {
   opacity:0.5;
+}
+
+#event-types tbody tr:nth-child(even) td {
+  background:#1e1e1e;
+}
+
+#event-types tbody tr:nth-child(odd) td {
+  background:#333333;
+}
+
+.error {
+  margin: 15px 0;
+}
+
+.error h1 {
+  line-height: 24px;
+}
+
+.error-buttons {
+  margin: 15px 0;
+}
+
+.error-trace {
+  color: #999;
+  border-top: solid 2px #222;
+  padding: 15px 0;
+  margin: 20px 0;
 }

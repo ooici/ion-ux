@@ -161,7 +161,7 @@ class Deploy:
         local('git tag | sort -r' )
         tag_version = prompt('Please enter release tag you want to deploy based on list above:',
             default=default_tag_version)
-        if default_tag_version != no_tag:
+        if tag_version != no_tag:
             print '\nUsing git tag version: ', tag_version
             local('git checkout %s' % tag_version)
         else:

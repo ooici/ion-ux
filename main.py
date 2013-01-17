@@ -1,4 +1,4 @@
-from flask import Flask, request, session, jsonify, render_template, redirect, url_for, escape, send_file
+from flask import Flask, request, session, jsonify, render_template, redirect, url_for, escape, send_file, make_response
 import requests, json
 from functools import wraps
 import base64
@@ -22,24 +22,31 @@ from mimetypes import guess_extension
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
 app.debug = True
-# SERVICE_GATEWAY_BASE_URL = 'http://%s:%d/ion-service' % (GATEWAY_HOST, GATEWAY_PORT)
 
 def render_app_template(current_url):
-    """Renders base template for full app, with needed template params"""
-    # roles = session["roles"] if session.has_key("roles") else "roles"
-    # logged_in = "True" if session.has_key('user_id') else "False"
-    # tmpl = Template(LayoutApi.process_layout())
-    # return render_template(tmpl, **{"current_url":"/", "roles":roles, "logged_in":logged_in})
-
     tmpl = Template(LayoutApi.process_layout())
     return render_template(tmpl)
     
+def render_json_response(service_api_response):
+    if isinstance(service_api_response, dict) and service_api_response.has_key('GatewayError'):
+        if PRODUCTION:
+            del service_api_response['GatewayError']['Trace']
+        error_response = make_response(json.dumps({'data': service_api_response}), 400)
+        error_response.headers['Content-Type'] = 'application/json'
+        return error_response
+    else:
+        return jsonify(data=service_api_response)
+
+
+# -----------------------------------------------------------------------------
+# ROUTES
+# -----------------------------------------------------------------------------
 
 @app.route('/')
 def index():
     return render_app_template(request.path)
 
-
+    
 # -----------------------------------------------------------------------------
 # SEARCH & ATTACHMENTS
 # -----------------------------------------------------------------------------
@@ -49,7 +56,7 @@ def search(query=None):
     if request.is_xhr:
         search_query = escape(request.args.get('query'))
         search_results = ServiceApi.search(quote(search_query))
-        return search_results
+        return render_json_response(search_results)
     else:
         return render_app_template(request.path)
 
@@ -80,7 +87,8 @@ def event_types():
 def subscribe_to_resource(resource_type, resource_id, event_type):
     user_id = session.get('user_id')
     if user_id:
-        resp = ServiceApi.subscribe(resource_type, resource_id, event_type, user_id)
+        resource_name = request.args.get('resource_name')
+        resp = ServiceApi.subscribe(resource_type, resource_id, event_type, user_id, resource_name)
         return jsonify(data=resp)
     else:
         return jsonify(data='No user_id.')
@@ -106,8 +114,11 @@ def page(resource_type, resource_id):
 @app.route('/<resource_type>/list/', methods=['GET'])
 def collection(resource_type=None):
     if request.is_xhr:
-        resources = ServiceApi.find_by_resource_type(resource_type)
-        return jsonify(data=resources)
+        # Todo - Implement "My Resources" as a separate call when they are available (observatories, platforms, etc.)...
+        # Todo - user_info_id set in a @login_required decorator
+        user_info_id = session.get('user_id') if session.has_key('user_id') else None
+        resources = ServiceApi.find_by_resource_type(resource_type, user_info_id)
+        return render_json_response(resources)
     else:
         return render_app_template(request.path)
 

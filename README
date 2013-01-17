@@ -79,8 +79,16 @@ To clear preload data, exit out of the running Capability Container and enter:
 
 	bin/pycc -x ion.processes.bootstrap.datastore_loader.DatastoreLoader op=clear
 
-5. Deploy Remote
+5. Release
 ----------------
+
+A fab script has been provided to tag specific releases of this software.  You need to be in a virtualenv with 'fabric' installed before running following command:
+
+    fab -f fabrelease.py release
+
+6. Deploy Remote
+----------------
+
 
 A fab script has been provided to facilitate deployment to a remote VM.  To prepare to run the fab script, be sure to install fabric.
 
