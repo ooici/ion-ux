@@ -144,7 +144,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
     },
 
     type_indicator: function(obj){
-        var resource_type = obj.aData[1];
+        var resource_type = obj.aData[obj.iDataColumn];
         switch(resource_type){
             case "InstrumentDevice":
                 var status_css = 'instrument_mini';
