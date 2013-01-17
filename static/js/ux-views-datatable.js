@@ -147,50 +147,52 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         var resource_type = obj.aData[obj.iDataColumn];
         switch(resource_type){
             case "InstrumentDevice":
-                var status_css = 'instrument_mini';
+                var type_css = 'instrument_mini';
                 break;
             case "PlatformDevice":
-                var status_css = 'platform_mini';
+                var type_css = 'platform_mini';
                 break;
             case "Org":
-                var status_css = 'observatory_mini';
+                var type_css = 'observatory_mini';
                 break;
             case "DataProduct":
-                var status_css = 'data_product_mini';
+                var type_css = 'data_product_mini';
                 break;
             case "SensorDevice":
-                var status_css = 'sensor_mini';
+                var type_css = 'sensor_mini';
                 break;
             case "Site":
-                var status_css = 'site_mini';
+                var type_css = 'site_mini';
                 break;
             case "Observatory":
-                var status_css = 'site_mini';
+                var type_css = 'site_mini';
                 break;
             case "Subsite":
-                var status_css = 'site_mini';
+                var type_css = 'site_mini';
                 break;
             case "PlatformSite":
-                var status_css = 'site_mini';
+                var type_css = 'site_mini';
                 break;
             case "InstrumentSite":
-                var status_css = 'site_mini';
+                var type_css = 'site_mini';
                 break;
             case "Attachment":
-                var status_css = 'attachment_mini';
+                var type_css = 'attachment_mini';
                 break;
             case "DataProducer":
-                var status_css = 'data_producer_mini';
+                var type_css = 'data_producer_mini';
                 break;
             case "DataSet":
-                var status_css = 'data_set_mini';
+                var type_css = 'data_set_mini';
                 break;
             case "Deployment":
-                var status_css = 'deployment_mini';
+                var type_css = 'deployment_mini';
                 break;
+            default:
+                var type_css = 'resource_mini';
         };
         
-        var html = "<div class='sprite "+status_css+"' title='"+resource_type+"'>&nbsp;</div>";
+        var html = "<div class='sprite "+type_css+"' title='"+resource_type+"'>&nbsp;</div>";
         return html;
     },
 
