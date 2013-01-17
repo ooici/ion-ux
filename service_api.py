@@ -61,7 +61,13 @@ class ServiceApi(object):
         return service_gateway_get('directory', 'reset_ui_specs', params={'url': 'http://filemaker.oceanobservatories.org/database-exports/'})
     
     @staticmethod
-    def find_by_resource_type(resource_type):
+    def find_by_resource_type(resource_type, user_info_id=None):
+        # Todo - Implement "My Resources" as a separate call when they are available (observatories, platforms, etc.)...
+        if resource_type == 'NotificationRequest':
+            if user_info_id:
+                req = service_gateway_get('user_notification', 'get_user_notifications', params={'user_info_id': user_info_id})
+            else:
+                return []
         req = service_gateway_get('resource_registry', 'find_resources', params={'restype': resource_type})
         return req
     

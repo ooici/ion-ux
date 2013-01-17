@@ -114,8 +114,10 @@ def page(resource_type, resource_id):
 @app.route('/<resource_type>/list/', methods=['GET'])
 def collection(resource_type=None):
     if request.is_xhr:
-        resources = ServiceApi.find_by_resource_type(resource_type)
-        # return jsonify(data=resources)
+        # Todo - Implement "My Resources" as a separate call when they are available (observatories, platforms, etc.)...
+        # Todo - user_info_id set in a @login_required decorator
+        user_info_id = session.get('user_id') if session.has_key('user_id') else None
+        resources = ServiceApi.find_by_resource_type(resource_type, user_info_id)
         return render_json_response(resources)
     else:
         return render_app_template(request.path)
