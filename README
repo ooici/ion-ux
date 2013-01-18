@@ -67,13 +67,9 @@ In pyon.local.yml:
 
 The name above ensures that your Capability Container will always use the same system name for creating, clearing and loading the data in CouchDB. After lauching you Capability Container with pyon.local.yml enabled, enter one of the following commands in another terminal window:
 
-Base Preload
+Beta Preload
 
-	bin/pycc -x ion.processes.bootstrap.ion_loader.IONLoader op=load path=res/preload/lca_demo scenario=LCA_DEMO_PRE
-
-Or, LCA Demo Preload:
-
-	bin/pycc -x ion.processes.bootstrap.ion_loader.IONLoader loadooi=True op=load path=res/preload/lca_demo scenario=LCA_DEMO_PRE
+	bin/pycc -x ion.processes.bootstrap.ion_loader.IONLoader op=load loadui=true scenario=BASE,BETA path=master ui_path='https://userexperience.oceanobservatories.org/database-exports' attachments=res/preload/r2_ioc/attachments
 
 To clear preload data, exit out of the running Capability Container and enter:
 
