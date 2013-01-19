@@ -14,7 +14,7 @@ todo:
 INTERACTIONS_OBJECT = {};
 INTERACTIONS_OBJECT.block_interactions = ['More Info', 'Hide', 'Edit'];
 INTERACTIONS_OBJECT.group_interactions = ['More Info', 'Detailed View', /*'Submenu',*/ 'Edit'];
-INTERACTIONS_OBJECT.view_interactions = ['Subscribe', 'Detailed View', /*'Submenu',*/ 'Command', 'Direct Command', 'Download'];
+INTERACTIONS_OBJECT.view_interactions = ['Subscribe', 'Lifecycle', 'Detailed View', /*'Submenu',*/ 'Command', 'Direct Command', 'Download'];
 
 
 IONUX.Views.ActionMenu = Backbone.View.extend({
@@ -58,16 +58,36 @@ IONUX.Views.ActionMenu = Backbone.View.extend({
 
 
 IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
-
+    modal_template: '<div id="action-modal" class="modal hide fade""></div>',
     initialize: function() {
         this.interaction_items = INTERACTIONS_OBJECT.view_interactions;
         this.create_actionmenu();
         this.on("action__subscribe", this.action__subscribe);
+        this.on("action__lifecycle", this.action__lifecycle);
         this.on("action__detailed_view", this.action__detailed_view);
         this.on("action__submenu_toggle", this.action__submenu_toggle);
         this.on("action__command", this.action__command);
         this.on("action__direct_command", this.action__direct_command);
         this.on("action__download", this.action__download);
+    },
+    action__subscribe:function(){
+        var modal_html = '<div id="subscribe-modal" class="modal hide fade""></div>';
+        $(modal_html).modal({keyboard:false})
+            .on('shown', function(){
+                new IONUX.Views.Subscribe().render().el;
+            })
+            .on('hidden',function(){
+                $('#subscribe-modal').remove();
+            });
+    },
+    action__lifecycle:function(){
+        $(this.modal_template).modal({keyboard:false})
+            .on('shown', function(){
+                new IONUX.Views.Lifecycle().render().el;
+            })
+            .on('hidden',function(){
+                $('#action-modal').remove();
+            });
     },
     action__subscribe:function(){
         var modal_html = '<div id="subscribe-modal" class="modal hide fade""></div>';

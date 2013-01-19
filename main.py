@@ -92,6 +92,29 @@ def subscribe_to_resource(resource_type, resource_id, event_type):
         return jsonify(data=resp)
     else:
         return jsonify(data='No user_id.')
+        
+@app.route('/<resource_type>/status/<resource_id>/transition/', methods=['POST'])
+@app.route('/<resource_type>/face/<resource_id>/transition/', methods=['POST'])
+@app.route('/<resource_type>/related/<resource_id>/transition/', methods=['POST'])
+def change_lcstate(resource_type, resource_id):
+    user_id = session.get('user_id')
+    if user_id:
+        transition_event = request.form['transition_event'].lower()
+        transition = ServiceApi.transition_lcstate(resource_id, transition_event)
+        return jsonify(data=transition)
+    else:
+        error_response = make_response('Login required to change Lifecycle state.', 400)
+        error_response.headers['Content-Type'] = 'application/json'
+        return error_response
+
+    # user_id = session.get('user_id')
+    # if user_id:
+    #     resource_name = request.args.get('resource_name')
+    #     resp = ServiceApi.subscribe(resource_type, resource_id, event_type, user_id, resource_name)
+    #     return jsonify(data=resp)
+    # else:
+    #     return jsonify(data='No user_id.')
+
 
 # -----------------------------------------------------------------------------
 # FACE, STATUS, RELATED PAGES

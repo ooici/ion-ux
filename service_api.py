@@ -36,6 +36,12 @@ class ServiceApi(object):
             return search_json['data']
 
     @staticmethod
+    def transition_lcstate(resource_id, transition_event):
+        req = service_gateway_get('resource_management', 'execute_lifecycle_transition', params={'resource_id': resource_id, 'transition_event': transition_event})
+        return req
+
+
+    @staticmethod
     def subscribe(resource_type, resource_id, event_type, user_id, resource_name=None):
         name = 'Notification for %s' % resource_name if resource_name else 'NotificationTest'
         description = '%s - %s - Notification Request' % (resource_type, event_type)
@@ -288,8 +294,7 @@ class ServiceApi(object):
         for user_identity in user_identities:
             if user_name == user_identity['name']:
                 user_id = user_identity['_id']
-                actor_id = service_gateway_get('resource_registry', 'find_subjects', params={'predicate': 'hasInfo', 'object': user_id, 'id_only': True})[0][0]
-                
+                actor_id = service_gateway_get('resource_registry', 'find_subjects', params={'predicate': 'hasInfo', 'object': user_id, 'id_only': True})[0]
                 session['user_id'] = user_id
                 session['actor_id'] = actor_id
                 session['valid_until'] = str(int(time.time()) * 100000)

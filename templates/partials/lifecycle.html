@@ -1,0 +1,13 @@
+<div class="modal-header">
+  <h1><%= resource_label %>&nbsp;<strong><%= resource_name %></strong> &dash; <%= current_lcstate %></h1>
+</div>
+<div class="modal-body">
+  <p>AVAILABLE LIFECYCLE TRANSITIONS:</p>
+  <select id="lc-transitions" class="modal-select"></select>  
+</div>
+<div class="modal-footer">
+  <img class="loading" src='/static/img/modal-loader.gif'/>
+  <button id="btn-lcstate" class="btn-blue">Change Lifecycle</button>&nbsp;
+  <button id="btn-cancel" class="btn-blue" data-dismiss="modal">Cancel</button>
+</div>
+ 

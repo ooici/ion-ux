@@ -1,3 +1,59 @@
+IONUX.Views.Lifecycle = Backbone.View.extend({
+    el: '#action-modal',
+    template: _.template($('#lifecycle-tmpl').html()),
+    events: {
+        'click #btn-lcstate': 'change_lc_state',
+    },
+    initialize: function(){
+        _.bindAll(this);
+        this.resource_name = window.MODEL_DATA['resource']['name'];
+        this.resource_label = $(".heading-left:visible .text_static_ooi").text();
+        this.current_lcstate = window.MODEL_DATA['resource']['lcstate'];
+    },
+    render: function(){
+        this.$el.html(this.template({resource_label: this.resource_label, resource_name: this.resource_name, current_lcstate: this.current_lcstate}));
+        this.get_transition_events();
+        return this;
+    },
+    change_lc_state: function(evt){
+        evt.preventDefault();
+        $('#btn-cancel').hide();
+        $('#btn-lcstate').text('Saving...')
+        $('.modal-footer .loading').show();
+        var button_elmt = $(evt.target);
+        var select_elmt = this.$el.find('select');
+        var selected_option = this.$el.find('option:selected');
+        var transition_event = selected_option.attr("value");
+        $.ajax({
+          type: "POST",
+          url: 'transition/',
+          data: {transition_event: transition_event},
+          global: false,
+          success: function(resp){
+              $('#btn-cancel').click();
+              Backbone.history.fragment = null; // Clear history fragment to allow for page "refresh".
+              IONUX.ROUTER.navigate(window.location.pathname, {trigger: true});
+          },
+          error: function(resp){
+              $('.modal-footer .loading').hide();
+              $('.modal-footer #btn-cancel').show();
+              $('.modal-footer #btn-lcstate').text('Change Lifecycle');
+              alert(resp.responseText);
+              $('#btn-cancel').click();
+          },
+        });
+    },
+    get_transition_events: function(){
+        var select_elmt = $('#lc-transitions');
+        var option_tmpl = '<option value="<%= transition_event %>"><%= transition_event_long %> (<%= transition_event %>)</option>';
+        var lcstate_transition_events = window.MODEL_DATA['lcstate_transitions'];
+        _.each(_.keys(lcstate_transition_events), function(transition_event){ // NOTE: Keys are the values.
+            var transition_event_long = lcstate_transition_events[transition_event];
+            select_elmt.append(_.template(option_tmpl, {transition_event: transition_event, transition_event_long: transition_event_long}));
+        });
+    }
+})
+
 IONUX.Views.Error = Backbone.View.extend({
   template: _.template($('#error-tmpl').html()),
   initialize: function(){
@@ -357,7 +413,7 @@ IONUX.Views.AttributeGroup = Backbone.View.extend({
 
 IONUX.Views.TextShort = Backbone.View.extend({
     template: _.template('<span><%= label %>:</span>&nbsp;<%= text_short %>'),
-    template_title: _.template('<%= text_short %>'),
+    template_no_label: _.template('<%= text_short %>'),
     template_attr_group: _.template('<div class="row-fluid"><div class="span5 text-short-label"><%= label %>:&nbsp;</div><div class="span7 text-short-value"><%= text_short %></div></div>'),
 
     render: function(){
@@ -365,15 +421,13 @@ IONUX.Views.TextShort = Backbone.View.extend({
         if (data_path){
             var label = this.$el.data('label');
             var text_short = get_descendant_properties(this.options.data_model, data_path);
-                        
-            if (this.$el.parent().is('.heading-left')) {
-              this.$el.html(this.template_title({text_short: text_short}));
+            if (this.$el.parent().is('.heading-left') || label == "NO LABEL"){
+              this.$el.html(this.template_no_label({text_short: text_short}));
             } else if (this.$el.parent().is('.heading-right')) {
               this.$el.html(this.template({label: label, text_short: text_short}));
             } else {
               this.$el.html(this.template_attr_group({label: label, text_short: text_short}));
             };
-
         } else {
             // this.$el.css('color', 'orange');
             // var integration_info = this.$el.text();
