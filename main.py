@@ -103,7 +103,7 @@ def change_lcstate(resource_type, resource_id):
         transition = ServiceApi.transition_lcstate(resource_id, transition_event)
         return jsonify(data=transition)
     else:
-        error_response = make_response('Login required to change Lifecycle state.', 400)
+        error_response = make_response('You must be signed in to change Lifecycle state.', 400)
         error_response.headers['Content-Type'] = 'application/json'
         return error_response
 
