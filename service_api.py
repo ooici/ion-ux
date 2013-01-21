@@ -3,8 +3,9 @@ from flask import session, jsonify
 from config import GATEWAY_HOST, GATEWAY_PORT
 from copy import deepcopy
 
-SERVICE_GATEWAY_BASE_URL = 'http://%s:%d/ion-service' % (GATEWAY_HOST, GATEWAY_PORT)
-AGENT_GATEWAY_BASE_URL = 'http://%s:%d/ion-agent' % (GATEWAY_HOST, GATEWAY_PORT)
+GATEWAY_BASE_URL = 'http://%s:%d' % (GATEWAY_HOST, GATEWAY_PORT)
+SERVICE_GATEWAY_BASE_URL = '%s/ion-service' % (GATEWAY_BASE_URL)
+AGENT_GATEWAY_BASE_URL = '%s/ion-agent' % (GATEWAY_BASE_URL)
 
 SERVICE_REQUEST_TEMPLATE = {
     'serviceRequest': {
@@ -396,23 +397,38 @@ class ServiceApi(object):
 # HELPER METHODS
 # ---------------------------------------------------------------------------
 
-def build_get_request(service_name, operation_name, params={}):
-    url = '%s/%s/%s' % (SERVICE_GATEWAY_BASE_URL, service_name, operation_name)
+def _build_param_str(params=None):
     param_string = '?'
-    
+
     requester = session['actor_id'] if session.has_key('actor_id') else 'None'
     param_string += 'requester=%s' % requester
-    if params:
-        for (k, v) in params.iteritems():
+
+    if params is not None:
+        for k, v in params.iteritems():
             param_string += '&%s=%s' % (k,v)
+
+    return param_string
+
+def build_get_request(base, service_name, operation_name=None, params=None):
+    """
+    Builds a get request out of a service/operation and optional params.
+
+    operation_name may be left blank if going to a custom url.
+    """
+    urlarr = [base, service_name]
+    if operation_name is not None:
+        urlarr.append(operation_name)
+
+    url = "/".join(urlarr)
+    param_string = _build_param_str(params)
+
     url += param_string
-    
-    pretty_console_log('SERVICE GATEWAY GET URL', url)
-    
+    #pretty_console_log('SERVICE GATEWAY GET URL', url)
+
     return url
 
-def service_gateway_get(service_name, operation_name, params={}):    
-    service_gateway_resp = requests.get(build_get_request(service_name, operation_name, params))
+def service_gateway_get(service_name, operation_name, params=None, base=SERVICE_GATEWAY_BASE_URL):
+    service_gateway_resp = requests.get(build_get_request(base, service_name, operation_name, params))
     pretty_console_log('SERVICE GATEWAY GET RESPONSE', service_gateway_resp.content)
     return render_service_gateway_response(service_gateway_resp)
 
@@ -430,14 +446,14 @@ def render_service_gateway_response(service_gateway_resp):
     else:
         return json.dumps({'GatewayError': {'Message': 'An error occurred communicating with the Service Gateway'}})
 
-def build_post_request(service_name, operation_name, params={}):
+def build_post_request(service_name, operation_name, params=None):
     url = '%s/%s/%s' % (SERVICE_GATEWAY_BASE_URL, service_name, operation_name)
 
     post_data = deepcopy(SERVICE_REQUEST_TEMPLATE)
     post_data['serviceRequest']['serviceName'] = service_name
     post_data['serviceRequest']['serviceOp'] = operation_name
-        
-    if params:
+
+    if params is not None:
         post_data['serviceRequest']['params'] = params
 
     # conditionally add user id and expiry to request
@@ -451,7 +467,7 @@ def build_post_request(service_name, operation_name, params={}):
 
     return url, data
 
-def service_gateway_post(service_name, operation_name, params={}):
+def service_gateway_post(service_name, operation_name, params=None):
     url, data = build_post_request(service_name, operation_name, params)
     resp = requests.post(url, data)
     pretty_console_log('SERVICE GATEWAY POST RESPONSE', resp.content)
@@ -467,14 +483,14 @@ def service_gateway_post(service_name, operation_name, params={}):
             elif type(resp) == list:
                 return resp['data']['GatewayResponse'][0]
 
-def build_agent_request(agent_id, operation_name, params={}):
+def build_agent_request(agent_id, operation_name, params=None):
     url = '%s/%s/%s' % (AGENT_GATEWAY_BASE_URL, agent_id, operation_name)
-    
+
     post_data = deepcopy(AGENT_REQUEST_TEMPLATE)
     post_data['agentRequest']['agentId'] = agent_id
     post_data['agentRequest']['agentOp'] = operation_name
-    
-    if params:
+
+    if params is not None:
         post_data['agentRequest']['params'] = params
 
     # conditionally add user id and expiry to request
@@ -483,13 +499,13 @@ def build_agent_request(agent_id, operation_name, params={}):
         post_data['agentRequest']['expiry'] = session['valid_until']
 
     data={'payload': json.dumps(post_data)}
-    
+
     pretty_console_log('SERVICE GATEWAY AGENT REQUEST POST URL/DATA', url, data)
     print 'SERVICE AGENT REQUEST POST DATA: ', data
 
     return url, data
 
-def service_gateway_agent_request(agent_id, operation_name, params={}):
+def service_gateway_agent_request(agent_id, operation_name, params=None):
     url, data = build_agent_request(agent_id, operation_name, params)
     resp = requests.post(url, data)
     pretty_console_log('SERVICE GATEWAY AGENT REQUEST POST RESPONSE', resp.content)
