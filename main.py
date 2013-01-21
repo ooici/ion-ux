@@ -64,10 +64,10 @@ def search(query=None):
 def attachment(attachment_id):
     url = 'http://%s:%d/ion-service/attachment/%s' % (GATEWAY_HOST, GATEWAY_PORT, attachment_id)
     attachment_response = requests.get(url)
-    
     attachment = StringIO(attachment_response.content)
     attachment_ext = guess_extension(attachment_response.headers.get('content-type'))
-    attachment_name = 'OOI_%s%s' % (attachment_id, attachment_ext)
+    attachment_name = request.args.get('name') if request.args.get('name') else 'OOI_%s' % attachment_id
+    attachment_filename = '%s%s' % (attachment_name, attachment_ext)
 
     return send_file(attachment, attachment_filename=attachment_name, as_attachment=True)
 

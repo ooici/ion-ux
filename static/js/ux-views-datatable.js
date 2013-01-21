@@ -319,7 +319,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         if (resource_type.match(/Event$/)) return false;
 
         if (resource_type == 'Attachment') {
-          var url = "/attachment/"+resource_id
+          var url = "/attachment/"+resource_id+"/?name="+table_row_data[2];
           window.open(url)
         } else {
           var url = "/"+resource_type+"/face/"+resource_id+"/";
