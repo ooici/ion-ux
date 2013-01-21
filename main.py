@@ -1,4 +1,4 @@
-from flask import Flask, request, session, jsonify, render_template, redirect, url_for, escape, send_file, make_response
+from flask import Flask, request, session, jsonify, render_template, redirect, url_for, escape, send_file, g, make_response
 import requests, json
 from functools import wraps
 import base64
@@ -14,6 +14,7 @@ from layout_api import LayoutApi
 from jinja2 import Template
 from urlparse import urlparse
 import re
+import os
 
 # Attachments
 from StringIO import StringIO
@@ -22,6 +23,28 @@ from mimetypes import guess_extension
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
 app.debug = True
+
+def get_versions():
+    if not hasattr(g, "ion_ux_version"):
+        g.ion_ux_version = "unknown"
+        g.ion_ux_git_version = "unknown"
+
+        try:
+            with open("VERSION.txt") as f:
+                g.ion_ux_version = f.readline().strip()
+        except OSError:
+            pass
+
+        if os.path.exists(".git"):
+            try:
+                with open(".git/HEAD") as f:
+                    refline = f.readline().strip().split(":")[1].strip()
+                with open(os.path.join(".git", *refline.split("/"))) as f:
+                    g.ion_ux_git_version = f.readline().strip()
+            except OSError:
+                pass
+
+    return (g.ion_ux_version, g.ion_ux_git_version)
 
 def render_app_template(current_url):
     tmpl = Template(LayoutApi.process_layout())
@@ -325,7 +348,14 @@ def logout():
 
 @app.route('/session/', methods=['GET'])
 def session_info():
-    session_values = {'user_id': None, 'roles': None, 'is_registered': False, 'is_logged_in': False, 'ui_mode': UI_MODE}
+    remote_version = ServiceApi.get_version()
+    ion_ux_version, ion_ux_git_version = get_versions()
+    version = {'ux-release' : ion_ux_version,
+               'ux-git'     : ion_ux_git_version }
+
+    version.update(remote_version)
+
+    session_values = {'user_id': None, 'roles': None, 'is_registered': False, 'is_logged_in': False, 'ui_mode': UI_MODE, 'version': version }
     if session.has_key('user_id'):
         session_values.update({'user_id': session['user_id'], 'roles': session['roles'], 'is_registered': session['is_registered'], 'is_logged_in': True})
     return jsonify(data=session_values)

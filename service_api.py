@@ -393,6 +393,9 @@ class ServiceApi(object):
             user_info = {'contact': {'name': '(Not Registered)', 'email': '(Not Registered)', 'phone': '???'}}
         return user_info
 
+    @staticmethod
+    def get_version():
+        return service_gateway_get('version', None, base=GATEWAY_BASE_URL)
 
 # HELPER METHODS
 # ---------------------------------------------------------------------------

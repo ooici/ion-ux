@@ -17,6 +17,7 @@ IONUX.Models.Session = Backbone.Model.extend({
         user_id: null,
         is_logged_in: false,
         is_registered: null,
+        version: {},
         roles: [],
         ui_mode: 'PRODUCTION',
     },
