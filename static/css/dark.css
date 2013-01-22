@@ -840,3 +840,16 @@ ul.nav {
   padding: 15px 0;
   margin: 20px 0;
 }
+
+/* support for right-sided dropdowns,
+ * added in bootstrap 2.0.2 */
+.pull-right .dropdown-menu:after {
+  left: auto;
+  right: 21px;    /* adjusts the tip of the pointer, this is custom for the
+                     help menu but needs adjustment on a per use basis */
+}
+.pull-right .dropdown-menu {
+  left: auto;
+  right: 0;
+}
+
