@@ -853,3 +853,15 @@ ul.nav {
   right: 0;
 }
 
+/* link colors in dropdowns
+ * @TODO: too specific of a selector
+ */
+.dropdown-menu .btn-navigation-plain {
+  color: inherit;
+}
+
+/* Version modal overlay specific settings */
+#version-overlay {
+  text-align: left;
+}
+
