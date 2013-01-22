@@ -353,7 +353,7 @@ def session_info():
     version = {'ux-release' : ion_ux_version,
                'ux-git'     : ion_ux_git_version }
 
-    version.update(remote_version)
+    # version.update(remote_version)
 
     session_values = {'user_id': None, 'roles': None, 'is_registered': False, 'is_logged_in': False, 'ui_mode': UI_MODE, 'version': version }
     if session.has_key('user_id'):

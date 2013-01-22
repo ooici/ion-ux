@@ -30,7 +30,6 @@ IONUX.Views.Lifecycle = Backbone.View.extend({
           data: {transition_event: transition_event},
           global: false,
           success: function(resp){
-              console.log('resp',resp);
               $('#btn-cancel').click();
               Backbone.history.fragment = null; // Clear history fragment to allow for page "refresh".
               IONUX.ROUTER.navigate(window.location.pathname, {trigger: true});
@@ -96,7 +95,6 @@ IONUX.Views.Search = Backbone.View.extend({
     return false;
   },
 });
-
 
 IONUX.Views.Topbar = Backbone.View.extend({
   el: '#topbar',
