@@ -15,6 +15,7 @@ IONUX.Models.Session = Backbone.Model.extend({
     defaults: {
         actor_id: null,
         user_id: null,
+        name: "Guest",
         is_logged_in: false,
         is_registered: null,
         version: {},

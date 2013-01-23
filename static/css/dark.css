@@ -465,8 +465,20 @@ a.btn-footer {
 /*  padding-top: 15px;*/
 }
 
+.current-user {
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  padding-top: 0px;
+  padding-right: 10px;
+  padding-bottom: 5px;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
 .user-nav {
-  padding-top: 43px;
+  padding-top: 20px;
   text-align: right;
 }
 
@@ -554,8 +566,6 @@ a.btn-navigation-plain {
   border-bottom: solid 1px #0079af;
   height: 70px;
 }
-
-
 
 .wrapper {
   min-height: 100%;
