@@ -238,11 +238,11 @@ def map2():
 # GOOGLE VISUALIZATION API
 # -----------------------------------------------------------------------------
 
-@app.route('/viz/overview/<data_product_id>/')
-def viz_overview(data_product_id):
-    # Need to move into ServiceApi
-    resp = requests.get('http://%s:%s/ion-service/visualization_service/get_visualization_data?data_product_id=%s&return_format=raw_json' % (GATEWAY_HOST, str(GATEWAY_PORT), data_product_id))
-    return resp.content
+@app.route('/visualization/<operation_name>/')
+def visualization(operation_name):
+    overview_url = 'http://%s:%d/ion-service/visualization_service/%s?%s' % (GATEWAY_HOST, GATEWAY_PORT, operation_name, request.query_string)
+    req = requests.get(overview_url)
+    return req.content
 
 @app.route('/viz/initiate_realtime_visualization/<data_product_id>/', methods=['GET'])
 def initiate_realtime_visualization2(data_product_id):
