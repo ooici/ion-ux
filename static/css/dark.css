@@ -789,28 +789,29 @@ ul.nav {
   background: #666666;
 }
 
-#action-modal, #action-modal .modal-footer {
+.modal-ooi {
   background: #1E1E1E;
   border: solid 1px #333;
 }
 
-#action-modal h1 {
+.modal-ooi h1 {
   font-size:15px;
 }
 
-#action-modal .modal-header, 
-#action-modal .modal-body,
-#action-modal .modal-footer {
+.modal-ooi .modal-header, 
+.modal-ooi .modal-body,
+.modal-ooi .modal-footer {
+  background: #1E1E1E;
   border-color: #333;
 }
 
-#action-modal .modal-footer {
+.modal-ooi .modal-footer {
   box-shadow:none;
   -webkit-box-shadow:none;
   -moz-box-shadow:none;
 }
 
-#action-modal .modal-footer .loading {
+.modal-ooi .modal-footer .loading {
   display:none;
 }
 .modal-backdrop.fade {

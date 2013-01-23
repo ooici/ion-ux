@@ -58,7 +58,7 @@ IONUX.Views.ActionMenu = Backbone.View.extend({
 
 
 IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
-    modal_template: '<div id="action-modal" class="modal hide fade""></div>',
+    modal_template: '<div id="action-modal" class="modal hide fade modal-ooi""></div>',
     initialize: function() {
         this.interaction_items = INTERACTIONS_OBJECT.view_interactions;
         this.create_actionmenu();
@@ -71,7 +71,7 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
         this.on("action__download", this.action__download);
     },
     action__subscribe:function(){
-        var modal_html = '<div id="subscribe-modal" class="modal hide fade""></div>';
+        var modal_html = '<div id="subscribe-modal" class="modal hide fade modal-ooi"></div>';
         $(modal_html).modal({keyboard:false})
             .on('shown', function(){
                 new IONUX.Views.Subscribe().render().el;
@@ -90,7 +90,7 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
             });
     },
     action__subscribe:function(){
-        var modal_html = '<div id="subscribe-modal" class="modal hide fade""></div>';
+        var modal_html = '<div id="subscribe-modal" class="modal hide fade modal-ooi""></div>';
         $(modal_html).modal({keyboard:false})
             .on('shown', function(){
                 new IONUX.Views.Subscribe().render().el;
