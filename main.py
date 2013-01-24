@@ -8,7 +8,7 @@ import time
 
 from urllib import quote
 
-from config import FLASK_HOST, FLASK_PORT, GATEWAY_HOST, GATEWAY_PORT, LOGGED_IN, PRODUCTION, SECRET_KEY, UI_MODE
+from config import FLASK_HOST, FLASK_PORT, GATEWAY_HOST, GATEWAY_PORT, LOGGED_IN, PRODUCTION, SECRET_KEY, UI_MODE, PORTAL_ROOT
 from service_api import ServiceApi
 from layout_api import LayoutApi
 from jinja2 import Template
@@ -30,7 +30,7 @@ def get_versions():
         g.ion_ux_git_version = "unknown"
 
         try:
-            with open("VERSION.txt") as f:
+            with open(PORTAL_ROOT +"/VERSION.txt") as f:
                 g.ion_ux_version = f.readline().strip()
         except OSError:
             pass
@@ -130,14 +130,6 @@ def change_lcstate(resource_type, resource_id):
         error_response.headers['Content-Type'] = 'application/json'
         return error_response
 
-    # user_id = session.get('user_id')
-    # if user_id:
-    #     resource_name = request.args.get('resource_name')
-    #     resp = ServiceApi.subscribe(resource_type, resource_id, event_type, user_id, resource_name)
-    #     return jsonify(data=resp)
-    # else:
-    #     return jsonify(data='No user_id.')
-
 
 # -----------------------------------------------------------------------------
 # FACE, STATUS, RELATED PAGES
@@ -152,6 +144,17 @@ def page(resource_type, resource_id):
         return True
     else:
         return render_app_template(request.path)
+
+@app.route('/<resource_type>/status/<resource_id>/edit', methods=['GET'])
+@app.route('/<resource_type>/face/<resource_id>/edit', methods=['GET'])
+@app.route('/<resource_type>/related/<resource_id>/edit', methods=['GET'])
+@app.route('/<resource_type>/command/<resource_id>/edit', methods=['GET'])
+def edit(resource_type, resource_id):
+    # Edit HTML requests should be redirected to a parent view
+    # for data setup and page structure.
+    parent_url = re.sub(r'edit$', '', request.url)
+    return redirect(parent_url)
+
 
 # -----------------------------------------------------------------------------
 # COLLECTION "FACE" PAGES
