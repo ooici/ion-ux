@@ -16,8 +16,13 @@ IONUX.Router = Backbone.Router.extend({
     ":resource_type/list/": "collection",
     ":resource_type/command/:resource_id/": "command",
     ":resource_type/:view_type/:resource_id/" : "page",
+    ":resource_type/:view_type/:resource_id/edit" : "edit"
   },
-        
+  
+  edit: function() {
+    // $('.viewcontainer').empty();
+    new IONUX.Views.EditResource().render().el;
+  },
   search: function(query){
     $('#error').hide();
     $('#dynamic-container').show().html(LOADING_TEMPLATE);

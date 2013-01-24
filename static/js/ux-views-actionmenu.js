@@ -14,7 +14,7 @@ todo:
 INTERACTIONS_OBJECT = {};
 INTERACTIONS_OBJECT.block_interactions = ['More Info', 'Hide', 'Edit'];
 INTERACTIONS_OBJECT.group_interactions = ['More Info', 'Detailed View', /*'Submenu',*/ 'Edit'];
-INTERACTIONS_OBJECT.view_interactions = ['Subscribe', 'Lifecycle', 'Detailed View', /*'Submenu',*/ 'Command', 'Direct Command', 'Download'];
+INTERACTIONS_OBJECT.view_interactions = ['Subscribe', 'Lifecycle', 'Edit', 'Detailed View', /*'Submenu',*/ 'Command', 'Direct Command', 'Download'];
 
 
 IONUX.Views.ActionMenu = Backbone.View.extend({
@@ -58,12 +58,14 @@ IONUX.Views.ActionMenu = Backbone.View.extend({
 
 
 IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
-    modal_template: '<div id="action-modal" class="modal hide fade modal-ooi""></div>',
+    modal_template: '<div id="action-modal" class="modal hide fade modal-ooi zzz">',
     initialize: function() {
+        _.bindAll(this);
         this.interaction_items = INTERACTIONS_OBJECT.view_interactions;
         this.create_actionmenu();
         this.on("action__subscribe", this.action__subscribe);
         this.on("action__lifecycle", this.action__lifecycle);
+        this.on("action__edit", this.action__edit);
         this.on("action__detailed_view", this.action__detailed_view);
         this.on("action__submenu_toggle", this.action__submenu_toggle);
         this.on("action__command", this.action__command);
@@ -78,7 +80,7 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
             })
             .on('hidden',function(){
                 $('#subscribe-modal').remove();
-            });
+        });
     },
     action__lifecycle:function(){
         $(this.modal_template).modal({keyboard:false})
@@ -87,20 +89,13 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
             })
             .on('hidden',function(){
                 $('#action-modal').remove();
-            });
+        });
     },
-    action__subscribe:function(){
-        var modal_html = '<div id="subscribe-modal" class="modal hide fade modal-ooi""></div>';
-        $(modal_html).modal({keyboard:false})
-            .on('shown', function(){
-                new IONUX.Views.Subscribe().render().el;
-            })
-            .on('hidden',function(){
-                $('#subscribe-modal').remove();
-            });
+    action__edit: function(){
+      IONUX.ROUTER.navigate(window.location.pathname + 'edit', {trigger:true});
     },
     action__detailed_view:function(){
-        var modal_tmpl = '<div class="modal hide fade"><h1>Detailed View</h1><h3>Element: <%= elem_id %></h3></div>';
+        var modal_tmpl = '<div class="modal hide fade modal-ooi"><h1>Detailed View</h1><h3>Element: <%= elem_id %></h3></div>';
         var modal_html = _.template(modal_tmpl, {"elem_id":this.$el.attr("id")});
         $(modal_html).modal();
     },

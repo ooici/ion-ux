@@ -30,7 +30,7 @@ def get_versions():
         g.ion_ux_git_version = "unknown"
 
         try:
-            with open(PORTAL_ROOT +"/VERSION.txt") as f:
+            with open(PORTAL_ROOT + "/VERSION.txt") as f:
                 g.ion_ux_version = f.readline().strip()
         except OSError:
             pass
@@ -148,7 +148,6 @@ def page(resource_type, resource_id):
 @app.route('/<resource_type>/status/<resource_id>/edit', methods=['GET'])
 @app.route('/<resource_type>/face/<resource_id>/edit', methods=['GET'])
 @app.route('/<resource_type>/related/<resource_id>/edit', methods=['GET'])
-@app.route('/<resource_type>/command/<resource_id>/edit', methods=['GET'])
 def edit(resource_type, resource_id):
     # Edit HTML requests should be redirected to a parent view
     # for data setup and page structure.
