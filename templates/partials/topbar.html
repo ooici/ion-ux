@@ -8,4 +8,15 @@
   <a id="signin" href="https://<%= window.location.host %>/login" class="external btn-navigation filter">Sign In</a>
 <% } %>
 
-<a id="help" href="https://confluence.oceanobservatories.org/display/CIUserDoc/User+Documentation" target="_ooi_help" class="btn-navigation-plain external">Help</a>
+<span class="dropdown pull-right" id="help">
+  <a id="helpmenu-parent" class="btn-navigation-plain external" data-toggle="dropdown" href="#">Help</a>
+  <ul class="dropdown-menu">
+    <li>
+      <a id="helpmenu-helpcontents" href="https://confluence.oceanobservatories.org/display/CIUserDoc/User+Documentation" target="_ooi_help" class="btn-navigation-plain external">Help Contents</a>
+    </li>
+    <li>
+      <a id="helpmenu-version" class="btn-navigation-plain" href="#">Version Info</a>
+    </li>
+  </ul>
+</span>
+
