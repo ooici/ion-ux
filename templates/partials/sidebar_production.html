@@ -83,24 +83,3 @@
   </div>
 <% } %>
 
-  <div id="version-info">
-      <p><a href="#">Version Info</a></p>
-  </div>
-
-  <div id="version-overlay" class="modal hide" role="dialog">
-
-    <div class="modal-header">
-      <button type="button" class="close" data-dismiss="modal">x</button>
-      <h3>Version Information</h3>
-    </div>
-
-    <div class="modal-body">
-      <dl>
-        <% _.each(version, function(v, k, l) { %>
-          <dt><%= k %></dt>
-          <dd><%= v %></dd>
-        <% }) %>
-      </dl>
-    </div>
-  </div>
-

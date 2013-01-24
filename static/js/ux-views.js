@@ -120,9 +120,6 @@ IONUX.Views.Topbar = Backbone.View.extend({
 
 IONUX.Views.Sidebar = Backbone.View.extend({
   el: '#sidebar',
-  events: {
-    "click #version-info a": "get_version"
-  },
   initialize: function(){
     _.bindAll(this);
     this.model.on('change', this.render);
@@ -133,9 +130,6 @@ IONUX.Views.Sidebar = Backbone.View.extend({
     this.$el.html(this.template(this.model.toJSON()));
     return this;
   },
-  get_version: function() {
-    $('#version-overlay').modal();
-  }
 });
 
 IONUX.Views.Subscribe = Backbone.View.extend({
