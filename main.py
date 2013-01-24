@@ -30,18 +30,18 @@ def get_versions():
         g.ion_ux_git_version = "unknown"
 
         try:
-            with open(PORTAL_ROOT +"/VERSION.txt") as f:
-                g.ion_ux_version = f.readline().strip()
-        except OSError:
+            with open(os.path.join(PORTAL_ROOT, "VERSION.txt")) as f:
+                g.ion_ux_version = f.readline().strip().replace("-dev", "")
+        except IOError:
             pass
 
-        if os.path.exists(".git"):
+        if os.path.exists(os.path.join(PORTAL_ROOT, ".git")):
             try:
                 with open(".git/HEAD") as f:
                     refline = f.readline().strip().split(":")[1].strip()
                 with open(os.path.join(".git", *refline.split("/"))) as f:
                     g.ion_ux_git_version = f.readline().strip()
-            except OSError:
+            except (OSError, IOError):
                 pass
 
     return (g.ion_ux_version, g.ion_ux_git_version)
@@ -356,7 +356,8 @@ def session_info():
     version = {'ux-release' : ion_ux_version,
                'ux-git'     : ion_ux_git_version }
 
-    # version.update(remote_version)
+    remote_version = { k: v.replace("-dev", "") for k,v in remote_version.iteritems() }
+    version.update(remote_version)
 
     session_values = {'user_id': None, 'roles': None, 'is_registered': False, 'is_logged_in': False, 'ui_mode': UI_MODE, 'version': version }
     if session.has_key('user_id'):
