@@ -288,11 +288,8 @@ class ServiceApi(object):
         name = user['name'] if user.has_key('name') else 'Unregistered'
         session['name'] = name
         session['user_id'] = user_id
-        
-        print 'x user: ', user
-        
+
         session['roles'] = ServiceApi.get_roles_by_actor_id(actor_id)
-        
         
     @staticmethod
     def signon_user_testmode(user_name):
@@ -303,19 +300,19 @@ class ServiceApi(object):
                 actor_id = service_gateway_get('resource_registry', 'find_subjects', params={'predicate': 'hasInfo', 'object': uid, 'id_only': True})[0]
                 session['actor_id'] = actor_id
                 session['valid_until'] = str(int(time.time()) * 100000)
-                session['is_registered'] = True
                 
                 user = service_gateway_get('identity_management', 'find_user_info_by_id', params={'actor_id': actor_id})
-                user_id = user['_id'] if user.has_key('_id') else None
+                if user.has_key('_id'):
+                    user_id = user['_id']
+                    is_registered = True
+                else:
+                    user_id = None
+                    is_registered = False
                 name = user['name'] if user.has_key('name') else 'Unregistered'
-                session['name'] = name
+                
                 session['user_id'] = user_id
-                
-                
-                print 'dddd - user_id', user_id
-                print 'dddd - name', name
-                
-                
+                session['name'] = name
+                session['is_registered'] = is_registered
                 session['roles'] = ServiceApi.get_roles_by_actor_id(actor_id)
                 
                 return
