@@ -305,9 +305,6 @@ class ServiceApi(object):
                 session['valid_until'] = str(int(time.time()) * 100000)
                 session['is_registered'] = True
                 
-                
-                print 'aaaaaaaaaa', actor_id
-                
                 session['roles'] = ServiceApi.get_roles_by_actor_id(actor_id)
                 
                 return
