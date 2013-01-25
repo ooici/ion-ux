@@ -26,7 +26,6 @@ app.debug = True
 def get_versions():
     if not hasattr(g, "ion_ux_version"):
         g.ion_ux_version = "unknown"
-        g.ion_ux_git_version = "unknown"
 
         try:
             with open(os.path.join(PORTAL_ROOT, "VERSION.txt")) as f:
@@ -34,16 +33,7 @@ def get_versions():
         except IOError:
             pass
 
-        if os.path.exists(os.path.join(PORTAL_ROOT, ".git")):
-            try:
-                with open(".git/HEAD") as f:
-                    refline = f.readline().strip().split(":")[1].strip()
-                with open(os.path.join(".git", *refline.split("/"))) as f:
-                    g.ion_ux_git_version = f.readline().strip()
-            except (OSError, IOError):
-                pass
-
-    return (g.ion_ux_version, g.ion_ux_git_version)
+    return g.ion_ux_version
 
 def render_app_template(current_url):
     tmpl = Template(LayoutApi.process_layout())
@@ -349,18 +339,23 @@ def logout():
 
 @app.route('/session/', methods=['GET'])
 def session_info():
+
+    # get version info from service gateway
     remote_version = ServiceApi.get_version()
-    ion_ux_version, ion_ux_git_version = get_versions()
-    version = {'ux-release' : ion_ux_version,
-               'ux-git'     : ion_ux_git_version }
-    
-    for k,v in remote_version.iteritems():
-        remote_version[k] = v.replace("-dev", "")
-    
-    version.update(remote_version)
+    ion_ux_version = get_versions()
+
+    # ion ux must be first
+    version = [{ 'lib': 'ux-release', 'version': ion_ux_version }]
+
+    # coi services should be second
+    version.append({'lib':'coi-services-release', 'version': remote_version.pop('coi-services-release', 'unknown').replace("-dev", "")})
+
+    # sort the rest by alpha
+    for k,v in sorted(remote_version.iteritems()):
+      version.append({'lib':k, 'version': v.replace("-dev", "")})
 
     session_values = {'user_id': None, 'roles': None, 'is_registered': False, 'is_logged_in': False, 'ui_mode': UI_MODE, 'version': version }
-    
+
     if session.has_key('user_id'):
         session_values.update({'name': session['name'], 'user_id': session['user_id'], 'roles': session['roles'], 'is_registered': session['is_registered'], 'is_logged_in': True})
     return jsonify(data=session_values)
