@@ -29,7 +29,7 @@ def get_versions():
 
         try:
             with open(os.path.join(PORTAL_ROOT, "VERSION.txt")) as f:
-                g.ion_ux_version = f.readline().strip().replace("-dev", "")
+                g.ion_ux_version = f.readline().strip()
         except IOError:
             pass
 
@@ -348,11 +348,16 @@ def session_info():
     version = [{ 'lib': 'ux-release', 'version': ion_ux_version }]
 
     # coi services should be second
-    version.append({'lib':'coi-services-release', 'version': remote_version.pop('coi-services-release', 'unknown').replace("-dev", "")})
+    version.append({'lib':'coi-services-release', 'version': remote_version.pop('coi-services-release', 'unknown')})
 
     # sort the rest by alpha
     for k,v in sorted(remote_version.iteritems()):
-      version.append({'lib':k, 'version': v.replace("-dev", "")})
+        version.append({'lib':k, 'version': v})
+
+    # trim off "-release" and "-dev"
+    for ver in version:
+        ver['lib']     = ver['lib'].replace("-release", "")
+        ver['version'] = ver['version'].replace("-dev", "")
 
     session_values = {'user_id': None, 'roles': None, 'is_registered': False, 'is_logged_in': False, 'ui_mode': UI_MODE, 'version': version }
 
