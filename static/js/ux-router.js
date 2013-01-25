@@ -315,7 +315,7 @@ function render_page(resource_type, resource_id, model) {
     $(el).find('.content-wrapper:first').css('height', '200px').jScrollPane({autoReinitialise: true});
   });
   
-  // ActionMenus
+  // Action Menus
   _.each($('.v01 .group .nav, .v02 .group .nav'), function(el) {
       new IONUX.Views.GroupActions({el:$(el)});
   });

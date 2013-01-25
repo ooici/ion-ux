@@ -5,7 +5,6 @@ import base64
 import hashlib
 import time
 
-
 from urllib import quote
 
 from config import FLASK_HOST, FLASK_PORT, GATEWAY_HOST, GATEWAY_PORT, LOGGED_IN, PRODUCTION, SECRET_KEY, UI_MODE, PORTAL_ROOT
@@ -354,13 +353,14 @@ def session_info():
     ion_ux_version, ion_ux_git_version = get_versions()
     version = {'ux-release' : ion_ux_version,
                'ux-git'     : ion_ux_git_version }
-
+    
     for k,v in remote_version.iteritems():
         remote_version[k] = v.replace("-dev", "")
-
+    
     version.update(remote_version)
 
     session_values = {'user_id': None, 'roles': None, 'is_registered': False, 'is_logged_in': False, 'ui_mode': UI_MODE, 'version': version }
+    
     if session.has_key('user_id'):
         session_values.update({'name': session['name'], 'user_id': session['user_id'], 'roles': session['roles'], 'is_registered': session['is_registered'], 'is_logged_in': True})
     return jsonify(data=session_values)

@@ -1644,9 +1644,10 @@ table .span12 {
   font-weight: bold;
   line-height: 18px;
   color: #000000;
-  text-shadow: 0 1px 0 #ffffff;
-  opacity: 0.2;
-  filter: alpha(opacity=20);
+  text-shadow: none;
+  background: transparent;
+  opacity: 0.0;
+  filter: alpha(opacity=0);
 }
 .close:hover {
   color: #000000;
@@ -1655,6 +1656,7 @@ table .span12 {
   filter: alpha(opacity=40);
   cursor: pointer;
 }
+
 .btn {
   display: inline-block;
   padding: 4px 10px 4px;
