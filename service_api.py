@@ -274,7 +274,7 @@ class ServiceApi(object):
     def signon_user(certificate):
         params={'certificate': certificate}
         actor_id, valid_until, is_registered = service_gateway_post('identity_management', 'signon', params)
-
+        
         # set user id, valid until and is registered info in session
         # TODO might need to address issues that arise with using
         # session to set cookie when web server ends up being a pool
@@ -284,13 +284,12 @@ class ServiceApi(object):
         session['is_registered'] = is_registered
         
         user = service_gateway_get('identity_management', 'find_user_info_by_id', params={'actor_id': actor_id})
+        user_id = user['_id'] if user.has_key('_id') else None
+        name = user['name'] if user.has_key('name') else 'Unregistered'
+        session['name'] = name
+        session['user_id'] = user_id
         
-        print 'x user', user
-        
-        if user.has_key('_id'):
-            session['user_id'] = user['_id']
-        if user.has_key('name'):
-            session['name'] = user['name']
+        print 'x user: ', user
         
         session['roles'] = ServiceApi.get_roles_by_actor_id(actor_id)
         
@@ -300,19 +299,22 @@ class ServiceApi(object):
         user_identities = ServiceApi.find_by_resource_type("UserInfo")
         for user_identity in user_identities:
             if user_name == user_identity['name']:
-                user_id = user_identity['_id']
-                actor_id = service_gateway_get('resource_registry', 'find_subjects', params={'predicate': 'hasInfo', 'object': user_id, 'id_only': True})[0]
-                session['name'] = user_identity['name']
-                session['user_id'] = user_id
+                uid = user_identity['_id']
+                actor_id = service_gateway_get('resource_registry', 'find_subjects', params={'predicate': 'hasInfo', 'object': uid, 'id_only': True})[0]
                 session['actor_id'] = actor_id
                 session['valid_until'] = str(int(time.time()) * 100000)
                 session['is_registered'] = True
                 
                 user = service_gateway_get('identity_management', 'find_user_info_by_id', params={'actor_id': actor_id})
-                print 'x actor_if', actor_id
-                print 'x user', user
-                print 'x user_id', user['_id']
-                print 'x name', user['name']
+                user_id = user['_id'] if user.has_key('_id') else None
+                name = user['name'] if user.has_key('name') else 'Unregistered'
+                session['name'] = name
+                session['user_id'] = user_id
+                
+                
+                print 'dddd - user_id', user_id
+                print 'dddd - name', name
+                
                 
                 session['roles'] = ServiceApi.get_roles_by_actor_id(actor_id)
                 
