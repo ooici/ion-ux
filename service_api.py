@@ -282,8 +282,11 @@ class ServiceApi(object):
         session['actor_id'] = actor_id
         session['valid_until'] = valid_until
         session['is_registered'] = is_registered
-
-        user_id = service_gateway_get('identity_management', 'find_user_info_by_id', params={'actor_id': actor_id})['_id']
+        
+        user = service_gateway_get('identity_management', 'find_user_info_by_id', params={'actor_id': actor_id})
+        user_id = user['_id']
+        name = user['name']
+        session['name'] = name
         session['user_id'] = user_id
         
         session['roles'] = ServiceApi.get_roles_by_actor_id(actor_id)
@@ -301,6 +304,9 @@ class ServiceApi(object):
                 session['actor_id'] = actor_id
                 session['valid_until'] = str(int(time.time()) * 100000)
                 session['is_registered'] = True
+                
+                
+                print 'aaaaaaaaaa', actor_id
                 
                 session['roles'] = ServiceApi.get_roles_by_actor_id(actor_id)
                 
