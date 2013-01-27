@@ -29,7 +29,9 @@
       // Global variables
       var graph, dataTable, dataTable_overview, dp_id, dp_id_token, dp_metadata, dataTable_overview_stride_factor = 1;
       var graph_visible_start_date, graph_visible_end_date, graph_x_res, avg_data_rate, curr_stride_factor = 1;
-      var dataTable_parameters = ['temp', 'pressure', 'conductivity'];
+      // var dataTable_parameters = ['temp', 'pressure', 'conductivity'];
+
+      var dataTable_parameters = [];
 
       var container_server = "http://" + window.location.host;
       var first_draw_flag = true;
