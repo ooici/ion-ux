@@ -449,12 +449,15 @@ button.btn-general:hover, a.btn-general:hover, a.btn-advanced-search:hover {back
 button.btn-general:active, a.btn-general:active, a.btn-advanced-search:active {background: #333333; color:#fff; border: solid #fff 1px;} 
 
 a.btn-footer {
-  margin-right: 10px;
+  margin: 0px 5px;
   width: 100px;
 }
 
 .footer .active {
-  color: #FFFFFF; border: solid #FFFFFF 1px; background: #999999;
+  color: #FFFFFF;
+  border: solid #FFFFFF 1px;
+  background: #999999;
+  padding-right: 5px;
 }
 
 .footer {
@@ -463,6 +466,11 @@ a.btn-footer {
 /*  height: 50px;*/
   text-align: right;
 /*  padding-top: 15px;*/
+}
+
+/* version display in footer */
+.footer-version {
+  margin: 0px 5px;
 }
 
 .current-user {

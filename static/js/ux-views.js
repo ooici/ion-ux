@@ -230,8 +230,15 @@ IONUX.Views.Footer = Backbone.View.extend({
     $('.footer').empty();
     
     $('#footr').html(this.$el);
+    this.render_versions();
     this.render_buttons();
     return this;
+  },
+  render_versions: function() {
+    var version_tmpl = '<span class="footer-version"><%= lib %>: <%= version %></span>';
+    this.$el.append(_.template(version_tmpl)({lib: "OOI Version", version: ""}));
+    this.$el.append(_.template(version_tmpl)({lib: "ux", version: IONUX.SESSION_MODEL.attributes.version[0].version}));
+    this.$el.append(_.template(version_tmpl)({lib: "coi-services", version: IONUX.SESSION_MODEL.attributes.version[1].version}));
   },
   render_buttons: function(){
     var resource_id = this.options.resource_id;
