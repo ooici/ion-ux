@@ -13,6 +13,7 @@ IONUX.Views.HelpMenu = Backbone.View.extend({
       .on('hidden', function() {
         $('#version-overlay').remove();
       });
+    return false;
   }
 
 });
