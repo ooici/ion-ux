@@ -18,13 +18,9 @@ IONUX.Router = Backbone.Router.extend({
     ":resource_type/:view_type/:resource_id/" : "page",
     ":resource_type/:view_type/:resource_id/edit" : "edit"
   },
-  
-  edit: function() {
-    // $('.viewcontainer').empty();
-    // new IONUX.Views.EditResource().render().el;
+  edit: function(){
     var editable_resource = new IONUX.Models.EditableResource(window.MODEL_DATA.resource);
-    var edit_form = new Backbone.Form({model: editable_resource}).render();
-    $('.viewcontainer').children('.row-fluid').html(edit_form.el);
+    new IONUX.Views.EditResource({model: editable_resource}).render().el;
   },
   search: function(query){
     $('#error').hide();

@@ -37,6 +37,11 @@ class ServiceApi(object):
             return search_json['data']
 
     @staticmethod
+    def update_resource(resource_obj):
+        req = service_gateway_post('resource_management', 'update_resource', params={'resource': resource_obj})
+        return req
+
+    @staticmethod
     def transition_lcstate(resource_id, transition_event):
         req = service_gateway_get('resource_management', 'execute_lifecycle_transition', params={'resource_id': resource_id, 'transition_event': transition_event})
         return req
@@ -477,13 +482,12 @@ def build_post_request(service_name, operation_name, params=None):
         post_data['serviceRequest']['expiry'] = session['valid_until']
 
     data={'payload': json.dumps(post_data)}
-
     pretty_console_log('SERVICE GATEWAY POST URL/DATA', url, data)
-
     return url, data
 
 def service_gateway_post(service_name, operation_name, params=None):
     url, data = build_post_request(service_name, operation_name, params)
+    
     resp = requests.post(url, data)
     pretty_console_log('SERVICE GATEWAY POST RESPONSE', resp.content)
 
