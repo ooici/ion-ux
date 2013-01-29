@@ -1,3 +1,31 @@
+IONUX.Models.EditableResource = Backbone.Model.extend({
+  idAttribute: '_id',
+  schema: function(){
+    return this.make_schema();
+  },
+  initialize: function(){
+  },
+  url: function(){
+    return window.location.pathname.replace(/edit$/,'');
+  },
+  make_schema: function(){
+    var self = this;
+    var schema = {};
+    _.each(this.attributes, function(value, key) {
+      if (!_.isObject(value) && !(key == 'ts_updated' || key == 'ts_created')){
+        switch(typeof(value)){
+          case 'boolean':
+            schema[key] = 'Checkbox';
+            break;
+          default:
+            schema[key] = 'Text'
+        };
+      };
+    });
+    return schema;
+  },
+});
+
 IONUX.Models.Search = Backbone.Model.extend();
 
 IONUX.Models.Search = Backbone.Model.extend({

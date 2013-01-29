@@ -124,13 +124,18 @@ def change_lcstate(resource_type, resource_id):
 # FACE, STATUS, RELATED PAGES
 # -----------------------------------------------------------------------------
 
-@app.route('/<resource_type>/status/<resource_id>/', methods=['GET'])
-@app.route('/<resource_type>/face/<resource_id>/', methods=['GET'])
-@app.route('/<resource_type>/related/<resource_id>/', methods=['GET'])
-@app.route('/<resource_type>/command/<resource_id>/', methods=['GET'])
+@app.route('/<resource_type>/status/<resource_id>/', methods=['GET','PUT'])
+@app.route('/<resource_type>/face/<resource_id>/', methods=['GET','PUT'])
+@app.route('/<resource_type>/related/<resource_id>/', methods=['GET','PUT'])
+@app.route('/<resource_type>/command/<resource_id>/', methods=['GET','PUT'])
 def page(resource_type, resource_id):
     if request.is_xhr:
-        return True
+        if request.method == 'PUT':
+            resource_obj = json.loads(request.data)
+            updated_resource = ServiceApi.update_resource(resource_obj)
+            return render_json_response(updated_resource)
+        else:
+            return
     else:
         return render_app_template(request.path)
 

@@ -1,10 +1,23 @@
 IONUX.Views.EditResource = Backbone.View.extend({
+  tagName: 'div',
   template: _.template($('#edit-resource-tmpl').html()),
-  initialize: function(){},
+  events: {
+    'click #save-resource': 'submit_form'
+  }, 
+  initialize: function(){
+    _.bindAll(this);
+    this.form = new Backbone.Form({model: this.model}).render();
+  },
   render: function(){
-    console.log('render EditResource');
     view_elmt = $('.viewcontainer').children('.row-fluid');
-    view_elmt.html(this.template);
+    view_elmt.empty().html(this.$el.html(this.template));
+    $('#form-container').html(this.form.el);
     return this;
-  }
-})
+  },
+  submit_form: function(){
+    this.model.set(this.form.getValue());
+    this.model.save()
+      .done(function(resp){IONUX.ROUTER.navigate(window.location.pathname.replace(/edit$/, ''),{trigger:true})})
+      .fail(function(resp){console.log(resp)});
+  },
+});

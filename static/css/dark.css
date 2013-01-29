@@ -1,3 +1,32 @@
+.edit-resource-btns {
+  margin: 10px 0;
+  padding: 10px 0;
+  border-top: solid 1px #333;
+}
+
+label:before {
+  padding: 5px;
+}
+
+label {
+  margin-top: 9px;
+  color: #ddd;
+}
+
+fieldset {
+  margin-top: 20px;
+}
+
+.controls input {
+  padding: 5px;
+  color: #ccc;
+  height: 25px;
+  background: #333;
+  border: solid 1px #666;
+  box-shadow: none;
+  -webkit-box-shadow: none;
+}
+
 
 
 .table-heading {
