@@ -8,6 +8,7 @@ IONUX.Views.EditResource = Backbone.View.extend({
   initialize: function(){
     _.bindAll(this);
     this.form = new Backbone.Form({model: this.model}).render();
+    this.base_url = window.location.pathname.replace(/edit$/,'');
   },
   render: function(){
     view_elmt = $('.viewcontainer').children('.row-fluid');
@@ -16,12 +17,15 @@ IONUX.Views.EditResource = Backbone.View.extend({
     return this;
   },
   submit_form: function(){
+    this.model.clear(); // clear to remove attrs not in model.schema.
     this.model.set(this.form.getValue());
+    var self = this;
     this.model.save()
-      .done(function(resp){IONUX.ROUTER.navigate(window.location.pathname.replace(/edit$/, ''),{trigger:true})})
-      .fail(function(resp){console.log(resp)});
+      .done(function(resp){
+        IONUX.ROUTER.navigate(self.base_url,{trigger:true});
+    });
   },
   cancel: function(){
-    window.history.back();
+    IONUX.ROUTER.navigate(this.base_url,{trigger:true});
   },
 });

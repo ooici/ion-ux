@@ -3,8 +3,7 @@ IONUX.Models.EditableResource = Backbone.Model.extend({
   schema: function(){
     return this.make_schema();
   },
-  initialize: function(){
-  },
+  initialize: function(){},
   url: function(){
     return window.location.pathname.replace(/edit$/,'');
   },
@@ -13,9 +12,13 @@ IONUX.Models.EditableResource = Backbone.Model.extend({
     var schema = {};
     _.each(this.attributes, function(value, key){
       if (!_.isObject(value) && !(key=='ts_updated' || key=='ts_created')){
+        console.log(key, value, typeof value);
         switch(typeof(value)){
           case 'boolean':
             schema[key] = 'Checkbox';
+            break;
+          case 'number':
+            schema[key] = 'Number';
             break;
           default:
             schema[key] = 'Text'
