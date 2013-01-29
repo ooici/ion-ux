@@ -135,15 +135,17 @@ table.table tr.odd td {
     margin-bottom:0px;
 }
 
-.dataTables_paginate {
-  display: none;
-}
-
 .dataTables_paginate a {
     cursor:pointer;
     margin:2px 4px 2px 0px;
     color:#ccc;
 }
+
+.dataTables_paginate a.paginate_disabled_previous, a.paginate_disabled_next {
+    cursor:default;
+    text-decoration:none;
+}
+
 .table-bordered tr th {
 }
 

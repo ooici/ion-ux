@@ -128,11 +128,14 @@ IONUX.Router = Backbone.Router.extend({
   handle_navigation: function(){
     var self = this;
     $(document).on("click", "a", function(e) {
-      if ($(e.target).hasClass('external')) return true;
+      var target = $(e.target);
+      if (target.hasClass('external')) return true;
       // TEMP: catching links in Google Maps, also catching download links.
-      if ($(e.target).attr('href').match(/^http/)) return true;
+      var href = target.attr('href'); 
+      if (!href) return true;
+      if (href.match(/^http/)) return true;
       // Catch Bootstrap's tabs hash so URL doesn't change, example: "InstrumentDevice/list/" to "/2150593"
-      if ($(e.target).attr('data-toggle') == 'tab') return true;
+      if (target.attr('data-toggle') == 'tab') return true;
       self.navigate($(this).attr('href'), {trigger:true});
       return false;
     });

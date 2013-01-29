@@ -16,12 +16,21 @@ TEST_TABLE_DATA = [
     {'aggregated_status':"Normal", 'name':"Platform 0 -AS02CPSM", 'uuid':274503, 'last_calibration_datetime':"05:12:33", 'description':"Last Note4..", "_id":"a0bc123", "type_":"InstrumentDevice", 'timestamp':1156049834855},
     {'aggregated_status':"Alarm", 'name':"Platform 1 - AS02CPSM", 'uuid':174501,  'last_calibration_datetime':"05:12:33", 'description':"Last Note2..", "_id":"a1bc123", "type_":"PlatformDevice", 'timestamp':1256049834855},
     {'aggregated_status':"Normal", 'name':"Platform 2 - AS02CPSM", 'uuid':473508, 'last_calibration_datetime':"05:12:33", 'description':"Last Note5..", "_id":"a2bc123", "type_":"InstrumentDevice", 'timestamp':1356049834855},
-    {'aggregated_status':"Normal", 'name':"Platform 3 -AS02CPSM", 'uuid':271501, 'last_calibration_datetime':"05:12:33", 'description':"Last Note8..", "_id":"a3bc123", "type_":"PlatformDevice", 'timestamp':1456049834855},
+    {'aggregated_status':"Normal", 'name':"Platform 6 -AS02CPSM", 'uuid':271501, 'last_calibration_datetime':"05:12:33", 'description':"Last Note8..", "_id":"a3bc123", "type_":"PlatformDevice", 'timestamp':1456049834855},
     {'aggregated_status':"Unknown", 'name':"Platform 4 - AS02CPSM", 'uuid':275504, 'last_calibration_datetime':"05:12:33", 'description':"Last Note3..", "_id":"a4bc123", "type_":"InstrumentDevice", 'timestamp':1336049834855},
+    {'aggregated_status':"Normal", 'name':"Platform 0 -AS02CPSM", 'uuid':274503, 'last_calibration_datetime':"05:12:33", 'description':"Last Note4..", "_id":"a0bc123", "type_":"InstrumentDevice", 'timestamp':1156049834855},
     {'aggregated_status':"Normal", 'name':"Platform 5 - AS02CPSM", 'uuid':274500, 'last_calibration_datetime':"05:12:33", 'description':"Last Note1..", "_id":"a5bc123", "type_":"InstrumentDevice", 'timestamp':1136049834855},
     {'aggregated_status':"Normal", 'name':"Platform 6 - AS02CPSM", 'uuid':974508, 'last_calibration_datetime':"05:12:33", 'description':"Last Note7..", "_id":"a6bc123", "type_":"InstrumentDevice", 'timestamp':1806049834855},
+    {'aggregated_status':"Alarm", 'name':"Platform 1 - AS02CPSM", 'uuid':174501,  'last_calibration_datetime':"05:12:33", 'description':"Last Note2..", "_id":"a1bc123", "type_":"PlatformDevice", 'timestamp':1256049834855},
+    {'aggregated_status':"Normal", 'name':"Platform 6 - AS02CPSM", 'uuid':974508, 'last_calibration_datetime':"05:12:33", 'description':"Last Note7..", "_id":"a6bc123", "type_":"InstrumentDevice", 'timestamp':1806049834855},
+    {'aggregated_status':"Alarm", 'name':"Platform 1 - AS02CPSM", 'uuid':174501,  'last_calibration_datetime':"05:12:33", 'description':"Last Note2..", "_id":"a1bc123", "type_":"PlatformDevice", 'timestamp':1256049834855},
+    {'aggregated_status':"Normal", 'name':"Platform 0 -AS02CPSM", 'uuid':274503, 'last_calibration_datetime':"05:12:33", 'description':"Last Note4..", "_id":"a0bc123", "type_":"InstrumentDevice", 'timestamp':1156049834855},
+    {'aggregated_status':"Normal", 'name':"Platform 6 - AS02CPSM", 'uuid':974508, 'last_calibration_datetime':"05:12:33", 'description':"Last Note7..", "_id":"a6bc123", "type_":"InstrumentDevice", 'timestamp':1806049834855},
     {'aggregated_status':"Alert", 'name':"Platform 7 - AS02CPSM", 'uuid':274508, 'last_calibration_datetime':"05:12:33",  'description':"Last Note6..", "_id":"a7bc123", "type_":"PlatformDevice", 'timestamp':1726049834855},
-    {'aggregated_status':"Unknown", 'name':"Platform 8 - AS02CPSM", 'uuid':275504, 'last_calibration_datetime':"05:12:33", 'description':"Last Note3..", "_id":"a8bc123", "type_":"PlatformDevice", 'timestamp':1056049834855}
+    {'aggregated_status':"Normal", 'name':"Platform 6 - AS02CPSM", 'uuid':974508, 'last_calibration_datetime':"05:12:33", 'description':"Last Note7..", "_id":"a6bc123", "type_":"InstrumentDevice", 'timestamp':1806049834855},
+    {'aggregated_status':"Normal", 'name':"Platform 6 - AS02CPSM", 'uuid':974508, 'last_calibration_datetime':"05:12:33", 'description':"Last Note7..", "_id":"a6bc123", "type_":"InstrumentDevice", 'timestamp':1806049834855},
+    {'aggregated_status':"Alert", 'name':"Platform 7 - AS02CPSM", 'uuid':274508, 'last_calibration_datetime':"05:12:33",  'description':"Last Note6..", "_id":"a7bc123", "type_":"PlatformDevice", 'timestamp':1726049834855},
+    {'aggregated_status':"Unknown", 'name':"Platform 6 - AS02CPSM", 'uuid':275504, 'last_calibration_datetime':"05:12:33", 'description':"Last Note3..", "_id":"a8bc123", "type_":"PlatformDevice", 'timestamp':1056049834855}
 ]
 
 
@@ -57,9 +66,8 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
             "aaData":table_data,
             "aoColumns":header_data,
             "bInfo":false,
-            'bPaginate':false,
-            'sScrollY': '300px',
-            'sScrollYInner': "110%",
+            "sScrollY": "300px",
+            "sScrollYInner": "110%",
             "bScrollCollapse": true,
             "sScrollXInner": "100%",
         });
