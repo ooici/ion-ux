@@ -40,6 +40,7 @@ def render_app_template(current_url):
     return render_template(tmpl)
     
 def render_json_response(service_api_response):
+    print 'yyy - service_api_response ', service_api_response
     if isinstance(service_api_response, dict) and service_api_response.has_key('GatewayError'):
         if PRODUCTION:
             del service_api_response['GatewayError']['Trace']

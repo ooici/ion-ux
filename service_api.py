@@ -448,9 +448,9 @@ def build_get_request(base, service_name, operation_name=None, params=None):
     return url
 
 def service_gateway_get(service_name, operation_name, params=None, base=SERVICE_GATEWAY_BASE_URL):
-    service_gateway_resp = requests.get(build_get_request(base, service_name, operation_name, params))
-    pretty_console_log('SERVICE GATEWAY GET RESPONSE', service_gateway_resp.content)
-    return render_service_gateway_response(service_gateway_resp)
+    service_gateway_request = requests.get(build_get_request(base, service_name, operation_name, params))
+    pretty_console_log('SERVICE GATEWAY GET RESPONSE', service_gateway_request.content)
+    return render_service_gateway_response(service_gateway_request)
 
 def render_service_gateway_response(service_gateway_resp):
     if service_gateway_resp.status_code == 200:
@@ -468,39 +468,24 @@ def render_service_gateway_response(service_gateway_resp):
 
 def build_post_request(service_name, operation_name, params=None):
     url = '%s/%s/%s' % (SERVICE_GATEWAY_BASE_URL, service_name, operation_name)
-
     post_data = deepcopy(SERVICE_REQUEST_TEMPLATE)
     post_data['serviceRequest']['serviceName'] = service_name
     post_data['serviceRequest']['serviceOp'] = operation_name
-
     if params is not None:
         post_data['serviceRequest']['params'] = params
-
     # conditionally add user id and expiry to request
     if "actor_id" in session:
         post_data['serviceRequest']['requester'] = session['actor_id']
         post_data['serviceRequest']['expiry'] = session['valid_until']
-
     data={'payload': json.dumps(post_data)}
     pretty_console_log('SERVICE GATEWAY POST URL/DATA', url, data)
     return url, data
 
 def service_gateway_post(service_name, operation_name, params=None):
     url, data = build_post_request(service_name, operation_name, params)
-    
-    resp = requests.post(url, data)
-    pretty_console_log('SERVICE GATEWAY POST RESPONSE', resp.content)
-
-    if resp.status_code == 200:
-        resp = json.loads(resp.content)
-        
-        if resp['data'].has_key('GatewayError'):
-            return resp['data']['GatewayError']
-        else:
-            if type(resp) == dict:
-                return resp['data']['GatewayResponse']
-            elif type(resp) == list:
-                return resp['data']['GatewayResponse'][0]
+    service_gateway_request = requests.post(url, data)
+    pretty_console_log('SERVICE GATEWAY POST RESPONSE', service_gateway_request.content)
+    return render_service_gateway_response(service_gateway_request)
 
 def build_agent_request(agent_id, operation_name, params=None):
     url = '%s/%s/%s' % (AGENT_GATEWAY_BASE_URL, agent_id, operation_name)

@@ -11,8 +11,8 @@ IONUX.Models.EditableResource = Backbone.Model.extend({
   make_schema: function(){
     var self = this;
     var schema = {};
-    _.each(this.attributes, function(value, key) {
-      if (!_.isObject(value) && !(key == 'ts_updated' || key == 'ts_created')){
+    _.each(this.attributes, function(value, key){
+      if (!_.isObject(value) && !(key=='ts_updated' || key=='ts_created')){
         switch(typeof(value)){
           case 'boolean':
             schema[key] = 'Checkbox';

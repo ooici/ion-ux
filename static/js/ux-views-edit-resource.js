@@ -2,7 +2,8 @@ IONUX.Views.EditResource = Backbone.View.extend({
   tagName: 'div',
   template: _.template($('#edit-resource-tmpl').html()),
   events: {
-    'click #save-resource': 'submit_form'
+    'click #save-resource': 'submit_form',
+    'click #cancel-edit': 'cancel'
   }, 
   initialize: function(){
     _.bindAll(this);
@@ -19,5 +20,8 @@ IONUX.Views.EditResource = Backbone.View.extend({
     this.model.save()
       .done(function(resp){IONUX.ROUTER.navigate(window.location.pathname.replace(/edit$/, ''),{trigger:true})})
       .fail(function(resp){console.log(resp)});
+  },
+  cancel: function(){
+    window.history.back();
   },
 });
