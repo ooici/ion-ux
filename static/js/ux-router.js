@@ -21,7 +21,10 @@ IONUX.Router = Backbone.Router.extend({
   
   edit: function() {
     // $('.viewcontainer').empty();
-    new IONUX.Views.EditResource().render().el;
+    // new IONUX.Views.EditResource().render().el;
+    var editable_resource = new IONUX.Models.EditableResource(window.MODEL_DATA.resource);
+    var edit_form = new Backbone.Form({model: editable_resource}).render();
+    $('.viewcontainer').children('.row-fluid').html(edit_form.el);
   },
   search: function(query){
     $('#error').hide();
