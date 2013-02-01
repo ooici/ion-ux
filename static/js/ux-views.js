@@ -28,19 +28,12 @@ IONUX.Views.Lifecycle = Backbone.View.extend({
           type: "POST",
           url: 'transition/',
           data: {transition_event: transition_event},
-          global: false,
+          // global: false,
           success: function(resp){
               $('#btn-cancel').click();
               Backbone.history.fragment = null; // Clear history fragment to allow for page "refresh".
               IONUX.ROUTER.navigate(window.location.pathname, {trigger: true});
-          },
-          error: function(resp){
-              $('.modal-footer .loading').hide();
-              $('.modal-footer #btn-cancel').show();
-              $('.modal-footer #btn-lcstate').text('Change Lifecycle');
-              alert(resp.responseText);
-              $('#btn-cancel').click();
-          },
+          }
         });
     },
     get_transition_events: function(){
@@ -52,17 +45,6 @@ IONUX.Views.Lifecycle = Backbone.View.extend({
             select_elmt.append(_.template(option_tmpl, {transition_event: transition_event, transition_event_long: transition_event_long}));
         });
     }
-})
-
-IONUX.Views.Error = Backbone.View.extend({
-  template: _.template($('#error-tmpl').html()),
-  initialize: function(){
-    _.bindAll(this);
-  },
-  render: function(){
-    $('#dynamic-container').html(this.template({error_obj: this.options.error_obj}));
-    return this;
-  },
 });
 
 IONUX.Views.Search = Backbone.View.extend({
@@ -133,7 +115,7 @@ IONUX.Views.Sidebar = Backbone.View.extend({
 });
 
 IONUX.Views.Subscribe = Backbone.View.extend({
-    el: '#subscribe-modal',
+    el: '#action-modal',
     template: _.template($('#subscribe-tmpl').html()),
     events: {
         'click #btn-subscribe': 'subscribe'
@@ -159,11 +141,11 @@ IONUX.Views.Subscribe = Backbone.View.extend({
           success: function(resp){
               self.$el.find('.modal-body').prepend('<div class="alert alert-success">Subscription successful.</div>');
           },
-          error: function() {
-              self.$el.find('.modal-body').prepend('<div class="alert alert-error">Subscription error.</div>');
-          },
-          complete: function(resp){
-          }
+          // error: function() {
+          //     self.$el.find('.modal-body').prepend('<div class="alert alert-error">Subscription error.</div>');
+          // },
+          // complete: function(resp){
+          // }
         });
     },
     get_event_types: function(evt) {
@@ -229,7 +211,7 @@ IONUX.Views.Footer = Backbone.View.extend({
     // Investigating collections and dashboard implementation issues.
     $('.footer').empty();
     
-    $('#footr').html(this.$el);
+    $('#footer').html(this.$el);
     this.render_versions();
     this.render_buttons();
     return this;

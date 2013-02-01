@@ -1,13 +1,20 @@
-<div class="error">
-  <h1>Error: <%= error_obj.Message %></h1>
-  <div class="error-buttons">
-    <a class="btn-general" href="/">Home</a>&nbsp;
-    <a class="btn-general external" target="_blank" href="mailto:helpdesk@oceanobservatories.org">Email Helpdesk</a>
-  </div>
+<div class="modal-header">
+  <h1>Error</h1>
 </div>
-
-<% if (_.has(error_obj, 'Trace')) { %>
-  <div class="error-trace">
-    <%= error_obj.Trace %>
-  </div>
-<% } %>
+<div class="modal-body error">
+  <h4><%= error_obj.Message %></h4>
+  <p style="margin-top:15px;"><a class="btn-general external" target="_blank" href="mailto:helpdesk@oceanobservatories.org">Email Helpdesk</a></p>
+  <% if (_.has(error_obj, 'Trace')) { %>
+    <p class="error-trace">
+      <%= error_obj.Trace %>
+    </p>
+  <% } %>
+</div>
+<div class="modal-footer">
+  <% if (open_modal) { %>
+    <button class="btn-blue" data-dismiss="modal">OK</button>
+  <% } else { %>
+    <button id="dashboard" class="btn-blue" data-dismiss="modal">Dashboard</button>
+    <button id="retry" class="btn-blue" data-dismiss="modal">Retry</button>
+  <% } %>
+</div>

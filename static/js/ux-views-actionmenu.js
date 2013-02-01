@@ -53,7 +53,6 @@ IONUX.Views.ActionMenu = Backbone.View.extend({
         var action_event = "action__" + action_name.replace(/ /g, "_").toLowerCase()
         this.trigger(action_event, $(evt.target));
     }
-
 });
 
 

@@ -66,6 +66,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
             "aaData":table_data,
             "aoColumns":header_data,
             "bInfo":false,
+            'bPaginate':false,
             "sScrollY": "300px",
             "sScrollYInner": "110%",
             "bScrollCollapse": true,

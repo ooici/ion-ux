@@ -46,7 +46,6 @@ class ServiceApi(object):
         req = service_gateway_get('resource_management', 'execute_lifecycle_transition', params={'resource_id': resource_id, 'transition_event': transition_event})
         return req
 
-
     @staticmethod
     def subscribe(resource_type, resource_id, event_type, user_id, resource_name=None):
         name = 'Notification for %s' % resource_name if resource_name else 'NotificationTest'
@@ -113,7 +112,7 @@ class ServiceApi(object):
         elif resource_type in ('UserRole'):
             extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'ExtendedInformationResource'})
         else:
-            extension = 'Service API call not implemented.'
+            extension = error_message(msg="Resource extension for %s is not available." % resource_type)
 
         return extension
 
@@ -194,7 +193,6 @@ class ServiceApi(object):
         instrument_agent_instance = service_gateway_get('instrument_management', 'find_instrument_agent_instance_by_instrument_device', params={'instrument_device_id': instrument_device_id})
         instrument_agent_instance_id = instrument_agent_instance['_id']
         agent_request = service_gateway_get('instrument_management', 'start_instrument_agent_instance', params={'instrument_agent_instance_id': str(instrument_agent_instance_id)})
-        
         return agent_request
 
     @staticmethod
@@ -203,7 +201,6 @@ class ServiceApi(object):
         instrument_agent_instance_id = instrument_agent_instance['_id']
         ServiceApi.reset_driver(instrument_device_id)
         agent_request = service_gateway_get('instrument_management', 'stop_instrument_agent_instance', params={'instrument_agent_instance_id': str(instrument_agent_instance_id)})
-        
         return agent_request
     
     # Used to ensure that driver is reset prior to an agent being stopped.
@@ -432,7 +429,6 @@ def _build_param_str(params=None):
 def build_get_request(base, service_name, operation_name=None, params=None):
     """
     Builds a get request out of a service/operation and optional params.
-
     operation_name may be left blank if going to a custom url.
     """
     urlarr = [base, service_name]
@@ -464,7 +460,7 @@ def render_service_gateway_response(service_gateway_resp):
         except Exception, e:
             return resp['data']
     else:
-        return json.dumps({'GatewayError': {'Message': 'An error occurred communicating with the Service Gateway'}})
+        return json.dumps(GATEWAY_ERROR)
 
 def build_post_request(service_name, operation_name, params=None):
     url = '%s/%s/%s' % (SERVICE_GATEWAY_BASE_URL, service_name, operation_name)
@@ -522,6 +518,12 @@ def service_gateway_agent_request(agent_id, operation_name, params=None):
         elif type(resp) == list:
             return resp['data']['GatewayResponse'][0]
 
+def error_message(msg=None):
+    """Builds a Gateway compataible error message for UI."""
+    error_msg = {'GatewayError': {'Message': 'An error occurred.'}}
+    if msg is not None:
+        error_msg['GatewayError']['Message'] = msg
+    return error_msg
+
 def pretty_console_log(label, content, data=None):
-    # pass
     print '\n Service Gateway: ', '%s : %s' % (label, content), '\n\n'
