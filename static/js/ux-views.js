@@ -577,7 +577,7 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
         $(".command-output").append($('<p class="command-success">').html("OK: '" + command + "' was successful. <br />" + JSON.stringify(data.result)));
       },
       error: function() {
-        $(".command-output").append($('<p class="command-failure">').text("ALERT: '" + command + "' was unsuccessful."));
+        $(".command-output").append($('<p class="command-failure">').text("ERROR: '" + command + "' was unsuccessful."));
       },
       complete: function(resp){
           button_elmt.removeAttr("disabled");
@@ -610,7 +610,7 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
       var self = this;
       $.ajax({
         url: 'get_capabilities?cap_type=abc123',
-        global: false,
+        // global: false,
         dataType: 'json',
         success: function(resp){
             var agent_options = [];
@@ -632,9 +632,9 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
                 select_elmt.append(_.template(option_tmpl, option));
             });
         },
-        error: function(resp) {
-            console.log('Error: ', resp);
-        }
+        // error: function(resp) {
+        //     console.log('Error: ', resp);
+        // }
       });
       
   },

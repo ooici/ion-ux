@@ -5,8 +5,8 @@ IONUX.Views.Error = Backbone.View.extend({
   modal_template: '<div id="action-modal" class="modal hide fade modal-ooi"></div>',
   template: _.template($('#error-tmpl').html()),
   events: {
-    'click #dashboard': 'dashboard',
-    'click #retry': 'retry'
+    'click #retry': 'retry',
+    'click #dashboard': 'dashboard'
   },
   initialize: function(){
     _.bindAll(this);
@@ -15,13 +15,13 @@ IONUX.Views.Error = Backbone.View.extend({
     this.$el.html(this.template({error_obj: this.options.error_obj, open_modal: this.options.open_modal})).modal();
     return this;
   },
-  dashboard: function(){
-    IONUX.ROUTER.navigate('/', {trigger:true});
-  },
   retry: function(){
     Backbone.history.fragment = null;
     return IONUX.ROUTER.navigate(window.location.pathname, {trigger: true});
   },
+  dashboard: function(){
+    IONUX.ROUTER.navigate('/', {trigger:true});
+  }
 });
 
 IONUX.Views.InlineError = Backbone.View.extend({

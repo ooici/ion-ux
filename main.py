@@ -49,6 +49,15 @@ def render_json_response(service_api_response):
     else:
         return jsonify(data=service_api_response)
 
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not 'user_id' in session:
+            return render_json_response(error_message(msg='You must be signed in to use this feature.'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
 
 # -----------------------------------------------------------------------------
 # ROUTES
@@ -96,25 +105,20 @@ def event_types():
 @app.route('/<resource_type>/status/<resource_id>/subscribe/<event_type>/', methods=['GET'])
 @app.route('/<resource_type>/face/<resource_id>/subscribe/<event_type>/', methods=['GET'])
 @app.route('/<resource_type>/related/<resource_id>/subscribe/<event_type>/', methods=['GET'])
+@login_required
 def subscribe_to_resource(resource_type, resource_id, event_type):
-    if 'user_id' in session:
-        resource_name = request.args.get('resource_name')
-        resp = ServiceApi.subscribe(resource_type, resource_id, event_type, user_id, resource_name)
-        return render_json_response(transition)
-    else:
-        return render_json_response(error_message(msg='You must be signed in to subscribe.'))
+    resource_name = request.args.get('resource_name')
+    resp = ServiceApi.subscribe(resource_type, resource_id, event_type, user_id, resource_name)
+    return render_json_response(transition)
         
 @app.route('/<resource_type>/status/<resource_id>/transition/', methods=['POST'])
 @app.route('/<resource_type>/face/<resource_id>/transition/', methods=['POST'])
 @app.route('/<resource_type>/related/<resource_id>/transition/', methods=['POST'])
+@login_required
 def change_lcstate(resource_type, resource_id):
-    if 'user_id' in session:
-        transition_event = request.form['transition_event'].lower()
-        transition = ServiceApi.transition_lcstate(resource_id, transition_event)
-        return render_json_response(transition)
-    else:
-        return render_json_response(error_message(msg='You must be signed in to transition Lifecycle State.'))
-
+    transition_event = request.form['transition_event'].lower()
+    transition = ServiceApi.transition_lcstate(resource_id, transition_event)
+    return render_json_response(transition)
 
 # -----------------------------------------------------------------------------
 # FACE, STATUS, RELATED PAGES
@@ -177,6 +181,7 @@ def extension(resource_type, resource_id):
 # -----------------------------------------------------------------------------
 
 @app.route('/InstrumentDevice/command/<instrument_device_id>/<agent_command>/')
+@login_required
 def start_instrument_agent(instrument_device_id, agent_command, cap_type=None):
     cap_type = request.args.get('cap_type')
     if agent_command == 'start':
@@ -224,7 +229,6 @@ def map():
 def map2():
     ui_server = request.args.get('ui_server')
     unique_key = request.args.get('unique_key')
-    
     kml = ServiceApi.fetch_map(ui_server=ui_server, unique_key=unique_key)
     return kml
 

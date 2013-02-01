@@ -72,13 +72,12 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
         this.on("action__download", this.action__download);
     },
     action__subscribe:function(){
-        var modal_html = '<div id="subscribe-modal" class="modal hide fade modal-ooi"></div>';
-        $(modal_html).modal({keyboard:false})
+        $(this.modal_template).modal({keyboard:false})
             .on('shown', function(){
                 new IONUX.Views.Subscribe().render().el;
             })
-            .on('hidden',function(){
-                $('#subscribe-modal').remove();
+            .on('hide',function(){
+                $('#action-modal').remove();
         });
     },
     action__lifecycle:function(){
@@ -86,7 +85,7 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
             .on('shown', function(){
                 new IONUX.Views.Lifecycle().render().el;
             })
-            .on('hidden',function(){
+            .on('hide',function(){
                 $('#action-modal').remove();
         });
     },
