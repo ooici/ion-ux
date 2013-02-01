@@ -1,74 +1,86 @@
 
+
     <script type='text/javascript' src='http://www.google.com/jsapi'></script>
-    <script type="text/javascript" src='https://www.google.com/jsapi?autoload={"modules":[{"name":"visualization","version":"1"}]}'></script>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js" ></script>
-    <script type="text/javascript" src="/static/js/spin.js" ></script>
-    
+    <script type="text/javascript"
+        src='https://www.google.com/jsapi?autoload={"modules":[{"name":"visualization","version":"1"}]}'>
+    </script>
+
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.0.min.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/ui/1.10.0/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="jquery-ui-timepicker-addon.js" ></script>
+    <script type="text/javascript" src="jquery-ui-sliderAccess.js"></script>
+    <script type="text/javascript" src="spin.js" ></script>
+
+    <link rel="stylesheet" media="all" type="text/css" href="http://code.jquery.com/ui/1.10.0/themes/smoothness/jquery-ui.css" />
+    <link rel="stylesheet" media="all" type="text/css" href="jquery-ui-timepicker-addon.css" />
+    <style> .container { border:2px solid #ccc; width:300px; height: 100px; overflow-y: scroll; } </style>
+
     <script type='text/javascript'>
-    
-      /*
-      NOTE : The caching of the datatable is pretty basic and essentially amount to storing a set
-          number of retrieves on the browser side and generating an appropriate dataview from the
-          data. If certain data is not available, then a call to the viz service is made.
 
-          [1] The cache is currently implemented as a 2 level cache. There's the overview data and actual data
-          which is arranged in certain sized blocks .. e.g 4096. The container is always asked to fetch these
-          4096 byte blocks and if the current view overlaps two subsequent 4096 blocks, two calls will be made
-          to fetch each of those blocks. The figure of 4096 (or 1024 or whatever) is an approximation and the actual block
-          returned by coverage may be different in size if the instrument has a non uniform data feed.
+    /*
+    NOTE : The caching of the datatable is pretty basic and essentially amount to storing a set
+        number of retrieves on the browser side and generating an appropriate dataview from the
+        data. If certain data is not available, then a call to the viz service is made.
 
-          [2] The stride_factor and zoom factor are used interchangeably. When stride_factor reduces ( ..3,2,1) the
-          data resolution increases and there fore the zoom increases. So zoom = 1 is the highest and subsequent levels
-          zoom out.
+        [1] The cache is currently implemented as a 2 level cache. There's the overview data and actual data
+        which is arranged in certain sized blocks .. e.g 4096. The container is always asked to fetch these
+        4096 byte blocks and if the current view overlaps two subsequent 4096 blocks, two calls will be made
+        to fetch each of those blocks. The figure of 4096 (or 1024 or whatever) is an approximation and the actual block
+        returned by coverage may be different in size if the instrument has a non uniform data feed.
 
-          [3] The blocks of cached data are arranged at boundaries aligned by the end_time. So if there are 90 records in total
-          and the block size is 40, the three data blocks will have sizes [10,40,40]
+        [2] The stride_factor and zoom factor are used interchangeably. When stride_factor reduces ( ..3,2,1) the
+        data resolution increases and there fore the zoom increases. So zoom = 1 is the highest and subsequent levels
+        zoom out.
 
-       */
+        [3] The blocks of cached data are arranged at boundaries aligned by the end_time. So if there are 90 records in total
+        and the block size is 40, the three data blocks will have sizes [10,40,40]
 
-      // Global variables
-      var graph, dataTable, dataTable_overview, dp_id, dp_id_token, dp_metadata, dataTable_overview_stride_factor = 1;
-      var graph_visible_start_date, graph_visible_end_date, graph_x_res, avg_data_rate, curr_stride_factor = 1;
-      // var dataTable_parameters = ['temp', 'pressure', 'conductivity'];
+     */
 
-      var dataTable_parameters = [];
+	// Global variables
+	var graph, dataTable, dataTable_overview, dp_id, dp_id_token, dp_metadata, dataView_overview;
+    var dataTable_overview_stride_factor = 1;
+    var graph_visible_start_date, graph_visible_end_date, graph_x_res, avg_data_rate, curr_stride_factor = 1;
+    var dataTable_parameters = []; // ['temp', 'pressure', 'conductivity'];
 
-      var container_server = "http://" + window.location.host;
-      var first_draw_flag = true;
-      var viz_params = {};
-      var curr_graph_type = "";
-      var supported_graph_type = ['AnnotatedTimeLine', 'Table', 'LineGraph', 'AreaChart', 'ComboChart'];
-      var overview_reqId = 9;
-      var graph_spinner;
+    var container_server = "http://" + window.location.host;
+    var first_draw_flag = true;
+    var viz_params = {};
+    var curr_graph_type = "";
+    //var supported_graph_type = ['AnnotatedTimeLine', 'Table', 'LineGraph', 'AreaChart', 'ComboChart'];
+    var supported_graph_type = ['AnnotatedTimeLine', 'Table', 'LineGraph', 'AreaChart'];
+    var overview_reqId = 9;
+    var graph_spinner;
 
-      // cache
-      var dataTable_cache_block_size = 1024, dataTable_cache_block_time_period;
-      var dataTable_level_trigger = 1; // when user view crosses these zoom / stride levels (1 is highest), resolution of data changes
-      var dataTable_cache = []; // stores blocks of size dataTable_cache_block_size
-      var dataTable_cache_size_max = 100;
-      var dataTable_cache_ptr = 0;
+    // cache
+    var dataTable_cache_block_size = 1024, dataTable_cache_block_time_period;
+    var dataTable_level_trigger = 1; // when user view crosses these zoom / stride levels (1 is highest), resolution of data changes
+    var dataTable_cache = []; // stores blocks of size dataTable_cache_block_size
+    var dataTable_cache_size_max = 100;
+    var dataTable_cache_ptr = 0;
 
-      var cache_node = function(st, et, dt) {
-          var cache_node = {
-              start_time: st,
-              end_time: et,
-              datatable: dt
-          }
+    var cache_node = function(st, et, dt) {
+        var cache_node = {
+            start_time: st,
+            end_time: et,
+            datatable: dt
+        }
 
-          return cache_node;
-      }
+        return cache_node;
+    }
 
-      // Google library specific loads for all the supported chart types  
-      google.load("visualization", "1", {packages: ['annotatedtimeline', 'table', 'corechart', 'motionchart']});
-      google.setOnLoadCallback(initGraph);
+    // Google library specific loads for all the supported chart types
+	google.load("visualization", "1", {packages: ['annotatedtimeline', 'table', 'corechart', 'motionchart']});
+	google.setOnLoadCallback(initGraph);
 
-      function initGraph() {
+    function initGraph() {
+
         dp_id = parent.window.location.pathname.split('/')[3]
         console.log('dp_id: ', dp_id);
 
         // Init some variables
         graph_x_res = document.getElementById("graph_div").scrollWidth;
-        // initSpinner();
+        initSpinner();
 
         // **** FOR DEBUG ONLY ****
         //graph_x_res = 100;
@@ -78,448 +90,695 @@
 
         /// Get meta data for the data product id. It will be used to retrieve the correct data
         jQuery.ajax ({
-          url: container_server + "/visualization/get_dataproduct_metadata/?data_product_id=" + dp_id + "&callback=dp_metadata_cb&return_format=raw_json",
-          dataType: 'jsonp',
-          jsonpCallback: 'dp_metadata_cb'
+            url: container_server + "/visualization/get_dataproduct_metadata?data_product_id=" + dp_id + "&callback=dp_metadata_cb&return_format=raw_json",
+            dataType: 'jsonp',
+            jsonpCallback: 'dp_metadata_cb'
         });
-      }
-
-      function dp_metadata_cb(response) {
-          dp_metadata = response;
-
-          // calculate and init a few things
-          avg_data_rate = dp_metadata['time_steps'] / (dp_metadata['time_bounds'][1] - dp_metadata['time_bounds'][0]);
-          var tot_num_of_blocks = Math.ceil(dp_metadata['time_steps']/dataTable_cache_block_size);
-          dataTable_cache_block_time_period = Math.ceil(dataTable_cache_block_size / avg_data_rate); // ** Is this correct ?
-
-          // init cache blocks
-          for (i = 0; i < tot_num_of_blocks; i++) {
-              _end_time = dp_metadata['time_bounds'][1] - dataTable_cache_block_time_period * i;
-              _start_time = Math.max(dp_metadata['time_bounds'][0], (_end_time - dataTable_cache_block_time_period));
-
-              dataTable_cache[i] = new cache_node(_start_time, _end_time, null);
-          }
-
-          // calculate the stride factor
-          var num_of_actual_data_points = (dp_metadata['time_bounds'][1] - dp_metadata['time_bounds'][0]) * avg_data_rate;
-          dataTable_overview_stride_factor = Math.ceil(num_of_actual_data_points / graph_x_res);
-          setVizParams(dataTable_parameters, dp_metadata['time_bounds'][0], dp_metadata['time_bounds'][1], dataTable_overview_stride_factor);
-
-          fetchData(); // set reqId to some arbitrary large number for the overview query
-      }
-
-
-      function fetchData() {
-            var query;
-
-            //query = new google.visualization.Query(container_server + "/ion-service/visualization_service/get_visualization_data?data_product_id=" + dp_id + "&visualization_parameters=" + JSON.stringify(viz_params) + "&tqx=reqId:" + _reqId + "&return_format=raw_json");
-            query = new google.visualization.Query(container_server + "/visualization/get_visualization_data/?data_product_id=" + dp_id + "&visualization_parameters=" + JSON.stringify(viz_params) + "&return_format=raw_json");
-            console.debug("Fetching data : ", query);
-
-            // Send the query with a callback function.
-            query.send(handleDrawQueryResponse);
-
-            // Starter the spinner to tell user that more data is coming
-            // var spin_target = document.getElementById('graph_div');
-            // graph_spinner.spin(spin_target);
-
-      }
-
-
-    function handleDrawQueryResponse(response) {
-
-    	if (response.isError()) {
-    		alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
-    	    return;
-    	}
-
-          if (first_draw_flag) {
-              // note the first table which is the overview
-              dataTable_overview = response.getDataTable();
-              dataTable_overview.sort([{column:0}]); // sort the datatable to take care or any out or order-ness
-              dataTable = dataTable_overview;
-
-              drawGraph(first_draw_flag);
-              first_draw_flag = false;
-          }
-          else {
-              // store the returned datatable in the cache
-              cache_idx = insertDataTableInCache(response.getDataTable());
-
-              // Use the overview table and replace low-res data with high-res data rows from cache
-              time_range = dataTable_cache[cache_idx].datatable.getColumnRange(0); // get the min and max values of higher res data
-
-              start_time_d = time_range.min;
-              end_time_d = time_range.max;
-
-              // Find the equivalent rows in the overview that match
-              filteredRows = dataTable.getFilteredRows([{column: 0, minValue: start_time_d, maxValue: end_time_d}]);
-
-              // remove those rows from the low res version
-              // --- ****** FIX THIS to remove los res data from the view
-              //dataTable.removeRows(filteredRows[0], filteredRows.length);
-
-
-              // now join the new high res data with datatable
-              //new_datatable_json = eval("(" + dataTable_cache[cache_idx].datatable.toJSON() + ')');
-
-              var rows = getDatatableRows(dataTable_cache[cache_idx].datatable);
-              dataTable.addRows(rows);
-
-              dataTable.sort([{column:0}]);
-              drawGraph(first_draw_flag);
-
-          }
-
-          // Stop the spinner
-          // graph_spinner.stop();
-
     }
 
-      function drawGraph(first_time_flag) {
+    function dp_metadata_cb(response) {
+        dp_metadata = response;
 
-          // This function is hacky but will draw the graph assuming the graph object has been created
-          if (curr_graph_type == "AnnotatedTimeLine") {
-              if (first_time_flag) {
-                  graph.draw(dataTable, {'allowRedraw': true, 'displayAnnotations' : false, 'wmode' : 'transparent'});
-              }
-              else {
-                  //graph.draw(dataTable, {'zoomStartTime': graph_visible_start_date, 'zoomEndTime': graph_visible_end_date});
-                  graph.draw(dataTable, {'allowRedraw': true, 'displayAnnotations' : false, 'wmode' : 'transparent'});
-              }
-          }
+        // calculate and init a few things
+        avg_data_rate = dp_metadata['time_steps'] / (dp_metadata['time_bounds'][1] - dp_metadata['time_bounds'][0]);
+        var tot_num_of_blocks = Math.ceil(dp_metadata['time_steps']/dataTable_cache_block_size);
+        dataTable_cache_block_time_period = Math.ceil(dataTable_cache_block_size / avg_data_rate); // ** Is this correct ?
 
-          if (curr_graph_type == "Table") {
-              // set options and show the entire datatable
-              graph.draw(dataTable);
+        // init cache blocks
+        for (i = 0; i < tot_num_of_blocks; i++) {
+            _end_time = dp_metadata['time_bounds'][1] - dataTable_cache_block_time_period * i;
+            _start_time = Math.max(dp_metadata['time_bounds'][0], (_end_time - dataTable_cache_block_time_period));
 
-          }
+            dataTable_cache[i] = new cache_node(_start_time, _end_time, null);
+        }
 
-          if (curr_graph_type == "LineGraph") {
-              // set options and draw
-              graph.draw(dataTable_overview);
-          }
+        // calculate the stride factor
+        var num_of_actual_data_points = (dp_metadata['time_bounds'][1] - dp_metadata['time_bounds'][0]) * avg_data_rate;
+        dataTable_overview_stride_factor = Math.ceil(num_of_actual_data_points / graph_x_res);
+        setVizParams(dataTable_parameters, dp_metadata['time_bounds'][0], dp_metadata['time_bounds'][1], dataTable_overview_stride_factor);
 
-          if (curr_graph_type == "AreaChart") {
-              // set options and draw
-              graph.draw(dataTable_overview);
-          }
-
-          if (curr_graph_type == "ComboChart") {
-              // set options and draw
-              var options = {
-                  seriesType: "bars",
-                  series: {5: {type: "bars"}}
-              };
-              graph.draw(dataTable_overview);
-          }
-
-      }
-
-    // Callback for when the graph is ready
-    function onGraphReady() {
-    	//set callbacks for events here. Why ? no idea !
-    	//google.visualization.events.addListener(graph, 'select', onSelect);
-    	//google.visualization.events.addListener(graph, 'rangechange', onDateRangeChange);
-
-          graph_ui_cb();
+        fetchData(); // set reqId to some arbitrary large number for the overview query
     }
 
 
-      function graph_ui_cb() {
+	function fetchData() {
+        var query;
 
-          // Empty anything in the div before drawing
-          $("#graph_ui_div").empty();
+        //query = new google.visualization.Query(container_server + "/ion-service/visualization_service/get_visualization_data?data_product_id=" + dp_id + "&visualization_parameters=" + JSON.stringify(viz_params) + "&tqx=reqId:" + _reqId + "&return_format=raw_json");
+        query = new google.visualization.Query(container_server + "/visualization/get_visualization_data/?data_product_id=" + dp_id + "&visualization_parameters=" + JSON.stringify(viz_params) + "&return_format=raw_json");
+        console.debug("Fetching data : ", query);
 
-          // Populate UI components
-          var graphUiDiv = document.getElementById("graph_ui_div");
-          var chkBox, paramIdx, graph_type_select;
-          for (i=1; i<dataTable.getNumberOfColumns(); i++) {
+        // Send the query with a callback function.
+        query.send(handleDrawQueryResponse);
 
-              paramIdx = i - 1;
-              // create a checkBox and add to the graphs' UI div
-              chkBox = document.createElement('input');
-              chkBox.type = 'checkBox';
+        // Starter the spinner to tell user that more data is coming
+        var spin_target = document.getElementById('graph_div');
+        graph_spinner.spin(spin_target);
 
-              chkBox.setAttribute("name", "columnSelect");
-              chkBox.setAttribute("value", paramIdx);
-              chkBox.setAttribute("checked","checked");
-              chkBox.setAttribute("onClick","toggleParameterVisibility(this," + paramIdx + ")");
+	}
 
 
-              graphUiDiv.appendChild(chkBox);
-              graphUiDiv.appendChild(document.createTextNode('    ' + dataTable.getColumnLabel(i)));
+	function handleDrawQueryResponse(response) {
 
-              graphUiDiv.appendChild(document.createElement('br'));
+		if (response.isError()) {
+			alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
+		    return;
+		}
 
-          }
+        if (first_draw_flag) {
+            // note the first table which is the overview
+            dataTable_overview = response.getDataTable();
+            dataTable_overview.sort([{column:0}]); // sort the datatable to take care or any out or order-ness
+            dataTable = dataTable_overview;
 
-          // Create a select box for choosing the graph type
-          graph_type_select = document.createElement('select');
-          graph_type_select.setAttribute("id", "graph_type_select");
-          graph_type_select.setAttribute("onChange", "setGraphType(this)");
+            dataView_overview = new google.visualization.DataView(dataTable);
 
-          selectFlag = true;
-          for (i=0; i<supported_graph_type.length; i++) {
-              graph_type_select.options[i] = new Option(supported_graph_type[i], supported_graph_type[i], selectFlag, false);
-              selectFlag = false; // just need it true for the first entry
-          }
+            drawGraph(first_draw_flag);
+            first_draw_flag = false;
+        }
+        else {
+            // store the returned datatable in the cache
+            cache_idx = insertDataTableInCache(response.getDataTable());
 
-          graphUiDiv.appendChild(graph_type_select);
-          graphUiDiv.appendChild(document.createElement('br'));
+            // Use the overview table and replace low-res data with high-res data rows from cache
+            time_range = dataTable_cache[cache_idx].datatable.getColumnRange(0); // get the min and max values of higher res data
 
-      }
+            start_time_d = time_range.min;
+            end_time_d = time_range.max;
 
-      function toggleParameterVisibility(chkBox, idx) {
+            // Find the equivalent rows in the overview that match
+            filteredRows = dataTable.getFilteredRows([{column: 0, minValue: start_time_d, maxValue: end_time_d}]);
 
-          // detect state of the checkbox that caused this event and behave accordingly.
-          if(chkBox.checked) graph.showDataColumns(idx);
-          else
-              graph.hideDataColumns(idx);
+            // remove those rows from the low res version
+            // --- ****** FIX THIS to remove los res data from the view
+            //dataTable.removeRows(filteredRows[0], filteredRows.length);
 
-      }
 
-      function onSelect() {
-    	// Selection only supported for annotations. Not useful exactly
-    	//alert('onSelect()');
+            // now join the new high res data with datatable
+            //new_datatable_json = eval("(" + dataTable_cache[cache_idx].datatable.toJSON() + ')');
+
+            var rows = getDatatableRows(dataTable_cache[cache_idx].datatable);
+            dataTable.addRows(rows);
+
+            dataTable.sort([{column:0}]);
+            drawGraph(first_draw_flag);
+
+        }
+
+        // Stop the spinner
+        graph_spinner.stop();
+
+	}
+
+    function drawGraph(first_time_flag) {
+
+        // This function is hacky but will draw the graph assuming the graph object has been created
+        if (curr_graph_type == "AnnotatedTimeLine") {
+            if (first_time_flag) {
+                graph.draw(dataTable, {'allowRedraw': true, 'displayAnnotations' : false, 'wmode' : 'transparent'});
+            }
+            else {
+                //graph.draw(dataTable, {'zoomStartTime': graph_visible_start_date, 'zoomEndTime': graph_visible_end_date});
+                graph.draw(dataTable, {'allowRedraw': true, 'displayAnnotations' : false, 'wmode' : 'transparent'});
+            }
+        }
+
+        if (curr_graph_type == "Table") {
+            // set options and show the entire datatable
+            graph.draw(dataView_overview);
+
+        }
+
+        if (curr_graph_type == "LineGraph") {
+            // set options and draw
+            graph.draw(dataView_overview);
+        }
+
+        if (curr_graph_type == "AreaChart") {
+            // set options and draw
+            graph.draw(dataView_overview);
+        }
+
+        if (curr_graph_type == "ComboChart") {
+            // set options and draw
+            var options = {
+                seriesType: "bars",
+                series: {5: {type: "bars"}}
+            };
+            graph.draw(dataView_overview);
+        }
 
     }
 
-    function onDateRangeChange() {
+	// Callback for when the graph is ready
+	function onGraphReady() {
+		//set callbacks for events here. Why ? no idea !
+		//google.visualization.events.addListener(graph, 'select', onSelect);
+		//google.visualization.events.addListener(graph, 'rangechange', onDateRangeChange);
 
-          // If the overview itself is at a high enough zoom level, no need to make requests for data
-          if (dataTable_overview_stride_factor <= dataTable_level_trigger)
-              return;
+        graph_ui_cb();
+	}
 
-    	var dateRange = graph.getVisibleChartRange();
 
-    	graph_visible_start_date = new Date(dateRange.start.getTime());
-    	graph_visible_end_date = new Date(dateRange.end.getTime());
+    function graph_ui_cb() {
 
-          // calculate current stride_factor
-          var num_of_actual_data_points = (graph_visible_end_date.getTime() - graph_visible_start_date.getTime()) * avg_data_rate / 1000;
-          curr_stride_factor = Math.ceil(num_of_actual_data_points / graph_x_res);
-          console.debug ("curr_stride_factor : ", curr_stride_factor);
+        // Empty anything in the div before drawing
+        $("#graph_ui_div").empty();
 
-          if(isDataInCache(graph_visible_start_date.getTime()/1000, graph_visible_end_date.getTime()/1000, curr_stride_factor))
-              return;
+        // Populate UI components. Start with the list of parameters. Enclose in a container
+        var graphUiDiv = document.getElementById("graph_ui_div");
+        var chkBox, paramIdx, graph_type_select, id_str;
 
-          // Find out what we need and fetch the data
-          var listOfBlocksNeeded = getListOfBlocksNeeded(graph_visible_start_date.getTime() / 1000, graph_visible_end_date.getTime() / 1000);
+        var param_list_container = document.createElement('div');
+        param_list_container.setAttribute("id", 'param_list_container');
+        param_list_container.setAttribute("class", 'container');
+        graphUiDiv.appendChild(param_list_container);
 
-          for (var i = 0; i <listOfBlocksNeeded.length; i++) {
+        for (i=1; i<dataTable.getNumberOfColumns(); i++) {
 
-              // set viz params which will decide the query
-              setVizParams(dataTable_parameters, dataTable_cache[listOfBlocksNeeded[i]].start_time, dataTable_cache[listOfBlocksNeeded[i]].end_time, curr_stride_factor);
-              fetchData(); // set reqId to the index of block in cache. Should be unique for every query
-          }
+            paramIdx = i;
+            // create a checkBox and add to the graphs' UI div
+            id_str = "viz_param." + paramIdx;
+            chkBox = document.createElement('input');
+            chkBox.type = 'checkbox';
+
+            chkBox.setAttribute("name", "columnSelect");
+            chkBox.setAttribute("id", id_str);
+            chkBox.setAttribute("value", paramIdx);
+            chkBox.setAttribute("onClick","updateParameterVisibility(this)");
+
+            // Check sessionStorage to see if the state of the checkBoxes is available
+            if (sessionStorage[id_str]) {
+                // a special case for error catching
+                if (sessionStorage[id_str] != "true" && sessionStorage[id_str] != "false")
+                    sessionStorage[id_str] = "true";
+
+                if (sessionStorage[id_str] == "true") chkBox.checked = true;
+                else
+                    chkBox.checked = false;
+            }
+            else {
+                chkBox.checked = true;
+                // store the state of the checkbox in sessionStorage
+                sessionStorage[id_str] = "true";
+            }
+
+            param_list_container.appendChild(chkBox);
+            param_list_container.appendChild(document.createTextNode('    ' + dataTable.getColumnLabel(i)));
+            param_list_container.appendChild(document.createElement('br'));
+        }
+
+        // Create the 'set all' and 'clear all' button
+        var check_all_viz_params_button = document.createElement('input');
+        check_all_viz_params_button.type = 'button';
+        check_all_viz_params_button.value = "Check all";
+        check_all_viz_params_button.addEventListener("click", showAllVizParams);
+        graphUiDiv.appendChild(check_all_viz_params_button);
+
+
+        var clear_all_viz_params_button = document.createElement('input');
+        clear_all_viz_params_button.type = 'button';
+        clear_all_viz_params_button.value = "Clear all";
+        clear_all_viz_params_button.addEventListener("click", hideAllVizParams);
+        graphUiDiv.appendChild(clear_all_viz_params_button);
+        graphUiDiv.appendChild(document.createElement('br'));
+
+        // Create a select box for choosing the graph type
+        graph_type_select = document.createElement('select');
+        graph_type_select.setAttribute("id", "graph_type_select");
+        graph_type_select.setAttribute("onChange", "onGraphTypeChange(this)");
+
+        selectFlag = true;
+        for (i=0; i<supported_graph_type.length; i++) {
+            graph_type_select.options[i] = new Option(supported_graph_type[i], supported_graph_type[i], selectFlag, false);
+            selectFlag = false; // just need it true for the first entry
+        }
+
+        graphUiDiv.appendChild(graph_type_select);
+        graphUiDiv.appendChild(document.createTextNode('Graph Type'));
+        graphUiDiv.appendChild(document.createElement('br'));
+
+
+        // Create text input boxes for date range
+        var dateRange = graph.getVisibleChartRange();
+        graph_visible_start_date = new Date(dateRange.start.getTime());
+        graph_visible_end_date = new Date(dateRange.end.getTime());
+
+        start_datetime_txtbox = document.createElement("input");
+        start_datetime_txtbox.type = "text";
+        start_datetime_txtbox.setAttribute("id","start_datetime_txtbox");
+        start_datetime_txtbox.setAttribute("name","start_datetime_txtbox");
+
+        graphUiDiv.appendChild(start_datetime_txtbox);
+        graphUiDiv.appendChild(document.createTextNode('Start Date/Time'));
+        $("#start_datetime_txtbox").datetimepicker({
+            minDate: graph_visible_start_date,
+            maxDate: graph_visible_end_date,
+            showButtonPanel: false,
+            onClose: onStartDatetimePickerChange
+
+        });
+
+        //set current date
+        $("#start_datetime_txtbox").datetimepicker('setDate', graph_visible_start_date);
+
+        end_datetime_txtbox = document.createElement("input");
+        end_datetime_txtbox.type = "text";
+        end_datetime_txtbox.setAttribute("id","end_datetime_txtbox");
+        end_datetime_txtbox.setAttribute("name","end_datetime_txtbox");
+
+        graphUiDiv.appendChild(end_datetime_txtbox);
+        graphUiDiv.appendChild(document.createTextNode('End Date/Time'));
+        $("#end_datetime_txtbox").datetimepicker({
+            minDate: graph_visible_start_date,
+            maxDate: graph_visible_end_date,
+            showButtonPanel: false,
+            onClose: onEndDatetimePickerChange
+        });
+
+        // set current date
+        $("#end_datetime_txtbox").datetimepicker('setDate', graph_visible_end_date);
+
+
+        // Page reload button
+        graphUiDiv.appendChild(document.createElement('br'));
+        graphUiDiv.appendChild(document.createElement('br'));
+        var page_reload_button = document.createElement('input');
+        page_reload_button.type = 'button';
+        page_reload_button.value = "Refresh Chart";
+        page_reload_button.addEventListener("click", reloadPage);
+        graphUiDiv.appendChild(page_reload_button);
+
+        // Once all the UI widgets have been drawn, reflect their state in graph
+        updateParameterVisibility();
+    }
+
+    function updateParameterVisibility(chkBox) {
+
+        var param_chkbox_list = null;
+        var colIdx = 0;
+
+        // update sessionStorage values
+        if (chkBox != undefined && chkBox) {
+            if (chkBox.checked) sessionStorage[chkBox.id] = "true";
+            else
+                sessionStorage[chkBox.id] = "false";
+        }
+
+        // For the very first call, the checkboxes are not yet drawn. Do nothing.
+        if ((document.getElementById('param_list_container')) == null) return;
+
+        param_chkbox_list = (document.getElementById('param_list_container')).childNodes;
+
+        // detect state of the checkbox that caused this event and behave accordingly.
+        if (curr_graph_type == "AnnotatedTimeLine") {
+            // update the graph based on the status of the checkboxes used for parameter selection
+
+            // If a specific checkbox was passed. Only affect that parameter. Otherwise detect
+            // state of all checkboxes and affect visibility accordingly
+            if (chkBox != undefined && chkBox) {
+                colIdx = parseInt((chkBox.id.split("."))[1]);
+                if(chkBox.checked) {
+                    graph.showDataColumns(colIdx - 1);
+                }
+                else {
+                    graph.hideDataColumns(colIdx - 1);
+                }
+            }
+            else
+            {
+                // create a list of visible parameters to reflect the checkboxes
+                for (i=0; i< param_chkbox_list.length; i++) {
+                    if (param_chkbox_list[i].type != "checkbox") continue;
+
+                    colIdx = parseInt((param_chkbox_list[i].id.split("."))[1]);
+                    if (param_chkbox_list[i].checked) {
+                        graph.showDataColumns(colIdx - 1);
+                    }
+                    else {
+                        graph.hideDataColumns(colIdx - 1)
+                    }
+                }
+            }
+        }
+
+        // For the graph types that use a dataview, we will have to build a list of visible columns
+        if (curr_graph_type == "Table" || curr_graph_type == "LineGraph" ||
+                curr_graph_type == "AreaChart" || curr_graph_type == "ComboChart") {
+
+            var visible_params = [0];
+            // create a list of visible parameters reflects the checkboxes
+            for (i=0; i< param_chkbox_list.length; i++) {
+                if (param_chkbox_list[i].type != "checkbox") continue;
+
+                colIdx = parseInt((param_chkbox_list[i].id.split("."))[1]);
+                if (param_chkbox_list[i].checked) visible_params.push(colIdx);
+            }
+
+            dataView_overview.setColumns(visible_params);
+            drawGraph();
+
+        }
+
+    }
+
+    function onSelect() {
+		// Selection only supported for annotations. Not useful exactly
+		//alert('onSelect()');
+	
+	}
+
+	function onDateRangeChange() {
+        var dateRange = graph.getVisibleChartRange();
+
+        graph_visible_start_date = new Date(dateRange.start.getTime());
+        graph_visible_end_date = new Date(dateRange.end.getTime());
+
+        // update the text input boxes for date changes
+        var startDateTextBox = $('#start_datetime_txtbox');
+        var endDateTextBox = $('#end_datetime_txtbox');
+        startDateTextBox.datetimepicker('setDate', graph_visible_start_date);
+        endDateTextBox.datetimepicker('setDate', graph_visible_end_date);
+
+        // If the overview itself is at a high enough zoom level, no need to make requests for data
+        if (dataTable_overview_stride_factor <= dataTable_level_trigger)
+            return;
+
+        // calculate current stride_factor
+        var num_of_actual_data_points = (graph_visible_end_date.getTime() - graph_visible_start_date.getTime()) * avg_data_rate / 1000;
+        curr_stride_factor = Math.ceil(num_of_actual_data_points / graph_x_res);
+        console.debug ("curr_stride_factor : ", curr_stride_factor);
+
+        if(isDataInCache(graph_visible_start_date.getTime()/1000, graph_visible_end_date.getTime()/1000, curr_stride_factor))
+            return;
+
+        console.debug(">>>>>   HERE   <<<<<");
+        // Find out what we need and fetch the data
+        var listOfBlocksNeeded = getListOfBlocksNeeded(graph_visible_start_date.getTime() / 1000, graph_visible_end_date.getTime() / 1000);
+
+        for (var i = 0; i <listOfBlocksNeeded.length; i++) {
+
+            // set viz params which will decide the query
+            setVizParams(dataTable_parameters, dataTable_cache[listOfBlocksNeeded[i]].start_time, dataTable_cache[listOfBlocksNeeded[i]].end_time, curr_stride_factor);
+            fetchData(); // set reqId to the index of block in cache. Should be unique for every query
+        }
+	}
+
+    function onStartDatetimePickerChange (dateText, inst) {
+        var startDateTextBox = $('#start_datetime_txtbox');
+        var endDateTextBox = $('#end_datetime_txtbox');
+        var testStartDate, testEndDate;
+
+        if (endDateTextBox.val() != '') {
+            testStartDate = startDateTextBox.datetimepicker('getDate');
+            testEndDate = endDateTextBox.datetimepicker('getDate');
+            if (testStartDate > testEndDate)
+                endDateTextBox.datetimepicker('setDate', testStartDate);
+        }
+        else {
+            endDateTextBox.val(dateText);
+        }
+
+        // affect the graph accordingly
+        graph.setVisibleChartRange(testStartDate, testEndDate)
+        onDateRangeChange();
+    }
+
+    function onEndDatetimePickerChange (dateText, inst) {
+        var startDateTextBox = $('#start_datetime_txtbox');
+        var endDateTextBox = $('#end_datetime_txtbox');
+        var testStartDate, testEndDate;
+
+        if (startDateTextBox.val() != '') {
+            testStartDate = startDateTextBox.datetimepicker('getDate');
+            testEndDate = endDateTextBox.datetimepicker('getDate');
+            if (testStartDate > testEndDate)
+                startDateTextBox.datetimepicker('setDate', testEndDate);
+        }
+        else {
+            startDateTextBox.val(dateText);
+        }
+
+        // affect the graph accordingly
+        graph.setVisibleChartRange(testStartDate, testEndDate)
+        onDateRangeChange();
+    }
+
+    function showAllVizParams() {
+        var param_chkbox_list = null;
+
+        param_chkbox_list = (document.getElementById('param_list_container')).childNodes;
+        for (i=0; i< param_chkbox_list.length; i++) {
+            if (param_chkbox_list[i].type != "checkbox") continue;
+
+            param_chkbox_list[i].checked = true;
+            updateParameterVisibility(param_chkbox_list[i]);
+        }
+    }
+
+    function hideAllVizParams() {
+        var param_chkbox_list = null;
+
+        param_chkbox_list = (document.getElementById('param_list_container')).childNodes;
+        for (i=0; i< param_chkbox_list.length; i++) {
+            if (param_chkbox_list[i].type != "checkbox") continue;
+
+            param_chkbox_list[i].checked = false;
+            updateParameterVisibility(param_chkbox_list[i]);
+        }
+
+    }
+
+    function setVizParams(_dt_params, _start_time, _end_time, _stride_factor) {
+
+        // prep the dictionary
+        viz_params['parameters'] = _dt_params; // Comma separated list of variables to be plotted. If empty,
+        // all variables are plotted
+
+        viz_params["start_time"] = _start_time;
+        viz_params["end_time"] = _end_time;
+        viz_params['stride_time'] = _stride_factor;
+
+        viz_params['use_direct_access'] = 1;  // 1 for yes, 0 for no
+    }
+
+    function onGraphTypeChange (selectedOption ) {
+        setGraphType(selectedOption);
+        updateParameterVisibility();
+    }
+
+    function setGraphType(selectedOption) {
+
+        // If a type was specified, make that the current type and proceed
+        if (selectedOption) {
+            curr_graph_type = selectedOption.value;
+        }
+        else {
+            // Set default graph type
+            curr_graph_type = supported_graph_type[0];
+        }
+
+        // Create appropriate graph objects based on what user wants to see
+        if (curr_graph_type == "AnnotatedTimeLine") {
+            $("#graph_div").empty();
+            graph = new google.visualization.AnnotatedTimeLine(document.getElementById('graph_div'));
+
+            // Set graph handlers for events
+            google.visualization.events.addListener(graph, 'ready', onGraphReady);
+            google.visualization.events.addListener(graph, 'select', onSelect);
+            google.visualization.events.addListener(graph, 'rangechange', onDateRangeChange);
+
+        }
+
+        if (curr_graph_type == "Table") {
+            $("#graph_div").empty();
+            graph = new google.visualization.Table(document.getElementById('graph_div'));
+        }
+
+        if (curr_graph_type == "LineGraph") {
+            $("#graph_div").empty();
+            graph = new google.visualization.LineChart(document.getElementById('graph_div'));
+        }
+
+        if (curr_graph_type == "AreaChart") {
+            $("#graph_div").empty();
+            graph = new google.visualization.AreaChart(document.getElementById('graph_div'));
+        }
+
+        if (curr_graph_type == "ComboChart") {
+            $("#graph_div").empty();
+            graph = new google.visualization.ComboChart(document.getElementById('graph_div'));
+        }
+
+        // Check to see if this was triggered in the middle of a session. If yes we want to call
+        // drawGraph to update the view with the new graph type
+        if (!first_draw_flag){
+            // Set flag to indicate that the graph has been changed and should be treated as a new flag
+            first_draw_flag = true;
+            drawGraph(first_draw_flag);
+            first_draw_flag = false;
+        }
+
+        // update view based on parameter checkboxes
+        //updateParameterVisibility();
+
+    }
+
+    // ****************************************************************************
+    // Caching related methods
+    // ****************************************************************************
+
+    // Function gets a list of indexes in the dataTable_cache list which overlap the start_time - end_time
+    function getListOfBlocks(start_time, end_time) {
+
+        var listOfBlocks = [];
+        var _start_time, _end_time;
+
+        for (var i=0; i < dataTable_cache.length; i++) {
+            // Simple checks to see if the block overlaps with passed time period
+            if (start_time > dataTable_cache[i].end_time) continue;
+            if (end_time < dataTable_cache[i].start_time) continue;
+
+            listOfBlocks[listOfBlocks.length] = i;
+        }
+
+        return listOfBlocks;
+    }
+
+    // Function gets a list of  of indexes in the dataTable_cache list which overlap the start_time - end_time but
+    // are not available in cache
+    function getListOfBlocksNeeded(start_time, end_time) {
+
+        var listOfBlocks = getListOfBlocks(start_time, end_time);
+        var listOfBlocksNeeded = [];
+
+        // go through the list to see which blocks are missing
+        for (var i = 0; i<listOfBlocks.length; i++) {
+            if (dataTable_cache[listOfBlocks[i]].datatable == null)
+                listOfBlocksNeeded[listOfBlocksNeeded.length] = listOfBlocks[i];
+        }
+
+        return listOfBlocksNeeded;
+    }
+
+    // Returns true if all the data needed is in cache, Even if one block is missing, it will return false
+    function isDataInCache(start_time, end_time, stride_factor) {
+
+        // Is the current zoom level at the high level
+        if (stride_factor <= dataTable_level_trigger) {
+            var listOfblocks = getListOfBlocksNeeded(start_time, end_time);
+
+            // If all the data is in cache, we should have received an empty list
+            if (listOfblocks.length > 0) return false;
+        }
+
+        return true; // Since we have an overview of all data
+    }
+
+    // This is a weird hacky function which is needed to place the received high datatable in its appropriate place in
+    // cache. The lack of a reqId return from google API necessitates the need for this one.
+    function insertDataTableInCache(dt) {
+        time_range = dt.getColumnRange(0); // get the min and max values of time
+
+        start_time_d = new Date(time_range.min);
+        end_time_d = new Date(time_range.max);
+
+        start_time = start_time_d.getTime() / 1000;
+        end_time = end_time_d.getTime() / 1000;
+
+        // Because of a difference in the requested time window and returned time window,
+        // we do a best match score to see which cache slot is the best fit 
+        var idx = null;
+        var proximity_score = Infinity, temp_score = 0;
+        for (var i=0; i < dataTable_cache.length; i++) {
+            // Simple checks to see which entry in cache is the best match
+            temp_score = Math.abs(dataTable_cache[i].start_time - start_time) +
+                    Math.abs(dataTable_cache[i].end_time - end_time);
+
+            if(temp_score < proximity_score) {
+                proximity_score = temp_score;
+                idx = i;
+            }
+        }
+
+        if (idx != null) {
+            dataTable_cache[idx].datatable = dt;
+            return idx;
+        }
+        else {
+            console.debug("Error: Could not locate entry for datatable");
+            return null;
+        }
     }
 
 
-      function setVizParams(_dt_params, _start_time, _end_time, _stride_factor) {
-          // prep the dictionary
-          viz_params['parameters'] = _dt_params; // Comma separated list of variables to be plotted. If empty,
-          // all variables are plotted
+    function getDatatableRows(dt, start_row, end_row) {
 
-          viz_params["start_time"] = _start_time;
-          viz_params["end_time"] = _end_time;
-          viz_params['stride_time'] = _stride_factor;
+        var rows = [];
+        var temp_row = [];
 
-          viz_params['use_direct_access'] = 0;  // 1 for yes, 0 for no
-      }
+        var num_of_cols = dt.getNumberOfColumns();
 
-      function setGraphType(selectedOption) {
+        if(start_row == null && end_row == null) {
+            start_row = 0;
+            end_row = dt.getNumberOfRows() - 1;
+        }
 
-          // If a type was specified, make that the current type and proceed
-          if (selectedOption) {
-              curr_graph_type = selectedOption.value;
-          }
-          else {
-              // Set default graph type
-              curr_graph_type = supported_graph_type[0];
-          }
+        for (var row_idx = start_row; row_idx <= end_row; row_idx++) {
+            temp_row = [];
+            for (col_idx = 0; col_idx < num_of_cols; col_idx++) {
+                if (col_idx == 0)
+                    temp_row[col_idx] = new Date(dt.getValue(row_idx, col_idx));
+                else
+                    temp_row[col_idx] = dt.getValue(row_idx, col_idx);
+            }
 
-          // Create appropriate graph objects based on what user wants to see
-          if (curr_graph_type == "AnnotatedTimeLine") {
-              $("#graph_div").empty();
-              graph = new google.visualization.AnnotatedTimeLine(document.getElementById('graph_div'));
+            rows[rows.length] = temp_row;
+        }
 
-              // Set graph handlers for events
-              google.visualization.events.addListener(graph, 'ready', onGraphReady);
-              google.visualization.events.addListener(graph, 'select', onSelect);
-              google.visualization.events.addListener(graph, 'rangechange', onDateRangeChange);
+        return rows;
 
-          }
+    }
 
-          if (curr_graph_type == "Table") {
-              $("#graph_div").empty();
-              graph = new google.visualization.Table(document.getElementById('graph_div'));
-          }
+    function initSpinner() {
+        var opts = {
+            lines: 13, // The number of lines to draw
+            length: 7, // The length of each line
+            width: 4, // The line thickness
+            radius: 10, // The radius of the inner circle
+            corners: 1, // Corner roundness (0..1)
+            rotate: 0, // The rotation offset
+            color: '#000', // #rgb or #rrggbb
+            speed: 1, // Rounds per second
+            trail: 60, // Afterglow percentage
+            shadow: false, // Whether to render a shadow
+            hwaccel: false, // Whether to use hardware acceleration
+            className: 'spinner', // The CSS class to assign to the spinner
+            zIndex: 2e9, // The z-index (defaults to 2000000000)
+            top: 'auto', // Top position relative to parent in px
+            left: 'auto' // Left position relative to parent in px
+        };
 
-          if (curr_graph_type == "LineGraph") {
-              $("#graph_div").empty();
-              graph = new google.visualization.LineChart(document.getElementById('graph_div'));
-          }
+        graph_spinner = new Spinner(opts);
+    }
 
-          if (curr_graph_type == "AreaChart") {
-              $("#graph_div").empty();
-              graph = new google.visualization.AreaChart(document.getElementById('graph_div'));
-          }
-
-          if (curr_graph_type == "ComboChart") {
-              $("#graph_div").empty();
-              graph = new google.visualization.ComboChart(document.getElementById('graph_div'));
-          }
-
-          // Check to see if this was triggered in the middle of a session. If yes we want to call
-          // drawGraph to update the view with the new graph type
-          if (!first_draw_flag){
-              // Set flag to indicate that the graph has been changed and should be treated as a new flag
-              first_draw_flag = true;
-              drawGraph(first_draw_flag);
-              first_draw_flag = false;
-          }
-
-      }
-
-      // ****************************************************************************
-      // Caching related methods
-      // ****************************************************************************
-
-      // Function gets a list of indexes in the dataTable_cache list which overlap the start_time - end_time
-      function getListOfBlocks(start_time, end_time) {
-
-          var listOfBlocks = [];
-          var _start_time, _end_time;
-
-          for (var i=0; i < dataTable_cache.length; i++) {
-              // Simple checks to see if the block overlaps with passed time period
-              if (start_time > dataTable_cache[i].end_time) continue;
-              if (end_time < dataTable_cache[i].start_time) continue;
-
-              listOfBlocks[listOfBlocks.length] = i;
-          }
-
-          return listOfBlocks;
-      }
-
-      // Function gets a list of  of indexes in the dataTable_cache list which overlap the start_time - end_time but
-      // are not available in cache
-      function getListOfBlocksNeeded(start_time, end_time) {
-
-          var listOfBlocks = getListOfBlocks(start_time, end_time);
-          var listOfBlocksNeeded = [];
-
-          // go through the list to see which blocks are missing
-          for (var i = 0; i<listOfBlocks.length; i++) {
-              if (dataTable_cache[listOfBlocks[i]].datatable == null)
-                  listOfBlocksNeeded[listOfBlocksNeeded.length] = listOfBlocks[i];
-          }
-
-          return listOfBlocksNeeded;
-      }
-
-      // Returns true if all the data needed is in cache, Even if one block is missing, it will return false
-      function isDataInCache(start_time, end_time, stride_factor) {
-
-          // Is the current zoom level at the high level
-          if (stride_factor <= dataTable_level_trigger) {
-              var listOfblocks = getListOfBlocksNeeded(start_time, end_time);
-
-              // If all the data is in cache, we should have received an empty list
-              if (listOfblocks.length > 0) return false;
-          }
-
-          return true; // Since we have an overview of all data
-      }
-
-      // This is a weird hacky function which is needed to place the received high datatable in its appropriate place in
-      // cache. The lack of a reqId return from google API necessitates the need for this one.
-      function insertDataTableInCache(dt) {
-          time_range = dt.getColumnRange(0); // get the min and max values of time
-
-          start_time_d = new Date(time_range.min);
-          end_time_d = new Date(time_range.max);
-
-          start_time = start_time_d.getTime() / 1000;
-          end_time = end_time_d.getTime() / 1000;
-
-          for (var i=0; i < dataTable_cache.length; i++) {
-              // Simple checks to see which entry in cache is the best match
-              if (start_time >= dataTable_cache[i].start_time && end_time <= dataTable_cache[i].end_time) {
-                  dataTable_cache[i].datatable = dt;
-                  //console.debug("Datatable inserted in cache");
-                  return i;
-              }
-
-          }
-
-          console.debug("Error: Could not locate entry for datatable");
-          return null;
-      }
+    function reloadPage() {
+        location.reload(true);
+    }
 
 
-      function getDatatableRows(dt, start_row, end_row) {
+    </script>
+  </head>
 
-          var rows = [];
-          var temp_row = [];
-
-          var num_of_cols = dt.getNumberOfColumns();
-
-          if(start_row == null && end_row == null) {
-              start_row = 0;
-              end_row = dt.getNumberOfRows() - 1;
-          }
-
-          for (var row_idx = start_row; row_idx <= end_row; row_idx++) {
-              temp_row = [];
-              for (col_idx = 0; col_idx < num_of_cols; col_idx++) {
-                  if (col_idx == 0)
-                      temp_row[col_idx] = new Date(dt.getValue(row_idx, col_idx));
-                  else
-                      temp_row[col_idx] = dt.getValue(row_idx, col_idx);
-              }
-
-              rows[rows.length] = temp_row;
-          }
-
-          return rows;
-
-      }
-
-      // function initSpinner() {
-      //     var opts = {
-      //         lines: 13, // The number of lines to draw
-      //         length: 7, // The length of each line
-      //         width: 4, // The line thickness
-      //         radius: 10, // The radius of the inner circle
-      //         corners: 1, // Corner roundness (0..1)
-      //         rotate: 0, // The rotation offset
-      //         color: '#000', // #rgb or #rrggbb
-      //         speed: 1, // Rounds per second
-      //         trail: 60, // Afterglow percentage
-      //         shadow: false, // Whether to render a shadow
-      //         hwaccel: false, // Whether to use hardware acceleration
-      //         className: 'spinner', // The CSS class to assign to the spinner
-      //         zIndex: 2e9, // The z-index (defaults to 2000000000)
-      //         top: 'auto', // Top position relative to parent in px
-      //         left: 'auto' // Left position relative to parent in px
-      //     };
-      // 
-      //     graph_spinner = new Spinner(opts);
-      // }
-
-      </script>
-
-      <div class='chart-google' style="position:relative;">
-        <div id="graph_div" style="width:80%;margin-right:165px;height:300px;"></div>
-        <!-- <form> -->
-        	<div id="graph_ui_div" style="color:#ccc;font-family:sans-serif;font-size:11px;text-transform:uppercase;position:absolute;top:0;right:0;width:19%;"></div>
-        <!-- </form> -->
-      </div>
+  <div class='chart-google' style="position:relative;">
+      <div id="graph_div" style="width:80%;margin-right:165px;height:300px;"></div>
+      <!-- <form> -->
+      <div id="graph_ui_div" style="color:#ccc;font-family:sans-serif;font-size:11px;text-transform:uppercase;position:absolute;top:0;right:0;width:19%;"></div>
+      <!-- </form> -->
+  </div>
 
 
-  
-  
+
+
   <!-- HTML code and UI components etc -->
-  
+
