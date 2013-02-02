@@ -108,8 +108,8 @@ def event_types():
 @login_required
 def subscribe_to_resource(resource_type, resource_id, event_type):
     resource_name = request.args.get('resource_name')
-    resp = ServiceApi.subscribe(resource_type, resource_id, event_type, user_id, resource_name)
-    return render_json_response(transition)
+    resp = ServiceApi.subscribe(resource_type, resource_id, event_type, session['user_id'], resource_name)
+    return render_json_response(resp)
         
 @app.route('/<resource_type>/status/<resource_id>/transition/', methods=['POST'])
 @app.route('/<resource_type>/face/<resource_id>/transition/', methods=['POST'])
