@@ -181,7 +181,6 @@ def extension(resource_type, resource_id):
 # -----------------------------------------------------------------------------
 
 @app.route('/InstrumentDevice/command/<instrument_device_id>/<agent_command>/')
-@login_required
 def start_instrument_agent(instrument_device_id, agent_command, cap_type=None):
     cap_type = request.args.get('cap_type')
     if agent_command == 'start':
