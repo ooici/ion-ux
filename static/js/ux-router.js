@@ -41,7 +41,6 @@ IONUX.Router = Backbone.Router.extend({
       });
     new IONUX.Views.Footer({resource_id: null, resource_type: null}).render().el;
   },
-  
   dashboard: function(){
     $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS['dashboard']).html()).show();
     $('.Collection').show();
@@ -52,7 +51,6 @@ IONUX.Router = Backbone.Router.extend({
     new IONUX.Views.Footer({resource_id: null, resource_type: null}).render().el;
     new IONUX.Views.Search({el: '#search'}).render().el;
   },
-    
   collection: function(resource_type){
     $('#error').hide();
     $('#dynamic-container').show().html(LOADING_TEMPLATE);
@@ -84,7 +82,7 @@ IONUX.Router = Backbone.Router.extend({
       });
     new IONUX.Views.Footer({resource_id: resource_id, resource_type: resource_type}).render().el;
   },
-
+  
   command: function(resource_type, resource_id){
     $('#error').hide();
     $('#dynamic-container').show();
@@ -162,12 +160,6 @@ function get_descendant_properties(obj, desc) {
   var arr = desc.split(".");
   while(arr.length && (obj = obj[arr.shift()]));
   return obj;
-};
-
-// Render basic error on AJAX error
-function render_error(){
-  $('#dynamic-container').hide();
-  $('#error').show();
 };
 
 // Create <a href> from text

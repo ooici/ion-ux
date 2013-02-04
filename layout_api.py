@@ -293,6 +293,8 @@ class LayoutApi(object):
         body_elmt.append(init_script_elmt)
 
         tmpl = ET.tostring(tmpl)
+        tmpl = '<!DOCTYPE html>\n' + tmpl
+        
         h = HTMLParser.HTMLParser()
         return h.unescape(tmpl)
 

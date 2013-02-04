@@ -8,7 +8,7 @@ import time
 from urllib import quote
 
 from config import FLASK_HOST, FLASK_PORT, GATEWAY_HOST, GATEWAY_PORT, LOGGED_IN, PRODUCTION, SECRET_KEY, UI_MODE, PORTAL_ROOT
-from service_api import ServiceApi
+from service_api import ServiceApi, error_message
 from layout_api import LayoutApi
 from jinja2 import Template
 from urlparse import urlparse
@@ -40,7 +40,6 @@ def render_app_template(current_url):
     return render_template(tmpl)
     
 def render_json_response(service_api_response):
-    print 'yyy - service_api_response ', service_api_response
     if isinstance(service_api_response, dict) and service_api_response.has_key('GatewayError'):
         if PRODUCTION:
             del service_api_response['GatewayError']['Trace']
@@ -49,6 +48,15 @@ def render_json_response(service_api_response):
         return error_response
     else:
         return jsonify(data=service_api_response)
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not 'user_id' in session:
+            return render_json_response(error_message(msg='You must be signed in to use this feature.'))
+        return f(*args, **kwargs)
+    return decorated_function
+
 
 
 # -----------------------------------------------------------------------------
@@ -97,29 +105,20 @@ def event_types():
 @app.route('/<resource_type>/status/<resource_id>/subscribe/<event_type>/', methods=['GET'])
 @app.route('/<resource_type>/face/<resource_id>/subscribe/<event_type>/', methods=['GET'])
 @app.route('/<resource_type>/related/<resource_id>/subscribe/<event_type>/', methods=['GET'])
+@login_required
 def subscribe_to_resource(resource_type, resource_id, event_type):
-    user_id = session.get('user_id')
-    if user_id:
-        resource_name = request.args.get('resource_name')
-        resp = ServiceApi.subscribe(resource_type, resource_id, event_type, user_id, resource_name)
-        return jsonify(data=resp)
-    else:
-        return jsonify(data='No user_id.')
+    resource_name = request.args.get('resource_name')
+    resp = ServiceApi.subscribe(resource_type, resource_id, event_type, session['user_id'], resource_name)
+    return render_json_response(resp)
         
 @app.route('/<resource_type>/status/<resource_id>/transition/', methods=['POST'])
 @app.route('/<resource_type>/face/<resource_id>/transition/', methods=['POST'])
 @app.route('/<resource_type>/related/<resource_id>/transition/', methods=['POST'])
+@login_required
 def change_lcstate(resource_type, resource_id):
-    user_id = session.get('user_id')
-    if user_id:
-        transition_event = request.form['transition_event'].lower()
-        transition = ServiceApi.transition_lcstate(resource_id, transition_event)
-        return jsonify(data=transition)
-    else:
-        error_response = make_response('You must be signed in to change Lifecycle state.', 400)
-        error_response.headers['Content-Type'] = 'application/json'
-        return error_response
-
+    transition_event = request.form['transition_event'].lower()
+    transition = ServiceApi.transition_lcstate(resource_id, transition_event)
+    return render_json_response(transition)
 
 # -----------------------------------------------------------------------------
 # FACE, STATUS, RELATED PAGES
@@ -144,8 +143,10 @@ def page(resource_type, resource_id):
 @app.route('/<resource_type>/face/<resource_id>/edit', methods=['GET'])
 @app.route('/<resource_type>/related/<resource_id>/edit', methods=['GET'])
 def edit(resource_type, resource_id):
-    # Edit HTML requests should be redirected to a parent view
-    # for data setup and page structure.
+    '''
+    HTML requests should be redirected to the parent view
+    for data, page preprocessing and Backbone initialization.
+    '''
     parent_url = re.sub(r'edit$', '', request.url)
     return redirect(parent_url)
 
@@ -172,7 +173,7 @@ def collection(resource_type=None):
 @app.route('/<resource_type>/extension/<resource_id>/', methods=['GET'])
 def extension(resource_type, resource_id):
     extension = ServiceApi.get_extension(resource_type, resource_id)
-    return jsonify(data=extension)
+    return render_json_response(extension)
 
 
 # -----------------------------------------------------------------------------
@@ -227,7 +228,6 @@ def map():
 def map2():
     ui_server = request.args.get('ui_server')
     unique_key = request.args.get('unique_key')
-    
     kml = ServiceApi.fetch_map(ui_server=ui_server, unique_key=unique_key)
     return kml
 
