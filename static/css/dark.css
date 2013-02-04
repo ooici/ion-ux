@@ -373,9 +373,9 @@ max-width: none;
 body, p, h1, h2, h3, h4, h5, h6 {
   color: #ccc;
   font-family: Signika Negative;
-  -webkit-font-smoothing: antialiased;
-  font-smoothing: antialiased;
-}
+/*  -webkit-font-smoothing: none;
+  font-smoothing: none;
+*/}
 
 body {
   background-color:#000;
