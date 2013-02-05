@@ -459,7 +459,7 @@ h4, .h4-span {
   background: -moz-linear-gradient(center top, #e0e0e0 0%, #e6e3e6 25%, #e6e3e6 25%, #ffffff 100%);
 }
 
-button.btn-general, a.btn-general, a.btn-footer, a.btn-advanced-search {
+input.btn-general, button.btn-general, a.btn-general, a.btn-footer, a.btn-advanced-search {
   color:#999; font-size:11px;
   font-weight:400;
   letter-spacing:2px;
@@ -473,14 +473,15 @@ button.btn-general, a.btn-general, a.btn-footer, a.btn-advanced-search {
   text-transform: uppercase;
   -webkit-border-radius: 5px; 
   -moz-border-radius: 5px;
+  border-radius: 5px;
   border: solid #808080 1px;   
   background:#333333;
   background:-webkit-gradient (linear, left top, left bottom, color-stop(0%,#3d3d3d), color-stop(75%,#333333), color-stop(75%,#333333), color-stop(100%,#2e2e2e));
   background: -moz-linear-gradient(center top, #3d3d3d 0%, #333333 75%, #333333 75%, #2e2e2e 100%);
 }
 
-button.btn-general:hover, a.btn-general:hover, a.btn-advanced-search:hover {background: #666666; color:#fff; border: solid #fff 1px;}
-button.btn-general:active, a.btn-general:active, a.btn-advanced-search:active {background: #333333; color:#fff; border: solid #fff 1px;} 
+input.btn-general:hover, button.btn-general:hover, a.btn-general:hover, a.btn-advanced-search:hover {background: #666666; color:#fff; border: solid #fff 1px;}
+input.btn-general:active, button.btn-general:active, a.btn-general:active, a.btn-advanced-search:active {background: #333333; color:#fff; border: solid #fff 1px;} 
 
 a.btn-footer {
   margin: 0px 5px;
@@ -524,7 +525,7 @@ a.btn-footer {
   text-align: right;
 }
 
-button.btn-blue, a.btn-navigation {
+input.btn-blue, button.btn-blue, a.btn-navigation {
   color: #FFFFFF; 
   font-size: 11px; 
   font-weight: 400; 
@@ -537,13 +538,14 @@ button.btn-blue, a.btn-navigation {
   text-transform: uppercase;
   -webkit-border-radius: 7px; 
   -moz-border-radius: 7px; 
+  border-radius: 7px;
   border: solid #00354C 1px; 
   background: -webkit-gradient(linear, 0 0, 0 100%, from(#0079AF), to(#025C99)); 
   background: -moz-linear-gradient(top, #0079AF, #025C99);
 }
 
-button.btn-blue:hover, a.btn-navigation:hover {background: #0079AF;}
-button.btn-blue:active, a.btn-navigation:active {background: #025C99;}
+input.btn-blue:hover, button.btn-blue:hover, a.btn-navigation:hover {background: #0079AF;}
+input.btn-blue:active, button.btn-blue:active, a.btn-navigation:active {background: #025C99;}
 
 a.btn-navigation-plain {
 /*  font-family: Signika Negative; */

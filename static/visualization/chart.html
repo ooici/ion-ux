@@ -13,7 +13,39 @@
 
     <link rel="stylesheet" media="all" type="text/css" href="http://code.jquery.com/ui/1.10.0/themes/smoothness/jquery-ui.css" />
     <link rel="stylesheet" media="all" type="text/css" href="jquery-ui-timepicker-addon.css" />
-    <style> .container { border:2px solid #ccc; width:300px; height: 100px; overflow-y: scroll; } </style>
+    <link rel="stylesheet" media="all" type="text/css" href="/static/css/dark.css" />
+    
+    <style> 
+      .container {
+        /* border:2px solid #ccc;*/ 
+        /*width:300px;*/
+        height: 100px; 
+        overflow-y: scroll; 
+/*        margin-bottom: 5px;*/
+      }
+      
+      .chart-type {
+        border-top: solid 1px #444;
+        border-bottom: solid 1px #444;
+        padding: 7px 0;
+        margin: 7px 0;
+      }
+      
+      .chart-type select {
+        color: #fff;
+        background-color: #444;
+        -webkit-appearance: menulist;
+        box-sizing: border-box;
+        -webkit-box-align: center;
+        border: 1px solid #333;
+/*        border-image: initial;*/
+        white-space: pre;
+        -webkit-rtl-ordering: logical;
+        color: black;
+        background-color: white;
+        cursor: default;
+      }
+    </style>
 
     <script type='text/javascript'>
 
@@ -292,13 +324,17 @@
         var check_all_viz_params_button = document.createElement('input');
         check_all_viz_params_button.type = 'button';
         check_all_viz_params_button.value = "Check all";
+        check_all_viz_params_button.className = "btn-general";
+        
         check_all_viz_params_button.addEventListener("click", showAllVizParams);
         graphUiDiv.appendChild(check_all_viz_params_button);
+
 
 
         var clear_all_viz_params_button = document.createElement('input');
         clear_all_viz_params_button.type = 'button';
         clear_all_viz_params_button.value = "Clear all";
+        clear_all_viz_params_button.className = "btn-general";
         clear_all_viz_params_button.addEventListener("click", hideAllVizParams);
         graphUiDiv.appendChild(clear_all_viz_params_button);
         graphUiDiv.appendChild(document.createElement('br'));
@@ -313,11 +349,17 @@
             graph_type_select.options[i] = new Option(supported_graph_type[i], supported_graph_type[i], selectFlag, false);
             selectFlag = false; // just need it true for the first entry
         }
+        
+        
+        var div = document.createElement("div");
+        div.className = 'chart-type';
+        div.appendChild(graph_type_select);
+        div.appendChild(document.createTextNode('Graph Type'));
+        graphUiDiv.appendChild(div);
 
-        graphUiDiv.appendChild(graph_type_select);
-        graphUiDiv.appendChild(document.createTextNode('Graph Type'));
-        graphUiDiv.appendChild(document.createElement('br'));
-
+        // graphUiDiv.appendChild(document.createTextNode('Graph Type'));
+        // graphUiDiv.appendChild(document.createElement('br'));
+        // graphUiDiv.appendChild(graph_type_select);
 
         // Create text input boxes for date range
         var dateRange = graph.getVisibleChartRange();
@@ -366,6 +408,7 @@
         var page_reload_button = document.createElement('input');
         page_reload_button.type = 'button';
         page_reload_button.value = "Refresh Chart";
+        page_reload_button.className = "btn-blue";
         page_reload_button.addEventListener("click", reloadPage);
         graphUiDiv.appendChild(page_reload_button);
 
@@ -785,9 +828,9 @@
   </head>
 
   <div class='chart-google' style="position:relative;">
-      <div id="graph_div" style="width:80%;margin-right:165px;height:300px;"></div>
+      <div id="graph_div" style="width:75%;margin-right:165px;height:300px;"></div>
       <!-- <form> -->
-      <div id="graph_ui_div" style="color:#ccc;font-family:sans-serif;font-size:11px;text-transform:uppercase;position:absolute;top:0;right:0;width:19%;"></div>
+      <div id="graph_ui_div" style="color:#ccc;font-family:sans-serif;font-size:11px;text-transform:uppercase;position:absolute;top:0;right:0;width:24%;"></div>
       <!-- </form> -->
   </div>
 
