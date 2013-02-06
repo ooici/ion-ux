@@ -12,9 +12,9 @@ todo:
 */
 
 INTERACTIONS_OBJECT = {};
-INTERACTIONS_OBJECT.block_interactions = ['More Info', 'Hide', 'Edit'];
-INTERACTIONS_OBJECT.group_interactions = ['More Info', 'Detailed View', /*'Submenu',*/ 'Edit'];
-INTERACTIONS_OBJECT.view_interactions = ['Subscribe', 'Lifecycle', 'Edit', 'Detailed View', /*'Submenu',*/ 'Command', 'Direct Command', 'Download'];
+INTERACTIONS_OBJECT.block_interactions = ['More Info'];
+INTERACTIONS_OBJECT.group_interactions = ['More Info', /*'Submenu', 'Edit'*/];
+INTERACTIONS_OBJECT.view_interactions = ['Subscribe', 'Lifecycle', 'Edit', /*'Submenu',*/ 'Command', 'Direct Command', 'Download'];
 
 
 IONUX.Views.ActionMenu = Backbone.View.extend({
@@ -39,8 +39,8 @@ IONUX.Views.ActionMenu = Backbone.View.extend({
 
     create_actionmenu: function(){
         var dropdown_button_tmpl =
-            '<div class="btn-group">'+
-            '<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">Actions<span class="caret"></span></a>'+
+            '<div class="btn-group pull-right">'+
+            '<a class="btn dropdown-toggle" data-toggle="dropdown">Actions<span class="caret"></span></a>'+
             '<ul class="dropdown-menu"><% _.each(dropdown_items, function(item) { %> <li><%= item %></li> <% }); %></ul>'+
             '</div>';
         var dropdown_items = INTERACTIONS_OBJECT.block_interactions; 
@@ -49,6 +49,7 @@ IONUX.Views.ActionMenu = Backbone.View.extend({
     },
 
     action_control_click: function(evt) {
+        evt.preventDefault();
         var action_name = $(evt.target).text();
         var action_event = "action__" + action_name.replace(/ /g, "_").toLowerCase()
         this.trigger(action_event, $(evt.target));
@@ -65,7 +66,6 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
         this.on("action__subscribe", this.action__subscribe);
         this.on("action__lifecycle", this.action__lifecycle);
         this.on("action__edit", this.action__edit);
-        this.on("action__detailed_view", this.action__detailed_view);
         this.on("action__submenu_toggle", this.action__submenu_toggle);
         this.on("action__command", this.action__command);
         this.on("action__direct_command", this.action__direct_command);
@@ -91,11 +91,6 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
     },
     action__edit: function(){
       IONUX.ROUTER.navigate(window.location.pathname + 'edit', {trigger:true});
-    },
-    action__detailed_view:function(){
-        var modal_tmpl = '<div class="modal hide fade modal-ooi"><h1>Detailed View</h1><h3>Element: <%= elem_id %></h3></div>';
-        var modal_html = _.template(modal_tmpl, {"elem_id":this.$el.attr("id")});
-        $(modal_html).modal();
     },
     action__submenu_toggle:function(){
         alert("IONUX.Views.ViewActions - ACTION: submenu_toggle");
