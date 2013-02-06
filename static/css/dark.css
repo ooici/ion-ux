@@ -70,10 +70,16 @@ fieldset {
   padding: none;
 }
 
-.chart-google {
-  color: #ccc;
-  position: relative;
+table.google-visualization-table-table {
+  color: #333;
+  width: 100%;
+  font-size: 12px;
 }
+
+/*.chart-google {
+  color: #333;
+  position: relative;
+*/}
 
 #graph_ui_div {
   font-family: Signika Negative;
