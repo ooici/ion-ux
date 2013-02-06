@@ -229,6 +229,7 @@ table.google-visualization-table-table {
   position:absolute;
 }
 */
+
 .main-nav li a {
   width: 100%;
   font-weight:300; 
@@ -294,22 +295,124 @@ max-width: none;
 }
 
 
-.block .btn-group {
-  top: 3px;
+/* ---------------------------------------------------------------
+ACTION MENU STYLING
+Intentionally verbose and redundant until styles are determined
+for heading, group and block elements.
+--------------------------------------------------------------- */
+
+/*
+ HEADING
+*/
+
+.v00 .block .btn-group.open .btn.dropdown-toggle {
+  color: #ccc;
+  background-color: transparent;
+}
+
+.v00 .block .btn-group .btn {
+  font-size: 14px;
+  text-transform:uppercase;
+  background: transparent;
+  border: none;
+  text-shadow: none;
+  box-shadow: none;
+  padding:0;
+  margin:0 3px 0 0;
+  color: #666;
+}
+
+.v00 .block .btn-group .btn .caret  {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  text-indent: -99999px;
+  vertical-align: top;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid #666;
+  margin-left: 2px;
+  content: "\2193";
+}
+
+.v00 .block .btn-group.open .btn.dropdown-toggle {
+  color: #ccc;
+  background-color: transparent;
+}
+
+.v00 .block .btn-group.open .btn .caret {
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid #ccc;
+}
+
+/*
+ GROUP
+*/
+
+.group .btn-group.open .btn.dropdown-toggle {
+  color: #ccc;
+  background-color: transparent;
+}
+
+.group .btn-group .btn {
+  font-size: 12px;
+  text-transform:uppercase;
+  background: transparent;
+  border: none;
+  text-shadow: none;
+  box-shadow: none;
+  padding:0;
+  margin:0 3px 0 0;
+  color: #666;
+}
+
+.group .btn-group .btn .caret  {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  text-indent: -99999px;
+  vertical-align: top;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid #666;
+  margin-left: 2px;
+  content: "\2193";
+}
+
+.group .btn-group.open .btn.dropdown-toggle {
+  color: #ccc;
+  background-color: transparent;
+}
+
+.group .btn-group.open .btn .caret {
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid #ccc;
+}
+
+/*
+ BLOCK
+*/
+
+.block .btn-group.open .btn.dropdown-toggle {
+  color: #ccc;
+  background-color: transparent;
 }
 
 .block .btn-group .btn {
-/*  padding: -6px;*/
-  color: red;
-  line-height: 14px;
+  font-size: 10px;
+  text-transform:uppercase;
   background: transparent;
   border: none;
-  color: #ccc;
   text-shadow: none;
   box-shadow: none;
+  padding:0;
+  margin:0 3px 0 0;
+  color: #ccc;
 }
 
-.block .btn .caret  {
+.block .btn-group .btn .caret  {
   display: inline-block;
   width: 0;
   height: 0;
@@ -319,18 +422,58 @@ max-width: none;
   border-right: 4px solid transparent;
   border-top: 4px solid #ccc;
   margin-left: 2px;
-  opacity: 1;
-  filter: alpha(opacity=30);
   content: "\2193";
 }
 
+.block .btn-group.open .btn.dropdown-toggle {
+  color: #fff;
+  background-color: transparent;
+}
+
+.block .btn-group.open .btn .caret {
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid #fff;
+}
+
+
+/* OVERRIDE DEFAULT BOOTSTRAP RADIUS */
+.nav-tabs .dropdown-menu {
+  -webkit-border-radius: 6px 6px 6px 6px;
+  -moz-border-radius: 6px 6px 6px 6px;
+  border-radius: 6px 6px 6px 6px;
+}
+
+ul.dropdown-menu {
+  background: #222;
+  border: solid 1px #333;
+  margin: 1px 0 0;
+}
+
+ul.dropdown-menu li {
+  padding: 2px 5px;
+  font-size: 11px;
+  text-transform: uppercase;
+  cursor: pointer;
+  color: #ccc;
+}
+
+ul.dropdown-menu li:hover {
+  color: #ddd;
+  background: #202020;
+}
+
+/* ---------------------------------------------------------------
+/ ACTION MENU STYLING
+--------------------------------------------------------------- */
+
 .v02 .row-fluid {
   background: #1E1E1E;
-  border-left:#333333 solid 1px; 
+/*  border-left:#333333 solid 1px; 
   -webkit-box-shadow: 1px 1px #000000; 
   -moz-box-shadow: 1px 1px #000000;
   box-shadow: 1px 1px #000000;
-  
+*/  
 }
 
 .block .row-fluid {
@@ -546,6 +689,7 @@ input.btn-blue, button.btn-blue, a.btn-navigation {
   -moz-border-radius: 7px; 
   border-radius: 7px;
   border: solid #00354C 1px; 
+  background: #025C99;
   background: -webkit-gradient(linear, 0 0, 0 100%, from(#0079AF), to(#025C99)); 
   background: -moz-linear-gradient(top, #0079AF, #025C99);
 }
@@ -579,30 +723,6 @@ a.btn-navigation-plain {
 
 .not-aligned {
   color: #933;
-}
-
-.btn-group {
-  float: right;
-  position: relative;
-  top: 4px;
-  right: 4px;
-}
-
-.btn-group a {
-  padding: 0;
-  font-size: 11px;
-  margin: 0;
-}
-
-.dropdown-menu li {
-  color: black;
-  cursor:pointer;
-  padding:2px 6px;
-  margin:0px;
-}
-.dropdown-menu li:hover {
-  font-weight:bold;
-  background-color:#ddd;
 }
 
 .controls {
@@ -640,13 +760,6 @@ h2 {
   font-size: 18px;
 }
 
-/*h3 {
-  color: #999;
-  font-size: 14px;
-  font-weight: 300;
-  text-transform: none;
-}
-*/
 .wrapper-heading {
   color: #666;
   margin: 15px 0;
@@ -696,7 +809,7 @@ h2 {
   line-height: 18px;
   color:#CCCCCC;
   text-transform: uppercase;
-
+  margin:0;
 }
 
 .block h3 {
@@ -738,7 +851,6 @@ h2 {
 }
 
 ul.nav {margin: 0;}
-
 /*ul.nav-tabs > li.active a {
     background-color:#333;
 }
@@ -776,6 +888,7 @@ ul.nav {
   color: #808080;
   letter-spacing:1px;
   margin-right:10px;
+  margin-bottom: 0;
   /*width:115px;*/
 }
 
@@ -797,6 +910,7 @@ ul.nav {
   color: #FFFFFF;
   letter-spacing:1px;
   margin-right: 10px;
+  margin-bottom:0;
   /*width:115px;*/
   border: none;
 }
