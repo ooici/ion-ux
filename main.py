@@ -384,6 +384,10 @@ def dev_datatable(resource_id=None):
 def dev_actionmenus(resource_id=None):
     return render_template('dev_actionmenus.html')
 
+@app.route('/dev/editform', methods=['GET'])
+def dev_editform(resource_id=None):
+    return render_template('dev_editform.html')
+
 @app.route('/dev/subscribe', methods=['GET'])
 def dev_subscribe():
     time.sleep(2)
