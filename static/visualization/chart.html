@@ -13,7 +13,39 @@
 
     <link rel="stylesheet" media="all" type="text/css" href="http://code.jquery.com/ui/1.10.0/themes/smoothness/jquery-ui.css" />
     <link rel="stylesheet" media="all" type="text/css" href="jquery-ui-timepicker-addon.css" />
-    <style> .container { border:2px solid #ccc; width:300px; height: 100px; overflow-y: scroll; } </style>
+    <link rel="stylesheet" media="all" type="text/css" href="/static/css/dark.css" />
+    
+    <style> 
+      .container {
+        /* border:2px solid #ccc;*/ 
+        /*width:300px;*/
+        height: 100px; 
+        overflow-y: scroll; 
+/*        margin-bottom: 5px;*/
+      }
+      
+      .chart-type {
+        border-top: solid 1px #444;
+        border-bottom: solid 1px #444;
+        padding: 7px 0;
+        margin: 7px 0;
+      }
+      
+      .chart-type select {
+        color: #fff;
+        background-color: #444;
+        -webkit-appearance: menulist;
+        box-sizing: border-box;
+        -webkit-box-align: center;
+        border: 1px solid #333;
+/*        border-image: initial;*/
+        white-space: pre;
+        -webkit-rtl-ordering: logical;
+        color: black;
+        background-color: white;
+        cursor: default;
+      }
+    </style>
 
     <script type='text/javascript'>
 
@@ -105,7 +137,7 @@
         dataTable_cache_block_time_period = Math.ceil(dataTable_cache_block_size / avg_data_rate); // ** Is this correct ?
 
         // init cache blocks
-        for (i = 0; i < tot_num_of_blocks; i++) {
+        for (var i = 0; i < tot_num_of_blocks; i++) {
             _end_time = dp_metadata['time_bounds'][1] - dataTable_cache_block_time_period * i;
             _start_time = Math.max(dp_metadata['time_bounds'][0], (_end_time - dataTable_cache_block_time_period));
 
@@ -254,7 +286,7 @@
         param_list_container.setAttribute("class", 'container');
         graphUiDiv.appendChild(param_list_container);
 
-        for (i=1; i<dataTable.getNumberOfColumns(); i++) {
+        for (var i=1; i<dataTable.getNumberOfColumns(); i++) {
 
             paramIdx = i;
             // create a checkBox and add to the graphs' UI div
@@ -292,13 +324,17 @@
         var check_all_viz_params_button = document.createElement('input');
         check_all_viz_params_button.type = 'button';
         check_all_viz_params_button.value = "Check all";
+        check_all_viz_params_button.className = "btn-general";
+        
         check_all_viz_params_button.addEventListener("click", showAllVizParams);
         graphUiDiv.appendChild(check_all_viz_params_button);
+
 
 
         var clear_all_viz_params_button = document.createElement('input');
         clear_all_viz_params_button.type = 'button';
         clear_all_viz_params_button.value = "Clear all";
+        clear_all_viz_params_button.className = "btn-general";
         clear_all_viz_params_button.addEventListener("click", hideAllVizParams);
         graphUiDiv.appendChild(clear_all_viz_params_button);
         graphUiDiv.appendChild(document.createElement('br'));
@@ -309,15 +345,21 @@
         graph_type_select.setAttribute("onChange", "onGraphTypeChange(this)");
 
         selectFlag = true;
-        for (i=0; i<supported_graph_type.length; i++) {
+        for (var i=0; i<supported_graph_type.length; i++) {
             graph_type_select.options[i] = new Option(supported_graph_type[i], supported_graph_type[i], selectFlag, false);
             selectFlag = false; // just need it true for the first entry
         }
+        
+        
+        var div = document.createElement("div");
+        div.className = 'chart-type';
+        div.appendChild(graph_type_select);
+        div.appendChild(document.createTextNode('Graph Type'));
+        graphUiDiv.appendChild(div);
 
-        graphUiDiv.appendChild(graph_type_select);
-        graphUiDiv.appendChild(document.createTextNode('Graph Type'));
-        graphUiDiv.appendChild(document.createElement('br'));
-
+        // graphUiDiv.appendChild(document.createTextNode('Graph Type'));
+        // graphUiDiv.appendChild(document.createElement('br'));
+        // graphUiDiv.appendChild(graph_type_select);
 
         // Create text input boxes for date range
         var dateRange = graph.getVisibleChartRange();
@@ -366,6 +408,7 @@
         var page_reload_button = document.createElement('input');
         page_reload_button.type = 'button';
         page_reload_button.value = "Refresh Chart";
+        page_reload_button.className = "btn-blue";
         page_reload_button.addEventListener("click", reloadPage);
         graphUiDiv.appendChild(page_reload_button);
 
@@ -408,7 +451,7 @@
             else
             {
                 // create a list of visible parameters to reflect the checkboxes
-                for (i=0; i< param_chkbox_list.length; i++) {
+                for (var i=0; i< param_chkbox_list.length; i++) {
                     if (param_chkbox_list[i].type != "checkbox") continue;
 
                     colIdx = parseInt((param_chkbox_list[i].id.split("."))[1]);
@@ -428,7 +471,7 @@
 
             var visible_params = [0];
             // create a list of visible parameters reflects the checkboxes
-            for (i=0; i< param_chkbox_list.length; i++) {
+            for (var i=0; i< param_chkbox_list.length; i++) {
                 if (param_chkbox_list[i].type != "checkbox") continue;
 
                 colIdx = parseInt((param_chkbox_list[i].id.split("."))[1]);
@@ -448,17 +491,34 @@
 	
 	}
 
-	function onDateRangeChange() {
-        var dateRange = graph.getVisibleChartRange();
+    function onDateRangeChange(_dr, _sd, _ed) {
 
-        graph_visible_start_date = new Date(dateRange.start.getTime());
-        graph_visible_end_date = new Date(dateRange.end.getTime());
+        var dateRange;
+        // if start and end dates were passed, the date input boxes were updated
+        if (_sd && _ed) {
+            graph.setVisibleChartRange(_sd, _ed);
 
-        // update the text input boxes for date changes
-        var startDateTextBox = $('#start_datetime_txtbox');
-        var endDateTextBox = $('#end_datetime_txtbox');
-        startDateTextBox.datetimepicker('setDate', graph_visible_start_date);
-        endDateTextBox.datetimepicker('setDate', graph_visible_end_date);
+            dateRange = graph.getVisibleChartRange();
+
+            // The reason we are not using the passed _sd and _ed is there might be a difference
+            // in the resolution of the datetime picker and the view graph
+            graph_visible_start_date = new Date(dateRange.start.getTime());
+            graph_visible_end_date = new Date(dateRange.end.getTime());
+        }
+        else{ // The view window on the graph was changed
+            dateRange = graph.getVisibleChartRange();
+
+            graph_visible_start_date = new Date(dateRange.start.getTime());
+            graph_visible_end_date = new Date(dateRange.end.getTime());
+
+            // update the text input boxes for date changes
+            var startDateTextBox = $('#start_datetime_txtbox');
+            var endDateTextBox = $('#end_datetime_txtbox');
+            startDateTextBox.datetimepicker('setDate', graph_visible_start_date);
+            endDateTextBox.datetimepicker('setDate', graph_visible_end_date);
+        }
+
+
 
         // If the overview itself is at a high enough zoom level, no need to make requests for data
         if (dataTable_overview_stride_factor <= dataTable_level_trigger)
@@ -472,7 +532,6 @@
         if(isDataInCache(graph_visible_start_date.getTime()/1000, graph_visible_end_date.getTime()/1000, curr_stride_factor))
             return;
 
-        console.debug(">>>>>   HERE   <<<<<");
         // Find out what we need and fetch the data
         var listOfBlocksNeeded = getListOfBlocksNeeded(graph_visible_start_date.getTime() / 1000, graph_visible_end_date.getTime() / 1000);
 
@@ -480,9 +539,9 @@
 
             // set viz params which will decide the query
             setVizParams(dataTable_parameters, dataTable_cache[listOfBlocksNeeded[i]].start_time, dataTable_cache[listOfBlocksNeeded[i]].end_time, curr_stride_factor);
-            fetchData(); // set reqId to the index of block in cache. Should be unique for every query
+            fetchData();
         }
-	}
+    }
 
     function onStartDatetimePickerChange (dateText, inst) {
         var startDateTextBox = $('#start_datetime_txtbox');
@@ -500,8 +559,7 @@
         }
 
         // affect the graph accordingly
-        graph.setVisibleChartRange(testStartDate, testEndDate)
-        onDateRangeChange();
+        onDateRangeChange(null, testStartDate, testEndDate);
     }
 
     function onEndDatetimePickerChange (dateText, inst) {
@@ -520,15 +578,14 @@
         }
 
         // affect the graph accordingly
-        graph.setVisibleChartRange(testStartDate, testEndDate)
-        onDateRangeChange();
+        onDateRangeChange(null, testStartDate, testEndDate);
     }
 
     function showAllVizParams() {
         var param_chkbox_list = null;
 
         param_chkbox_list = (document.getElementById('param_list_container')).childNodes;
-        for (i=0; i< param_chkbox_list.length; i++) {
+        for (var i=0; i< param_chkbox_list.length; i++) {
             if (param_chkbox_list[i].type != "checkbox") continue;
 
             param_chkbox_list[i].checked = true;
@@ -540,7 +597,7 @@
         var param_chkbox_list = null;
 
         param_chkbox_list = (document.getElementById('param_list_container')).childNodes;
-        for (i=0; i< param_chkbox_list.length; i++) {
+        for (var i=0; i< param_chkbox_list.length; i++) {
             if (param_chkbox_list[i].type != "checkbox") continue;
 
             param_chkbox_list[i].checked = false;
@@ -687,7 +744,7 @@
         end_time = end_time_d.getTime() / 1000;
 
         // Because of a difference in the requested time window and returned time window,
-        // we do a best match score to see which cache slot is the best fit 
+        // we do a best match score to see which cache slot is the best fit
         var idx = null;
         var proximity_score = Infinity, temp_score = 0;
         for (var i=0; i < dataTable_cache.length; i++) {
@@ -771,9 +828,9 @@
   </head>
 
   <div class='chart-google' style="position:relative;">
-      <div id="graph_div" style="width:80%;margin-right:165px;height:300px;"></div>
+      <div id="graph_div" style="width:75%;margin-right:165px;height:300px;"></div>
       <!-- <form> -->
-      <div id="graph_ui_div" style="color:#ccc;font-family:sans-serif;font-size:11px;text-transform:uppercase;position:absolute;top:0;right:0;width:19%;"></div>
+      <div id="graph_ui_div" style="color:#ccc;font-family:sans-serif;font-size:11px;text-transform:uppercase;position:absolute;top:0;right:0;width:24%;"></div>
       <!-- </form> -->
   </div>
 
