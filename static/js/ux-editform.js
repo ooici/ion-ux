@@ -1,3 +1,59 @@
+/*
+
+NOTES:
+
+  - EditableResource will have 'self.models' (needed to handle the sub-nesting of Resource attrs)
+
+
+BLACK_LIST: ['_id', '_rev', 'ts_created', 'ts_updated', 'lcstate', 'type_'];
+*/
+
+var Resource = Backbone.Model.extend({
+    schema: {
+      message_controllable: 'Radio', 
+      addl: 'Select', 
+      description: 'Text',
+      name: 'Text',
+      alt_ids: 'Select',
+      uuid: 'Text', 
+      custom_attributes: 'Select', 
+      hardware_version: 'Text', 
+      monitorable: 'Radio', 
+      controllable: 'Radio', 
+      serial_number: 'Text', 
+      firmware_version: 'Text',
+      reference_urls: 'Select',
+      last_calibration_datetime: 'Text', 
+    }
+})
+
+var ContactForResource = Backbone.Model.extend({
+    schema: {
+      individual_names_given: 'Text',
+      city: 'Text',
+      roles: {type: 'Select', options: ['primary', 'secondary', 'thirdary']}, 
+      administrative_area: 'Text', 
+      url: 'Text', 
+      country: 'Text', 
+      // variables: 'Select',
+      organization_name: 'Text',
+      type_: 'Text',
+      postal_code: 'Text',
+      street_address: 'Text'
+    }
+});
+
+var PhoneForContactForResource = Backbone.Model.extend({
+    schema: {
+          phone_number: 'Text', 
+          phone_type: {type: 'Select', options: ['home', 'office', 'cell']}, 
+          type_: 'Text',
+          sms: 'Radio'
+    }
+});
+
+
+
 IONUX.Models.EditableResource = Backbone.Model.extend({
   idAttribute: '_id',
   schema: function(){
