@@ -1,0 +1,115 @@
+{% extends "ion_ux.html" %}
+
+{% block extra_css %}
+{% endblock %}
+
+{% block extra_templates %}
+{% endblock %}
+
+
+{% block extra_vendor_js %}
+{% endblock %}
+
+
+{% block extra_ionux_js %}
+    <script src="/static/js/ux-editform.js"></script>
+    <script>
+    var TEST_MODEL_DATA = {
+"resource": {
+  "message_controllable": true, 
+  "addl": {}, 
+  "description": "Simulator 1 providing CTD data in the R2 Demonstration", 
+  "name": "CTD Simulator 1 Demo", 
+  "alt_ids": [
+    "PRE:ID3"
+  ], 
+  "_rev": "3-18d1c0cc26fcc01f4df472b5a883bd3a", 
+  "contacts": [{
+      "individual_names_given": "Mike", 
+      "city": "Some Place", 
+      "roles": [
+        "primary"
+      ], 
+      "administrative_area": "", 
+      "url": "www.yahoo.com", 
+      "country": "USA", 
+      "variables": [ { "name": "", "value": "" }
+      ], 
+      "organization_name": "UNoIt", 
+      "type_": "ContactInformation", 
+      "postal_code": "02392", 
+      "street_address": "123 Anytown Rd", 
+      "phones": [ {
+          "phone_number": "619-555-1212", 
+          "phone_type": "office", 
+          "type_": "Phone", 
+          "sms": 0
+        }
+      ], 
+      "position_name": "Manager", 
+      "email": "mikemanagerooi@gmail.com", 
+      "individual_name_family": "Manager"
+    }, 
+    {
+      "individual_names_given": "Owen", 
+      "city": "Some Place", 
+      "roles": [
+        "alternate"
+      ], 
+      "administrative_area": "", 
+      "url": "www.yahoo.com", 
+      "country": "USA", 
+      "variables": [{
+          "name": "", 
+          "value": ""
+        }
+      ], 
+      "organization_name": "Univ. of Washington", 
+      "type_": "ContactInformation", 
+      "postal_code": "02392", 
+      "street_address": "123 Anytown Rd", 
+      "phones": [
+        {
+          "phone_number": "222-555-1212", 
+          "phone_type": "home", 
+          "type_": "Phone", 
+          "sms": 0
+        }, 
+        {
+          "phone_number": "858-822-6379", 
+          "phone_type": "office", 
+          "type_": "Phone", 
+          "sms": 0
+        }
+      ], 
+      "position_name": "Representative", 
+      "email": "owenownerrep@gmail.com", 
+      "individual_name_family": "Ownerrep"
+    }
+  ], 
+  "uuid": "", 
+  "custom_attributes": {}, 
+  "hardware_version": "0-00", 
+  "ts_updated": "1360001527015", 
+  "type_": "InstrumentDevice", 
+  "monitorable": true, 
+  "controllable": true, 
+  "serial_number": "10003", 
+  "firmware_version": "0-00", 
+  "_id": "1b0e725ac49946efa7e64aeeed40d1a8", 
+  "ts_created": "1360001526734", 
+  "reference_urls": [], 
+  "last_calibration_datetime": "", 
+  "lcstate": "DEPLOYED_AVAILABLE"
+}}
+    </script>
+{% endblock %}
+
+{% block document_ready %}
+  $(function(){
+    IONUX.init();
+    var black_list = ['_id', '_rev', 'ts_created', 'ts_updated', 'lcstate', 'type_'];
+    var efmodel = new IONUX.Models.EditableForm(TEST_MODEL_DATA["resource"], {black_list:black_list});
+    M = efmodel;
+  });
+{% endblock %}
