@@ -91,16 +91,15 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
                                     </div>\
                                   </div>';
         $(subscribe_template).modal({keyboard:false})
-            .on('shown', function(){
-                   // var subscriptions = _.map(window.MODEL_DATA['computed']['user_notification_requests']['value'], function(sub) {
-                   //   return sub['event_type'];
-                   // });
-                   var notifications = new IONUX.Collections.Notifications();
-                   new IONUX.Views.Notifications({collection: notifications});
-                   notifications.fetch();
-               })
-            .on('hide',function(){
-                $('#action-modal').remove();
+          .on('shown', function(){
+             var notifications = new IONUX.Collections.Notifications();
+             new IONUX.Views.Notifications({collection: notifications});
+             notifications.fetch();
+           })
+          .on('hide',function(){
+            $('#action-modal').remove();
+            Backbone.history.fragment = null; // Clear history fragment to allow for page "refresh".
+            IONUX.ROUTER.navigate(window.location.pathname, {trigger: true});
         });
     },
     
