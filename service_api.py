@@ -430,10 +430,10 @@ class ServiceApi(object):
 
     @staticmethod
     def find_user_info(user_id):
-        try:
-            user_info = service_gateway_get('identity_management', 'find_user_info_by_id', params={'user_id': user_id})
-        except:
+        user_info = service_gateway_get('identity_management', 'find_user_info_by_id', params={'actor_id': user_id})
+        if "GatewayError" in user_info:
             user_info = {'contact': {'name': '(Not Registered)', 'email': '(Not Registered)', 'phone': '???'}}
+
         return user_info
 
     @staticmethod

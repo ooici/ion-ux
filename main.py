@@ -351,7 +351,7 @@ def userprofile():
         if request.method == 'GET':
             # determine if this is an update or a new registration
             if is_registered:
-                resp_data = ServiceApi.find_user_info(user_id)
+                resp_data = ServiceApi.find_user_info(session['actor_id'])
             else:
                 resp_data = {'contact': {'name': '', 'email': '', 'phone': '', 'address': '', 'city': '', 'postalcode': ''}}
             return jsonify(data=resp_data)
