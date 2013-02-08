@@ -98,18 +98,31 @@ def attachment(attachment_id):
 # -----------------------------------------------------------------------------
 
 @app.route('/event_types/', methods=['GET'])
+@login_required
 def event_types():
     event_types = ServiceApi.get_event_types()
     return jsonify(data=event_types)
 
-@app.route('/<resource_type>/status/<resource_id>/subscribe/<event_type>/', methods=['GET'])
-@app.route('/<resource_type>/face/<resource_id>/subscribe/<event_type>/', methods=['GET'])
-@app.route('/<resource_type>/related/<resource_id>/subscribe/<event_type>/', methods=['GET'])
+@app.route('/<resource_type>/status/<resource_id>/subscribe/', methods=['GET'])
+@app.route('/<resource_type>/face/<resource_id>/subscribe/', methods=['GET'])
+@app.route('/<resource_type>/related/<resource_id>/subscribe/', methods=['GET'])
 @login_required
-def subscribe_to_resource(resource_type, resource_id, event_type):
+def subscribe_to_resource(resource_type, resource_id):
     resource_name = request.args.get('resource_name')
-    resp = ServiceApi.subscribe(resource_type, resource_id, event_type, session['user_id'], resource_name)
+    event_type = request.args.get('event_type')
+    resp = ServiceApi.create_user_notification(resource_type, resource_id, event_type, session['user_id'], resource_name)
     return render_json_response(resp)
+
+@app.route('/<resource_type>/status/<resource_id>/unsubscribe/', methods=['GET'])
+@app.route('/<resource_type>/face/<resource_id>/unsubscribe/', methods=['GET'])
+@app.route('/<resource_type>/related/<resource_id>/unsubscribe/', methods=['GET'])
+@login_required
+def unsubscribe_to_resource(resource_type, resource_id):
+    notification_id = request.args.get('notification_id')
+    resp = ServiceApi.delete_user_subscription(notification_id)
+    return render_json_response(resp)
+
+
         
 @app.route('/<resource_type>/status/<resource_id>/transition/', methods=['POST'])
 @app.route('/<resource_type>/face/<resource_id>/transition/', methods=['POST'])
@@ -172,7 +185,10 @@ def collection(resource_type=None):
 
 @app.route('/<resource_type>/extension/<resource_id>/', methods=['GET'])
 def extension(resource_type, resource_id):
-    extension = ServiceApi.get_extension(resource_type, resource_id)
+    # Login not required to view, but required for user specific things
+    # like event notifications, etc.
+    user_id = session['user_id'] if session.has_key('user_id') else None
+    extension = ServiceApi.get_extension(resource_type, resource_id, user_id)
     return render_json_response(extension)
 
 
