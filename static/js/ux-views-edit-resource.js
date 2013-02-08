@@ -29,3 +29,61 @@ IONUX.Views.EditResource = Backbone.View.extend({
     IONUX.ROUTER.navigate(this.base_url,{trigger:true});
   },
 });
+
+IONUX.Views.EditUserRegistration = IONUX.Views.EditResource.extend({
+
+  template: _.template($('#user-profile-modal-tmpl').html()),
+  events: {
+    'click #save-resource': 'submit_form',
+  }, 
+
+  initialize: function() {
+    _.bindAll(this);
+
+    var schema = this.model.schema,
+        data = _.clone(this.model.attributes);
+
+    this.form = new Backbone.Form({schema: schema,
+                                   data: data,
+                                   fieldsets: [{legend:'Contact Information',
+                                                fields: ['name', 'contact']},
+                                               {legend:'Notification Preferences',
+                                                fields:['variables']}]}).render();
+
+    this.base_url = '';
+  },
+
+  render: function() {
+    var modal_html = this.template();
+
+    $('body').append(modal_html);
+    var el = $('#user-profile-overlay');
+
+    $('.form-container', el).append(this.form.el);
+
+    el.modal('show')
+      .on('hidden', function() {
+        el.remove();
+      })
+  },
+
+  submit_form: function() {
+
+    console.log("hi");
+
+    var formval = this.form.getValue();
+
+    this.model.set(_.omit(formval, 'contact', 'variables'));
+    this.model.merge('variables', formval.variables);
+    this.model.merge('contact', formval.contact);
+
+    var self = this;
+    this.model.save()
+      .done(function(resp) {
+        // MODAL CLOSE
+        $('#user-profile-overlay').modal('hide');
+    });
+  },
+
+});
+
