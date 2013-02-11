@@ -64,7 +64,7 @@ IONUX.Views.EditUserRegistration = IONUX.Views.EditResource.extend({
 
     var self = this;  // @TODO: i know there is a better way of doing this
 
-    el.modal('show')
+    el.modal({show:true, keyboard:false, backdrop:'static'})
       .on('hidden', function() {
         self.$el.remove();
       })
