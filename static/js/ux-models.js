@@ -326,7 +326,7 @@ IONUX.Models.UserRegistrationModel = IONUX.Models.EditableResource.extend({
   idAttribute: "_id",
 
   schema: {
-    name: 'Text',
+    name: { type: 'Text', validators: ['required'] },
 
     'contact': {
       type: 'Object',
@@ -334,7 +334,7 @@ IONUX.Models.UserRegistrationModel = IONUX.Models.EditableResource.extend({
       subSchema: {
         organization_name: { type: 'Text', title: 'Organization Name' },
         position_name:     { type: 'Text', title: 'Position' },
-        email:             { type: 'Text', title: 'Email', dataType: 'email' },
+        email:             { type: 'Text', title: 'Email', dataType: 'email', validators: ['required', 'email']},
         street_address:    { type: 'Text', title: 'Street Address' },
         city:              { type: 'Text', title: 'City' },
         postal_code:       { type: 'Text', title: 'Postal Code' },

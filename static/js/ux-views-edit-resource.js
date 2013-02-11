@@ -72,6 +72,17 @@ IONUX.Views.EditUserRegistration = IONUX.Views.EditResource.extend({
 
   submit_form: function() {
 
+    var vo = this.form.validate();
+    if (vo != null) {
+      var parentel = $('#user-profile-overlay .modal-body');
+
+      parentel.animate({
+        scrollTop: parentel.scrollTop() + $('#' + _.keys(vo)[0]).position().top - 5
+      }, 200);
+
+      return;
+    }
+
     var formval = this.form.getValue();
 
     this.model.set(_.omit(formval, 'contact', 'variables'));
