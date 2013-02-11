@@ -56,20 +56,21 @@ IONUX.Views.EditUserRegistration = IONUX.Views.EditResource.extend({
   render: function() {
     var modal_html = this.template();
 
-    $('body').append(modal_html);
+    $('body').append(this.$el);
+    this.$el.append(modal_html);
     var el = $('#user-profile-overlay');
 
     $('.form-container', el).append(this.form.el);
 
+    var self = this;  // @TODO: i know there is a better way of doing this
+
     el.modal('show')
       .on('hidden', function() {
-        el.remove();
+        self.$el.remove();
       })
   },
 
   submit_form: function() {
-
-    console.log("hi");
 
     var formval = this.form.getValue();
 

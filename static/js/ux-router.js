@@ -109,8 +109,7 @@ IONUX.Router = Backbone.Router.extend({
       .done(function(data) {
         $("#dynamic-container").show();
         //$("#dynamic-container").html(data);
-        var view = new IONUX.Views.EditUserRegistration({model: model});
-        view.render();
+        new IONUX.Views.EditUserRegistration({model: model}).render();
       });
   },
 
