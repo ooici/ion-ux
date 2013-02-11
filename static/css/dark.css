@@ -825,7 +825,7 @@ h2 {
   line-height: 18px;
   color:#CCCCCC;
   text-transform: uppercase;
-  margin:0;
+  margin: 0 0 5px;
 }
 
 .block h3 {
