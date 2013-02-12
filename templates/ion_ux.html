@@ -36,7 +36,7 @@
     				<div id="sidebar" class="span2"> </div> <!-- div#sidebar -->
     				<div id="info" class="span10">
     				    <div id="error" style="display:none;"><h1>Error occurred.</h1></div>
-    	                <div id="dynamic-container" class="viewcontainer"> </div>
+    	          <div id="dynamic-container" class="viewcontainer"> </div>
     				</div>
     			</div> <!-- div.row -->
     		 </div> <!-- div.container-fluid -->
@@ -60,6 +60,8 @@
         <script type="text/template" id="list-tmpl"><![CDATA[{% include 'partials/list.html' %}]]></script>
         <script type="text/template" id="checkbox-tmpl"><![CDATA[{% include 'partials/checkbox.html' %}]]></script>
         <script type="text/template" id="subscribe-tmpl"><![CDATA[{% include 'partials/subscribe.html' %}]]></script>
+        <script type="text/template" id="notifications-tmpl"><![CDATA[{% include 'partials/notifications.html' %}]]></script>
+        <script type="text/template" id="notification-item-tmpl"><![CDATA[{% include 'partials/notification_item.html' %}]]></script>
         <script type="text/template" id="lifecycle-tmpl"><![CDATA[{% include 'partials/lifecycle.html' %}]]></script>
         <script type="text/template" id="extent-geospatial-tmpl"><![CDATA[{% include 'partials/extent_geospatial.html' %}]]></script>
         <script type="text/template" id="extent-vertical-tmpl"><![CDATA[{% include 'partials/extent_vertical.html' %}]]></script>
@@ -104,6 +106,7 @@
         <script src="/static/js/ux-views-helpmenu.js"> </script>
         <script src="/static/js/ux-views-chart.js"> </script>
         <script src="/static/js/ux-views-edit-resource.js"> </script>
+        <script src="/static/js/ux-views-notifications.js"> </script>
         {% block extra_ionux_js %} {% endblock %}
         
         <script>

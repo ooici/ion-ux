@@ -1,3 +1,19 @@
+.notifications th {
+  text-align: left;
+}
+
+.notifications tbody tr td {
+  padding: 5px;
+}
+.notifications tbody tr:nth-child(even) {
+  background: #333;
+}
+
+.notifications tbody tr:nth-child(odd) {
+  background: #222;
+}
+
+
 #sidebar-search {
 height: 12px;
 width: 80%;
@@ -809,7 +825,7 @@ h2 {
   line-height: 18px;
   color:#CCCCCC;
   text-transform: uppercase;
-  margin:0;
+  margin: 0 0 5px;
 }
 
 .block h3 {
@@ -968,8 +984,15 @@ ul.nav {
   border: solid 1px #333;
 }
 
+.modal-ooi .close {
+  color: #444;
+  opacity: 1;
+  text-shadow: none;
+}
+
 .modal-ooi h1 {
   font-size:15px;
+  line-height: 15px;
 }
 
 .modal-ooi .modal-header, 

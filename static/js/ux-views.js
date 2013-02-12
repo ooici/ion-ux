@@ -136,7 +136,7 @@ IONUX.Views.Subscribe = Backbone.View.extend({
         // select_elmt.attr("disabled", "disabled");
         var self = this;
         $.ajax({
-          url: 'subscribe/'+event_type+'/?resource_name='+resource_name,
+          url: 'subscribe/?event_type='+event_type+'?resource_name='+resource_name,
           dataType: 'json',
           success: function(resp){
               self.$el.find('.modal-body').prepend('<div class="alert alert-success">Subscription successful.</div>');

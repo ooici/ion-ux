@@ -311,7 +311,10 @@ function render_page(resource_type, resource_id, model) {
   
   // Action Menus
   _.each($('.v01 .group .nav, .v02 .group .nav'), function(el) {
-      new IONUX.Views.GroupActions({el:$(el)});
+    new IONUX.Views.GroupActions({el:$(el)});
+
+    // Todo: finish attachments/events menus
+    var group_name = $(el).find('li:first a').text();
   });
   _.each($('.v01 .'+resource_type+'.block, .v02 .'+resource_type+'.block'), function(el) {
     new IONUX.Views.BlockActions({el:$(el)});

@@ -47,7 +47,11 @@ class ServiceApi(object):
         return req
 
     @staticmethod
-    def subscribe(resource_type, resource_id, event_type, user_id, resource_name=None):
+    def get_user_subscriptions(user_id):
+        return service_gateway_post('user_notification', 'get_user_notifications', params={'user_info_id': user_id})
+
+    @staticmethod
+    def create_user_notification(resource_type, resource_id, event_type, user_id, resource_name=None):
         name = 'Notification for %s' % resource_name if resource_name else 'NotificationTest'
         description = '%s - %s - Notification Request' % (resource_type, event_type)
         notification = {
@@ -57,8 +61,14 @@ class ServiceApi(object):
             "name": name, 
             "origin": resource_id, 
             "origin_type": resource_type,
-            "event_type": event_type}
+            "event_type": event_type
+            }
         return service_gateway_post('user_notification', 'create_notification', params={'notification': notification, 'user_id': user_id})
+    
+    @staticmethod
+    def delete_user_subscription(notification_id):
+        return service_gateway_post('user_notification', 'delete_notification', params={'notification_id': notification_id})
+
 
     @staticmethod
     def get_event_types():
@@ -88,29 +98,31 @@ class ServiceApi(object):
         return jsonify(data=resource)
 
     @staticmethod
-    def get_extension(resource_type, resource_id):
+    def get_extension(resource_type, resource_id, user_id):
         if resource_type == 'InstrumentDevice':
-            extension = service_gateway_get('instrument_management', 'get_instrument_device_extension', params= {'instrument_device_id': resource_id})
+            extension = service_gateway_get('instrument_management', 'get_instrument_device_extension', params= {'instrument_device_id': resource_id, 'user_id': user_id})
         elif resource_type in ('InstrumentModel', 'SensorModel', 'PlatformModel'):
-            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'DeviceModelExtension'})
+            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'DeviceModelExtension', 'user_id': user_id})
         elif resource_type == 'PlatformDevice':
-            extension = service_gateway_get('instrument_management', 'get_platform_device_extension', params= {'platform_device_id': resource_id})
+            extension = service_gateway_get('instrument_management', 'get_platform_device_extension', params= {'platform_device_id': resource_id, 'user_id': user_id})
         elif resource_type == 'DataProduct':
-            extension = service_gateway_get('data_product_management', 'get_data_product_extension', params= {'data_product_id': resource_id})
+            extension = service_gateway_get('data_product_management', 'get_data_product_extension', params= {'data_product_id': resource_id, 'user_id': user_id})
         elif resource_type == 'UserInfo':
-            extension = service_gateway_get('identity_management', 'get_user_info_extension', params= {'user_info_id': resource_id})
+            extension = service_gateway_get('identity_management', 'get_user_info_extension', params= {'user_info_id': resource_id, 'user_id': user_id})
         elif resource_type == 'DataProcessDefinition':
-            extension = service_gateway_get('data_process_management', 'get_data_process_definition_extension', params= {'data_process_definition_id': resource_id})
+            extension = service_gateway_get('data_process_management', 'get_data_process_definition_extension', params= {'data_process_definition_id': resource_id, 'user_id': user_id})
         elif resource_type == 'Org':
-            extension = service_gateway_get('org_management', 'get_marine_facility_extension', params= {'org_id': resource_id})
+            extension = service_gateway_get('org_management', 'get_marine_facility_extension', params= {'org_id': resource_id, 'user_id': user_id})
         elif resource_type in ('Observatory', 'Subsite', 'PlatformSite', 'InstrumentSite'):
-            extension = service_gateway_get('observatory_management', 'get_site_extension', params= {'site_id': resource_id})
+            extension = service_gateway_get('observatory_management', 'get_site_extension', params= {'site_id': resource_id, 'user_id': user_id})
         elif resource_type == 'NotificationRequest':
-            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'NotificationRequestExtension'})
+            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'NotificationRequestExtension', 'user_id': user_id})
         elif resource_type == 'DataProcess':
-            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'DataProcessExtension'})
+            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'DataProcessExtension', 'user_id': user_id})
         elif resource_type in ('UserRole'):
-            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'ExtendedInformationResource'})
+            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'ExtendedInformationResource', 'user_id': user_id})
+        elif resource_type in ('InformationResource'):
+            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'ExtendedInformationResource', 'user_id': user_id})
         else:
             extension = error_message(msg="Resource extension for %s is not available." % resource_type)
 
@@ -471,8 +483,11 @@ def build_post_request(service_name, operation_name, params=None):
         post_data['serviceRequest']['params'] = params
     # conditionally add user id and expiry to request
     if "actor_id" in session:
+        print 'xxx',session['actor_id']
         post_data['serviceRequest']['requester'] = session['actor_id']
         post_data['serviceRequest']['expiry'] = session['valid_until']
+        
+    print 'xxx - post_data', post_data
     data={'payload': json.dumps(post_data)}
     pretty_console_log('SERVICE GATEWAY POST URL/DATA', url, data)
     return url, data
