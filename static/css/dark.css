@@ -984,8 +984,15 @@ ul.nav {
   border: solid 1px #333;
 }
 
+.modal-ooi .close {
+  color: #444;
+  opacity: 1;
+  text-shadow: none;
+}
+
 .modal-ooi h1 {
   font-size:15px;
+  line-height: 15px;
 }
 
 .modal-ooi .modal-header, 

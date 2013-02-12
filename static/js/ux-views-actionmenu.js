@@ -83,7 +83,7 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
     },
     
     action__subscribe_two:function(){
-        var subscribe_template = '<div id="action-modal" class="modal hide fade modal-ooi zzz">\
+        var subscribe_template = '<div id="action-modal" class="modal hide fade modal-ooi">\
                                     <div class="modal-header"><h1>Notifications</h1></div>\
                                     <div class="modal-body">Loading...</div>\
                                     <div class="modal-footer">\

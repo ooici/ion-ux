@@ -59,11 +59,7 @@ IONUX.Views.NotificationItem = Backbone.View.extend({
       url: 'subscribe/?event_type='+event_type+'&resource_name='+resource_name,
       dataType: 'json',
       success: function(resp){
-        console.log('---------------------');
-        console.log('subscribe success', resp.data)
-        console.log('subscribe success model:before', self.model.toJSON())
         self.model.set({_id: resp.data});
-        console.log('subscribe success model:after', self.model.toJSON())
       }
     });
   },
@@ -74,11 +70,7 @@ IONUX.Views.NotificationItem = Backbone.View.extend({
       url: 'unsubscribe/?notification_id='+this.model.get('_id'),
       dataType: 'json',
       success: function(resp){
-        console.log('---------------------');
-        console.log('unsubscribe success', resp.data)
-        console.log('unsubscribe success model:before', self.model.toJSON())
         self.model.unset('_id');
-        console.log('unsubscribe success model:after', self.model.toJSON())
       }
     });
   }
