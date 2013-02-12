@@ -9,7 +9,88 @@ NOTES:
 BLACK_LIST: ['_id', '_rev', 'ts_created', 'ts_updated', 'lcstate', 'type_'];
 */
 
-var Resource = Backbone.Model.extend({
+
+var User = Backbone.Model.extend({
+    schema: {
+        title:      { type: 'Select', options: ['Mr', 'Mrs', 'Ms'] },
+        name:       'Text',
+        email:      { validators: ['required', 'email'] },
+        birthday:   'Date',
+        //password:   'Password',
+        //address:    { type: 'NestedModel', model: Address },
+        //notes:      { type: 'List', listType: 'Text' }
+    }
+});
+
+//var user = new User({'title':'Mr', name:'Ed', email:'a@a.com', birdthday:'1/1/1900', password:'secret', notes:['Note 1', 'Note 2']});
+var user = new User({'title':'Mr', name:'Ed', email:'a@a.com', birdthday:'1/1/1900'});
+f = new Backbone.Form({ model: user }).render();
+//console.log(f.el);//new Backbone.Form({ model: user }).render());
+
+
+
+
+
+var DMS = Backbone.DeepModel.extend({
+    schema: {
+        'id':'Number',
+        'user.type':'Text',
+        'user.name.first':'Text',
+        'user.name.last':'Text',
+        'others.0.name': 'Text',
+        'others.1.name': 'Text'
+    }
+});
+TDM = new DMS({id: 123,
+    user: {type: 'Mgmt', name: {first: 'Sterling', last: 'Archer' }},
+    others: [ { name: 'Lana' }, { name: 'Cyrril' }]
+  });
+
+f2 = new Backbone.Form({ model: TDM }).render();
+console.log(f2.el);
+$("#dynamic-container").append(f2.el);
+
+
+
+
+
+
+
+
+
+
+var Resource = Backbone.DeepModel.extend({
+    schema: {
+      'message_controllable': 'Radio', 
+      'addl': 'Select', 
+      'description': 'Text',
+      'name': 'Text',
+      'alt_ids': 'Select',
+      'uuid': 'Text', 
+      'custom_attributes': 'Select', 
+      'hardware_version': 'Text', 
+      'monitorable': 'Radio', 
+      'controllable': 'Radio', 
+      'serial_number': 'Text', 
+      'firmware_version': 'Text',
+      'reference_urls': 'Select',
+      'last_calibration_datetime': 'Text', 
+      'contacts.individual_names_given': 'Text',
+      'contacts.city': 'Text',
+      'contacts.roles': {type: 'Select', options: ['primary', 'secondary', 'thirdary']}, 
+      'contacts.administrative_area': 'Text', 
+      'contacts.url': 'Text', 
+      'contacts.country': 'Text', 
+      //'contacts.variables': 'Select',
+      'contacts.organization_name': 'Text',
+      'contacts.type_': 'Text',
+      'contacts.postal_code': 'Text',
+      'contacts.street_address': 'Text'
+    }
+});
+
+
+var ResourceTopLevel = Backbone.Model.extend({
   schema: {
     message_controllable: 'Radio', 
     addl: 'Select', 

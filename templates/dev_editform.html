@@ -12,6 +12,8 @@
 
 
 {% block extra_ionux_js %}
+    <script src="/static/js/underscore.mixin.deepExtend.js"></script>
+    <script src="/static/js/deep-model.js"></script>
     <script src="/static/js/ux-editform.js"></script>
     <script>
     var TEST_MODEL_DATA = {
@@ -105,6 +107,6 @@
   $(function(){
     IONUX.init();
     var black_list = ['_id', '_rev', 'ts_created', 'ts_updated', 'lcstate', 'type_'];
-    var efmodel = new IONUX.Models.EditableForm(TEST_MODEL_DATA['resource'], {black_list:black_list});
+    //var efmodel = new IONUX.Models.EditableForm(TEST_MODEL_DATA['resource'], {black_list:black_list});
   });
 {% endblock %}
