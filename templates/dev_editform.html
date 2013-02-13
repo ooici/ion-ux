@@ -12,6 +12,8 @@
 
 
 {% block extra_ionux_js %}
+    <script src="/static/js/underscore.mixin.deepExtend.js"></script>
+    <script src="/static/js/deep-model.js"></script>
     <script src="/static/js/ux-editform.js"></script>
     <script>
     var TEST_MODEL_DATA = {
@@ -27,14 +29,11 @@
   "contacts": [{
       "individual_names_given": "Mike", 
       "city": "Some Place", 
-      "roles": [
-        "primary"
-      ], 
+      "roles": [ "primary" ], 
       "administrative_area": "", 
       "url": "www.yahoo.com", 
       "country": "USA", 
-      "variables": [ { "name": "", "value": "" }
-      ], 
+      "variables": [ { "name": "", "value": "" } ], 
       "organization_name": "UNoIt", 
       "type_": "ContactInformation", 
       "postal_code": "02392", 
@@ -44,8 +43,7 @@
           "phone_type": "office", 
           "type_": "Phone", 
           "sms": 0
-        }
-      ], 
+        } ], 
       "position_name": "Manager", 
       "email": "mikemanagerooi@gmail.com", 
       "individual_name_family": "Manager"
@@ -109,7 +107,6 @@
   $(function(){
     IONUX.init();
     var black_list = ['_id', '_rev', 'ts_created', 'ts_updated', 'lcstate', 'type_'];
-    var efmodel = new IONUX.Models.EditableForm(TEST_MODEL_DATA["resource"], {black_list:black_list});
-    M = efmodel;
+    //var efmodel = new IONUX.Models.EditableForm(TEST_MODEL_DATA['resource'], {black_list:black_list});
   });
 {% endblock %}
