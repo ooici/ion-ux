@@ -14,7 +14,7 @@ todo:
 INTERACTIONS_OBJECT = {};
 INTERACTIONS_OBJECT.block_interactions = ['More Info'];
 INTERACTIONS_OBJECT.group_interactions = ['More Info', /*'Submenu', 'Edit'*/];
-INTERACTIONS_OBJECT.view_interactions = ['Subscribe', 'Subscribe Two', 'Lifecycle', 'Edit', /*'Submenu',*/ 'Command', 'Direct Command', 'Download'];
+INTERACTIONS_OBJECT.view_interactions = ['Subscribe', 'Lifecycle', 'Edit', /*'Submenu',*/ 'Command', 'Direct Command', 'Download'];
 
 
 IONUX.Views.ActionMenu = Backbone.View.extend({
@@ -64,7 +64,6 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
         this.interaction_items = INTERACTIONS_OBJECT.view_interactions;
         this.create_actionmenu();
         this.on("action__subscribe", this.action__subscribe);
-        this.on("action__subscribe_two", this.action__subscribe_two);
         this.on("action__lifecycle", this.action__lifecycle);
         this.on("action__edit", this.action__edit);
         this.on("action__submenu_toggle", this.action__submenu_toggle);
@@ -72,17 +71,17 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
         this.on("action__direct_command", this.action__direct_command);
         this.on("action__download", this.action__download);
     },
-    action__subscribe:function(){
-        $(this.modal_template).modal({keyboard:false})
-            .on('shown', function(){
-                new IONUX.Views.Subscribe().render().el;
-            })
-            .on('hide',function(){
-                $('#action-modal').remove();
-        });
-    },
+    // action__subscribe:function(){
+    //     $(this.modal_template).modal({keyboard:false})
+    //         .on('shown', function(){
+    //             new IONUX.Views.Subscribe().render().el;
+    //         })
+    //         .on('hide',function(){
+    //             $('#action-modal').remove();
+    //     });
+    // },
     
-    action__subscribe_two:function(){
+    action__subscribe:function(){
         var subscribe_template = '<div id="action-modal" class="modal hide fade modal-ooi">\
                                     <div class="modal-header"><h1>Notifications</h1></div>\
                                     <div class="modal-body">Loading...</div>\
