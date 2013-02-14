@@ -106,7 +106,16 @@
 {% block document_ready %}
   $(function(){
     IONUX.init();
-    var black_list = ['_id', '_rev', 'ts_created', 'ts_updated', 'lcstate', 'type_'];
-    //var efmodel = new IONUX.Models.EditableForm(TEST_MODEL_DATA['resource'], {black_list:black_list});
-  });
+    var black_list = ['resource._id', 'resource._rev', 'resource.ts_created', 'resource.ts_updated', 'resource.lcstate', 'resource.type_'];
+
+nfmodel = new NestedFormModel(TEST_MODEL_DATA, {black_list:black_list});
+
+nform = new Backbone.Form({model: nfmodel }).render();
+$("#dynamic-container").append(nform.el);
+
+
+$(".form-horizontal .control-label").css({"width":"300px", "margin-right":"10px"});
+
+
+});
 {% endblock %}
