@@ -309,16 +309,28 @@ function render_page(resource_type, resource_id, model) {
     $(el).find('.content-wrapper:first').css('height', '200px').jScrollPane({autoReinitialise: true});
   });
   
-  // Action Menus
-  _.each($('.v01 .group .nav, .v02 .group .nav'), function(el) {
-    new IONUX.Views.GroupActions({el:$(el)});
 
+  // Action Menus
+  
+  _.each($('.v01 .group .nav, .v02 .group .nav'), function(el) {
     // Todo: finish attachments/events menus
     var group_name = $(el).find('li:first a').text();
+    switch(group_name){
+      case 'Attachments':
+        new IONUX.Views.AttachmentActions({el:$(el)});
+        break;
+      case 'Recent Events':
+        new IONUX.Views.EventActions({el:$(el)});
+        break;
+      default:
+        new IONUX.Views.GroupActions({el:$(el)});
+    };
   });
+  
   _.each($('.v01 .'+resource_type+'.block, .v02 .'+resource_type+'.block'), function(el) {
     new IONUX.Views.BlockActions({el:$(el)});
   });
+  
   new IONUX.Views.ViewActions({el: '.'+resource_type+' .heading-right'});
 
   // Show the relevant elements and click to enable the Bootstrap tabs.
