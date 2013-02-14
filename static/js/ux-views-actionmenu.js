@@ -220,7 +220,11 @@ IONUX.Views.EventActions = IONUX.Views.ActionMenu.extend({
     },
     
     add_event: function(){
-      alert('add_event');
+      if (IONUX.SESSION_MODEL.get('is_logged_in') != true) {
+        alert("You must be logged in to add an event")
+      } else {
+        new IONUX.Views.ResourceAddEventView().render().el;
+      }
     },
 });
 

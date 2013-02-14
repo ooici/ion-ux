@@ -438,9 +438,66 @@ function integration_log(id, db_path, integration_info ) {
     console.log('ID: ' + id + ' --DB-PATH: ' + db_path + ' --INTEGRATION-INFO: ' + integration_info);
 };
 
+IONUX.Views.ResourceAddEventView = Backbone.View.extend({
+  tagName: "div",
+  template: _.template($("#resource-add-event-tmpl").html()),
+  events: {
+    "click #add-event-ok": "ok_clicked"
+  },
+  render: function() {
+    $('body').append(this.$el);
+    var modal_html = this.template();
+    this.$el.append(modal_html);
 
+    var self = this;
 
+    $('#resource-add-event-overlay').modal()
+      .on('hidden', function() {
+        self.$el.remove();
+      });
 
+    return false;
+  },
+  ok_clicked: function() {
+    // disable ok button from multiple clicks
+    $('#add-event-ok', this.$el).attr('disabled', true);
+
+    var url = window.location.href + "publish_event/";
+    var vals = { 'description': $('#description', this.$el).val() };
+
+    function remove() {
+      $('#resource-add-event-overlay').modal('hide');
+    }
+
+    function failure(reason) {
+      remove();
+      alert("Could not create the event");
+    }
+
+    $.post(url, vals)
+      .done(function(resp) {
+        remove();
+
+        // @TODO this is HEAVYWEIGHT just to get recent events updated
+        var resource_extension = new IONUX.Models.ResourceExtension({resource_type: window.MODEL_DATA['resource_type'], resource_id: window.MODEL_DATA['_id']});
+        resource_extension.fetch()
+          .done(function() {
+            window.MODEL_DATA['computed']['recent_events'] = resource_extension.get('computed')['recent_events'];
+            var el = $('div[data-label="Events"]');
+            var data_path = $(el).data('path');
+            var raw_table_data = get_descendant_properties(window.MODEL_DATA, data_path);
+            if (!_.isEmpty(raw_table_data)) {
+                var table = new IONUX.Views.DataTable({el: $(el), data: raw_table_data});
+            } else {
+                var table = new IONUX.Views.DataTable({el: $(el), data: []});
+            };
+          });
+      })
+      .fail(function(resp) {
+        failure();
+      });
+  },
+});
 
 
 // LEFT FOR REFERENCE
@@ -475,7 +532,6 @@ function integration_log(id, db_path, integration_info ) {
 //    return this; 
 //   }
 // });
-
 
 // IONUX.Views.UserRequestItemView = Backbone.View.extend({
 //   tagName: "tr",
