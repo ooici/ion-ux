@@ -74,4 +74,59 @@ IONUX.Views.NotificationItem = Backbone.View.extend({
       }
     });
   }
-})
+});
+
+// IONUX.Views.Subscribe = Backbone.View.extend({
+//     el: '#action-modal',
+//     template: _.template($('#subscribe-tmpl').html()),
+//     events: {
+//         'click #btn-subscribe': 'subscribe'
+//     },
+//     render: function() {
+//         this.$el.html(this.template);
+//         this.get_event_types();
+//         return this;
+//     },
+//     subscribe: function(evt){
+//         evt.preventDefault();
+//         var button_elmt = $(evt.target);
+//         var select_elmt = this.$el.find('select');
+//         var selected_option = this.$el.find('option:selected');
+//         var event_type = selected_option.attr("value");
+//         var resource_name = window.MODEL_DATA['resource']['name'];
+//         // button_elmt.attr("disabled", "disabled");
+//         // select_elmt.attr("disabled", "disabled");
+//         var self = this;
+//         $.ajax({
+//           url: 'subscribe/?event_type='+event_type+'?resource_name='+resource_name,
+//           dataType: 'json',
+//           success: function(resp){
+//               self.$el.find('.modal-body').prepend('<div class="alert alert-success">Subscription successful.</div>');
+//           },
+//           // error: function() {
+//           //     self.$el.find('.modal-body').prepend('<div class="alert alert-error">Subscription error.</div>');
+//           // },
+//           // complete: function(resp){
+//           // }
+//         });
+//     },
+//     get_event_types: function(evt) {
+//          var self = this;
+//          $.ajax({
+//            url: '/event_types/',
+//            dataType: 'json',
+//            success: function(resp){
+//                var select_elmt = $('#event-types');
+//                select_elmt.empty();
+//                var option_tmpl = '<option value="<%= event_type_name %>"><%= event_type_name %></option>'
+//                _.each(resp.data, function(event_type_name){
+//                    select_elmt.append(_.template(option_tmpl, {event_type_name: event_type_name}));
+//                });
+//            },
+//            error: function(resp) {
+//                console.log('Error: ', resp);
+//            }
+//          }); 
+//      },
+// });
+

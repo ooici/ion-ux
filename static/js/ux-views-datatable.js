@@ -351,7 +351,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
                                       <p>Name: <%= name %><br />\
                                       Description: <%= desc %><br />\
                                       Mime-type: <%= mime %></p>\
-                                      <p><a id="download" onclick="window.open(\'<%= dl_url %>\')" class="btn-general">Download</a>\
+                                      <p><a id="download" data-dismiss="modal" onclick="window.open(\'<%= dl_url %>\')" class="btn-general">Download</a>\
                                       <a class="btn-general" data-dismiss="modal" href="<%= fp_url %>">Facepage</a></p>\
                                    </div>\
                                    <div class="modal-footer">\
