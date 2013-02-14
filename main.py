@@ -197,20 +197,21 @@ def extension(resource_type, resource_id):
 # -----------------------------------------------------------------------------
 
 @app.route('/InstrumentDevice/command/<instrument_device_id>/<agent_command>/')
+@login_required
 def start_instrument_agent(instrument_device_id, agent_command, cap_type=None):
     cap_type = request.args.get('cap_type')
     if agent_command == 'start':
         command_response = ServiceApi.instrument_agent_start(instrument_device_id)
-        return jsonify(data=command_response)
+        return render_json_response(command_response)
     elif agent_command == 'stop':
         command_response = ServiceApi.instrument_agent_stop(instrument_device_id)
-        return jsonify(data=command_response)
+        return render_json_response(command_response)
     elif agent_command == 'get_capabilities':
         command_response = ServiceApi.instrument_agent_get_capabilities(instrument_device_id)
-        return jsonify(data=command_response)
+        return render_json_response(command_response)
     else:
         command_response = ServiceApi.instrument_execute(instrument_device_id, agent_command, cap_type)
-    return jsonify(data=command_response)
+    return render_json_response(command_response)
 
 
 @app.route('/PlatformDevice/command/<platform_device_id>/<agent_command>/')

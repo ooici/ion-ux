@@ -21,6 +21,7 @@ IONUX = {
   },
   setup_ajax_error: function(){
     $(document).ajaxError(function(evt, resp){
+      console.log('setup_ajax_error', resp);
       var error_obj = JSON.parse(resp['responseText'])['data']['GatewayError'];
       
       var open_modal = $('.modal-ooi').is(':visible') ? true : false;

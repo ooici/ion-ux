@@ -41,14 +41,10 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
 
     $.ajax({
       url:command,
-      global: false,
       dataType: 'json',
       success: function(resp) {
         var data = resp.data;
         $(".command-output").append($('<p class="command-success">').html("OK: '" + command + "' was successful. <br />" + JSON.stringify(data.result)));
-      },
-      error: function() {
-        $(".command-output").append($('<p class="command-failure">').text("ERROR: '" + command + "' was unsuccessful."));
       },
       complete: function(resp){
           button_elmt.removeAttr("disabled");
@@ -64,14 +60,11 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
     var self = this;
     $.ajax({
         url: 'start/',
-        global: false,
         success: function() {
           $('.instrument-commands').show();
           $('#start-instrument-agent-instance').hide();
           $(' #stop-instrument-agent-instance').show();
           self.get_capabilities();
-        },
-        error: function() {
         }
     });    
     return false;
@@ -81,7 +74,6 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
       var self = this;
       $.ajax({
         url: 'get_capabilities?cap_type=abc123',
-        // global: false,
         dataType: 'json',
         success: function(resp){
             var agent_options = [];
@@ -114,9 +106,6 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
         $('#stop-instrument-agent-instance').hide();
         $('#start-instrument-agent-instance').show();
         $('.instrument-commands').hide();
-      },
-      error: function() {
-        alert("An error occured.");
       }
     });
     return false;
