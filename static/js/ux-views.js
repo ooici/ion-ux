@@ -477,21 +477,8 @@ IONUX.Views.ResourceAddEventView = Backbone.View.extend({
     $.post(url, vals)
       .done(function(resp) {
         remove();
-
-        // @TODO this is HEAVYWEIGHT just to get recent events updated
-        var resource_extension = new IONUX.Models.ResourceExtension({resource_type: window.MODEL_DATA['resource_type'], resource_id: window.MODEL_DATA['_id']});
-        resource_extension.fetch()
-          .done(function() {
-            window.MODEL_DATA['computed']['recent_events'] = resource_extension.get('computed')['recent_events'];
-            var el = $('div[data-label="Events"]');
-            var data_path = $(el).data('path');
-            var raw_table_data = get_descendant_properties(window.MODEL_DATA, data_path);
-            if (!_.isEmpty(raw_table_data)) {
-                var table = new IONUX.Views.DataTable({el: $(el), data: raw_table_data});
-            } else {
-                var table = new IONUX.Views.DataTable({el: $(el), data: []});
-            };
-          });
+        Backbone.history.fragment = null; // Clear history fragment to allow for page "refresh".
+        IONUX.ROUTER.navigate(window.location.pathname, {trigger: true});
       })
       .fail(function(resp) {
         failure();
