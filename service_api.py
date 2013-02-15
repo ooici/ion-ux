@@ -280,19 +280,27 @@ class ServiceApi(object):
         return agent_response
     
 
-
+        
     # SIGNON
     # ---------------------------------------------------------------------------
 
     @staticmethod
+    def signon_test():
+        signon_requester = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'ActorIdentity', 'name': 'Identity for Apache Actor'})
+        # signon_requester_id = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'ActorIdentity', 'name': 'Identity for Apache Actor'})
+        return signon_requester
+
+    @staticmethod
     def signon_user(certificate):
         params={'certificate': certificate}
-        actor_id, valid_until, is_registered = service_gateway_post('identity_management', 'signon', params)
+        signon_requester = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'ActorIdentity', 'name': 'Identity for Apache Actor'})['_id']
+        actor_id, valid_until, is_registered = service_gateway_post('identity_management', 'signon', params, signon=True)
         
         # set user id, valid until and is registered info in session
         # TODO might need to address issues that arise with using
         # session to set cookie when web server ends up being a pool
         # of web servers?
+        
         session['actor_id'] = actor_id
         session['valid_until'] = valid_until
         session['is_registered'] = is_registered
@@ -428,9 +436,9 @@ class ServiceApi(object):
 
 def _build_param_str(params=None):
     param_string = '?'
-
-    requester = session['actor_id'] if session.has_key('actor_id') else 'None'
-    param_string += 'requester=%s' % requester
+    
+    # requester = session['actor_id'] if session.has_key('actor_id') else 'None'
+    # param_string += 'requester=%s' % requester
 
     if params is not None:
         for k, v in params.iteritems():
@@ -451,7 +459,7 @@ def build_get_request(base, service_name, operation_name=None, params=None):
     param_string = _build_param_str(params)
 
     url += param_string
-    #pretty_console_log('SERVICE GATEWAY GET URL', url)
+    pretty_console_log('SERVICE GATEWAY GET URL', url)
 
     return url
 
@@ -460,11 +468,14 @@ def service_gateway_get(service_name, operation_name, params=None, base=SERVICE_
     pretty_console_log('SERVICE GATEWAY GET RESPONSE', service_gateway_request.content)
     return render_service_gateway_response(service_gateway_request)
 
-def render_service_gateway_response(service_gateway_resp):
+def render_service_gateway_response(service_gateway_resp, signon=None):
     if service_gateway_resp.status_code == 200:
         resp = json.loads(service_gateway_resp.content)
         try:
             response = resp['data']['GatewayResponse']
+            # return actor_id, valid_until, is_registered tuple/list
+            if signon:
+                return response
             if isinstance(response, list):
                 return response[0]
             else:
@@ -472,7 +483,7 @@ def render_service_gateway_response(service_gateway_resp):
         except Exception, e:
             return resp['data']
     else:
-        return json.dumps(GATEWAY_ERROR)
+        return json.dumps(service_gateway_resp.content)
 
 def build_post_request(service_name, operation_name, params=None):
     url = '%s/%s/%s' % (SERVICE_GATEWAY_BASE_URL, service_name, operation_name)
@@ -492,11 +503,11 @@ def build_post_request(service_name, operation_name, params=None):
     pretty_console_log('SERVICE GATEWAY POST URL/DATA', url, data)
     return url, data
 
-def service_gateway_post(service_name, operation_name, params=None):
+def service_gateway_post(service_name, operation_name, params=None, signon=None):
     url, data = build_post_request(service_name, operation_name, params)
     service_gateway_request = requests.post(url, data)
     pretty_console_log('SERVICE GATEWAY POST RESPONSE', service_gateway_request.content)
-    return render_service_gateway_response(service_gateway_request)
+    return render_service_gateway_response(service_gateway_request, signon=signon)
 
 def build_agent_request(agent_id, operation_name, params=None):
     url = '%s/%s/%s' % (AGENT_GATEWAY_BASE_URL, agent_id, operation_name)

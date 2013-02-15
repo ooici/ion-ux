@@ -287,6 +287,13 @@ def reset_ui():
 # AUTHENTICATION AND SESSIONS
 # -----------------------------------------------------------------------------
 
+@app.route('/signon_test/', methods=['GET'])
+def signon_test():
+    signon = ServiceApi.signon_test();
+    return signon
+    # pass
+
+
 @app.route('/signon/', methods=['GET'])
 def signon():
     user_name = request.args.get('user')

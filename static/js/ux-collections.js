@@ -8,7 +8,7 @@ IONUX.Collections.Resources = Backbone.Collection.extend({
       return '/' + this.resource_type + '/list/'
   },
   parse: function(resp){
-      make_iso_timestamps(resp);
+      make_iso_timestamps(resp.data);
       return resp.data;
   } 
 });

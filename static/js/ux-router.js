@@ -64,7 +64,7 @@ IONUX.Router = Backbone.Router.extend({
         $('.span9').find('li.Collection:first').find('a').click();
         var table_elmt = $('.v02 .Collection .table_ooi').first(); // Todo: better way of finding the container for the collection.
         var table_id = table_elmt.attr('id');
-        new IONUX.Views.DataTable({el: $(table_elmt), data: data.data});
+        new IONUX.Views.DataTable({el: $(table_elmt), data: window.MODEL_DATA.toJSON()});
       });
     new IONUX.Views.Footer({resource_id: null, resource_type: resource_type}).render().el;
   },
