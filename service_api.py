@@ -78,6 +78,16 @@ class ServiceApi(object):
         return events_json['data']['GatewayResponse']
 
     @staticmethod
+    def publish_event(event_type, origin, origin_type, sub_type, description):
+        pdict = { 'event_type'  : event_type,
+                  'origin'      : origin,
+                  'origin_type' : origin_type,
+                  'sub_type'    : sub_type,
+                  'description' : description}
+
+        return service_gateway_post('user_notification', 'publish_event', params=pdict)
+
+    @staticmethod
     def ui_reset():
         return service_gateway_get('directory', 'reset_ui_specs', params={'url': 'http://filemaker.oceanobservatories.org/database-exports/'})
     

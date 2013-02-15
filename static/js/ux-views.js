@@ -438,9 +438,53 @@ function integration_log(id, db_path, integration_info ) {
     console.log('ID: ' + id + ' --DB-PATH: ' + db_path + ' --INTEGRATION-INFO: ' + integration_info);
 };
 
+IONUX.Views.ResourceAddEventView = Backbone.View.extend({
+  tagName: "div",
+  template: _.template($("#resource-add-event-tmpl").html()),
+  events: {
+    "click #add-event-ok": "ok_clicked"
+  },
+  render: function() {
+    $('body').append(this.$el);
+    var modal_html = this.template();
+    this.$el.append(modal_html);
 
+    var self = this;
 
+    $('#resource-add-event-overlay').modal()
+      .on('hidden', function() {
+        self.$el.remove();
+      });
 
+    return false;
+  },
+  ok_clicked: function() {
+    // disable ok button from multiple clicks
+    $('#add-event-ok', this.$el).attr('disabled', true);
+
+    var url = window.location.href + "publish_event/";
+    var vals = { 'description': $('#description', this.$el).val() };
+
+    function remove() {
+      $('#resource-add-event-overlay').modal('hide');
+    }
+
+    function failure(reason) {
+      remove();
+      alert("Could not create the event");
+    }
+
+    $.post(url, vals)
+      .done(function(resp) {
+        remove();
+        Backbone.history.fragment = null; // Clear history fragment to allow for page "refresh".
+        IONUX.ROUTER.navigate(window.location.pathname, {trigger: true});
+      })
+      .fail(function(resp) {
+        failure();
+      });
+  },
+});
 
 
 // LEFT FOR REFERENCE
@@ -475,7 +519,6 @@ function integration_log(id, db_path, integration_info ) {
 //    return this; 
 //   }
 // });
-
 
 // IONUX.Views.UserRequestItemView = Backbone.View.extend({
 //   tagName: "tr",

@@ -133,6 +133,22 @@ def change_lcstate(resource_type, resource_id):
     transition = ServiceApi.transition_lcstate(resource_id, transition_event)
     return render_json_response(transition)
 
+@app.route('/<resource_type>/status/<resource_id>/publish_event/', methods=['POST'])
+@app.route('/<resource_type>/face/<resource_id>/publish_event/', methods=['POST'])
+@app.route('/<resource_type>/related/<resource_id>/publish_event/', methods=['POST'])
+@login_required
+def publish_event(resource_type, resource_id):
+    if resource_type == 'InstrumentDevice':
+        event_type = 'DeviceOperatorEvent'
+    else:
+        event_type  = 'ResourceOperatorEvent'
+
+    sub_type    = None
+    description = request.form['description']
+
+    resp = ServiceApi.publish_event(event_type, resource_id, resource_type, sub_type, description)
+    return render_json_response(resp)
+
 # -----------------------------------------------------------------------------
 # FACE, STATUS, RELATED PAGES
 # -----------------------------------------------------------------------------
