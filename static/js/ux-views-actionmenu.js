@@ -170,7 +170,6 @@ IONUX.Views.GroupActions = IONUX.Views.ActionMenu.extend({
     action__edit:function(){
         alert("IONUX.Views.GroupActions - ACTION: edit");
     }
-
 });
 
 IONUX.Views.BlockActions = IONUX.Views.ActionMenu.extend({

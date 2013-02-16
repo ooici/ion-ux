@@ -303,13 +303,6 @@ def reset_ui():
 # AUTHENTICATION AND SESSIONS
 # -----------------------------------------------------------------------------
 
-@app.route('/signon_test/', methods=['GET'])
-def signon_test():
-    signon = ServiceApi.signon_test();
-    return signon
-    # pass
-
-
 @app.route('/signon/', methods=['GET'])
 def signon():
     user_name = request.args.get('user')
@@ -450,9 +443,9 @@ def dev_image(resource_id=None):
 # CATCH ANY UNMATCHED ROUTES
 # -----------------------------------------------------------------------------
 
-@app.route("/<catchall>")
-def catchall(catchall):
-    return render_app_template(catchall)
+# @app.route("/<catchall>")
+# def catchall(catchall):
+#     return render_app_template(catchall)
 
     
 if __name__ == '__main__':

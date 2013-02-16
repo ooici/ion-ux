@@ -295,16 +295,15 @@ class ServiceApi(object):
     # ---------------------------------------------------------------------------
 
     @staticmethod
-    def signon_test():
-        signon_requester = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'ActorIdentity', 'name': 'Identity for Apache Actor'})
-        # signon_requester_id = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'ActorIdentity', 'name': 'Identity for Apache Actor'})
-        return signon_requester
+    def signon_tester():
+        signon_request = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'ActorIdentity', 'name': 'web_authentication', 'id_only': True})[0]
+        return signon_request
 
     @staticmethod
     def signon_user(certificate):
         params={'certificate': certificate}
-        signon_requester = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'ActorIdentity', 'name': 'Identity for Apache Actor'})['_id']
-        actor_id, valid_until, is_registered = service_gateway_post('identity_management', 'signon', params, signon=True)
+        web_requester_id = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'ActorIdentity', 'name': 'web_authentication', 'id_only': True})[0]
+        actor_id, valid_until, is_registered = service_gateway_post('identity_management', 'signon', params, signon=True, web_requester_id=web_requester_id)
         
         # set user id, valid until and is registered info in session
         # TODO might need to address issues that arise with using
@@ -447,8 +446,8 @@ class ServiceApi(object):
 def _build_param_str(params=None):
     param_string = '?'
     
-    # requester = session['actor_id'] if session.has_key('actor_id') else 'None'
-    # param_string += 'requester=%s' % requester
+    requester = session['actor_id'] if session.has_key('actor_id') else 'None'
+    param_string += 'requester=%s' % requester
 
     if params is not None:
         for k, v in params.iteritems():
@@ -467,7 +466,7 @@ def build_get_request(base, service_name, operation_name=None, params=None):
 
     url = "/".join(urlarr)
     param_string = _build_param_str(params)
-
+    
     url += param_string
     pretty_console_log('SERVICE GATEWAY GET URL', url)
 
@@ -483,8 +482,8 @@ def render_service_gateway_response(service_gateway_resp, signon=None):
         resp = json.loads(service_gateway_resp.content)
         try:
             response = resp['data']['GatewayResponse']
-            # return actor_id, valid_until, is_registered tuple/list
-            if signon:
+            
+            if signon: # return actor_id, valid_until, is_registered tuple/list
                 return response
             if isinstance(response, list):
                 return response[0]
@@ -495,7 +494,7 @@ def render_service_gateway_response(service_gateway_resp, signon=None):
     else:
         return json.dumps(service_gateway_resp.content)
 
-def build_post_request(service_name, operation_name, params=None):
+def build_post_request(service_name, operation_name, params=None, web_requester_id=None):
     url = '%s/%s/%s' % (SERVICE_GATEWAY_BASE_URL, service_name, operation_name)
     post_data = deepcopy(SERVICE_REQUEST_TEMPLATE)
     post_data['serviceRequest']['serviceName'] = service_name
@@ -503,8 +502,10 @@ def build_post_request(service_name, operation_name, params=None):
     if params is not None:
         post_data['serviceRequest']['params'] = params
     # conditionally add user id and expiry to request
-    if "actor_id" in session:
-        print 'xxx',session['actor_id']
+    
+    if web_requester_id:
+        post_data['serviceRequest']['requester'] = web_requester_id
+    elif "actor_id" in session:
         post_data['serviceRequest']['requester'] = session['actor_id']
         post_data['serviceRequest']['expiry'] = session['valid_until']
         
@@ -513,8 +514,8 @@ def build_post_request(service_name, operation_name, params=None):
     pretty_console_log('SERVICE GATEWAY POST URL/DATA', url, data)
     return url, data
 
-def service_gateway_post(service_name, operation_name, params=None, signon=None):
-    url, data = build_post_request(service_name, operation_name, params)
+def service_gateway_post(service_name, operation_name, params=None, signon=None, web_requester_id=None):
+    url, data = build_post_request(service_name, operation_name, params, web_requester_id)
     service_gateway_request = requests.post(url, data)
     pretty_console_log('SERVICE GATEWAY POST RESPONSE', service_gateway_request.content)
     return render_service_gateway_response(service_gateway_request, signon=signon)
