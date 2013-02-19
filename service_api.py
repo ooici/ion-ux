@@ -494,8 +494,17 @@ def render_service_gateway_response(service_gateway_resp, signon=None):
     else:
         return json.dumps(service_gateway_resp.content)
 
-def build_post_request(service_name, operation_name, params=None, web_requester_id=None):
-    url = '%s/%s/%s' % (SERVICE_GATEWAY_BASE_URL, service_name, operation_name)
+def build_post_request(service_name, operation_name, params=None, web_requester_id=None, base=SERVICE_GATEWAY_BASE_URL):
+    """
+    Builds a post request out of a service/operation and optional params.
+    operation_name may be left blank if going to a custom url.
+    """
+    urlarr = [base, service_name]
+    if operation_name is not None:
+        urlarr.append(operation_name)
+
+    url = "/".join(urlarr)
+
     post_data = deepcopy(SERVICE_REQUEST_TEMPLATE)
     post_data['serviceRequest']['serviceName'] = service_name
     post_data['serviceRequest']['serviceOp'] = operation_name
@@ -514,8 +523,8 @@ def build_post_request(service_name, operation_name, params=None, web_requester_
     pretty_console_log('SERVICE GATEWAY POST URL/DATA', url, data)
     return url, data
 
-def service_gateway_post(service_name, operation_name, params=None, signon=None, web_requester_id=None):
-    url, data = build_post_request(service_name, operation_name, params, web_requester_id)
+def service_gateway_post(service_name, operation_name, params=None, signon=None, web_requester_id=None, base=SERVICE_GATEWAY_BASE_URL):
+    url, data = build_post_request(service_name, operation_name, params, web_requester_id=web_requester_id, base=base)
     service_gateway_request = requests.post(url, data)
     pretty_console_log('SERVICE GATEWAY POST RESPONSE', service_gateway_request.content)
     return render_service_gateway_response(service_gateway_request, signon=signon)
