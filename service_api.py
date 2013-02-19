@@ -42,6 +42,30 @@ class ServiceApi(object):
         return req
 
     @staticmethod
+    def create_resource_attachment(resource_id, attachment_name, attachment_description, attachment_type, attachment_content_type, content):
+        # use build_post_request to get url
+        url, _ = build_post_request('attachment', None)
+
+        # form our own data
+        post_data = {}
+        if "actor_id" in session:
+            post_data.update({'requester' : session['actor_id'],
+                              'expiry'    : session['valid_until']})
+
+        post_data.update({'resource_id'             : resource_id,
+                          'attachment_name'         : attachment_name,
+                          'attachment_description'  : attachment_description,
+                          'attachment_type'         : attachment_type,
+                          'attachment_content_type' : attachment_content_type})
+
+        post_files = { 'file': (attachment_name, content) }
+
+        # make our own post
+        req = requests.post(url, post_data, files=post_files)
+
+        return req
+
+    @staticmethod
     def transition_lcstate(resource_id, transition_event):
         req = service_gateway_get('resource_management', 'execute_lifecycle_transition', params={'resource_id': resource_id, 'transition_event': transition_event})
         return req

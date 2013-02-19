@@ -486,6 +486,83 @@ IONUX.Views.ResourceAddEventView = Backbone.View.extend({
   },
 });
 
+IONUX.Views.ResourceAddAttachmentView = Backbone.View.extend({
+  tagName: "div",
+  template: _.template($("#resource-add-attachment-tmpl").html()),
+  events: {
+    "click #add-attachment-ok": "ok_clicked"
+  },
+  up_trigger: null,
+  render: function() {
+    $('body').append(this.$el);
+    var modal_html = this.template();
+    this.$el.append(modal_html);
+
+    var self = this;
+
+    // jquery upload initialization
+    $('#attachment').fileupload({
+      url: "/attachment/" + window.MODEL_DATA['_id'] + "/",
+      dataType: 'json',
+      add: function(e, data) {
+        self.up_trigger = data;
+      },
+      replaceFileInput: false,
+      done: function(e, data) {
+        $('.progress', '#resource-add-attachment-overlay').addClass('progress-success');
+        $('#resource-add-attachment-overlay').modal('hide');
+
+        Backbone.history.fragment = null; // Clear history fragment to allow for page "refresh".
+        IONUX.ROUTER.navigate(window.location.pathname, {trigger: true});
+      },
+      fail: function(e, data) {
+        console.log(data);
+        alert("Failed to upload: " + data.errorText);
+      },
+      always: function(e, data) {
+        $('input', '#resource-add-attachment-overlay').attr('disabled', false);
+
+        var atel = $('#attachment');
+        atel.css('display', 'inherit');
+        atel.next().css('display', 'inherit'); // should be help-inline span
+
+        $('img.spinner', '#resource-add-attachment-overlay').css('display', 'none');
+
+        $('.progress', atel.parent()).css('display', 'none');
+      },
+      progressall: function(e, data) {
+        var progress = parseInt(data.loaded / data.total * 100, 10);
+        $('.bar', '#resource-add-attachment-overlay .progress').css('width', progress + '%');
+      },
+    });
+
+    $('#resource-add-attachment-overlay').modal()
+    .on('hidden', function() {
+      self.$el.remove();
+    });
+
+    return false;
+  },
+  ok_clicked: function() {
+    if (this.up_trigger == null)
+      alert("Please select a file to upload");
+    else {
+      $('input', '#resource-add-attachment-overlay').attr('disabled', true);
+      var atel = $('#attachment');
+      atel.css('display', 'none');
+      atel.next().css('display', 'none'); // should be help-inline span
+
+      $('.progress', atel.parent()).css('display', 'block');
+
+      $('img.spinner', '#resource-add-attachment-overlay').css('display', 'inline-block');
+
+      this.up_trigger.formData = { 'description' : $('#description').val() };
+      this.up_trigger.submit();
+    }
+  },
+
+});
+
 
 // LEFT FOR REFERENCE
 // IONUX.Views.UserRegistration = IONUX.Views.CreateNewView.extend({
