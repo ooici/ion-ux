@@ -92,14 +92,14 @@ def attachment(attachment_id):
 
     return send_file(attachment, attachment_filename=attachment_name, as_attachment=True)
 
-@app.route('/attachment/<resource_id>/', methods=['POST'])
-def attachment_create(resource_id):
+@app.route('/attachment/', methods=['POST'])
+def attachment_create():
     fd = request.files['attachment']
     attachment_type = 2
     if fd.mimetype.startswith("text/"):
         attachment_type = 1
 
-    retval = ServiceApi.create_resource_attachment(resource_id,
+    retval = ServiceApi.create_resource_attachment(request.form['resource_id'],
                                                    fd.filename,
                                                    request.form['description'],
                                                    attachment_type,

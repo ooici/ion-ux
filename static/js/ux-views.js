@@ -502,7 +502,7 @@ IONUX.Views.ResourceAddAttachmentView = Backbone.View.extend({
 
     // jquery upload initialization
     $('#attachment').fileupload({
-      url: "/attachment/" + window.MODEL_DATA['_id'] + "/",
+      url: "/attachment/",
       dataType: 'json',
       add: function(e, data) {
         self.up_trigger = data;
@@ -556,7 +556,8 @@ IONUX.Views.ResourceAddAttachmentView = Backbone.View.extend({
 
       $('img.spinner', '#resource-add-attachment-overlay').css('display', 'inline-block');
 
-      this.up_trigger.formData = { 'description' : $('#description').val() };
+      this.up_trigger.formData = { 'description' : $('#description').val(),
+                                   'resource_id' : window.MODEL_DATA['_id'] };
       this.up_trigger.submit();
     }
   },
