@@ -374,11 +374,11 @@ class ServiceApi(object):
         return user_infos
     
     @staticmethod
-    def create_user_info(user_id, user_info):
-        params={'user_id': user_id}
+    def create_user_info(actor_id, user_info):
+        params={'actor_id': actor_id}
         params['user_info'] = user_info
         params['user_info']['type_'] = 'UserInfo'
-        return service_gateway_post('identity_management', 'create_user_info', params)
+        return service_gateway_post('identity_management', 'create_user_info', params, raw_return=True)
     
     @staticmethod
     def update_user_info(user_info):

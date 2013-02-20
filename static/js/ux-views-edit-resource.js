@@ -94,6 +94,11 @@ IONUX.Views.EditUserRegistration = IONUX.Views.EditResource.extend({
       .done(function(resp) {
         // MODAL CLOSE
         $('#user-profile-overlay').modal('hide');
+
+        // refresh session model and affected areas of the UI (topbar so far)
+        IONUX.SESSION_MODEL.fetch().complete(function(resp) {
+          new IONUX.Views.Topbar({model: IONUX.SESSION_MODEL}).render().el
+        });
     });
   },
 

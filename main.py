@@ -353,19 +353,33 @@ def userprofile():
             if is_registered:
                 resp_data = ServiceApi.find_user_info(session['actor_id'])
             else:
-                resp_data = {'contact': {'name': '', 'email': '', 'phone': '', 'address': '', 'city': '', 'postalcode': ''}}
+                resp_data = {}
             return jsonify(data=resp_data)
         else:
             form_data = json.loads(request.data)
             if is_registered:
-                ServiceApi.update_user_info(form_data)
-            else:
-                ServiceApi.create_user_info(user_id, form_data)
-        
-            # indicate user is registered
-            session['is_registered'] = True
+                resp_data = ServiceApi.update_user_info(form_data)
 
-            resp_data = {"success":True}            
+                if isinstance(resp_data, dict) and resp_data.has_key('GatewayError'):
+                    return render_json_response(resp_data)
+                else:
+                    # only thing that can change here for session is name
+                    session['name'] = form_data['name']
+
+            else:
+                user_id = ServiceApi.create_user_info(session['actor_id'], form_data)
+
+                if isinstance(user_id, dict) and user_id.has_key('GatewayError'):
+                    return render_json_response(user_id)
+                else:
+                    # simulate a signon by setting appropriate session vars
+                    session['is_registered'] = True
+                    session['user_id']       = user_id
+                    session['roles']         = ServiceApi.get_roles_by_actor_id(session['actor_id'])
+                    session['name']          = form_data['name']
+                    #session['valid_until']  = 0     # @TODO: howto? only in certificate, so logon?
+
+            resp_data = {"success":True}
             return jsonify(data=resp_data)
     else:
         return render_app_template(request.path)

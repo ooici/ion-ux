@@ -415,7 +415,8 @@ IONUX.Models.UserRegistrationModel = IONUX.Models.EditableResource.extend({
 
   parse: function(resp) {
     var data = resp.data;
-    data = this.attr_convert_parse(data);
+    if (data != null)
+      data = this.attr_convert_parse(data);
     return data;
   },
 
