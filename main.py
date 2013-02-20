@@ -306,9 +306,9 @@ def reset_ui():
 @app.route('/signon/', methods=['GET'])
 def signon():
     user_name = request.args.get('user')
-
     if user_name:
-        ServiceApi.signon_user_testmode(user_name)
+        if not PRODUCTION:
+            ServiceApi.signon_user_testmode(user_name)
         return redirect('/')
     
     # carriage returns were removed on the cilogon portal side,
