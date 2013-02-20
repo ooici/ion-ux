@@ -22,18 +22,40 @@ var NestedFormModel = Backbone.DeepModel.extend({
 
   initialize: function(attrs, options){
     this.black_list = options.black_list || [];
+    Backbone.Form.helpers.keyToTitle = this.key_to_title;
   },
 
   schema: function(){
-    return this.make_schema();
+    var schema = this.make_schema();
+    console.log(schema);
+    return schema;
   },
 
   make_schema: function(){
     var paths = this.object_to_paths(this.attributes);
-    var tfield = function(){return "Text";}; //All 'Text' fields for now
+    var defaults = {type: "Text", fieldClass: "fieldClass",
+                   fieldAttrs:{style: "margin-left:10px"}};
+    var tfield = function(){return defaults}; //All 'Text' fields for now
     var schema_full = _.object(paths, _.map(_.range(paths.length), tfield));
     var schema = _.omit(schema_full, this.black_list); // remove black_listed
     return schema
+  },
+
+  key_to_title: function(val){
+    //console.log("key_to_title - val: ", val);
+    var wlist = val.split(".");
+    wlist.shift(); //remove root name
+    var isInt = function(w){return _.isNaN(parseInt(w))};
+    var isNotInt = function(w){return !_.isNaN(parseInt(w))};
+    //XXX use regex: ".<Int>." instead for more precise pad depth discovery?
+    console.log(_.filter(wlist, isInt));
+    var pad = _.filter(wlist, isNotInt).length;
+    wlist = _.flatten(_.map(wlist, function(w){return w.split("_")}));
+    console.log("pad, wlist:", pad, wlist); //TODO use for css padding
+    var capital = function(w){return w.charAt(0).toUpperCase() + w.slice(1)};
+    wlist = _.map(wlist, capital);
+    title = wlist.join(" ");
+    return title;
   },
   
   object_to_paths: function(obj){
