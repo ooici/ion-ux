@@ -70,35 +70,6 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
     return false;
   },
   
-  get_capabilities: function(evt) {
-      var self = this;
-      $.ajax({
-        url: 'get_capabilities?cap_type=abc123',
-        dataType: 'json',
-        success: function(resp){
-            var agent_options = [];
-            var resource_options = [];
-            
-            _.each(resp.data, function(option) {
-                if (option.name != 'example'){
-                    if (option.cap_type == 1) agent_options.push(option);
-                    if (option.cap_type == 3) resource_options.push(option);
-                };
-            });
-            
-            var select_elmt = $('#new-commands');
-            select_elmt.empty();
-            
-            var option_elmts = agent_options.concat(resource_options);
-            var option_tmpl = '<option data-cap-type="<%= cap_type %>" value="<%= name %>"><%= name %></option>'
-            _.each(option_elmts, function(option){
-                select_elmt.append(_.template(option_tmpl, option));
-            });
-        }
-      });
-      
-  },
-  
   stop_agent: function(evt) {
     $.ajax({
       url: 'stop/',
@@ -109,5 +80,38 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
       }
     });
     return false;
+  },
+  
+  get_capabilities: function(evt) {
+      var self = this;
+      $.ajax({
+        url: 'get_capabilities?cap_type=abc123',
+        dataType: 'json',
+        success: function(resp){
+          var agent_options = [];
+          var resource_options = [];
+          var param_options = [];
+          _.each(resp.data, function(option) {
+            if (option.name != 'example'){
+              if (option.cap_type == 1) agent_options.push(option);
+              if (option.cap_type == 3) resource_options.push(option);
+
+            };
+          });
+          self.render_select_menu(agent_options.concat(resource_options));
+        }
+      });
+      
+  },
+  
+  render_parameters: function(options){
+  },
+  
+  render_select_menu: function(options) {
+    var select_elmt = $('#new-commands').empty();
+    var option_tmpl = '<option data-cap-type="<%= cap_type %>" value="<%= name %>"><%= name %></option>'
+    _.each(options, function(option){
+      select_elmt.append(_.template(option_tmpl, option));
+    });
   }
 });

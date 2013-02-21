@@ -327,7 +327,7 @@ class ServiceApi(object):
     def signon_user(certificate):
         params={'certificate': certificate}
         web_requester_id = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'ActorIdentity', 'name': 'web_authentication', 'id_only': True})[0]
-        actor_id, valid_until, is_registered = service_gateway_post('identity_management', 'signon', params, signon=True, web_requester_id=web_requester_id)
+        actor_id, valid_until, is_registered = service_gateway_post('identity_management', 'signon', params, raw_return=True, web_requester_id=web_requester_id)
         
         # set user id, valid until and is registered info in session
         # TODO might need to address issues that arise with using
@@ -501,13 +501,13 @@ def service_gateway_get(service_name, operation_name, params=None, base=SERVICE_
     pretty_console_log('SERVICE GATEWAY GET RESPONSE', service_gateway_request.content)
     return render_service_gateway_response(service_gateway_request)
 
-def render_service_gateway_response(service_gateway_resp, signon=None):
+def render_service_gateway_response(service_gateway_resp, raw_return=None):
     if service_gateway_resp.status_code == 200:
         resp = json.loads(service_gateway_resp.content)
         try:
             response = resp['data']['GatewayResponse']
             
-            if signon: # return actor_id, valid_until, is_registered tuple/list
+            if raw_return: # return actor_id, valid_until, is_registered tuple/list
                 return response
             if isinstance(response, list):
                 return response[0]
@@ -547,11 +547,11 @@ def build_post_request(service_name, operation_name, params=None, web_requester_
     pretty_console_log('SERVICE GATEWAY POST URL/DATA', url, data)
     return url, data
 
-def service_gateway_post(service_name, operation_name, params=None, signon=None, web_requester_id=None, base=SERVICE_GATEWAY_BASE_URL):
+def service_gateway_post(service_name, operation_name, params=None, raw_return=None, web_requester_id=None, base=SERVICE_GATEWAY_BASE_URL):
     url, data = build_post_request(service_name, operation_name, params, web_requester_id=web_requester_id, base=base)
     service_gateway_request = requests.post(url, data)
     pretty_console_log('SERVICE GATEWAY POST RESPONSE', service_gateway_request.content)
-    return render_service_gateway_response(service_gateway_request, signon=signon)
+    return render_service_gateway_response(service_gateway_request, raw_return=raw_return)
 
 def build_agent_request(agent_id, operation_name, params=None):
     url = '%s/%s/%s' % (AGENT_GATEWAY_BASE_URL, agent_id, operation_name)
@@ -579,7 +579,7 @@ def service_gateway_agent_request(agent_id, operation_name, params=None):
     url, data = build_agent_request(agent_id, operation_name, params)
     resp = requests.post(url, data)
     pretty_console_log('SERVICE GATEWAY AGENT REQUEST POST RESPONSE', resp.content)
-
+    return render_service_gateway_response(resp, raw_return=True)
     if resp.status_code == 200:
         resp = json.loads(resp.content)
 
