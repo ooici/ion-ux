@@ -348,6 +348,30 @@ class ServiceApi(object):
                 
                 return
 
+        # if still here, search by ActorIdentity
+        actor_identities = ServiceApi.find_by_resource_type("ActorIdentity")
+        for actor_identity in actor_identities:
+            if user_name == actor_identity['name']:
+                actor_id = actor_identity['_id']
+                session['actor_id'] = actor_id
+                session['valid_until'] = str(int(time.time()) * 100000)
+
+                user = service_gateway_get('identity_management', 'find_user_info_by_id', params={'actor_id': actor_id})
+                if user.has_key('_id'):
+                    user_id = user['_id']
+                    is_registered = True
+                else:
+                    user_id = None
+                    is_registered = False
+                name = user['name'] if user.has_key('name') else 'Unregistered'
+
+                session['user_id'] = user_id
+                session['name'] = name
+                session['is_registered'] = is_registered
+                session['roles'] = ServiceApi.get_roles_by_actor_id(actor_id)
+
+                return
+
     @staticmethod
     def get_roles_by_actor_id(actor_id):
         roles_request = requests.get('http://%s:%d/ion-service/org_roles/%s' % (GATEWAY_HOST, GATEWAY_PORT, actor_id))
