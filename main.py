@@ -353,7 +353,20 @@ def userprofile():
             if is_registered:
                 resp_data = ServiceApi.find_user_info(session['actor_id'])
             else:
-                resp_data = {}
+                # try to extract name from UserCredentials
+                creds = ServiceApi.find_user_credentials_by_actor_id(session['actor_id'])
+                cntoken = creds['name']
+                name = ''
+
+                try:
+                    rcn = re.compile(r'CN=(.*)\sA.+')
+                    m = rcn.search(cntoken)
+                    if m is not None:
+                        name = m.groups()[0]
+                except:
+                    pass
+
+                resp_data = {'name':name}
             return jsonify(data=resp_data)
         else:
             form_data = json.loads(request.data)

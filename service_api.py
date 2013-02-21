@@ -461,6 +461,14 @@ class ServiceApi(object):
         return user_info
 
     @staticmethod
+    def find_user_credentials_by_actor_id(actor_id):
+        return service_gateway_get('resource_registry',
+                                   'find_objects',
+                                   params={'subject':actor_id,
+                                           'predicate':'hasCredentials',
+                                           'object_type':'UserCredentials'})[0]
+
+    @staticmethod
     def get_version():
         return service_gateway_get('version', None, base=GATEWAY_BASE_URL)
 

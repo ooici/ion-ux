@@ -1109,8 +1109,12 @@ ul.nav {
   margin-bottom: 0px;
 }
 
+#user-profile-overlay .control-label {
+    padding-top: 9px;
+}
+
 #user-profile-overlay input {
-  width: 100%;
+  width: 90%;
 }
 
 #user-profile-overlay .bbf-object {
