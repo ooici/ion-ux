@@ -151,7 +151,7 @@ class Deploy:
     def clone(self):
         local('rm -rf ' + self.clone_dir)
         local('mkdir  ' + self.clone_dir)
-        local('git clone %s %s' % (self.git_project_url, self.clone_dir))
+        local('git clone . %s' % (self.clone_dir))
 
         print 'Below is a list of release tags available for deploying:'
         os.chdir(self.clone_dir)
@@ -176,6 +176,7 @@ env.roledefs = {
 
 host = None
 gateway_host = None
+gateway_port = None
 
 def ux_dev():
     global host
@@ -194,10 +195,11 @@ def gateway_sg():
     gateway_host = 'sg.a.oceanobservatories.org'
 
 def deploy():
-    global host, gateway_host
+    global host, gateway_host, gateway_port
     web_host = host or prompt('Web application hostname: ', default='ux-test.oceanobservatories.org')
     ssh_user = prompt('Username for remote host: ', default=getpass.getuser())
     gateway_host= gateway_host or prompt('Service Gateway Service hostname: ', default='sg.a.oceanobservatories.org')
+    gateway_port= gateway_port or prompt('Service Gateway Service port: ', default='5000')
     deploy = Deploy()
 
-    deploy.deploy(ssh_user=ssh_user, web_host=web_host, gateway_host=gateway_host)
+    deploy.deploy(ssh_user=ssh_user, web_host=web_host, gateway_host=gateway_host, gateway_port=gateway_port)

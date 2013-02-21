@@ -98,18 +98,31 @@ def attachment(attachment_id):
 # -----------------------------------------------------------------------------
 
 @app.route('/event_types/', methods=['GET'])
+@login_required
 def event_types():
     event_types = ServiceApi.get_event_types()
     return jsonify(data=event_types)
 
-@app.route('/<resource_type>/status/<resource_id>/subscribe/<event_type>/', methods=['GET'])
-@app.route('/<resource_type>/face/<resource_id>/subscribe/<event_type>/', methods=['GET'])
-@app.route('/<resource_type>/related/<resource_id>/subscribe/<event_type>/', methods=['GET'])
+@app.route('/<resource_type>/status/<resource_id>/subscribe/', methods=['GET'])
+@app.route('/<resource_type>/face/<resource_id>/subscribe/', methods=['GET'])
+@app.route('/<resource_type>/related/<resource_id>/subscribe/', methods=['GET'])
 @login_required
-def subscribe_to_resource(resource_type, resource_id, event_type):
+def subscribe_to_resource(resource_type, resource_id):
     resource_name = request.args.get('resource_name')
-    resp = ServiceApi.subscribe(resource_type, resource_id, event_type, session['user_id'], resource_name)
+    event_type = request.args.get('event_type')
+    resp = ServiceApi.create_user_notification(resource_type, resource_id, event_type, session['user_id'], resource_name)
     return render_json_response(resp)
+
+@app.route('/<resource_type>/status/<resource_id>/unsubscribe/', methods=['GET'])
+@app.route('/<resource_type>/face/<resource_id>/unsubscribe/', methods=['GET'])
+@app.route('/<resource_type>/related/<resource_id>/unsubscribe/', methods=['GET'])
+@login_required
+def unsubscribe_to_resource(resource_type, resource_id):
+    notification_id = request.args.get('notification_id')
+    resp = ServiceApi.delete_user_subscription(notification_id)
+    return render_json_response(resp)
+
+
         
 @app.route('/<resource_type>/status/<resource_id>/transition/', methods=['POST'])
 @app.route('/<resource_type>/face/<resource_id>/transition/', methods=['POST'])
@@ -119,6 +132,22 @@ def change_lcstate(resource_type, resource_id):
     transition_event = request.form['transition_event'].lower()
     transition = ServiceApi.transition_lcstate(resource_id, transition_event)
     return render_json_response(transition)
+
+@app.route('/<resource_type>/status/<resource_id>/publish_event/', methods=['POST'])
+@app.route('/<resource_type>/face/<resource_id>/publish_event/', methods=['POST'])
+@app.route('/<resource_type>/related/<resource_id>/publish_event/', methods=['POST'])
+@login_required
+def publish_event(resource_type, resource_id):
+    if resource_type == 'InstrumentDevice':
+        event_type = 'DeviceOperatorEvent'
+    else:
+        event_type  = 'ResourceOperatorEvent'
+
+    sub_type    = None
+    description = request.form['description']
+
+    resp = ServiceApi.publish_event(event_type, resource_id, resource_type, sub_type, description)
+    return render_json_response(resp)
 
 # -----------------------------------------------------------------------------
 # FACE, STATUS, RELATED PAGES
@@ -172,7 +201,10 @@ def collection(resource_type=None):
 
 @app.route('/<resource_type>/extension/<resource_id>/', methods=['GET'])
 def extension(resource_type, resource_id):
-    extension = ServiceApi.get_extension(resource_type, resource_id)
+    # Login not required to view, but required for user specific things
+    # like event notifications, etc.
+    user_id = session['user_id'] if session.has_key('user_id') else None
+    extension = ServiceApi.get_extension(resource_type, resource_id, user_id)
     return render_json_response(extension)
 
 
@@ -181,20 +213,21 @@ def extension(resource_type, resource_id):
 # -----------------------------------------------------------------------------
 
 @app.route('/InstrumentDevice/command/<instrument_device_id>/<agent_command>/')
+@login_required
 def start_instrument_agent(instrument_device_id, agent_command, cap_type=None):
     cap_type = request.args.get('cap_type')
     if agent_command == 'start':
         command_response = ServiceApi.instrument_agent_start(instrument_device_id)
-        return jsonify(data=command_response)
+        return render_json_response(command_response)
     elif agent_command == 'stop':
         command_response = ServiceApi.instrument_agent_stop(instrument_device_id)
-        return jsonify(data=command_response)
+        return render_json_response(command_response)
     elif agent_command == 'get_capabilities':
         command_response = ServiceApi.instrument_agent_get_capabilities(instrument_device_id)
-        return jsonify(data=command_response)
+        return render_json_response(command_response)
     else:
         command_response = ServiceApi.instrument_execute(instrument_device_id, agent_command, cap_type)
-    return jsonify(data=command_response)
+    return render_json_response(command_response)
 
 
 @app.route('/PlatformDevice/command/<platform_device_id>/<agent_command>/')
@@ -273,9 +306,9 @@ def reset_ui():
 @app.route('/signon/', methods=['GET'])
 def signon():
     user_name = request.args.get('user')
-
     if user_name:
-        ServiceApi.signon_user_testmode(user_name)
+        if not PRODUCTION:
+            ServiceApi.signon_user_testmode(user_name)
         return redirect('/')
     
     # carriage returns were removed on the cilogon portal side,
@@ -384,6 +417,10 @@ def dev_datatable(resource_id=None):
 def dev_actionmenus(resource_id=None):
     return render_template('dev_actionmenus.html')
 
+@app.route('/dev/editform', methods=['GET'])
+def dev_editform(resource_id=None):
+    return render_template('dev_editform.html')
+
 @app.route('/dev/subscribe', methods=['GET'])
 def dev_subscribe():
     time.sleep(2)
@@ -406,9 +443,9 @@ def dev_image(resource_id=None):
 # CATCH ANY UNMATCHED ROUTES
 # -----------------------------------------------------------------------------
 
-@app.route("/<catchall>")
-def catchall(catchall):
-    return render_app_template(catchall)
+# @app.route("/<catchall>")
+# def catchall(catchall):
+#     return render_app_template(catchall)
 
     
 if __name__ == '__main__':

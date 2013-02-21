@@ -47,7 +47,11 @@ class ServiceApi(object):
         return req
 
     @staticmethod
-    def subscribe(resource_type, resource_id, event_type, user_id, resource_name=None):
+    def get_user_subscriptions(user_id):
+        return service_gateway_post('user_notification', 'get_user_notifications', params={'user_info_id': user_id})
+
+    @staticmethod
+    def create_user_notification(resource_type, resource_id, event_type, user_id, resource_name=None):
         name = 'Notification for %s' % resource_name if resource_name else 'NotificationTest'
         description = '%s - %s - Notification Request' % (resource_type, event_type)
         notification = {
@@ -57,8 +61,14 @@ class ServiceApi(object):
             "name": name, 
             "origin": resource_id, 
             "origin_type": resource_type,
-            "event_type": event_type}
+            "event_type": event_type
+            }
         return service_gateway_post('user_notification', 'create_notification', params={'notification': notification, 'user_id': user_id})
+    
+    @staticmethod
+    def delete_user_subscription(notification_id):
+        return service_gateway_post('user_notification', 'delete_notification', params={'notification_id': notification_id})
+
 
     @staticmethod
     def get_event_types():
@@ -66,6 +76,16 @@ class ServiceApi(object):
         events = requests.get(events_url)
         events_json = json.loads(events.content)
         return events_json['data']['GatewayResponse']
+
+    @staticmethod
+    def publish_event(event_type, origin, origin_type, sub_type, description):
+        pdict = { 'event_type'  : event_type,
+                  'origin'      : origin,
+                  'origin_type' : origin_type,
+                  'sub_type'    : sub_type,
+                  'description' : description}
+
+        return service_gateway_post('user_notification', 'publish_event', params=pdict)
 
     @staticmethod
     def ui_reset():
@@ -88,29 +108,31 @@ class ServiceApi(object):
         return jsonify(data=resource)
 
     @staticmethod
-    def get_extension(resource_type, resource_id):
+    def get_extension(resource_type, resource_id, user_id):
         if resource_type == 'InstrumentDevice':
-            extension = service_gateway_get('instrument_management', 'get_instrument_device_extension', params= {'instrument_device_id': resource_id})
+            extension = service_gateway_get('instrument_management', 'get_instrument_device_extension', params= {'instrument_device_id': resource_id, 'user_id': user_id})
         elif resource_type in ('InstrumentModel', 'SensorModel', 'PlatformModel'):
-            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'DeviceModelExtension'})
+            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'DeviceModelExtension', 'user_id': user_id})
         elif resource_type == 'PlatformDevice':
-            extension = service_gateway_get('instrument_management', 'get_platform_device_extension', params= {'platform_device_id': resource_id})
+            extension = service_gateway_get('instrument_management', 'get_platform_device_extension', params= {'platform_device_id': resource_id, 'user_id': user_id})
         elif resource_type == 'DataProduct':
-            extension = service_gateway_get('data_product_management', 'get_data_product_extension', params= {'data_product_id': resource_id})
+            extension = service_gateway_get('data_product_management', 'get_data_product_extension', params= {'data_product_id': resource_id, 'user_id': user_id})
         elif resource_type == 'UserInfo':
-            extension = service_gateway_get('identity_management', 'get_user_info_extension', params= {'user_info_id': resource_id})
+            extension = service_gateway_get('identity_management', 'get_user_info_extension', params= {'user_info_id': resource_id, 'user_id': user_id})
         elif resource_type == 'DataProcessDefinition':
-            extension = service_gateway_get('data_process_management', 'get_data_process_definition_extension', params= {'data_process_definition_id': resource_id})
+            extension = service_gateway_get('data_process_management', 'get_data_process_definition_extension', params= {'data_process_definition_id': resource_id, 'user_id': user_id})
         elif resource_type == 'Org':
-            extension = service_gateway_get('org_management', 'get_marine_facility_extension', params= {'org_id': resource_id})
+            extension = service_gateway_get('org_management', 'get_marine_facility_extension', params= {'org_id': resource_id, 'user_id': user_id})
         elif resource_type in ('Observatory', 'Subsite', 'PlatformSite', 'InstrumentSite'):
-            extension = service_gateway_get('observatory_management', 'get_site_extension', params= {'site_id': resource_id})
+            extension = service_gateway_get('observatory_management', 'get_site_extension', params= {'site_id': resource_id, 'user_id': user_id})
         elif resource_type == 'NotificationRequest':
-            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'NotificationRequestExtension'})
+            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'NotificationRequestExtension', 'user_id': user_id})
         elif resource_type == 'DataProcess':
-            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'DataProcessExtension'})
+            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'DataProcessExtension', 'user_id': user_id})
         elif resource_type in ('UserRole'):
-            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'ExtendedInformationResource'})
+            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'ExtendedInformationResource', 'user_id': user_id})
+        elif resource_type in ('InformationResource'):
+            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'ExtendedInformationResource', 'user_id': user_id})
         else:
             extension = error_message(msg="Resource extension for %s is not available." % resource_type)
 
@@ -268,19 +290,26 @@ class ServiceApi(object):
         return agent_response
     
 
-
+        
     # SIGNON
     # ---------------------------------------------------------------------------
 
     @staticmethod
+    def signon_tester():
+        signon_request = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'ActorIdentity', 'name': 'web_authentication', 'id_only': True})[0]
+        return signon_request
+
+    @staticmethod
     def signon_user(certificate):
         params={'certificate': certificate}
-        actor_id, valid_until, is_registered = service_gateway_post('identity_management', 'signon', params)
+        web_requester_id = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'ActorIdentity', 'name': 'web_authentication', 'id_only': True})[0]
+        actor_id, valid_until, is_registered = service_gateway_post('identity_management', 'signon', params, raw_return=True, web_requester_id=web_requester_id)
         
         # set user id, valid until and is registered info in session
         # TODO might need to address issues that arise with using
         # session to set cookie when web server ends up being a pool
         # of web servers?
+        
         session['actor_id'] = actor_id
         session['valid_until'] = valid_until
         session['is_registered'] = is_registered
@@ -416,7 +445,7 @@ class ServiceApi(object):
 
 def _build_param_str(params=None):
     param_string = '?'
-
+    
     requester = session['actor_id'] if session.has_key('actor_id') else 'None'
     param_string += 'requester=%s' % requester
 
@@ -437,9 +466,9 @@ def build_get_request(base, service_name, operation_name=None, params=None):
 
     url = "/".join(urlarr)
     param_string = _build_param_str(params)
-
+    
     url += param_string
-    #pretty_console_log('SERVICE GATEWAY GET URL', url)
+    pretty_console_log('SERVICE GATEWAY GET URL', url)
 
     return url
 
@@ -448,11 +477,14 @@ def service_gateway_get(service_name, operation_name, params=None, base=SERVICE_
     pretty_console_log('SERVICE GATEWAY GET RESPONSE', service_gateway_request.content)
     return render_service_gateway_response(service_gateway_request)
 
-def render_service_gateway_response(service_gateway_resp):
+def render_service_gateway_response(service_gateway_resp, raw_return=None):
     if service_gateway_resp.status_code == 200:
         resp = json.loads(service_gateway_resp.content)
         try:
             response = resp['data']['GatewayResponse']
+            
+            if raw_return: # return actor_id, valid_until, is_registered tuple/list
+                return response
             if isinstance(response, list):
                 return response[0]
             else:
@@ -460,9 +492,9 @@ def render_service_gateway_response(service_gateway_resp):
         except Exception, e:
             return resp['data']
     else:
-        return json.dumps(GATEWAY_ERROR)
+        return json.dumps(service_gateway_resp.content)
 
-def build_post_request(service_name, operation_name, params=None):
+def build_post_request(service_name, operation_name, params=None, web_requester_id=None):
     url = '%s/%s/%s' % (SERVICE_GATEWAY_BASE_URL, service_name, operation_name)
     post_data = deepcopy(SERVICE_REQUEST_TEMPLATE)
     post_data['serviceRequest']['serviceName'] = service_name
@@ -470,18 +502,23 @@ def build_post_request(service_name, operation_name, params=None):
     if params is not None:
         post_data['serviceRequest']['params'] = params
     # conditionally add user id and expiry to request
-    if "actor_id" in session:
+    
+    if web_requester_id:
+        post_data['serviceRequest']['requester'] = web_requester_id
+    elif "actor_id" in session:
         post_data['serviceRequest']['requester'] = session['actor_id']
         post_data['serviceRequest']['expiry'] = session['valid_until']
+        
+    print 'xxx - post_data', post_data
     data={'payload': json.dumps(post_data)}
     pretty_console_log('SERVICE GATEWAY POST URL/DATA', url, data)
     return url, data
 
-def service_gateway_post(service_name, operation_name, params=None):
-    url, data = build_post_request(service_name, operation_name, params)
+def service_gateway_post(service_name, operation_name, params=None, raw_return=None, web_requester_id=None):
+    url, data = build_post_request(service_name, operation_name, params, web_requester_id)
     service_gateway_request = requests.post(url, data)
     pretty_console_log('SERVICE GATEWAY POST RESPONSE', service_gateway_request.content)
-    return render_service_gateway_response(service_gateway_request)
+    return render_service_gateway_response(service_gateway_request, raw_return=raw_return)
 
 def build_agent_request(agent_id, operation_name, params=None):
     url = '%s/%s/%s' % (AGENT_GATEWAY_BASE_URL, agent_id, operation_name)
@@ -509,7 +546,7 @@ def service_gateway_agent_request(agent_id, operation_name, params=None):
     url, data = build_agent_request(agent_id, operation_name, params)
     resp = requests.post(url, data)
     pretty_console_log('SERVICE GATEWAY AGENT REQUEST POST RESPONSE', resp.content)
-
+    return render_service_gateway_response(resp, raw_return=True)
     if resp.status_code == 200:
         resp = json.loads(resp.content)
 

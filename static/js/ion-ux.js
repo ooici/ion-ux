@@ -22,18 +22,9 @@ IONUX = {
   setup_ajax_error: function(){
     $(document).ajaxError(function(evt, resp){
       var error_obj = JSON.parse(resp['responseText'])['data']['GatewayError'];
-      
       var open_modal = $('.modal-ooi').is(':visible') ? true : false;
       if (open_modal) $('#action-modal').modal('hide').remove();
-
-      var modal_html = '<div id="action-modal" class="modal hide fade modal-ooi"></div>';
-      $(modal_html).modal({keyboard:false,backdrop:'static'})
-        .on('shown', function(){
-          new IONUX.Views.Error({error_obj:error_obj,open_modal:open_modal}).render().el;
-        })
-        .on('hide',function(){
-          $('#action-modal').remove();
-      });
+      new IONUX.Views.Error({error_obj:error_obj,open_modal:open_modal}).render().el;
     });
   },
 }

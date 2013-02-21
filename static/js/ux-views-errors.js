@@ -2,22 +2,26 @@
 
 IONUX.Views.Error = Backbone.View.extend({
   el: '#action-modal',
-  modal_template: '<div id="action-modal" class="modal hide fade modal-ooi"></div>',
+  modal_template: '<div id="action-modal" class="modal modal-ooi"></div>',
   template: _.template($('#error-tmpl').html()),
   events: {
-    'click #retry': 'retry',
+    'click #back': 'back',
     'click #dashboard': 'dashboard'
   },
   initialize: function(){
     _.bindAll(this);
   },
   render: function(){
-    this.$el.html(this.template({error_obj: this.options.error_obj, open_modal: this.options.open_modal})).modal();
+    var self = this;
+    $(this.modal_template).html(this.template({error_obj: this.options.error_obj, open_modal: this.options.open_modal})).modal()
+      .on('hide', function() {
+        $('#action-modal').remove();
+      });
     return this;
   },
-  retry: function(){
-    Backbone.history.fragment = null;
-    return IONUX.ROUTER.navigate(window.location.pathname, {trigger: true});
+  back: function(){
+    window.history.back();
+    return;
   },
   dashboard: function(){
     IONUX.ROUTER.navigate('/', {trigger:true});

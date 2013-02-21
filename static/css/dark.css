@@ -1,3 +1,19 @@
+.notifications th {
+  text-align: left;
+}
+
+.notifications tbody tr td {
+  padding: 5px;
+}
+.notifications tbody tr:nth-child(even) {
+  background: #333;
+}
+
+.notifications tbody tr:nth-child(odd) {
+  background: #222;
+}
+
+
 #sidebar-search {
 height: 12px;
 width: 80%;
@@ -70,10 +86,16 @@ fieldset {
   padding: none;
 }
 
-.chart-google {
-  color: #ccc;
-  position: relative;
+table.google-visualization-table-table {
+  color: #333;
+  width: 100%;
+  font-size: 12px;
 }
+
+/*.chart-google {
+  color: #333;
+  position: relative;
+*/}
 
 #graph_ui_div {
   font-family: Signika Negative;
@@ -223,6 +245,7 @@ fieldset {
   position:absolute;
 }
 */
+
 .main-nav li a {
   width: 100%;
   font-weight:300; 
@@ -288,22 +311,124 @@ max-width: none;
 }
 
 
-.block .btn-group {
-  top: 3px;
+/* ---------------------------------------------------------------
+ACTION MENU STYLING
+Intentionally verbose and redundant until styles are determined
+for heading, group and block elements.
+--------------------------------------------------------------- */
+
+/*
+ HEADING
+*/
+
+.v00 .block .btn-group.open .btn.dropdown-toggle {
+  color: #ccc;
+  background-color: transparent;
+}
+
+.v00 .block .btn-group .btn {
+  font-size: 14px;
+  text-transform:uppercase;
+  background: transparent;
+  border: none;
+  text-shadow: none;
+  box-shadow: none;
+  padding:0;
+  margin:0 3px 0 0;
+  color: #666;
+}
+
+.v00 .block .btn-group .btn .caret  {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  text-indent: -99999px;
+  vertical-align: top;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid #666;
+  margin-left: 2px;
+  content: "\2193";
+}
+
+.v00 .block .btn-group.open .btn.dropdown-toggle {
+  color: #ccc;
+  background-color: transparent;
+}
+
+.v00 .block .btn-group.open .btn .caret {
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid #ccc;
+}
+
+/*
+ GROUP
+*/
+
+.group .btn-group.open .btn.dropdown-toggle {
+  color: #ccc;
+  background-color: transparent;
+}
+
+.group .btn-group .btn {
+  font-size: 12px;
+  text-transform:uppercase;
+  background: transparent;
+  border: none;
+  text-shadow: none;
+  box-shadow: none;
+  padding:0;
+  margin:0 3px 0 0;
+  color: #666;
+}
+
+.group .btn-group .btn .caret  {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  text-indent: -99999px;
+  vertical-align: top;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid #666;
+  margin-left: 2px;
+  content: "\2193";
+}
+
+.group .btn-group.open .btn.dropdown-toggle {
+  color: #ccc;
+  background-color: transparent;
+}
+
+.group .btn-group.open .btn .caret {
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid #ccc;
+}
+
+/*
+ BLOCK
+*/
+
+.block .btn-group.open .btn.dropdown-toggle {
+  color: #ccc;
+  background-color: transparent;
 }
 
 .block .btn-group .btn {
-/*  padding: -6px;*/
-  color: red;
-  line-height: 14px;
+  font-size: 10px;
+  text-transform:uppercase;
   background: transparent;
   border: none;
-  color: #ccc;
   text-shadow: none;
   box-shadow: none;
+  padding:0;
+  margin:0 3px 0 0;
+  color: #ccc;
 }
 
-.block .btn .caret  {
+.block .btn-group .btn .caret  {
   display: inline-block;
   width: 0;
   height: 0;
@@ -313,18 +438,58 @@ max-width: none;
   border-right: 4px solid transparent;
   border-top: 4px solid #ccc;
   margin-left: 2px;
-  opacity: 1;
-  filter: alpha(opacity=30);
   content: "\2193";
 }
 
+.block .btn-group.open .btn.dropdown-toggle {
+  color: #fff;
+  background-color: transparent;
+}
+
+.block .btn-group.open .btn .caret {
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid #fff;
+}
+
+
+/* OVERRIDE DEFAULT BOOTSTRAP RADIUS */
+.nav-tabs .dropdown-menu {
+  -webkit-border-radius: 6px 6px 6px 6px;
+  -moz-border-radius: 6px 6px 6px 6px;
+  border-radius: 6px 6px 6px 6px;
+}
+
+ul.dropdown-menu {
+  background: #222;
+  border: solid 1px #333;
+  margin: 1px 0 0;
+}
+
+ul.dropdown-menu li {
+  padding: 2px 5px;
+  font-size: 11px;
+  text-transform: uppercase;
+  cursor: pointer;
+  color: #ccc;
+}
+
+ul.dropdown-menu li:hover {
+  color: #ddd;
+  background: #202020;
+}
+
+/* ---------------------------------------------------------------
+/ ACTION MENU STYLING
+--------------------------------------------------------------- */
+
 .v02 .row-fluid {
   background: #1E1E1E;
-  border-left:#333333 solid 1px; 
+/*  border-left:#333333 solid 1px; 
   -webkit-box-shadow: 1px 1px #000000; 
   -moz-box-shadow: 1px 1px #000000;
   box-shadow: 1px 1px #000000;
-  
+*/  
 }
 
 .block .row-fluid {
@@ -459,7 +624,7 @@ h4, .h4-span {
   background: -moz-linear-gradient(center top, #e0e0e0 0%, #e6e3e6 25%, #e6e3e6 25%, #ffffff 100%);
 }
 
-button.btn-general, a.btn-general, a.btn-footer, a.btn-advanced-search {
+input.btn-general, button.btn-general, a.btn-general, a.btn-footer, a.btn-advanced-search {
   color:#999; font-size:11px;
   font-weight:400;
   letter-spacing:2px;
@@ -473,14 +638,15 @@ button.btn-general, a.btn-general, a.btn-footer, a.btn-advanced-search {
   text-transform: uppercase;
   -webkit-border-radius: 5px; 
   -moz-border-radius: 5px;
+  border-radius: 5px;
   border: solid #808080 1px;   
   background:#333333;
   background:-webkit-gradient (linear, left top, left bottom, color-stop(0%,#3d3d3d), color-stop(75%,#333333), color-stop(75%,#333333), color-stop(100%,#2e2e2e));
   background: -moz-linear-gradient(center top, #3d3d3d 0%, #333333 75%, #333333 75%, #2e2e2e 100%);
 }
 
-button.btn-general:hover, a.btn-general:hover, a.btn-advanced-search:hover {background: #666666; color:#fff; border: solid #fff 1px;}
-button.btn-general:active, a.btn-general:active, a.btn-advanced-search:active {background: #333333; color:#fff; border: solid #fff 1px;} 
+input.btn-general:hover, button.btn-general:hover, a.btn-general:hover, a.btn-advanced-search:hover {background: #666666; color:#fff; border: solid #fff 1px;}
+input.btn-general:active, button.btn-general:active, a.btn-general:active, a.btn-advanced-search:active {background: #333333; color:#fff; border: solid #fff 1px;} 
 
 a.btn-footer {
   margin: 0px 5px;
@@ -524,7 +690,7 @@ a.btn-footer {
   text-align: right;
 }
 
-button.btn-blue, a.btn-navigation {
+input.btn-blue, button.btn-blue, a.btn-navigation {
   color: #FFFFFF; 
   font-size: 11px; 
   font-weight: 400; 
@@ -537,13 +703,15 @@ button.btn-blue, a.btn-navigation {
   text-transform: uppercase;
   -webkit-border-radius: 7px; 
   -moz-border-radius: 7px; 
+  border-radius: 7px;
   border: solid #00354C 1px; 
+  background: #025C99;
   background: -webkit-gradient(linear, 0 0, 0 100%, from(#0079AF), to(#025C99)); 
   background: -moz-linear-gradient(top, #0079AF, #025C99);
 }
 
-button.btn-blue:hover, a.btn-navigation:hover {background: #0079AF;}
-button.btn-blue:active, a.btn-navigation:active {background: #025C99;}
+input.btn-blue:hover, button.btn-blue:hover, a.btn-navigation:hover {background: #0079AF;}
+input.btn-blue:active, button.btn-blue:active, a.btn-navigation:active {background: #025C99;}
 
 a.btn-navigation-plain {
 /*  font-family: Signika Negative; */
@@ -571,30 +739,6 @@ a.btn-navigation-plain {
 
 .not-aligned {
   color: #933;
-}
-
-.btn-group {
-  float: right;
-  position: relative;
-  top: 4px;
-  right: 4px;
-}
-
-.btn-group a {
-  padding: 0;
-  font-size: 11px;
-  margin: 0;
-}
-
-.dropdown-menu li {
-  color: black;
-  cursor:pointer;
-  padding:2px 6px;
-  margin:0px;
-}
-.dropdown-menu li:hover {
-  font-weight:bold;
-  background-color:#ddd;
 }
 
 .controls {
@@ -632,13 +776,6 @@ h2 {
   font-size: 18px;
 }
 
-/*h3 {
-  color: #999;
-  font-size: 14px;
-  font-weight: 300;
-  text-transform: none;
-}
-*/
 .wrapper-heading {
   color: #666;
   margin: 15px 0;
@@ -688,7 +825,7 @@ h2 {
   line-height: 18px;
   color:#CCCCCC;
   text-transform: uppercase;
-
+  margin: 0 0 5px;
 }
 
 .block h3 {
@@ -730,7 +867,6 @@ h2 {
 }
 
 ul.nav {margin: 0;}
-
 /*ul.nav-tabs > li.active a {
     background-color:#333;
 }
@@ -768,6 +904,7 @@ ul.nav {
   color: #808080;
   letter-spacing:1px;
   margin-right:10px;
+  margin-bottom: 0;
   /*width:115px;*/
 }
 
@@ -789,6 +926,7 @@ ul.nav {
   color: #FFFFFF;
   letter-spacing:1px;
   margin-right: 10px;
+  margin-bottom:0;
   /*width:115px;*/
   border: none;
 }
@@ -846,8 +984,15 @@ ul.nav {
   border: solid 1px #333;
 }
 
+.modal-ooi .close {
+  color: #444;
+  opacity: 1;
+  text-shadow: none;
+}
+
 .modal-ooi h1 {
   font-size:15px;
+  line-height: 15px;
 }
 
 .modal-ooi .modal-header, 
