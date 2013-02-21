@@ -238,7 +238,7 @@ IONUX.Views.AttachmentActions = IONUX.Views.ActionMenu.extend({
     },
     
     upload_attachment: function(){
-      alert('upload_attachment');
+      new IONUX.Views.ResourceAddAttachmentView().render().el;
     },
 });
 
