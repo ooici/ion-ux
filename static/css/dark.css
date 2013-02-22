@@ -1156,3 +1156,26 @@ ul.nav {
 #user-profile-overlay form {
   margin-bottom: 0px;
 }
+
+#user-profile-overlay form.form-inline {
+  margin-bottom: 5px;
+}
+
+#user-profile-overlay form[name='phones'] input[name="phone_number"] {
+  width: 100px;
+  margin-right: 5px;
+}
+
+#user-profile-overlay form[name='phones'] select[name="phone_type"] {
+  width: 100px; 
+  margin-right: 5px;
+}
+
+#user-profile-overlay form[name='phones'] input[name="sms"] {
+  width: inherit; 
+  margin: 0px 5px;
+}
+
+#user-profile-overlay .bbf-del {
+  margin-top: 5px;
+}

@@ -104,3 +104,38 @@ IONUX.Views.EditUserRegistration = IONUX.Views.EditResource.extend({
 
 });
 
+Backbone.Form.editors.List.Phone = Backbone.Form.editors.Base.extend({
+
+  tagName: 'form',
+  render: function() {
+    this.numel = $("<input type='text' name='phone_number' />")
+    this.typel = $("<select name='phone_type'><option value='work'>Work</option><option value='mobile'>Mobile</option><option value='home'>Home</option><option value='other'>Other</option></select>")
+    this.smsel = $("<input type='checkbox' name='sms' />");
+    this.$el.append(this.numel);
+    this.$el.append(this.typel);
+    this.$el.append("<label>SMS</label>")
+    this.$el.append(this.smsel);
+
+    this.$el.addClass('form-inline');
+
+    this.setValue(this.value);
+
+    return this;
+  },
+  getValue: function() {
+    var retval = { 'phone_number' : this.numel.val(),
+                   'phone_type'   : this.typel.val(),
+                   'sms'          : this.smsel.is(':checked') };
+    return retval;
+  },
+
+  setValue: function(value) {
+    if (value && value.hasOwnProperty('phone_number'))
+      this.numel.val(value.phone_number);
+    if (value && value.hasOwnProperty('phone_type'))
+      this.typel.val(value.phone_type);
+    if (value && value.hasOwnProperty('sms'))
+      this.smsel.attr('checked', value.sms);
+  },
+  
+});

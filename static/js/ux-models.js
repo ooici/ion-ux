@@ -340,7 +340,7 @@ IONUX.Models.UserRegistrationModel = IONUX.Models.EditableResource.extend({
         postal_code:       { type: 'Text', title: 'Postal Code' },
         country:           { type: 'Text', title: 'Country' },
         url:               { type: 'Text', title: 'Contact URL' },
-        //phone:             'Text', // @TODO: how
+        phones:            { type: 'List', itemType: 'Phone' },
       },
     },
 
