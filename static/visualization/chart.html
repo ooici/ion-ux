@@ -69,13 +69,14 @@
 
      */
 
-	// Global variables
-	var graph, dataTable, dataTable_overview, dp_id, dp_id_token, dp_metadata, dataView_overview;
+    // Global variables
+    var graph, dataTable, dataTable_overview, dp_id, dp_id_token, dp_metadata, dataView_overview;
     var dataTable_overview_stride_factor = 1;
     var graph_visible_start_date, graph_visible_end_date, graph_x_res, avg_data_rate, curr_stride_factor = 1;
     var dataTable_parameters = []; // ['temp', 'pressure', 'conductivity'];
+    var visible_params_idx_list = [0];
 
-    var container_server = "http://" + window.location.host;
+    var container_server = "http://" + window.location.host;;
     var first_draw_flag = true;
     var viz_params = {};
     var curr_graph_type = "";
@@ -83,6 +84,11 @@
     var supported_graph_type = ['AnnotatedTimeLine', 'Table', 'LineGraph', 'AreaChart'];
     var overview_reqId = 9;
     var graph_spinner;
+
+    // Real-time variables
+    var rt_graph, rt_dataTable = null, rt_dataView = null, rt_graph_options = {};
+    var rt_query, rt_query_token;
+    var rt_sliding_window_size; // in seconds
 
     // cache
     var dataTable_cache_block_size = 1024, dataTable_cache_block_time_period;
@@ -102,8 +108,8 @@
     }
 
     // Google library specific loads for all the supported chart types
-	google.load("visualization", "1", {packages: ['annotatedtimeline', 'table', 'corechart', 'motionchart']});
-	google.setOnLoadCallback(initGraph);
+    google.load("visualization", "1", {packages: ['annotatedtimeline', 'table', 'corechart', 'motionchart']});
+    google.setOnLoadCallback(initGraph);
 
     function initGraph() {
 
@@ -114,18 +120,25 @@
         graph_x_res = document.getElementById("graph_div").scrollWidth;
         initSpinner();
 
-        // **** FOR DEBUG ONLY ****
-        //graph_x_res = 100;
-
         // Init the graph object based on drop down selection
         setGraphType();
 
+        // Init the realtime graph now
+        //initRealtimeView();
+
+        // Init the overview graph
+        initOverview();
+
+    }
+
+    function initOverview() {
         /// Get meta data for the data product id. It will be used to retrieve the correct data
         jQuery.ajax ({
-            url: container_server + "/visualization/get_dataproduct_metadata?data_product_id=" + dp_id + "&callback=dp_metadata_cb&return_format=raw_json",
+            url: container_server + "/visualization/get_dataproduct_metadata/?data_product_id=" + dp_id + "&callback=dp_metadata_cb&return_format=raw_json",
             dataType: 'jsonp',
             jsonpCallback: 'dp_metadata_cb'
         });
+
     }
 
     function dp_metadata_cb(response) {
@@ -137,6 +150,8 @@
         dataTable_cache_block_time_period = Math.ceil(dataTable_cache_block_size / avg_data_rate); // ** Is this correct ?
 
         // init cache blocks
+        delete dataTable_cache;
+
         for (var i = 0; i < tot_num_of_blocks; i++) {
             _end_time = dp_metadata['time_bounds'][1] - dataTable_cache_block_time_period * i;
             _start_time = Math.max(dp_metadata['time_bounds'][0], (_end_time - dataTable_cache_block_time_period));
@@ -153,7 +168,7 @@
     }
 
 
-	function fetchData() {
+    function fetchData() {
         var query;
 
         //query = new google.visualization.Query(container_server + "/ion-service/visualization_service/get_visualization_data?data_product_id=" + dp_id + "&visualization_parameters=" + JSON.stringify(viz_params) + "&tqx=reqId:" + _reqId + "&return_format=raw_json");
@@ -167,15 +182,132 @@
         var spin_target = document.getElementById('graph_div');
         graph_spinner.spin(spin_target);
 
-	}
+    }
+
+    // When this function is called, it is assumed that the annotated timeline chart object has already been created
+    function initRealtimeView() {
+        rt_sliding_window_size = 600;
+
+        rt_graph_options = {
+            enableInteractivity: true,
+            title: "Realtime Data",
+            //backgroundColor: "#CCCCCC",
+            animation : {
+                duration: 500,
+                easing: 'inAndOut'
+            },
+            vAxis: {
+                gridlines : {
+                    count : 5
+                },
+                minorGridlines: {
+                    count : 4
+                }
+            },
+            hAxis: {
+                gridlines : {
+                    count : 5
+                },
+                minorGridlines: {
+                    count : 4
+                }
+            }
+        };
+        rt_graph = new google.visualization.LineChart(document.getElementById('rt_graph_div'));
+
+        // Init the realtime queues and pipeline on the container
+        jQuery.ajax ({
+            url: container_server + "/visualization/initiate_realtime_visualization/?data_product_id=" + dp_id + "&callback=init_realtime_visualization_cb&return_format=raw_json",
+            dataType: 'jsonp',
+            jsonpCallback: 'init_realtime_visualization_cb'  // Has to correspond with the server side response
+        });
+
+    }
+
+    function init_realtime_visualization_cb(qt) {
+
+        rt_query_token = qt;
+        console.debug ("Query Token : " + qt);
+
+        // {sendMethod:'scriptInjection'} specifies cross domain query .. oddly its needed to get realtime queries
+        // to work within the UX
+        rt_query = new google.visualization.Query(container_server + "/visualization/get_realtime_visualization_data/?query_token=" + rt_query_token +"&return_format=raw_json",
+                {sendMethod:'scriptInjection'});
+
+        // Set up query to refresh every x seconds with a callback function.
+        rt_query.setRefreshInterval(5);
+        rt_query.send(handleRealtimeQueryResponse);
+
+    }
+
+    function handleRealtimeQueryResponse(response) {
+
+        // If there was no data, do nothing
+        if (!response) return;
+
+        if (response.isError()) {
+            alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
+            return;
+        }
+
+        // Add the from the response to the dataTable
+        if (rt_dataTable) {
+            rt_dataTable.addRows(getDatatableRows(response.getDataTable()));
+        }
+        else {
+            rt_dataTable = response.getDataTable();
+        }
+
+        // Sort the rows and see if we need to implement a sliding window
+        rt_dataTable.sort([{column:0}]);
+        var date_range = rt_dataTable.getColumnRange(0);
+        var curr_win_size = (date_range.max.getTime() - date_range.min.getTime()) / 1000;
+
+        if (curr_win_size > rt_sliding_window_size) {
+            // Find out what rows in the data table need to be dropped
+            var new_start_date = new Date(date_range.max.getTime() - rt_sliding_window_size * 1000)
+            var row_count = 0;
+            for (var i=0; i < rt_dataTable.getNumberOfRows(); i++) {
+                if (new_start_date < rt_dataTable.getValue(row_count, 0)) {
+                    break;
+                }
+                ++row_count;
+            }
+            // remove rows from the top
+            rt_dataTable.removeRows(0, row_count);
+        }
+
+        console.debug("Datatable length = " + rt_dataTable.getNumberOfRows());
+
+        // create a data view out of the data table since that allows us to choose and hide columns
+        rt_dataView = new google.visualization.DataView(rt_dataTable);
+        rt_dataView.setColumns(visible_params_idx_list);
+
+        // draw he graph
+        drawRealtimeGraph();
+
+    }
+
+    function drawRealtimeGraph() {
+        if (!rt_graph || ! rt_dataView) return;
+
+        rt_graph.draw(rt_dataView, rt_graph_options);
+    }
+
+    function stopRealtimeView() {
+        realtime_query.abort();
+
+        // call terminate on the container side too
+    }
 
 
-	function handleDrawQueryResponse(response) {
 
-		if (response.isError()) {
-			alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
-		    return;
-		}
+    function handleDrawQueryResponse(response) {
+
+        if (response.isError()) {
+            alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
+            return;
+        }
 
         if (first_draw_flag) {
             // note the first table which is the overview
@@ -185,8 +317,9 @@
 
             dataView_overview = new google.visualization.DataView(dataTable);
 
-            drawGraph(first_draw_flag);
+            drawOverviewGraph(first_draw_flag);
             first_draw_flag = false;
+
         }
         else {
             // store the returned datatable in the cache
@@ -199,30 +332,29 @@
             end_time_d = time_range.max;
 
             // Find the equivalent rows in the overview that match
-            filteredRows = dataTable.getFilteredRows([{column: 0, minValue: start_time_d, maxValue: end_time_d}]);
+            //filteredRows = dataTable.getFilteredRows([{column: 0, minValue: start_time_d, maxValue: end_time_d}]);
 
             // remove those rows from the low res version
             // --- ****** FIX THIS to remove los res data from the view
             //dataTable.removeRows(filteredRows[0], filteredRows.length);
-
 
             // now join the new high res data with datatable
             //new_datatable_json = eval("(" + dataTable_cache[cache_idx].datatable.toJSON() + ')');
 
             var rows = getDatatableRows(dataTable_cache[cache_idx].datatable);
             dataTable.addRows(rows);
-
             dataTable.sort([{column:0}]);
-            drawGraph(first_draw_flag);
+
+            drawOverviewGraph(first_draw_flag);
 
         }
 
         // Stop the spinner
         graph_spinner.stop();
 
-	}
+    }
 
-    function drawGraph(first_time_flag) {
+    function drawOverviewGraph(first_time_flag) {
 
         // This function is hacky but will draw the graph assuming the graph object has been created
         if (curr_graph_type == "AnnotatedTimeLine") {
@@ -262,14 +394,11 @@
 
     }
 
-	// Callback for when the graph is ready
-	function onGraphReady() {
-		//set callbacks for events here. Why ? no idea !
-		//google.visualization.events.addListener(graph, 'select', onSelect);
-		//google.visualization.events.addListener(graph, 'rangechange', onDateRangeChange);
+    // Callback for when the graph is ready
+    function onGraphReady() {
 
         graph_ui_cb();
-	}
+    }
 
 
     function graph_ui_cb() {
@@ -384,6 +513,7 @@
         //set current date
         $("#start_datetime_txtbox").datetimepicker('setDate', graph_visible_start_date);
 
+        graphUiDiv.appendChild(document.createElement('br'));
         end_datetime_txtbox = document.createElement("input");
         end_datetime_txtbox.type = "text";
         end_datetime_txtbox.setAttribute("id","end_datetime_txtbox");
@@ -408,8 +538,8 @@
         var page_reload_button = document.createElement('input');
         page_reload_button.type = 'button';
         page_reload_button.value = "Refresh Chart";
-        page_reload_button.className = "btn-blue";
-        page_reload_button.addEventListener("click", reloadPage);
+
+        page_reload_button.addEventListener("click", reloadOverview);
         graphUiDiv.appendChild(page_reload_button);
 
         // Once all the UI widgets have been drawn, reflect their state in graph
@@ -465,31 +595,38 @@
             }
         }
 
-        // For the graph types that use a dataview, we will have to build a list of visible columns
+        // For the graphs using dataviews, create a list of visible parameters
+        visible_params_idx_list = [0];
+        // create a list of visible parameters reflects the checkboxes
+        for (var i=0; i< param_chkbox_list.length; i++) {
+            if (param_chkbox_list[i].type != "checkbox") continue;
+
+            colIdx = parseInt((param_chkbox_list[i].id.split("."))[1]);
+            if (param_chkbox_list[i].checked) visible_params_idx_list.push(colIdx);
+        }
+
+        // affect the data view of the realtime graph.
+        if (rt_dataView) {
+            rt_dataView.setColumns(visible_params_idx_list);
+            drawRealtimeGraph();
+        }
+
+        // In case the overview graph is not ATL,
         if (curr_graph_type == "Table" || curr_graph_type == "LineGraph" ||
                 curr_graph_type == "AreaChart" || curr_graph_type == "ComboChart") {
 
-            var visible_params = [0];
-            // create a list of visible parameters reflects the checkboxes
-            for (var i=0; i< param_chkbox_list.length; i++) {
-                if (param_chkbox_list[i].type != "checkbox") continue;
-
-                colIdx = parseInt((param_chkbox_list[i].id.split("."))[1]);
-                if (param_chkbox_list[i].checked) visible_params.push(colIdx);
-            }
-
-            dataView_overview.setColumns(visible_params);
-            drawGraph();
+            dataView_overview.setColumns(visible_params_idx_list);
+            drawOverviewGraph();
 
         }
 
     }
 
     function onSelect() {
-		// Selection only supported for annotations. Not useful exactly
-		//alert('onSelect()');
-	
-	}
+        // Selection only supported for annotations. Not useful exactly
+        //alert('onSelect()');
+
+    }
 
     function onDateRangeChange(_dr, _sd, _ed) {
 
@@ -668,11 +805,11 @@
         }
 
         // Check to see if this was triggered in the middle of a session. If yes we want to call
-        // drawGraph to update the view with the new graph type
+        // drawOverviewGraph to update the view with the new graph type
         if (!first_draw_flag){
             // Set flag to indicate that the graph has been changed and should be treated as a new flag
             first_draw_flag = true;
-            drawGraph(first_draw_flag);
+            drawOverviewGraph(first_draw_flag);
             first_draw_flag = false;
         }
 
@@ -743,8 +880,6 @@
         start_time = start_time_d.getTime() / 1000;
         end_time = end_time_d.getTime() / 1000;
 
-        // Because of a difference in the requested time window and returned time window,
-        // we do a best match score to see which cache slot is the best fit
         var idx = null;
         var proximity_score = Infinity, temp_score = 0;
         for (var i=0; i < dataTable_cache.length; i++) {
@@ -819,8 +954,9 @@
         graph_spinner = new Spinner(opts);
     }
 
-    function reloadPage() {
-        location.reload(true);
+    function reloadOverview() {
+        //location.reload(true);
+        initOverview();
     }
 
 
@@ -832,6 +968,7 @@
       <!-- <form> -->
       <div id="graph_ui_div" style="color:#ccc;font-family:sans-serif;font-size:11px;text-transform:uppercase;position:absolute;top:0;right:0;width:24%;"></div>
       <!-- </form> -->
+      <div id="rt_graph_div" style="width:100%;margin-right:165px;height:200px;"></div>
   </div>
 
 

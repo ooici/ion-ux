@@ -197,7 +197,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
             case "DataProducer":
                 var type_css = 'data_producer_mini';
                 break;
-            case "DataSet":
+            case "Dataset":
                 var type_css = 'data_set_mini';
                 break;
             case "Deployment":

@@ -93,9 +93,9 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
           var param_options = [];
           _.each(resp.data, function(option) {
             if (option.name != 'example'){
-              console.log('option', option);
               if (option.cap_type == 1) agent_options.push(option);
               if (option.cap_type == 3) resource_options.push(option);
+
             };
           });
           self.render_select_menu(agent_options.concat(resource_options));
