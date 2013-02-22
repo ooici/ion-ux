@@ -55,6 +55,10 @@ Point your browser to http://localhost:3000 and enjoy.
 4. Load Data into COI Services
 ------------------------------
 
+See also: ION-UX Guide for COI Developers
+
+https://confluence.oceanobservatories.org/display/CIDev/ION-UX+Guide+for+COI+Developers
+
 It will be a better browsing experience to have data preloaded into your COI Services Capability Container. The first thing you will want to do is create pyon.local.yml:
 
 	coi-services/res/config/pylon.local.yml
