@@ -1125,6 +1125,7 @@ ul.nav {
   list-style: none;
   margin: 0px;
   padding: 0px;
+  display: inline-block;    /* otherwise help blocks take up vertical */
 }
 
 #user-profile-overlay #variables ul li input {
