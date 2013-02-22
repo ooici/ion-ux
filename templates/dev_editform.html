@@ -106,7 +106,7 @@
 {% block document_ready %}
   $(function(){
     IONUX.init();
-    var black_list = ['resource._id', 'resource._rev', 'resource.ts_created', 'resource.ts_updated', 'resource.lcstate', 'resource.type_'];
+    var black_list = ['resource._id', 'resource._rev', 'resource.ts_created', 'resource.ts_updated', 'resource.lcstate', 'resource.type_', 'resource.alt_ids'];
 
 nfmodel = new NestedFormModel(TEST_MODEL_DATA, {black_list:black_list});
 
