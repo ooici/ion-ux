@@ -55,6 +55,10 @@ Point your browser to http://localhost:3000 and enjoy.
 4. Load Data into COI Services
 ------------------------------
 
+See also: ION-UX Guide for COI Developers
+
+https://confluence.oceanobservatories.org/display/CIDev/ION-UX+Guide+for+COI+Developers
+
 It will be a better browsing experience to have data preloaded into your COI Services Capability Container. The first thing you will want to do is create pyon.local.yml:
 
 	coi-services/res/config/pylon.local.yml
@@ -90,7 +94,7 @@ A fab script has been provided to facilitate deployment to a remote VM.  To prep
 
         easy_install fabric
 
-Now you run the fab script, which will prompt you for necessary information to complete the deployment.  Currently, the script supports deployment to ux-test and ux-dev.  Utilize one of the following command lines to deploy to ux-dev or ux-test.
+Now you run the fab script, which will prompt you for necessary information to complete the deployment.  Currently, the script supports deployment to ux-test and ion-alpha.  Utilize one of the following command lines to deploy to ion-alpha or ion-beta.
 
-        > fab ux_dev deploy
-        > fab ux_test deploy
+        > fab ion_alpha deploy
+        > fab ion_beta deploy

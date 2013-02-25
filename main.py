@@ -92,6 +92,22 @@ def attachment(attachment_id):
 
     return send_file(attachment, attachment_filename=attachment_name, as_attachment=True)
 
+@app.route('/attachment/', methods=['POST'])
+def attachment_create():
+    fd = request.files['attachment']
+    attachment_type = 2
+    if fd.mimetype.startswith("text/"):
+        attachment_type = 1
+
+    retval = ServiceApi.create_resource_attachment(request.form['resource_id'],
+                                                   fd.filename,
+                                                   request.form['description'],
+                                                   attachment_type,
+                                                   fd.mimetype,
+                                                   fd)
+
+    dat = {'files':[{'name':fd.filename, 'size':fd.content_length}]}
+    return jsonify(dat)
 
 # -----------------------------------------------------------------------------
 # EVENT SUBSCRIPTIONS

@@ -1,15 +1,14 @@
+<span class="current-user"><%= name %></span>
 <% if (is_logged_in) { %>
-  <div class="current-user"><%= name %></div>
   <a id="userprofile" href="#" class="btn-navigation filter">Account Settings</a>
   <a id="signoff" href="http://<%= window.location.host %>/signoff/" class="btn-navigation filter external">Sign Out</a>
 <% } else { %>
-  <div class="current-user"><%= name %></div>
   <a id="signup" href="#" class="btn-navigation filter">Create Account</a>
   <a id="signin" href="https://<%= window.location.host %>/login" class="external btn-navigation filter">Sign In</a>
 <% } %>
 
 <span class="dropdown pull-right" id="help">
-  <a id="helpmenu-parent" class="btn-navigation-plain external" data-toggle="dropdown" href="#">Help</a>
+  <a id="helpmenu-parent" class="btn-navigation external" data-toggle="dropdown" href="#">Help</a>
   <ul class="dropdown-menu">
     <li>
       <a id="helpmenu-helpcontents" href="https://confluence.oceanobservatories.org/display/CIUserDoc/User+Documentation" target="_ooi_help" class="btn-navigation-plain external">Help Contents</a>

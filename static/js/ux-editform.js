@@ -22,38 +22,46 @@ var NestedFormModel = Backbone.DeepModel.extend({
 
   initialize: function(attrs, options){
     this.black_list = options.black_list || [];
+    this.nest_depth_factor = options.nest_depth_factor || 50;
     Backbone.Form.helpers.keyToTitle = this.key_to_title;
   },
 
   schema: function(){
     var schema = this.make_schema();
-    console.log(schema);
     return schema;
   },
 
   make_schema: function(){
     var paths = this.object_to_paths(this.attributes);
-    var defaults = {type: "Text", fieldClass: "fieldClass",
-                   fieldAttrs:{style: "margin-left:10px"}};
-    var tfield = function(){return defaults}; //All 'Text' fields for now
-    var schema_full = _.object(paths, _.map(_.range(paths.length), tfield));
+    var self = this;
+    var schema_full = {};
+    _.each(paths, function(key, val){
+      var margin_left = self.nest_depth(key) * self.nest_depth_factor;
+      var keyschema = {type: "Text", fieldClass: "nestedform",
+                   fieldAttrs:{style: "margin-left:"+margin_left+"px"}};
+      schema_full[key] = keyschema;
+    });
     var schema = _.omit(schema_full, this.black_list); // remove black_listed
     return schema
   },
 
-  key_to_title: function(val){
-    //console.log("key_to_title - val: ", val);
+  nest_depth: function(val){
     var wlist = val.split(".");
     wlist.shift(); //remove root name
-    var isInt = function(w){return _.isNaN(parseInt(w))};
-    var isNotInt = function(w){return !_.isNaN(parseInt(w))};
-    //XXX use regex: ".<Int>." instead for more precise pad depth discovery?
-    console.log(_.filter(wlist, isInt));
-    var pad = _.filter(wlist, isNotInt).length;
+    var intarray = _.filter(wlist, function(w){return !_.isNaN(parseInt(w))});
+    return intarray.length;
+  },
+
+  key_to_title: function(val){
+    var wlist = val.split(".");
+    wlist.shift(); //remove root name
     wlist = _.flatten(_.map(wlist, function(w){return w.split("_")}));
-    console.log("pad, wlist:", pad, wlist); //TODO use for css padding
+    var intarray = _.filter(wlist, function(w){return !_.isNaN(parseInt(w))});
+    var warray = _.filter(wlist, function(w){return _.isNaN(parseInt(w))});
+    var nest_depth = intarray.length;
     var capital = function(w){return w.charAt(0).toUpperCase() + w.slice(1)};
-    wlist = _.map(wlist, capital);
+    wlist = _.map(warray, capital); //Capitalize
+    //wlist = wlist.slice(nest_depth, wlist.length); //last part is form title
     title = wlist.join(" ");
     return title;
   },
