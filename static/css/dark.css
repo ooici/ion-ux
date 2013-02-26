@@ -1100,3 +1100,82 @@ ul.nav {
   text-align: left;
 }
 
+/* User Profile modal has different form requirements */
+#user-profile-overlay fieldset {
+  margin-top: 0px;
+}
+
+#user-profile-overlay .control-group {
+  margin-bottom: 0px;
+}
+
+#user-profile-overlay .control-label {
+    padding-top: 9px;
+}
+
+#user-profile-overlay input {
+  width: 90%;
+}
+
+#user-profile-overlay .bbf-object {
+  margin-left: -180px;
+}
+
+#user-profile-overlay #variables ul {
+  list-style: none;
+  margin: 0px;
+  padding: 0px;
+  display: inline-block;    /* otherwise help blocks take up vertical */
+}
+
+#user-profile-overlay #variables ul li input {
+  width: inherit;
+  margin: 0px;
+  padding: 0px;
+}
+
+#user-profile-overlay #variables ul li label {
+  display: inline-block;
+  margin: 5px;
+}
+
+#user-profile-overlay legend {
+  margin-bottom: 0px;
+  border-bottom-width: 0px;
+
+}
+
+#user-profile-overlay legend + .control-group {
+  margin-top: 0px;
+}
+
+#user-profile-overlay .control-group > .controls:first-child {
+  padding-top: 0px;
+}
+
+#user-profile-overlay form {
+  margin-bottom: 0px;
+}
+
+#user-profile-overlay form.form-inline {
+  margin-bottom: 5px;
+}
+
+#user-profile-overlay form[name='phones'] input[name="phone_number"] {
+  width: 100px;
+  margin-right: 5px;
+}
+
+#user-profile-overlay form[name='phones'] select[name="phone_type"] {
+  width: 100px; 
+  margin-right: 5px;
+}
+
+#user-profile-overlay form[name='phones'] input[name="sms"] {
+  width: inherit; 
+  margin: 0px 5px;
+}
+
+#user-profile-overlay .bbf-del {
+  margin-top: 5px;
+}

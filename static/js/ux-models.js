@@ -321,14 +321,117 @@ IONUX.Models.FrameOfReferenceFacepage = Backbone.Model.extend({
   }
 });
 
-
-IONUX.Models.UserRegistrationModel = Backbone.Model.extend({
+IONUX.Models.UserRegistrationModel = IONUX.Models.EditableResource.extend({
   url: "/userprofile/",
   idAttribute: "_id",
-   
+
+  schema: {
+    name: { type: 'Text', validators: ['required'] },
+
+    'contact': {
+      type: 'Object',
+      title: false,
+      subSchema: {
+        organization_name: { type: 'Text', title: 'Organization Name' },
+        position_name:     { type: 'Text', title: 'Position' },
+        email:             { type: 'Text', title: 'Email', dataType: 'email', validators: ['required', 'email']},
+        street_address:    { type: 'Text', title: 'Street Address' },
+        city:              { type: 'Text', title: 'City' },
+        postal_code:       { type: 'Text', title: 'Postal Code' },
+        country:           { type: 'Text', title: 'Country' },
+        url:               { type: 'Text', title: 'Contact URL' },
+        phones:            { type: 'List', itemType: 'Phone' },
+      },
+    },
+
+    'variables': {
+      type: 'Object',
+      title: false,
+      subSchema: {
+        notification_contact:   { type: 'Radio',    title: 'Notification Method', options: ['Email', 'SMS'] },
+        sms_email:              { type: 'Checkbox', title: "Use email->SMS" },
+        ooi_system_change:      { type: 'Checkbox', title: "OOI system change information" },
+        ooi_project_updates:    { type: 'Checkbox', title: "OOI project updates" },
+        ocean_leadership_news:  { type: 'Checkbox', title: "Ocean Leadership News" },
+        ux_improvement_program: { type: 'Checkbox', title: "Participate in OOI User Experience Improvement Program" },
+      }
+    },
+
+  },
+
+  attr_convert: {
+    'variables': {
+      parse: function(v) {
+        /**
+         * Input: array of { name: <key>, value: <value> } literal objects
+         * Output: object with keys -> values
+         */
+        return _.object(_.map(v, function(vv) { return [vv.name, vv.value]; } ));
+      },
+      serialize: function(v) {
+        /**
+         * Input: object with keys -> values
+         * Output: array of { name: <key>, value: <value> } literal objects
+         */
+        return _.map(v, function(vv, kk) { return { name: kk, value: vv }; });
+      },
+    },
+  },
+
+  attr_convert_serialize: function(attrs) {
+    /**
+     * Call this from your toJSON.
+     */
+    attrs = _.clone(attrs);
+    _.each(this.attr_convert, function(v, k) {
+      if (_.has(attrs, k)) {
+        attrs[k] = v.serialize(attrs[k]);
+      }
+    });
+
+    return attrs;
+  },
+
+  attr_convert_parse: function(data) {
+    /**
+     * Call this from your parse method.
+     */
+    data = _.clone(data);
+    _.each(this.attr_convert, function(v, k) {
+      if (_.has(data, k)) {
+        data[k] = v.parse(data[k]);
+      }
+    });
+
+    return data;
+  },
+
+  toJSON: function() {
+    var o = IONUX.Models.EditableResource.prototype.toJSON.call(this);
+    o = this.attr_convert_serialize(o);
+
+    return o;
+  },
+
   parse: function(resp) {
-    return resp.data;
-  }
+    var data = resp.data;
+    if (data != null)
+      data = this.attr_convert_parse(data);
+    return data;
+  },
+
+  merge: function(attribute, value) {
+    /**
+     * Instead of overwriting full objects, this method merges the passed in value
+     * on top of the current value.
+     */
+
+    var curval = _.clone(this.get(attribute) || {});
+    _.extend(curval, value);
+    this.set(attribute, curval);
+
+    return curval;
+  },
 });
 
 
