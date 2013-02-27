@@ -377,6 +377,30 @@ class ServiceApi(object):
                 
                 return
 
+        # if still here, search by ActorIdentity
+        actor_identities = ServiceApi.find_by_resource_type("ActorIdentity")
+        for actor_identity in actor_identities:
+            if user_name == actor_identity['name']:
+                actor_id = actor_identity['_id']
+                session['actor_id'] = actor_id
+                session['valid_until'] = str(int(time.time()) * 100000)
+
+                user = service_gateway_get('identity_management', 'find_user_info_by_id', params={'actor_id': actor_id})
+                if user.has_key('_id'):
+                    user_id = user['_id']
+                    is_registered = True
+                else:
+                    user_id = None
+                    is_registered = False
+                name = user['name'] if user.has_key('name') else 'Unregistered'
+
+                session['user_id'] = user_id
+                session['name'] = name
+                session['is_registered'] = is_registered
+                session['roles'] = ServiceApi.get_roles_by_actor_id(actor_id)
+
+                return
+
     @staticmethod
     def get_roles_by_actor_id(actor_id):
         roles_request = requests.get('http://%s:%d/ion-service/org_roles/%s' % (GATEWAY_HOST, GATEWAY_PORT, actor_id))
@@ -403,11 +427,11 @@ class ServiceApi(object):
         return user_infos
     
     @staticmethod
-    def create_user_info(user_id, user_info):
-        params={'user_id': user_id}
+    def create_user_info(actor_id, user_info):
+        params={'actor_id': actor_id}
         params['user_info'] = user_info
         params['user_info']['type_'] = 'UserInfo'
-        return service_gateway_post('identity_management', 'create_user_info', params)
+        return service_gateway_post('identity_management', 'create_user_info', params, raw_return=True)
     
     @staticmethod
     def update_user_info(user_info):
@@ -459,10 +483,10 @@ class ServiceApi(object):
 
     @staticmethod
     def find_user_info(user_id):
-        try:
-            user_info = service_gateway_get('identity_management', 'find_user_info_by_id', params={'user_id': user_id})
-        except:
+        user_info = service_gateway_get('identity_management', 'find_user_info_by_id', params={'actor_id': user_id})
+        if "GatewayError" in user_info:
             user_info = {'contact': {'name': '(Not Registered)', 'email': '(Not Registered)', 'phone': '???'}}
+
         return user_info
 
 
@@ -493,6 +517,14 @@ class ServiceApi(object):
             data.update(dict([(path+"."+key, _resource_type_to_form_type(val)) for (key, val) in current_data_resp.iteritems()]))
         return data
 
+
+    @staticmethod
+    def find_user_credentials_by_actor_id(actor_id):
+        return service_gateway_get('resource_registry',
+                                   'find_objects',
+                                   params={'subject':actor_id,
+                                           'predicate':'hasCredentials',
+                                           'object_type':'UserCredentials'})[0]
 
     @staticmethod
     def get_version():
