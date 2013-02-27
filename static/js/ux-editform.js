@@ -21,9 +21,11 @@ Form styling:
 var NestedFormModel = Backbone.DeepModel.extend({
 
   initialize: function(attrs, options){
+    this.resource_type = options.resource_type;
     this.black_list = options.black_list || [];
     this.nest_depth_factor = options.nest_depth_factor || 50;
     Backbone.Form.helpers.keyToTitle = this.key_to_title;
+    this.get_resource_type_schema();
   },
 
   schema: function(){
@@ -43,6 +45,14 @@ var NestedFormModel = Backbone.DeepModel.extend({
     });
     var schema = _.omit(schema_full, this.black_list); // remove black_listed
     return schema
+  },
+
+  get_resource_type_schema: function(){
+    var url = "/resource_type_schema/"+this.resource_type; 
+    $.ajax({url:url, type:"GET", dataType:"json"})
+      .always(function(){})
+      .done(function(resp){console.log(resp);})
+      .fail(function(){})
   },
 
   nest_depth: function(val){

@@ -24,6 +24,11 @@ AGENT_REQUEST_TEMPLATE = {
     }
 }
 
+SCHEMA_TO_RESOURCE = {
+    "contacts":"ContactInformation",
+    "phones":"Phone"
+}
+
 class ServiceApi(object):
 
     @staticmethod
@@ -459,6 +464,35 @@ class ServiceApi(object):
         except:
             user_info = {'contact': {'name': '(Not Registered)', 'email': '(Not Registered)', 'phone': '???'}}
         return user_info
+
+
+    @staticmethod
+    def resource_type_schema(resource_type):
+        def _resource_type_to_form_type(resource_py_type):
+            "Mapping between Python type and HTML form type."
+            if isinstance(resource_py_type, (list, tuple)):
+                return "Select"
+            elif isinstance(resource_py_type, bool):
+                return "Radio"
+            elif isinstance(resource_py_type, int):
+                return "Number"
+            else:
+                return "Text"
+        current_data_resp = service_gateway_get('resource_type_schema', resource_type, params={})
+        sub_obj_keys = [key for key in current_data_resp.keys() if key in SCHEMA_TO_RESOURCE]
+        removed_data = [current_data_resp.pop(key) for key in sub_obj_keys] # sub objects removed 
+        path = None
+        data = dict([(key, _resource_type_to_form_type(val)) for (key, val) in current_data_resp.iteritems()])
+        while sub_obj_keys:
+            sub_obj_key = sub_obj_keys.pop(0)
+            path = (path + "." + sub_obj_key) if path else sub_obj_key
+            resource_type = SCHEMA_TO_RESOURCE[sub_obj_key]
+            current_data_resp = service_gateway_get('resource_type_schema', resource_type, params={})
+            sub_obj_keys.extend([key for key in current_data_resp.keys() if key in SCHEMA_TO_RESOURCE])
+            [current_data_resp.pop(key) for key in sub_obj_keys] # sub objects removed 
+            data.update(dict([(path+"."+key, _resource_type_to_form_type(val)) for (key, val) in current_data_resp.iteritems()]))
+        return data
+
 
     @staticmethod
     def get_version():

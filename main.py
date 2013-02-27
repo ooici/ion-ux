@@ -304,6 +304,11 @@ def get_realtime_visualization_data2(query_token):
 # UI API
 # -----------------------------------------------------------------------------
 
+@app.route('/resource_type_schema/<resource_type>', methods=['GET'])
+def get_resource_type_schema(resource_type):
+    schema = ServiceApi.resource_type_schema(resource_type)
+    return jsonify(data=schema)
+
 @app.route('/ui/', methods=['GET'])
 def layout3():
     layout = LayoutApi.get_new_layout_schema()
