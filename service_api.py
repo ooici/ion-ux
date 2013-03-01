@@ -509,12 +509,12 @@ class ServiceApi(object):
         data = dict([(key, _resource_type_to_form_type(val)) for (key, val) in current_data_resp.iteritems()])
         while sub_obj_keys:
             sub_obj_key = sub_obj_keys.pop(0)
-            path = (path + "." + sub_obj_key) if path else sub_obj_key
+            path = (path + ".[0-9]+." + sub_obj_key) if path else sub_obj_key
             resource_type = SCHEMA_TO_RESOURCE[sub_obj_key]
             current_data_resp = service_gateway_get('resource_type_schema', resource_type, params={})
             sub_obj_keys.extend([key for key in current_data_resp.keys() if key in SCHEMA_TO_RESOURCE])
             [current_data_resp.pop(key) for key in sub_obj_keys] # sub objects removed 
-            data.update(dict([(path+"."+key, _resource_type_to_form_type(val)) for (key, val) in current_data_resp.iteritems()]))
+            data.update(dict([(path+".[0-9]+."+key, _resource_type_to_form_type(val)) for (key, val) in current_data_resp.iteritems()]))
         return data
 
 
