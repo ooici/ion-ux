@@ -344,11 +344,7 @@ def signon():
     # will stash user id, expiry, is_registered and roles in session
     ServiceApi.signon_user(certificate)    
 
-    if session['is_registered'] == False:
-        # redirect to registration screen
-        return redirect('/userprofile')
-    else:
-        return redirect('/')
+    return redirect('/')
 
 @app.route('/login/', methods=['GET'])
 def login():
