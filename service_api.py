@@ -431,11 +431,7 @@ class ServiceApi(object):
         params={'actor_id': actor_id}
         params['user_info'] = user_info
         params['user_info']['type_'] = 'UserInfo'
-
-        # need to use web requester id to make this request
-        web_requester_id = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'ActorIdentity', 'name': 'web_authentication', 'id_only': True})[0]
-
-        return service_gateway_post('identity_management', 'create_user_info', params, web_requester_id=web_requester_id, raw_return=True)
+        return service_gateway_post('identity_management', 'create_user_info', params, raw_return=True)
     
     @staticmethod
     def update_user_info(user_info):
