@@ -88,8 +88,101 @@ IONUX.Views.Search = Backbone.View.extend({
   },
   advanced_search: function(e){
     e.preventDefault();
-    alert("Advanced search is not available.");
+    new IONUX.Views.AdvancedSearch().render().el;
     return false;
+  },
+});
+
+IONUX.Views.AdvancedSearch = Backbone.View.extend({
+  tagName: "div",
+  template: _.template($("#advanced-search-tmpl").html()),
+  events: {
+    "click #btn-adv-search": "search_clicked"
+  },
+  render: function() {
+    $('body').append(this.$el);
+    var modal_html = this.template();
+    this.$el.append(modal_html);
+
+    var self = this;
+
+    // set up search views
+    var geodata = { geospatial_latitude_limit_north: 47.0,
+                    geospatial_latitude_limit_south: 35.3,
+                    geospatial_longitude_limit_east: -117.8,
+                    geospatial_longitude_limit_west: -150.2,
+                    geospatial_vertical_min: 1000,
+                    geospatial_vertical_max: 10000 }
+
+
+    new IONUX.Views.ExtentGeospatial({el:$('#adv-geospatial', this.$el), data: geodata}).render().el;
+    new IONUX.Views.ExtentVertical({el:$('#adv-vertical', this.$el), data: geodata}).render().el;
+    new IONUX.Views.ExtentTemporal({el:$('#adv-temporal', this.$el), data: geodata}).render().el;
+
+    // enable input in controls
+    $('input', this.$el).removeAttr('disabled');
+    $('input', '#adv-geospatial')
+      .on('change', function() {
+        var ninput = $('input[name="north"]', self.$el);
+        var sinput = $('input[name="south"]', self.$el);
+        var einput = $('input[name="east"]', self.$el);
+        var winput = $('input[name="west"]', self.$el);
+
+        //if (ninput.val() > sinput.val()) { ninput.val(sinput.val()); }
+        //if (einput.val() < winput.val()) { einput.val(winput.val()); }    // @TODO incorrect
+
+        var bounds = new google.maps.LatLngBounds(
+          new google.maps.LatLng(sinput.val(), winput.val()),
+          new google.maps.LatLng(ninput.val(), einput.val())
+        );
+        self.rectangle.setBounds(bounds);
+      });
+
+    var map_options = {
+      center: new google.maps.LatLng(0, 0),
+      zoom: 1,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+
+    $('#advanced-search-overlay').modal()
+      .on('shown', function() {
+        self.map = new google.maps.Map($('#adv_map', self.$el)[0], map_options);
+        self.rectangle = new google.maps.Rectangle();
+
+        var bounds = new google.maps.LatLngBounds(
+          new google.maps.LatLng(geodata.geospatial_latitude_limit_south, geodata.geospatial_longitude_limit_west),
+          new google.maps.LatLng(geodata.geospatial_latitude_limit_north, geodata.geospatial_longitude_limit_east)
+        );
+
+        var rect_options = { bounds        : bounds,
+                             fillColor     : "#ffcc33",
+                             fillOpacity   : 0.5,
+                             strokeWeight  : 1,
+                             strokeColor   : '#ccff33',
+                             strokeOpacity : 0.5,
+                             editable      : true,
+                             draggable     : true,
+                             map           : self.map }
+
+        self.rectangle.setOptions(rect_options);
+
+        google.maps.event.addListener(self.rectangle, 'bounds_changed', function() {
+          var curbounds = self.rectangle.getBounds();
+
+          $('input[name="north"]', self.$el).val(curbounds.getNorthEast().lat());
+          $('input[name="south"]', self.$el).val(curbounds.getSouthWest().lat());
+          $('input[name="east"]',  self.$el).val(curbounds.getNorthEast().lng());
+          $('input[name="west"]',  self.$el).val(curbounds.getSouthWest().lng());
+        });
+      })
+      .on('hidden', function() {
+        self.$el.remove();
+      });
+
+    return false;
+  },
+  search_clicked: function(e) {
+    alert('go');
   },
 });
 
@@ -149,10 +242,10 @@ IONUX.Views.DashboardMap = Backbone.View.extend({
       mapTypeId: google.maps.MapTypeId.SATELLITE
     };
     map = new google.maps.Map(this.$el[0], mapOptions);
-    kml_path = 'http://'+window.location.host+'/map2.kml?ui_server=http://'+window.location.host+'&unique_key='+this.create_random_id()+'&return_format=raw_json';
-    console.log('KML_PATH: ', kml_path);
-    var georssLayer = new google.maps.KmlLayer(kml_path);
-    georssLayer.setMap(map);
+    //kml_path = 'http://'+window.location.host+'/map2.kml?ui_server=http://'+window.location.host+'&unique_key='+this.create_random_id()+'&return_format=raw_json';
+    //console.log('KML_PATH: ', kml_path);
+    //var georssLayer = new google.maps.KmlLayer(kml_path);
+    //georssLayer.setMap(map);
     return this;
   },
   

@@ -1205,3 +1205,18 @@ ul.nav {
 #user-profile-overlay .bbf-del {
   margin-top: 5px;
 }
+
+#advanced-search-overlay {
+  width: 960px;
+  margin-left: -480px;
+}
+
+#advanced-search-overlay .modal-body {
+  height: 620px;
+  max-height: 620px;
+}
+
+#advanced-search-overlay #adv_map {
+  width: 680px;
+  height: 450px;
+}
