@@ -1,3 +1,16 @@
+
+.command-tbl tr:nth-child(odd) {
+  background: #222;
+}
+
+select#new-commands {
+  width: 350px;
+}
+
+.agent-start-stop {
+  padding: 15px 0 25px;
+}
+
 .notifications th {
   text-align: left;
 }

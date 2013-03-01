@@ -14,9 +14,13 @@ IONUX.Views.Error = Backbone.View.extend({
   render: function(){
     var self = this;
     $(this.modal_template).html(this.template({error_obj: this.options.error_obj, open_modal: this.options.open_modal})).modal()
-      .on('hide', function() {
+      .on('hidden', function() {
         $('#action-modal').remove();
       });
+    
+    // Ensure bindings, back and dashboard functions won't work without this.
+    this.setElement('#action-modal'); 
+    
     return this;
   },
   back: function(){
@@ -24,7 +28,9 @@ IONUX.Views.Error = Backbone.View.extend({
     return;
   },
   dashboard: function(){
+    console.log('dashboard clicked.');
     IONUX.ROUTER.navigate('/', {trigger:true});
+    return;
   }
 });
 

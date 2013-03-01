@@ -159,7 +159,6 @@ class ServiceApi(object):
             extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'ExtendedInformationResource', 'user_id': user_id})
         else:
             extension = error_message(msg="Resource extension for %s is not available." % resource_type)
-
         return extension
 
     @staticmethod
@@ -268,17 +267,52 @@ class ServiceApi(object):
         params = {"command": {"type_": "AgentCommand", "command": command}}
         if command == 'RESOURCE_AGENT_EVENT_GO_DIRECT_ACCESS':
             params['command'].update({'kwargs': {'session_type': 3, 'session_timeout':600, 'inactivity_timeout': 600}})
-        agent_response = service_gateway_agent_request(instrument_device_id, agent_op, params)
-        return agent_response
+        agent_request = service_gateway_agent_request(instrument_device_id, agent_op, params)
+        return agent_request
 
     @staticmethod
     def instrument_agent_get_capabilities(instrument_device_id):
-        agent_command = "get_capabilities"
-        params = {}
-        agent_response = service_gateway_agent_request(instrument_device_id, agent_command, params)
-        return agent_response
+        agent_req = service_gateway_agent_request(instrument_device_id, 'get_capabilities', params={})
+        
+        # Temp hack to catch error
+        if isinstance(agent_req, dict) and agent_req.has_key('GatewayError'):
+            return agent_req
+        else:
+            commands = []
+            agent_param_names = []
+            resource_param_names = []
+            
+            for param in agent_req:
+                cap_type = param['cap_type']
+                if cap_type == 1 or cap_type == 3:
+                    commands.append(param)
+                if cap_type == 2:
+                    agent_param_names.append(param['name'])
+                if cap_type == 4:
+                    resource_param_names.append(param['name'])
+                    
+            if resource_param_names:
+                resource_params = service_gateway_agent_request(instrument_device_id, 'get_resource', params={'params': resource_param_names})
+            else:
+                resource_params = []
+            
+            if agent_param_names:
+                agent_params = service_gateway_agent_request(instrument_device_id, 'get_resource', params={'params': agent_param_names})
+            else:
+                agent_params = []
+            
+            capabilities = {}
+            capabilities.update({'resource_params': resource_params})
+            capabilities.update({'commands': commands})
+            capabilities.update({'agent_params': agent_params})
+                
+        return capabilities
 
-
+    @staticmethod
+    def get_resource(device_id):
+        params = ["PTCA1", "PA1", "WBOTC", "PCALDATE", "STORETIME", "CPCOR", "PTCA2", "OUTPUTSV", "SAMPLENUM", "TCALDATE", "OUTPUTSAL", "NAVG", "POFFSET", "INTERVAL", "SYNCWAIT", "CJ", "CI", "CH", "TA0", "TA1", "TA2", "TA3", "RCALDATE", "CG", "CTCOR", "PTCB0", "PTCB1", "PTCB2", "CCALDATE", "PA0", "TXREALTIME", "PA2", "SYNCMODE", "PTCA0", "RTCA2", "RTCA1", "RTCA0"]
+        agent_request = service_gateway_agent_request(device_id, 'get_resource', params={'params': params})
+        return agent_request
 
     # PLATFORM COMMAND
     # ---------------------------------------------------------------------------
@@ -561,7 +595,8 @@ def build_agent_request(agent_id, operation_name, params=None):
     post_data['agentRequest']['agentOp'] = operation_name
 
     if params is not None:
-        post_data['agentRequest']['params'] = params
+        # post_data['agentRequest']['params'] = params['params']
+        post_data['agentRequest']['params'].update(params)
 
     # conditionally add user id and expiry to request
     if session.has_key('actor_id'):
@@ -580,13 +615,14 @@ def service_gateway_agent_request(agent_id, operation_name, params=None):
     resp = requests.post(url, data)
     pretty_console_log('SERVICE GATEWAY AGENT REQUEST POST RESPONSE', resp.content)
     return render_service_gateway_response(resp, raw_return=True)
-    if resp.status_code == 200:
-        resp = json.loads(resp.content)
 
-        if type(resp) == dict:
-            return resp['data']['GatewayResponse']
-        elif type(resp) == list:
-            return resp['data']['GatewayResponse'][0]
+    # if resp.status_code == 200:
+    #     resp = json.loads(resp.content)
+    # 
+    #     if type(resp) == dict:
+    #         return resp['data']['GatewayResponse']
+    #     elif type(resp) == list:
+    #         return resp['data']['GatewayResponse'][0]
 
 def error_message(msg=None):
     """Builds a Gateway compataible error message for UI."""
