@@ -24,6 +24,11 @@ AGENT_REQUEST_TEMPLATE = {
     }
 }
 
+SCHEMA_TO_RESOURCE = {
+    "contacts":"ContactInformation",
+    "phones":"Phone"
+}
+
 class ServiceApi(object):
 
     @staticmethod
@@ -39,6 +44,30 @@ class ServiceApi(object):
     @staticmethod
     def update_resource(resource_obj):
         req = service_gateway_post('resource_management', 'update_resource', params={'resource': resource_obj})
+        return req
+
+    @staticmethod
+    def create_resource_attachment(resource_id, attachment_name, attachment_description, attachment_type, attachment_content_type, content):
+        # use build_post_request to get url
+        url, _ = build_post_request('attachment', None)
+
+        # form our own data
+        post_data = {}
+        if "actor_id" in session:
+            post_data.update({'requester' : session['actor_id'],
+                              'expiry'    : session['valid_until']})
+
+        post_data.update({'resource_id'             : resource_id,
+                          'attachment_name'         : attachment_name,
+                          'attachment_description'  : attachment_description,
+                          'attachment_type'         : attachment_type,
+                          'attachment_content_type' : attachment_content_type})
+
+        post_files = { 'file': (attachment_name, content) }
+
+        # make our own post
+        req = requests.post(url, post_data, files=post_files)
+
         return req
 
     @staticmethod
@@ -348,6 +377,30 @@ class ServiceApi(object):
                 
                 return
 
+        # if still here, search by ActorIdentity
+        actor_identities = ServiceApi.find_by_resource_type("ActorIdentity")
+        for actor_identity in actor_identities:
+            if user_name == actor_identity['name']:
+                actor_id = actor_identity['_id']
+                session['actor_id'] = actor_id
+                session['valid_until'] = str(int(time.time()) * 100000)
+
+                user = service_gateway_get('identity_management', 'find_user_info_by_id', params={'actor_id': actor_id})
+                if user.has_key('_id'):
+                    user_id = user['_id']
+                    is_registered = True
+                else:
+                    user_id = None
+                    is_registered = False
+                name = user['name'] if user.has_key('name') else 'Unregistered'
+
+                session['user_id'] = user_id
+                session['name'] = name
+                session['is_registered'] = is_registered
+                session['roles'] = ServiceApi.get_roles_by_actor_id(actor_id)
+
+                return
+
     @staticmethod
     def get_roles_by_actor_id(actor_id):
         roles_request = requests.get('http://%s:%d/ion-service/org_roles/%s' % (GATEWAY_HOST, GATEWAY_PORT, actor_id))
@@ -374,11 +427,11 @@ class ServiceApi(object):
         return user_infos
     
     @staticmethod
-    def create_user_info(user_id, user_info):
-        params={'user_id': user_id}
+    def create_user_info(actor_id, user_info):
+        params={'actor_id': actor_id}
         params['user_info'] = user_info
         params['user_info']['type_'] = 'UserInfo'
-        return service_gateway_post('identity_management', 'create_user_info', params)
+        return service_gateway_post('identity_management', 'create_user_info', params, raw_return=True)
     
     @staticmethod
     def update_user_info(user_info):
@@ -430,11 +483,48 @@ class ServiceApi(object):
 
     @staticmethod
     def find_user_info(user_id):
-        try:
-            user_info = service_gateway_get('identity_management', 'find_user_info_by_id', params={'user_id': user_id})
-        except:
+        user_info = service_gateway_get('identity_management', 'find_user_info_by_id', params={'actor_id': user_id})
+        if "GatewayError" in user_info:
             user_info = {'contact': {'name': '(Not Registered)', 'email': '(Not Registered)', 'phone': '???'}}
+
         return user_info
+
+
+    @staticmethod
+    def resource_type_schema(resource_type):
+        def _resource_type_to_form_type(resource_py_type):
+            "Mapping between Python type and HTML form type."
+            if isinstance(resource_py_type, (list, tuple)):
+                return "Select"
+            elif isinstance(resource_py_type, bool):
+                return "Radio"
+            elif isinstance(resource_py_type, int):
+                return "Number"
+            else:
+                return "Text"
+        current_data_resp = service_gateway_get('resource_type_schema', resource_type, params={})
+        sub_obj_keys = [key for key in current_data_resp.keys() if key in SCHEMA_TO_RESOURCE]
+        removed_data = [current_data_resp.pop(key) for key in sub_obj_keys] # sub objects removed 
+        path = None
+        data = dict([(key, _resource_type_to_form_type(val)) for (key, val) in current_data_resp.iteritems()])
+        while sub_obj_keys:
+            sub_obj_key = sub_obj_keys.pop(0)
+            path = (path + ".[0-9]+." + sub_obj_key) if path else sub_obj_key
+            resource_type = SCHEMA_TO_RESOURCE[sub_obj_key]
+            current_data_resp = service_gateway_get('resource_type_schema', resource_type, params={})
+            sub_obj_keys.extend([key for key in current_data_resp.keys() if key in SCHEMA_TO_RESOURCE])
+            [current_data_resp.pop(key) for key in sub_obj_keys] # sub objects removed 
+            data.update(dict([(path+".[0-9]+."+key, _resource_type_to_form_type(val)) for (key, val) in current_data_resp.iteritems()]))
+        return data
+
+
+    @staticmethod
+    def find_user_credentials_by_actor_id(actor_id):
+        return service_gateway_get('resource_registry',
+                                   'find_objects',
+                                   params={'subject':actor_id,
+                                           'predicate':'hasCredentials',
+                                           'object_type':'UserCredentials'})[0]
 
     @staticmethod
     def get_version():
@@ -494,8 +584,17 @@ def render_service_gateway_response(service_gateway_resp, raw_return=None):
     else:
         return json.dumps(service_gateway_resp.content)
 
-def build_post_request(service_name, operation_name, params=None, web_requester_id=None):
-    url = '%s/%s/%s' % (SERVICE_GATEWAY_BASE_URL, service_name, operation_name)
+def build_post_request(service_name, operation_name, params=None, web_requester_id=None, base=SERVICE_GATEWAY_BASE_URL):
+    """
+    Builds a post request out of a service/operation and optional params.
+    operation_name may be left blank if going to a custom url.
+    """
+    urlarr = [base, service_name]
+    if operation_name is not None:
+        urlarr.append(operation_name)
+
+    url = "/".join(urlarr)
+
     post_data = deepcopy(SERVICE_REQUEST_TEMPLATE)
     post_data['serviceRequest']['serviceName'] = service_name
     post_data['serviceRequest']['serviceOp'] = operation_name
@@ -514,8 +613,8 @@ def build_post_request(service_name, operation_name, params=None, web_requester_
     pretty_console_log('SERVICE GATEWAY POST URL/DATA', url, data)
     return url, data
 
-def service_gateway_post(service_name, operation_name, params=None, raw_return=None, web_requester_id=None):
-    url, data = build_post_request(service_name, operation_name, params, web_requester_id)
+def service_gateway_post(service_name, operation_name, params=None, raw_return=None, web_requester_id=None, base=SERVICE_GATEWAY_BASE_URL):
+    url, data = build_post_request(service_name, operation_name, params, web_requester_id=web_requester_id, base=base)
     service_gateway_request = requests.post(url, data)
     pretty_console_log('SERVICE GATEWAY POST RESPONSE', service_gateway_request.content)
     return render_service_gateway_response(service_gateway_request, raw_return=raw_return)

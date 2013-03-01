@@ -39,11 +39,15 @@
     ',
 
     nestedField: '\
-      <div class="field-{{key}}">\
-        <div title="{{title}}" class="input-xlarge">{{editor}}\
-          <div class="help-inline">{{error}}</div>\
+      <div class="field-{{key}} control-group">\
+        <div title="{{title}}" class="control-group">\
+          <label class="control-label" for="{{id}}">{{title}}</label>\
+          <div class="controls">\
+            {{editor}}\
+            <div class="help-inline">{{error}}</div>\
+            <div class="help-block">{{help}}</div>\
+          </div>\
         </div>\
-        <div class="help-block">{{help}}</div>\
       </div>\
     ',
 

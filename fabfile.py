@@ -168,27 +168,31 @@ class Deploy:
             print '\nNot using git tag. Deploying the latest\n'
 
 
-env.roledefs = {
-    'ux_dev': ['ux-dev.oceanobservatories.org'],
-    'ux_test': ['ux-test.oceanobservatories.org'],
-}
-
-
 host = None
-gateway_host = None
+gateway_host = 'sg.a.oceanobservatories.org'
 gateway_port = None
 
 def ux_dev():
     global host
     host = 'ux-dev.oceanobservatories.org'
 
-def ux_test():
+def ion_alpha():
     global host
-    host = 'ux-test.oceanobservatories.org'
+    host = 'ion-alpha.oceanobservatories.org'
+
+def ux_test():
+    print 'Deprecated...Please use "fab ion-alpha deploy"'
+    exit()
 
 def ux_stage():
+    print 'Deprecated...Please use "fab ion-beta deploy"'
+    exit()
+
+def ion_beta():
     global host
-    host = 'r2-ux-stage.oceanobservatories.org'
+    global gateway_host;
+    gateway_host = 'sg.b.oceanobservatories.org'
+    host = 'ion-beta.oceanobservatories.org'
 
 def gateway_sg():
     global gateway_host;
@@ -198,7 +202,7 @@ def deploy():
     global host, gateway_host, gateway_port
     web_host = host or prompt('Web application hostname: ', default='ux-test.oceanobservatories.org')
     ssh_user = prompt('Username for remote host: ', default=getpass.getuser())
-    gateway_host= gateway_host or prompt('Service Gateway Service hostname: ', default='sg.a.oceanobservatories.org')
+    gateway_host= prompt('Service Gateway Service hostname: ', default=gateway_host)
     gateway_port= gateway_port or prompt('Service Gateway Service port: ', default='5000')
     deploy = Deploy()
 

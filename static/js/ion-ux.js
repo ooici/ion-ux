@@ -15,6 +15,9 @@ IONUX = {
       new IONUX.Views.Topbar({model: IONUX.SESSION_MODEL}).render().el
       new IONUX.Views.Search().render().el;
       new IONUX.Views.HelpMenu({model: IONUX.SESSION_MODEL}).render().el;
+
+      // nag popup!
+      if (!IONUX.SESSION_MODEL.get('is_registered')) router.user_profile();
     });
     router.handle_navigation();
     return router;

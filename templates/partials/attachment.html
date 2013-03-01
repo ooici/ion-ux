@@ -1,0 +1,35 @@
+<div id="resource-add-attachment-overlay" class="modal-ooi modal hide">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h1>Add Resource Attachment</h1>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal">
+            <div class="control-group">
+                <label class="control-label" for="attachment">File</label>
+                <div class="controls">
+                    <input type="file" id="attachment" class="input-block-level" name="attachment" />
+                    <span class="help-inline">The file to attach</span>
+
+                    <div class="progress progress-striped" style="display: none;">
+                        <div class="bar" style="width: 0%;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="description">Description</label>
+                <div class="controls">
+                    <input type="text" id="description" name="description" class="input-block-level" maxlength="128" />
+                    <span class="help-inline">A brief description about the attachment (128 char max)</span>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <img class="spinner" style="display:none;" src="/static/img/busy_indicator.gif" alt="uploading" />
+        <button id="add-attachment-ok" class="btn-blue btn-save">OK</button>
+        <button id="add-attachment-cancel" data-dismiss="modal" class="btn-blue btn-cancel">Cancel</button>
+    </div>
+</div>
+
