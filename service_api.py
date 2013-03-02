@@ -528,7 +528,7 @@ class ServiceApi(object):
 
     @staticmethod
     def get_version():
-        return service_gateway_get('version', None, base=GATEWAY_BASE_URL)
+        return service_gateway_get('version', None)
 
 # HELPER METHODS
 # ---------------------------------------------------------------------------
