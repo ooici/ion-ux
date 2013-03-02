@@ -339,7 +339,7 @@ class ServiceApi(object):
         # session to set cookie when web server ends up being a pool
         # of web servers?
         
-        session['actor_id'] = actor_id
+        session['actor_id'] = actor_identities
         session['valid_until'] = valid_until
         session['is_registered'] = is_registered
         
