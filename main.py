@@ -307,6 +307,11 @@ def get_realtime_visualization_data2(query_token):
 # UI API
 # -----------------------------------------------------------------------------
 
+@app.route('/resource_type_schema/<resource_type>', methods=['GET'])
+def get_resource_type_schema(resource_type):
+    schema = ServiceApi.resource_type_schema(resource_type)
+    return jsonify(data=schema)
+
 @app.route('/ui/', methods=['GET'])
 def layout3():
     layout = LayoutApi.get_new_layout_schema()
@@ -342,11 +347,7 @@ def signon():
     # will stash user id, expiry, is_registered and roles in session
     ServiceApi.signon_user(certificate)    
 
-    if session['is_registered'] == False:
-        # redirect to registration screen
-        return redirect('/userprofile')
-    else:
-        return redirect('/')
+    return redirect('/')
 
 @app.route('/login/', methods=['GET'])
 def login():
@@ -370,21 +371,48 @@ def userprofile():
         if request.method == 'GET':
             # determine if this is an update or a new registration
             if is_registered:
-                resp_data = ServiceApi.find_user_info(user_id)
+                resp_data = ServiceApi.find_user_info(session['actor_id'])
             else:
-                resp_data = {'contact': {'name': '', 'email': '', 'phone': '', 'address': '', 'city': '', 'postalcode': ''}}
+                # try to extract name from UserCredentials
+                creds = ServiceApi.find_user_credentials_by_actor_id(session['actor_id'])
+                cntoken = creds['name']
+                name = ''
+
+                try:
+                    rcn = re.compile(r'CN=(.*)\sA.+')
+                    m = rcn.search(cntoken)
+                    if m is not None:
+                        name = m.groups()[0]
+                except:
+                    pass
+
+                resp_data = {'name':name}
             return jsonify(data=resp_data)
         else:
             form_data = json.loads(request.data)
             if is_registered:
-                ServiceApi.update_user_info(form_data)
-            else:
-                ServiceApi.create_user_info(user_id, form_data)
-        
-            # indicate user is registered
-            session['is_registered'] = True
+                resp_data = ServiceApi.update_user_info(form_data)
 
-            resp_data = {"success":True}            
+                if isinstance(resp_data, dict) and resp_data.has_key('GatewayError'):
+                    return render_json_response(resp_data)
+                else:
+                    # only thing that can change here for session is name
+                    session['name'] = form_data['name']
+
+            else:
+                user_id = ServiceApi.create_user_info(session['actor_id'], form_data)
+
+                if isinstance(user_id, dict) and user_id.has_key('GatewayError'):
+                    return render_json_response(user_id)
+                else:
+                    # simulate a signon by setting appropriate session vars
+                    session['is_registered'] = True
+                    session['user_id']       = user_id
+                    session['roles']         = ServiceApi.get_roles_by_actor_id(session['actor_id'])
+                    session['name']          = form_data['name']
+                    #session['valid_until']  = 0     # @TODO: howto? only in certificate, so logon?
+
+            resp_data = {"success":True}
             return jsonify(data=resp_data)
     else:
         return render_app_template(request.path)

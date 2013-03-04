@@ -108,13 +108,14 @@
     IONUX.init();
     var black_list = ['resource._id', 'resource._rev', 'resource.ts_created', 'resource.ts_updated', 'resource.lcstate', 'resource.type_', 'resource.alt_ids'];
 
-nfmodel = new NestedFormModel(TEST_MODEL_DATA, {black_list:black_list});
+nfmodel = new NestedFormModel(TEST_MODEL_DATA, {resource_type:"InstrumentDevice", black_list:black_list});
 
 nform = new Backbone.Form({model: nfmodel }).render();
 $("#dynamic-container").append(nform.el);
 
-
 $(".form-horizontal .control-label").css({"width":"300px", "margin-right":"10px"});
+$(".form-horizontal ul li").css({"display":"inline", "margin-right":"10px"});
+$(".form-horizontal ul li label").css({"display":"inline"});
 
 
 });
