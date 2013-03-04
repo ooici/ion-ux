@@ -1,13 +1,44 @@
 IONUX.Models.ResourceParams = Backbone.Model.extend({
-  initialize: function(options){
-    console.log('ResourceParams', this.toJSON(), this.attributes);
+  url: function() {
+    return location.href + 'set_resource/'
+  },  
+  schema: function(){
+    var sch = {};
+    _.each(this.attributes, function(attr, key) {
+      if (typeof attr === 'number') {
+        sch[key] = 'Number';
+      } else if (typeof attr == 'string') {
+        sch[key] = 'String';
+      } else if (attr instanceof Array) {
+        sch[key] = { type: 'List', itemType: 'Number' }
+      };
+    });
+    return sch;
+  }
+});
+
+
+IONUX.Views.ResourceParams = Backbone.View.extend({
+  el: '#resource-form',
+  template: '<div><button class="btn-blue save-params">Save</button></div>',
+  events: {
+    'click .save-params': 'save_params',
+  },
+  initialize: function() {
+    _.bindAll(this);
+    this.resource_params_form = new Backbone.Form({model: this.model}).render();
+  },
+  render: function(){
+    this.$el.html(this.template);
+    this.$el.prepend(this.resource_params_form.el);
+    return this;
   },
   
-  schema: function() {
-    
+  save_params: function() {
+    this.model.save();
   }
-  
-});
+})
+
 
 
 IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
@@ -19,7 +50,7 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
     'click #stop-instrument-agent-instance': 'stop_agent',
     'click .issue_command': 'issue_command',
     'click .get_capabilities': 'get_capabilities',
-    'click .execute-command': 'execute_command'
+    'click .execute-command': 'execute_command',
   },
     
   initialize: function(){
@@ -105,8 +136,11 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
         dataType: 'json',
         success: function(resp){
           self.render_commands(resp.data.commands);
-          self.render_parameters(resp.data.resource_params);
-          new IONUX.Models.ResourceParams(resp.data.resource_params);
+          // self.render_parameters(resp.data.resource_params);
+
+          new IONUX.Views.ResourceParams({
+            model: new IONUX.Models.ResourceParams(resp.data.resource_params)
+          }).render().el;
         }
       });
   },
@@ -117,26 +151,31 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
                     <td style="text-align:right">\
                     <button class="btn-blue execute-command" data-cap-type="<%= cap_type %>" data-command="<%= name %>">Execute</button>\
                     </td></tr>'
-    _.each(options, function(option) {
+    _.each(options, function(option){
       $('#cmds tbody').append(_.template(cmd_tmpl, option));
     });
   },
   
-  render_parameters: function(options){
-    var param_tmpl = '<label><%= label %></label>\
-                      <input type="text" value="<%= value %>" />'
-    var params = _.pairs(options);
-    _.each(params, function(param) {
-      // console.log(param[0], param[1]);
-      $('#resource-params tbody').append(_.template(param_tmpl, {label: param[0], value: param[1]}));
-    });
-
-    // _.each(options, function(v, k){
-    //   // console.log(k, v);
-    //   
-    //   // $('#instrument-params').append(_.template(param_tmpl, {label: option['name']}));
-    // });
+  render_parameters: function(params){
+    // this.resource_params_model = new IONUX.Models.ResourceParams(params);
+    // this.resource_params_form = new Backbone.Form({model: this.resource_params_model}).render();
+    // $('#resource-form').append(this.resource_params_form.el);
+    // $('#resource-form').append('<button class="btn-blue save-params">Save</button>');
+    // 
+    // // ---------------------------------------------------------------
+    // // var param_tmpl = '<label><%= label %></label>\
+    // //                   <input type="text" value="<%= value %>" />'
+    // // _.each(_.pairs(params), function(param) {
+    // //   $('#resource-params tbody').append(_.template(param_tmpl, {label: param[0], value: param[1]}));
+    // // });
   },
+  
+  // save_params: function() {
+  //   console.log('before', this.resource_params_model.toJSON());
+  //   this.resource_params_form.commit();
+  //   console.log('after: ', this.resource_params_model.toJSON());
+  //   this.resource_params_model.save();
+  // },
   
   render_select_menu: function(options) {
     var select_elmt = $('#new-commands').empty();
@@ -145,8 +184,6 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
       select_elmt.append(_.template(option_tmpl, option));
     });
   },
-  
-  
   
   issue_command: function(evt){
     var button_elmt = $(evt.target);

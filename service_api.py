@@ -314,6 +314,12 @@ class ServiceApi(object):
         return capabilities
 
     @staticmethod
+    def set_resource(device_id, params):
+        agent_request = service_gateway_agent_request(device_id, 'get_resource', params=params)
+        return agent_request
+
+
+    @staticmethod
     def get_resource(device_id):
         params = ["PTCA1", "PA1", "WBOTC", "PCALDATE", "STORETIME", "CPCOR", "PTCA2", "OUTPUTSV", "SAMPLENUM", "TCALDATE", "OUTPUTSAL", "NAVG", "POFFSET", "INTERVAL", "SYNCWAIT", "CJ", "CI", "CH", "TA0", "TA1", "TA2", "TA3", "RCALDATE", "CG", "CTCOR", "PTCB0", "PTCB1", "PTCB2", "CCALDATE", "PA0", "TXREALTIME", "PA2", "SYNCMODE", "PTCA0", "RTCA2", "RTCA1", "RTCA0"]
         agent_request = service_gateway_agent_request(device_id, 'get_resource', params={'params': params})

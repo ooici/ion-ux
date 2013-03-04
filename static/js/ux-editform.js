@@ -157,7 +157,6 @@ var NestedFormModel = Backbone.DeepModel.extend({
     })(obj);
     return result;
   }
-
 });
 
 
