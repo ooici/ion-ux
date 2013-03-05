@@ -98,7 +98,9 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
         stop_btn.prop('disabled', false);
         stop_btn.prop('value', 'Stop Instrument Agent');
         $('#start-instrument-agent-instance').show();
-        $('.instrument-commands').hide();
+        // $('.instrument-commands').hide();
+        $('#resource-form').empty();
+        $('#cmds tbody').empty();
       }
     });
     return false;
@@ -117,7 +119,7 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
       url: url,
       dataType: 'json',
       success: function(resp){
-        var data = resp.data;
+        var data = resp.data['commands'];
         $(".command-output").append($('<p class="command-success">').html("OK: '" + command + "' was successful. <br />"));
         self.get_capabilities();
       },
@@ -136,8 +138,6 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
         dataType: 'json',
         success: function(resp){
           self.render_commands(resp.data.commands);
-          // self.render_parameters(resp.data.resource_params);
-
           new IONUX.Views.ResourceParams({
             model: new IONUX.Models.ResourceParams(resp.data.resource_params)
           }).render().el;

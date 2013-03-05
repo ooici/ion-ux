@@ -258,7 +258,7 @@ class ServiceApi(object):
     def reset_driver(instrument_device_id):
         capabilities = ServiceApi.instrument_agent_get_capabilities(instrument_device_id)
         reset_cmd = 'RESOURCE_AGENT_EVENT_RESET'
-        reset_state = bool([True for c in capabilities if c['name'] == reset_cmd])
+        reset_state = bool([True for c in capabilities['commands'] if c['name'] == reset_cmd])
         if reset_state:
             ServiceApi.instrument_execute(instrument_device_id, reset_cmd, '1')
         return
@@ -295,27 +295,27 @@ class ServiceApi(object):
                     agent_param_names.append(param['name'])
                 if cap_type == 4:
                     resource_param_names.append(param['name'])
-                    
-            if resource_param_names:
-                resource_params = service_gateway_agent_request(instrument_device_id, 'get_resource', params={'params': resource_param_names})
-            else:
-                resource_params = []
             
-            if agent_param_names:
-                agent_params = service_gateway_agent_request(instrument_device_id, 'get_resource', params={'params': agent_param_names})
-            else:
-                agent_params = []
+            # if resource_param_names:
+            #     resource_params = service_gateway_agent_request(instrument_device_id, 'get_resource', params={'params': resource_param_names})
+            # else:
+            #     resource_params = []
+            # 
+            # if agent_param_names:
+            #     agent_params = service_gateway_agent_request(instrument_device_id, 'get_resource', params={'params': agent_param_names})
+            # else:
+            #     agent_params = []
             
             capabilities = {}
-            capabilities.update({'resource_params': resource_params})
+            # capabilities.update({'resource_params': resource_params})
             capabilities.update({'commands': commands})
-            capabilities.update({'agent_params': agent_params})
+            # capabilities.update({'agent_params': agent_params})
                 
         return capabilities
 
     @staticmethod
     def set_resource(device_id, params):
-        agent_request = service_gateway_agent_request(device_id, 'get_resource', params=params)
+        agent_request = service_gateway_agent_request(device_id, 'set_resource', params={'params': params})
         return agent_request
 
 
