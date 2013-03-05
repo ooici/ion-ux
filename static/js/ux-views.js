@@ -97,7 +97,8 @@ IONUX.Views.Topbar = Backbone.View.extend({
   el: '#topbar',
   template: _.template($('#topbar-tmpl').html()),
   events: {
-    'click #userprofile': 'userprofile'
+    'click #userprofile': 'userprofile',
+    'click #signup': 'create_account'
   },
   initialize: function(){
     _.bindAll(this, "render");
@@ -111,6 +112,11 @@ IONUX.Views.Topbar = Backbone.View.extend({
     e.preventDefault();
     user_info_url = '/UserInfo/face/'+IONUX.SESSION_MODEL.get('user_id')+'/';
     IONUX.ROUTER.navigate(user_info_url, {trigger: true});
+    return false;
+  },
+  create_account: function(e) {
+    e.preventDefault();
+    IONUX.ROUTER.create_account();
     return false;
   },
 });
@@ -562,6 +568,31 @@ IONUX.Views.ResourceAddAttachmentView = Backbone.View.extend({
     }
   },
 
+});
+
+IONUX.Views.CreateAccountView = Backbone.View.extend({
+  tagName: "div",
+  template: _.template($("#create-account-modal-tmpl").html()),
+  events: {
+    'click #get-credentials': 'get_credentials_clicked'
+  },
+  render: function() {
+    $('body').append(this.$el);
+    var modal_html = this.template();
+    this.$el.append(modal_html);
+
+    var self = this;
+
+    $('#create-account-overlay').modal()
+      .on('hidden', function() {
+        self.$el.remove();
+      });
+
+    return false;
+  },
+  get_credentials_clicked: function() {
+    window.location.href = window.location.origin + "/login/";
+  }
 });
 
 
