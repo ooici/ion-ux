@@ -18,7 +18,8 @@ IONUX = {
       console.log(resp);
       console.log(IONUX.SESSION_MODEL);
       // nag popup!
-      // if (!IONUX.SESSION_MODEL.get('is_registered')) router.user_profile();
+      if (IONUX.SESSION_MODEL.get('is_logged_in') && !IONUX.SESSION_MODEL.get('is_registered'))
+        router.user_profile();
     });
     router.handle_navigation();
     return router;

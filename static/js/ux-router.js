@@ -17,7 +17,8 @@ IONUX.Router = Backbone.Router.extend({
     ":resource_type/command/:resource_id/": "command",
     ":resource_type/:view_type/:resource_id/" : "page",
     ":resource_type/:view_type/:resource_id/edit" : "edit",
-    "userprofile" : "user_profile"
+    "userprofile" : "user_profile",
+    "create_account": "create_account",
   },
   edit: function(){
     var editable_resource = new IONUX.Models.EditableResource(window.MODEL_DATA.resource);
@@ -111,6 +112,10 @@ IONUX.Router = Backbone.Router.extend({
         //$("#dynamic-container").html(data);
         new IONUX.Views.EditUserRegistration({model: model}).render();
       });
+  },
+
+  create_account: function() {
+    new IONUX.Views.CreateAccountView().render();
   },
 
     // KEPT FOR REFERENCE
