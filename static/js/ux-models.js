@@ -326,8 +326,6 @@ IONUX.Models.UserRegistrationModel = IONUX.Models.EditableResource.extend({
   idAttribute: "_id",
 
   schema: {
-    name: { type: 'Text', validators: ['required'] },
-
     'contact': {
       type: 'Object',
       title: false,
@@ -362,6 +360,23 @@ IONUX.Models.UserRegistrationModel = IONUX.Models.EditableResource.extend({
   },
 
   attr_convert: {
+    'name': {
+      parse: function(v) {
+        /**
+         * Input: value of name field.
+         * Ouptut: the same. Not presented on form.
+         */
+        return v;
+      },
+      serialize: function(v) {
+        /**
+         * Input: whatever value we parsed initially. May be empty.
+         * Output: the concatentation of contact.individual_names_given + individual_name_family
+         */
+        var contact = this.get('contact');
+        return contact.individual_names_given + " " + contact.individual_name_family;
+      },
+    },
     'variables': {
       parse: function(v) {
         /**
@@ -385,9 +400,10 @@ IONUX.Models.UserRegistrationModel = IONUX.Models.EditableResource.extend({
      * Call this from your toJSON.
      */
     attrs = _.clone(attrs);
+    var self = this;
     _.each(this.attr_convert, function(v, k) {
       if (_.has(attrs, k)) {
-        attrs[k] = v.serialize(attrs[k]);
+        attrs[k] = v.serialize.call(self, attrs[k]);
       }
     });
 
@@ -399,9 +415,10 @@ IONUX.Models.UserRegistrationModel = IONUX.Models.EditableResource.extend({
      * Call this from your parse method.
      */
     data = _.clone(data);
+    var self = this;
     _.each(this.attr_convert, function(v, k) {
       if (_.has(data, k)) {
-        data[k] = v.parse(data[k]);
+        data[k] = v.parse.call(self, data[k]);
       }
     });
 
