@@ -89,7 +89,7 @@ IONUX.Views.PlatformCommandFacepage = Backbone.View.extend({
             var agent_options = [];
             var resource_options = [];
             
-            _.each(resp.data, function(option) {
+            _.each(resp.data['commands'], function(option) {
                 if (option.name != 'example'){
                     if (option.cap_type == 1) agent_options.push(option);
                     if (option.cap_type == 3) resource_options.push(option);
