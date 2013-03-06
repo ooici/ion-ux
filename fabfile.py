@@ -155,10 +155,11 @@ class Deploy:
 
         print 'Below is a list of release tags available for deploying:'
         os.chdir(self.clone_dir)
-        default_tag_version = local('git tag|sort -n|tail -1', capture=True)
+        cmd = "git tag | sed -e 's/v//g' | sort -t. -k1,1n -k2,2n -k3,3n | sed -e 's/^/v/g'"
+        default_tag_version = local(cmd + '|tail -1', capture=True)
         no_tag = 'no tag - get the latest'
         default_tag_version = no_tag
-        local('git tag | sort -r' )
+        local(cmd)
         tag_version = prompt('Please enter release tag you want to deploy based on list above:',
             default=default_tag_version)
         if tag_version != no_tag:
