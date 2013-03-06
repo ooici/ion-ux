@@ -46,7 +46,7 @@ IONUX.Views.EditUserRegistration = IONUX.Views.EditResource.extend({
     this.form = new Backbone.Form({schema: schema,
                                    data: data,
                                    fieldsets: [{legend:'Contact Information',
-                                                fields: ['name', 'contact']},
+                                                fields: ['contact']},
                                                {legend:'Notification Preferences',
                                                 fields:['variables']}]}).render();
 

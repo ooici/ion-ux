@@ -344,11 +344,7 @@ def signon():
     # will stash user id, expiry, is_registered and roles in session
     ServiceApi.signon_user(certificate)    
 
-    if session['is_registered'] == False:
-        # redirect to registration screen
-        return redirect('/userprofile')
-    else:
-        return redirect('/')
+    return redirect('/')
 
 @app.route('/login/', methods=['GET'])
 def login():
@@ -378,16 +374,23 @@ def userprofile():
                 creds = ServiceApi.find_user_credentials_by_actor_id(session['actor_id'])
                 cntoken = creds['name']
                 name = ''
+                individual_names_given = ''
+                individual_name_family = ''
 
                 try:
                     rcn = re.compile(r'CN=(.*)\sA.+')
                     m = rcn.search(cntoken)
                     if m is not None:
                         name = m.groups()[0]
+
+                        individual_names_given, individual_name_family = name.split(' ', 1)
                 except:
                     pass
 
-                resp_data = {'name':name}
+                resp_data = {'name':name,
+                             'contact':{'individual_names_given':individual_names_given,
+                                        'individual_name_family':individual_name_family}}
+
             return jsonify(data=resp_data)
         else:
             form_data = json.loads(request.data)

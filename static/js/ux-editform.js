@@ -1,65 +1,8 @@
 /*
-
-NOTES:
-
-  - EditableResource will have 'self.models' 
-    (needed to handle the sub-nesting of Resource attrs)
-
-
-BLACK_LIST: ['_id', '_rev', 'ts_created', 'ts_updated', 'lcstate', 'type_'];
-
-
-
 Form styling:
-  - removed top level data name (eg 'Resource')
-  - Replace '_' with ' '.
-  - Nested data: "(index+1)*margin_left" ...
   - Sort order: alphabetically
 */
 
-
-TEST_RESOURCE_TYPE_SCHEMA = {
-"addl": "Text",
-"alt_ids": "Select",
-"contacts.administrative_area": "Text",
-"contacts.city": "Text",
-"contacts.country": "Text",
-"contacts.email": "Text",
-"contacts.individual_name_family": "Text",
-"contacts.individual_names_given": "Text",
-"contacts.organization_name": "Text",
-"contacts.[0-9]+.phones.[0-9]+.phone_number": "Text",
-"contacts.phones.phone_type": "Text",
-"contacts.phones.sms": "Number",
-"contacts.phones.type_": "Text",
-"contacts.position_name": "Text",
-"contacts.postal_code": "Text",
-"contacts.roles": "Select",
-"contacts.street_address": "Text",
-"contacts.type_": "Text",
-"contacts.url": "Text",
-"contacts.variables": "Select",
-"controllable": "Radio",
-"custom_attributes": "Text",
-"description": "Text",
-"firmware_version": "Text",
-"hardware_version": "Text",
-"last_calibration_datetime": "Text",
-"lcstate": "Text",
-"message_controllable": "Radio",
-"monitorable": "Radio",
-"name": "Text",
-"reference_urls": "Select",
-"serial_number": "Text",
-"ts_created": "Text",
-"ts_updated": "Text",
-"type_": "Text",
-"uuid": "Text"}
-
-/*
-var reg = new RegExp('resources.contacts.[0-9]+.phones.[0-9]+.phone_number');
-reg.exec('resources.contacts.453.phones.34.phone_number')
-*/
 
 var NestedFormModel = Backbone.DeepModel.extend({
 
@@ -71,11 +14,8 @@ var NestedFormModel = Backbone.DeepModel.extend({
   },
 
   schema: function(){
-    console.log("started 'schema'");
-    //var resource_type_schema = TEST_RESOURCE_TYPE_SCHEMA; //this.get_resource_type_schema();
     var resource_type_schema = this.get_resource_type_schema();
     resource_type_schema = resource_type_schema['data'];
-    console.log("! ", resource_type_schema);
     var schema = this.make_schema(resource_type_schema);
     return schema;
   },
@@ -104,7 +44,6 @@ var NestedFormModel = Backbone.DeepModel.extend({
       var match = reg.exec(data_key);
       if (!_.isNull(match)) form_type = key;
       //console.log(regex_str, key, val, data_key, match, form_type);
-      console.log(form_type, "    ----  ", data_key, val, match);
     });
    return form_type; 
   },
@@ -159,86 +98,6 @@ var NestedFormModel = Backbone.DeepModel.extend({
   }
 
 });
-
-
-
-
-IONUX.Models.EditableForm = Backbone.Model.extend({
-  idAttribute: '_id',
-
-  modelmap: {},
-
-  initialize: function(attrs, options){
-    this.black_list = options.black_list || [];
-    //this.make_schema();
-    this.make_models();
-  },
-
-  make_models: function(){
-    var all_models = [];
-    var attrs = _.omit(this.attributes, this.black_list);
-    var sub_object_keys = this.find_sub_objects();
-    console.log("SUB OBJECTS: ", sub_object_keys);
-    var self = this;
-    var sub_sub_objects = [];
-    _.each(sub_object_keys, function(key){
-      var sub_objects = attrs[key];
-      var subobj = sub_objects[0];
-      console.log("! subobj ", key);
-      all_models.push(new self.modelmap[key]());
-      //sub_sub_objects.push(self.find_sub_objects(subobj));
-      _.each(sub_objects, function(obj){
-        console.log("! sub sub obj ", self.find_sub_objects(obj));
-      });
-    });
-    //_.each(sub_sub_objects, function(item){ });
-  },
-
-  make_schemas: function(){
-    var self = this;
-    var schema = {};
-    var attrs = _.omit(this.attributes, this.black_list);
-    console.log("black_list: ", this.black_list);
-    _.each(this.attributes, function(value, key){
-      console.log(key, value);
-    });
-    return schema;
-  },
-
-  find_sub_objects: function(attrs){
-    var sub_object_keys = [];
-    var attrs = attrs || _.omit(this.attributes, this.black_list);
-    _.each(attrs, function(value, key){
-      //console.log(key, typeof(value), value);
-      if (_.isArray(value)){
-        //console.log("isArray: ", key);
-        if (value.length > 0){
-          var item = value[0];
-          if (_.isObject(item) && !_.isArray(item)){
-            sub_object_keys.push(key);
-          }
-        }
-      } else {
-        if (_.isObject(value)){
-          //console.log("isObject: ", key);
-        } else {
-          if (_.isString(value)){
-            //console.log("isString ", key);
-          } else {
-            if (_.isBoolean(value)){
-              //console.log("isBoolean ", key);
-            } else {
-              //console.log("is?: ", key);
-            }
-          }
-        }
-      } // _.isNumber, _.isDate
-    });
-    return sub_object_keys;
-  }
-
-});
-
 
 
 
