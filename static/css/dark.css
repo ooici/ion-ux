@@ -584,6 +584,11 @@ h4, .h4-span {
   text-transform: uppercase;
 }
 
+hr {
+  border-top-color: #222;
+  border-bottom-color: #333;
+}
+
 #container {
   padding-top: 60px;
 }
@@ -1219,4 +1224,8 @@ ul.nav {
 #advanced-search-overlay #adv_map {
   width: 680px;
   height: 450px;
+}
+
+#advanced-search-overlay #limit_search_checkboxes {
+  margin-left: 30px;
 }

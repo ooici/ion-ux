@@ -18,7 +18,55 @@
                 </div>
             </div>
             <div class="span3">
-                sidebar
+                <h4>Search Terms</h4>
+                <label class="radio">
+                    <input type="radio" name="searchtermsradio" id="searchtermsradio_all" value="all" checked />
+                    Search All
+                </label>
+
+                <label class="radio">
+                    <input type="radio" name="searchtermsradio" id="searchtermsradio_limit" value="limit" />
+                    Limit search to:
+                </label>
+
+                <div id="limit_search_checkboxes">
+
+                    <label class="checkbox">
+                        <input type="checkbox" name="searchterms[]" value="data_products" />
+                        Data Products
+                    </label>
+
+                    <label class="checkbox">
+                        <input type="checkbox" name="searchterms[]" value="observatories" />
+                        Observatories
+                    </label>
+
+                    <label class="checkbox">
+                        <input type="checkbox" name="searchterms[]" value="platforms" />
+                        Platforms
+                    </label>
+
+                    <label class="checkbox">
+                        <input type="checkbox" name="searchterms[]" value="instruments" />
+                        Instruments
+                    </label>
+
+                </div>
+
+                <hr />
+
+                <h4>Search Criteria</h4>
+
+                <select name="one" id="selectone">
+                    <option value="owner">Owner</option>
+                </select>
+
+                <select name="two" id="selecttwo">
+                    <option value="matches">Matches</option>
+                </select>
+
+                <input type="text" name="criteria" id="search_criteria" />
+
             </div>
         </div>
     </div>
