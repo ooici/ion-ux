@@ -27,9 +27,10 @@
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#cccccc',GradientType=0 ); /* IE6-9 */
 }
 
-.argument {
+input.argument {
   height: 20px;
   border: solid 1px #666;
+  padding: 0px 5px;
   font-size: 11px;
   font-weight: 500;
   width: 150px;

@@ -97,8 +97,11 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
   tagName: "div",
   template: _.template($("#advanced-search-tmpl").html()),
   events: {
+    "click .filter-add": "add_filter_item",
+    "click .filter-remove": "remove_filter_item",
     "click #btn-adv-search": "search_clicked"
   },
+  filter_template: _.template($('#filter-item-tmpl').html()),
   render: function() {
     $('body').append(this.$el);
     var modal_html = this.template();
@@ -155,6 +158,8 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
 
         });
 
+        self.add_filter_item();
+
         self.map = new google.maps.Map($('#adv_map', self.$el)[0], map_options);
         self.rectangle = new google.maps.Rectangle();
 
@@ -192,6 +197,27 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
   },
   search_clicked: function(e) {
     alert('go');
+  },
+  add_filter_item: function(evt) {
+    //var columns = this.get_filter_columns();
+    //var data = {"columns":columns, "operators":OPERATORS};
+
+    var data = {'columns':['test1', 'test2'], 'operators': ['op1', 'op2']};
+    var filter_item = this.filter_template(data);
+    if (evt == null){
+      this.$el.find(".filter-item-holder").append(filter_item);
+    } else {
+      var target = $(evt.target);
+      target.parents('.filter-item').after(filter_item);
+    }
+  },
+  remove_filter_item: function(evt) {
+    var this_filter_item = $(evt.target).parents('.filter-item');
+    var filter_items = this_filter_item.siblings();
+    if (filter_items.length > 0) {
+      this_filter_item.remove();
+      return;
+    }
   },
 });
 

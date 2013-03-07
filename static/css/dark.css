@@ -1217,8 +1217,8 @@ ul.nav {
 }
 
 #advanced-search-overlay .modal-body {
-  height: 620px;
-  max-height: 620px;
+  height: 600px;
+  max-height: 600px;
 }
 
 #advanced-search-overlay #adv_map {
@@ -1228,4 +1228,25 @@ ul.nav {
 
 #advanced-search-overlay #limit_search_checkboxes {
   margin-left: 30px;
+}
+
+#advanced-search-overlay h4 {
+  margin: 0px;
+}
+
+#advanced-search-overlay #searchterms_holder label {
+  font-size: 0.9em;
+  margin: 0px;
+}
+
+#advanced-search-overlay .filter-item {
+  padding: 0px;
+}
+
+#advanced-search-overlay .filter-add i, #advanced-search-overlay .filter-remove i {
+  margin-top: 3px;
+}
+
+#advanced-search-overlay .filter-add, #advanced-search-overlay .filter-remove {
+  border-radius: 3px;
 }
