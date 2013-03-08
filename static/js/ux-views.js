@@ -162,6 +162,18 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
         self.map = new google.maps.Map($('#adv_map', self.$el)[0], map_options);
         self.rectangle = new google.maps.Rectangle();
 
+        var close_symbol = { path         : "M24.778,21.419L19.276,15.917L24.777,10.415L21.949,7.585L16.447,13.087L10.945,7.585L8.117,10.415L13.618,15.917L8.116,21.419L10.946,24.248L16.447,18.746L21.948,24.248Z",
+                             fillColor    : "white",
+                             fillOpacity  : 0.9,
+                             scale        : 0.8,
+                             strokeColor  : "black",
+                             strokeWeight : 1,
+                             anchor       : new google.maps.Point(-3, 25) }
+
+        self.close_marker = new google.maps.Marker({ icon    : close_symbol,
+                                                     map     : self.map,
+                                                     visible : false });
+
         var rect_options = { fillColor     : '#c4e5fc',
                              fillOpacity   : 0.5,
                              strokeWeight  : 1,
@@ -176,16 +188,18 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
 
         self.reset_drag_rect();
 
+        // update geo inputs to reflect rectangle when visible and moving
         google.maps.event.addListener(self.rectangle, 'bounds_changed', function() {
           if (!self.rectangle.getVisible())
             return;
 
           var curbounds = self.rectangle.getBounds();
+          self.close_marker.setPosition(curbounds.getNorthEast());
           self.update_geo_inputs(curbounds);
         });
 
-        // @TODO: click to remove is not correct
-        google.maps.event.addListener(self.rectangle, 'click', function(e) {
+        // click on close marker to remove the rect and reset geo inputs
+        google.maps.event.addListener(self.close_marker, 'click', function(e) {
           self.reset_drag_rect();
         });
       })
@@ -217,6 +231,9 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
 
     // hide rect
     self.rectangle.setVisible(false);
+
+    // hide marker
+    self.close_marker.setVisible(false);
 
     // make rect uneditable
     self.rectangle.setOptions({editable:false});
@@ -287,6 +304,9 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
 
       // make rect editable
       self.rectangle.setOptions({editable:true});
+
+      // make delete marker visible
+      self.close_marker.setVisible(true);
 
       // remove all mouseup handlers
       mu_listener1.remove();
