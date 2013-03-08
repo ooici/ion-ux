@@ -591,7 +591,7 @@ IONUX.Views.CreateAccountView = Backbone.View.extend({
     return false;
   },
   get_credentials_clicked: function() {
-    window.location.href = window.location.origin + "/login/";
+    window.location.href = window.location.protocol + "//" + window.location.host + "/login/";
   }
 });
 
