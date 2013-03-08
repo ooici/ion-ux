@@ -101,6 +101,12 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
     "click .filter-remove": "remove_filter_item",
     "click #btn-adv-search": "search_clicked"
   },
+  geodata: { geospatial_latitude_limit_north: null,
+             geospatial_latitude_limit_south: null,
+             geospatial_longitude_limit_east: null,
+             geospatial_longitude_limit_west: null,
+             geospatial_vertical_min: null,
+             geospatial_vertical_max: null },
   filter_template: _.template($('#filter-item-tmpl').html()),
   render: function() {
     $('body').append(this.$el);
@@ -110,17 +116,9 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
     var self = this;
 
     // set up search views
-    var geodata = { geospatial_latitude_limit_north: 47.0,
-                    geospatial_latitude_limit_south: 35.3,
-                    geospatial_longitude_limit_east: -117.8,
-                    geospatial_longitude_limit_west: -150.2,
-                    geospatial_vertical_min: 1000,
-                    geospatial_vertical_max: 10000 }
-
-
-    new IONUX.Views.ExtentGeospatial({el:$('#adv-geospatial', this.$el), data: geodata}).render().el;
-    new IONUX.Views.ExtentVertical({el:$('#adv-vertical', this.$el), data: geodata}).render().el;
-    new IONUX.Views.ExtentTemporal({el:$('#adv-temporal', this.$el), data: geodata}).render().el;
+    new IONUX.Views.ExtentGeospatial({el:$('#adv-geospatial', this.$el), data: self.geodata}).render().el;
+    new IONUX.Views.ExtentVertical({el:$('#adv-vertical', this.$el), data: self.geodata}).render().el;
+    new IONUX.Views.ExtentTemporal({el:$('#adv-temporal', this.$el), data: self.geodata}).render().el;
 
     // enable input in controls
     $('input', this.$el).removeAttr('disabled');
@@ -144,7 +142,8 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
     var map_options = {
       center: new google.maps.LatLng(0, 0),
       zoom: 1,
-      mapTypeId: google.maps.MapTypeId.ROADMAP
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      draggable: false,
     };
 
     $('#advanced-search-overlay').modal()
@@ -163,30 +162,31 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
         self.map = new google.maps.Map($('#adv_map', self.$el)[0], map_options);
         self.rectangle = new google.maps.Rectangle();
 
-        var bounds = new google.maps.LatLngBounds(
-          new google.maps.LatLng(geodata.geospatial_latitude_limit_south, geodata.geospatial_longitude_limit_west),
-          new google.maps.LatLng(geodata.geospatial_latitude_limit_north, geodata.geospatial_longitude_limit_east)
-        );
-
-        var rect_options = { bounds        : bounds,
-                             fillColor     : '#ffcc33',
+        var rect_options = { fillColor     : '#c4e5fc',
                              fillOpacity   : 0.5,
                              strokeWeight  : 1,
-                             strokeColor   : '#ccff33',
-                             strokeOpacity : 0.5,
-                             editable      : true,
+                             strokeColor   : '#0cc1ff',
+                             strokeOpacity : 0.8,
+                             editable      : false,
                              draggable     : true,
-                             map           : self.map }
+                             map           : self.map,
+                             visible       : false }
 
         self.rectangle.setOptions(rect_options);
 
-        google.maps.event.addListener(self.rectangle, 'bounds_changed', function() {
-          var curbounds = self.rectangle.getBounds();
+        self.reset_drag_rect();
 
-          $('input[name="north"]', self.$el).val(curbounds.getNorthEast().lat());
-          $('input[name="south"]', self.$el).val(curbounds.getSouthWest().lat());
-          $('input[name="east"]',  self.$el).val(curbounds.getNorthEast().lng());
-          $('input[name="west"]',  self.$el).val(curbounds.getSouthWest().lng());
+        google.maps.event.addListener(self.rectangle, 'bounds_changed', function() {
+          if (!self.rectangle.getVisible())
+            return;
+
+          var curbounds = self.rectangle.getBounds();
+          self.update_geo_inputs(curbounds);
+        });
+
+        // @TODO: click to remove is not correct
+        google.maps.event.addListener(self.rectangle, 'click', function(e) {
+          self.reset_drag_rect();
         });
       })
       .on('hidden', function() {
@@ -194,6 +194,107 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
       });
 
     return false;
+  },
+  update_geo_inputs: function(bounds) {
+
+    var n, s, e, w = null;
+
+    if (bounds != null) {
+      n = bounds.getNorthEast().lat();
+      s = bounds.getSouthWest().lat();
+      e = bounds.getNorthEast().lng();
+      w = bounds.getSouthWest().lng();
+    }
+
+    $('input[name="north"]', this.$el).val(n);
+    $('input[name="south"]', this.$el).val(s);
+    $('input[name="east"]',  this.$el).val(e);
+    $('input[name="west"]',  this.$el).val(w);
+  },
+  reset_drag_rect: function() {
+
+    var self = this;
+
+    // hide rect
+    self.rectangle.setVisible(false);
+
+    // make rect uneditable
+    self.rectangle.setOptions({editable:false});
+
+    // set map undraggable
+    self.map.setOptions({draggable: false});
+
+    // clear out geo inputs
+    self.update_geo_inputs(null);
+
+    // mouse move handler - repositions rect under mouse cursor
+    self.mm_listener = google.maps.event.addListener(self.map, 'mousemove', function(e) {
+
+      var bounds = null;
+
+      // are we invisible, or are we clicking + dragging?
+      if (self.rectangle.getVisible()) {
+        // determine sw/ne based on lat/long of this and mousedown event
+
+        if (e.latLng.lat() <= self.start_point.lat() && e.latLng.lng() <= self.start_point.lng()) {
+          var sw = e.latLng; // SW
+          var ne = self.start_point; // NE
+        }
+        else if (e.latLng.lat() <= self.start_point.lat() && e.latLng.lng() >= self.start_point.lng()) {
+          var sw = new google.maps.LatLng(e.latLng.ib, self.start_point.lng());  // e.latLng; // SE
+          var ne = new google.maps.LatLng(self.start_point.lat(), e.latLng.jb);  // self.start_point // NW
+        }
+        else if (e.latLng.lat() >= self.start_point.lat() && e.latLng.lng() >= self.start_point.lng()) {
+          var sw = self.start_point; // SW
+          var ne = e.latLng; // NE
+        }
+        else if (e.latLng.lat() >= self.start_point.lat() && e.latLng.lng() <= self.start_point.lng()) {
+          var sw = new google.maps.LatLng(self.start_point.lat(), e.latLng.jb); // e.latLng; // NW
+          var ne = new google.maps.LatLng(e.latLng.ib, self.start_point.lng()); // self.start_point; // SE
+        }
+
+        bounds = new google.maps.LatLngBounds(sw, ne); 
+
+      } else {
+        // move the invisible rectangle underneath the pointer
+        bounds = new google.maps.LatLngBounds(e.latLng, e.latLng);
+      }
+
+      self.rectangle.setBounds(bounds);
+    });
+
+    google.maps.event.addListenerOnce(self.map, 'mousedown', function(e) {
+      self.rectangle.setVisible(true);
+
+      self.start_point = new google.maps.LatLng(e.latLng.ib, e.latLng.jb);
+    });
+
+    var mu_listener1, mu_listener2 = null;
+
+    var muphandler = function(e) {
+      // remove initial rect point setter
+      if (self.mm_listener != null) {
+        //google.maps.event.removeListener(self.mm_listener);
+        self.mm_listener.remove();
+        self.mm_listener = null;
+      }
+
+      // reset start_point
+      self.start_point = null;
+
+      // make map draggable
+      self.map.setOptions({draggable:true});
+
+      // make rect editable
+      self.rectangle.setOptions({editable:true});
+
+      // remove all mouseup handlers
+      mu_listener1.remove();
+      mu_listener2.remove();
+    };
+
+    mu_listener1 = google.maps.event.addListenerOnce(self.map, 'mouseup', muphandler);
+    mu_listener2 = google.maps.event.addListenerOnce(self.rectangle, 'mouseup', muphandler);
   },
   search_clicked: function(e) {
     alert('go');
