@@ -24,7 +24,7 @@ IONUX.Views.ResourceParams = Backbone.View.extend({
   events: {
     'click .save-params': 'save_params',
   },
-  initialize: function() {
+  initialize: function(){
     _.bindAll(this);
     this.resource_params_form = new Backbone.Form({model: this.model}).render();
   },
@@ -33,8 +33,8 @@ IONUX.Views.ResourceParams = Backbone.View.extend({
     this.$el.prepend(this.resource_params_form.el);
     return this;
   },
-  
-  save_params: function() {
+  save_params: function(){
+    this.resource_params_form.commit();
     this.model.save();
   }
 })

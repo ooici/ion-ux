@@ -296,20 +296,20 @@ class ServiceApi(object):
                 if cap_type == 4:
                     resource_param_names.append(param['name'])
             
-            # if resource_param_names:
-            #     resource_params = service_gateway_agent_request(instrument_device_id, 'get_resource', params={'params': resource_param_names})
-            # else:
-            #     resource_params = []
-            # 
-            # if agent_param_names:
-            #     agent_params = service_gateway_agent_request(instrument_device_id, 'get_resource', params={'params': agent_param_names})
-            # else:
-            #     agent_params = []
+            if resource_param_names:
+                resource_params = service_gateway_agent_request(instrument_device_id, 'get_resource', params={'params': resource_param_names})
+            else:
+                resource_params = []
+            
+            if agent_param_names:
+                agent_params = service_gateway_agent_request(instrument_device_id, 'get_resource', params={'params': agent_param_names})
+            else:
+                agent_params = []
             
             capabilities = {}
-            # capabilities.update({'resource_params': resource_params})
+            capabilities.update({'resource_params': resource_params})
             capabilities.update({'commands': commands})
-            # capabilities.update({'agent_params': agent_params})
+            capabilities.update({'agent_params': agent_params})
                 
         return capabilities
 
