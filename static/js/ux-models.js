@@ -56,7 +56,16 @@ IONUX.Models.Session = Backbone.Model.extend({
     url: '/session/',
     parse: function(resp){
         return resp.data;
-    }    
+    },
+    is_logged_in: function(){
+      return this.get('is_logged_in');
+    },
+    is_registered: function() {
+      return this.get('is_registered');
+    },
+    is_resource_owner: function(){
+      return _.findWhere(MODEL_DATA.owners[0], {_id: this.get('user_id')}) ? true : false;
+    }
 });
 
 IONUX.Models.Resource = Backbone.Model.extend({});

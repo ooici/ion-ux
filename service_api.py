@@ -98,6 +98,13 @@ class ServiceApi(object):
     def delete_user_subscription(notification_id):
         return service_gateway_post('user_notification', 'delete_notification', params={'notification_id': notification_id})
 
+    @staticmethod
+    def enroll_request(resource_id, actor_id):
+        print 'zzzzz', resource_id, actor_id
+        return True
+        # return service_gateway_post('user_notification', 'delete_notification', params={'notification_id': notification_id})
+
+
 
     @staticmethod
     def get_event_types():
