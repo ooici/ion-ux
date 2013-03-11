@@ -125,7 +125,8 @@ Backbone.Form.editors.List.Phone = Backbone.Form.editors.Base.extend({
   getValue: function() {
     var retval = { 'phone_number' : this.numel.val(),
                    'phone_type'   : this.typel.val(),
-                   'sms'          : this.smsel.is(':checked') };
+                   'sms'          : this.smsel.is(':checked'),
+                   'type_'        : 'Phone' };
     return retval;
   },
 

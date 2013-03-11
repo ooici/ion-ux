@@ -184,16 +184,17 @@ def page(resource_type, resource_id):
     else:
         return render_app_template(request.path)
 
-@app.route('/<resource_type>/status/<resource_id>/edit', methods=['GET'])
-@app.route('/<resource_type>/face/<resource_id>/edit', methods=['GET'])
-@app.route('/<resource_type>/related/<resource_id>/edit', methods=['GET'])
-def edit(resource_type, resource_id):
-    '''
-    HTML requests should be redirected to the parent view
-    for data, page preprocessing and Backbone initialization.
-    '''
-    parent_url = re.sub(r'edit$', '', request.url)
-    return redirect(parent_url)
+# TEMP: Disabled until nested forms implemented.
+# @app.route('/<resource_type>/status/<resource_id>/edit', methods=['GET'])
+# @app.route('/<resource_type>/face/<resource_id>/edit', methods=['GET'])
+# @app.route('/<resource_type>/related/<resource_id>/edit', methods=['GET'])
+# def edit(resource_type, resource_id):
+#     '''
+#     HTML requests should be redirected to the parent view
+#     for data, page preprocessing and Backbone initialization.
+#     '''
+#     parent_url = re.sub(r'edit$', '', request.url)
+#     return redirect(parent_url)
 
 
 # -----------------------------------------------------------------------------
