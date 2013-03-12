@@ -502,9 +502,11 @@ class ServiceApi(object):
                 return "Number"
             else:
                 return "Text"
+        rts = ResourceTypeSchema(resource_type)
         current_data_resp = service_gateway_get('resource_type_schema', resource_type, params={})
+        #sub_obj_keys = current_data_resp["schemas"][resource_type]
         sub_obj_keys = [key for key in current_data_resp.keys() if key in SCHEMA_TO_RESOURCE]
-        removed_data = [current_data_resp.pop(key) for key in sub_obj_keys] # sub objects removed 
+        #removed_data = [current_data_resp.pop(key) for key in sub_obj_keys] # sub objects removed 
         path = None
         data = dict([(key, _resource_type_to_form_type(val)) for (key, val) in current_data_resp.iteritems()])
         while sub_obj_keys:
@@ -529,6 +531,46 @@ class ServiceApi(object):
     @staticmethod
     def get_version():
         return service_gateway_get('version', None)
+
+
+class ResourceTypeSchema(object):
+
+    def __init__(self, resource_type):
+        self.top_level_resource_type = resource_type
+
+    def schema(self):
+        #TODO: finish method with logic from 'resource_type_schema(resource_type)'
+        data = self.get_data(self.top_level_resource_type)
+        sub_resources = self.find_sub_resources(data, self.top_level_resource_type)
+        return sub_resources
+
+    def get_data(self, resource_type):
+        resp = service_gateway_get('resource_type_schema', resource_type, params={})
+        return resp
+
+    def find_sub_resources(self, data, parent_resource_type):
+        prt_schema = data["schemas"][parent_resource_type]
+        sub_resources = []
+        for (name, val) in prt_schema.iteritems():
+            if val.has_key("decorators"):
+                if val["decorators"].has_key("ContentType"):
+                    sub_resources.append(val["decorators"]["ContentType"])
+        return sub_resources
+
+    def _resource_type_to_form_type(self, resource_py_type):
+        """
+        Mapping between Python type and HTML form type.
+        """
+        if isinstance(resource_py_type, (list, tuple)):
+            return "Select"
+        elif isinstance(resource_py_type, bool):
+            return "Radio"
+        elif isinstance(resource_py_type, int):
+            return "Number"
+        else:
+            return "Text"
+
+
 
 # HELPER METHODS
 # ---------------------------------------------------------------------------
