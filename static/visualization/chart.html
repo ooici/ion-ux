@@ -14,7 +14,7 @@
 
     <!-- High charts / High stocks -->
     <script src="js/highstock/js/highstock.js"></script>
-    <script src="js/highstock/js/modules/exporting.js"></script> 
+    <script src="js/highstock/js/modules/exporting.js"></script>
     
     <style> 
       .container {
@@ -111,7 +111,7 @@
         //init the realtime component. Check to see if there was a lingering query_token from a previous session.
         // Needs to be cleaned up. This happens in Chrome when the page reload does not fire the beforeunload event
         rt_query = null;
-        rt_len_max = 10;
+        rt_len_max = 600;
         if (sessionStorage["rt_query_token"]) {
             rt_query_token = sessionStorage["rt_query_token"];
             chartCleanup();
@@ -126,7 +126,7 @@
 
         /// Get meta data for the data product id. It will be used to retrieve the correct data
         jQuery.ajax ({
-            url: container_server + "/visualization/get_dataproduct_metadata/?data_product_id=" + dp_id + "&callback=dp_metadata_cb&return_format=raw_json",
+            url: container_server + "/visualization/get_data_product_metadata/?data_product_id=" + dp_id + "&callback=dp_metadata_cb&return_format=raw_json",
             dataType: 'jsonp',
             jsonpCallback: 'dp_metadata_cb'
         });
