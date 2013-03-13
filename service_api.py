@@ -499,31 +499,8 @@ class ServiceApi(object):
 
     @staticmethod
     def resource_type_schema(resource_type):
-        def _resource_type_to_form_type(resource_py_type):
-            "Mapping between Python type and HTML form type."
-            if isinstance(resource_py_type, (list, tuple)):
-                return "Select"
-            elif isinstance(resource_py_type, bool):
-                return "Radio"
-            elif isinstance(resource_py_type, int):
-                return "Number"
-            else:
-                return "Text"
-        current_data_resp = service_gateway_get('resource_type_schema', resource_type, params={})
-        sub_obj_keys = [key for key in current_data_resp.keys() if key in SCHEMA_TO_RESOURCE]
-        removed_data = [current_data_resp.pop(key) for key in sub_obj_keys] # sub objects removed 
-        path = None
-        data = dict([(key, _resource_type_to_form_type(val)) for (key, val) in current_data_resp.iteritems()])
-        while sub_obj_keys:
-            sub_obj_key = sub_obj_keys.pop(0)
-            path = (path + ".[0-9]+." + sub_obj_key) if path else sub_obj_key
-            resource_type = SCHEMA_TO_RESOURCE[sub_obj_key]
-            current_data_resp = service_gateway_get('resource_type_schema', resource_type, params={})
-            sub_obj_keys.extend([key for key in current_data_resp.keys() if key in SCHEMA_TO_RESOURCE])
-            [current_data_resp.pop(key) for key in sub_obj_keys] # sub objects removed 
-            data.update(dict([(path+".[0-9]+."+key, _resource_type_to_form_type(val)) for (key, val) in current_data_resp.iteritems()]))
-        return data
-
+        rts = ResourceTypeSchema(resource_type)
+        return rts()
 
     @staticmethod
     def find_user_credentials_by_actor_id(actor_id):
@@ -536,6 +513,67 @@ class ServiceApi(object):
     @staticmethod
     def get_version():
         return service_gateway_get('version', None)
+
+
+class ResourceTypeSchema(object):
+
+    def __init__(self, resource_type):
+        self.top_level_resource_type = resource_type
+
+    def __call__(self):
+        #TODO: finish method with logic from 'resource_type_schema(resource_type)'
+        data_resp = self.get_data(self.top_level_resource_type)
+        sub_resources = self.find_sub_resources(data_resp, self.top_level_resource_type)
+        path = None
+        schema_data = self.find_types(data_resp, self.top_level_resource_type)
+        while sub_resources:
+            schema_resource_name, schema_resource_type = sub_resources.pop(0)
+            path = (path + ".[0-9]+." + str(schema_resource_name)) if path else schema_resource_name
+            data_resp = self.get_data(schema_resource_type)
+            sub_resources.extend(self.find_sub_resources(data_resp, schema_resource_type))
+            schema_data_current = self.find_types(data_resp, schema_resource_type)
+            schema_data.update(dict([(path+ u".[0-9]+."+str(key), val) for (key, val) in schema_data_current.iteritems()]))
+        print schema_data
+        return schema_data
+
+    def get_data(self, resource_type):
+        resp = service_gateway_get('resource_type_schema', resource_type, params={})
+        return resp
+
+    def find_sub_resources(self, data, parent_resource_type):
+        prt_schema = data["schemas"][parent_resource_type]
+        sub_resources = []
+        for (name, val) in prt_schema.iteritems():
+            if val.has_key("decorators"):
+                if val["decorators"].has_key("ContentType"):
+                    content_type = val["decorators"]["ContentType"]
+                    if content_type not in ["list", "tuple", "bool", "int", "str"]: #XXX 
+                        sub_resources.append([name, content_type])
+        return sub_resources
+
+    def find_types(self, data, parent_resource_type):
+        prt_schema = data["schemas"][parent_resource_type]
+        types = []
+        for (name, val) in prt_schema.iteritems():
+            if val.has_key("type"):
+                types.append([name, val["type"]])
+        return dict([(name, self._resource_type_to_form_type(stype)) for (name, stype) in types])
+
+    def _resource_type_to_form_type(self, resource_str_type):
+        """
+        Mapping between given string type and HTML form type.
+        """
+        if resource_str_type in ["list", "tuple"]:
+            return "Select"
+        elif resource_str_type == "bool":
+            return "Radio"
+        elif resource_str_type == "int":
+            return "Number"
+        elif resource_str_type == "str":
+            return "Text"
+        else:
+            return "Text"
+
 
 # HELPER METHODS
 # ---------------------------------------------------------------------------
