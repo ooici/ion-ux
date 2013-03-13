@@ -15,8 +15,7 @@ IONUX = {
       new IONUX.Views.Topbar({model: IONUX.SESSION_MODEL}).render().el
       new IONUX.Views.Search().render().el;
       new IONUX.Views.HelpMenu({model: IONUX.SESSION_MODEL}).render().el;
-      console.log(resp);
-      console.log(IONUX.SESSION_MODEL);
+      
       // nag popup!
       if (IONUX.SESSION_MODEL.get('is_logged_in') && !IONUX.SESSION_MODEL.get('is_registered'))
         router.user_profile();

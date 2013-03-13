@@ -1,4 +1,7 @@
 IONUX.Models.ResourceParams = Backbone.Model.extend({
+  initialize: function() {
+    console.log('ResourceParams Model initialize:', this.attributes);
+  },
   url: function() {
     return location.href + 'set_resource/'
   },  
@@ -8,7 +11,7 @@ IONUX.Models.ResourceParams = Backbone.Model.extend({
       if (typeof attr === 'number') {
         sch[key] = 'Number';
       } else if (typeof attr == 'string') {
-        sch[key] = 'String';
+        sch[key] = 'Text';
       } else if (attr instanceof Array) {
         sch[key] = { type: 'List', itemType: 'Number' }
       };
@@ -136,11 +139,19 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
       $.ajax({
         url: 'get_capabilities?cap_type=abc123',
         dataType: 'json',
+        dataFilter: function(raw) {
+          console.log('raw', raw);
+          return raw;
+        },
         success: function(resp){
+          console.log('get_capabilities:', resp);
           self.render_commands(resp.data.commands);
-          new IONUX.Views.ResourceParams({
-            model: new IONUX.Models.ResourceParams(resp.data.resource_params)
-          }).render().el;
+
+          if (!_.isEmpty(resp.data.resource_params)){
+            new IONUX.Views.ResourceParams({
+              model: new IONUX.Models.ResourceParams(resp.data.resource_params)
+            }).render().el;
+          };
         }
       });
   },

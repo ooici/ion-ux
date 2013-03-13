@@ -2,6 +2,7 @@ import requests, json, time, pprint
 from flask import session, jsonify
 from config import GATEWAY_HOST, GATEWAY_PORT
 from copy import deepcopy
+from instrument_command import BLACKLIST
 
 GATEWAY_BASE_URL = 'http://%s:%d' % (GATEWAY_HOST, GATEWAY_PORT)
 SERVICE_GATEWAY_BASE_URL = '%s/ion-service' % (GATEWAY_BASE_URL)
@@ -298,32 +299,50 @@ class ServiceApi(object):
             
             if resource_param_names:
                 resource_params = service_gateway_agent_request(instrument_device_id, 'get_resource', params={'params': resource_param_names})
+
+                # TEMP: hack to convert 0.0 strings for JavaScript.
+                for k,v in resource_params.iteritems():
+                    if isinstance(v, float):
+                        resource_params[k] = str(v)
             else:
                 resource_params = []
             
-            if agent_param_names:
-                agent_params = service_gateway_agent_request(instrument_device_id, 'get_resource', params={'params': agent_param_names})
-            else:
-                agent_params = []
+            # if agent_param_names:
+            #     agent_params = service_gateway_agent_request(instrument_device_id, 'get_resource', params={'params': agent_param_names})
+            # else:
+            #     agent_params = []
             
             capabilities = {}
             capabilities.update({'resource_params': resource_params})
             capabilities.update({'commands': commands})
-            capabilities.update({'agent_params': agent_params})
+            # capabilities.update({'agent_params': agent_params})
                 
         return capabilities
 
     @staticmethod
     def set_resource(device_id, params):
-        agent_request = service_gateway_agent_request(device_id, 'set_resource', params={'params': params})
+        # TEMP: hack to convert '0.0' strings to workaround JavaScript/JSON.
+        # Also, skips null values until param schema is available.
+        new_params = {}
+        for k,v in params.iteritems():
+            if k in BLACKLIST or not v:
+                continue
+            if isinstance(v, unicode) and '.' in v:
+                print 'before float:', k, v, type(v)
+                new_params.update({k: float(v.strip())})
+                print 'after float', k, params[k], type(float(v.strip()))
+            else:
+                new_params.update({k: v})
+        
+        agent_request = service_gateway_agent_request(device_id, 'set_resource', params={'params': new_params})
         return agent_request
 
 
-    @staticmethod
-    def get_resource(device_id):
-        params = ["PTCA1", "PA1", "WBOTC", "PCALDATE", "STORETIME", "CPCOR", "PTCA2", "OUTPUTSV", "SAMPLENUM", "TCALDATE", "OUTPUTSAL", "NAVG", "POFFSET", "INTERVAL", "SYNCWAIT", "CJ", "CI", "CH", "TA0", "TA1", "TA2", "TA3", "RCALDATE", "CG", "CTCOR", "PTCB0", "PTCB1", "PTCB2", "CCALDATE", "PA0", "TXREALTIME", "PA2", "SYNCMODE", "PTCA0", "RTCA2", "RTCA1", "RTCA0"]
-        agent_request = service_gateway_agent_request(device_id, 'get_resource', params={'params': params})
-        return agent_request
+    # @staticmethod
+    # def get_resource(device_id):
+    #     # params = ["PTCA1", "PA1", "WBOTC", "PCALDATE", "STORETIME", "CPCOR", "PTCA2", "OUTPUTSV", "SAMPLENUM", "TCALDATE", "OUTPUTSAL", "NAVG", "POFFSET", "INTERVAL", "SYNCWAIT", "CJ", "CI", "CH", "TA0", "TA1", "TA2", "TA3", "RCALDATE", "CG", "CTCOR", "PTCB0", "PTCB1", "PTCB2", "CCALDATE", "PA0", "TXREALTIME", "PA2", "SYNCMODE", "PTCA0", "RTCA2", "RTCA1", "RTCA0"]
+    #     agent_request = service_gateway_agent_request(device_id, 'get_resource', params={'params': params})
+    #     return agent_request
 
     # PLATFORM COMMAND
     # ---------------------------------------------------------------------------
