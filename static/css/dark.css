@@ -703,6 +703,10 @@ a.btn-footer {
   text-align: right;
 }
 
+.btn-blue:disabled {
+  cursor: wait;
+}
+
 input.btn-blue, button.btn-blue, a.btn-navigation {
   color: #FFFFFF; 
   font-size: 11px; 
