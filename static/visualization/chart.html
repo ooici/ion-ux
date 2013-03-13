@@ -126,7 +126,7 @@
 
         /// Get meta data for the data product id. It will be used to retrieve the correct data
         jQuery.ajax ({
-            url: container_server + "/visualization/get_data_product_metadata/?data_product_id=" + dp_id + "&callback=dp_metadata_cb&return_format=raw_json",
+            url: container_server + "/visualization/get_data_product_metadata/?data_product_id=" + dp_id + "&callback=dp_metadata_cb&return_mimetype=application/json",
             dataType: 'jsonp',
             jsonpCallback: 'dp_metadata_cb'
         });
@@ -152,8 +152,8 @@
 
         var query;
 
-        //query = new google.visualization.Query(container_server + "/ion-service/visualization_service/get_visualization_data?data_product_id=" + dp_id + "&visualization_parameters=" + JSON.stringify(viz_params) + "&tqx=reqId:" + _reqId + "&return_format=raw_json");
-        query = new google.visualization.Query(container_server + "/visualization/get_visualization_data/?data_product_id=" + dp_id + "&visualization_parameters=" + JSON.stringify(vp) + "&return_format=raw_json");
+        //query = new google.visualization.Query(container_server + "/ion-service/visualization_service/get_visualization_data?data_product_id=" + dp_id + "&visualization_parameters=" + JSON.stringify(viz_params) + "&tqx=reqId:" + _reqId + "&return_mimetype=application/json");
+        query = new google.visualization.Query(container_server + "/visualization/get_visualization_data/?data_product_id=" + dp_id + "&visualization_parameters=" + JSON.stringify(vp) + "&return_mimetype=application/json");
         console.debug("Fetching data : ", query);
 
         // Send the query with a callback function.
@@ -452,7 +452,7 @@
 
         // Init the realtime queues and pipeline on the container
         jQuery.ajax ({
-            url: container_server + "/visualization/initiate_realtime_visualization/?data_product_id=" + dp_id + "&callback=initRealtimeViewCb&return_format=raw_json",
+            url: container_server + "/visualization/initiate_realtime_visualization/?data_product_id=" + dp_id + "&callback=initRealtimeViewCb&return_mimetype=application/json",
             dataType: 'jsonp',
             jsonpCallback: 'initRealtimeViewCb'  // Has to correspond with the server side response
         });
@@ -471,7 +471,7 @@
 
         // {sendMethod:'scriptInjection'} specifies cross domain query .. oddly its needed to get realtime queries
         // to work within the UX
-        rt_query = new google.visualization.Query(container_server + "/visualization/get_realtime_visualization_data/?query_token=" + rt_query_token +"&return_format=raw_json",
+        rt_query = new google.visualization.Query(container_server + "/visualization/get_realtime_visualization_data/?query_token=" + rt_query_token +"&return_mimetype=application/json",
                 {sendMethod:'scriptInjection'});
 
         // Set up query to refresh every x seconds with a callback function.
