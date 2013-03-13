@@ -1,4 +1,5 @@
 IONUX = {
+  Templates: {},
   Interactions: {},
   Models:{},
   Collections:{},
@@ -31,4 +32,12 @@ IONUX = {
       new IONUX.Views.Error({error_obj:error_obj,open_modal:open_modal}).render().el;
     });
   },
+  is_logged_in: function(){
+    return IONUX.SESSION_MODEL.get('is_logged_in');
+  },
+  is_owner: function(){
+    var user_id = IONUX.SESSION_MODEL.get('user_id');
+    var owner_match = _.findWhere(MODEL_DATA.owners[0], {_id: user_id}) ? true : false;
+    return owner_match;
+  }
 }

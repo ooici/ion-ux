@@ -187,11 +187,12 @@ function replace_url_with_html_links(text) {
 
 // Renders a page based on resource_type
 function render_page(resource_type, resource_id, model) {
+  var start_render = new Date().getTime();
+
   // Catch and set derivative resources;
   // it should be moved into it's own function
   // so that we can develop more logic to handle
   // heirarchy in face, status and related pages.
-  
   if (resource_type == 'InstrumentModel' || resource_type == 'PlatformModel' || resource_type == 'SensorModel') {
       var resource_type = 'DeviceModel';
   } else if (resource_type == 'Observatory' || resource_type == 'InstrumentSite' || resource_type == 'PlatformSite' || resource_type == 'Subsite') {
@@ -339,6 +340,9 @@ function render_page(resource_type, resource_id, model) {
       case 'Recent Events':
         new IONUX.Views.EventActions({el:$(el)});
         break;
+      case 'Participants':
+        new IONUX.Views.NegotiationActions({el: $(el)});
+        break;
       default:
         new IONUX.Views.GroupActions({el:$(el)});
     };
@@ -362,4 +366,6 @@ function render_page(resource_type, resource_id, model) {
   _.each($('.'+resource_type+' .table_ooi'), function(table){
     $(table).find('table').last().dataTable().fnAdjustColumnSizing();
   });
+  
+  console.log('render_page elapsed: ', new Date().getTime() - start_render);
 };

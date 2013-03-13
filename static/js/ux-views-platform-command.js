@@ -100,6 +100,7 @@ IONUX.Views.PlatformCommandFacepage = Backbone.View.extend({
             select_elmt.empty();
             
             var option_elmts = agent_options.concat(resource_options);
+            console.log('option_elmts', option_elmts);
             var option_tmpl = '<option data-cap-type="<%= cap_type %>" value="<%= name %>"><%= name %></option>'
             _.each(option_elmts, function(option){
                 select_elmt.append(_.template(option_tmpl, option));

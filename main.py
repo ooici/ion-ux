@@ -139,7 +139,19 @@ def unsubscribe_to_resource(resource_type, resource_id):
     return render_json_response(resp)
 
 
-        
+@app.route('/<resource_type>/status/<resource_id>/enroll/', methods=['POST'])
+@app.route('/<resource_type>/face/<resource_id>/enroll/', methods=['POST'])
+@app.route('/<resource_type>/related/<resource_id>/enroll/', methods=['POST'])
+@login_required
+def enroll_request(resource_type, resource_id):
+    actor_id = session.get('actor_id') if session.has_key('actor_id') else None
+    print 'zzzzz', actor_id, resource_id
+    resp = ServiceApi.enroll_request(resource_id, actor_id)
+    return jsonify(data=actor_id)
+    # return render_json_response(resp)
+
+
+
 @app.route('/<resource_type>/status/<resource_id>/transition/', methods=['POST'])
 @app.route('/<resource_type>/face/<resource_id>/transition/', methods=['POST'])
 @app.route('/<resource_type>/related/<resource_id>/transition/', methods=['POST'])
@@ -184,16 +196,17 @@ def page(resource_type, resource_id):
     else:
         return render_app_template(request.path)
 
-@app.route('/<resource_type>/status/<resource_id>/edit', methods=['GET'])
-@app.route('/<resource_type>/face/<resource_id>/edit', methods=['GET'])
-@app.route('/<resource_type>/related/<resource_id>/edit', methods=['GET'])
-def edit(resource_type, resource_id):
-    '''
-    HTML requests should be redirected to the parent view
-    for data, page preprocessing and Backbone initialization.
-    '''
-    parent_url = re.sub(r'edit$', '', request.url)
-    return redirect(parent_url)
+# TEMP: Disabled until nested forms implemented.
+# @app.route('/<resource_type>/status/<resource_id>/edit', methods=['GET'])
+# @app.route('/<resource_type>/face/<resource_id>/edit', methods=['GET'])
+# @app.route('/<resource_type>/related/<resource_id>/edit', methods=['GET'])
+# def edit(resource_type, resource_id):
+#     '''
+#     HTML requests should be redirected to the parent view
+#     for data, page preprocessing and Backbone initialization.
+#     '''
+#     parent_url = re.sub(r'edit$', '', request.url)
+#     return redirect(parent_url)
 
 
 # -----------------------------------------------------------------------------

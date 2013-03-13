@@ -13,8 +13,8 @@
     <link rel="stylesheet" media="all" type="text/css" href="/static/css/dark.css" />
 
     <!-- High charts / High stocks -->
-    <script src="js/highcharts/js/highstock.js"></script>
-    <script src="js/highcharts/js/modules/exporting.js"></script>
+    <script src="js/highstock/js/highstock.js"></script>
+    <script src="js/highstock/js/modules/exporting.js"></script>
     
     <style> 
       .container {
@@ -55,63 +55,37 @@
      number of retrieves on the browser side and generating an appropriate dataview from the
      data. If certain data is not available, then a call to the viz service is made.
 
-     [1] The cache is currently implemented as a multi level cache. There's the overview data at the lowest resolution
-     which is actually indicated by the highest stride factor. The stride factor (or zoom factor) decides the
-     levels in the cache tree. Caching is done at level 1, level 2, level 4, level8 .. and overview level.
-     No of blocks used in caching increase as one goes down the tree. So overview has 1 cache block and zoom level
-     1 has the highest number of blocks. Blocks are of certain size e.g 4096. The container is always asked to fetch these
-     4096 byte blocks and if the current view overlaps two subsequent 4096 blocks, two calls will be made
-     to fetch each of those blocks. The figure of 4096 (or 1024 or whatever) is an approximation and the actual block
-     returned by coverage may be different in size if the instrument has a non uniform data feed.
+     [1] The cache is currently disabled. The overview data is fetched at page load and then as the user
+     moves around, hi-res data is appropriately fetched and merged into the overview. The realtime data blocks
+     are also stored separatelt and merged. For the sake of required functionality, the three blocks are kept
+     separate and updated when needed. However before updating the graph, the three types (overview, hi-res and realtime)
+     are merged everytime. This is an expensive operation and needs to be corrected as its not scalable.
 
      [2] The stride_factor and zoom factor are used interchangeably. When stride_factor reduces ( ..3,2,1) the
      data resolution increases and there fore the zoom increases. So zoom = 1 is the highest and subsequent levels
      zoom out.
 
-     [3] The blocks of cached data are arranged at boundaries aligned by the end_time. So if there are 90 records in total
-     and the block size is 40, the three data blocks will have sizes [10,40,40]
-
      */
 
     // Global variables
-    var graph, table, dataTable, dataTable_overview, dp_id, dp_id_token, dp_metadata, dataView_overview;
-    var data_series_overview;
+    var graph, table, dataTable, dataTable_overview, dp_id, dp_metadata, dataView_overview;
+    var data_series_overview, data_series_hires, data_series_rt;
+
     var dataTable_overview_stride_factor = 1;
     var graph_visible_start_date, graph_visible_end_date, graph_x_res, avg_data_rate, curr_stride_factor = 1;
-    var dataTable_parameters = []; // ['temp', 'pressure', 'conductivity'];
+    var dp_parameters = []; // ['temp', 'pressure', 'conductivity'];
 
-    var container_server = "http://" + window.location.host;
+    var container_server =  "http://" + window.location.host;
     var first_draw_flag = true;
     //var viz_params = {};
     var curr_graph_type = "line";
     //var supported_graph_type = ['AnnotatedTimeLine', 'Table', 'LineGraph', 'AreaChart', 'ComboChart'];
     var supported_graph_type = ['line', 'area', 'spline', 'scatter', 'table'];
     var overview_reqId = 9;
-    var graph_spinner
+    var graph_spinner;
 
-    // cache
-    var dataTable_cache_block_size = 1024, dataTable_cache_block_time_period;
-    var dataTable_level_trigger = 1; // when user view crosses these zoom / stride levels (1 is highest), resolution of data changes
-    var dataTable_cache = {}; // stores blocks of size dataTable_cache_block_size
-    var dataTable_cache_size_max = 100;
-    var dataTable_cache_ptr = 0;
-
-    var cache_node = function(st, et, dt) {
-        var cache_node = {
-            start_time: st,
-            end_time: et,
-            datatable: dt
-        }
-
-        return cache_node;
-    }
-
-    var cache_level = function (level, no_of_blocks) {
-        var cache_level = [];
-        for (var i=0; i<no_of_blocks; i++) {
-            cache_level.push(new cache_node(null, null, null));
-        }
-    }
+    // Realtime variables
+    var rt_query, rt_query_token, rt_len_max;
 
     // Google library specific loads for all the supported chart types
     google.load("visualization", "1", {packages: ['table', 'motionchart']});
@@ -122,24 +96,37 @@
         dp_id = parent.window.location.pathname.split('/')[3]
         console.log('dp_id: ', dp_id);
 
+        //  Set additional page events here
+        window.addEventListener("beforeunload", chartCleanup, false);
+
         // Init some variables
         graph_x_res = document.getElementById("graph_div").scrollWidth;
         initSpinner();
 
-        // Init the graph object based on drop down selection
-        //setGraphType();
-
         // Init the overview graph
-        data_series_overview = [];
+        data_series_hires = [];
         graph = table = null;
         initOverview();
+
+        //init the realtime component. Check to see if there was a lingering query_token from a previous session.
+        // Needs to be cleaned up. This happens in Chrome when the page reload does not fire the beforeunload event
+        rt_query = null;
+        rt_len_max = 600;
+        if (sessionStorage["rt_query_token"]) {
+            rt_query_token = sessionStorage["rt_query_token"];
+            chartCleanup();
+        }
+        initRealtimeView();
 
     }
 
     function initOverview() {
+
+        data_series_overview = [];
+
         /// Get meta data for the data product id. It will be used to retrieve the correct data
         jQuery.ajax ({
-            url: container_server + "/visualization/get_dataproduct_metadata/?data_product_id=" + dp_id + "&callback=dp_metadata_cb&return_format=raw_json",
+            url: container_server + "/visualization/get_data_product_metadata/?data_product_id=" + dp_id + "&callback=dp_metadata_cb&return_mimetype=application/json",
             dataType: 'jsonp',
             jsonpCallback: 'dp_metadata_cb'
         });
@@ -151,34 +138,12 @@
 
         // calculate and init a few things
         avg_data_rate = dp_metadata['time_steps'] / (dp_metadata['time_bounds'][1] - dp_metadata['time_bounds'][0]);
-        var tot_num_of_blocks = Math.ceil(dp_metadata['time_steps']/dataTable_cache_block_size);
-        dataTable_cache_block_time_period = Math.ceil(dataTable_cache_block_size / avg_data_rate); // ** Is this correct ?
 
         // calculate the stride factor
         var num_of_actual_data_points = (dp_metadata['time_bounds'][1] - dp_metadata['time_bounds'][0]) * avg_data_rate;
         dataTable_overview_stride_factor = Math.ceil(num_of_actual_data_points / graph_x_res);
 
-        // init cache blocks
-        delete dataTable_cache;
-        dataTable_cache = {};
-
-        // Calculate the number of cache levels needed. Its a binary tree that starts at the overview and
-        // goes down to stride factor 1
-        var no_of_cache_levels = Math.ceil(Math.log(dataTable_overview_stride_factor)/Math.log(2) + 1);
-        var no_of_cache_level_blocks = 1;
-        // Init the cache
-        for (var i=no_of_cache_levels - 1; i>=0; i--) {
-            var _level = Math.pow(2,i);
-
-            if (_level >= dataTable_overview_stride_factor) {
-                _level = dataTable_overview_stride_factor
-            }
-
-            dataTable_cache[_level.toString()] = new cache_level(no_of_cache_level_blocks);
-            no_of_cache_level_blocks = 4 * no_of_cache_level_blocks;
-        }
-
-        var vp = setVizParams(dataTable_parameters, dp_metadata['time_bounds'][0], dp_metadata['time_bounds'][1], dataTable_overview_stride_factor);
+        var vp = setVizParams(dp_parameters, dp_metadata['time_bounds'][0], dp_metadata['time_bounds'][1], dataTable_overview_stride_factor);
         fetchData(vp);
     }
 
@@ -187,9 +152,8 @@
 
         var query;
 
-        //query = new google.visualization.Query(container_server + "/ion-service/visualization_service/get_visualization_data?data_product_id=" + dp_id + "&visualization_parameters=" + JSON.stringify(viz_params) + "&tqx=reqId:" + _reqId + "&return_format=raw_json");
-        query = new google.visualization.Query(container_server + "/visualization/get_visualization_data/?data_product_id=" + dp_id + "&visualization_parameters=" + JSON.stringify(vp) + "&return_format=raw_json",
-                {sendMethod:'scriptInjection'});
+        //query = new google.visualization.Query(container_server + "/ion-service/visualization_service/get_visualization_data?data_product_id=" + dp_id + "&visualization_parameters=" + JSON.stringify(viz_params) + "&tqx=reqId:" + _reqId + "&return_mimetype=application/json");
+        query = new google.visualization.Query(container_server + "/visualization/get_visualization_data/?data_product_id=" + dp_id + "&visualization_parameters=" + JSON.stringify(vp) + "&return_mimetype=application/json");
         console.debug("Fetching data : ", query);
 
         // Send the query with a callback function.
@@ -219,16 +183,25 @@
             dataView_overview = new google.visualization.DataView(_dt);
             data_series_overview = gdt_to_highcharts_data(_dt);
 
-            // Call the draw with the first time flag
-            drawGraph(data_series_overview, curr_graph_type, true);
+            // If no graph exists, create one
+            if(graph) {
+                drawGraph(mergeAndSortHcData(data_series_overview, data_series_hires, data_series_rt),
+                        curr_graph_type, false);
+            }
+            else{
+                drawGraph(data_series_overview, curr_graph_type, true);
+                // Create the UI at this point. Now that we have the data
+                initGraphUi();
+            }
 
-            // Create the UI at this point. Now that we have the data
-            initGraphUi();
+
         }
-        // Otherwise assume its a higher resolution data set and needs to be merged with the graph
+        // Otherwise its data that needs to replace what's currently in the graph
         else {
-            var hc_data = gdt_to_highcharts_data(_dt);
-            drawGraph(hc_data, curr_graph_type, false);
+            data_series_hires = gdt_to_highcharts_data(_dt);
+            drawGraph(mergeAndSortHcData(data_series_overview, data_series_hires, data_series_rt),
+                    curr_graph_type, false);
+
         }
 
         // Stop the spinner
@@ -237,10 +210,18 @@
     }
 
     function gdt_to_highcharts_data (_dt) {
-        var _hc_data = []
+        var _hc_data = [];
+        var _hc_data_count = 0;
         for (var i=1; i < _dt.getNumberOfColumns(); i++) {
 
-            _hc_data[i-1] = {};
+            // Check to see if the series contains NaN. If yes, just ignore the entire series
+            if (isNaN(_dt.getValue(0,i))) continue;
+            // Also ignore any parameter that has the string "timestamp" in it or is the lat/lon
+            if (_dt.getColumnLabel(i).search("timestamp") >= 0) continue;
+            if (_dt.getColumnLabel(i) == 'lat' || _dt.getColumnLabel(i) == 'lon') continue;
+
+            _hc_data[_hc_data_count] = {};
+            var _series = _hc_data[_hc_data_count];
             var _data = [];
 
             // Create the series data as an array of [timestamp, value]
@@ -248,9 +229,63 @@
                 _data[j] = [_dt.getValue(j,0).getTime(), _dt.getValue(j,i)];
             }
 
-            _hc_data[i-1]["name"] = _dt.getColumnLabel(i);
-            _hc_data[i-1]["tooltip"] = {valueDecimals:5};
-            _hc_data[i-1]["data"] = _data;
+            _series["name"] = _dt.getColumnLabel(i);
+            _series["tooltip"] = {valueDecimals:5};
+            _series["data"] = _data;
+
+            ++_hc_data_count;
+        }
+
+        return _hc_data;
+    }
+
+    // Typically used to merge overview, realtime and high-res in to one series before drawing. Assumption
+    // is that the overview data is valid when this function is called. This is a very expensive function
+    // since it not only makes copies of all the data series passed to it, it is called every time the graph
+    // needs to be updated with new data.
+    function mergeAndSortHcData(ov_data, hr_data, rt_data) {
+        var _hc_data = ov_data.slice();
+        var tempIdx = 0;
+        var tempCount = 0;
+
+        // Merge the overview and hi-res and then the real-time
+        for (var i = 0; i<_hc_data.length; i++) {
+
+            // Merge overview and hi-res. Before concatenating make sure the arrays match.
+            tempIdx = -1;
+            for (var j = 0; j < hr_data.length; j++) {
+                tempCount = (i + j) % hr_data.length;
+                if(_hc_data[i]["name"] == hr_data[tempCount]["name"]) {
+                    tempIdx = tempCount;
+                    break;
+                }
+            }
+
+            if (tempIdx >= 0) {
+                _hc_data[i]["data"].push.apply(_hc_data[i]["data"], hr_data[tempIdx]["data"]);
+            }
+
+            // Similarly merge real-time
+            tempIdx = -1;
+            for (var j = 0; j < rt_data.length; j++) {
+                tempCount = (i + j) % rt_data.length;
+                if(_hc_data[i]["name"] == rt_data[tempCount]["name"]) {
+                    tempIdx = tempCount;
+                    break;
+                }
+            }
+
+            if (tempIdx >= 0) {
+                _hc_data[i]["data"].push.apply(_hc_data[i]["data"], rt_data[tempIdx]["data"]);
+            }
+        }
+
+        // Now that the merge is complete, sort the data series since they were not merged in order
+        // now sort all the series wrt to time before drawing
+        for (var i = 0; i<_hc_data.length; i++) {
+            _hc_data[i]["data"].sort(function(a,b){
+                return a[0] - b[0];
+            })
         }
 
         return _hc_data;
@@ -269,19 +304,22 @@
                 chart : {
                     renderTo : 'graph_div',
                     type: _type,
-                    backgroundColor: "#CCCCCC",
+                    backgroundColor: "#999999",
+                    borderColor: "black",
                     zoomType: "x"
                 },
-
-                title : {
-                    text : 'Overview Graph'
-                },
+                /*
+                 title : {
+                 text : 'Overview Graph'
+                 },
+                 */
                 navigator : {
                     adaptToUpdatedData: false,
                     series : {
                         data : _data[0]["data"]
                     }
                 },
+
                 legend: {
                     enabled: true,
                     align: 'right',
@@ -293,17 +331,27 @@
                     y: 50,
                     shadow: true
                 },
+
                 xAxis: {
+                    labels: {
+                        style : {
+                            color : "#FFFFFF"
+                        }
+                    },
                     type: 'datetime',
                     events : {
                         afterSetExtremes : onDateRangeChange
                     },
                     minRange: 60 * 1000 // one minute
                 },
+
                 yAxis: {
                     labels: {
                         formatter: function() {
-                            return (this.value > 0 ? '+' : '') + this.value + '%';
+                            return (this.value >= 0 ? '+' : '') + this.value + '%';
+                        },
+                        style : {
+                            color : "#FFFFFF"
                         }
                     },
                     plotLines: [{
@@ -315,10 +363,26 @@
 
                 plotOptions: {
                     series: {
-                        compare: 'value'
-                    }
+                        compare: 'value',
+                        connectNulls: true
+                    },
+                    threshold: null
+                    /*
+                     line: {
+                     compare: 'value',
+                     connectNulls: true
+                     }
+                     */
                 },
+                exporting: {
+                    width:  graph_x_res
+                },
+
                 rangeSelector : {
+                    inputStyle: {
+                        color: '#FFFFFF',
+                        fontWeight: 'bold'
+                    },
                     buttons: [{
                         type: 'minute',
                         count: 1,
@@ -353,10 +417,14 @@
         }
         // If it was not a first draw, it was the high res data
         else {
+            // note the view extremes and reset after the graph has been drawn
             for (var i=0; i < _data.length; i++) {
                 graph.series[i].setData(_data[i]["data"], true);
 
             }
+
+            // update the navigator series .. its the last one
+            graph.series[graph.series.length - 1].setData(_data[0]["data"], true);
             //graph.redraw();
         }
 
@@ -368,16 +436,110 @@
         $("#graph_div").empty();
         table = new google.visualization.Table(document.getElementById('graph_div'));
 
-        var visible_params_idx_list = [0];
-        // create a list of visible parameters reflects the checkboxes
-        for (var i=0; i< (dataTable_overview.getNumberOfColumns() - 1); i++) {
-            if (graph.series[i]) visible_params_idx_list.push(i+1);
-        }
-
-        dataView_overview.setColumns(visible_params_idx_list);
         table.draw(dataView_overview);
 
     }
+
+
+    // When this function is called, it is assumed that the annotated timeline chart object has already been created
+    function initRealtimeView() {
+
+        data_series_rt = [];
+        // In case the page was refreshed, check to see if a query token exists and call cleanup on it
+        if (rt_query_token) {
+            chartCleanup();
+        }
+
+        // Init the realtime queues and pipeline on the container
+        jQuery.ajax ({
+            url: container_server + "/visualization/initiate_realtime_visualization/?data_product_id=" + dp_id + "&callback=initRealtimeViewCb&return_mimetype=application/json",
+            dataType: 'jsonp',
+            jsonpCallback: 'initRealtimeViewCb'  // Has to correspond with the server side response
+        });
+
+    }
+
+    function initRealtimeViewCb(qt) {
+
+        if (!qt) {
+            console.debug("Not a valid query token. Will not show real-time data.");
+            return;
+        }
+
+        rt_query_token = qt;
+        console.debug ("Query Token : " + qt);
+
+        // {sendMethod:'scriptInjection'} specifies cross domain query .. oddly its needed to get realtime queries
+        // to work within the UX
+        rt_query = new google.visualization.Query(container_server + "/visualization/get_realtime_visualization_data/?query_token=" + rt_query_token +"&return_mimetype=application/json",
+                {sendMethod:'scriptInjection'});
+
+        // Set up query to refresh every x seconds with a callback function.
+        rt_query.setRefreshInterval(5);
+        rt_query.send(handleRealtimeQueryResponse);
+
+    }
+
+    function handleRealtimeQueryResponse(response) {
+
+        // If there was no data, do nothing
+        if (!response) return;
+
+        if (response.isError()) {
+            alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
+            return;
+        }
+
+        // Starter the spinner to tell user that real-time data is being updated
+        var spin_target = document.getElementById('graph_div');
+        graph_spinner.spin(spin_target);
+
+        var rt_gdt = response.getDataTable();
+        var rt_hc_data = gdt_to_highcharts_data(rt_gdt);
+
+        // If the returned data series is empty .. do nothing
+        if (!rt_hc_data || !rt_hc_data[0]["data"] || rt_hc_data[0]["data"].length < 1) return;
+
+        // Collect all the real-time data in a separate series. Append new data
+        if (data_series_rt.length > 0) {
+            for (var i=0; i < data_series_rt.length; i++) {
+                data_series_rt[i]["data"].push.apply(data_series_rt[i]["data"],rt_hc_data[i]["data"]);
+            }
+        }
+        else {
+            data_series_rt = rt_hc_data;
+        }
+
+        // Merge the overview, hi-res and realtime all together before redrawing the graph.
+        // NEED TO FIX this expensive operation
+        drawGraph(mergeAndSortHcData(data_series_overview, data_series_hires, data_series_rt),
+                curr_graph_type, false);
+
+
+        console.debug("Num of data points in the graph :" + data_series_overview[0]["data"].length);
+
+        // if we have collected too much real-time data, flush and retrieve a low-res overview again
+        if (data_series_rt[0]["data"].length > rt_len_max) {
+            data_series_rt = [];
+            initOverview();
+        }
+
+        // stop spinner
+        graph_spinner.stop();
+
+    }
+
+    function drawRealtimeGraph() {
+        // the overview should have been updated. Draw the graph with the new overview
+
+    }
+
+    function stopRealtimeView() {
+
+
+        // call terminate on the container side too
+    }
+
 
     function initGraphUi() {
 
@@ -387,20 +549,6 @@
         // Populate UI components. Start with the list of parameters. Enclose in a container
         var graphUiDiv = document.getElementById("graph_ui_div");
         var chkBox, paramIdx, graph_type_select, id_str;
-
-        // Create the 'set all' and 'clear all' button
-        var check_all_viz_params_button = document.createElement('input');
-        check_all_viz_params_button.type = 'button';
-        check_all_viz_params_button.value = "Select All Parameters";
-        check_all_viz_params_button.addEventListener("click", showAllVizParams);
-        graphUiDiv.appendChild(check_all_viz_params_button);
-
-        var clear_all_viz_params_button = document.createElement('input');
-        clear_all_viz_params_button.type = 'button';
-        clear_all_viz_params_button.value = "De-select All Parameters";
-        clear_all_viz_params_button.addEventListener("click", hideAllVizParams);
-        graphUiDiv.appendChild(clear_all_viz_params_button);
-        graphUiDiv.appendChild(document.createElement('br'));
 
         // Create a select box for choosing the graph type
         graphUiDiv.appendChild(document.createTextNode('   Graph Type: '));
@@ -415,25 +563,39 @@
         }
         graphUiDiv.appendChild(graph_type_select);
 
+        // Create the 'set all' and 'clear all' button
+        var check_all_viz_params_button = document.createElement('input');
+        check_all_viz_params_button.type = 'button';
+        check_all_viz_params_button.value = "Select All Parameters";
+        check_all_viz_params_button.addEventListener("click", showAllVizParams);
+        graphUiDiv.appendChild(check_all_viz_params_button);
+
+        var clear_all_viz_params_button = document.createElement('input');
+        clear_all_viz_params_button.type = 'button';
+        clear_all_viz_params_button.value = "De-select All Parameters";
+        clear_all_viz_params_button.addEventListener("click", hideAllVizParams);
+        graphUiDiv.appendChild(clear_all_viz_params_button);
+        //graphUiDiv.appendChild(document.createElement('br'));
+
+
         // Page reload button
-        graphUiDiv.appendChild(document.createElement('br'));
+        //graphUiDiv.appendChild(document.createElement('br'));
         var page_reload_button = document.createElement('input');
         page_reload_button.type = 'button';
         page_reload_button.value = "Refresh Chart";
+        page_reload_button.align = "right";
         page_reload_button.addEventListener("click", reloadGraph);
         graphUiDiv.appendChild(page_reload_button);
     }
 
 
     function showAllVizParams() {
-        // Apparently the last entry in series is for the navigator. So we will ignore that one
         for (var i=0; i < graph.series.length - 1; i++) {
             graph.series[i].show();
         }
     }
 
     function hideAllVizParams() {
-        // Apparently the last entry in series is for the navigator. So we will ignore that one
         for (var i=0; i < graph.series.length - 1; i++) {
             graph.series[i].hide();
         }
@@ -447,7 +609,9 @@
             drawTable();
         }
         else {
-            drawGraph(data_series_overview, curr_graph_type, true);
+            // Change graph type in the series
+            drawGraph(mergeAndSortHcData(data_series_overview, data_series_hires, data_series_rt),
+                    curr_graph_type, true);
         }
     }
 
@@ -455,123 +619,25 @@
         initOverview();
     }
 
-    /*
+    function chartCleanup() {
+        // terminate the realtime queues on the server side
+        if (rt_query_token) {
+
+            jQuery.ajax ({
+                url: container_server + "/visualization/terminate_realtime_visualization_data?query_token=" + rt_query_token,
+                dataType: 'jsonp',
+                success: function() {
+                    console.debug("Real-time Termination acknowledged");
+                },
+                async: false
+            });
+
+            rt_query_token = sessionStorage["rt_query_token"] = null;
+        }
+
+    }
 
 
-     // ****************************************************************************
-     // Caching related methods
-     // ****************************************************************************
-
-     // Function gets a list of indexes in the dataTable_cache list which overlap the start_time - end_time
-     function getListOfBlocks(start_time, end_time) {
-
-     var listOfBlocks = [];
-     var _start_time, _end_time;
-
-     for (var i=0; i < dataTable_cache.length; i++) {
-     // Simple checks to see if the block overlaps with passed time period
-     if (start_time > dataTable_cache[i].end_time) continue;
-     if (end_time < dataTable_cache[i].start_time) continue;
-
-     listOfBlocks[listOfBlocks.length] = i;
-     }
-
-     return listOfBlocks;
-     }
-
-     // Function gets a list of  of indexes in the dataTable_cache list which overlap the start_time - end_time but
-     // are not available in cache
-     function getListOfBlocksNeeded(start_time, end_time) {
-
-     var listOfBlocks = getListOfBlocks(start_time, end_time);
-     var listOfBlocksNeeded = [];
-
-     // go through the list to see which blocks are missing
-     for (var i = 0; i<listOfBlocks.length; i++) {
-     if (dataTable_cache[listOfBlocks[i]].datatable == null)
-     listOfBlocksNeeded[listOfBlocksNeeded.length] = listOfBlocks[i];
-     }
-
-     return listOfBlocksNeeded;
-     }
-
-     // Returns true if all the data needed is in cache, Even if one block is missing, it will return false
-     function isDataInCache(start_time, end_time, stride_factor) {
-
-     // Is the current zoom level at the high level
-     if (stride_factor <= dataTable_level_trigger) {
-     var listOfblocks = getListOfBlocksNeeded(start_time, end_time);
-
-     // If all the data is in cache, we should have received an empty list
-     if (listOfblocks.length > 0) return false;
-     }
-
-     return true; // Since we have an overview of all data
-     }
-
-     // This is a weird hacky function which is needed to place the received high datatable in its appropriate place in
-     // cache. The lack of a reqId return from google API necessitates the need for this one.
-     function insertDataTableInCache(dt) {
-     time_range = dt.getColumnRange(0); // get the min and max values of time
-
-     start_time_d = new Date(time_range.min);
-     end_time_d = new Date(time_range.max);
-
-     start_time = start_time_d.getTime() / 1000;
-     end_time = end_time_d.getTime() / 1000;
-
-     var idx = null;
-     var proximity_score = Infinity, temp_score = 0;
-     for (var i=0; i < dataTable_cache.length; i++) {
-     // Simple checks to see which entry in cache is the best match
-     temp_score = Math.abs(dataTable_cache[i].start_time - start_time) +
-     Math.abs(dataTable_cache[i].end_time - end_time);
-
-     if(temp_score < proximity_score) {
-     proximity_score = temp_score;
-     idx = i;
-     }
-     }
-
-     if (idx != null) {
-     dataTable_cache[idx].datatable = dt;
-     return idx;
-     }
-     else {
-     console.debug("Error: Could not locate entry for datatable");
-     return null;
-     }
-     }
-
-
-     function getDatatableRows(dt, start_row, end_row) {
-
-     var rows = [];
-     var temp_row = [];
-
-     var num_of_cols = dt.getNumberOfColumns();
-
-     if(start_row == null && end_row == null) {
-     start_row = 0;
-     end_row = dt.getNumberOfRows() - 1;
-     }
-
-     for (var row_idx = start_row; row_idx <= end_row; row_idx++) {
-     temp_row = [];
-     for (col_idx = 0; col_idx < num_of_cols; col_idx++) {
-     if (col_idx == 0)
-     temp_row[col_idx] = new Date(dt.getValue(row_idx, col_idx));
-     else
-     temp_row[col_idx] = dt.getValue(row_idx, col_idx);
-     }
-
-     rows[rows.length] = temp_row;
-     }
-
-     return rows;
-
-     }
-     */
 
     function onDateRangeChange(e) {
 
@@ -594,13 +660,26 @@
         // NO CACHING SCHEME  *************************
 
         // Draw from local data first while users way for the higher resolution
-        for (var i=0; i < data_series_overview.length; i++) {
-            graph.series[i].setData(data_series_overview[i]["data"], true);
+//        for (var i=0; i < data_series_overview.length; i++) {
+//            graph.series[i].setData(data_series_overview[i]["data"], true);
+//        }
+
+        var adjusted_start_date = graph_visible_start_date;
+        var adjusted_end_date = graph_visible_end_date;
+
+        // Since the real-time data is always full res, we do not need to fetch it again. Basically adjust the
+        // data query to reflect only the pieces needed for the hi-res retrieve
+        if (data_series_rt.length > 0) {
+            if (adjusted_start_date >= data_series_rt[0]["data"][0][0]) return; // view window is within real-time data
+            // truncate the fetch window to the start of the real-time data
+            if (adjusted_end_date > data_series_rt[0]["data"][0][0]) {
+                adjusted_end_date = data_series_rt[0]["data"][0][0];
+            }
         }
 
-        var vp = setVizParams(dataTable_parameters,
-                Math.round(graph_visible_start_date/1000),
-                Math.round(graph_visible_end_date/1000),
+        var vp = setVizParams(dp_parameters,
+                Math.round(adjusted_start_date/1000),
+                Math.round(adjusted_end_date/1000),
                 curr_stride_factor);
         fetchData(vp);
 

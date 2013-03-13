@@ -17,6 +17,7 @@ INTERACTIONS_OBJECT.group_interactions = ['More Info', /*'Submenu', 'Edit'*/];
 INTERACTIONS_OBJECT.view_interactions = ['Subscribe', 'Lifecycle', 'Edit', /*'Submenu',*/ 'Command', 'Direct Command', 'Download'];
 INTERACTIONS_OBJECT.event_interactions = ['Add Event'];
 INTERACTIONS_OBJECT.attachment_interactions = ['Upload Attachment'];
+INTERACTIONS_OBJECT.negotiation_interactions = {owner: ['View Requests'], nonmember: ['Enroll']};
 
 
 IONUX.Views.ActionMenu = Backbone.View.extend({
@@ -115,7 +116,8 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
         });
     },
     action__edit: function(){
-      IONUX.ROUTER.navigate(window.location.pathname + 'edit', {trigger:true});
+      alert('Resource editing is currently disabled.');
+      // IONUX.ROUTER.navigate(window.location.pathname + 'edit', {trigger:true});
     },
     action__submenu_toggle:function(){
         alert("IONUX.Views.ViewActions - ACTION: submenu_toggle");
@@ -220,7 +222,7 @@ IONUX.Views.EventActions = IONUX.Views.ActionMenu.extend({
     
     add_event: function(){
       if (IONUX.SESSION_MODEL.get('is_logged_in') != true) {
-        alert("You must be logged in to add an event")
+        alert("You must be signed in to add an event")
       } else {
         new IONUX.Views.ResourceAddEventView().render().el;
       }
@@ -242,3 +244,22 @@ IONUX.Views.AttachmentActions = IONUX.Views.ActionMenu.extend({
     },
 });
 
+IONUX.Views.NegotiationActions = IONUX.Views.ActionMenu.extend({
+    "events": _.extend({
+        "hover": "action_controls_onhover",
+    }, IONUX.Views.ActionMenu.prototype.events),
+
+    initialize: function() {
+      this.interaction_items = INTERACTIONS_OBJECT.negotiation_interactions['nonmember'];
+      this.on('action__enroll', this.enroll);
+    },
+    
+    enroll: function(){
+      if (!IONUX.SESSION_MODEL.is_logged_in()) {
+        alert("You must be signed in to request a role.")
+      } else {
+        console.log('request_role');
+        new IONUX.Views.Enroll().render().el;
+      }
+    },
+});
