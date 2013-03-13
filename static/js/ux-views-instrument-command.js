@@ -36,9 +36,15 @@ IONUX.Views.ResourceParams = Backbone.View.extend({
     this.$el.prepend(this.resource_params_form.el);
     return this;
   },
-  save_params: function(){
+  save_params: function(e){
+    var btn = $(e.target);
+    // btn.prop('disabled', true).text('Saving...')
     this.resource_params_form.commit();
-    this.model.save();
+    this.model.save({
+      success: function(resp) {
+        // $('.save-params').prop('disabled', false).text('Save');
+      }
+    });
   }
 })
 

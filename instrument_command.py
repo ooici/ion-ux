@@ -21,6 +21,7 @@ BLACKLIST = [
     # 'Set command not recognized.'
     'TIDE_SAMPLES_PER_DAY',
     'WAVE_BURSTS_PER_DAY',
+    'WAVE_BURSTS_SINCE_LAST_START',
     # Todo: troubleshoot why these are problematic, i.e. nulls or invalid floats/types
     'HANNING_WINDOW_CUTOFF',
     'TOTAL_RECORDED_WAVE_BURSTS',
