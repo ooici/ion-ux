@@ -110,6 +110,7 @@
 
         //init the realtime component. Check to see if there was a lingering query_token from a previous session.
         // Needs to be cleaned up. This happens in Chrome when the page reload does not fire the beforeunload event
+        /*
         rt_query = null;
         rt_len_max = 600;
         if (sessionStorage["rt_query_token"]) {
@@ -117,6 +118,7 @@
             chartCleanup();
         }
         initRealtimeView();
+        */
 
     }
 
