@@ -298,10 +298,23 @@ class ServiceApi(object):
                     resource_param_names.append(param['name'])
             
             if resource_param_names:
-                resource_params = service_gateway_agent_request(instrument_device_id, 'get_resource', params={'params': resource_param_names})
+                resource_params_request = service_gateway_agent_request(instrument_device_id, 'get_resource', params={'params': resource_param_names})
+
+                resource_params = {}
+                for k,v in resource_params_request.iteritems():
+                    if k in BLACKLIST:
+                        continue
+                    resource_params.update({k:v})
+                    if isinstance(v, float):
+                        resource_params[k] = str(v)
 
                 # TEMP: hack to convert 0.0 strings for JavaScript.
-                for k,v in resource_params.iteritems():
+                resource_params = {}
+                for k,v in resource_params_request.iteritems():
+                    if k in BLACKLIST:
+                        continue
+                    else:
+                        resource_params.update({k:v})
                     if isinstance(v, float):
                         resource_params[k] = str(v)
             else:

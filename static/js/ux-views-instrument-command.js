@@ -113,7 +113,8 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
     evt.preventDefault();
     var execute_elmt = $(evt.target);
     execute_elmt.text("Executing...")
-    execute_elmt.prop('disable', true);
+    execute_elmt.prop('disabled', true);
+    $('#cmds').find('button').prop('disabled', true);
     var cap_type = execute_elmt.data('cap-type');
     var command = execute_elmt.data('command');
     var url = command + '?cap_type='+cap_type;
@@ -128,6 +129,7 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
       },
       complete: function(){
         execute_elmt.text('Execute');
+        $('#cmds').find('button').prop('disabled', false);
       },
     });
     return false;
@@ -146,11 +148,11 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
         success: function(resp){
           console.log('get_capabilities:', resp);
           self.render_commands(resp.data.commands);
-
+          
           if (!_.isEmpty(resp.data.resource_params)){
-            new IONUX.Views.ResourceParams({
-              model: new IONUX.Models.ResourceParams(resp.data.resource_params)
-            }).render().el;
+            new IONUX.Views.ResourceParams({model: new IONUX.Models.ResourceParams(resp.data.resource_params)}).render().el;
+          } else {
+            $('#resource-form').empty();
           };
         }
       });
