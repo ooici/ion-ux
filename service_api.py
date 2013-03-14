@@ -346,11 +346,12 @@ class ServiceApi(object):
         new_params = {}
         for k,v in params.iteritems():
             if k in BLACKLIST or not v:
+                print 'Blacklisted:', k, v
                 continue
             if isinstance(v, unicode) and '.' in v:
-                print 'before float:', k, v, type(v)
+                print 'Before float:', k, v, type(v)
                 new_params.update({k: float(v.strip())})
-                print 'after float', k, params[k], type(float(v.strip()))
+                print 'After float', k, params[k], type(float(v.strip()))
             else:
                 new_params.update({k: v})
         

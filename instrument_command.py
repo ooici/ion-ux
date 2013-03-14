@@ -1,4 +1,5 @@
 BLACKLIST = [
+    # PRESF ---------------------------
     'SetTime',
     'DateTime',
     'ExternalTemperature',
@@ -25,5 +26,18 @@ BLACKLIST = [
     # Todo: troubleshoot why these are problematic, i.e. nulls or invalid floats/types
     'HANNING_WINDOW_CUTOFF',
     'TOTAL_RECORDED_WAVE_BURSTS',
-    'TIDE_SAMPLES_BETWEEN_WAVE_BURST_MEASUREMENTS'
+    'TIDE_SAMPLES_BETWEEN_WAVE_BURST_MEASUREMENTS',
+    # CTDBP ---------------------------
+    'TXREALTIME',
+    'Volt1',
+    'Volt2',
+    'DelayAfterSampling',
+    'Volt3',
+    'Volt0',
+    'OutputExecutedTag',
+    'PType',
+    'Volt4',
+    'Volt5',
+    'DelayBeforeSampling',
+    'echo'
 ]
