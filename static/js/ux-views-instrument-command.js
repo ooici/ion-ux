@@ -1,6 +1,6 @@
 IONUX.Models.ResourceParams = Backbone.Model.extend({
   initialize: function() {
-    console.log('ResourceParams Model initialize:', this.attributes);
+    // console.log('ResourceParams Model initialize:', this.attributes);
   },
   url: function() {
     return location.href + 'set_resource/'
@@ -57,7 +57,6 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
   events: {
     'click #start-instrument-agent-instance': 'start_agent',
     'click #stop-instrument-agent-instance': 'stop_agent',
-    'click .issue_command': 'issue_command',
     'click .get_capabilities': 'get_capabilities',
     'click .execute-command': 'execute_command',
   },
@@ -129,8 +128,9 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
       url: url,
       dataType: 'json',
       success: function(resp){
-        var data = resp.data['commands'];
-        $(".command-output").append($('<p class="command-success">').html("OK: '" + command + "' was successful. <br />"));
+        var result_tmpl = '<p class="command-success">OK: '+command+' was successful.'
+        if (resp.data.result !== null) result_tmpl += '<br/>'+JSON.stringify(resp.data.result);
+        $(".command-output").append(result_tmpl);
         self.get_capabilities();
       },
       complete: function(){
@@ -147,14 +147,9 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
       $.ajax({
         url: 'get_capabilities?cap_type=abc123',
         dataType: 'json',
-        dataFilter: function(raw) {
-          console.log('raw', raw);
-          return raw;
-        },
         success: function(resp){
           console.log('get_capabilities:', resp);
           self.render_commands(resp.data.commands);
-          
           if (!_.isEmpty(resp.data.resource_params)){
             new IONUX.Views.ResourceParams({model: new IONUX.Models.ResourceParams(resp.data.resource_params)}).render().el;
           } else {
@@ -173,62 +168,5 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
     _.each(options, function(option){
       $('#cmds tbody').append(_.template(cmd_tmpl, option));
     });
-  },
-  
-  render_parameters: function(params){
-    // this.resource_params_model = new IONUX.Models.ResourceParams(params);
-    // this.resource_params_form = new Backbone.Form({model: this.resource_params_model}).render();
-    // $('#resource-form').append(this.resource_params_form.el);
-    // $('#resource-form').append('<button class="btn-blue save-params">Save</button>');
-    // 
-    // // ---------------------------------------------------------------
-    // // var param_tmpl = '<label><%= label %></label>\
-    // //                   <input type="text" value="<%= value %>" />'
-    // // _.each(_.pairs(params), function(param) {
-    // //   $('#resource-params tbody').append(_.template(param_tmpl, {label: param[0], value: param[1]}));
-    // // });
-  },
-  
-  // save_params: function() {
-  //   console.log('before', this.resource_params_model.toJSON());
-  //   this.resource_params_form.commit();
-  //   console.log('after: ', this.resource_params_model.toJSON());
-  //   this.resource_params_model.save();
-  // },
-  
-  render_select_menu: function(options) {
-    var select_elmt = $('#new-commands').empty();
-    var option_tmpl = '<option data-cap-type="<%= cap_type %>" value="<%= name %>"><%= name %></option>'
-    _.each(options, function(option){
-      select_elmt.append(_.template(option_tmpl, option));
-    });
-  },
-  
-  issue_command: function(evt){
-    var button_elmt = $(evt.target);
-    button_elmt.attr("disabled", "disabled");
-    var select_elmt = this.$el.find('select');
-    select_elmt.attr("disabled", "disabled");
-    var selected_option = this.$el.find('option:selected');
-    var command = selected_option.attr("value");
-    var cap_type = selected_option.data('cap-type');
-    if (cap_type) command += '?cap_type=' + cap_type;
-    var self = this;
-
-    $.ajax({
-      url:command,
-      dataType: 'json',
-      success: function(resp) {
-        var data = resp.data;
-        $(".command-output").append($('<p class="command-success">').html("OK: '" + command + "' was successful. <br />" + JSON.stringify(data.result)));
-      },
-      complete: function(resp){
-          button_elmt.removeAttr("disabled");
-          select_elmt.removeAttr("disabled");
-          self.get_capabilities();
-      }
-    });
-    
-    return false;
   },
 });
