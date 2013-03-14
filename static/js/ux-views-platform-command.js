@@ -1,6 +1,6 @@
 IONUX.Views.PlatformCommandFacepage = Backbone.View.extend({
   el: "#dynamic-container",
-  template: _.template($("#instrument-command-facepage-tmpl").html()),
+  template: _.template($("#platform-command-facepage-tmpl").html()),
   
   events: {
     'click #start-instrument-agent-instance': 'start_agent',
