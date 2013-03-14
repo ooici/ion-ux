@@ -70,7 +70,6 @@ IONUX.Router = Backbone.Router.extend({
       });
     new IONUX.Views.Footer({resource_id: null, resource_type: resource_type}).render().el;
   },
-  
   page: function(resource_type, view_type, resource_id){
     $('#error').hide();
     $('#dynamic-container').show().html(LOADING_TEMPLATE);
@@ -90,7 +89,7 @@ IONUX.Router = Backbone.Router.extend({
     $('#dynamic-container').show();
     $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS['command']).html());
     $('.span9 li,.span3 li').hide();
-    $('.v02').empty();
+    // $('.v02').empty();
     var resource_extension = new IONUX.Models.ResourceExtension({resource_type: resource_type, resource_id: resource_id});
     if (resource_type == 'InstrumentDevice') {
       new IONUX.Views.InstrumentCommandFacepage({model: resource_extension, el: '.v02'});
@@ -101,6 +100,7 @@ IONUX.Router = Backbone.Router.extend({
       .success(function(model, resp){
         render_page(resource_type, resource_id, model);
       });
+    new IONUX.Views.Footer({resource_id: null, resource_type: null}).render().el;
   },
 
   user_profile: function() {
@@ -339,6 +339,9 @@ function render_page(resource_type, resource_id, model) {
         break;
       case 'Recent Events':
         new IONUX.Views.EventActions({el:$(el)});
+        break;
+      case 'Participants':
+        new IONUX.Views.NegotiationActions({el: $(el)});
         break;
       default:
         new IONUX.Views.GroupActions({el:$(el)});

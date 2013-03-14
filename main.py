@@ -1,5 +1,5 @@
-from flask import Flask, request, session, jsonify, render_template, redirect, url_for, escape, send_file, g, make_response
-import requests, json
+from flask import json, Flask, request, session, jsonify, render_template, redirect, url_for, escape, send_file, g, make_response
+import requests #, json
 from functools import wraps
 import base64
 import hashlib
@@ -139,7 +139,19 @@ def unsubscribe_to_resource(resource_type, resource_id):
     return render_json_response(resp)
 
 
-        
+@app.route('/<resource_type>/status/<resource_id>/enroll/', methods=['POST'])
+@app.route('/<resource_type>/face/<resource_id>/enroll/', methods=['POST'])
+@app.route('/<resource_type>/related/<resource_id>/enroll/', methods=['POST'])
+@login_required
+def enroll_request(resource_type, resource_id):
+    actor_id = session.get('actor_id') if session.has_key('actor_id') else None
+    print 'zzzzz', actor_id, resource_id
+    resp = ServiceApi.enroll_request(resource_id, actor_id)
+    return jsonify(data=actor_id)
+    # return render_json_response(resp)
+
+
+
 @app.route('/<resource_type>/status/<resource_id>/transition/', methods=['POST'])
 @app.route('/<resource_type>/face/<resource_id>/transition/', methods=['POST'])
 @app.route('/<resource_type>/related/<resource_id>/transition/', methods=['POST'])
@@ -229,22 +241,30 @@ def extension(resource_type, resource_id):
 # COMMAND RESOURCE PAGES
 # -----------------------------------------------------------------------------
 
-@app.route('/InstrumentDevice/command/<instrument_device_id>/<agent_command>/')
-@login_required
+@app.route('/InstrumentDevice/command/<instrument_device_id>/<agent_command>/', methods=['GET', 'POST', 'PUT'])
+# @login_required
 def start_instrument_agent(instrument_device_id, agent_command, cap_type=None):
     cap_type = request.args.get('cap_type')
-    if agent_command == 'start':
-        command_response = ServiceApi.instrument_agent_start(instrument_device_id)
-        return render_json_response(command_response)
-    elif agent_command == 'stop':
-        command_response = ServiceApi.instrument_agent_stop(instrument_device_id)
-        return render_json_response(command_response)
-    elif agent_command == 'get_capabilities':
-        command_response = ServiceApi.instrument_agent_get_capabilities(instrument_device_id)
-        return render_json_response(command_response)
+    if request.method in ('POST', 'PUT'):
+        if agent_command == 'set_resource':
+            resource_params = json.loads(request.data)
+            set_params = ServiceApi.set_resource(instrument_device_id, resource_params)
+            return render_json_response(set_params)
     else:
-        command_response = ServiceApi.instrument_execute(instrument_device_id, agent_command, cap_type)
-    return render_json_response(command_response)
+        if agent_command == 'start':
+            command_response = ServiceApi.instrument_agent_start(instrument_device_id)
+            return render_json_response(command_response)
+        elif agent_command == 'stop':
+            command_response = ServiceApi.instrument_agent_stop(instrument_device_id)
+            return render_json_response(command_response)
+        elif agent_command == 'get_capabilities':
+            command_response = ServiceApi.instrument_agent_get_capabilities(instrument_device_id)
+            return render_json_response(command_response)
+        elif agent_command == 'get_resource':
+            command_response = ServiceApi.get_resource(instrument_device_id)
+        else:
+            command_response = ServiceApi.instrument_execute(instrument_device_id, agent_command, cap_type)
+        return render_json_response(command_response)
 
 
 @app.route('/PlatformDevice/command/<platform_device_id>/<agent_command>/')
@@ -264,6 +284,7 @@ def start_platform_agent(platform_device_id, agent_command, cap_type=None, agent
         command_response = ServiceApi.platform_execute(platform_device_id, agent_command, cap_type)
     
     return jsonify(data=command_response)
+
 
 # -----------------------------------------------------------------------------
 # GOOGLE MAP API

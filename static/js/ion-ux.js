@@ -1,4 +1,5 @@
 IONUX = {
+  Templates: {},
   Interactions: {},
   Models:{},
   Collections:{},
@@ -15,7 +16,7 @@ IONUX = {
       new IONUX.Views.Topbar({model: IONUX.SESSION_MODEL}).render().el
       new IONUX.Views.Search().render().el;
       new IONUX.Views.HelpMenu({model: IONUX.SESSION_MODEL}).render().el;
-
+      
       // nag popup!
       if (IONUX.SESSION_MODEL.get('is_logged_in') && !IONUX.SESSION_MODEL.get('is_registered'))
         router.user_profile();
@@ -31,4 +32,12 @@ IONUX = {
       new IONUX.Views.Error({error_obj:error_obj,open_modal:open_modal}).render().el;
     });
   },
+  is_logged_in: function(){
+    return IONUX.SESSION_MODEL.get('is_logged_in');
+  },
+  is_owner: function(){
+    var user_id = IONUX.SESSION_MODEL.get('user_id');
+    var owner_match = _.findWhere(MODEL_DATA.owners[0], {_id: user_id}) ? true : false;
+    return owner_match;
+  }
 }

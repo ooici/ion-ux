@@ -2,6 +2,7 @@ import requests, json, time, pprint
 from flask import session, jsonify
 from config import GATEWAY_HOST, GATEWAY_PORT
 from copy import deepcopy
+from instrument_command import BLACKLIST
 
 GATEWAY_BASE_URL = 'http://%s:%d' % (GATEWAY_HOST, GATEWAY_PORT)
 SERVICE_GATEWAY_BASE_URL = '%s/ion-service' % (GATEWAY_BASE_URL)
@@ -98,6 +99,13 @@ class ServiceApi(object):
     def delete_user_subscription(notification_id):
         return service_gateway_post('user_notification', 'delete_notification', params={'notification_id': notification_id})
 
+    @staticmethod
+    def enroll_request(resource_id, actor_id):
+        print 'zzzzz', resource_id, actor_id
+        return True
+        # return service_gateway_post('user_notification', 'delete_notification', params={'notification_id': notification_id})
+
+
 
     @staticmethod
     def get_event_types():
@@ -164,7 +172,6 @@ class ServiceApi(object):
             extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'ExtendedInformationResource', 'user_id': user_id})
         else:
             extension = error_message(msg="Resource extension for %s is not available." % resource_type)
-
         return extension
 
     @staticmethod
@@ -259,7 +266,7 @@ class ServiceApi(object):
     def reset_driver(instrument_device_id):
         capabilities = ServiceApi.instrument_agent_get_capabilities(instrument_device_id)
         reset_cmd = 'RESOURCE_AGENT_EVENT_RESET'
-        reset_state = bool([True for c in capabilities if c['name'] == reset_cmd])
+        reset_state = bool([True for c in capabilities['commands'] if c['name'] == reset_cmd])
         if reset_state:
             ServiceApi.instrument_execute(instrument_device_id, reset_cmd, '1')
         return
@@ -273,17 +280,89 @@ class ServiceApi(object):
         params = {"command": {"type_": "AgentCommand", "command": command}}
         if command == 'RESOURCE_AGENT_EVENT_GO_DIRECT_ACCESS':
             params['command'].update({'kwargs': {'session_type': 3, 'session_timeout':600, 'inactivity_timeout': 600}})
-        agent_response = service_gateway_agent_request(instrument_device_id, agent_op, params)
-        return agent_response
+        agent_request = service_gateway_agent_request(instrument_device_id, agent_op, params)
+        return agent_request
 
     @staticmethod
     def instrument_agent_get_capabilities(instrument_device_id):
-        agent_command = "get_capabilities"
-        params = {}
-        agent_response = service_gateway_agent_request(instrument_device_id, agent_command, params)
-        return agent_response
+        agent_req = service_gateway_agent_request(instrument_device_id, 'get_capabilities', params={})
+        
+        # Temp hack to catch error
+        if isinstance(agent_req, dict) and agent_req.has_key('GatewayError'):
+            return agent_req
+        else:
+            commands = []
+            agent_param_names = []
+            resource_param_names = []
+            
+            for param in agent_req:
+                cap_type = param['cap_type']
+                if cap_type == 1 or cap_type == 3:
+                    commands.append(param)
+                if cap_type == 2:
+                    agent_param_names.append(param['name'])
+                if cap_type == 4:
+                    resource_param_names.append(param['name'])
+            
+            if resource_param_names:
+                resource_params_request = service_gateway_agent_request(instrument_device_id, 'get_resource', params={'params': resource_param_names})
+
+                resource_params = {}
+                for k,v in resource_params_request.iteritems():
+                    if k in BLACKLIST:
+                        continue
+                    resource_params.update({k:v})
+                    if isinstance(v, float):
+                        resource_params[k] = str(v)
+
+                # TEMP: hack to convert 0.0 strings for JavaScript.
+                resource_params = {}
+                for k,v in resource_params_request.iteritems():
+                    if k in BLACKLIST:
+                        continue
+                    else:
+                        resource_params.update({k:v})
+                    if isinstance(v, float):
+                        resource_params[k] = str(v)
+            else:
+                resource_params = []
+            
+            # if agent_param_names:
+            #     agent_params = service_gateway_agent_request(instrument_device_id, 'get_resource', params={'params': agent_param_names})
+            # else:
+            #     agent_params = []
+            
+            capabilities = {}
+            capabilities.update({'resource_params': resource_params})
+            capabilities.update({'commands': commands})
+            # capabilities.update({'agent_params': agent_params})
+                
+        return capabilities
+
+    @staticmethod
+    def set_resource(device_id, params):
+        # TEMP: hack to convert '0.0' strings to workaround JavaScript/JSON.
+        # Also, skips null values until param schema is available.
+        new_params = {}
+        for k,v in params.iteritems():
+            if k in BLACKLIST or not v:
+                continue
+            if isinstance(v, unicode) and '.' in v:
+                print 'before float:', k, v, type(v)
+                new_params.update({k: float(v.strip())})
+                print 'after float', k, params[k], type(float(v.strip()))
+            else:
+                new_params.update({k: v})
+        
+        agent_request = service_gateway_agent_request(device_id, 'set_resource', params={'params': new_params})
+        return agent_request
 
 
+    # @staticmethod
+    # def get_resource(device_id):
+    #     # params = ["PTCA1", "PA1", "WBOTC", "PCALDATE", "STORETIME", "CPCOR", "PTCA2", "OUTPUTSV", "SAMPLENUM", "TCALDATE", "OUTPUTSAL", "NAVG", "POFFSET", "INTERVAL", "SYNCWAIT", "CJ", "CI", "CH", "TA0", "TA1", "TA2", "TA3", "RCALDATE", "CG", "CTCOR", "PTCB0", "PTCB1", "PTCB2", "CCALDATE", "PA0", "TXREALTIME", "PA2", "SYNCMODE", "PTCA0", "RTCA2", "RTCA1", "RTCA0"]
+    #     agent_request = service_gateway_agent_request(device_id, 'get_resource', params={'params': params})
+    #     return agent_request
 
     # PLATFORM COMMAND
     # ---------------------------------------------------------------------------
@@ -665,7 +744,8 @@ def build_agent_request(agent_id, operation_name, params=None):
     post_data['agentRequest']['agentOp'] = operation_name
 
     if params is not None:
-        post_data['agentRequest']['params'] = params
+        # post_data['agentRequest']['params'] = params['params']
+        post_data['agentRequest']['params'].update(params)
 
     # conditionally add user id and expiry to request
     if session.has_key('actor_id'):
@@ -684,13 +764,14 @@ def service_gateway_agent_request(agent_id, operation_name, params=None):
     resp = requests.post(url, data)
     pretty_console_log('SERVICE GATEWAY AGENT REQUEST POST RESPONSE', resp.content)
     return render_service_gateway_response(resp, raw_return=True)
-    if resp.status_code == 200:
-        resp = json.loads(resp.content)
 
-        if type(resp) == dict:
-            return resp['data']['GatewayResponse']
-        elif type(resp) == list:
-            return resp['data']['GatewayResponse'][0]
+    # if resp.status_code == 200:
+    #     resp = json.loads(resp.content)
+    # 
+    #     if type(resp) == dict:
+    #         return resp['data']['GatewayResponse']
+    #     elif type(resp) == list:
+    #         return resp['data']['GatewayResponse'][0]
 
 def error_message(msg=None):
     """Builds a Gateway compataible error message for UI."""
