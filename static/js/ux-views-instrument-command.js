@@ -150,7 +150,10 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
         success: function(resp){
           console.log('get_capabilities:', resp);
           self.render_commands(resp.data.commands);
-          if (!_.isEmpty(resp.data.resource_params)){
+          
+          // Catch 'GatewayError' caused by unsupported/invalid state.
+          if (!_.isEmpty(resp.data.resource_params) && !_.has(resp.data.resource_params, 'GatewayError')){
+            console.log('resource_params', resp.data.resource_params);
             new IONUX.Views.ResourceParams({model: new IONUX.Models.ResourceParams(resp.data.resource_params)}).render().el;
           } else {
             $('#resource-form').empty();
