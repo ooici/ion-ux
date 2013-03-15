@@ -74,9 +74,10 @@
     var dataTable_overview_stride_factor = 1;
     var chart_visible_start_date, chart_visible_end_date, chart_x_res, avg_data_rate, curr_stride_factor = 1;
     var dp_parameters = []; // ['temp', 'pressure', 'conductivity'];
+    var curr_parameter_visibility = {};
 
     var container_server = "http://" + window.location.host;
-    var first_draw_flag = true;
+    //var first_draw_flag = true;
     //var viz_params = {};
 
 
@@ -85,6 +86,7 @@
 
     // Chart options
     var curr_chart_type = "line";
+    var curr_y_axis_compare_type = "percent";
     //var supported_chart_type = ['AnnotatedTimeLine', 'Table', 'LineChart', 'AreaChart', 'ComboChart'];
     var supported_chart_type = ['line', 'area', 'spline', 'scatter', 'table'];
     var overview_reqId = 9;
@@ -212,11 +214,10 @@
 
             // If no chart exists, create one
             if(chart) {
-                drawChart(mergeAndSortHcData(data_series_overview, data_series_hires, data_series_rt),
-                        curr_chart_type, false);
+                drawChart(false, mergeAndSortHcData(data_series_overview, data_series_hires, data_series_rt));
             }
             else{
-                drawChart(data_series_overview, curr_chart_type, true);
+                drawChart(true, data_series_overview);
                 // Create the UI at this point. Now that we have the data
                 initChartUi();
             }
@@ -225,8 +226,7 @@
         // Otherwise its data that needs to replace what's currently in the chart
         else {
             data_series_hires = gdt_to_highcharts_data(_dt);
-            drawChart(mergeAndSortHcData(data_series_overview, data_series_hires, data_series_rt),
-                    curr_chart_type, false);
+            drawChart(false, mergeAndSortHcData(data_series_overview, data_series_hires, data_series_rt));
         }
 
         // Stop the spinner
@@ -317,16 +317,16 @@
     }
 
 
-    function drawChart(_data, _type, first_draw_flag) {
+    function drawChart(_first_draw_flag, _data) {
 
         // Handle tables in a special way
-        if (_type == 'table') {
+        if (curr_chart_type == 'table') {
             drawTable(dataTable_overview);
             return;
         }
 
         // Create the chart if the call is being called for the first time
-        if (first_draw_flag) {
+        if (_first_draw_flag) {
 
             if(chart && chart != undefined) {
                 chart.destroy();
@@ -335,7 +335,7 @@
             chart = new Highcharts.StockChart({
                 chart : {
                     renderTo : 'chart_div',
-                    type: _type,
+                    type: curr_chart_type,
                     backgroundColor: chartBkgColor,
                     borderColor: "black",
                     zoomType: "x"
@@ -388,7 +388,7 @@
                 yAxis: {
                     labels: {
                         formatter: function() {
-                            return (this.value >= 0 ? '+' : '') + this.value + '%';
+                            return (this.value >= 0 ? '+' : '') + this.value + (curr_y_axis_compare_type == "percent" ? '%' : '');
                         },
                         style : {
                             color : chartLabelColor
@@ -403,15 +403,23 @@
 
                 plotOptions: {
                     series: {
-                        compare: 'percent',
-                        connectNulls: true
+                        compare: curr_y_axis_compare_type,
+                        connectNulls: true,
+                        events: {
+                            hide: function() {
+                                curr_parameter_visibility[this.name] = false;
+                            },
+                            show: function() {
+                                curr_parameter_visibility[this.name] = true;
+                            }
+                        }
                     },
-                    threshold: null,
-                     line: {
-                     compare: 'percent',
+                    threshold: null
+                    /*                line: {
+                     compare: _y_axis_compare_type,
                      connectNulls: true
                      }
-
+                     */
                 },
                 exporting: {
                     width:  chart_x_res
@@ -469,6 +477,9 @@
             //chart.redraw();
         }
 
+        // update series visibility
+        updateSeriesVisibility();
+
     }
 
     function drawTable(_data) {
@@ -479,6 +490,29 @@
 
         table.draw(_data);
 
+    }
+
+
+    function updateSeriesVisibility() {
+        if(!chart) return;
+
+        // check visibility flags for all the series
+        for (var i = 0; i < chart.series.length - 1; i++) {
+
+            // if the entry in the visibility dict does not exist, create it
+            if (chart.series[i]["name"] in curr_parameter_visibility) {
+                if (curr_parameter_visibility[chart.series[i]["name"]]) {
+                    chart.series[i].show();
+                }
+                else {
+                    chart.series[i].hide();
+                }
+            }
+            else {
+                curr_parameter_visibility[chart.series[i]["name"]] = true;
+                chart.series[i].show();
+            }
+        }
     }
 
 
@@ -553,8 +587,7 @@
 
         // Merge the overview, hi-res and realtime all together before redrawing the chart.
         // NEED TO FIX this expensive operation
-        drawChart(mergeAndSortHcData(data_series_overview, data_series_hires, data_series_rt),
-                curr_chart_type, false);
+        drawChart(false, mergeAndSortHcData(data_series_overview, data_series_hires, data_series_rt));
 
 
         console.debug("Num of data points in the chart :" + data_series_overview[0]["data"].length);
@@ -567,11 +600,6 @@
 
         // stop spinner
         chart_spinner.stop();
-
-    }
-
-    function drawRealtimeChart() {
-        // the overview should have been updated. Draw the chart with the new overview
 
     }
 
@@ -589,7 +617,7 @@
 
         // Populate UI components. Start with the list of parameters. Enclose in a container
         var chartUiDiv = document.getElementById("chart_ui_div");
-        var chkBox, paramIdx, chart_type_select, id_str;
+        var chkBox, paramIdx, chart_type_select, id_str, y_axis_compare_type_select;
 
         // Create a select box for choosing the chart type
         chartUiDiv.appendChild(document.createTextNode('   Chart Type: '));
@@ -603,6 +631,16 @@
             selectFlag = false; // just need it true for the first entry
         }
         chartUiDiv.appendChild(chart_type_select);
+
+        // Create a select box for choosing the comparison type
+        chartUiDiv.appendChild(document.createTextNode('   Y-Ais Comparison Type: '));
+        y_axis_compare_type_select = document.createElement('select');
+        y_axis_compare_type_select.setAttribute("id", "y_axis_compare_type_select");
+        y_axis_compare_type_select.setAttribute("onChange", "onYaxisCompareTypeChange(this)");
+
+        y_axis_compare_type_select.options[0] = new Option("percent", "percent", true, false);
+        y_axis_compare_type_select.options[1] = new Option("value", "value", false, false);
+        chartUiDiv.appendChild(y_axis_compare_type_select);
 
         // Create the 'set all' and 'clear all' button
         var check_all_viz_params_button = document.createElement('input');
@@ -645,9 +683,16 @@
     function onChartTypeChange (selectedOption ) {
         curr_chart_type = selectedOption.value;
 
-        // Change chart type in the series
-        drawChart(mergeAndSortHcData(data_series_overview, data_series_hires, data_series_rt),
-                curr_chart_type, true);
+        // Re-draw chart with new options
+        drawChart(true, mergeAndSortHcData(data_series_overview, data_series_hires, data_series_rt));
+    }
+
+    function onYaxisCompareTypeChange(selectedOption) {
+        curr_y_axis_compare_type = selectedOption.value;
+
+        // Re-draw chart with new options
+        drawChart(true, mergeAndSortHcData(data_series_overview, data_series_hires, data_series_rt));
+
     }
 
     function reloadChart() {
@@ -759,7 +804,6 @@
 
         chart_spinner = new Spinner(opts);
     }
-
 
 
     </script>
