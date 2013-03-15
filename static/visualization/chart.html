@@ -76,7 +76,7 @@
     var dp_parameters = []; // ['temp', 'pressure', 'conductivity'];
     var curr_parameter_visibility = {};
 
-    var container_server = "http://" + window.location.host;
+    var container_server =  "http://" + window.location.host;
     //var first_draw_flag = true;
     //var viz_params = {};
 
@@ -86,7 +86,7 @@
 
     // Chart options
     var curr_chart_type = "line";
-    var curr_y_axis_compare_type = "percent";
+    var curr_y_axis_compare_type = undefined;
     //var supported_chart_type = ['AnnotatedTimeLine', 'Table', 'LineChart', 'AreaChart', 'ComboChart'];
     var supported_chart_type = ['line', 'area', 'spline', 'scatter', 'table'];
     var overview_reqId = 9;
@@ -633,13 +633,14 @@
         chartUiDiv.appendChild(chart_type_select);
 
         // Create a select box for choosing the comparison type
-        chartUiDiv.appendChild(document.createTextNode('   Y-Ais Comparison Type: '));
+        chartUiDiv.appendChild(document.createTextNode('   Show Y-Axis As : '));
         y_axis_compare_type_select = document.createElement('select');
         y_axis_compare_type_select.setAttribute("id", "y_axis_compare_type_select");
         y_axis_compare_type_select.setAttribute("onChange", "onYaxisCompareTypeChange(this)");
 
-        y_axis_compare_type_select.options[0] = new Option("percent", "percent", true, false);
-        y_axis_compare_type_select.options[1] = new Option("value", "value", false, false);
+        y_axis_compare_type_select.options[0] = new Option("Actual Values", undefined, true, false);
+        y_axis_compare_type_select.options[1] = new Option("Value Comparison", "value", false, false);
+        y_axis_compare_type_select.options[2] = new Option("Percentage Comparison", "percent", false, false);
         chartUiDiv.appendChild(y_axis_compare_type_select);
 
         // Create the 'set all' and 'clear all' button
@@ -689,6 +690,15 @@
 
     function onYaxisCompareTypeChange(selectedOption) {
         curr_y_axis_compare_type = selectedOption.value;
+
+        // Does not pass undefined as an object but a string .. wtf
+        if (curr_y_axis_compare_type == "undefined") {
+            curr_y_axis_compare_type = undefined;
+        }
+
+        if (curr_y_axis_compare_type == "percent") {
+            alert("For percentage comparison, please disable any data series with zero-values, using the legend.");
+        }
 
         // Re-draw chart with new options
         drawChart(true, mergeAndSortHcData(data_series_overview, data_series_hires, data_series_rt));
