@@ -34,15 +34,24 @@ IONUX.Views.ResourceParams = Backbone.View.extend({
   render: function(){
     this.$el.html(this.template);
     this.$el.prepend(this.resource_params_form.el);
+    
+    // Quick hack to disable and hide backbone-forms buttons.
+    // Todo: implement custom form templates in IONUX.Templates
+    this.$el.find('.bbf-add, .bbf-del').remove();
+    
     return this;
   },
   save_params: function(e){
+    var self = this;
     var btn = $(e.target);
-    // btn.prop('disabled', true).text('Saving...')
+    btn.prop('disabled', true).text('Saving...');
+    this.$el.find('input').prop('disabled', true);
     this.resource_params_form.commit();
-    this.model.save({
-      success: function(resp) {
-        // $('.save-params').prop('disabled', false).text('Save');
+    var attrs = this.model.toJSON(); // Hack to force fn complete below. Better way?
+    this.model.save(attrs, {
+      complete: function(resp){
+        btn.prop('disabled', false).text('Save');
+        self.$el.find('input').prop('disabled', false);
       }
     });
   }
@@ -150,10 +159,8 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
         success: function(resp){
           console.log('get_capabilities:', resp);
           self.render_commands(resp.data.commands);
-          
           // Catch 'GatewayError' caused by unsupported/invalid state.
           if (!_.isEmpty(resp.data.resource_params) && !_.has(resp.data.resource_params, 'GatewayError')){
-            console.log('resource_params', resp.data.resource_params);
             new IONUX.Views.ResourceParams({model: new IONUX.Models.ResourceParams(resp.data.resource_params)}).render().el;
           } else {
             $('#resource-form').empty();
