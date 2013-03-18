@@ -151,7 +151,6 @@ def enroll_request(resource_type, resource_id):
     # return render_json_response(resp)
 
 
-
 @app.route('/<resource_type>/status/<resource_id>/transition/', methods=['POST'])
 @app.route('/<resource_type>/face/<resource_id>/transition/', methods=['POST'])
 @app.route('/<resource_type>/related/<resource_id>/transition/', methods=['POST'])
@@ -326,7 +325,12 @@ def get_realtime_visualization_data2(query_token):
 # UI API
 # -----------------------------------------------------------------------------
 
-@app.route('/resource_type_schema/<resource_type>', methods=['GET'])
+@app.route('/<resource_type>/<resource_id>/', methods=['GET'])
+def resource_by_id(resource_type, resource_id):
+    resource = ServiceApi.find_by_resource_id(resource_id)
+    return resource
+
+@app.route('/resource_type_schema/<resource_type>/', methods=['GET'])
 def get_resource_type_schema(resource_type):
     schema = ServiceApi.resource_type_schema(resource_type)
     return jsonify(data=schema)
