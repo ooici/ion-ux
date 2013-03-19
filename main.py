@@ -305,10 +305,13 @@ def map2():
 # GOOGLE VISUALIZATION API
 # -----------------------------------------------------------------------------
 
-@app.route('/visualization/<operation_name>/')
+@app.route('/visualization/<operation_name>/', methods=['GET', 'POST'])
 def visualization(operation_name):
     overview_url = 'http://%s:%d/ion-service/visualization_service/%s?%s' % (GATEWAY_HOST, GATEWAY_PORT, operation_name, request.query_string)
-    req = requests.get(overview_url)
+    if request.method == 'POST':
+        req = requests.post(overview_url, request.data)
+    else:
+        req = requests.get(overview_url)
     return req.content
 
 @app.route('/viz/initiate_realtime_visualization/<data_product_id>/', methods=['GET'])
@@ -485,6 +488,11 @@ def session_info():
 # -----------------------------------------------------------------------------
 # DEVELOPMENT ROUTES
 # -----------------------------------------------------------------------------
+
+@app.route('/dev/dashboard', methods=['GET'])
+def dev_dashboard():
+    return render_app_template(request.path)
+
 
 @app.route('/dev/datatable', methods=['GET'])
 def dev_datatable(resource_id=None):
