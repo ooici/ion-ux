@@ -43,6 +43,36 @@ class ServiceApi(object):
             return search_json['data']
 
     @staticmethod
+    def adv_search(geospatial_bounds, vertical_bounds, temporal_bounds, search_terms, search_criteria):
+        post_data = { 'query': {},
+                      'and': [],
+                      'or': [] }
+
+        queries = []
+
+        if geospatial_bounds:
+            # field: DataProduct -> "geospatial_bounds"
+            #        PlatformDevice -> "index_location"
+            queries.append({'bottom_right': [geospatial_bounds['south'], geospatial_bounds['east']],
+                                'top_left': [geospatial_bounds['north'], geospatial_bounds['west']]})
+
+        if vertical_bounds:
+            queries.append({'range': {'from': vertical_bounds['vertical-lower-ctrl'], 'to': vertical_bounds['vertical-lower-ctrl']}})
+
+        if temporal_bounds:
+            queries.append({'time': {'from': temporal_bounds['temporal-from-ctrl'], 'to': temporal_bounds['temporal-to-ctrl']}})
+
+        if search_terms:
+            pass
+
+        if search_criteria:
+            pass
+
+        # transform queries into the expected query object
+
+
+
+    @staticmethod
     def update_resource(resource_obj):
         req = service_gateway_post('resource_management', 'update_resource', params={'resource': resource_obj})
         return req
