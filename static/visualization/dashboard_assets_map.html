@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+        html { height: 100% }
+        body { height: 100%; margin: 0; padding: 0 }
+        #map_canvas { height: 100% }
+    </style>
+    <script type="text/javascript"
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCCcEp2hQdftRhaYgonh1Vyv0JYi5KVvFI&sensor=false">
+    </script>
+    <script src="js/markerclusterer.js"> </script>
+    <script type="text/javascript">
+
+        var container_server = "http://127.0.0.1:3000";
+        var _row_highlight_color = "#FFEFC6";
+        var _row_background_color = "#FFFFFF";
+
+        default_map_options = {
+            center: new google.maps.LatLng(0, 0),
+            zoom: 3,
+            mapTypeId: google.maps.MapTypeId.TERRAIN,
+            disableDefaultUI: true
+        };
+
+        // The following parameters are ideally passed in to the page
+        //assetListUrl = ["/Org/list/", "/PlatformDevice/list/", "/InstrumentDevice/list/", "/DataProduct/list/"];
+
+
+        function initAssetMapView(map_options, container_server) {
+            if (map_options == null) map_options = default_map_options;
+
+            // create a map object
+            this.map = new google.maps.Map(document.getElementById("map_canvas"), map_options);
+
+            // Add the markers to the map clusterer which will handle large collections of markers
+            this.markerClusterer = new MarkerClusterer(this.map);
+
+            // For debugging
+            testMarkers();
+
+        }
+
+        // Creates a marker based on the lat, lon and icon information provided.
+        // _hover_text and _info_content are optional.
+        function createMarker(_lat, _lon, _icon, _hover_text, _info_content, _table_row) {
+
+            if (!_lat || !_lon) return null;
+
+            // Add marker to map
+            latLng = new google.maps.LatLng(_lat, _lon);
+            var marker = new google.maps.Marker({
+                    map: this.map,
+                    position: latLng,
+                    icon: _icon,
+                    title: _hover_text
+            });
+
+            // mouse click opens infoWindow
+            if (_info_content) {
+                var iw = new google.maps.InfoWindow({
+                    content: _info_content
+                });
+
+                var _map = this.map;
+
+                // Event when marker is clicked
+                google.maps.event.addListener(marker, 'click', function(_map) {
+                    iw.open(_map, marker);
+                });
+
+                // Event for mouseover
+                google.maps.event.addListener(marker, 'mouseover', function() {
+                    _table_row.style.backgroundColor = _row_highlight_color;
+                });
+
+                // Event for mouseout
+                google.maps.event.addListener(marker, 'mouseout', function() {
+                    _table_row.style.backgroundColor = _row_background_color;
+                });
+            }
+
+            this.markerClusterer.addMarker(marker);
+        }
+
+        // Clear all markers
+        function clearMarkers() {
+            this.markerClusterer.clearMarkers();
+        }
+
+
+
+        // DEBUGGING CODE ***************************
+        // Debugging function. Creates random markers
+        function testMarkers() {
+            // create map markers and add to list
+            var asset_table=document.getElementById("asset_table");
+            var row, cell;
+
+            var _lat = 32.7;
+            var _lon = -117.1;
+            var _offset = 0.5; // for randomly shifting points around the map
+            var _text;
+
+            for (var i = 0; i < 5; i++) {
+                _text = "Marker #" + i.toString();
+
+                row = asset_table.insertRow(-1);
+                cell = row.insertCell(-1);
+                cell.innerHTML = _text
+                createMarker(_lat, _lon, null, _text,"<P>Insert HTML here.</P>", row);
+
+                _lat = _lat + _offset;
+                _lon = _lon + _offset;
+            }
+
+        }
+
+        //container_server + "/ion-service/visualization_service/get_data_product_kml&return_format=raw_json"
+    </script>
+</head>
+<body onload="initAssetMapView(default_map_options, container_server)">
+<div id="map_canvas" style="width:100%; height:80%"></div>
+<div id="asset_table_div" style="width:100%; height:20%">
+    <table id="asset_table" border="1">
+    </table>
+</div>
+<button type="button" onclick="clearMarkers()">Clear Markers</button>
+</body>
+</html>
+
