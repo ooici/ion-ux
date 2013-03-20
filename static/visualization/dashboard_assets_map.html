@@ -28,23 +28,30 @@
         //assetListUrl = ["/Org/list/", "/PlatformDevice/list/", "/InstrumentDevice/list/", "/DataProduct/list/"];
 
 
-        function initAssetMapView(map_options, container_server) {
+        function initAssetMap(map_options) {
+            asset_map = new AssetMap(map_options);
+
+            // For debugging
+            testMarkers(asset_map);
+
+        }
+
+        function AssetMap(map_options) {
             if (map_options == null) map_options = default_map_options;
 
             // create a map object
             this.map = new google.maps.Map(document.getElementById("map_canvas"), map_options);
+            // Create a info Window object. Only one is shared between all markers
+            this.info_window = new google.maps.InfoWindow({content: ""});
 
             // Add the markers to the map clusterer which will handle large collections of markers
             this.markerClusterer = new MarkerClusterer(this.map);
-
-            // For debugging
-            testMarkers();
 
         }
 
         // Creates a marker based on the lat, lon and icon information provided.
         // _hover_text and _info_content are optional.
-        function createMarker(_lat, _lon, _icon, _hover_text, _info_content, _table_row) {
+        AssetMap.prototype.createMarker = function(_lat, _lon, _icon, _hover_text, _info_content, _table_row) {
 
             if (!_lat || !_lon) return null;
 
@@ -59,15 +66,14 @@
 
             // mouse click opens infoWindow
             if (_info_content) {
-                var iw = new google.maps.InfoWindow({
-                    content: _info_content
-                });
 
                 var _map = this.map;
+                var _iw = this.info_window;
 
                 // Event when marker is clicked
-                google.maps.event.addListener(marker, 'click', function(_map) {
-                    iw.open(_map, marker);
+                google.maps.event.addListener(marker, 'click', function() {
+                    _iw.setContent(_info_content);
+                    _iw.open(_map, marker);
                 });
 
                 // Event for mouseover
@@ -85,7 +91,7 @@
         }
 
         // Clear all markers
-        function clearMarkers() {
+        AssetMap.prototype.clearMarkers = function() {
             this.markerClusterer.clearMarkers();
         }
 
@@ -93,7 +99,7 @@
 
         // DEBUGGING CODE ***************************
         // Debugging function. Creates random markers
-        function testMarkers() {
+        function testMarkers(_asset_map) {
             // create map markers and add to list
             var asset_table=document.getElementById("asset_table");
             var row, cell;
@@ -108,8 +114,8 @@
 
                 row = asset_table.insertRow(-1);
                 cell = row.insertCell(-1);
-                cell.innerHTML = _text
-                createMarker(_lat, _lon, null, _text,"<P>Insert HTML here.</P>", row);
+                cell.innerHTML = _text;
+                _asset_map.createMarker(_lat, _lon, null, _text,"<P>Insert HTML for " + _text + "</P>", row);
 
                 _lat = _lat + _offset;
                 _lon = _lon + _offset;
@@ -120,7 +126,7 @@
         //container_server + "/ion-service/visualization_service/get_data_product_kml&return_format=raw_json"
     </script>
 </head>
-<body onload="initAssetMapView(default_map_options, container_server)">
+<body onload="initAssetMap(default_map_options, container_server)">
 <div id="map_canvas" style="width:100%; height:80%"></div>
 <div id="asset_table_div" style="width:100%; height:20%">
     <table id="asset_table" border="1">
