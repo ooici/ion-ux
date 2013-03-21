@@ -168,10 +168,14 @@ class ServiceApi(object):
             extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'DataProcessExtension', 'user_id': user_id})
         elif resource_type in ('UserRole'):
             extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'ExtendedInformationResource', 'user_id': user_id})
-        elif resource_type in ('InformationResource'):
-            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'ExtendedInformationResource', 'user_id': user_id})
         else:
-            extension = error_message(msg="Resource extension for %s is not available." % resource_type)
+            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'ExtendedInformationResource', 'user_id': user_id})
+            # brute force - if not an InformationResource, it might be taskable
+            if "GatewayError" in extension:
+                extension = service_gateway_get('resource_registry', 'get_resource_extension', params = {'resource_id': resource_id, 'resource_extension': 'ExtendedTaskableResource', 'user_id': user_id})
+
+        #else:
+        #    extension = error_message(msg="Resource extension for %s is not available." % resource_type)
         return extension
 
     @staticmethod

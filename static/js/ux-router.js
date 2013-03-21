@@ -185,25 +185,35 @@ function replace_url_with_html_links(text) {
   return text.replace(exp,"<a class='external' target='_blank' href='$1'>$1</a>"); 
 };
 
+// Returns a displayable resource type for the resource_type given.
+// If the type is not displayable, traverse up the heirarchy of resources
+// until one is found.
+function get_renderable_resource_type(resource_type)
+{
+  // FIX/HACK: Observatory shouldn't be on its own, it should be a site
+  if (resource_type == "Observatory")
+    return "Site";
+
+  // conduct initial search of window.LAYOUT
+  var re = _.find(window.LAYOUT.spec.restypes, function(v, k) { return v.name == resource_type; });
+
+  while (re != null) {
+    if ($("." + re.name).length > 0)
+      return re.name;
+
+    re = window.LAYOUT.spec.restypes[re.super];
+  }
+
+  // unknown?
+  return "Resource";
+}
+
 // Renders a page based on resource_type
 function render_page(resource_type, resource_id, model) {
   var start_render = new Date().getTime();
 
-  // Catch and set derivative resources;
-  // it should be moved into it's own function
-  // so that we can develop more logic to handle
-  // heirarchy in face, status and related pages.
-  if (resource_type == 'InstrumentModel' || resource_type == 'PlatformModel' || resource_type == 'SensorModel') {
-      var resource_type = 'DeviceModel';
-  } else if (resource_type == 'Observatory' || resource_type == 'InstrumentSite' || resource_type == 'PlatformSite' || resource_type == 'Subsite') {
-      var resource_type = 'Site';
-  } else if (resource_type == 'SensorDevice') {
-      var resource_type = 'Device';
-  } else if (resource_type == 'DataProcess') {
-      var resource_type = 'TaskableResource';
-  } else if (resource_type == 'UserRole') {
-      var resource_type = 'InformationResource';
-  };
+   // get most displayable resource type - by derived or otherwise
+  resource_type = get_renderable_resource_type(resource_type);
   
   window.MODEL_DATA = model.data;
   window.MODEL_DATA['resource_type'] = resource_type;
