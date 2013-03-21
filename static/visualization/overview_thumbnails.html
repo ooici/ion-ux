@@ -1,0 +1,335 @@
+<html>
+  <head>
+
+    <script type='text/javascript' src='http://www.google.com/jsapi'></script>
+    <script type="text/javascript"
+        src='https://www.google.com/jsapi?autoload={"modules":[{"name":"visualization","version":"1"}]}'>
+    </script>
+
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.0.min.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/ui/1.10.0/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="js/spin.js" ></script>
+
+
+    <!-- High charts / High stocks -->
+    <script src="js/highcharts/js/highcharts.js"></script>
+    <script src="js/highcharts/js/modules/exporting.js"></script>
+
+    <style> .container { border:2px solid #ccc; width:300px; height: 100px; overflow-y: scroll; } </style>
+
+    <script type='text/javascript'>
+
+    /*
+    NOTE : This code is for generating simple graphs to be used as thumbnails
+
+     */
+
+	// Global variables
+	var graph, dataTable, dp_id, dp_metadata;
+    var data_series;
+    var dataTable_overview_stride_factor = 1;
+    var dp_parameters = []; // ['temp', 'pressure', 'conductivity'];
+
+    var container_server =  "http://127.0.0.1:3000";
+
+    var graph_type = "line";
+    var graph_spinner;
+
+    // Other globals
+    var graph_target_container = "graph_div";
+    var graph_layout = "vertical"; // or horizontal
+    var composite_graph_flag = true; // If false, every parameter is plotted separately
+    var enableLegend = false;
+    var enableTooltip = true;
+
+
+    // Google library specific loads for all the supported chart types
+	google.setOnLoadCallback(initViz);
+
+    function initViz() {
+
+        // Init some varaibles which should actually be provided
+        dp_id=prompt("Please enter Data Product Id","");
+        if (dp_id == null) {
+            return;
+        }
+
+        // Init some variables
+        graph_x_res = document.getElementById("graph_div").scrollWidth;
+        initSpinner();
+
+        // Init the overview graph
+        graph = null;
+        initOverview();
+    }
+
+    function initOverview() {
+
+        /// Get meta data for the data product id. It will be used to retrieve the correct data
+        jQuery.ajax ({
+            url: container_server + "/visualization/get_data_product_metadata/?data_product_id=" + dp_id + "&callback=dp_metadata_cb&return_mimetype=application/json",
+            dataType: 'jsonp',
+            jsonpCallback: 'dp_metadata_cb'
+        });
+
+    }
+
+    function dp_metadata_cb(response) {
+        dp_metadata = response;
+
+        // calculate and init a few things
+        avg_data_rate = dp_metadata['time_steps'] / (dp_metadata['time_bounds'][1] - dp_metadata['time_bounds'][0]);
+
+        // calculate the stride factor
+        var num_of_actual_data_points = (dp_metadata['time_bounds'][1] - dp_metadata['time_bounds'][0]) * avg_data_rate;
+        dataTable_overview_stride_factor = Math.ceil(num_of_actual_data_points / graph_x_res);
+
+        var vp = setVizParams(dp_parameters, dp_metadata['time_bounds'][0], dp_metadata['time_bounds'][1], dataTable_overview_stride_factor);
+        fetchData(vp);
+    }
+
+
+	function fetchData(vp) {
+
+        var query;
+
+        //query = new google.visualization.Query(container_server + "/ion-service/visualization_service/get_visualization_data?data_product_id=" + dp_id + "&visualization_parameters=" + JSON.stringify(viz_params) + "&tqx=reqId:" + _reqId + "&return_mimetype=application/json");
+        query = new google.visualization.Query(container_server + "/visualization/get_visualization_data/?data_product_id=" + dp_id + "&visualization_parameters=" + JSON.stringify(vp) + "&return_mimetype=application/json");
+        console.debug("Fetching data : ", query);
+
+        // Send the query with a callback function.
+        query.send(handleDrawQueryResponse);
+
+        // Start the spinner to tell user that more data is coming
+        var spin_target = document.getElementById('graph_div');
+        graph_spinner.spin(spin_target);
+
+	}
+
+
+	function handleDrawQueryResponse(response) {
+
+        if (response.isError()) {
+            alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
+            return;
+        }
+
+        // Translate response in to the format, highstocks understands
+        var _dt = response.getDataTable();
+        _dt.sort([{column:0}]);
+
+        data_series = gdt_to_highcharts_data(_dt);
+
+        // for composite view, show all series on the same graph
+        if (composite_graph_flag) {
+            drawGraph(graph_target_container, data_series, graph_type, enableLegend, enableTooltip, " ");
+        }
+        else {
+            var _series = [];
+            var sub_div;
+            var sub_div_id;
+            var graphDiv = document.getElementById(graph_target_container);
+
+            for (var i=0; i < data_series.length; i++) {
+                // create a new sub div, one for each series graph
+                sub_div_id = graph_target_container + "." + i.toString();
+                sub_div = document.createElement('div');
+                sub_div.setAttribute("id", sub_div_id);
+                sub_div.position = "relative";
+                sub_div.align = "center";
+                sub_div.border = 5;
+                sub_div.style.width = graphDiv.style.width;
+                sub_div.style.height = "200px";
+
+                graphDiv.appendChild(sub_div);
+
+                // create a separate data series with just one entry
+                _series[0] = data_series[i];
+                drawGraph(sub_div_id, _series, graph_type, enableLegend, enableTooltip, data_series[i]["name"]);
+
+                // insert a break
+                graphDiv.appendChild(document.createElement('br'));
+            }
+
+        }
+
+        // Stop the spinner
+        graph_spinner.stop();
+
+	}
+
+    function gdt_to_highcharts_data (_dt) {
+        var _hc_data = [];
+        var _hc_data_count = 0;
+        for (var i=1; i < _dt.getNumberOfColumns(); i++) {
+
+            // Check to see if the series contains NaN. If yes, just ignore the entire series
+            if (isNaN(_dt.getValue(0,i))) continue;
+            // Also ignore any parameter that has the string "timestamp" in it or is the lat/lon
+            if (_dt.getColumnLabel(i).search("timestamp") >= 0) continue;
+            if (_dt.getColumnLabel(i) == 'lat' || _dt.getColumnLabel(i) == 'lon') continue;
+
+            _hc_data[_hc_data_count] = {};
+            var _series = _hc_data[_hc_data_count];
+            var _data = [];
+
+            // Create the series data as an array of [timestamp, value]
+            for (var j=0; j<_dt.getNumberOfRows(); j++) {
+                _data[j] = [_dt.getValue(j,0).getTime(), _dt.getValue(j,i)];
+            }
+
+            _series["name"] = _dt.getColumnLabel(i);
+            _series["tooltip"] = {valueDecimals:5};
+            _series["data"] = _data;
+
+            ++_hc_data_count;
+        }
+
+        return _hc_data;
+    }
+
+
+
+    function drawGraph(renderTo, _data, _type, _enableLegend, _enableTooltip, _title) {
+        // Create the chart if the call is being called for the first time
+
+            graph = new Highcharts.Chart({
+
+                chart : {
+                    renderTo: renderTo,
+                    type: _type,
+                    backgroundColor: "#999999",
+                    borderColor: "lightgray",
+                    spacingTop: 0
+
+                },
+                title : {
+                    margin : 0,
+                    text: _title
+                },
+
+
+                legend: {
+                    enabled: _enableLegend,
+                    align: 'center',
+                    backgroundColor: '#FCFFC5',
+                    borderColor: 'black',
+                    borderWidth: 1,
+                    borderRadius: 0,
+                    layout: 'horizontal',
+                    verticalAlign: 'bottom'
+                },
+
+                xAxis: {
+                    labels: {
+                        style : {
+                            color : "#FFFFFF",
+                            fontSize: 8
+                        }
+                    },
+                    type: 'datetime'
+                },
+
+                yAxis: {
+                    labels: {
+                        formatter: function() {
+                            return (this.value >= 0 ? '+' : '') + this.value + '%';
+                        },
+                        style : {
+                            color : "#FFFFFF",
+                            fontSize: 8
+                        }
+                    },
+                    plotLines: [{
+                        value: 0,
+                        width: 2,
+                        color: 'silver'
+                    }],
+                    title: null
+                },
+
+                plotOptions: {
+                    series: {
+                        compare: 'value',
+                        connectNulls: true
+                    },
+                    line:{
+                        marker: {
+                            enabled: false
+                        },
+                        lineWidth: 1,
+                        shadow: false
+                    }
+                },
+                tooltip: {
+                    enabled: _enableTooltip,
+                    crosshairs: true,
+                    shared: true,
+                    style : {
+                        fontSize: 8
+                    }
+                },
+                exporting: {
+                    enabled: false
+                },
+
+                series : _data
+            });
+
+    }
+
+
+    function reloadGraph() {
+        initOverview();
+    }
+
+    function setVizParams(_dt_params, _start_time, _end_time, _stride_factor) {
+
+        // prep the dictionary
+        var viz_params = {};
+        viz_params['parameters'] = _dt_params; // Comma separated list of variables to be plotted. If empty,
+        // all variables are plotted
+
+        viz_params["start_time"] = _start_time;
+        viz_params["end_time"] = _end_time;
+        viz_params['stride_time'] = _stride_factor;
+
+        viz_params['use_direct_access'] = 0;  // 1 for yes, 0 for no
+
+        return viz_params;
+    }
+
+    function initSpinner() {
+        var opts = {
+            lines: 13, // The number of lines to draw
+            length: 7, // The length of each line
+            width: 4, // The line thickness
+            radius: 10, // The radius of the inner circle
+            corners: 1, // Corner roundness (0..1)
+            rotate: 0, // The rotation offset
+            color: '#000', // #rgb or #rrggbb
+            speed: 1, // Rounds per second
+            trail: 60, // Afterglow percentage
+            shadow: false, // Whether to render a shadow
+            hwaccel: false, // Whether to use hardware acceleration
+            className: 'spinner', // The CSS class to assign to the spinner
+            zIndex: 2e9, // The z-index (defaults to 2000000000)
+            top: 'auto', // Top position relative to parent in px
+            left: 'auto' // Left position relative to parent in px
+        };
+
+        graph_spinner = new Spinner(opts);
+    }
+
+    function getURLParameter(name) {
+        return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;
+    }
+
+    </script>
+  </head>
+
+  <body>
+      <div id="graph_div" style="width:300px;height:200px;margin: 0px"></div>
+  </body>
+</html>
+
