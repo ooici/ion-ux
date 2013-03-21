@@ -489,9 +489,18 @@ def session_info():
 # DEVELOPMENT ROUTES
 # -----------------------------------------------------------------------------
 
+
+@app.route('/dev/assetmap', methods=['GET'])
+def asset_map():
+    return render_template('dashboard_assets_map.html')
+
 @app.route('/dev/dashboard', methods=['GET'])
 def dev_dashboard():
     return render_app_template(request.path)
+
+@app.route('/dev/map', methods=['GET'])
+def dev_map(resource_id=None):
+    return render_template('dev_map.html')
 
 
 @app.route('/dev/datatable', methods=['GET'])

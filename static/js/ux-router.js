@@ -19,6 +19,7 @@ IONUX.Router = Backbone.Router.extend({
     ":resource_type/:view_type/:resource_id/edit" : "edit",
     "userprofile" : "user_profile",
     "create_account": "create_account",
+    'dev/dashboard': 'new_dashboard' // Preview dashbaord
   },
   edit: function(){
     var editable_resource = new IONUX.Models.EditableResource(window.MODEL_DATA.resource);
@@ -117,6 +118,14 @@ IONUX.Router = Backbone.Router.extend({
   create_account: function() {
     new IONUX.Views.CreateAccountView().render();
   },
+  
+  new_dashboard: function() {
+    $('.wrapper').html($('#dashboard-tmpl').html());
+    new IONUX.Views.ViewControls().render().el;
+    // var sites = new IONUX.Collections.Sites();
+    new IONUX.Views.SiteNavigation({collection: new IONUX.Collections.Sites()});
+    // sites.fetch();
+  },
 
     // KEPT FOR REFERENCE
     // user_profile: function() {
@@ -155,7 +164,7 @@ IONUX.Router = Backbone.Router.extend({
     });
   },
     
-  // graceful Backbone handling of full page refresh on non '/' url.
+  // // graceful Backbone handling of full page refresh on non '/' url.
   // handle_url: function(current_url){
   //     if (current_url != "/"){
   //         this.navigate(current_url, {trigger:true});
