@@ -37,7 +37,7 @@ IONUX = {
   },
   is_owner: function(){
     var user_id = IONUX.SESSION_MODEL.get('user_id');
-    var owner_match = _.findWhere(MODEL_DATA.owners[0], {_id: user_id}) ? true : false;
+    var owner_match = _.findWhere(MODEL_DATA.owners, {_id: user_id}) ? true : false;
     return owner_match;
   }
 }
