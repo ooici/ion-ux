@@ -251,6 +251,7 @@ def start_instrument_agent(instrument_device_id, agent_command, cap_type=None, s
         elif agent_command == 'start':
             command_response = ServiceApi.instrument_agent_start(instrument_device_id)
         elif agent_command == 'stop':
+            print 'zzzzstops'
             command_response = ServiceApi.instrument_agent_stop(instrument_device_id)
         else:
             if agent_command == 'RESOURCE_AGENT_EVENT_GO_DIRECT_ACCESS':

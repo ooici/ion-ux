@@ -276,7 +276,7 @@ class ServiceApi(object):
         return
         
     @staticmethod
-    def instrument_execute(instrument_device_id, command, cap_type, session_type):
+    def instrument_execute(instrument_device_id, command, cap_type, session_type=None):
         if cap_type == '1':
             agent_op = "execute_agent"
         elif cap_type == '3':
