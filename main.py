@@ -489,6 +489,10 @@ def session_info():
 # DEVELOPMENT ROUTES
 # -----------------------------------------------------------------------------
 
+@app.route('/dev/thumbnail', methods=['GET'])
+def thumbnail():
+    return render_template('overview_thumbnails.html')
+
 
 @app.route('/dev/assetmap', methods=['GET'])
 def asset_map():

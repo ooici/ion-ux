@@ -120,11 +120,21 @@ IONUX.Router = Backbone.Router.extend({
   },
   
   new_dashboard: function() {
+    $('#footer').remove(); // Remove legacy crap.
     $('.wrapper').html($('#dashboard-tmpl').html());
-    new IONUX.Views.ViewControls().render().el;
-    // var sites = new IONUX.Collections.Sites();
-    new IONUX.Views.SiteNavigation({collection: new IONUX.Collections.Sites()});
-    // sites.fetch();
+    
+    // if (this.sites) {this.sites = null};
+    var self = this;
+    this.observatories = new IONUX.Collections.Observatories();
+    this.observatories.fetch({
+      success: function(resp) {
+        new IONUX.Views.SiteSelector({collection: resp}).render().el;
+        new IONUX.Views.ViewControls().render().el;
+        new IONUX.Views.AssetMap().render().el;
+        new IONUX.Views.DataTable({el: $('#list'), data: []});
+        // new IONUX.Views.ThumbnailChart({resource_id: '4ebb16dcc6b84eb4a28a8b39384fd4a7'}).render().el;
+      }
+    });
   },
 
     // KEPT FOR REFERENCE

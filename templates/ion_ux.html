@@ -2,7 +2,9 @@
 <html>
 	<head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
         <title>OOI Integrated Observatory Network</title>
+
         <link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico" />
         <link rel="stylesheet" href="/static/css/jquery-ui-1.8.6.custom.css" type="text/css" />
         <link rel="stylesheet" href="/static/css/jscrollpane.css" type="text/css" />
@@ -16,6 +18,7 @@
         <link rel="stylesheet" href="/static/css/dark-geospatial.css" type="text/css" />
         <link rel="stylesheet" href="/static/css/new-dashboard.css" type="text/css" />
         <link rel="stylesheet/less" href="/static/css/images.less" />
+
         <!-- Development styles -->
         <link rel="stylesheet" href="/static/css/dark-integration.css" type="text/css" />
         
@@ -81,17 +84,23 @@
         <!-- Vendor JavaScripts -->
         <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCCcEp2hQdftRhaYgonh1Vyv0JYi5KVvFI&amp;sensor=false"> </script>
         <script src="/static/visualization/js/markerclusterer.js"> </script>
+        
+        <script type='text/javascript' src='http://www.google.com/jsapi'> </script>
+        <script type="text/javascript" src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization','version':'1'}]}"> </script>
+        
         <!-- 
           <script src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization','version':'1'}]}"> </script>
           <script charset="utf-8">
             google.load('visualization', '1', {'packages': ['annotatedtimeline']});
           </script>
         -->
-        <script src="/static/js/jquery-1.7.1.min.js"> </script>
+        
+        <script src="/static/js/jquery-1.9.1.min.js"> </script>
+        <script src="/static/js/jquery-ui.min.js"> </script>
         <script src="/static/js/bootstrap.min.js"> </script>
         <script src="/static/js/json2.js"> </script>
         <script src="/static/js/underscore-1.4.4.min.js "> </script>
-        <script src="/static/js/backbone-0.9.2.min.js"> </script>
+        <script src="/static/js/backbone-1.0.min.js"> </script>
         <script src="/static/js/backbone-forms.js"> </script>
         <script src="/static/js/bootstrap-forms.js"> </script>
         <script src="/static/js/list.js"> </script>
@@ -104,6 +113,9 @@
         <script src="/static/js/jquery.fileupload.js"> </script>
         <script src="/static/js/less-1.2.1.min.js"> </script>
         <script src="/static/js/spin.min.js"> </script>
+        
+        <script src="/static/visualization/js/highcharts/js/highcharts.js"> </script>
+        <script src="/static/visualization/js/highcharts/js/modules/exporting.js"> </script>
 
         {% block extra_vendor_js %} {% endblock %}
         
@@ -126,6 +138,7 @@
         <script src="/static/js/ux-views-instrument-command.js"> </script>
         <script src="/static/js/ux-views-platform-command.js"> </script>
         <script src="/static/js/ux-views-dashboard.js"> </script>
+        <script src="/static/js/ux-views-thumbnail-chart.js"> </script>
         <script src="/static/js/ux-views-negotiations.js"> </script>
 
         {% block extra_ionux_js %} {% endblock %}

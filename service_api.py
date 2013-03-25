@@ -306,7 +306,6 @@ class ServiceApi(object):
             
             if resource_param_names:
                 resource_params_request = service_gateway_agent_request(instrument_device_id, 'get_resource', params={'params': resource_param_names})
-
                 resource_params = {}
                 for k,v in resource_params_request.iteritems():
                     if k in BLACKLIST:
@@ -314,8 +313,7 @@ class ServiceApi(object):
                     resource_params.update({k:v})
                     if isinstance(v, float):
                         resource_params[k] = str(v)
-
-                # TEMP: hack to convert 0.0 strings for JavaScript.
+                # TEMP: workaround to convert 0.0 strings for JavaScript/JSON.
                 resource_params = {}
                 for k,v in resource_params_request.iteritems():
                     if k in BLACKLIST:
