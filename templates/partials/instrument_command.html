@@ -1,0 +1,18 @@
+<tr class="execute_command">
+  <td style="width:90%;"><%= name %>
+  <td>
+    <% if (name == 'RESOURCE_AGENT_EVENT_GO_DIRECT_ACCESS') { %>
+      <select id="direct_access">
+        <option value="3">Telnet</option>
+        <option value="4">Vendor</option>
+      </select>
+    <% } else { %>
+      &nbsp;
+    <% }; %>
+  </td>
+  
+  </td>
+  <td style="text-align:right">
+    <button class="btn-blue execute-command" data-cap-type="<%= cap_type %>" data-command="<%= name %>">Execute</button>
+  </td>
+</tr>

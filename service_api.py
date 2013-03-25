@@ -168,10 +168,14 @@ class ServiceApi(object):
             extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'DataProcessExtension', 'user_id': user_id})
         elif resource_type in ('UserRole'):
             extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'ExtendedInformationResource', 'user_id': user_id})
-        elif resource_type in ('InformationResource'):
-            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'ExtendedInformationResource', 'user_id': user_id})
         else:
-            extension = error_message(msg="Resource extension for %s is not available." % resource_type)
+            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'ExtendedInformationResource', 'user_id': user_id})
+            # brute force - if not an InformationResource, it might be taskable
+            if "GatewayError" in extension:
+                extension = service_gateway_get('resource_registry', 'get_resource_extension', params = {'resource_id': resource_id, 'resource_extension': 'ExtendedTaskableResource', 'user_id': user_id})
+
+        #else:
+        #    extension = error_message(msg="Resource extension for %s is not available." % resource_type)
         return extension
 
     @staticmethod
@@ -272,14 +276,14 @@ class ServiceApi(object):
         return
         
     @staticmethod
-    def instrument_execute(instrument_device_id, command, cap_type):
+    def instrument_execute(instrument_device_id, command, cap_type, session_type=None):
         if cap_type == '1':
             agent_op = "execute_agent"
         elif cap_type == '3':
             agent_op = "execute_resource"
         params = {"command": {"type_": "AgentCommand", "command": command}}
         if command == 'RESOURCE_AGENT_EVENT_GO_DIRECT_ACCESS':
-            params['command'].update({'kwargs': {'session_type': 3, 'session_timeout':600, 'inactivity_timeout': 600}})
+            params['command'].update({'kwargs': {'session_type': int(session_type), 'session_timeout':600, 'inactivity_timeout': 600}})
         agent_request = service_gateway_agent_request(instrument_device_id, agent_op, params)
         return agent_request
 

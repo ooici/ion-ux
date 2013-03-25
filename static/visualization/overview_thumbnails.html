@@ -25,37 +25,88 @@
      */
 
 	// Global variables
-	var graph, dataTable, dp_id, dp_metadata;
+	var graph, dp_id;
     var data_series;
-    var dataTable_overview_stride_factor = 1;
+    var overview_stride_factor = 1;
     var dp_parameters = []; // ['temp', 'pressure', 'conductivity'];
+    var chart_start_time, chart_end_time;
 
     var container_server =  "http://127.0.0.1:3000";
 
-    var graph_type = "line";
     var graph_spinner;
 
     // Other globals
-    var graph_target_container = "graph_div";
+    var chart_target = "graph_div";
     var graph_layout = "vertical"; // or horizontal
-    var composite_graph_flag = true; // If false, every parameter is plotted separately
+    var composite_view_flag = true; // If false, every parameter is plotted separately
     var enableLegend = false;
     var enableTooltip = true;
+    var graph_type = "line";
+
+    chartBkgColor = "#231F20";
+    chartLabelColor = "#FFFFFF";
+    chartSeriesColor = ["#1f75fe",
+        "#f9fa47",
+        "#fd524b",
+        "#fca767",
+        "#8bce6d",
+        "#71dab9",
+        "#1792bb",
+        "#926eae",
+        "#fe62ac",
+        "#185fc7",
+        "#cbc440",
+        "#ce4138",
+        "#c98554",
+        "#6da659",
+        "#56b094",
+        "#0b7895",
+        "#4c72a3",
+        "#74588b",
+        "#c3538b"
+    ];
 
 
-    // Google library specific loads for all the supported chart types
-	google.setOnLoadCallback(initViz);
+    /*
+        chart_target        :   HTML element ID
+        dp_id               :   The data product to plot
+        dp_parameters       :   Array of DP parameters are to be plotted. Empty array signifies all parameters
+        start_time, end_time:   As seconds from epoch. If null, it defaults to the entire time range in converage
+        composite_view      :   If set to true, all parameters are plotted on the same chart. Else a separate chart
+                                is drawn per parameter.
 
-    function initViz() {
+     */
+    function initChart(_chart_target, _dp_id, _dp_parameters, _start_time, _end_time, _composite_view) {
 
-        // Init some varaibles which should actually be provided
-        dp_id=prompt("Please enter Data Product Id","");
-        if (dp_id == null) {
+        if(!_chart_target || _chart_target == null) {
+            console.debug("Need a valid target for rendering the chart");
             return;
         }
+        else {
+            chart_target = _chart_target;
+        }
 
+        // Init some varaibles which should actually be provided
+        if(! _dp_id || _dp_id == null) {
+            dp_id=prompt("Please enter Data Product Id","");
+            if (dp_id == null) {
+                return;
+            }
+        }
+
+        if(_dp_parameters && _dp_parameters != null) {
+            dp_parameters = _dp_parameters;
+        }
+
+        if(chart_start_time) chart_start_time = _start_time;
+        if(chart_end_time) chart_end_time = _end_time;
+
+        if(_composite_view != null) {
+            composite_view_flag = _composite_view;
+        }
+        
         // Init some variables
-        graph_x_res = document.getElementById("graph_div").scrollWidth;
+        graph_x_res = document.getElementById(chart_target).scrollWidth;
         initSpinner();
 
         // Init the overview graph
@@ -75,16 +126,30 @@
     }
 
     function dp_metadata_cb(response) {
-        dp_metadata = response;
+        var dp_metadata = response;
+        var _start_time, _end_time;
+
+        // Determine the correct time bounds
+        if (chart_start_time && chart_start_time != null) {
+            _start_time = Math.max(chart_start_time, dp_metadata['time_bounds'][0]);
+        }
+        else
+            _start_time = dp_metadata['time_bounds'][0];
+
+        if (chart_end_time && chart_end_time != null) {
+            _end_time = Math.min(chart_end_time, dp_metadata['time_bounds'][1]);
+        }
+        else
+            _end_time = dp_metadata['time_bounds'][1];
 
         // calculate and init a few things
-        avg_data_rate = dp_metadata['time_steps'] / (dp_metadata['time_bounds'][1] - dp_metadata['time_bounds'][0]);
+        var avg_data_rate = dp_metadata['time_steps'] / (dp_metadata['time_bounds'][1] - dp_metadata['time_bounds'][0]);
 
         // calculate the stride factor
-        var num_of_actual_data_points = (dp_metadata['time_bounds'][1] - dp_metadata['time_bounds'][0]) * avg_data_rate;
-        dataTable_overview_stride_factor = Math.ceil(num_of_actual_data_points / graph_x_res);
+        var num_of_actual_data_points = (_end_time - _start_time) * avg_data_rate;
+        overview_stride_factor = Math.ceil(num_of_actual_data_points / graph_x_res);
 
-        var vp = setVizParams(dp_parameters, dp_metadata['time_bounds'][0], dp_metadata['time_bounds'][1], dataTable_overview_stride_factor);
+        var vp = setVizParams(dp_parameters, _start_time, _end_time, overview_stride_factor);
         fetchData(vp);
     }
 
@@ -101,7 +166,7 @@
         query.send(handleDrawQueryResponse);
 
         // Start the spinner to tell user that more data is coming
-        var spin_target = document.getElementById('graph_div');
+        var spin_target = document.getElementById(chart_target);
         graph_spinner.spin(spin_target);
 
 	}
@@ -121,18 +186,18 @@
         data_series = gdt_to_highcharts_data(_dt);
 
         // for composite view, show all series on the same graph
-        if (composite_graph_flag) {
-            drawGraph(graph_target_container, data_series, graph_type, enableLegend, enableTooltip, " ");
+        if (composite_view_flag) {
+            drawGraph(chart_target, data_series, graph_type, enableLegend, enableTooltip, " ");
         }
         else {
             var _series = [];
             var sub_div;
             var sub_div_id;
-            var graphDiv = document.getElementById(graph_target_container);
+            var graphDiv = document.getElementById(chart_target);
 
             for (var i=0; i < data_series.length; i++) {
                 // create a new sub div, one for each series graph
-                sub_div_id = graph_target_container + "." + i.toString();
+                sub_div_id = chart_target + "." + i.toString();
                 sub_div = document.createElement('div');
                 sub_div.setAttribute("id", sub_div_id);
                 sub_div.position = "relative";
@@ -198,14 +263,21 @@
                 chart : {
                     renderTo: renderTo,
                     type: _type,
-                    backgroundColor: "#999999",
+                    backgroundColor: chartBkgColor,
                     borderColor: "lightgray",
                     spacingTop: 0
 
                 },
+
+                color: chartSeriesColor,
+
                 title : {
-                    margin : 0,
-                    text: _title
+                    margin : 1,
+                    text: _title,
+                    style : {
+                        color : chartLabelColor,
+                        fontSize: 10
+                    }
                 },
 
 
@@ -223,7 +295,7 @@
                 xAxis: {
                     labels: {
                         style : {
-                            color : "#FFFFFF",
+                            color : chartLabelColor,
                             fontSize: 8
                         }
                     },
@@ -233,10 +305,10 @@
                 yAxis: {
                     labels: {
                         formatter: function() {
-                            return (this.value >= 0 ? '+' : '') + this.value + '%';
+                            return (this.value >= 0 ? '+' : '') + this.value;
                         },
                         style : {
-                            color : "#FFFFFF",
+                            color : chartLabelColor,
                             fontSize: 8
                         }
                     },
@@ -328,8 +400,8 @@
     </script>
   </head>
 
-  <body>
-      <div id="graph_div" style="width:300px;height:200px;margin: 0px"></div>
+  <body onload="initChart('chart_div', null, [], null, null, true)">
+      <div id="chart_div" style="width:300px;height:200px;margin: 0px"></div>
   </body>
 </html>
 
