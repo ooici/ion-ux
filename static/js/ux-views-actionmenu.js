@@ -64,7 +64,36 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
     modal_template: '<div id="action-modal" class="modal hide fade modal-ooi">',
     initialize: function() {
         _.bindAll(this);
-        this.interaction_items = INTERACTIONS_OBJECT.view_interactions;
+        this.interaction_items = INTERACTIONS_OBJECT.view_interactions.slice(0);    // ensure clone
+
+        // append resource-specific items here
+        if (window.MODEL_DATA.resource_type == 'Org') {
+
+          // ENROLLMENT
+          if (IONUX.is_logged_in()) {
+            if (IONUX.is_owner()) {
+              // INVITE USER
+              this.interaction_items.push("Invite User");
+              this.on("action__invite_user", this.action_org__invite_user);
+
+              // INVITE ROLE
+              this.interaction_items.push("Offer User Role");
+              this.on("action__offer_user_role", this.action_org__offer_user_role);
+
+            } else {
+              if (!_.some(window.MODEL_DATA.members, function(x) { return x._id == IONUX.SESSION_MODEL.get("user_id") })) {
+                // REQUEST ENROLLMENT
+                this.interaction_items.push("Enroll");
+                this.on("action__enroll", this.action_org__enroll);
+              } else {
+                // REQUEST ROLE
+                this.interaction_items.push("Request Role");
+                this.on("action__request_role", this.action_org__request_role);
+              }
+            }
+          }
+        };
+
         this.create_actionmenu();
         this.on("action__subscribe", this.action__subscribe);
         this.on("action__lifecycle", this.action__lifecycle);
@@ -142,6 +171,18 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
         } else {
             alert("Download not available for this resource.");
         };
+    },
+    action_org__invite_user: function(e) {
+      console.log("INVITE USER");
+    },
+    action_org__offer_user_role: function(e) {
+      console.log("OFFER USER ROLE");
+    },
+    action_org__enroll: function(e) {
+      new IONUX.Views.Enroll().render().el; 
+    },
+    action_org__request_role: function(e) {
+      console.log("REQUEST ROLE");
     },
 });
 

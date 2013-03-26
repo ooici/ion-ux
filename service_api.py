@@ -101,11 +101,12 @@ class ServiceApi(object):
 
     @staticmethod
     def enroll_request(resource_id, actor_id):
-        print 'zzzzz', resource_id, actor_id
-        return True
-        # return service_gateway_post('user_notification', 'delete_notification', params={'notification_id': notification_id})
-
-
+        sap = { 'type_': 'EnrollmentProposal',
+                'originator': 1,
+                'consumer': actor_id,
+                'provider': resource_id,
+                'proposal_status': 1 }
+        return service_gateway_post('org_management', 'negotiate', params={'sap':sap})
 
     @staticmethod
     def get_event_types():

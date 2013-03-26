@@ -359,9 +359,6 @@ function render_page(resource_type, resource_id, model) {
       case 'Recent Events':
         new IONUX.Views.EventActions({el:$(el)});
         break;
-      case 'Participants':
-        new IONUX.Views.NegotiationActions({el: $(el)});
-        break;
       default:
         new IONUX.Views.GroupActions({el:$(el)});
     };
