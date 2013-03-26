@@ -109,6 +109,17 @@ class ServiceApi(object):
         return service_gateway_post('org_management', 'negotiate', params={'sap':sap})
 
     @staticmethod
+    def request_role(resource_id, actor_id, role_name):
+        sap = { 'type_': 'RequestRoleProposal',
+                'originator': 1,
+                'consumer': actor_id,
+                'provider': resource_id,
+                'proposal_status': 1,
+                'role_name': role_name }
+
+        return service_gateway_post('org_management', 'negotiate', params={'sap':sap})
+
+    @staticmethod
     def get_event_types():
         events_url = 'http://%s:%s/ion-service/list_resource_types?type=Event' % (GATEWAY_HOST, GATEWAY_PORT)
         events = requests.get(events_url)

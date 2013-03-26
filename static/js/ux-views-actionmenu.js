@@ -182,7 +182,7 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
       new IONUX.Views.Enroll().render().el; 
     },
     action_org__request_role: function(e) {
-      console.log("REQUEST ROLE");
+      new IONUX.Views.RequestRole().render().el;
     },
 });
 

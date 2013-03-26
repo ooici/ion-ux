@@ -148,6 +148,17 @@ def enroll_request(resource_type, resource_id):
     resp = ServiceApi.enroll_request(resource_id, actor_id)
     return render_json_response(resp)
 
+@app.route('/<resource_type>/status/<resource_id>/request_role/', methods=['POST'])
+@app.route('/<resource_type>/face/<resource_id>/request_role/', methods=['POST'])
+@app.route('/<resource_type>/related/<resource_id>/request_role/', methods=['POST'])
+@login_required
+def request_role(resource_type, resource_id):
+    actor_id = session.get('actor_id') if session.has_key('actor_id') else None
+    role_name = request.form.get('role_name', None)
+
+    resp = ServiceApi.request_role(resource_id, actor_id, role_name)
+    return render_json_response(resp)
+
 @app.route('/<resource_type>/status/<resource_id>/transition/', methods=['POST'])
 @app.route('/<resource_type>/face/<resource_id>/transition/', methods=['POST'])
 @app.route('/<resource_type>/related/<resource_id>/transition/', methods=['POST'])
