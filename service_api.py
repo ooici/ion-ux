@@ -276,14 +276,14 @@ class ServiceApi(object):
         return
         
     @staticmethod
-    def instrument_execute(instrument_device_id, command, cap_type):
+    def instrument_execute(instrument_device_id, command, cap_type, session_type=None):
         if cap_type == '1':
             agent_op = "execute_agent"
         elif cap_type == '3':
             agent_op = "execute_resource"
         params = {"command": {"type_": "AgentCommand", "command": command}}
         if command == 'RESOURCE_AGENT_EVENT_GO_DIRECT_ACCESS':
-            params['command'].update({'kwargs': {'session_type': 3, 'session_timeout':600, 'inactivity_timeout': 600}})
+            params['command'].update({'kwargs': {'session_type': int(session_type), 'session_timeout':600, 'inactivity_timeout': 600}})
         agent_request = service_gateway_agent_request(instrument_device_id, agent_op, params)
         return agent_request
 
