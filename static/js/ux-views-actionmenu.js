@@ -173,7 +173,11 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
         };
     },
     action_org__invite_user: function(e) {
-      console.log("INVITE USER");
+      var model = new IONUX.Collections.Resources(null, {resource_type: 'UserInfo'});
+      model.fetch()
+        .done(function(data) {
+          new IONUX.Views.InviteUser({model: model}).render().el;
+        });
     },
     action_org__offer_user_role: function(e) {
       console.log("OFFER USER ROLE");

@@ -159,6 +159,16 @@ def request_role(resource_type, resource_id):
     resp = ServiceApi.request_role(resource_id, actor_id, role_name)
     return render_json_response(resp)
 
+@app.route('/<resource_type>/status/<resource_id>/invite_user/', methods=['POST'])
+@app.route('/<resource_type>/face/<resource_id>/invite_user/', methods=['POST'])
+@app.route('/<resource_type>/related/<resource_id>/invite_user/', methods=['POST'])
+@login_required
+def invite_user(resource_type, resource_id):
+    user_id = request.form.get('user_id', None)
+
+    resp = ServiceApi.invite_user(resource_id, user_id)
+    return render_json_response(resp)
+
 @app.route('/<resource_type>/status/<resource_id>/transition/', methods=['POST'])
 @app.route('/<resource_type>/face/<resource_id>/transition/', methods=['POST'])
 @app.route('/<resource_type>/related/<resource_id>/transition/', methods=['POST'])
