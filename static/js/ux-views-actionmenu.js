@@ -180,7 +180,7 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
         });
     },
     action_org__offer_user_role: function(e) {
-      console.log("OFFER USER ROLE");
+      new IONUX.Views.OfferUserRole().render().el;
     },
     action_org__enroll: function(e) {
       new IONUX.Views.Enroll().render().el; 

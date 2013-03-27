@@ -133,6 +133,21 @@ class ServiceApi(object):
         return service_gateway_post('org_management', 'negotiate', params={'negotiation_type': 2,
                                                                            'sap':sap})
 
+    @staticmethod
+    def offer_user_role(resource_id, user_id, role_name):
+        # look up actor id from user id
+        actor_id = service_gateway_get('resource_registry', 'find_subjects', params={'predicate': 'hasInfo', 'object': user_id, 'id_only': True})[0]
+
+        sap = {'type_': 'RequestRoleProposal',
+               'originator': 2,
+               'consumer': actor_id,
+               'provider': resource_id,
+               'proposal_status': 1,
+               'role_name': role_name }
+
+        return service_gateway_post('org_management', 'negotiate', params={'negotiation_type': 2,
+                                                                           'sap':sap})
+
 
     @staticmethod
     def get_event_types():

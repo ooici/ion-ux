@@ -1,0 +1,41 @@
+<div class="modal-header">
+  <h1>Offer User Role: <%= resource_name %></h1>
+</div>
+<div class="modal-body">
+  <p>
+    Select a member to offer a role to, and the role to offer. The user will need to
+    accept the offer in order for it to be approved.
+  </p>
+    <form class="form-horizontal">
+      <div class="control-group">
+        <label class="control-label" for="user">User</label>
+        <div class="controls">
+          <select name="user" size="6">
+            <% _.each(window.MODEL_DATA.members, function (user) { %>
+              <option value="<%= user._id %>"><%= user.name %></option>
+            <% }); %>
+          </select>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <label class="control-label" for="role_name">
+          <img style="display: none" src="/static/img/busy_indicator.gif" alt="loading" id="rolespinner" />
+          Role
+        </label>
+        <div class="controls">
+          <select name="role_name" size="6">
+            <% _.each(window.MODEL_DATA.roles, function (role) { %>
+              <option value="<%= role.governance_name %>"><%= role.name %></option>
+            <% }); %>
+          </select>
+        </div>
+      </div>
+
+    </form>
+</div>
+<div class="modal-footer">
+  <button id="btn-offer" class="btn-blue">Offer Role</button>
+  <button class="btn-general" data-dismiss="modal">Cancel</button>
+</div>
+
