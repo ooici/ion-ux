@@ -30,6 +30,8 @@ IONUX.Views.Enroll = Backbone.View.extend({
                                                            buttons: "<button class='btn-blue' data-dismiss='modal'>OK</button>"})).modal()
           .on('hide', function() {
             $('#action-modal').remove();
+            Backbone.history.fragment = null; // Clear history fragment to allow for page "refresh".
+            IONUX.ROUTER.navigate(window.location.pathname, {trigger: true});
           });
       }
     })
@@ -69,6 +71,8 @@ IONUX.Views.RequestRole = Backbone.View.extend({
                                                            buttons: "<button class='btn-blue' data-dismiss='modal'>OK</button>"})).modal()
           .on('hide', function() {
             $('#action-modal').remove();
+            Backbone.history.fragment = null; // Clear history fragment to allow for page "refresh".
+            IONUX.ROUTER.navigate(window.location.pathname, {trigger: true});
           });
       }
     })
@@ -109,6 +113,8 @@ IONUX.Views.InviteUser = Backbone.View.extend({
                                                            buttons: "<button class='btn-blue' data-dismiss='modal'>OK</button>"})).modal()
           .on('hide', function() {
             $('#action-modal').remove();
+            Backbone.history.fragment = null; // Clear history fragment to allow for page "refresh".
+            IONUX.ROUTER.navigate(window.location.pathname, {trigger: true});
           });
       }
     })
@@ -196,6 +202,8 @@ IONUX.Views.OfferUserRole = Backbone.View.extend({
                                                            buttons: "<button class='btn-blue' data-dismiss='modal'>OK</button>"})).modal()
           .on('hide', function() {
             $('#action-modal').remove();
+            Backbone.history.fragment = null; // Clear history fragment to allow for page "refresh".
+            IONUX.ROUTER.navigate(window.location.pathname, {trigger: true});
           });
       }
     })
