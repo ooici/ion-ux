@@ -148,6 +148,32 @@ class ServiceApi(object):
         return service_gateway_post('org_management', 'negotiate', params={'negotiation_type': 2,
                                                                            'sap':sap})
 
+    @staticmethod
+    def request_access(resource_id, actor_id, org_id):
+        sap = {'type_': 'AcquireResourceProposal',
+               'originator': 1,
+               'consumer': actor_id,
+               'provider': org_id,
+               'proposal_status': 1,
+               'resource_id': resource_id }
+
+        return service_gateway_post('org_management', 'negotiate', params={'sap':sap})
+
+    @staticmethod
+    def release_access(commitment_id):
+        return service_gateway_post('org_management', 'release_commitment', params={'commitment_id':commitment_id})
+
+    @staticmethod
+    def request_exclusive_access(resource_id, actor_id, org_id, expiration):
+        sap = {'type_': 'AcquireResourceExclusiveProposal',
+               'originator': 1,
+               'consumer': actor_id,
+               'provider': org_id,
+               'proposal_status': 1,
+               'resource_id': resource_id,
+               'expiration': expiration}
+
+        return service_gateway_post('org_management', 'negotiate', params={'sap':sap})
 
     @staticmethod
     def get_event_types():

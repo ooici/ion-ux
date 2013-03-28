@@ -210,3 +210,192 @@ IONUX.Views.OfferUserRole = Backbone.View.extend({
   },
 });
 
+IONUX.Views.RequestAccess = Backbone.View.extend({
+  events: {
+    'click #btn-request': 'request_access'
+  },
+  initialize: function(){
+    _.bindAll(this);
+  },
+  render: function(){
+    // devices etc have a list of orgs they are a part of
+    // the user has a list of orgs/roles they have
+    // need to find where they intersect (as INSTRUMENT_OPERATOR)
+    var org_id = null;
+    var roles = IONUX.SESSION_MODEL.get('roles');
+
+    // @TODO: there's got to be a better way than this
+    var user_orgs = _.map(_.filter(_.pairs(roles), function(r) { return _.contains(r[1], "INSTRUMENT_OPERATOR") } ), function(v) { return v[0] })
+
+    this.matching_orgs = _.filter(window.MODEL_DATA.orgs, function(o) { return _.contains(user_orgs, o.org_governance_name); });
+
+    var resource_name = window.MODEL_DATA.resource.name;
+
+    var cancel_button = "<button class='btn-general' data-dismiss='modal'>Cancel</button>";
+    var template_vars = {header_text: 'Request Access: ' + resource_name,
+                         body: 'Press the Request Access button below to request access to this resource. All requests must be approved by a manager.',
+                         buttons: "<button class='btn-blue' id='btn-request'>Request Access</button>" + cancel_button}
+
+    // sub out message/buttons if we don't have perms
+    if (this.matching_orgs.length == 0) {
+      template_vars.body = "You must have the instrument operator role in the associated org to request access to this device.";
+      template_vars.buttons = cancel_button;
+    }
+
+    this.modal = $(_.template(IONUX.Templates.full_modal_template, template_vars));
+    this.modal.modal('show')
+      .on('hide', function() {
+        $('#action-modal').remove();
+      });
+    this.setElement('#action-modal');
+    return this;
+  },
+  request_access: function(e){
+    if (this.matching_orgs.length == 0) {
+      alert("Could not find an Org that you are an instrument operator of and this device belongs to!");
+      return;
+    } else if (this.matching_orgs.length > 1) {
+      console.warn("More than one matching Org found (" + this.matching_orgs.length + "), using first: " + this.matching_orgs[0]);
+    }
+
+    org_id = this.matching_orgs[0]._id;
+
+    var self = this;
+    e.preventDefault();
+    $.ajax({
+      type: 'POST',
+      url: window.location.href + 'request_access/',
+      data: {org_id: org_id},
+      success: function(resp) {
+        self.modal.modal('hide');
+        $(_.template(IONUX.Templates.full_modal_template, {header_text:'Request Received',
+                                                           body: 'Your request has been received and will be reviewed by a manager.',
+                                                           buttons: "<button class='btn-blue' data-dismiss='modal'>OK</button>"})).modal()
+          .on('hide', function() {
+            $('#action-modal').remove();
+            Backbone.history.fragment = null; // Clear history fragment to allow for page "refresh".
+            IONUX.ROUTER.navigate(window.location.pathname, {trigger: true});
+          });
+      }
+    })
+  },
+});
+
+IONUX.Views.ReleaseAccess = Backbone.View.extend({
+  events: {
+    'click #btn-release': 'release_access'
+  },
+  initialize: function(){
+    _.bindAll(this);
+  },
+  template_vars: {
+    header_text: 'Release Access',
+    body: 'Press the Release Access button below to release access to this resource.',
+    buttons: "<button class='btn-blue' id='btn-release'>Release Access</button><button class='btn-general' data-dismiss='modal'>Cancel</button>",
+  },
+  render: function(){
+    this.modal = $(_.template(IONUX.Templates.full_modal_template, this.template_vars));
+    this.modal.modal('show')
+      .on('hide', function() {
+        $('#action-modal').remove();
+      });
+    this.setElement('#action-modal');
+    return this;
+  },
+  release_access: function(e){
+    var self = this;
+    e.preventDefault();
+    $.ajax({
+      type: 'POST',
+      url: window.location.href + 'release_access/',
+      data: {commitment_id: this.options.commitment_id},
+      success: function(resp) {
+        self.modal.modal('hide');
+        $(_.template(IONUX.Templates.full_modal_template, {header_text:'Release Received',
+                                                           body: 'Your release has been received.',
+                                                           buttons: "<button class='btn-blue' data-dismiss='modal'>OK</button>"})).modal()
+          .on('hide', function() {
+            $('#action-modal').remove();
+            Backbone.history.fragment = null; // Clear history fragment to allow for page "refresh".
+            IONUX.ROUTER.navigate(window.location.pathname, {trigger: true});
+          });
+      }
+    })
+  },
+});
+
+IONUX.Views.RequestExclusiveAccess = Backbone.View.extend({
+  template: _.template($("#request-exclusive-access-tmpl").html()),
+  events: {
+    'click #btn-request': 'request_access'
+  },
+  initialize: function(){
+    _.bindAll(this);
+  },
+  render: function(){
+
+    // check to see if someone ELSE has exclusive access so we can warn user it will fail
+    var exc = _.find(window.MODEL_DATA.commitments, function(c) { return c.commitment.exclusive && c.consumer != IONUX.SESSION_MODEL.get('actor_id'); });
+    if (exc != null) {
+      $(_.template(IONUX.Templates.full_modal_template, {header_text:'Exclusive Access',
+                                                         body: 'Another user already has exclusive access to this device.',
+                                                         buttons: "<button class='btn-blue' data-dismiss='modal'>OK</button>"})).modal()
+         .on('hide', function() {
+           $('#action-modal').remove();
+         });
+
+      return;
+    }
+
+    var resource_name = window.MODEL_DATA.resource.name;
+
+    this.modal = $(IONUX.Templates.modal_template).html(this.template({resource_name: resource_name}));
+    this.modal.modal('show')
+      .on('hide', function() {
+        $('#action-modal').remove();
+      });
+    this.setElement('#action-modal');
+    return this;
+  },
+  request_access: function(e){
+    var expiration = parseInt(this.$('input[name="time"]').val());
+    if (expiration <= 0 || expiration > 12) {
+      this.$('.control-group').addClass('error');
+      this.$('.help-inline').append("Please enter a value between 0 and 12");
+      return;
+    } else {
+      this.$('.control-group').removeClass('error');
+      this.$('.help-inline').empty();
+    }
+
+    var self = this;
+    e.preventDefault();
+    $.ajax({
+      type: 'POST',
+      url: window.location.href + 'request_exclusive_access/',
+      data: {expiration: expiration,
+             org_id: this.options.org_id},
+      success: function(resp) {
+        self.modal.modal('hide');
+        $(_.template(IONUX.Templates.full_modal_template, {header_text:'Request Received',
+                                                           body: 'Your request has been received and will be reviewed by a manager.',
+                                                           buttons: "<button class='btn-blue' data-dismiss='modal'>OK</button>"})).modal()
+          .on('hide', function() {
+            $('#action-modal').remove();
+            Backbone.history.fragment = null; // Clear history fragment to allow for page "refresh".
+            IONUX.ROUTER.navigate(window.location.pathname, {trigger: true});
+          });
+      }
+    })
+  },
+});
+
+IONUX.Views.ReleaseExclusiveAccess = IONUX.Views.ReleaseAccess.extend({
+  template_vars: {
+    header_text: 'Release Exclusive Access',
+    body: 'Press the Release Exclusive Access button below to release access to this resource.',
+    buttons: "<button class='btn-blue' id='btn-release'>Release Access</button><button class='btn-general' data-dismiss='modal'>Cancel</button>",
+  },
+});
+
+

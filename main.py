@@ -180,6 +180,41 @@ def offer_user_role(resource_type, resource_id):
     resp = ServiceApi.offer_user_role(resource_id, user_id, role_name)
     return render_json_response(resp)
 
+@app.route('/<resource_type>/status/<resource_id>/request_access/', methods=['POST'])
+@app.route('/<resource_type>/face/<resource_id>/request_access/', methods=['POST'])
+@app.route('/<resource_type>/related/<resource_id>/request_access/', methods=['POST'])
+@login_required
+def request_access(resource_type, resource_id):
+    org_id = request.form.get('org_id', None)
+    actor_id = session.get('actor_id') if session.has_key('actor_id') else None
+
+    resp = ServiceApi.request_access(resource_id, actor_id, org_id)
+    return render_json_response(resp)
+
+@app.route('/<resource_type>/status/<resource_id>/release_access/', methods=['POST'])
+@app.route('/<resource_type>/face/<resource_id>/release_access/', methods=['POST'])
+@app.route('/<resource_type>/related/<resource_id>/release_access/', methods=['POST'])
+@login_required
+def release_access(resource_type, resource_id):
+    commitment_id = request.form.get('commitment_id', None)
+
+    resp = ServiceApi.release_access(commitment_id)
+    return render_json_response(resp)
+
+@app.route('/<resource_type>/status/<resource_id>/request_exclusive_access/', methods=['POST'])
+@app.route('/<resource_type>/face/<resource_id>/request_exclusive_access/', methods=['POST'])
+@app.route('/<resource_type>/related/<resource_id>/request_exclusive_access/', methods=['POST'])
+@login_required
+def request_exclusive_access(resource_type, resource_id):
+    expiration = int(request.form.get('expiration', None))
+    curtime = int(round(time.time() * 1000))
+    full_expiration = curtime + (expiration * 60 * 60 * 1000) # in ms
+    actor_id = session.get('actor_id') if session.has_key('actor_id') else None
+    org_id = request.form.get('org_id', None)
+
+    resp = ServiceApi.request_exclusive_access(resource_id, actor_id, org_id, full_expiration)
+    return render_json_response(resp)
+
 @app.route('/<resource_type>/status/<resource_id>/transition/', methods=['POST'])
 @app.route('/<resource_type>/face/<resource_id>/transition/', methods=['POST'])
 @app.route('/<resource_type>/related/<resource_id>/transition/', methods=['POST'])
