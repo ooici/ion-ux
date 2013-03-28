@@ -7,7 +7,7 @@
     request will be reviewed by a manager.
   </p>
     <form class="form-horizontal">
-      <% var curroles = IONUX.SESSION_MODEL.get('roles')[window.MODEL_DATA.resource.name]; %>
+      <% var curroles = IONUX.SESSION_MODEL.get('roles')[window.MODEL_DATA.resource.org_governance_name]; %>
       <div class="control-group">
         <label class="control-label" for="role_name">Role</label>
         <div class="controls">
@@ -21,7 +21,7 @@
           <label class="control-label" for="have_roles">Your Roles</label>
           <div class="controls">
             <select name="have_roles" size="5" disabled=true>
-              <% _.each(IONUX.SESSION_MODEL.get('roles')[window.MODEL_DATA.resource.name], function(role) { %>
+              <% _.each(IONUX.SESSION_MODEL.get('roles')[window.MODEL_DATA.resource.org_governance_name], function(role) { %>
                 <option><%= _.findWhere(window.MODEL_DATA.roles, {governance_name:role}).name %></option>
               <% }); %>
             </select>
