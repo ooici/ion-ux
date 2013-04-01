@@ -207,6 +207,12 @@ function negotiation_show_controls(row_data) {
       _.contains(IONUX.SESSION_MODEL.get('roles')[window.MODEL_DATA.resource.org_governance_name], 'ORG_MANAGER'))
     return true;
 
+  if (neg &&
+      window.MODEL_DATA.resource_type == "UserInfo" &&
+      neg.proposals[0].originator == 2 && // originator == org proposed (2)
+      neg.proposals[0].consumer == IONUX.SESSION_MODEL.get('actor_id'))   // this is likely redundant
+    return true;
+
   return false;
 };
 
