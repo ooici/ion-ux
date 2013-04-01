@@ -398,4 +398,68 @@ IONUX.Views.ReleaseExclusiveAccess = IONUX.Views.ReleaseAccess.extend({
   },
 });
 
+IONUX.Views.NegotiationCommands = Backbone.View.extend({
+  template: _.template($("#negotiation-commands-tmpl").html()),
+  events: {
+    'click #btn-accept': 'accept',
+    'click #btn-reject': 'reject',
+  },
+  initialize: function(){
+    _.bindAll(this);
+    var row_info_list = this.options.data[0].split("::");
+    this.resource_id = row_info_list[0];
+    this.resource_type = row_info_list[1];
+  },
+  render: function(){
+    this.modal = $(IONUX.Templates.modal_template).html(this.template({negotiation_id: this.resource_id,
+                                                                       submitted: this.options.data[1]}));
+    this.modal.modal('show')
+      .on('hide', function() {
+        $('#action-modal').remove();
+      });
+    this.setElement('#action-modal');
+    return this;
+  },
+  accept: function(e){
+    var self = this;
+    e.preventDefault();
+    $.ajax({
+      type: 'POST',
+      url: window.location.protocol + "//" + window.location.host + "/negotiation/accept/",
+      data: {negotiation_id: this.resource_id},
+      success: function(resp) {
+        self.modal.modal('hide');
+        $(_.template(IONUX.Templates.full_modal_template, {header_text:'Accepted',
+                                                           body: 'You have accepted this negotiation request.',
+                                                           buttons: "<button class='btn-blue' data-dismiss='modal'>OK</button>"})).modal()
+          .on('hide', function() {
+            $('#action-modal').remove();
+            Backbone.history.fragment = null; // Clear history fragment to allow for page "refresh".
+            IONUX.ROUTER.navigate(window.location.pathname, {trigger: true});
+          });
+      }
+    })
+  },
+  reject: function(e){
+    var self = this;
+    e.preventDefault();
+    $.ajax({
+      type: 'POST',
+      url: window.location.protocol + "//" + window.location.host + "/negotiation/reject/",
+      data: {negotiation_id: this.resource_id},
+      success: function(resp) {
+        self.modal.modal('hide');
+        $(_.template(IONUX.Templates.full_modal_template, {header_text:'Rejected',
+                                                           body: 'You have rejected this negotiation request.',
+                                                           buttons: "<button class='btn-blue' data-dismiss='modal'>OK</button>"})).modal()
+          .on('hide', function() {
+            $('#action-modal').remove();
+            Backbone.history.fragment = null; // Clear history fragment to allow for page "refresh".
+            IONUX.ROUTER.navigate(window.location.pathname, {trigger: true});
+          });
+      }
+    })
+  },
+});
+
 

@@ -176,6 +176,32 @@ class ServiceApi(object):
         return service_gateway_post('org_management', 'negotiate', params={'sap':sap})
 
     @staticmethod
+    def _accept_reject_negotiation(negotiation_id, accept_value):
+        if not accept_value in [3,4]:
+            return error_message("Unknown accept_value %s" % accept_value)
+
+        # read the negotiation first so we can determine the sap to send
+        negotiation = service_gateway_get('resource_registry', 'read', params={'object_id': negotiation_id})
+
+        sap = {'type_': negotiation['proposals'][0]['type_'],
+               'negotiation_id': negotiation_id,
+               'sequence_num': int(negotiation['proposals'][0]['sequence_num']) + 1,
+               'originator': 2,
+               'proposal_status': accept_value,
+               'consumer': negotiation['proposals'][0]['consumer'],
+               'provider': negotiation['proposals'][0]['provider']}
+
+        return service_gateway_post('org_management', 'negotiate', params={'sap':sap})
+
+    @staticmethod
+    def accept_negotiation(negotiation_id):
+        return ServiceApi._accept_reject_negotiation(negotiation_id, 3) # 3 == accepted
+
+    @staticmethod
+    def reject_negotiation(negotiation_id):
+        return ServiceApi._accept_reject_negotiation(negotiation_id, 4) # 4 == rejected
+
+    @staticmethod
     def get_event_types():
         events_url = 'http://%s:%s/ion-service/list_resource_types?type=Event' % (GATEWAY_HOST, GATEWAY_PORT)
         events = requests.get(events_url)
