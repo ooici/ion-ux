@@ -182,14 +182,25 @@ class ServiceApi(object):
 
         # read the negotiation first so we can determine the sap to send
         negotiation = service_gateway_get('resource_registry', 'read', params={'object_id': negotiation_id})
+        proposal = negotiation['proposals'][0]
+        neg_type = proposal['type_']
 
-        sap = {'type_': negotiation['proposals'][0]['type_'],
+        sap = {'type_': neg_type,
                'negotiation_id': negotiation_id,
-               'sequence_num': int(negotiation['proposals'][0]['sequence_num']) + 1,
+               'sequence_num': int(proposal['sequence_num']) + 1,
                'originator': 2,
                'proposal_status': accept_value,
-               'consumer': negotiation['proposals'][0]['consumer'],
-               'provider': negotiation['proposals'][0]['provider']}
+               'consumer': proposal['consumer'],
+               'provider': proposal['provider']}
+
+        # add specific fields to sap for the type
+        if neg_type == "AcquireResourceExclusiveProposal":
+            sap.update({'expiration': proposal['expiration'],
+                        'resource_id': proposal['resource_id']})
+        elif neg_type == "AcquireResourceProposal":
+            sap.update({'resource_id': proposal['resource_id']})
+        elif neg_type == "RequestRoleProposal":
+            sap.update({'role_name': proposal['role_name']})
 
         return service_gateway_post('org_management', 'negotiate', params={'sap':sap})
 
