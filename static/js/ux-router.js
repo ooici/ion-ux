@@ -194,6 +194,28 @@ function replace_url_with_html_links(text) {
   return text.replace(exp,"<a class='external' target='_blank' href='$1'>$1</a>"); 
 };
 
+// Filter method for open negotiations shown in a data table
+// If this method returns true, there should be a column indicating
+// the view will be shown on row click.
+function negotiation_show_controls(row_data) {
+  // row data first column should always be of form resource_id/resource_type
+  // use this info to go and look up the real item, because UI columns may change
+  var neg = _.findWhere(window.MODEL_DATA.open_negotiations, {_id:row_data[0].split("::")[0]});
+  if (neg &&
+      window.MODEL_DATA.resource_type == "Org" &&
+      neg.proposals[0].originator == 1 && // originator == user proposed (1)
+      _.contains(IONUX.SESSION_MODEL.get('roles')[window.MODEL_DATA.resource.org_governance_name], 'ORG_MANAGER'))
+    return true;
+
+  if (neg &&
+      window.MODEL_DATA.resource_type == "UserInfo" &&
+      neg.proposals[0].originator == 2 && // originator == org proposed (2)
+      neg.proposals[0].consumer == IONUX.SESSION_MODEL.get('actor_id'))   // this is likely redundant
+    return true;
+
+  return false;
+};
+
 // Returns a displayable resource type for the resource_type given.
 // If the type is not displayable, traverse up the heirarchy of resources
 // until one is found.
@@ -287,7 +309,13 @@ function render_page(resource_type, resource_id, model) {
     var data_path = $(el).data('path');
     var raw_table_data = get_descendant_properties(window.MODEL_DATA, data_path);
     if (!_.isEmpty(raw_table_data)) {
-        var table = new IONUX.Views.DataTable({el: $(el), data: raw_table_data});
+        var opts = {el: $(el), data: raw_table_data}
+        if (data_path == "open_negotiations") {
+            _.extend(opts, {popup_view: IONUX.Views.NegotiationCommands,
+                            popup_label: "Accept/Reject",
+                            popup_filter_method: negotiation_show_controls});
+        } 
+        var table = new IONUX.Views.DataTable(opts);
     } else {
         var table = new IONUX.Views.DataTable({el: $(el), data: []});
     };
@@ -358,9 +386,6 @@ function render_page(resource_type, resource_id, model) {
         break;
       case 'Recent Events':
         new IONUX.Views.EventActions({el:$(el)});
-        break;
-      case 'Participants':
-        new IONUX.Views.NegotiationActions({el: $(el)});
         break;
       default:
         new IONUX.Views.GroupActions({el:$(el)});

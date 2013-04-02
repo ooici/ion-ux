@@ -1,0 +1,27 @@
+<div class="modal-header">
+  <h1>Invite User: <%= resource_name %></h1>
+</div>
+<div class="modal-body">
+  <p>
+    Select a user to invite to become a member. The user will need to accept the invitation
+    in order for it to be approved.
+  </p>
+    <form class="form-horizontal">
+      <% var curmembers = _.pluck(window.MODEL_DATA.members, '_id'); %>
+      <div class="control-group">
+        <label class="control-label" for="user">User</label>
+        <div class="controls">
+          <select name="user" size="6">
+            <% _.each(_.filter(this.model.toJSON(), function(d) { return !_.contains(curmembers, d._id); }), function (user) { %>
+              <option value="<%= user._id %>"><%= user.name %></option>
+            <% }); %>
+          </select>
+        </div>
+      </div>
+    </form>
+</div>
+<div class="modal-footer">
+  <button id="btn-invite" class="btn-blue">Invite User</button>
+  <button class="btn-general" data-dismiss="modal">Cancel</button>
+</div>
+

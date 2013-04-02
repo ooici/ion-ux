@@ -64,7 +64,64 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
     modal_template: '<div id="action-modal" class="modal hide fade modal-ooi">',
     initialize: function() {
         _.bindAll(this);
-        this.interaction_items = INTERACTIONS_OBJECT.view_interactions;
+        this.interaction_items = INTERACTIONS_OBJECT.view_interactions.slice(0);    // ensure clone
+
+        // append resource-specific items here
+        if (window.MODEL_DATA.resource_type == 'Org') {
+
+          // ENROLLMENT
+          if (IONUX.is_logged_in()) {
+            if (IONUX.is_owner()) {
+              // INVITE USER
+              this.interaction_items.push("Invite User");
+              this.on("action__invite_user", this.action_org__invite_user);
+
+              // INVITE ROLE
+              this.interaction_items.push("Offer User Role");
+              this.on("action__offer_user_role", this.action_org__offer_user_role);
+
+            } else {
+              if (!_.some(window.MODEL_DATA.members, function(x) { return x._id == IONUX.SESSION_MODEL.get("user_id") })) {
+                // REQUEST ENROLLMENT
+                this.interaction_items.push("Enroll");
+                this.on("action__enroll", this.action_org__enroll);
+              } else {
+                // REQUEST ROLE
+                this.interaction_items.push("Request Role");
+                this.on("action__request_role", this.action_org__request_role);
+              }
+            }
+          }
+        } else if (_.contains(['PlatformDevice', 'InstrumentDevice', 'DataProduct'], window.MODEL_DATA.resource_type)) {
+          if (IONUX.is_logged_in() && !IONUX.is_owner()) {
+            // check commitments on current object for resource commitments for the current owner
+            var resource_commitments = _.filter(window.MODEL_DATA.commitments, function (c) { return c.commitment.type_ == "ResourceCommitment" && c.consumer == IONUX.SESSION_MODEL.get('actor_id'); });
+
+            if (resource_commitments.length > 0) {
+              // we have access to this instrument, add item to release it
+              this.interaction_items.push("Release Resource");
+              // @TODO: assumption, only one commitment?
+              this.on("action__release_resource", _.partial(this.action__release_resource, resource_commitments[0]._id));
+
+              // exclusive access?
+              var exc = _.find(resource_commitments, function(c) { return c.commitment.exclusive; });
+              if (exc == null) {
+                this.interaction_items.push("Request Exclusive Access");
+                // @TODO: assumption, only one commitment?
+                this.on("action__request_exclusive_access", _.partial(this.action__request_exclusive_access, resource_commitments[0].provider));
+
+              } else {
+                this.interaction_items.push("Release Exclusive Access");
+                this.on("action__release_exclusive_access", _.partial(this.action__release_exclusive_access, exc._id));
+              }
+
+            } else {
+              this.interaction_items.push("Request Access");
+              this.on("action__request_access", this.action__request_access);
+            }
+          }
+        }
+
         this.create_actionmenu();
         this.on("action__subscribe", this.action__subscribe);
         this.on("action__lifecycle", this.action__lifecycle);
@@ -142,6 +199,34 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
         } else {
             alert("Download not available for this resource.");
         };
+    },
+    action_org__invite_user: function(e) {
+      var model = new IONUX.Collections.Resources(null, {resource_type: 'UserInfo'});
+      model.fetch()
+        .done(function(data) {
+          new IONUX.Views.InviteUser({model: model}).render().el;
+        });
+    },
+    action_org__offer_user_role: function(e) {
+      new IONUX.Views.OfferUserRole().render().el;
+    },
+    action_org__enroll: function(e) {
+      new IONUX.Views.Enroll().render().el; 
+    },
+    action_org__request_role: function(e) {
+      new IONUX.Views.RequestRole().render().el;
+    },
+    action__request_access: function(e) {
+      new IONUX.Views.RequestAccess().render().el;
+    },
+    action__release_resource: function(commitment_id, e) {
+      new IONUX.Views.ReleaseAccess({commitment_id: commitment_id}).render().el;
+    },
+    action__request_exclusive_access: function(org_id, e) {
+      new IONUX.Views.RequestExclusiveAccess({org_id: org_id}).render().el;
+    },
+    action__release_exclusive_access: function(commitment_id, e) {
+      new IONUX.Views.ReleaseExclusiveAccess({commitment_id: commitment_id}).render().el;
     },
 });
 

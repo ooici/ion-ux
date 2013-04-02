@@ -64,7 +64,7 @@ IONUX.Models.Session = Backbone.Model.extend({
       return this.get('is_registered');
     },
     is_resource_owner: function(){
-      return _.findWhere(MODEL_DATA.owners[0], {_id: this.get('user_id')}) ? true : false;
+      return _.findWhere(MODEL_DATA.owners, {_id: this.get('user_id')}) ? true : false;
     }
 });
 

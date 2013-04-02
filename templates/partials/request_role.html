@@ -1,0 +1,37 @@
+<div class="modal-header">
+  <h1>Request Role: <%= resource_name %></h1>
+</div>
+<div class="modal-body">
+  <p>
+    Choose the role you would like to request, then press the Request Role button below. Your
+    request will be reviewed by a manager.
+  </p>
+    <form class="form-horizontal">
+      <% var curroles = IONUX.SESSION_MODEL.get('roles')[window.MODEL_DATA.resource.org_governance_name]; %>
+      <div class="control-group">
+        <label class="control-label" for="role_name">Role</label>
+        <div class="controls">
+          <select name="role_name" size="6">
+            <% _.each(_.filter(window.MODEL_DATA.roles, function(d) { return !_.contains(curroles, d.governance_name); }), function(role) { %>
+              <option value="<%= role.governance_name %>"><%= role.name %></option>
+            <% }); %>
+          </select>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="have_roles">Your Roles</label>
+          <div class="controls">
+            <select name="have_roles" size="5" disabled=true>
+              <% _.each(IONUX.SESSION_MODEL.get('roles')[window.MODEL_DATA.resource.org_governance_name], function(role) { %>
+                <option><%= _.findWhere(window.MODEL_DATA.roles, {governance_name:role}).name %></option>
+              <% }); %>
+            </select>
+          </div>
+        </div>
+      </div>
+    </form>
+</div>
+<div class="modal-footer">
+  <button id="btn-request" class="btn-blue">Request Role</button>
+  <button class="btn-general" data-dismiss="modal">Cancel</button>
+</div>
+

@@ -145,11 +145,89 @@ def unsubscribe_to_resource(resource_type, resource_id):
 @login_required
 def enroll_request(resource_type, resource_id):
     actor_id = session.get('actor_id') if session.has_key('actor_id') else None
-    print 'zzzzz', actor_id, resource_id
     resp = ServiceApi.enroll_request(resource_id, actor_id)
-    return jsonify(data=actor_id)
-    # return render_json_response(resp)
+    return render_json_response(resp)
 
+@app.route('/<resource_type>/status/<resource_id>/request_role/', methods=['POST'])
+@app.route('/<resource_type>/face/<resource_id>/request_role/', methods=['POST'])
+@app.route('/<resource_type>/related/<resource_id>/request_role/', methods=['POST'])
+@login_required
+def request_role(resource_type, resource_id):
+    actor_id = session.get('actor_id') if session.has_key('actor_id') else None
+    role_name = request.form.get('role_name', None)
+
+    resp = ServiceApi.request_role(resource_id, actor_id, role_name)
+    return render_json_response(resp)
+
+@app.route('/<resource_type>/status/<resource_id>/invite_user/', methods=['POST'])
+@app.route('/<resource_type>/face/<resource_id>/invite_user/', methods=['POST'])
+@app.route('/<resource_type>/related/<resource_id>/invite_user/', methods=['POST'])
+@login_required
+def invite_user(resource_type, resource_id):
+    user_id = request.form.get('user_id', None)
+
+    resp = ServiceApi.invite_user(resource_id, user_id)
+    return render_json_response(resp)
+
+@app.route('/<resource_type>/status/<resource_id>/offer_user_role/', methods=['POST'])
+@app.route('/<resource_type>/face/<resource_id>/offer_user_role/', methods=['POST'])
+@app.route('/<resource_type>/related/<resource_id>/offer_user_role/', methods=['POST'])
+@login_required
+def offer_user_role(resource_type, resource_id):
+    user_id = request.form.get('user_id', None)
+    role_name = request.form.get('role_name', None)
+
+    resp = ServiceApi.offer_user_role(resource_id, user_id, role_name)
+    return render_json_response(resp)
+
+@app.route('/<resource_type>/status/<resource_id>/request_access/', methods=['POST'])
+@app.route('/<resource_type>/face/<resource_id>/request_access/', methods=['POST'])
+@app.route('/<resource_type>/related/<resource_id>/request_access/', methods=['POST'])
+@login_required
+def request_access(resource_type, resource_id):
+    org_id = request.form.get('org_id', None)
+    actor_id = session.get('actor_id') if session.has_key('actor_id') else None
+
+    resp = ServiceApi.request_access(resource_id, actor_id, org_id)
+    return render_json_response(resp)
+
+@app.route('/<resource_type>/status/<resource_id>/release_access/', methods=['POST'])
+@app.route('/<resource_type>/face/<resource_id>/release_access/', methods=['POST'])
+@app.route('/<resource_type>/related/<resource_id>/release_access/', methods=['POST'])
+@login_required
+def release_access(resource_type, resource_id):
+    commitment_id = request.form.get('commitment_id', None)
+
+    resp = ServiceApi.release_access(commitment_id)
+    return render_json_response(resp)
+
+@app.route('/<resource_type>/status/<resource_id>/request_exclusive_access/', methods=['POST'])
+@app.route('/<resource_type>/face/<resource_id>/request_exclusive_access/', methods=['POST'])
+@app.route('/<resource_type>/related/<resource_id>/request_exclusive_access/', methods=['POST'])
+@login_required
+def request_exclusive_access(resource_type, resource_id):
+    expiration = int(request.form.get('expiration', None))
+    curtime = int(round(time.time() * 1000))
+    full_expiration = curtime + (expiration * 60 * 60 * 1000) # in ms
+    actor_id = session.get('actor_id') if session.has_key('actor_id') else None
+    org_id = request.form.get('org_id', None)
+
+    resp = ServiceApi.request_exclusive_access(resource_id, actor_id, org_id, full_expiration)
+    return render_json_response(resp)
+
+@app.route('/negotiation/accept/', methods=['POST'])
+@login_required
+def accept_negotiation():
+    negotiation_id = request.form.get('negotiation_id', None)
+    resp = ServiceApi.accept_negotiation(negotiation_id)
+    return render_json_response(resp)
+
+@app.route('/negotiation/reject/', methods=['POST'])
+@login_required
+def reject_negotiation():
+    negotiation_id = request.form.get('negotiation_id', None)
+    resp = ServiceApi.reject_negotiation(negotiation_id)
+    return render_json_response(resp)
 
 @app.route('/<resource_type>/status/<resource_id>/transition/', methods=['POST'])
 @app.route('/<resource_type>/face/<resource_id>/transition/', methods=['POST'])
@@ -480,7 +558,7 @@ def session_info():
     session_values = {'user_id': None, 'roles': None, 'is_registered': False, 'is_logged_in': False, 'ui_mode': UI_MODE, 'version': version }
 
     if session.has_key('user_id'):
-        session_values.update({'name': session['name'], 'user_id': session['user_id'], 'roles': session['roles'], 'is_registered': session['is_registered'], 'is_logged_in': True})
+        session_values.update({'name': session['name'], 'user_id': session['user_id'], 'actor_id': session['actor_id'], 'roles': session['roles'], 'is_registered': session['is_registered'], 'is_logged_in': True})
     return jsonify(data=session_values)
 
 

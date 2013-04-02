@@ -101,11 +101,105 @@ class ServiceApi(object):
 
     @staticmethod
     def enroll_request(resource_id, actor_id):
-        print 'zzzzz', resource_id, actor_id
-        return True
-        # return service_gateway_post('user_notification', 'delete_notification', params={'notification_id': notification_id})
+        sap = {'type_': 'EnrollmentProposal',
+               'originator': 1,
+               'consumer': actor_id,
+               'provider': resource_id,
+               'proposal_status': 1 }
+        return service_gateway_post('org_management', 'negotiate', params={'sap':sap})
 
+    @staticmethod
+    def request_role(resource_id, actor_id, role_name):
+        sap = {'type_': 'RequestRoleProposal',
+               'originator': 1,
+               'consumer': actor_id,
+               'provider': resource_id,
+               'proposal_status': 1,
+               'role_name': role_name }
 
+        return service_gateway_post('org_management', 'negotiate', params={'sap':sap})
+
+    @staticmethod
+    def invite_user(resource_id, user_id):
+        # look up actor id from user id
+        actor_id = service_gateway_get('resource_registry', 'find_subjects', params={'predicate': 'hasInfo', 'object': user_id, 'id_only': True})[0]
+
+        sap = {'type_': 'EnrollmentProposal',
+               'originator': 2,
+               'consumer': actor_id,
+               'provider': resource_id,
+               'proposal_status': 1 }
+
+        return service_gateway_post('org_management', 'negotiate', params={'negotiation_type': 2,
+                                                                           'sap':sap})
+
+    @staticmethod
+    def offer_user_role(resource_id, user_id, role_name):
+        # look up actor id from user id
+        actor_id = service_gateway_get('resource_registry', 'find_subjects', params={'predicate': 'hasInfo', 'object': user_id, 'id_only': True})[0]
+
+        sap = {'type_': 'RequestRoleProposal',
+               'originator': 2,
+               'consumer': actor_id,
+               'provider': resource_id,
+               'proposal_status': 1,
+               'role_name': role_name }
+
+        return service_gateway_post('org_management', 'negotiate', params={'negotiation_type': 2,
+                                                                           'sap':sap})
+
+    @staticmethod
+    def request_access(resource_id, actor_id, org_id):
+        sap = {'type_': 'AcquireResourceProposal',
+               'originator': 1,
+               'consumer': actor_id,
+               'provider': org_id,
+               'proposal_status': 1,
+               'resource_id': resource_id }
+
+        return service_gateway_post('org_management', 'negotiate', params={'sap':sap})
+
+    @staticmethod
+    def release_access(commitment_id):
+        return service_gateway_post('org_management', 'release_commitment', params={'commitment_id':commitment_id})
+
+    @staticmethod
+    def request_exclusive_access(resource_id, actor_id, org_id, expiration):
+        sap = {'type_': 'AcquireResourceExclusiveProposal',
+               'originator': 1,
+               'consumer': actor_id,
+               'provider': org_id,
+               'proposal_status': 1,
+               'resource_id': resource_id,
+               'expiration': expiration}
+
+        return service_gateway_post('org_management', 'negotiate', params={'sap':sap})
+
+    @staticmethod
+    def _accept_reject_negotiation(negotiation_id, accept_value):
+        if not accept_value in [3,4]:
+            return error_message("Unknown accept_value %s" % accept_value)
+
+        # read the negotiation first so we can determine the sap to send
+        negotiation = service_gateway_get('resource_registry', 'read', params={'object_id': negotiation_id})
+
+        sap = {'type_': negotiation['proposals'][0]['type_'],
+               'negotiation_id': negotiation_id,
+               'sequence_num': int(negotiation['proposals'][0]['sequence_num']) + 1,
+               'originator': 2,
+               'proposal_status': accept_value,
+               'consumer': negotiation['proposals'][0]['consumer'],
+               'provider': negotiation['proposals'][0]['provider']}
+
+        return service_gateway_post('org_management', 'negotiate', params={'sap':sap})
+
+    @staticmethod
+    def accept_negotiation(negotiation_id):
+        return ServiceApi._accept_reject_negotiation(negotiation_id, 3) # 3 == accepted
+
+    @staticmethod
+    def reject_negotiation(negotiation_id):
+        return ServiceApi._accept_reject_negotiation(negotiation_id, 4) # 4 == rejected
 
     @staticmethod
     def get_event_types():
