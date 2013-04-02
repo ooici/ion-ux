@@ -105,6 +105,7 @@ class ServiceApi(object):
                'originator': 1,
                'consumer': actor_id,
                'provider': resource_id,
+               'description': "Enrollment Request",
                'proposal_status': 1 }
         return service_gateway_post('org_management', 'negotiate', params={'sap':sap})
 
@@ -115,6 +116,7 @@ class ServiceApi(object):
                'consumer': actor_id,
                'provider': resource_id,
                'proposal_status': 1,
+               'description': "Role Request",
                'role_name': role_name }
 
         return service_gateway_post('org_management', 'negotiate', params={'sap':sap})
@@ -128,6 +130,7 @@ class ServiceApi(object):
                'originator': 2,
                'consumer': actor_id,
                'provider': resource_id,
+               'description': "Enrollment Invite",
                'proposal_status': 1 }
 
         return service_gateway_post('org_management', 'negotiate', params={'negotiation_type': 2,
@@ -143,6 +146,7 @@ class ServiceApi(object):
                'consumer': actor_id,
                'provider': resource_id,
                'proposal_status': 1,
+               'description': "Role Invite",
                'role_name': role_name }
 
         return service_gateway_post('org_management', 'negotiate', params={'negotiation_type': 2,
@@ -155,6 +159,7 @@ class ServiceApi(object):
                'consumer': actor_id,
                'provider': org_id,
                'proposal_status': 1,
+               'description': "Access Request",
                'resource_id': resource_id }
 
         return service_gateway_post('org_management', 'negotiate', params={'sap':sap})
@@ -171,6 +176,7 @@ class ServiceApi(object):
                'provider': org_id,
                'proposal_status': 1,
                'resource_id': resource_id,
+               'description': "Exclusive Access Request",
                'expiration': expiration}
 
         return service_gateway_post('org_management', 'negotiate', params={'sap':sap})
