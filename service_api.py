@@ -643,7 +643,10 @@ class ResourceTypeSchema(object):
         sditems = schema_data.iteritems()
         all_nested_keys = [key for (key, val) in sditems if key.startswith(current_nested_name+".")]
         nest_level = nested_root.count(".")
-        max_nest_level = max([k.count(".") for k in all_nested_keys])
+        nesting_count = [k.count(".") for k in all_nested_keys]
+        if len(nesting_count) == 0:
+            return nested_data, removed_keys
+        max_nest_level = max(nesting_count)
         while max_nest_level >= nest_level:
             for (key, val) in schema_data.iteritems():
                 if key.startswith(current_nested_name+"."):
@@ -708,7 +711,11 @@ class ResourceTypeSchema(object):
             if val.has_key("type"):
                 stype = val["type"]
                 if stype not in self.fundamental_types: # must be an 'enum_type'
-                    enum_types.append([name, stype])
+                    rtype = val["default"]["type_"]
+                    rschema = data["schemas"][rtype]
+                    enums = [key for (key, valdict) in rschema.iteritems() if "enum_type" in valdict]
+                    if any(enums):
+                        enum_types.append([name, stype])
         return sub_resources, enum_types
 
     def find_types(self, data, parent_resource_type):

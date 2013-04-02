@@ -342,7 +342,9 @@ def resource_type_edit(resource_type):
         return jsonify(data=resp_json["data"])
     if request.method == 'POST':
         #TODO 
+        update_payload = "..."
         update_url = 'http://%s:%d/ion-service/resource_registry/update' % (GATEWAY_HOST, GATEWAY_PORT)
+        update_response = requests.post(update_url, data={"payload":update_payload})
         return ""
 
 @app.route('/resource_type_edit/<resource_type>/<object_id>', methods=['GET', 'POST'])
