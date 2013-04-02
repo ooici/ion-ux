@@ -67,7 +67,6 @@ def login_required(f):
 def index():
     return render_app_template(request.path)
 
-    
 # -----------------------------------------------------------------------------
 # SEARCH & ATTACHMENTS
 # -----------------------------------------------------------------------------
@@ -224,7 +223,7 @@ def collection(resource_type=None):
         return render_app_template(request.path)
 
 # -----------------------------------------------------------------------------
-# RESOURCE EXTENSION API
+# RESOURCE EXTENSION & RELATED SITES API
 # -----------------------------------------------------------------------------
 
 @app.route('/<resource_type>/extension/<resource_id>/', methods=['GET'])
@@ -235,6 +234,10 @@ def extension(resource_type, resource_id):
     extension = ServiceApi.get_extension(resource_type, resource_id, user_id)
     return render_json_response(extension)
 
+@app.route('/related_sites/<parent_resource_id>/', methods=['GET'])
+def related_sites(parent_resource_id):
+    related_sites = ServiceApi.find_related_sites(parent_resource_id)
+    return render_json_response(related_sites)
 
 # -----------------------------------------------------------------------------
 # COMMAND RESOURCE PAGES
@@ -492,13 +495,13 @@ def session_info():
 def thumbnail():
     return render_template('overview_thumbnails.html')
 
-
 @app.route('/dev/assetmap', methods=['GET'])
 def asset_map():
     return render_template('dashboard_assets_map.html')
 
 @app.route('/dev/dashboard', methods=['GET'])
-def dev_dashboard():
+@app.route('/dev/dashboard/map/<resource_id>', methods=['GET'])
+def dev_dashboard(resource_id=None):
     return render_app_template(request.path)
 
 @app.route('/dev/map', methods=['GET'])

@@ -81,6 +81,7 @@ html, body {
   padding: 8px 10px;
   border-top: solid 1px #9a9a9a;
   border-bottom: solid 1px #000;
+  letter-spacing: 1px;
 }
 
 #content {
@@ -127,43 +128,19 @@ html, body {
 = = = = = = = = = = = = = = = = = = = = 
 */
 
-#site-navigation {
+#resource-navigation {
   color: white;
 }
 
-#site-list ul {
+#resource-list ul {
   background: #333;
   margin: 0;
   padding: 15px 0;
 }
 
-#site-list ul li {
+#resource-list ul li {
   line-height: 15px;
   font-size: 12px;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-.btn-view.active, .btn-view.active:hover {
-  color: #fff;
-  background: -webkit-gradient(linear, left top, left bottom, from(#a6c1cf), color-stop(0.30, #326c8e), color-stop(0.60, #023756), color-stop(0.95, #034971), to(#012539));  
 }
 
 .btn-view {
@@ -183,27 +160,31 @@ html, body {
   background: -webkit-gradient(linear, left top, left bottom, from(#999999),color-stop(0.30, #7c7c7c), color-stop(0.60, #333333), color-stop(0.95, #4d4d4d),to(#1e1e1e));  
 }
 
+.btn-view.active, .btn-view.active:hover {
+  color: #fff;
+  background: -webkit-gradient(linear, left top, left bottom, from(#a6c1cf), color-stop(0.30, #326c8e), color-stop(0.60, #023756), color-stop(0.95, #034971), to(#012539));  
+}
+
 .btn-view:hover {
   color: #fff;
   background: -webkit-gradient(linear, left top, left bottom, from(#7c7c7c), color-stop(0.30, #4d4d4d), color-stop(0.60, #1e1e1e), color-stop(0.95, #333333), to(#000000));
 }
 
-
 /*
-HIGH/LOW SHADOW: 1px SOLID
-HIGHLIGHT SHADOW: -1 -1 #666666 (TOP,LEFT)
-LOWLIGHT SHADOW: +1 +1 #000000 (BOTTOM, RIGHT)
-
-TEXT
-
-SELECTED COLOR: #FFFFFF
-HOVER COLOR: #FFFFFF
-PASSIVE COLOR: #D3D3D3
-FONT SIZE: 10 px
-LETTERSPACING: 1px
-FONT WEIGHT: 600
-LINE HEIGHT: N/A
-TEXT SHADOW: -1 -1 #111111 (TOP, LEFT) Blur 20%
-HORIZONTALLY CENTRED
-VERTICALLY CENTRED
+= = = = = = = = = = = = = = = = = = = = 
+  MAP FILTER CSS MASKS
+= = = = = = = = = = = = = = = = = = = = 
 */
+
+
+#map-filter #data-filter {
+  display: none;
+}
+
+#map-filter.data-filter #data-filter {
+  display: block;
+}
+
+#map-filter.data-filter #asset-filter {
+  display: none;
+}

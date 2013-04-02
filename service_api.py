@@ -31,6 +31,11 @@ SCHEMA_TO_RESOURCE = {
 }
 
 class ServiceApi(object):
+    
+    @staticmethod
+    def find_related_sites(parent_resource_id):
+        related_sites = service_gateway_get('observatory_management', 'find_related_sites', params={'parent_resource_id': parent_resource_id})
+        return related_sites
 
     @staticmethod
     def search(search_query):

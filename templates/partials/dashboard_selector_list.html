@@ -1,0 +1,6 @@
+<h3><%= title %></h3>
+<ul>
+<% _.each(resources, function(resource) { %>
+  <li class="resource-link"><a href="/dev/dashboard/map/<%= resource._id %>"><%= resource.name %></a></li>
+<% }) %>
+</ul>

@@ -1,54 +1,127 @@
-IONUX.Spinners = {
-  xlarge: {
-    lines: 11, // The number of lines to draw
-    length: 2, // The length of each line
-    width: 12, // The line thickness
-    radius: 25, // The radius of the inner circle
-    corners: 0.7, // Corner roundness (0..1)
-    rotate: 29, // The rotation offset
-    color: '#fff', // #rgb or #rrggbb
-    speed: 1.3, // Rounds per second
-    trail: 54, // Afterglow percentage
-    shadow: true, // Whether to render a shadow
-    hwaccel: false, // Whether to use hardware acceleration
-    className: 'spinner', // The CSS class to assign to the spinner
-    zIndex: 2e9, // The z-index (defaults to 2000000000)
-    top: 'auto', // Top position relative to parent in px
-    left: 'auto' // Left position relative to parent in px
-  },
-}
+IONUX.DashboardView = "Map";
+IONUX.DashboardResource = null;
+IONUX.MapBlacklist = ['DRAFT'];
+
+// IONUX.Dashboard.MapFilter = {
+//   short: {},
+//   long: []
+// };
 
 IONUX.Views.ViewControls = Backbone.View.extend({
   el: '#view-controls',
-  template: '<button id="btn-map" class="btn-view active">Map</button><button id="btn-resources" class="btn-view">Resources</button>',
+  dashboard_template: _.template($('#dashboard-content-tmpl').html()),
   events: {
-    'click #btn-map': 'map_view',
-    'click #btn-resources': 'list_view'
+    'click #btn-map': 'render_map_view',
+    'click #btn-resources': 'render_list_view'
   },
   initialize: function(){
     _.bindAll(this);
   },
   render: function() {
-    this.$el.removeClass('placeholder');
-    this.$el.html(this.template);
     return this;
+  },  
+  render_map_view: function(e) {
+    if (e) e.preventDefault();
+    $('#btn-map').addClass('active').siblings('.active').removeClass('active');
+    IONUX.ROUTER.navigate('/dev/dashboard', true);
   },
-  map_view: function(e) {
-    e.preventDefault();
-    // Todo: clean up with parent $el CSS
-    this.$el.find('.active').removeClass('active');
-    $(e.target).addClass('active');
-    new IONUX.Views.AssetMap().render().el;
-  },
-  list_view: function(e) {
-    e.preventDefault();
-    // Todo: clean up with parent $el CSS
-    this.$el.find('.active').removeClass('active');
-    $(e.target).addClass('active');
-    // -------
-    $('#map_canvas').empty().hide();
+  render_list_view: function(e) {
+    if (e) e.preventDefault();
+    $('#btn-resources').addClass('active').siblings('.active').removeClass('active');
   },
 });
+
+
+/* 
+- - - - - - - - - - - - - - - - - 
+  Filters
+- - - - - - - - - - - - - - - - - 
+*/
+
+IONUX.Views.MapFilter = Backbone.View.extend({
+  el: '#map-filter',
+  filter_options: {
+    asset_options: [
+      {label: 'Station', type: 'PlatformSite'},
+      {label: 'Instrument', type: 'InstrumentSite'},
+      {label: 'Platform', type: 'PlatformDevice'},
+    ],
+    data_options: [
+      {label: 'Data Products', type: 'DataProduct'}
+    ],
+    lcstate_options: [
+      {label: 'Draft', lcstate: 'DRAFT'},
+      {label: 'Planned', lcstate: 'PLANNED'},
+      {label: 'Integrated', lcstate: 'INTEGRATED'},
+      {label: 'Deployed', lcstate: 'DEPLOYED'},
+      {label: 'Retired', lcstate: 'RETIRED'}
+    ]
+  },
+  template: '\
+    <h3>Filter</h3>\
+    <div class="">\
+      <input id="radio-assets" type="radio" name="map_filter" value="asset" checked />&nbsp;Asset&nbsp;\
+      <input id="radio-data" type="radio" name="map_filter" value="data" />&nbsp;Data&nbsp;\
+    </div>\
+    <div id="asset-filter"></div>\
+    <div id="data-filter"></div>\
+    <h3>Lifecycle</h3>\
+    <div id="lcstate-filter"></div>\
+  ',
+
+  events: {
+    // 'click #radio-assets, #radio-data': 'toggle_filter',
+    'click .filter-option': 'set_filter'
+  },
+  initialize: function(){
+    _.bindAll(this);
+  },
+  
+  render: function(){
+    this.$el.show().html(this.template);
+    this.render_filter_options();
+    return this;
+  },
+  
+  render_filter_options: function(options){
+    var item_tmpl = '<div class="filter-option"><%= label %> <input type="checkbox" value="<%= type %>" checked /></div>';
+    var lcstate_tmpl = '<div class="filter-option"><%= label %> <input type="checkbox" value="<%= lcstate %>" checked /></div>';
+
+    var assets_elmt = this.$el.find('#asset-filter');
+    _.each(this.filter_options.asset_options, function(option) {
+      assets_elmt.append(_.template(item_tmpl, option));
+    });
+    
+    var data_elmt = this.$el.find('#data-filter');
+    _.each(this.filter_options.data_options, function(option) {
+      data_elmt.append(_.template(item_tmpl, option));
+    });
+    
+    var lcstate_elmt = this.$el.find('#lcstate-filter');
+    _.each(this.filter_options.lcstate_options, function(option) {
+      lcstate_elmt.append(_.template(lcstate_tmpl, option));
+    });
+  },
+  
+  toggle_filter: function(e) {
+    this.$el.toggleClass('data-filter');
+  },
+  
+  set_filter: function(e){
+    var filter_elmt = $(e.target);
+    var type = filter_elmt.val();
+
+    if (filter_elmt.is(':checked')) {
+      var index = IONUX.MapBlacklist.indexOf(type)
+      IONUX.MapBlacklist.splice(index);
+    } else {
+      IONUX.MapBlacklist.push(type);
+    }; 
+    
+    IONUX.Dashboard.Resources.trigger('reset');
+  },
+});
+
 
 
 /* 
@@ -57,6 +130,13 @@ IONUX.Views.ViewControls = Backbone.View.extend({
 - - - - - - - - - - - - - - - - - 
 */
 
+IONUX.Collections.Orgs = Backbone.Collection.extend({
+  url: '/Org/list/',
+  parse: function(resp) {
+    return resp.data;
+  }
+});
+
 IONUX.Collections.Observatories = Backbone.Collection.extend({
   url: '/Observatory/list/',
   parse: function(resp) {
@@ -64,23 +144,43 @@ IONUX.Collections.Observatories = Backbone.Collection.extend({
   }
 });
 
-IONUX.Views.SiteSelector = Backbone.View.extend({
-  el: '#site-list',
-  template: _.template($('#dashboard-site-list-tmpl').html()),
-  events: {},
+IONUX.Collections.DashboardResources = Backbone.Collection.extend({
+  initialize: function(models, options){
+    this.resource_id = options.resource_id;
+  },
+  url: function() {
+   return '/related_sites/'+this.resource_id+'/';
+  },
+  parse: function(resp) {
+    var related_sites = [];
+    _.each(resp.data, function(site){related_sites.push(site)});
+    return related_sites;
+  }
+})
+
+IONUX.Views.ResourceSelector = Backbone.View.extend({
+  el: '#selector-list',
+  template: _.template($('#dashboard-selector-list-tmpl').html()),
   initialize: function(){
-    console.log('SiteNavigation initialize');
-    
     _.bindAll(this);
+    this.title = this.options.title;
     this.collection.on('reset', this.render);
   },
-  render: function() {
-    console.log('sites', this.collection.toJSON());
-    
+  render: function(){
     this.$el.removeClass('placeholder');
-    this.$el.html(this.template({sites: this.collection.toJSON()}));
+    this.$el.html(this.template({resources: this.collection.toJSON(), title: this.title}));
     return this;
+  },
+})
+
+IONUX.Views.ObservatorySelector = IONUX.Views.ResourceSelector.extend({
+  events: {'click .resource-link': 'focus_map'},
+  focus_map: function(e){
+    e.preventDefault();
   }
+});
+
+IONUX.Views.SiteSelector = IONUX.Views.ResourceSelector.extend({
 });
 
 
@@ -90,71 +190,134 @@ IONUX.Views.SiteSelector = Backbone.View.extend({
 - - - - - - - - - - - - - - - - - 
 */
 
+
+// IONUX.Models.CurrentResource = Backbone.Model.extend({
+//   defaults: {
+//     center: new google.maps.LatLng(0, 0),
+//     zoom: 9,
+//     mapTypeId: google.maps.MapTypeId.TERRAIN,
+//     disableDefaultUI: true
+//   }
+// })
+
+
+
+IONUX.Models.ActiveResource = Backbone.Model.extend({
+  defaults: {
+    geospatial_point_center: {
+      lat: 39.8106460,
+      lon: -98.5569760
+    },
+    constraint_list: null
+  }
+});
+
 IONUX.Views.AssetMap = Backbone.View.extend({
   el: '#map_canvas',
-  default_map_options: {
-    center: new google.maps.LatLng(0, 0),
-    zoom: 3,
-    mapTypeId: google.maps.MapTypeId.TERRAIN,
-    disableDefaultUI: true
-  },
+
   initialize: function(){
     _.bindAll(this);
+    this.draw_map();
+    this.render_table();
+    this.model.on('change', this.pan_map);
+    this.collection.on('update_markers', this.draw_markers);
+    this.collection.on('reset', this.render_table);
   },
+
   render: function(){
     this.$el.show();
-    this.draw_map();
     return this;
   },
+  
+  render_table: function(){
+    console.log('render_table', !_.isEmpty(IONUX.MapBlacklist) );
+    var resource_table = $('#2163993');
+    resource_table.show();
+    if (!_.isEmpty(IONUX.MapBlacklist)) {
+      var filtered_resources = []
+      _.each(IONUX.Dashboard.Resources.models, function(resource) {
+        if (!_.contains(IONUX.MapBlacklist, resource.get('type_'))) {
+          filtered_resources.push(resource.toJSON());
+        };
+      });
+      new IONUX.Views.DataTable({el: resource_table, data: filtered_resources});
+    } else {
+      new IONUX.Views.DataTable({el: resource_table, data: this.collection.toJSON()});
+    };
+  },
+  
   draw_map: function(map_options, container_server) {
-    if (map_options == null) var map_options = this.default_map_options;
+    console.log('draw_map');
+    $('#map_canvas').empty().show();
     this.map = new google.maps.Map(document.getElementById('map_canvas'), {
-      center: new google.maps.LatLng(0, 0),
+      center: new google.maps.LatLng(39.8106460, -98.5569760),
       zoom: 3,
       mapTypeId: google.maps.MapTypeId.TERRAIN,
       disableDefaultUI: true
     });
-    this.markerClusterer = new MarkerClusterer(this.map)
-    this.test_markers();
-    // Add the markers to the map clusterer which will handle large collections of markers
-    // this.markerClusterer = new MarkerClusterer(this.map);
-    // For debugging
-    // testMarkers();
+    this.markerClusterer = new MarkerClusterer(this.map);
   },
+  
+  draw_markers: function() {
+    console.log('draw_markers');
+    var self = this;
+    _.each(this.collection.models, function(resource) {
+      var lat = resource.get('geospatial_point_center')['lat'];
+      var lon = resource.get('geospatial_point_center')['lon'];
+      self.create_marker(lat, lon, null, '_text',"<P>Insert HTML here.</P>", null);
+    });    
+  },
+  
+  pan_map: function() {
+    console.log('pan_map');
+    try {
+      var n = this.model.get('constraint_list')[0]['geospatial_latitude_limit_north'];
+      var e = this.model.get('constraint_list')[0]['geospatial_longitude_limit_east'];
+      var s = this.model.get('constraint_list')[0]['geospatial_latitude_limit_south'];
+      var w = this.model.get('constraint_list')[0]['geospatial_longitude_limit_west'];
+      var ne = new google.maps.LatLng(n, e);
+      var sw = new google.maps.LatLng(s, w);
+      var bounds = new google.maps.LatLngBounds(sw, ne)
+      this.map.fitBounds(bounds);
+      this.draw_markers();
+    } catch(err) {
+      console.log('pan_map error:', err);
+      this.draw_map();
+      this.draw_markers();
+    }
+  },
+  
   create_marker: function(_lat, _lon, _icon, _hover_text, _info_content, _table_row) {
     if (!_lat || !_lon) return null;
     // Add marker to map
     latLng = new google.maps.LatLng(_lat, _lon);
     var marker = new google.maps.Marker({
-            map: this.map,
-            position: latLng,
-            icon: _icon,
-            title: _hover_text
+      map: this.map,
+      position: latLng,
+      icon: _icon,
+      title: _hover_text
     });
+
     // mouse click opens infoWindow
     if (_info_content) {
-        var iw = new google.maps.InfoWindow({
-            content: _info_content
-        });
+      var iw = new google.maps.InfoWindow({content: _info_content});
+      var _map = this.map;
+      // Event when marker is clicked
+      google.maps.event.addListener(marker, 'click', function(_map) {
+        console.log('clicky, clicky');
+        // iw.open(this.map, marker);
+      });
 
-        var _map = this.map;
+      // Event for mouseover
+      // google.maps.event.addListener(marker, 'mouseover', function() {
+      //     _table_row.style.backgroundColor = _row_highlight_color;
+      // });
 
-        // Event when marker is clicked
-        google.maps.event.addListener(marker, 'click', function(_map) {
-          // iw.open(this.map, marker);
-        });
-
-        // Event for mouseover
-        // google.maps.event.addListener(marker, 'mouseover', function() {
-        //     _table_row.style.backgroundColor = _row_highlight_color;
-        // });
-
-        // Event for mouseout
-        // google.maps.event.addListener(marker, 'mouseout', function() {
-        //     _table_row.style.backgroundColor = _row_background_color;
-        // });
-    }
-
+      // Event for mouseout
+      // google.maps.event.addListener(marker, 'mouseout', function() {
+      //     _table_row.style.backgroundColor = _row_background_color;
+      // });
+    };
     this.markerClusterer.addMarker(marker);
   },
   clear_all_markers: function(){
@@ -163,55 +326,19 @@ IONUX.Views.AssetMap = Backbone.View.extend({
   test_markers: function() {
     // var asset_table=document.getElementById("asset_table");
     var row, cell;
-
     var _lat = 32.7;
     var _lon = -117.1;
     var _offset = 0.5; // for randomly shifting points around the map
     var _text;
-
     for (var i = 0; i < 5; i++) {
-        _text = "Marker #" + i.toString();
+      _text = "Marker #" + i.toString();
+      // row = asset_table.insertRow(-1);
+      // cell = row.insertCell(-1);
+      // cell.innerHTML = _text
+      this.create_marker(_lat, _lon, null, _text,"<P>Insert HTML here.</P>", null);
 
-        // row = asset_table.insertRow(-1);
-        // cell = row.insertCell(-1);
-        // cell.innerHTML = _text
-        this.create_marker(_lat, _lon, null, _text,"<P>Insert HTML here.</P>", null);
-
-        _lat = _lat + _offset;
-        _lon = _lon + _offset;
+      _lat = _lat + _offset;
+      _lon = _lon + _offset;
     }
   },
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

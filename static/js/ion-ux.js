@@ -1,4 +1,5 @@
 IONUX = {
+  Dashboard: {},
   Templates: {},
   Interactions: {},
   Models:{},
