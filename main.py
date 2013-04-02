@@ -72,11 +72,33 @@ def index():
 # SEARCH & ATTACHMENTS
 # -----------------------------------------------------------------------------
 
-@app.route('/search/', methods=['GET'])
+@app.route('/search/', methods=['GET', 'POST'])
 def search(query=None):
     if request.is_xhr:
-        search_query = escape(request.args.get('query'))
-        search_results = ServiceApi.search(quote(search_query))
+        if request.method == "GET":
+            search_query = escape(request.args.get('query'))
+            search_results = ServiceApi.search(quote(search_query))
+        else:
+            print request.form
+            geospatial_bounds = {'north': request.form.get('geospatial_bounds[north]', None),
+                                  'east': request.form.get('geospatial_bounds[east]', None),
+                                 'south': request.form.get('geospatial_bounds[south]', None),
+                                  'west': request.form.get('geospatial_bounds[west]', None)}
+
+            vertical_bounds   = {'lower': request.form.get('vertical_bounds[lower]', None),
+                                 'upper': request.form.get('vertical_bounds[upper]', None)}
+
+            temporal_bounds   = {'from': request.form.get('temporal_bounds[from]', None),
+                                   'to': request.form.get('temporal_bounds[to]', None)}
+
+            search_criteria   = request.form.get('search_criteria', None)
+
+            search_results    = ServiceApi.adv_search(geospatial_bounds,
+                                                      vertical_bounds,
+                                                      temporal_bounds,
+                                                      None,
+                                                      search_criteria)
+
         return render_json_response(search_results)
     else:
         return render_app_template(request.path)

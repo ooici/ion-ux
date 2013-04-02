@@ -1,5 +1,5 @@
 import requests, json, time, pprint
-from flask import session, jsonify
+from flask import session, jsonify, abort
 from config import GATEWAY_HOST, GATEWAY_PORT
 from copy import deepcopy
 from instrument_command import BLACKLIST
@@ -50,27 +50,35 @@ class ServiceApi(object):
 
         queries = []
 
-        if geospatial_bounds:
-            # field: DataProduct -> "geospatial_bounds"
-            #        PlatformDevice -> "index_location"
-            queries.append({'bottom_right': [geospatial_bounds['south'], geospatial_bounds['east']],
-                                'top_left': [geospatial_bounds['north'], geospatial_bounds['west']]})
+        print "hello", geospatial_bounds, vertical_bounds, temporal_bounds, search_criteria
 
-        if vertical_bounds:
-            queries.append({'range': {'from': vertical_bounds['vertical-lower-ctrl'], 'to': vertical_bounds['vertical-lower-ctrl']}})
+        if geospatial_bounds and all(geospatial_bounds.itervalues()):
+            queries.append({'bottom_right': [float(geospatial_bounds['east']), float(geospatial_bounds['south'])],
+                                'top_left': [float(geospatial_bounds['west']), float(geospatial_bounds['north'])],
+                                   'field': 'geospatial_point_center',
+                                   'index': 'resources_index'})
 
-        if temporal_bounds:
-            queries.append({'time': {'from': temporal_bounds['temporal-from-ctrl'], 'to': temporal_bounds['temporal-to-ctrl']}})
+        if vertical_bounds and all(vertical_bounds.itervalues()):
+            queries.append({'range': {'from': vertical_bounds['lower'], 'to': vertical_bounds['upper']},
+                            'field': 'vertical_bounds',
+                            'index': 'resources_index'})
 
-        if search_terms:
-            pass
+        if temporal_bounds and all(temporal_bounds.itervalues()):
+            queries.append({'time': {'from': temporal_bounds['from'], 'to': temporal_bounds['to']},
+                            'field': 'temporal_bounds',
+                            'index': 'resources_index'})
 
         if search_criteria:
             pass
 
         # transform queries into the expected query object
+        if len(queries) == 0:
+            abort(500)
 
+        post_data['query'] = queries[0]
+        post_data['and'] = queries[1:]
 
+        return service_gateway_post('discovery', 'query', {'query': post_data})
 
     @staticmethod
     def update_resource(resource_obj):

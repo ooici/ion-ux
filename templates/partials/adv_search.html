@@ -4,60 +4,62 @@
         <h1>Advanced Search</h1>
     </div>
     <div class="modal-body">
-        <div class="row-fluid">
-            <div class="span9">
-                <div id="adv_map"></div>
-            </div>
-            <div class="span3">
-                <div class="span12" id="adv-geospatial" data-path="stub"></div>
-                <div class="span12" id="adv-vertical" data-path="stub"></div>
-                <div class="span12" id="adv-temporal" data-path="stub"></div>
-            </div>
-        </div>
-        <div class="row-fluid">
-            <div class="span3" id="searchterms_holder">
-                <h4>Search Terms</h4>
-                <label class="radio">
-                    <input type="radio" name="searchtermsradio" id="searchtermsradio_all" value="all" checked />
-                    Search All
-                </label>
-
-                <label class="radio">
-                    <input type="radio" name="searchtermsradio" id="searchtermsradio_limit" value="limit" />
-                    Limit search to:
-                </label>
-
-                <div id="limit_search_checkboxes">
-
-                    <label class="checkbox">
-                        <input type="checkbox" name="searchterms[]" value="data_products" />
-                        Data Products
-                    </label>
-
-                    <label class="checkbox">
-                        <input type="checkbox" name="searchterms[]" value="observatories" />
-                        Observatories
-                    </label>
-
-                    <label class="checkbox">
-                        <input type="checkbox" name="searchterms[]" value="platforms" />
-                        Platforms
-                    </label>
-
-                    <label class="checkbox">
-                        <input type="checkbox" name="searchterms[]" value="instruments" />
-                        Instruments
-                    </label>
-
+        <form>
+            <div class="row-fluid">
+                <div class="span9">
+                    <div id="adv_map"></div>
+                </div>
+                <div class="span3">
+                    <div class="span12" id="adv-geospatial" data-path="stub"></div>
+                    <div class="span12" id="adv-vertical" data-path="stub"></div>
+                    <div class="span12" id="adv-temporal" data-path="stub"></div>
                 </div>
             </div>
-            <div class="span9">
-                <h4>Search Criteria</h4>
+            <div class="row-fluid">
+                <div class="span3" id="searchterms_holder">
+                    <h4>Search Terms</h4>
+                    <label class="radio">
+                        <input type="radio" name="searchtermsradio" id="searchtermsradio_all" value="all" checked />
+                        Search All
+                    </label>
 
-                <div class="filter-item-holder">
+                    <label class="radio">
+                        <input type="radio" name="searchtermsradio" id="searchtermsradio_limit" value="limit" />
+                        Limit search to:
+                    </label>
+
+                    <div id="limit_search_checkboxes">
+
+                        <label class="checkbox">
+                            <input type="checkbox" name="searchterms[]" value="data_products" />
+                            Data Products
+                        </label>
+
+                        <label class="checkbox">
+                            <input type="checkbox" name="searchterms[]" value="observatories" />
+                            Observatories
+                        </label>
+
+                        <label class="checkbox">
+                            <input type="checkbox" name="searchterms[]" value="platforms" />
+                            Platforms
+                        </label>
+
+                        <label class="checkbox">
+                            <input type="checkbox" name="searchterms[]" value="instruments" />
+                            Instruments
+                        </label>
+
+                    </div>
+                </div>
+                <div class="span9">
+                    <h4>Search Criteria</h4>
+
+                    <div class="filter-item-holder">
+                    </div>
                 </div>
             </div>
-        </div>
+        </form>
     </div>
     <div class="modal-footer">
         <button id="btn-cancel" data-dismiss="modal" class="btn-blue btn-cancel">Cancel</button>
