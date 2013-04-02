@@ -14,7 +14,7 @@ todo:
 INTERACTIONS_OBJECT = {};
 INTERACTIONS_OBJECT.block_interactions = ['More Info'];
 INTERACTIONS_OBJECT.group_interactions = ['More Info', /*'Submenu', 'Edit'*/];
-INTERACTIONS_OBJECT.view_interactions = ['Subscribe', 'Lifecycle', 'Edit', /*'Submenu',*/ 'Command', 'Direct Command', 'Download'];
+INTERACTIONS_OBJECT.view_interactions = ['Subscribe', 'Lifecycle', 'Edit', /*'Submenu',*/ 'Command', 'Download'];
 INTERACTIONS_OBJECT.event_interactions = ['Add Event'];
 INTERACTIONS_OBJECT.attachment_interactions = ['Upload Attachment'];
 INTERACTIONS_OBJECT.negotiation_interactions = {owner: ['View Requests'], nonmember: ['Enroll']};
@@ -128,7 +128,6 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
         this.on("action__edit", this.action__edit);
         this.on("action__submenu_toggle", this.action__submenu_toggle);
         this.on("action__command", this.action__command);
-        this.on("action__direct_command", this.action__direct_command);
         this.on("action__download", this.action__download);
     },
     
@@ -188,9 +187,6 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
         } else {
             alert("Command not supported for " + resource_type + '.');
         };
-    },
-    action__direct_command:function(){
-        alert("Direct Command");
     },
     action__download: function(evt){
         if (window.location.pathname.match(/DataProduct/g)){
