@@ -1,0 +1,18 @@
+<div class="modal-header">
+  <h1>Accept/Reject Negotiation: <%= negotiation_id %></h1>
+</div>
+<div class="modal-body">
+  <p>
+    Please accept or reject this access/role proposal.
+  </p>
+
+  <dl>
+    <dt>Request Submitted</dt>
+    <dd><%= submitted %></dd>
+  </dl>
+</div>
+<div class="modal-footer">
+  <button id="btn-accept" class="btn-blue">Accept</button>
+  <button id="btn-reject" class="btn-blue">Reject</button>
+  <button class="btn-general" data-dismiss="modal">Cancel</button>
+</div>

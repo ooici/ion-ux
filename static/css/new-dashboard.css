@@ -1,0 +1,135 @@
+html, body {
+  height: 100%;
+}
+
+
+/* New Dashboard styles to be integrated */
+
+.placeholder {
+  background: #000;
+  opacity: .2;
+  text-transform: uppercase;
+  font-size: 10px;
+}
+
+/*
+= = = = = = = = = = = = = = = = = = = = 
+  BASIC LAYOUT STRUCTURE
+= = = = = = = = = = = = = = = = = = = = 
+*/
+
+#xheader {
+/*  position: fixed;*/
+/*  top: 0;*/
+/*  left: 0;*/
+  height: 69px;
+  border-bottom: solid 1px black;
+  background: #004978 url('/static/img/banner.png') no-repeat 0 0;
+  z-index: 15;
+}
+
+#top {
+/*  width: 100%;
+  position: fixed;
+  top: 70px;
+*/  
+  background: #333;
+  height: 35px;
+  border-top: solid 1px #9a9a9a;
+  border-bottom: solid 1px #000;
+  z-index: 2;
+}
+
+
+#main {
+  background:;
+  position: absolute;
+  top: 110px;
+  left: 0;
+  height: 100%;
+  width: 100%;
+}
+
+#left {
+/*  position: fixed;
+  top: 0;
+  left: 0;
+*/  
+/*  padding-top: 107px;*/
+  width: 199px;
+  background: #1e1e1e;
+  border-right: solid 1px #000;
+  height: 100%;
+  min-height: 100%;
+  z-index: 1;
+  float: left;
+}
+
+#left h3 {
+  margin: 0;
+  padding: 0;
+  background: #4d4d4d;
+  color: white;
+  font-size: 11px;
+  text-transform: uppercase;
+  line-height: 11px;
+  font-weight: normal;
+  padding: 8px 10px;
+  border-top: solid 1px #9a9a9a;
+  border-bottom: solid 1px #000;
+}
+
+
+
+
+#content {
+/*  position: absolute;*/
+/*  margin-left: 201px;
+  margin-top: 20px;*/
+/*  position: absolute;
+  width: 100%;
+  top: 110px;
+  left: 201px;
+*/  height: 50%;
+  background: green;
+}
+
+
+/*
+= = = = = = = = = = = = = = = = = = = = 
+  TOP ELEMENTS
+= = = = = = = = = = = = = = = = = = = = 
+*/
+
+#view-controls {
+  float: left;
+  width: 200px;
+}
+
+#xsearch {
+  float: left;
+  width: 200px;
+}
+
+/*
+= = = = = = = = = = = = = = = = = = = = 
+  SIDE
+= = = = = = = = = = = = = = = = = = = = 
+*/
+
+#site-navigation {
+  color: white;
+}
+
+#site-list ul {
+  background: #333;
+  margin: 0;
+  padding: 15px 0;
+}
+
+#site-list ul li {
+  line-height: 15px;
+  font-size: 12px;
+}
+
+

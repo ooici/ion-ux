@@ -45,7 +45,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         "click .show-hide-filters":"show_hide_filters",
         "click .filters-apply":"filters_apply",
         "click .filters-reset":"filters_reset",
-        "click table tbody tr":"table_row_click"
+        "click table tbody tr":"table_row_click",
     },
 
     template: _.template($('#datatable-tmpl').html()),
@@ -61,6 +61,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         this.$el.html(this.template());
         var header_data = this.header_data();
         var table_data = this.table_data(this.options.data);
+        var self = this;
         this.datatable = this.$el.find(".datatable-container table").dataTable({
             "sDom":"Rlfrtip",
             "aaData":table_data,
@@ -76,9 +77,10 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
               $('td', nRow).each(function() {
                 $(this).attr('title', $(this).text());
               });
-            }
+            },
         });
         if (this.options.data.length == 0){this.$el.find(".dataTables_scrollBody").css("overflow", "hidden")};
+
         return this;
     },
 
@@ -102,6 +104,12 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
             data_item["sClass"] = "center"; //TODO choose dependant on 'item[0]'
             data.push(data_item);
         });
+
+        // blank column for popup column
+        if (this.options.hasOwnProperty('popup_view')) {
+          data.push({sTitle: "", sType: "title", sClass: "center"});
+        }
+
         return data;
     },
 
@@ -128,6 +136,16 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
                 data_row.push(value);
             });
             
+            // insert false column for popup
+            if (self.options.hasOwnProperty('popup_view')) {
+              if (self.options.popup_filter_method(data_row)) {
+                var label = self.options.popup_label || "Options";
+                data_row.push(label);
+              } else {
+                data_row.push('');
+              }
+            }
+
             // Temp fix to block associations from appearing in search results.
             // Need to sub-class this view eventually.
             if (resource_type != 'Association') data.push(data_row);
@@ -333,7 +351,11 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         var resource_type = row_info_list[1];
         
         if (resource_type.match(/Event$/)) return false;
-        
+
+        if (this.options.hasOwnProperty('popup_view') && this.options.popup_filter_method(table_row_data)) {
+          new this.options.popup_view({data:table_row_data, datatable:this.datatable}).render().el;
+          return;
+        }
         // Check for type_ attachment and pop modal to let user
         // choose between downloading an attachment or viewing
         // its metadata on a face page.

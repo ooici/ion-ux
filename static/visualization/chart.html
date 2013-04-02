@@ -82,6 +82,7 @@
 
 
     // Realtime variables
+    var enable_realtime = false;
     var rt_query, rt_query_token, rt_len_max;
 
     // Chart options
@@ -94,6 +95,8 @@
 
     chartBkgColor = "#231F20";
     chartLabelColor = "#FFFFFF";
+    chartLabelInactiveColor = "#999999";
+    chartLabelHoverColor = "#888822"
     chartSeriesColor = ["#1f75fe",
         "#f9fa47",
         "#fd524b",
@@ -117,9 +120,9 @@
 
     // Google library specific loads for all the supported chart types
     google.load("visualization", "1", {packages: ['table', 'motionchart']});
-    google.setOnLoadCallback(initViz);
+    google.setOnLoadCallback(initChart);
 
-    function initViz() {
+    function initChart() {
 
         dp_id = parent.window.location.pathname.split('/')[3]
         console.log('dp_id: ', dp_id);
@@ -139,14 +142,16 @@
 
         //init the realtime component. Check to see if there was a lingering query_token from a previous session.
         // Needs to be cleaned up. This happens in Chrome when the page reload does not fire the beforeunload event
-        /*     rt_query = null;
-         rt_len_max = 600;
-         if (sessionStorage["rt_query_token"]) {
-         rt_query_token = sessionStorage["rt_query_token"];
-         chartCleanup();
-         }
-         initRealtimeView();
-         */
+        if (enable_realtime) {
+            rt_query = null;
+            rt_len_max = 600;
+            if ("rt_query_token" in sessionStorage) {
+                rt_query_token = sessionStorage["rt_query_token"];
+                chartCleanup();
+            }
+            initRealtimeView();
+        }
+
     }
 
     function initOverview() {
@@ -157,12 +162,29 @@
         jQuery.ajax ({
             url: container_server + "/visualization/get_data_product_metadata/?data_product_id=" + dp_id + "&callback=dp_metadata_cb&return_mimetype=application/json",
             dataType: 'jsonp',
-            jsonpCallback: 'dp_metadata_cb'
+            jsonpCallback: 'dp_metadata_cb',
+            error: function(jqXHR, status, err_type) {
+                console.debug("Error retrieving metadata for the data_product : " + jqXHR.responseText);
+            }
         });
+
+        /*       jQuery.ajax ({
+         type: 'POST',
+         url: container_server + "/visualization/get_data_product_metadata/?return_mimetype=application/json",
+         data: {data_product_id: dp_id, callback: "dp_metadata_cb"},
+         dataType: 'json',
+         success: 'dp_metadata_cb'
+         });
+         */
 
     }
 
     function dp_metadata_cb(response) {
+
+        if (response == null) {
+            alert("This dataproduct has no data in storage");
+            return;
+        }
         dp_metadata = response;
 
         // calculate and init a few things
@@ -204,6 +226,15 @@
 
         // Translate response in to the format, highstocks understands
         var _dt = response.getDataTable();
+
+        // If an empty data table was returned, exit gracefully
+        if (_dt.getNumberOfRows() == 0) {
+            alert("No data was found in storage. Please try again in a bit");
+            // Stop the spinner
+            chart_spinner.stop();
+            return;
+        }
+
         _dt.sort([{column:0}]);
 
         // If the overview series is empty, assume this is the response to the overview query
@@ -241,9 +272,11 @@
 
             // Check to see if the series contains NaN. If yes, just ignore the entire series
             if (isNaN(_dt.getValue(0,i))) continue;
-            // Also ignore any parameter that has the string "timestamp" in it or is the lat/lon
+            // Also ignore any parameter that has the string "timestamp" in it or is the lat/lon.
+            // Also ignore anything that's a string
             if (_dt.getColumnLabel(i).search("timestamp") >= 0) continue;
             if (_dt.getColumnLabel(i) == 'lat' || _dt.getColumnLabel(i) == 'lon') continue;
+            if (_dt.getColumnType(i) == 'string') continue;
 
             _hc_data[_hc_data_count] = {};
             var _series = _hc_data[_hc_data_count];
@@ -255,7 +288,8 @@
             }
 
             _series["name"] = _dt.getColumnLabel(i);
-            _series["tooltip"] = {valueDecimals:5};
+            //_series["tooltip"] = {valueDecimals:5};
+            _series["tooltip"] = {};
             _series["data"] = _data;
 
             ++_hc_data_count;
@@ -363,13 +397,25 @@
                 legend: {
                     enabled: true,
                     align: 'right',
-                    backgroundColor: '#FCFFC5',
-                    borderColor: 'black',
-                    borderWidth: 2,
+                    backgroundColor: chartBkgColor,
+                    borderColor: chartBkgColor,
+                    //borderWidth: 2,
+                    //borderRadius: 1,
                     layout: 'vertical',
                     verticalAlign: 'top',
                     y: 50,
-                    shadow: true
+                    //shadow: true
+
+                    itemStyle : {
+                        color : chartLabelColor
+                    },
+                    itemHiddenStyle : {
+                        color : chartLabelInactiveColor
+                    },
+                    itemHoverStyle : {
+                        color : chartLabelHoverColor
+                    }
+
                 },
 
                 xAxis: {
@@ -404,7 +450,7 @@
                 plotOptions: {
                     series: {
                         compare: curr_y_axis_compare_type,
-                        connectNulls: true,
+                        connectNulls: false,
                         events: {
                             hide: function() {
                                 curr_parameter_visibility[this.name] = false;
@@ -710,21 +756,22 @@
     }
 
     function chartCleanup() {
+        console.debug ("Terminating queues associated with token : " + rt_query_token);
         // terminate the realtime queues on the server side
-        if (rt_query_token) {
+        if (rt_query_token && rt_query_token != null && rt_query_token != "null") {
 
             jQuery.ajax ({
-                url: container_server + "/visualization/terminate_realtime_visualization_data?query_token=" + rt_query_token,
+                url: container_server + "/visualization/terminate_realtime_visualization_data/?query_token=" + rt_query_token,
                 dataType: 'jsonp',
-                success: function() {
-                    console.debug("Real-time Termination acknowledged");
+                success: function(response) {
+                    console.debug("Real-time Termination acknowledged:" + response);
                 },
                 async: false
             });
 
             rt_query_token = sessionStorage["rt_query_token"] = null;
         }
-
+        console.debug ("Done");
     }
 
 
@@ -795,16 +842,16 @@
 
     function initSpinner() {
         var opts = {
-            lines: 13, // The number of lines to draw
-            length: 7, // The length of each line
-            width: 4, // The line thickness
-            radius: 10, // The radius of the inner circle
-            corners: 1, // Corner roundness (0..1)
-            rotate: 0, // The rotation offset
+            lines: 11, // The number of lines to draw
+            length: 2, // The length of each line
+            width: 12, // The line thickness
+            radius: 25, // The radius of the inner circle
+            corners: 0.7, // Corner roundness (0..1)
+            rotate: 30, // The rotation offset
             color: "#999999", // #rgb or #rrggbb
-            speed: 1, // Rounds per second
-            trail: 60, // Afterglow percentage
-            shadow: false, // Whether to render a shadow
+            speed: 1.3, // Rounds per second
+            trail: 54, // Afterglow percentage
+            shadow: true, // Whether to render a shadow
             hwaccel: false, // Whether to use hardware acceleration
             className: 'spinner', // The CSS class to assign to the spinner
             zIndex: 2e9, // The z-index (defaults to 2000000000)

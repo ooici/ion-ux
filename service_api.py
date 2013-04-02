@@ -21,7 +21,7 @@ AGENT_REQUEST_TEMPLATE = {
         "agentId": "",
         "agentOp": "",
         # "expiry": 0,
-        "params": { "command": { "type_": "AgentCommand", "command": "placeholder" }}
+        "params": {"timeout": 300, "command": { "type_": "AgentCommand", "command": "placeholder" }}
     }
 }
 
@@ -97,11 +97,122 @@ class ServiceApi(object):
 
     @staticmethod
     def enroll_request(resource_id, actor_id):
-        print 'zzzzz', resource_id, actor_id
-        return True
-        # return service_gateway_post('user_notification', 'delete_notification', params={'notification_id': notification_id})
+        sap = {'type_': 'EnrollmentProposal',
+               'originator': 1,
+               'consumer': actor_id,
+               'provider': resource_id,
+               'description': "Enrollment Request",
+               'proposal_status': 1 }
+        return service_gateway_post('org_management', 'negotiate', params={'sap':sap})
 
+    @staticmethod
+    def request_role(resource_id, actor_id, role_name):
+        sap = {'type_': 'RequestRoleProposal',
+               'originator': 1,
+               'consumer': actor_id,
+               'provider': resource_id,
+               'proposal_status': 1,
+               'description': "Role Request",
+               'role_name': role_name }
 
+        return service_gateway_post('org_management', 'negotiate', params={'sap':sap})
+
+    @staticmethod
+    def invite_user(resource_id, user_id):
+        # look up actor id from user id
+        actor_id = service_gateway_get('resource_registry', 'find_subjects', params={'predicate': 'hasInfo', 'object': user_id, 'id_only': True})[0]
+
+        sap = {'type_': 'EnrollmentProposal',
+               'originator': 2,
+               'consumer': actor_id,
+               'provider': resource_id,
+               'description': "Enrollment Invite",
+               'proposal_status': 1 }
+
+        return service_gateway_post('org_management', 'negotiate', params={'negotiation_type': 2,
+                                                                           'sap':sap})
+
+    @staticmethod
+    def offer_user_role(resource_id, user_id, role_name):
+        # look up actor id from user id
+        actor_id = service_gateway_get('resource_registry', 'find_subjects', params={'predicate': 'hasInfo', 'object': user_id, 'id_only': True})[0]
+
+        sap = {'type_': 'RequestRoleProposal',
+               'originator': 2,
+               'consumer': actor_id,
+               'provider': resource_id,
+               'proposal_status': 1,
+               'description': "Role Invite",
+               'role_name': role_name }
+
+        return service_gateway_post('org_management', 'negotiate', params={'negotiation_type': 2,
+                                                                           'sap':sap})
+
+    @staticmethod
+    def request_access(resource_id, actor_id, org_id):
+        sap = {'type_': 'AcquireResourceProposal',
+               'originator': 1,
+               'consumer': actor_id,
+               'provider': org_id,
+               'proposal_status': 1,
+               'description': "Access Request",
+               'resource_id': resource_id }
+
+        return service_gateway_post('org_management', 'negotiate', params={'sap':sap})
+
+    @staticmethod
+    def release_access(commitment_id):
+        return service_gateway_post('org_management', 'release_commitment', params={'commitment_id':commitment_id})
+
+    @staticmethod
+    def request_exclusive_access(resource_id, actor_id, org_id, expiration):
+        sap = {'type_': 'AcquireResourceExclusiveProposal',
+               'originator': 1,
+               'consumer': actor_id,
+               'provider': org_id,
+               'proposal_status': 1,
+               'resource_id': resource_id,
+               'description': "Exclusive Access Request",
+               'expiration': expiration}
+
+        return service_gateway_post('org_management', 'negotiate', params={'sap':sap})
+
+    @staticmethod
+    def _accept_reject_negotiation(negotiation_id, accept_value):
+        if not accept_value in [3,4]:
+            return error_message("Unknown accept_value %s" % accept_value)
+
+        # read the negotiation first so we can determine the sap to send
+        negotiation = service_gateway_get('resource_registry', 'read', params={'object_id': negotiation_id})
+        proposal = negotiation['proposals'][0]
+        neg_type = proposal['type_']
+
+        sap = {'type_': neg_type,
+               'negotiation_id': negotiation_id,
+               'sequence_num': int(proposal['sequence_num']) + 1,
+               'originator': 2,
+               'proposal_status': accept_value,
+               'consumer': proposal['consumer'],
+               'provider': proposal['provider']}
+
+        # add specific fields to sap for the type
+        if neg_type == "AcquireResourceExclusiveProposal":
+            sap.update({'expiration': proposal['expiration'],
+                        'resource_id': proposal['resource_id']})
+        elif neg_type == "AcquireResourceProposal":
+            sap.update({'resource_id': proposal['resource_id']})
+        elif neg_type == "RequestRoleProposal":
+            sap.update({'role_name': proposal['role_name']})
+
+        return service_gateway_post('org_management', 'negotiate', params={'sap':sap})
+
+    @staticmethod
+    def accept_negotiation(negotiation_id):
+        return ServiceApi._accept_reject_negotiation(negotiation_id, 3) # 3 == accepted
+
+    @staticmethod
+    def reject_negotiation(negotiation_id):
+        return ServiceApi._accept_reject_negotiation(negotiation_id, 4) # 4 == rejected
 
     @staticmethod
     def get_event_types():
@@ -164,10 +275,14 @@ class ServiceApi(object):
             extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'DataProcessExtension', 'user_id': user_id})
         elif resource_type in ('UserRole'):
             extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'ExtendedInformationResource', 'user_id': user_id})
-        elif resource_type in ('InformationResource'):
-            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'ExtendedInformationResource', 'user_id': user_id})
         else:
-            extension = error_message(msg="Resource extension for %s is not available." % resource_type)
+            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'ExtendedInformationResource', 'user_id': user_id})
+            # brute force - if not an InformationResource, it might be taskable
+            if "GatewayError" in extension:
+                extension = service_gateway_get('resource_registry', 'get_resource_extension', params = {'resource_id': resource_id, 'resource_extension': 'ExtendedTaskableResource', 'user_id': user_id})
+
+        #else:
+        #    extension = error_message(msg="Resource extension for %s is not available." % resource_type)
         return extension
 
     @staticmethod
@@ -268,14 +383,14 @@ class ServiceApi(object):
         return
         
     @staticmethod
-    def instrument_execute(instrument_device_id, command, cap_type):
+    def instrument_execute(instrument_device_id, command, cap_type, session_type=None):
         if cap_type == '1':
             agent_op = "execute_agent"
         elif cap_type == '3':
             agent_op = "execute_resource"
         params = {"command": {"type_": "AgentCommand", "command": command}}
         if command == 'RESOURCE_AGENT_EVENT_GO_DIRECT_ACCESS':
-            params['command'].update({'kwargs': {'session_type': 3, 'session_timeout':600, 'inactivity_timeout': 600}})
+            params['command'].update({'kwargs': {'session_type': int(session_type), 'session_timeout':600, 'inactivity_timeout': 600}})
         agent_request = service_gateway_agent_request(instrument_device_id, agent_op, params)
         return agent_request
 

@@ -62,7 +62,7 @@ IONUX.Views.ResourceParams = Backbone.View.extend({
 IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
   el: "#dynamic-container",
   template: _.template($("#instrument-command-facepage-tmpl").html()),
-  
+  command_template: _.template($('#instrument-command-tmpl').html()),
   events: {
     'click #start-instrument-agent-instance': 'start_agent',
     'click #stop-instrument-agent-instance': 'stop_agent',
@@ -91,6 +91,7 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
     start_btn.prop('value', 'Starting Instrument Agent...');
     var self = this;
     $.ajax({
+        type: 'POST',
         url: 'start/',
         success: function() {
           $('.instrument-commands').show();
@@ -109,6 +110,7 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
     stop_btn.prop('disabled', true);
     stop_btn.prop('value', 'Stopping Instrument Agent...')
     $.ajax({
+      type: 'POST',
       url: 'stop/',
       success: function() {
         stop_btn.hide();
@@ -129,11 +131,17 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
     execute_elmt.text("Executing...")
     execute_elmt.prop('disabled', true);
     $('#cmds').find('button').prop('disabled', true);
+    
     var cap_type = execute_elmt.data('cap-type');
     var command = execute_elmt.data('command');
-    var url = command + '?cap_type='+cap_type;
+    var url = command + '/?cap_type='+cap_type;
+    if (command == 'RESOURCE_AGENT_EVENT_GO_DIRECT_ACCESS') {
+      url += '&session_type='+this.$el.find('option:selected').val();
+    };
+    
     var self = this;
     $.ajax({
+      type: 'POST',
       url: url,
       dataType: 'json',
       success: function(resp){
@@ -157,7 +165,7 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
         url: 'get_capabilities?cap_type=abc123',
         dataType: 'json',
         success: function(resp){
-          console.log('get_capabilities:', resp);
+          console.log('get_capabilities resp: ', resp);
           self.render_commands(resp.data.commands);
           // Catch 'GatewayError' caused by unsupported/invalid state.
           if (!_.isEmpty(resp.data.resource_params) && !_.has(resp.data.resource_params, 'GatewayError')){
@@ -175,8 +183,9 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
                     <td style="text-align:right">\
                     <button class="btn-blue execute-command" data-cap-type="<%= cap_type %>" data-command="<%= name %>">Execute</button>\
                     </td></tr>'
+    var self = this;
     _.each(options, function(option){
-      $('#cmds tbody').append(_.template(cmd_tmpl, option));
+      $('#cmds tbody').append(self.command_template(option));
     });
   },
 });

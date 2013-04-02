@@ -14,6 +14,7 @@
         <link rel="stylesheet" href="/static/css/dark.css" type="text/css" />
         <link rel="stylesheet" href="/static/css/dark-datatable.css" type="text/css" />
         <link rel="stylesheet" href="/static/css/dark-geospatial.css" type="text/css" />
+        <link rel="stylesheet" href="/static/css/new-dashboard.css" type="text/css" />
         <link rel="stylesheet/less" href="/static/css/images.less" />
         <!-- Development styles -->
         <link rel="stylesheet" href="/static/css/dark-integration.css" type="text/css" />
@@ -43,7 +44,9 @@
 	    </div> <!-- div.wrapper -->
         
         <div id="footer"> </div>
-
+        <script type="text/template" id="dashboard-tmpl"><![CDATA[{% include 'partials/dashboard.html' %}]]></script>
+        <script type="text/template" id="dashboard-site-list-tmpl"><![CDATA[{% include 'partials/dashboard_site_list.html' %}]]></script>
+        
         <script type="text/template" id="topbar-tmpl"><![CDATA[{% include 'partials/topbar.html' %}]]></script>
         <script type="text/template" id="edit-resource-tmpl"><![CDATA[{% include 'partials/edit_resource.html' %}]]></script>
         <script type="text/template" id="user-profile-modal-tmpl"><![CDATA[{% include 'partials/user_profile_modal.html' %}]]></script>
@@ -52,6 +55,7 @@
         <script type="text/template" id="sidebar-production-tmpl"><![CDATA[{% include 'partials/sidebar_production.html' %}]]></script>
         <script type="text/template" id="sidebar-development-tmpl"><![CDATA[{% include 'partials/sidebar_development.html' %}]]></script>
         <script type="text/template" id="instrument-command-facepage-tmpl"><![CDATA[{% include 'partials/instrument_command_facepage.html' %}]]></script>
+        <script type="text/template" id="instrument-command-tmpl"><![CDATA[{% include 'partials/instrument_command.html' %}]]></script>
         <script type="text/template" id="platform-command-facepage-tmpl"><![CDATA[{% include 'partials/platform_command_facepage.html' %}]]></script>
         <script type="text/template" id="user-request-item-tmpl"><![CDATA[{% include 'partials/user_request_item.html' %}]]></script>
         <script type="text/template" id="resource-add-event-tmpl"><![CDATA[{% include 'partials/resource_add_event.html' %}]]></script>
@@ -72,22 +76,28 @@
         <script type="text/template" id="extent-vertical-tmpl"><![CDATA[{% include 'partials/extent_vertical.html' %}]]></script>
         <script type="text/template" id="extent-temporal-tmpl"><![CDATA[{% include 'partials/extent_temporal.html' %}]]></script>
         <script type="text/template" id="enroll-request-tmpl"><![CDATA[{% include 'partials/enroll_request.html' %}]]></script>
+        <script type="text/template" id="request-role-tmpl"><![CDATA[{% include 'partials/request_role.html' %}]]></script>
+        <script type="text/template" id="invite-user-tmpl"><![CDATA[{% include 'partials/invite_user.html' %}]]></script>
+        <script type="text/template" id="offer-user-role-tmpl"><![CDATA[{% include 'partials/offer_user_role.html' %}]]></script>
+        <script type="text/template" id="request-exclusive-access-tmpl"><![CDATA[{% include 'partials/request_exclusive_access.html' %}]]></script>
+        <script type="text/template" id="negotiation-commands-tmpl"><![CDATA[{% include 'partials/negotiation_commands.html' %}]]></script>
         <script type="text/template" id="error-tmpl"><![CDATA[{% include 'partials/error.html' %}]]></script>
         {% block extra_templates %} {% endblock %}
         
         <!-- Vendor JavaScripts -->
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCCcEp2hQdftRhaYgonh1Vyv0JYi5KVvFI&amp;sensor=false"> </script>
-
-        <script src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization','version':'1'}]}"> </script>
-        <script charset="utf-8">
-          google.load('visualization', '1', {'packages': ['annotatedtimeline']});
-        </script>
-      
-        <script type="text/javascript" src="/static/js/jquery-1.7.1.min.js"> </script>
-        <script type="text/javascript" src="/static/js/bootstrap.min.js"> </script>
-        <script type="text/javascript" src="/static/js/json2.js"> </script>
-        <script type="text/javascript" src="/static/js/underscore-1.4.4.min.js "> </script>
-        <script type="text/javascript" src="/static/js/backbone-0.9.2.min.js"> </script>
+        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCCcEp2hQdftRhaYgonh1Vyv0JYi5KVvFI&amp;sensor=false"> </script>
+        <script src="/static/visualization/js/markerclusterer.js"> </script>
+        <!-- 
+          <script src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization','version':'1'}]}"> </script>
+          <script charset="utf-8">
+            google.load('visualization', '1', {'packages': ['annotatedtimeline']});
+          </script>
+        -->
+        <script src="/static/js/jquery-1.7.1.min.js"> </script>
+        <script src="/static/js/bootstrap.min.js"> </script>
+        <script src="/static/js/json2.js"> </script>
+        <script src="/static/js/underscore-1.4.4.min.js "> </script>
+        <script src="/static/js/backbone-0.9.2.min.js"> </script>
         <script src="/static/js/backbone-forms.js"> </script>
         <script src="/static/js/bootstrap-forms.js"> </script>
         <script src="/static/js/list.js"> </script>
@@ -99,8 +109,9 @@
         <script src="/static/js/jquery.ui.widget.js"> </script>
         <script src="/static/js/jquery.fileupload.js"> </script>
         <script src="/static/js/less-1.2.1.min.js"> </script>
+        <script src="/static/js/spin.min.js"> </script>
 
-        {% block extra_vendor_js %} {% endblock %}`
+        {% block extra_vendor_js %} {% endblock %}
         
         <!-- UX JavaScripts -->	
         <script src="/static/js/ion-ux.js"> </script>
@@ -120,6 +131,7 @@
         <script src="/static/js/ux-views-notifications.js"> </script>
         <script src="/static/js/ux-views-instrument-command.js"> </script>
         <script src="/static/js/ux-views-platform-command.js"> </script>
+        <script src="/static/js/ux-views-dashboard.js"> </script>
         <script src="/static/js/ux-views-negotiations.js"> </script>
 
         {% block extra_ionux_js %} {% endblock %}

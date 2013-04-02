@@ -19,6 +19,7 @@ IONUX.Router = Backbone.Router.extend({
     ":resource_type/:view_type/:resource_id/edit" : "edit",
     "userprofile" : "user_profile",
     "create_account": "create_account",
+    'dev/dashboard': 'new_dashboard' // Preview dashbaord
   },
   edit: function(){
     var editable_resource = new IONUX.Models.EditableResource(window.MODEL_DATA.resource);
@@ -117,6 +118,14 @@ IONUX.Router = Backbone.Router.extend({
   create_account: function() {
     new IONUX.Views.CreateAccountView().render();
   },
+  
+  new_dashboard: function() {
+    $('.wrapper').html($('#dashboard-tmpl').html());
+    new IONUX.Views.ViewControls().render().el;
+    // var sites = new IONUX.Collections.Sites();
+    new IONUX.Views.SiteNavigation({collection: new IONUX.Collections.Sites()});
+    // sites.fetch();
+  },
 
     // KEPT FOR REFERENCE
     // user_profile: function() {
@@ -155,7 +164,7 @@ IONUX.Router = Backbone.Router.extend({
     });
   },
     
-  // graceful Backbone handling of full page refresh on non '/' url.
+  // // graceful Backbone handling of full page refresh on non '/' url.
   // handle_url: function(current_url){
   //     if (current_url != "/"){
   //         this.navigate(current_url, {trigger:true});
@@ -185,25 +194,57 @@ function replace_url_with_html_links(text) {
   return text.replace(exp,"<a class='external' target='_blank' href='$1'>$1</a>"); 
 };
 
+// Filter method for open negotiations shown in a data table
+// If this method returns true, there should be a column indicating
+// the view will be shown on row click.
+function negotiation_show_controls(row_data) {
+  // row data first column should always be of form resource_id/resource_type
+  // use this info to go and look up the real item, because UI columns may change
+  var neg = _.findWhere(window.MODEL_DATA.open_negotiations, {_id:row_data[0].split("::")[0]});
+  if (neg &&
+      window.MODEL_DATA.resource_type == "Org" &&
+      neg.proposals[0].originator == 1 && // originator == user proposed (1)
+      _.contains(IONUX.SESSION_MODEL.get('roles')[window.MODEL_DATA.resource.org_governance_name], 'ORG_MANAGER'))
+    return true;
+
+  if (neg &&
+      window.MODEL_DATA.resource_type == "UserInfo" &&
+      neg.proposals[0].originator == 2 && // originator == org proposed (2)
+      neg.proposals[0].consumer == IONUX.SESSION_MODEL.get('actor_id'))   // this is likely redundant
+    return true;
+
+  return false;
+};
+
+// Returns a displayable resource type for the resource_type given.
+// If the type is not displayable, traverse up the heirarchy of resources
+// until one is found.
+function get_renderable_resource_type(resource_type)
+{
+  // FIX/HACK: Observatory shouldn't be on its own, it should be a site
+  if (resource_type == "Observatory")
+    return "Site";
+
+  // conduct initial search of window.LAYOUT
+  var re = _.find(window.LAYOUT.spec.restypes, function(v, k) { return v.name == resource_type; });
+
+  while (re != null) {
+    if ($("." + re.name).length > 0)
+      return re.name;
+
+    re = window.LAYOUT.spec.restypes[re.super];
+  }
+
+  // unknown?
+  return "Resource";
+}
+
 // Renders a page based on resource_type
 function render_page(resource_type, resource_id, model) {
   var start_render = new Date().getTime();
 
-  // Catch and set derivative resources;
-  // it should be moved into it's own function
-  // so that we can develop more logic to handle
-  // heirarchy in face, status and related pages.
-  if (resource_type == 'InstrumentModel' || resource_type == 'PlatformModel' || resource_type == 'SensorModel') {
-      var resource_type = 'DeviceModel';
-  } else if (resource_type == 'Observatory' || resource_type == 'InstrumentSite' || resource_type == 'PlatformSite' || resource_type == 'Subsite') {
-      var resource_type = 'Site';
-  } else if (resource_type == 'SensorDevice') {
-      var resource_type = 'Device';
-  } else if (resource_type == 'DataProcess') {
-      var resource_type = 'TaskableResource';
-  } else if (resource_type == 'UserRole') {
-      var resource_type = 'InformationResource';
-  };
+   // get most displayable resource type - by derived or otherwise
+  resource_type = get_renderable_resource_type(resource_type);
   
   window.MODEL_DATA = model.data;
   window.MODEL_DATA['resource_type'] = resource_type;
@@ -268,7 +309,13 @@ function render_page(resource_type, resource_id, model) {
     var data_path = $(el).data('path');
     var raw_table_data = get_descendant_properties(window.MODEL_DATA, data_path);
     if (!_.isEmpty(raw_table_data)) {
-        var table = new IONUX.Views.DataTable({el: $(el), data: raw_table_data});
+        var opts = {el: $(el), data: raw_table_data}
+        if (data_path == "open_negotiations") {
+            _.extend(opts, {popup_view: IONUX.Views.NegotiationCommands,
+                            popup_label: "Accept/Reject",
+                            popup_filter_method: negotiation_show_controls});
+        } 
+        var table = new IONUX.Views.DataTable(opts);
     } else {
         var table = new IONUX.Views.DataTable({el: $(el), data: []});
     };
@@ -339,9 +386,6 @@ function render_page(resource_type, resource_id, model) {
         break;
       case 'Recent Events':
         new IONUX.Views.EventActions({el:$(el)});
-        break;
-      case 'Participants':
-        new IONUX.Views.NegotiationActions({el: $(el)});
         break;
       default:
         new IONUX.Views.GroupActions({el:$(el)});
