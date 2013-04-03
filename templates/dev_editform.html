@@ -13,6 +13,7 @@
 
 {% block extra_ionux_js %}
     <script src="/static/js/underscore.mixin.deepExtend.js"></script>
+    <script src="/static/js/backbone.bootstrap-modal.js"></script>
     <script src="/static/js/deep-model.js"></script>
     <script src="/static/js/ux-editform.js"></script>
     <script>
@@ -108,14 +109,18 @@
     IONUX.init();
     var black_list = ['resource._id', 'resource._rev', 'resource.ts_created', 'resource.ts_updated', 'resource.lcstate', 'resource.type_', 'resource.alt_ids'];
 
-nfmodel = new NestedFormModel(TEST_MODEL_DATA, {resource_type:"InstrumentDevice", black_list:black_list});
-
+nfmodel = new EditResourceModel({resource_type:"InstrumentDevice", black_list:black_list});
+//nfmodel = new EditResourceModel({resource_type:"InstrumentAgentInstance", black_list:black_list});
 nform = new Backbone.Form({model: nfmodel }).render();
+nfmodel.fetch();
+
 $("#dynamic-container").append(nform.el);
 
+//TEMP STYLING:
 $(".form-horizontal .control-label").css({"width":"300px", "margin-right":"10px"});
 $(".form-horizontal ul li").css({"display":"inline", "margin-right":"10px"});
 $(".form-horizontal ul li label").css({"display":"inline"});
+$(".bbf-add").css({"margin-left":"120px"});
 
 
 });

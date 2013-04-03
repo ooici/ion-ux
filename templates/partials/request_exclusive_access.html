@@ -1,0 +1,22 @@
+<div class="modal-header">
+  <h1>Request Exclusive Access: <%= resource_name %></h1>
+</div>
+<div class="modal-body">
+  <p>
+    Select the amount of time (up to 12 hours) you would like exclusive access to this resource.
+  </p>
+    <form class="form-horizontal">
+      <div class="control-group">
+        <label class="control-label" for="time">Reserved Time</label>
+        <div class="controls">
+          <input type="text" name="time" value="12" />
+          <span class="help-inline"></span>
+        </div>
+      </div>
+    </form>
+</div>
+<div class="modal-footer">
+  <button id="btn-request" class="btn-blue">Request Exclusive Access</button>
+  <button class="btn-general" data-dismiss="modal">Cancel</button>
+</div>
+

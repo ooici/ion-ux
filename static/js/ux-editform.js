@@ -4,19 +4,28 @@ Form styling:
 */
 
 
-var NestedFormModel = Backbone.DeepModel.extend({
+var EditResourceModel = Backbone.Model.extend({
 
-  initialize: function(attrs, options){
+  initialize: function(options){
     this.resource_type = options.resource_type;
     this.black_list = options.black_list || [];
     this.nest_depth_factor = options.nest_depth_factor || 50;
     Backbone.Form.helpers.keyToTitle = this.key_to_title;
+    Backbone.Form.editors.List.Modal.ModalAdapter = Backbone.BootstrapModal;
+  },
+
+  url: function(){
+    return "/resource_type_edit/"+this.resource_type+'/';
+  },
+
+  parse: function(resp){
+    return resp.data.GatewayResponse;
   },
 
   schema: function(){
-    var resource_type_schema = this.get_resource_type_schema();
-    resource_type_schema = resource_type_schema['data'];
-    var schema = this.make_schema(resource_type_schema);
+    var schema = this.get_resource_type_schema();
+    //resource_type_schema = resource_type_schema['schema'];
+    //var schema = this.make_schema(resource_type_schema);
     return schema;
   },
 
@@ -25,10 +34,13 @@ var NestedFormModel = Backbone.DeepModel.extend({
     var self = this;
     var schema_full = {};
     _.each(paths, function(key, val){
-      var form_type = self.resource_type_schema_form_type(resource_type_schema, key);
+      var form_type_and_options = self.resource_type_schema_form_type(resource_type_schema, key);
+      var form_type = form_type_and_options[0], options = form_type_and_options[1];
       var margin_left = self.nest_depth(key) * self.nest_depth_factor;
-      var keyschema = {type: form_type, options:["Option1", "Option2"], fieldClass: "nestedform",
-                   fieldAttrs:{style: "margin-left:"+margin_left+"px"}};
+      var keyschema = {type: form_type, options:options,
+                      fieldClass: "nestedform", 
+                      fieldAttrs:{style: "margin-left:"+margin_left+"px"}};
+      //TODO: only add 'options' if non-empty list?
       schema_full[key] = keyschema;
     });
     var schema = _.omit(schema_full, this.black_list); // remove black_listed
@@ -36,27 +48,31 @@ var NestedFormModel = Backbone.DeepModel.extend({
   },
 
   resource_type_schema_form_type: function(resource_type_schema_obj, data_key){
+    //XXX is this still needed?
     var root_type = 'resource'; //XXX make more general
-    var form_type = 'Text';
+    var form_type_and_options = ["Text", []];
     _.each(resource_type_schema_obj, function(key, val){
+      console.log(key, val);
       var regex_str = root_type + '.' + val;
       var reg = new RegExp(regex_str);
       var match = reg.exec(data_key);
-      if (!_.isNull(match)) form_type = key;
+      if (!_.isNull(match)){
+         form_type_and_options = key;
+      }
       //console.log(regex_str, key, val, data_key, match, form_type);
     });
-   return form_type; 
+   return form_type_and_options; 
   },
 
   get_resource_type_schema: function(){
     /* NOTE: this is a blocking ajax call (async:false) */
     var url = "/resource_type_schema/"+this.resource_type; 
-    var schema = null;
+    var data = null;
     $.ajax({url:url, type:"GET", dataType:"json", async:false})
       .always(function(){})
-      .done(function(resp){schema = resp;})
+      .done(function(resp){data = resp;})
       .fail(function(){})
-    return schema;
+    return data["schema"];
   },
 
   nest_depth: function(val){
@@ -68,14 +84,10 @@ var NestedFormModel = Backbone.DeepModel.extend({
 
   key_to_title: function(val){
     var wlist = val.split(".");
-    wlist.shift(); //remove root name
     wlist = _.flatten(_.map(wlist, function(w){return w.split("_")}));
-    var intarray = _.filter(wlist, function(w){return !_.isNaN(parseInt(w))});
-    var warray = _.filter(wlist, function(w){return _.isNaN(parseInt(w))});
-    var nest_depth = intarray.length;
+    wlist = _.flatten(_.map(wlist, function(w){return w.split(".")}));
     var capital = function(w){return w.charAt(0).toUpperCase() + w.slice(1)};
-    wlist = _.map(warray, capital); //Capitalize
-    //wlist = wlist.slice(nest_depth, wlist.length); //last part is form title
+    wlist = _.map(wlist, capital); //Capitalize
     title = wlist.join(" ");
     return title;
   },
