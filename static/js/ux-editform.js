@@ -15,7 +15,7 @@ var EditResourceModel = Backbone.Model.extend({
   },
 
   url: function(){
-    return "/resource_type_edit/"+this.resource_type;
+    return "/resource_type_edit/"+this.resource_type+'/';
   },
 
   parse: function(resp){
