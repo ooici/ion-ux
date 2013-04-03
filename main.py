@@ -11,7 +11,7 @@ from config import FLASK_HOST, FLASK_PORT, GATEWAY_HOST, GATEWAY_PORT, LOGGED_IN
 from service_api import ServiceApi, error_message
 from layout_api import LayoutApi
 from jinja2 import Template
-from urlparse import urlparse
+from urlparse import urlparse, parse_qs
 import re
 import os
 
@@ -80,18 +80,23 @@ def search(query=None):
             search_results = ServiceApi.search(quote(search_query))
         else:
             print request.form
-            geospatial_bounds = {'north': request.form.get('geospatial_bounds[north]', None),
-                                  'east': request.form.get('geospatial_bounds[east]', None),
-                                 'south': request.form.get('geospatial_bounds[south]', None),
-                                  'west': request.form.get('geospatial_bounds[west]', None)}
+            adv_query_string = request.form['adv_query_string']
+            adv_query_chunks = parse_qs(adv_query_string)
 
-            vertical_bounds   = {'lower': request.form.get('vertical_bounds[lower]', None),
-                                 'upper': request.form.get('vertical_bounds[upper]', None)}
+            print "chunks", adv_query_chunks
 
-            temporal_bounds   = {'from': request.form.get('temporal_bounds[from]', None),
-                                   'to': request.form.get('temporal_bounds[to]', None)}
+            geospatial_bounds = {'north': adv_query_chunks.get('north', [''])[0],
+                                  'east': adv_query_chunks.get('east', [''])[0],
+                                 'south': adv_query_chunks.get('south', [''])[0],
+                                  'west': adv_query_chunks.get('west', [''])[0]}
 
-            search_criteria   = request.form.get('search_criteria', None)
+            vertical_bounds   = {'lower': adv_query_chunks.get('lower', [''])[0],
+                                 'upper': adv_query_chunks.get('upper', [''])[0]}
+
+            temporal_bounds   = {'from': adv_query_chunks.get('from', [''])[0],
+                                   'to': adv_query_chunks.get('to', [''])[0]}
+
+            search_criteria   = request.form.get('search_criteria', [''])[0]
 
             search_results    = ServiceApi.adv_search(geospatial_bounds,
                                                       vertical_bounds,

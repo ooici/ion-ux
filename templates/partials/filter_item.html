@@ -1,15 +1,15 @@
 <div class="filter-item">
-    <select class="column" name="filter_var[]">
+    <select class="column" name="filter_var">
         <% _.each(columns, function(e) { %>
         <option value="<%= e.replace(/ /g, "_") %>"><%= e %></option>
         <%});%>
     </select>
-    <select class="operator" name="filter_operator[]">
+    <select class="operator" name="filter_operator">
         <% _.each(operators, function(e) { %>
         <option value="<%= e.replace(/ /g, "_") %>"><%= e %></option>
         <%});%>
     </select>
-    <input class="argument" type="text" name="filter_arg[]" value="" />
+    <input class="argument" type="text" name="filter_arg" value="" />
 
     <span class="filter-add"><i class="icon-plus-sign icon-white"></i></span>
     <span class="filter-remove"><i class="icon-remove-sign icon-white"></i></span>

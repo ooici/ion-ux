@@ -317,35 +317,11 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
     mu_listener2 = google.maps.event.addListenerOnce(self.rectangle, 'mouseup', muphandler);
   },
   search_clicked: function(e) {
-    var geospatial_bounds = {north: this.$('input[name="north"]').val(),
-                              east: this.$('input[name="east"]').val(),
-                             south: this.$('input[name="south"]').val(),
-                              west: this.$('input[name="west"]').val()}
+    var search_term = "adv=1&" + this.$('form').serialize(); // marker at front to make distinguishing queries easier
 
-    var vertical_bounds = {lower: this.$('input[name="vertical-lower-bound"]').val(),
-                           upper: this.$('input[name="vertical-upper-bound"]').val()}
+    IONUX.ROUTER.navigate('/search/?'+ encodeURI(search_term), {trigger:true});
+    $('#advanced-search-overlay').modal('hide');
 
-    var temporal_bounds = {from: this.$('input[name="temporal-from-ctrl"]').val(),
-                             to: this.$('input[name="temporal-to-ctrl"]').val()}
-
-    var search_criteria = null;
-
-    $.ajax({
-      type: "POST",
-      dataType: 'json',
-      url: window.location.protocol + "//" + window.location.host + "/search/",
-      data: {geospatial_bounds: geospatial_bounds,
-             vertical_bounds: vertical_bounds,
-             temporal_bounds: temporal_bounds,
-             search_criteria: search_criteria},
-      // global: false,
-      success: function(resp){
-        console.log(resp);
-        //$('#btn-cancel').click();
-        //Backbone.history.fragment = null; // Clear history fragment to allow for page "refresh".
-        //IONUX.ROUTER.navigate(window.location.pathname, {trigger: true});
-      }
-    });
   },
   add_filter_item: function(evt) {
     //var columns = this.get_filter_columns();

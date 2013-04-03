@@ -1234,6 +1234,10 @@ ul.nav {
   margin: 0px;
 }
 
+#advanced-search-overlay form {
+  margin: 0px;
+}
+
 #advanced-search-overlay #searchterms_holder label {
   font-size: 0.9em;
   margin: 0px;
