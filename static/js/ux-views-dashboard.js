@@ -100,6 +100,7 @@ IONUX.Views.MapFilter = Backbone.View.extend({
       lcstate_elmt.append(_.template(lcstate_tmpl, option));
     });
     
+    // Waiting for resource_registry calls
     // var data_elmt = this.$el.find('#data-filter');
     // _.each(this.filter_options.data_options, function(option) {
     //   data_elmt.append(_.template(item_tmpl, option));
@@ -114,14 +115,12 @@ IONUX.Views.MapFilter = Backbone.View.extend({
     console.log('set_filter');
     var filter_elmt = $(e.target);
     var type = filter_elmt.val();
-
     if (filter_elmt.is(':checked')) {
       var index = IONUX.MapBlacklist.indexOf(type)
       IONUX.MapBlacklist.splice(index);
     } else {
       IONUX.MapBlacklist.push(type);
     }; 
-    
     IONUX.Dashboard.Resources.trigger('reset');
   },
 });

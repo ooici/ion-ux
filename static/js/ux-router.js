@@ -55,7 +55,8 @@ IONUX.Router = Backbone.Router.extend({
   
   dev_dashboard_map_resource: function(resource_id){
     console.log('router map_resource', resource_id);
-    $('#2163993').empty().append('<div style="margin-top:50px;" id="spinner"></div>');
+    // Todo: properly remove/unbind via Backbone.
+    $('#2163993').off().empty().append('<div style="margin-top:50px;" id="spinner"></div>');
     
     // Todo: move into it's own view for reuse;
     var opts = {
