@@ -149,14 +149,6 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
     $('#advanced-search-overlay').modal()
       .on('shown', function() {
 
-        $('input[type="checkbox"]', self.$el).change(function() {
-          if ($('input[type="checkbox"]:checked').length == 0)
-            $('#searchtermsradio_all', self.$el).attr('checked', true);
-          else
-            $('#searchtermsradio_limit', self.$el).attr('checked', true);
-
-        });
-
         self.add_filter_item();
 
         self.map = new google.maps.Map($('#adv_map', self.$el)[0], map_options);
