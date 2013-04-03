@@ -1,11 +1,10 @@
+// Todo: clean up MapAsset events and get draw_markers/render_table events
+// in sync. Possibly move MapBlacklist into it's own collection and listen
+// for change events.
+
 IONUX.DashboardView = "Map";
 IONUX.DashboardResource = null;
 IONUX.MapBlacklist = ['DRAFT'];
-
-// IONUX.Dashboard.MapFilter = {
-//   short: {},
-//   long: []
-// };
 
 IONUX.Views.ViewControls = Backbone.View.extend({
   el: '#view-controls',
@@ -70,7 +69,6 @@ IONUX.Views.MapFilter = Backbone.View.extend({
   ',
 
   events: {
-    // 'click #radio-assets, #radio-data': 'toggle_filter',
     'click .filter-option': 'set_filter'
   },
   initialize: function(){
@@ -108,6 +106,7 @@ IONUX.Views.MapFilter = Backbone.View.extend({
   },
   
   set_filter: function(e){
+    console.log('set_filter');
     var filter_elmt = $(e.target);
     var type = filter_elmt.val();
 
@@ -180,8 +179,7 @@ IONUX.Views.ObservatorySelector = IONUX.Views.ResourceSelector.extend({
   }
 });
 
-IONUX.Views.SiteSelector = IONUX.Views.ResourceSelector.extend({
-});
+IONUX.Views.SiteSelector = IONUX.Views.ResourceSelector.extend({});
 
 
 /* 
@@ -230,13 +228,13 @@ IONUX.Views.AssetMap = Backbone.View.extend({
   },
   
   render_table: function(){
-    console.log('render_table', !_.isEmpty(IONUX.MapBlacklist) );
+    console.log('render_table');
     var resource_table = $('#2163993');
     resource_table.show();
     if (!_.isEmpty(IONUX.MapBlacklist)) {
       var filtered_resources = []
       _.each(IONUX.Dashboard.Resources.models, function(resource) {
-        if (!_.contains(IONUX.MapBlacklist, resource.get('type_'))) {
+        if (!_.contains(IONUX.MapBlacklist, resource.get('type_')) && !_.contains(IONUX.MapBlacklist, resource.get('lcstate'))) {
           filtered_resources.push(resource.toJSON());
         };
       });
@@ -304,7 +302,6 @@ IONUX.Views.AssetMap = Backbone.View.extend({
       var _map = this.map;
       // Event when marker is clicked
       google.maps.event.addListener(marker, 'click', function(_map) {
-        console.log('clicky, clicky');
         // iw.open(this.map, marker);
       });
 
@@ -324,7 +321,6 @@ IONUX.Views.AssetMap = Backbone.View.extend({
     this.markerClusterer.clearMarkers();
   },
   test_markers: function() {
-    // var asset_table=document.getElementById("asset_table");
     var row, cell;
     var _lat = 32.7;
     var _lon = -117.1;
