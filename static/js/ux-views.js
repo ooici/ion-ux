@@ -99,7 +99,8 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
   events: {
     "click .filter-add": "add_filter_item",
     "click .filter-remove": "remove_filter_item",
-    "click #btn-adv-search": "search_clicked"
+    "click #btn-adv-search": "search_clicked",
+    "change select[name='filter_var']": "filter_field_changed",
   },
   geodata: { geospatial_latitude_limit_north: null,
              geospatial_latitude_limit_south: null,
@@ -315,18 +316,134 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
     $('#advanced-search-overlay').modal('hide');
 
   },
+  filter_fields: [
+    {field: 'ooi_short_name'        , label: 'OOI Data Product Code'    , values: []} ,
+    {field: 'ooi_product_name'      , label: 'Data Product Type'        , values: []} ,
+    {field: 'description'           , label: 'Description'              , values: []} ,
+    {field: 'instrument_family'     , label: 'Instrument Family'        , values: []} ,
+    {field: 'lcstate'               , label: 'Lifecycle State'          , values: ['DRAFT','PLANNED','DEVELOPED','INTEGRATED','DEPLOYED','RETIRED']} ,
+    {field: 'name'                  , label: 'Name'                     , values: []} ,
+    {field: 'alt_ids'               , label: 'OOI Reference Designator' , values: []} ,
+    {field: 'name'                  , label: 'Organization'             , values: []} ,
+    {field: 'platform_family'       , label: 'Platform Family'          , values: []} ,
+    {field: 'processing_level_code' , label: 'Processing Level'         , values: [['L0 - Unprocessed Data', 'L0'],
+                                                                                   ['L1 - Basic Data', 'L1'],
+                                                                                   ['L2 - Derived Data', 'L2']]} ,
+    {field: 'quality_control_level' , label: 'Quality Control Level'    , values: [['a - No QC applied', 'a'],
+                                                                                   ['b - Automatic QC applied', 'b'],
+                                                                                   ['c - Human QC applied', 'c']]} ,
+    {field: 'name'                  , label: 'Site'                     , values: ['Coastal Endurance',
+                                                                                   'Coastal Pioneer',
+                                                                                   'Global Argentine Basin',
+                                                                                   'Global Irminger Sea',
+                                                                                   'Global Southern Ocean',
+                                                                                   'Global Station Papa',
+                                                                                   'Regional Axial',
+                                                                                   'Regional Hydrate Ridge',
+                                                                                   'Regional Mid Plate']} ,
+    {field: 'aggregated_status'     , label: 'Status'                   , values: ['Critical', 'OK', 'None expected', 'Warning']} ,
+    {field: 'type_'                 , label: 'Type'                     , values: [['Platform','PlatformDevice'],
+                                                                                   ['Port','InstrumentSite'],
+                                                                                   ['Platform Model','PlatformModel'],
+                                                                                   ['Platform Agent Definition','PlatformAgent'],
+                                                                                   ['Platform Agent','PlatformAgentInstance'],
+                                                                                   ['Instrument','InstrumentDevice'],
+                                                                                   ['Instrument Model','InstrumentModel'],
+                                                                                   ['Instrument Agent Definition','InstrumentAgent'],
+                                                                                   ['Instrument Agent','InstrumentAgentInstance'],
+                                                                                   ['Data Product','DataProduct'],
+                                                                                   ['Data Transform','DataProcessDefinition'],
+                                                                                   ['Data Agent Definition','ExternalDatasetAgent'],
+                                                                                   ['Data Agent','ExternalDatasetAgentInstance'],
+                                                                                   ['Data Process','Data Process'],
+                                                                                   ['Site','Observatory'],
+                                                                                   ['Station','PlatformSite'],
+                                                                                   ['Event Type','EventType'],
+                                                                                   ['Event','Event'],
+                                                                                   ['Deployment','Deployment'],
+                                                                                   ['Organization [Facility]','Org'],
+                                                                                   ['User','UserInfo'],
+                                                                                   ['Role','UserRole'],
+                                                                                   ['Attachment','Attachment'],
+                                                                                   ['Subscription','NotificationRequest'], ]},
+  ],
+  filter_field_changed: function(evt){
+    var sel = $(evt.currentTarget);
+    var filter_container = sel.parent();
+
+    var operators = ['contains', 'matches', 'starts with', 'ends with'];
+
+    // determine if the selected field is a dropdown type or an entry type
+    var entry = _.findWhere(this.filter_fields, {'label': sel.find("option:selected").text() });
+    console.log(entry);
+
+    if (entry == null) {
+      console.error("Could not find associated entry");
+      return;
+    }
+
+    if (entry.values.length == 0) {
+      // this is a manual textbox entry
+      filter_container.find('input[name="filter_operator"]').remove();
+      filter_container.find('select[name="filter_arg"]').remove();
+
+      if (filter_container.find('select[name="filter_operator"]').length == 0) {
+        var sel_operator = $('<select class="operator" name="filter_operator"></select>');
+        filter_container.find('.filter-add').before(sel_operator);
+        _.each(operators, function(o) {
+          sel_operator.append('<option>' + o + '</option>');
+        });
+      }
+
+      if (filter_container.find('input[name="filter_arg"]').length == 0) {
+        var inp_arg = '<input class="argument" type="text" name="filter_arg" value="" />';
+        filter_container.find('.filter-add').before(inp_arg);
+      }
+
+    } else {
+
+      filter_container.find('select[name="filter_operator"]').remove();
+      filter_container.find('input[name="filter_arg"]').remove();
+
+      if (filter_container.find('input[name="filter_operator"]').length == 0) {
+        var sel_operator = '<input type="text" class="argument" style="visibility:hidden;" name="filter_operator" value="matches" />';
+        filter_container.find('.filter-add').before(sel_operator);
+      }
+
+      var inp_arg = filter_container.find('select[name="filter_arg"]'); 
+      if (inp_arg.length == 0) {
+        inp_arg = $('<select class="column" name="filter_arg"></select>');
+        filter_container.find('.filter-add').before(inp_arg);
+      }
+
+      inp_arg.empty();
+      _.each(entry.values, function(v) {
+        var value = null, label = null;
+        if (typeof(v) == "string")
+          value = label = v;
+        else {
+          label = v[0];
+          value = v[1];
+        }
+        inp_arg.append('<option value="' + value + '">' + label + '</option>');
+      });
+    }
+  },
   add_filter_item: function(evt) {
     //var columns = this.get_filter_columns();
     //var data = {"columns":columns, "operators":OPERATORS};
 
-    var data = {'columns':['test1', 'test2'], 'operators': ['op1', 'op2']};
-    var filter_item = this.filter_template(data);
+
+    var filter_item = $(this.filter_template({'fields':this.filter_fields}));
     if (evt == null){
       this.$el.find(".filter-item-holder").append(filter_item);
     } else {
       var target = $(evt.target);
       target.parents('.filter-item').after(filter_item);
     }
+
+    // preselect name field
+    filter_item.find('select[name="filter_var"] option[value="name"]:contains("Name")').attr('selected', 'selected').change();
   },
   remove_filter_item: function(evt) {
     var this_filter_item = $(evt.target).parents('.filter-item');

@@ -35,6 +35,7 @@ IONUX.Router = Backbone.Router.extend({
       // advanced search, set fetch_opts properly
       fetch_opts.type = 'POST';
       fetch_opts.data = {'adv_query_string': query}
+      search_model.set({search_query: "advanced"})
     } else {
       search_model.set({search_query: query});
     }
