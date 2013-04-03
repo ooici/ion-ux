@@ -4,7 +4,7 @@
 
 IONUX.DashboardView = "Map";
 IONUX.DashboardResource = null;
-IONUX.MapBlacklist = ['DRAFT'];
+IONUX.MapBlacklist = [];
 
 IONUX.Views.ViewControls = Backbone.View.extend({
   el: '#view-controls',
@@ -27,6 +27,7 @@ IONUX.Views.ViewControls = Backbone.View.extend({
   render_list_view: function(e) {
     if (e) e.preventDefault();
     $('#btn-resources').addClass('active').siblings('.active').removeClass('active');
+    IONUX.ROUTER.navigate('/dev/dashboard/resources', true);
   },
 });
 
@@ -82,23 +83,27 @@ IONUX.Views.MapFilter = Backbone.View.extend({
   },
   
   render_filter_options: function(options){
-    var item_tmpl = '<div class="filter-option"><%= label %> <input type="checkbox" value="<%= type %>" checked /></div>';
-    var lcstate_tmpl = '<div class="filter-option"><%= label %> <input type="checkbox" value="<%= lcstate %>" checked /></div>';
+    // Should not be in separate templates? 
+    // Waiting for definitive filter behavior before consolidating.
+    var item_tmpl = '<div class="filter-option"><%= label %> <input type="checkbox" value="<%= type %>" <%= checked %> /></div>';
+    var lcstate_tmpl = '<div class="filter-option"><%= label %> <input type="checkbox" value="<%= lcstate %>" <%= checked %> /></div>';
 
     var assets_elmt = this.$el.find('#asset-filter');
     _.each(this.filter_options.asset_options, function(option) {
+      option['checked'] = _.contains(IONUX.MapBlacklist, option['type']) ? "" : "checked";
       assets_elmt.append(_.template(item_tmpl, option));
-    });
-    
-    var data_elmt = this.$el.find('#data-filter');
-    _.each(this.filter_options.data_options, function(option) {
-      data_elmt.append(_.template(item_tmpl, option));
     });
     
     var lcstate_elmt = this.$el.find('#lcstate-filter');
     _.each(this.filter_options.lcstate_options, function(option) {
+      option['checked'] = _.contains(IONUX.MapBlacklist, option['lcstate']) ? "" : "checked";
       lcstate_elmt.append(_.template(lcstate_tmpl, option));
     });
+    
+    // var data_elmt = this.$el.find('#data-filter');
+    // _.each(this.filter_options.data_options, function(option) {
+    //   data_elmt.append(_.template(item_tmpl, option));
+    // });
   },
   
   toggle_filter: function(e) {

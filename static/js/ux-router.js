@@ -20,9 +20,13 @@ IONUX.Router = Backbone.Router.extend({
     "userprofile" : "user_profile",
     "create_account": "create_account",
     'dev/dashboard': 'dev_dashboard',
-    'dev/dashboard/map/:resource_id': 'map_resource'
+    'dev/dashboard/map/:resource_id': 'dev_dashboard_map_resource',
+    'dev/dashboard/resources': 'dev_dashboard_resources',
   },
 
+  dev_dashboard_resources: function() {
+    console.log('dev_dashboard_resources');
+  },
 
   dev_dashboard: function() {
     $('#footer').remove(); // Remove legacy footer.
@@ -49,7 +53,7 @@ IONUX.Router = Backbone.Router.extend({
     });
   },
   
-  map_resource: function(resource_id){
+  dev_dashboard_map_resource: function(resource_id){
     console.log('router map_resource', resource_id);
     $('#2163993').empty().append('<div style="margin-top:50px;" id="spinner"></div>');
     
