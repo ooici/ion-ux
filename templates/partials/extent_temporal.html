@@ -1,11 +1,11 @@
 <h4><%= label %></h4>
-<div class="temporal-from">
-    From:<br />
-    <input type="text" class="textfield_geo" value="<%= temporal_from %>" disabled /> <i class="icon-calendar icon-white"></i>
+<div class="temporal-from control-group">
+    <label class="control-label" for="temporal-from-ctrl">From:</label>
+    <input type="text" name="temporal-from-ctrl" class="textfield_geo" value="<%= temporal_from %>" disabled /> <i class="icon-calendar icon-white"></i>
 </div>
 <div class="temporal-to">
-    To:<br />
-    <input type="text" class="textfield_geo" value="<%= temporal_to %>" disabled /> <i class="icon-calendar icon-white"></i>
+    <label class="control-label" for="temporal-to-ctrl">To:</label>
+    <input type="text" name="temporal-to-ctrl" class="textfield_geo" value="<%= temporal_to %>" disabled /> <i class="icon-calendar icon-white"></i>
 </div>
 
 <% if (typeof(integration_info) != 'undefined') { %>

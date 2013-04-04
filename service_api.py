@@ -1,5 +1,5 @@
 import requests, json, time, pprint
-from flask import session, jsonify
+from flask import session, jsonify, abort
 from config import GATEWAY_HOST, GATEWAY_PORT
 from copy import deepcopy
 from instrument_command import BLACKLIST
@@ -37,6 +37,68 @@ class ServiceApi(object):
             return search_json['data']['GatewayResponse']
         else:
             return search_json['data']
+
+    @staticmethod
+    def adv_search(geospatial_bounds, vertical_bounds, temporal_bounds, search_criteria):
+        post_data = { 'query': {},
+                      'and': [],
+                      'or': [] }
+
+        queries = []
+
+        if geospatial_bounds and all(geospatial_bounds.itervalues()):
+            queries.append({'bottom_right': [float(geospatial_bounds['east']), float(geospatial_bounds['south'])],
+                                'top_left': [float(geospatial_bounds['west']), float(geospatial_bounds['north'])],
+                                   'field': 'geospatial_point_center',
+                                   'index': 'resources_index'})
+
+        if vertical_bounds and all(vertical_bounds.itervalues()):
+            queries.append({'vertical_bounds': {'from': float(vertical_bounds['lower']), 'to': float(vertical_bounds['upper'])},
+                            'field': 'geospatial_bounds',
+                            'index': 'resources_index'})
+
+        if temporal_bounds and all(temporal_bounds.itervalues()):
+            queries.append({'time_bounds': {'from': temporal_bounds['from'], 'to': temporal_bounds['to']},
+                            'field': 'nominal_datetime',
+                            'index': 'resources_index'})
+
+        if search_criteria:
+            for item in search_criteria:
+                # if no value, it's probably just the first one left blank
+                if not item[2]:
+                    continue
+
+                q = {'index': 'resources_index', 'field': str(item[0])}
+                v = str(item[2])
+
+                if item[1].lower() == "contains":
+                    q['value'] = "*{0}*".format(v)
+                elif item[1].lower() == "starts with":
+                    q['value'] = "{0}*".format(v)
+                elif item[1].lower() == "ends with":
+                    q['value'] = "*{0}".format(v)
+                elif item[1].lower() == "like":
+                    q['fuzzy'] = v
+                else:
+                    q['value'] = v       # matches or anything we didn't get
+
+                queries.append(q)
+
+        # transform queries into the expected query object
+        if len(queries) == 0:
+            abort(500)
+
+        post_data['query'] = queries[0]
+        post_data['and'] = queries[1:]
+
+        # have to manually call because normal SG post turns a list into the first object?
+        url, data = build_post_request('discovery', 'query', {'query': post_data, 'id_only': False})
+        resp = requests.post(url, data)
+        search_json = json.loads(resp.content)
+        if search_json['data'].has_key('GatewayResponse'):
+            return search_json['data']['GatewayResponse']
+
+        return search_json['data']
 
     @staticmethod
     def update_resource(resource_obj):

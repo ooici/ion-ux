@@ -38,7 +38,7 @@ IONUX.Models.Search = Backbone.Model.extend({
     parse: function(resp){
         make_iso_timestamps(resp);
         return resp.data;
-    }    
+    }
 });
 
 // For use with collections of Resource Types, i.e. InstrumentDevice, PlatformDevice, etc.

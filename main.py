@@ -11,7 +11,7 @@ from config import FLASK_HOST, FLASK_PORT, GATEWAY_HOST, GATEWAY_PORT, LOGGED_IN
 from service_api import ServiceApi, error_message
 from layout_api import LayoutApi
 from jinja2 import Template
-from urlparse import urlparse
+from urlparse import urlparse, parse_qs
 import re
 import os
 
@@ -72,11 +72,39 @@ def index():
 # SEARCH & ATTACHMENTS
 # -----------------------------------------------------------------------------
 
-@app.route('/search/', methods=['GET'])
+@app.route('/search/', methods=['GET', 'POST'])
 def search(query=None):
     if request.is_xhr:
-        search_query = escape(request.args.get('query'))
-        search_results = ServiceApi.search(quote(search_query))
+        if request.method == "GET":
+            search_query = escape(request.args.get('query'))
+            search_results = ServiceApi.search(quote(search_query))
+        else:
+            print request.form
+            adv_query_string = request.form['adv_query_string']
+            adv_query_chunks = parse_qs(adv_query_string)
+
+            print "chunks", adv_query_chunks
+
+            geospatial_bounds = {'north': adv_query_chunks.get('north', [''])[0],
+                                  'east': adv_query_chunks.get('east', [''])[0],
+                                 'south': adv_query_chunks.get('south', [''])[0],
+                                  'west': adv_query_chunks.get('west', [''])[0]}
+
+            vertical_bounds   = {'lower': adv_query_chunks.get('vertical-lower-bound', [''])[0],
+                                 'upper': adv_query_chunks.get('vertical-upper-bound', [''])[0]}
+
+            temporal_bounds   = {'from': adv_query_chunks.get('temporal-from-ctrl', [''])[0],
+                                   'to': adv_query_chunks.get('temporal-to-ctrl', [''])[0]}
+
+            search_criteria   = zip(adv_query_chunks.get('filter_var', []),
+                                    adv_query_chunks.get('filter_operator', []),
+                                    adv_query_chunks.get('filter_arg', []))
+
+            search_results    = ServiceApi.adv_search(geospatial_bounds,
+                                                      vertical_bounds,
+                                                      temporal_bounds,
+                                                      search_criteria)
+
         return render_json_response(search_results)
     else:
         return render_app_template(request.path)

@@ -88,8 +88,369 @@ IONUX.Views.Search = Backbone.View.extend({
   },
   advanced_search: function(e){
     e.preventDefault();
-    alert("Advanced search is not available.");
+    new IONUX.Views.AdvancedSearch().render().el;
     return false;
+  },
+});
+
+IONUX.Views.AdvancedSearch = Backbone.View.extend({
+  tagName: "div",
+  template: _.template($("#advanced-search-tmpl").html()),
+  events: {
+    "click .filter-add": "add_filter_item",
+    "click .filter-remove": "remove_filter_item",
+    "click #btn-adv-search": "search_clicked",
+    "change select[name='filter_var']": "filter_field_changed",
+  },
+  geodata: { geospatial_latitude_limit_north: null,
+             geospatial_latitude_limit_south: null,
+             geospatial_longitude_limit_east: null,
+             geospatial_longitude_limit_west: null,
+             geospatial_vertical_min: null,
+             geospatial_vertical_max: null },
+  filter_template: _.template($('#filter-item-tmpl').html()),
+  render: function() {
+    $('body').append(this.$el);
+    var modal_html = this.template();
+    this.$el.append(modal_html);
+
+    var self = this;
+
+    // set up search views
+    new IONUX.Views.ExtentGeospatial({el:$('#adv-geospatial', this.$el), data: self.geodata}).render().el;
+    new IONUX.Views.ExtentVertical({el:$('#adv-vertical', this.$el), data: self.geodata}).render().el;
+    new IONUX.Views.ExtentTemporal({el:$('#adv-temporal', this.$el), data: self.geodata}).render().el;
+
+    // enable input in controls
+    $('input', this.$el).removeAttr('disabled');
+    $('input', '#adv-geospatial')
+      .on('change', function() {
+        var ninput = $('input[name="north"]', self.$el);
+        var sinput = $('input[name="south"]', self.$el);
+        var einput = $('input[name="east"]', self.$el);
+        var winput = $('input[name="west"]', self.$el);
+
+        //if (ninput.val() > sinput.val()) { ninput.val(sinput.val()); }
+        //if (einput.val() < winput.val()) { einput.val(winput.val()); }    // @TODO incorrect
+
+        var bounds = new google.maps.LatLngBounds(
+          new google.maps.LatLng(sinput.val(), winput.val()),
+          new google.maps.LatLng(ninput.val(), einput.val())
+        );
+        self.rectangle.setBounds(bounds);
+      });
+
+    var map_options = {
+      center: new google.maps.LatLng(0, 0),
+      zoom: 1,
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+      draggable: false,
+    };
+
+    $('#advanced-search-overlay').modal()
+      .on('shown', function() {
+
+        self.add_filter_item();
+
+        self.map = new google.maps.Map($('#adv_map', self.$el)[0], map_options);
+        self.rectangle = new google.maps.Rectangle();
+
+        var close_symbol = { path         : "M24.778,21.419L19.276,15.917L24.777,10.415L21.949,7.585L16.447,13.087L10.945,7.585L8.117,10.415L13.618,15.917L8.116,21.419L10.946,24.248L16.447,18.746L21.948,24.248Z",
+                             fillColor    : "white",
+                             fillOpacity  : 0.9,
+                             scale        : 0.8,
+                             strokeColor  : "black",
+                             strokeWeight : 1,
+                             anchor       : new google.maps.Point(-3, 25) }
+
+        self.close_marker = new google.maps.Marker({ icon    : close_symbol,
+                                                     map     : self.map,
+                                                     visible : false });
+
+        var rect_options = { fillColor     : '#c4e5fc',
+                             fillOpacity   : 0.5,
+                             strokeWeight  : 1,
+                             strokeColor   : '#0cc1ff',
+                             strokeOpacity : 0.8,
+                             editable      : false,
+                             draggable     : true,
+                             map           : self.map,
+                             visible       : false }
+
+        self.rectangle.setOptions(rect_options);
+
+        self.reset_drag_rect();
+
+        // update geo inputs to reflect rectangle when visible and moving
+        google.maps.event.addListener(self.rectangle, 'bounds_changed', function() {
+          if (!self.rectangle.getVisible())
+            return;
+
+          var curbounds = self.rectangle.getBounds();
+          self.close_marker.setPosition(curbounds.getNorthEast());
+          self.update_geo_inputs(curbounds);
+        });
+
+        // click on close marker to remove the rect and reset geo inputs
+        google.maps.event.addListener(self.close_marker, 'click', function(e) {
+          self.reset_drag_rect();
+        });
+      })
+      .on('hidden', function() {
+        self.$el.remove();
+      });
+
+    return false;
+  },
+  update_geo_inputs: function(bounds) {
+
+    var n, s, e, w = null;
+
+    if (bounds != null) {
+      n = bounds.getNorthEast().lat();
+      s = bounds.getSouthWest().lat();
+      e = bounds.getNorthEast().lng();
+      w = bounds.getSouthWest().lng();
+    }
+
+    $('input[name="north"]', this.$el).val(n);
+    $('input[name="south"]', this.$el).val(s);
+    $('input[name="east"]',  this.$el).val(e);
+    $('input[name="west"]',  this.$el).val(w);
+  },
+  reset_drag_rect: function() {
+
+    var self = this;
+
+    // hide rect
+    self.rectangle.setVisible(false);
+
+    // hide marker
+    self.close_marker.setVisible(false);
+
+    // make rect uneditable
+    self.rectangle.setOptions({editable:false});
+
+    // set map undraggable
+    self.map.setOptions({draggable: false});
+
+    // clear out geo inputs
+    self.update_geo_inputs(null);
+
+    // mouse move handler - repositions rect under mouse cursor
+    self.mm_listener = google.maps.event.addListener(self.map, 'mousemove', function(e) {
+
+      var bounds = null;
+
+      // are we invisible, or are we clicking + dragging?
+      if (self.rectangle.getVisible()) {
+        // determine sw/ne based on lat/long of this and mousedown event
+
+        if (e.latLng.lat() <= self.start_point.lat() && e.latLng.lng() <= self.start_point.lng()) {
+          var sw = e.latLng; // SW
+          var ne = self.start_point; // NE
+        }
+        else if (e.latLng.lat() <= self.start_point.lat() && e.latLng.lng() >= self.start_point.lng()) {
+          var sw = new google.maps.LatLng(e.latLng.jb, self.start_point.lng());  // e.latLng; // SE
+          var ne = new google.maps.LatLng(self.start_point.lat(), e.latLng.kb);  // self.start_point // NW
+        }
+        else if (e.latLng.lat() >= self.start_point.lat() && e.latLng.lng() >= self.start_point.lng()) {
+          var sw = self.start_point; // SW
+          var ne = e.latLng; // NE
+        }
+        else if (e.latLng.lat() >= self.start_point.lat() && e.latLng.lng() <= self.start_point.lng()) {
+          var sw = new google.maps.LatLng(self.start_point.lat(), e.latLng.kb); // e.latLng; // NW
+          var ne = new google.maps.LatLng(e.latLng.jb, self.start_point.lng()); // self.start_point; // SE
+        }
+
+        bounds = new google.maps.LatLngBounds(sw, ne); 
+
+      } else {
+        // move the invisible rectangle underneath the pointer
+        bounds = new google.maps.LatLngBounds(e.latLng, e.latLng);
+      }
+
+      self.rectangle.setBounds(bounds);
+    });
+
+    google.maps.event.addListenerOnce(self.map, 'mousedown', function(e) {
+      self.rectangle.setVisible(true);
+
+      self.start_point = new google.maps.LatLng(e.latLng.jb, e.latLng.kb);
+    });
+
+    var mu_listener1, mu_listener2 = null;
+
+    var muphandler = function(e) {
+      // remove initial rect point setter
+      if (self.mm_listener != null) {
+        //google.maps.event.removeListener(self.mm_listener);
+        self.mm_listener.remove();
+        self.mm_listener = null;
+      }
+
+      // reset start_point
+      self.start_point = null;
+
+      // make map draggable
+      self.map.setOptions({draggable:true});
+
+      // make rect editable
+      self.rectangle.setOptions({editable:true});
+
+      // make delete marker visible
+      self.close_marker.setVisible(true);
+
+      // remove all mouseup handlers
+      mu_listener1.remove();
+      mu_listener2.remove();
+    };
+
+    mu_listener1 = google.maps.event.addListenerOnce(self.map, 'mouseup', muphandler);
+    mu_listener2 = google.maps.event.addListenerOnce(self.rectangle, 'mouseup', muphandler);
+  },
+  search_clicked: function(e) {
+    var search_term = "adv=1&" + this.$('form').serialize(); // marker at front to make distinguishing queries easier
+
+    IONUX.ROUTER.navigate('/search/?'+ encodeURI(search_term), {trigger:true});
+    $('#advanced-search-overlay').modal('hide');
+
+  },
+  filter_fields: [
+    {field: 'ooi_short_name'        , label: 'OOI Data Product Code'    , values: []} ,
+    {field: 'ooi_product_name'      , label: 'Data Product Type'        , values: []} ,
+    {field: 'description'           , label: 'Description'              , values: []} ,
+    {field: 'instrument_family'     , label: 'Instrument Family'        , values: []} ,
+    {field: 'lcstate'               , label: 'Lifecycle State'          , values: ['DRAFT','PLANNED','DEVELOPED','INTEGRATED','DEPLOYED','RETIRED']} ,
+    {field: 'name'                  , label: 'Name'                     , values: []} ,
+    {field: 'alt_ids'               , label: 'OOI Reference Designator' , values: []} ,
+    {field: 'name'                  , label: 'Organization'             , values: []} ,
+    {field: 'platform_family'       , label: 'Platform Family'          , values: []} ,
+    {field: 'processing_level_code' , label: 'Processing Level'         , values: [['L0 - Unprocessed Data', 'L0'],
+                                                                                   ['L1 - Basic Data', 'L1'],
+                                                                                   ['L2 - Derived Data', 'L2']]} ,
+    {field: 'quality_control_level' , label: 'Quality Control Level'    , values: [['a - No QC applied', 'a'],
+                                                                                   ['b - Automatic QC applied', 'b'],
+                                                                                   ['c - Human QC applied', 'c']]} ,
+    {field: 'name'                  , label: 'Site'                     , values: ['Coastal Endurance',
+                                                                                   'Coastal Pioneer',
+                                                                                   'Global Argentine Basin',
+                                                                                   'Global Irminger Sea',
+                                                                                   'Global Southern Ocean',
+                                                                                   'Global Station Papa',
+                                                                                   'Regional Axial',
+                                                                                   'Regional Hydrate Ridge',
+                                                                                   'Regional Mid Plate']} ,
+    {field: 'aggregated_status'     , label: 'Status'                   , values: ['Critical', 'OK', 'None expected', 'Warning']} ,
+    {field: 'type_'                 , label: 'Type'                     , values: [['Platform','PlatformDevice'],
+                                                                                   ['Port','InstrumentSite'],
+                                                                                   ['Platform Model','PlatformModel'],
+                                                                                   ['Platform Agent Definition','PlatformAgent'],
+                                                                                   ['Platform Agent','PlatformAgentInstance'],
+                                                                                   ['Instrument','InstrumentDevice'],
+                                                                                   ['Instrument Model','InstrumentModel'],
+                                                                                   ['Instrument Agent Definition','InstrumentAgent'],
+                                                                                   ['Instrument Agent','InstrumentAgentInstance'],
+                                                                                   ['Data Product','DataProduct'],
+                                                                                   ['Data Transform','DataProcessDefinition'],
+                                                                                   ['Data Agent Definition','ExternalDatasetAgent'],
+                                                                                   ['Data Agent','ExternalDatasetAgentInstance'],
+                                                                                   ['Data Process','Data Process'],
+                                                                                   ['Site','Observatory'],
+                                                                                   ['Station','PlatformSite'],
+                                                                                   ['Event Type','EventType'],
+                                                                                   ['Event','Event'],
+                                                                                   ['Deployment','Deployment'],
+                                                                                   ['Organization [Facility]','Org'],
+                                                                                   ['User','UserInfo'],
+                                                                                   ['Role','UserRole'],
+                                                                                   ['Attachment','Attachment'],
+                                                                                   ['Subscription','NotificationRequest'], ]},
+  ],
+  filter_field_changed: function(evt){
+    var sel = $(evt.currentTarget);
+    var filter_container = sel.parent();
+
+    var operators = ['like', 'contains', 'matches', 'starts with', 'ends with'];
+
+    // determine if the selected field is a dropdown type or an entry type
+    var entry = _.findWhere(this.filter_fields, {'label': sel.find("option:selected").text() });
+
+    if (entry == null) {
+      console.error("Could not find associated entry");
+      return;
+    }
+
+    if (entry.values.length == 0) {
+      // this is a manual textbox entry
+      filter_container.find('input[name="filter_operator"]').remove();
+      filter_container.find('select[name="filter_arg"]').remove();
+
+      if (filter_container.find('select[name="filter_operator"]').length == 0) {
+        var sel_operator = $('<select class="operator" name="filter_operator"></select>');
+        filter_container.find('.filter-add').before(sel_operator);
+        _.each(operators, function(o) {
+          sel_operator.append('<option>' + o + '</option>');
+        });
+      }
+
+      if (filter_container.find('input[name="filter_arg"]').length == 0) {
+        var inp_arg = '<input class="argument" type="text" name="filter_arg" value="" />';
+        filter_container.find('.filter-add').before(inp_arg);
+      }
+
+    } else {
+
+      filter_container.find('select[name="filter_operator"]').remove();
+      filter_container.find('input[name="filter_arg"]').remove();
+
+      if (filter_container.find('input[name="filter_operator"]').length == 0) {
+        var sel_operator = '<input type="text" class="argument" style="visibility:hidden;" name="filter_operator" value="matches" />';
+        filter_container.find('.filter-add').before(sel_operator);
+      }
+
+      var inp_arg = filter_container.find('select[name="filter_arg"]'); 
+      if (inp_arg.length == 0) {
+        inp_arg = $('<select class="column" name="filter_arg"></select>');
+        filter_container.find('.filter-add').before(inp_arg);
+      }
+
+      inp_arg.empty();
+      _.each(entry.values, function(v) {
+        var value = null, label = null;
+        if (typeof(v) == "string")
+          value = label = v;
+        else {
+          label = v[0];
+          value = v[1];
+        }
+        inp_arg.append('<option value="' + value + '">' + label + '</option>');
+      });
+    }
+  },
+  add_filter_item: function(evt) {
+    //var columns = this.get_filter_columns();
+    //var data = {"columns":columns, "operators":OPERATORS};
+
+
+    var filter_item = $(this.filter_template({'fields':this.filter_fields}));
+    if (evt == null){
+      this.$el.find(".filter-item-holder").append(filter_item);
+    } else {
+      var target = $(evt.target);
+      target.parents('.filter-item').after(filter_item);
+    }
+
+    // preselect name field
+    filter_item.find('select[name="filter_var"] option[value="name"]:contains("Name")').attr('selected', 'selected').change();
+  },
+  remove_filter_item: function(evt) {
+    var this_filter_item = $(evt.target).parents('.filter-item');
+    var filter_items = this_filter_item.siblings();
+    if (filter_items.length > 0) {
+      this_filter_item.remove();
+      return;
+    }
   },
 });
 
@@ -149,10 +510,10 @@ IONUX.Views.DashboardMap = Backbone.View.extend({
       mapTypeId: google.maps.MapTypeId.SATELLITE
     };
     map = new google.maps.Map(this.$el[0], mapOptions);
-    kml_path = 'http://'+window.location.host+'/map2.kml?ui_server=http://'+window.location.host+'&unique_key='+this.create_random_id()+'&return_format=raw_json';
-    console.log('KML_PATH: ', kml_path);
-    var georssLayer = new google.maps.KmlLayer(kml_path);
-    georssLayer.setMap(map);
+    //kml_path = 'http://'+window.location.host+'/map2.kml?ui_server=http://'+window.location.host+'&unique_key='+this.create_random_id()+'&return_format=raw_json';
+    //console.log('KML_PATH: ', kml_path);
+    //var georssLayer = new google.maps.KmlLayer(kml_path);
+    //georssLayer.setMap(map);
     return this;
   },
   

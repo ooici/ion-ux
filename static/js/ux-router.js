@@ -28,8 +28,18 @@ IONUX.Router = Backbone.Router.extend({
   search: function(query){
     $('#error').hide();
     $('#dynamic-container').show().html(LOADING_TEMPLATE);
-    var search_model = new IONUX.Models.Search({search_query: query});
-    search_model.fetch()
+    var search_model = new IONUX.Models.Search();
+    // use heuristics to determine what kind of query we have here
+    var fetch_opts = {};
+    if (query.indexOf("adv=1&") == 0) {
+      // advanced search, set fetch_opts properly
+      fetch_opts.type = 'POST';
+      fetch_opts.data = {'adv_query_string': query}
+      search_model.set({search_query: "advanced"})
+    } else {
+      search_model.set({search_query: query});
+    }
+    search_model.fetch(fetch_opts)
       .success(function(resp){
         console.log('Search success:', resp);
         $('#dynamic-container').html($('#2163152').html());

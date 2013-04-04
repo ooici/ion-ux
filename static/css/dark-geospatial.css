@@ -25,7 +25,11 @@
   margin-top: 0;
 }
 
-.textfield_geo, .textfield_geo[disabled] {
+div.geo-textfield, .v01 .block div.geo-textfield, .v02 .block div.geo-textfield {
+  margin: 5px;
+}
+
+input.textfield_geo{
   font-size: 10px;
   font-weight: normal;
   background: #333;
@@ -34,6 +38,20 @@
   color: #ccc;
   margin: 5px;
   text-align: center;
+}
+
+.input-append {
+}
+
+.input-prepend input.textfield_geo, .input-append input.textfield_geo {
+  margin: 0px; 
+}
+
+.input-prepend .add-on, .input-append .add-on {
+  background-color: #222;
+  border-color: #555;
+  color: #999;
+  text-shadow: none;
 }
 
 
