@@ -96,12 +96,13 @@ def search(query=None):
             temporal_bounds   = {'from': adv_query_chunks.get('from', [''])[0],
                                    'to': adv_query_chunks.get('to', [''])[0]}
 
-            search_criteria   = request.form.get('search_criteria', [''])[0]
+            search_criteria   = zip(adv_query_chunks.get('filter_var', []),
+                                    adv_query_chunks.get('filter_operator', []),
+                                    adv_query_chunks.get('filter_arg', []))
 
             search_results    = ServiceApi.adv_search(geospatial_bounds,
                                                       vertical_bounds,
                                                       temporal_bounds,
-                                                      None,
                                                       search_criteria)
 
         return render_json_response(search_results)
