@@ -329,7 +329,7 @@ IONUX.Views.MapFilter = Backbone.View.extend({
     } else {
       IONUX.MapBlacklist.push(type);
     }; 
-    IONUX.Dashboard.Resources.trigger('reset');
+    IONUX.Dashboard.MapResources.trigger('reset');
   },
 });
 
