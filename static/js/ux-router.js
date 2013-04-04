@@ -27,7 +27,7 @@ IONUX.Router = Backbone.Router.extend({
   
   dev_dashboard_list: function() {
     $('#main').html($('#dashboard-content-tmpl').html());
-    $('#2163993').off().empty();
+    $('#2163993').off() //.empty();
     IONUX.Dashboard.Orgs = new IONUX.Collections.Orgs();
     IONUX.Dashboard.OrgsView = new IONUX.Views.OrgSelector({collection: IONUX.Dashboard.Orgs, title: 'Facilities'});
     IONUX.Dashboard.Orgs.fetch({
