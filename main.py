@@ -90,11 +90,11 @@ def search(query=None):
                                  'south': adv_query_chunks.get('south', [''])[0],
                                   'west': adv_query_chunks.get('west', [''])[0]}
 
-            vertical_bounds   = {'lower': adv_query_chunks.get('lower', [''])[0],
-                                 'upper': adv_query_chunks.get('upper', [''])[0]}
+            vertical_bounds   = {'lower': adv_query_chunks.get('vertical-lower-bound', [''])[0],
+                                 'upper': adv_query_chunks.get('vertical-upper-bound', [''])[0]}
 
-            temporal_bounds   = {'from': adv_query_chunks.get('from', [''])[0],
-                                   'to': adv_query_chunks.get('to', [''])[0]}
+            temporal_bounds   = {'from': adv_query_chunks.get('temporal-from-ctrl', [''])[0],
+                                   'to': adv_query_chunks.get('temporal-to-ctrl', [''])[0]}
 
             search_criteria   = zip(adv_query_chunks.get('filter_var', []),
                                     adv_query_chunks.get('filter_operator', []),

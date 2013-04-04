@@ -50,8 +50,6 @@ class ServiceApi(object):
 
         queries = []
 
-        print "hello", geospatial_bounds, vertical_bounds, temporal_bounds, search_criteria
-
         if geospatial_bounds and all(geospatial_bounds.itervalues()):
             queries.append({'bottom_right': [float(geospatial_bounds['east']), float(geospatial_bounds['south'])],
                                 'top_left': [float(geospatial_bounds['west']), float(geospatial_bounds['north'])],
@@ -59,13 +57,13 @@ class ServiceApi(object):
                                    'index': 'resources_index'})
 
         if vertical_bounds and all(vertical_bounds.itervalues()):
-            queries.append({'range': {'from': vertical_bounds['lower'], 'to': vertical_bounds['upper']},
-                            'field': 'vertical_bounds',
+            queries.append({'vertical_bounds': {'from': float(vertical_bounds['lower']), 'to': float(vertical_bounds['upper'])},
+                            'field': 'geospatial_bounds',
                             'index': 'resources_index'})
 
         if temporal_bounds and all(temporal_bounds.itervalues()):
-            queries.append({'time': {'from': temporal_bounds['from'], 'to': temporal_bounds['to']},
-                            'field': 'temporal_bounds',
+            queries.append({'time_bounds': {'from': temporal_bounds['from'], 'to': temporal_bounds['to']},
+                            'field': 'nominal_datetime',
                             'index': 'resources_index'})
 
         if search_criteria:
@@ -96,7 +94,6 @@ class ServiceApi(object):
 
         post_data['query'] = queries[0]
         post_data['and'] = queries[1:]
-
 
         # have to manually call because normal SG post turns a list into the first object?
         url, data = build_post_request('discovery', 'query', {'query': post_data, 'id_only': False})
