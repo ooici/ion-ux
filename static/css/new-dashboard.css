@@ -188,3 +188,19 @@ html, body {
 #map-filter.data-filter #asset-filter {
   display: none;
 }
+
+
+#select-facility {
+  background: #222;
+  color: #666;
+  border-radius: 7px;
+  padding: 5px;
+  text-transform: uppercase;
+  text-align: center;
+  margin: 20px;
+}
+
+#spinner {
+  margin-top: 50px;
+}
+

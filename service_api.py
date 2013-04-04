@@ -27,10 +27,15 @@ AGENT_REQUEST_TEMPLATE = {
 
 
 class ServiceApi(object):
+
+    @staticmethod
+    def find_related_objects(resource_id):
+        related_objects = service_gateway_get('resource_registry', 'find_objects', params={'subject': resource_id, 'predicate': 'hasResource'})
+        return related_objects
     
     @staticmethod
-    def find_related_sites(parent_resource_id):
-        related_sites = service_gateway_get('observatory_management', 'find_related_sites', params={'parent_resource_id': parent_resource_id})
+    def find_related_sites(resource_id):
+        related_sites = service_gateway_get('observatory_management', 'find_related_sites', params={'parent_resource_id': resource_id})
         return related_sites
 
     @staticmethod

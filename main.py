@@ -312,10 +312,15 @@ def extension(resource_type, resource_id):
     extension = ServiceApi.get_extension(resource_type, resource_id, user_id)
     return render_json_response(extension)
 
-@app.route('/related_sites/<parent_resource_id>/', methods=['GET'])
-def related_sites(parent_resource_id):
-    related_sites = ServiceApi.find_related_sites(parent_resource_id)
+@app.route('/related_sites/<resource_id>/', methods=['GET'])
+def related_sites(resource_id):
+    related_sites = ServiceApi.find_related_sites(resource_id)
     return render_json_response(related_sites)
+
+@app.route('/related_objects/<resource_id>/', methods=['GET'])
+def related_objects(resource_id):
+    related_objects = ServiceApi.find_related_objects(resource_id)
+    return render_json_response(related_objects)
 
 # -----------------------------------------------------------------------------
 # COMMAND RESOURCE PAGES
@@ -332,7 +337,6 @@ def start_instrument_agent(instrument_device_id, agent_command, cap_type=None, s
         elif agent_command == 'start':
             command_response = ServiceApi.instrument_agent_start(instrument_device_id)
         elif agent_command == 'stop':
-            print 'zzzzstops'
             command_response = ServiceApi.instrument_agent_stop(instrument_device_id)
         else:
             if agent_command == 'RESOURCE_AGENT_EVENT_GO_DIRECT_ACCESS':
@@ -437,9 +441,7 @@ def resource_type_edit_existing(resource_type, object_id):
         read_response = requests.get(read_url)
         resp_json = json.loads(read_response.text)
         return jsonify(data=resp_json["data"])
- 
 
- 
 
 @app.route('/<resource_type>/<resource_id>/', methods=['GET'])
 def resource_by_id(resource_type, resource_id):

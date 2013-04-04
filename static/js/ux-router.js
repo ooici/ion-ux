@@ -21,74 +21,79 @@ IONUX.Router = Backbone.Router.extend({
     "create_account": "create_account",
     'dev/dashboard': 'dev_dashboard',
     'dev/dashboard/map/:resource_id': 'dev_dashboard_map_resource',
-    'dev/dashboard/resources': 'dev_dashboard_resources',
+    'dev/dashboard/resources': 'dev_dashboard_list',
+    'dev/dashboard/resources/:resource_id': 'dev_dashboard_list_resource',
   },
-
-  dev_dashboard_resources: function() {
-    console.log('dev_dashboard_resources');
+  
+  dev_dashboard_list: function() {
+    $('#main').html($('#dashboard-content-tmpl').html());
+    $('#2163993').off().empty();
+    IONUX.Dashboard.Orgs = new IONUX.Collections.Orgs();
+    IONUX.Dashboard.OrgsView = new IONUX.Views.OrgSelector({collection: IONUX.Dashboard.Orgs, title: 'Facilities'});
+    IONUX.Dashboard.Orgs.fetch({
+      reset: true, 
+      success: function(resp) {
+        $('#2163993').show();
+      },
+    });
+  },
+  
+  dev_dashboard_list_resource: function(resource_id){
+    console.log('dev_dashboard_list_resource', resource_id);
+    $('#2163993').off().empty().append('<div id="spinner"></div>');
+    new Spinner(IONUX.Spinner.large).spin(document.getElementById('spinner'));
+    if (IONUX.Dashboard.ListResources === undefined) {
+      IONUX.Dashboard.ListResources = new IONUX.Collections.ListResources(null, {resource_id: resource_id});
+      new IONUX.Views.List({collection: IONUX.Dashboard.ListResources});
+    };
+    IONUX.Dashboard.ListResources.resource_id = resource_id;
+    IONUX.Dashboard.ListResources.set([]);
+    IONUX.Dashboard.ListResources.fetch({reset:true});
   },
 
   dev_dashboard: function() {
+    // TEMP page setup.
     $('#footer').remove(); // Remove legacy footer.
     $('.wrapper').html($('#dashboard-tmpl').html());
     $('#main').html($('#dashboard-content-tmpl').html());
-
+    
+    // Move to IONUX in production
     new IONUX.Views.ViewControls().render().el;
     
     // Render Sidebar
-    IONUX.Dashboard.SelectorResources = new IONUX.Collections.Observatories();
-    IONUX.Dashboard.SelectorView = new IONUX.Views.ObservatorySelector({collection: IONUX.Dashboard.SelectorResources, title: 'Sites'});
-    IONUX.Dashboard.SelectorResources.fetch({
+    IONUX.Dashboard.Observatories = new IONUX.Collections.Observatories();
+    IONUX.Dashboard.ObservatoriesView = new IONUX.Views.ObservatorySelector({collection: IONUX.Dashboard.Observatories, title: 'Sites'});
+    IONUX.Dashboard.Observatories.fetch({
       reset: true,
       success: function(resp){
-        IONUX.Dashboard.Resources = new IONUX.Collections.DashboardResources(resp.models, {resource_id: null});
-        IONUX.Dashboard.ActiveResource = new IONUX.Models.ActiveResource();
-        new IONUX.Views.AssetMap({
-          collection: IONUX.Dashboard.Resources,
-          model: IONUX.Dashboard.ActiveResource
+        IONUX.Dashboard.MapResources = new IONUX.Collections.MapResources(resp.models, {resource_id: null});
+        IONUX.Dashboard.MapResource = new IONUX.Models.MapResource();
+        new IONUX.Views.Map({
+          collection: IONUX.Dashboard.MapResources,
+          model: IONUX.Dashboard.MapResource
         });
-        IONUX.Dashboard.Resources.trigger('update_markers');
+        IONUX.Dashboard.MapResources.trigger('update_markers');
         new IONUX.Views.MapFilter().render().el;
       },
     });
   },
   
   dev_dashboard_map_resource: function(resource_id){
-    console.log('router map_resource', resource_id);
+    console.log('router map_resource!!!');
     // Todo: properly remove/unbind via Backbone.
-    $('#2163993').off().empty().append('<div style="margin-top:50px;" id="spinner"></div>');
-    
-    // Todo: move into it's own view for reuse;
-    var opts = {
-      lines: 13, // The number of lines to draw
-      length: 7, // The length of each line
-      width: 4, // The line thickness
-      radius: 10, // The radius of the inner circle
-      corners: 1, // Corner roundness (0..1)
-      rotate: 0, // The rotation offset
-      color: '#fff', // #rgb or #rrggbb
-      speed: 1, // Rounds per second
-      trail: 60, // Afterglow percentage
-      shadow: false, // Whether to render a shadow
-      hwaccel: false, // Whether to use hardware acceleration
-      className: 'spinner', // The CSS class to assign to the spinner
-      zIndex: 2e9, // The z-index (defaults to 2000000000)
-      top: 'auto', // Top position relative to parent in px
-      left: 'auto' // Left position relative to parent in px
-    };
-    var target = document.getElementById('spinner');
-    var spinner = new Spinner(opts).spin(target);
+    $('#2163993').off().empty().append('<div id="spinner"></div>');
+    new Spinner(IONUX.Spinner.large).spin(document.getElementById('2163993'));
         
-    var active_resource_attributes = IONUX.Dashboard.SelectorResources.findWhere({_id: resource_id})['attributes'];
+    var active_resource_attributes = IONUX.Dashboard.Observatories.findWhere({_id: resource_id})['attributes'];
     // IONUX.Dashboard.ActiveResource.set(active_resource_attributes);
-    IONUX.Dashboard.Resources.resource_id = resource_id;
-    IONUX.Dashboard.Resources.set([]);
-    IONUX.Dashboard.Resources.fetch({
+    IONUX.Dashboard.MapResources.resource_id = resource_id;
+    IONUX.Dashboard.MapResources.set([]);
+    IONUX.Dashboard.MapResources.fetch({
       reset: true,
       success: function(resp) {
-        IONUX.Dashboard.ActiveResource.set(active_resource_attributes);
-        // console.log('ActiveResource', IONUX.Dashboard.ActiveResource.toJSON());
-        // console.log('Resources', IONUX.Dashboard.Resources.toJSON());
+        IONUX.Dashboard.MapResource.set(active_resource_attributes);
+        // console.log('ActiveResource', IONUX.Dashboard.MapResource.toJSON());
+        // console.log('Resources', IONUX.Dashboard.MapResources.toJSON());
       }
     });
   },

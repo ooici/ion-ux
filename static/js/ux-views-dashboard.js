@@ -3,8 +3,6 @@
 // for change events.
 
 IONUX.DashboardView = "Map";
-IONUX.DashboardResource = null;
-IONUX.MapBlacklist = [];
 
 IONUX.Views.ViewControls = Backbone.View.extend({
   el: '#view-controls',
@@ -34,101 +32,6 @@ IONUX.Views.ViewControls = Backbone.View.extend({
 
 /* 
 - - - - - - - - - - - - - - - - - 
-  Filters
-- - - - - - - - - - - - - - - - - 
-*/
-
-IONUX.Views.MapFilter = Backbone.View.extend({
-  el: '#map-filter',
-  filter_options: {
-    asset_options: [
-      {label: 'Station', type: 'PlatformSite'},
-      {label: 'Instrument', type: 'InstrumentSite'},
-      {label: 'Platform', type: 'PlatformDevice'},
-    ],
-    data_options: [
-      {label: 'Data Products', type: 'DataProduct'}
-    ],
-    lcstate_options: [
-      {label: 'Draft', lcstate: 'DRAFT'},
-      {label: 'Planned', lcstate: 'PLANNED'},
-      {label: 'Integrated', lcstate: 'INTEGRATED'},
-      {label: 'Deployed', lcstate: 'DEPLOYED'},
-      {label: 'Retired', lcstate: 'RETIRED'}
-    ]
-  },
-  template: '\
-    <h3>Filter</h3>\
-    <div class="">\
-      <input id="radio-assets" type="radio" name="map_filter" value="asset" checked />&nbsp;Asset&nbsp;\
-      <input id="radio-data" type="radio" name="map_filter" value="data" />&nbsp;Data&nbsp;\
-    </div>\
-    <div id="asset-filter"></div>\
-    <div id="data-filter"></div>\
-    <h3>Lifecycle</h3>\
-    <div id="lcstate-filter"></div>\
-  ',
-
-  events: {
-    'click .filter-option': 'set_filter'
-  },
-  initialize: function(){
-    _.bindAll(this);
-  },
-  
-  render: function(){
-    this.$el.show().html(this.template);
-    this.render_filter_options();
-    return this;
-  },
-  
-  render_filter_options: function(options){
-    // Should not be in separate templates? 
-    // Waiting for definitive filter behavior before consolidating.
-    var item_tmpl = '<div class="filter-option"><%= label %> <input type="checkbox" value="<%= type %>" <%= checked %> /></div>';
-    var lcstate_tmpl = '<div class="filter-option"><%= label %> <input type="checkbox" value="<%= lcstate %>" <%= checked %> /></div>';
-
-    var assets_elmt = this.$el.find('#asset-filter');
-    _.each(this.filter_options.asset_options, function(option) {
-      option['checked'] = _.contains(IONUX.MapBlacklist, option['type']) ? "" : "checked";
-      assets_elmt.append(_.template(item_tmpl, option));
-    });
-    
-    var lcstate_elmt = this.$el.find('#lcstate-filter');
-    _.each(this.filter_options.lcstate_options, function(option) {
-      option['checked'] = _.contains(IONUX.MapBlacklist, option['lcstate']) ? "" : "checked";
-      lcstate_elmt.append(_.template(lcstate_tmpl, option));
-    });
-    
-    // Waiting for resource_registry calls
-    // var data_elmt = this.$el.find('#data-filter');
-    // _.each(this.filter_options.data_options, function(option) {
-    //   data_elmt.append(_.template(item_tmpl, option));
-    // });
-  },
-  
-  toggle_filter: function(e) {
-    this.$el.toggleClass('data-filter');
-  },
-  
-  set_filter: function(e){
-    console.log('set_filter');
-    var filter_elmt = $(e.target);
-    var type = filter_elmt.val();
-    if (filter_elmt.is(':checked')) {
-      var index = IONUX.MapBlacklist.indexOf(type)
-      IONUX.MapBlacklist.splice(index);
-    } else {
-      IONUX.MapBlacklist.push(type);
-    }; 
-    IONUX.Dashboard.Resources.trigger('reset');
-  },
-});
-
-
-
-/* 
-- - - - - - - - - - - - - - - - - 
   Site Navigation
 - - - - - - - - - - - - - - - - - 
 */
@@ -147,23 +50,8 @@ IONUX.Collections.Observatories = Backbone.Collection.extend({
   }
 });
 
-IONUX.Collections.DashboardResources = Backbone.Collection.extend({
-  initialize: function(models, options){
-    this.resource_id = options.resource_id;
-  },
-  url: function() {
-   return '/related_sites/'+this.resource_id+'/';
-  },
-  parse: function(resp) {
-    var related_sites = [];
-    _.each(resp.data, function(site){related_sites.push(site)});
-    return related_sites;
-  }
-})
-
 IONUX.Views.ResourceSelector = Backbone.View.extend({
   el: '#selector-list',
-  template: _.template($('#dashboard-selector-list-tmpl').html()),
   initialize: function(){
     _.bindAll(this);
     this.title = this.options.title;
@@ -177,13 +65,16 @@ IONUX.Views.ResourceSelector = Backbone.View.extend({
 })
 
 IONUX.Views.ObservatorySelector = IONUX.Views.ResourceSelector.extend({
+  template: _.template($('#dashboard-observatory-list-tmpl').html()),
   events: {'click .resource-link': 'focus_map'},
   focus_map: function(e){
     e.preventDefault();
   }
 });
 
-IONUX.Views.SiteSelector = IONUX.Views.ResourceSelector.extend({});
+IONUX.Views.OrgSelector = IONUX.Views.ResourceSelector.extend({
+  template: _.template($('#dashboard-org-list-tmpl').html()),
+});
 
 
 /* 
@@ -192,19 +83,9 @@ IONUX.Views.SiteSelector = IONUX.Views.ResourceSelector.extend({});
 - - - - - - - - - - - - - - - - - 
 */
 
+IONUX.MapBlacklist = [];
 
-// IONUX.Models.CurrentResource = Backbone.Model.extend({
-//   defaults: {
-//     center: new google.maps.LatLng(0, 0),
-//     zoom: 9,
-//     mapTypeId: google.maps.MapTypeId.TERRAIN,
-//     disableDefaultUI: true
-//   }
-// })
-
-
-
-IONUX.Models.ActiveResource = Backbone.Model.extend({
+IONUX.Models.MapResource = Backbone.Model.extend({
   defaults: {
     geospatial_point_center: {
       lat: 39.8106460,
@@ -214,9 +95,23 @@ IONUX.Models.ActiveResource = Backbone.Model.extend({
   }
 });
 
-IONUX.Views.AssetMap = Backbone.View.extend({
-  el: '#map_canvas',
 
+IONUX.Collections.MapResources = Backbone.Collection.extend({
+  initialize: function(models, options){
+    this.resource_id = options.resource_id;
+  },
+  url: function() {
+   return '/related_sites/'+this.resource_id+'/';
+  },
+  parse: function(resp) {
+    var related_sites = [];
+    _.each(resp.data, function(site){related_sites.push(site)});
+    return related_sites;
+  }
+});
+
+IONUX.Views.Map = Backbone.View.extend({
+  el: '#map_canvas',
   initialize: function(){
     _.bindAll(this);
     this.draw_map();
@@ -237,7 +132,7 @@ IONUX.Views.AssetMap = Backbone.View.extend({
     resource_table.show();
     if (!_.isEmpty(IONUX.MapBlacklist)) {
       var filtered_resources = []
-      _.each(IONUX.Dashboard.Resources.models, function(resource) {
+      _.each(IONUX.Dashboard.MapResources.models, function(resource) {
         if (!_.contains(IONUX.MapBlacklist, resource.get('type_')) && !_.contains(IONUX.MapBlacklist, resource.get('lcstate'))) {
           filtered_resources.push(resource.toJSON());
         };
@@ -340,5 +235,154 @@ IONUX.Views.AssetMap = Backbone.View.extend({
       _lat = _lat + _offset;
       _lon = _lon + _offset;
     }
+  },
+});
+
+
+/* 
+- - - - - - - - - - - - - - - - - 
+  Map Filters
+- - - - - - - - - - - - - - - - - 
+*/
+
+
+IONUX.Views.MapFilter = Backbone.View.extend({
+  el: '#map-filter',
+  filter_options: {
+    asset_options: [
+      {label: 'Station', type: 'PlatformSite'},
+      {label: 'Instrument', type: 'InstrumentSite'},
+      {label: 'Platform', type: 'PlatformDevice'},
+    ],
+    data_options: [
+      {label: 'Data Products', type: 'DataProduct'}
+    ],
+    lcstate_options: [
+      {label: 'Draft', lcstate: 'DRAFT'},
+      {label: 'Planned', lcstate: 'PLANNED'},
+      {label: 'Integrated', lcstate: 'INTEGRATED'},
+      {label: 'Deployed', lcstate: 'DEPLOYED'},
+      {label: 'Retired', lcstate: 'RETIRED'}
+    ]
+  },
+  template: '\
+    <h3>Filter</h3>\
+    <div class="">\
+      <input id="radio-assets" type="radio" name="map_filter" value="asset" checked />&nbsp;Asset&nbsp;\
+      <input id="radio-data" type="radio" name="map_filter" value="data" />&nbsp;Data&nbsp;\
+    </div>\
+    <div id="asset-filter"></div>\
+    <div id="data-filter"></div>\
+    <h3>Lifecycle</h3>\
+    <div id="lcstate-filter"></div>\
+  ',
+
+  events: {
+    'click .filter-option': 'set_filter'
+  },
+  initialize: function(){
+    _.bindAll(this);
+  },
+  
+  render: function(){
+    this.$el.show().html(this.template);
+    this.render_filter_options();
+    return this;
+  },
+  
+  render_filter_options: function(options){
+    // Should not be in separate templates? 
+    // Waiting for definitive filter behavior before consolidating.
+    var item_tmpl = '<div class="filter-option"><%= label %> <input type="checkbox" value="<%= type %>" <%= checked %> /></div>';
+    var lcstate_tmpl = '<div class="filter-option"><%= label %> <input type="checkbox" value="<%= lcstate %>" <%= checked %> /></div>';
+
+    var assets_elmt = this.$el.find('#asset-filter');
+    _.each(this.filter_options.asset_options, function(option) {
+      option['checked'] = _.contains(IONUX.MapBlacklist, option['type']) ? "" : "checked";
+      assets_elmt.append(_.template(item_tmpl, option));
+    });
+    
+    var lcstate_elmt = this.$el.find('#lcstate-filter');
+    _.each(this.filter_options.lcstate_options, function(option) {
+      option['checked'] = _.contains(IONUX.MapBlacklist, option['lcstate']) ? "" : "checked";
+      lcstate_elmt.append(_.template(lcstate_tmpl, option));
+    });
+    
+    // Waiting for resource_registry calls
+    // var data_elmt = this.$el.find('#data-filter');
+    // _.each(this.filter_options.data_options, function(option) {
+    //   data_elmt.append(_.template(item_tmpl, option));
+    // });
+  },
+  
+  toggle_filter: function(e) {
+    this.$el.toggleClass('data-filter');
+  },
+  
+  set_filter: function(e){
+    console.log('set_filter');
+    var filter_elmt = $(e.target);
+    var type = filter_elmt.val();
+    if (filter_elmt.is(':checked')) {
+      var index = IONUX.MapBlacklist.indexOf(type)
+      IONUX.MapBlacklist.splice(index);
+    } else {
+      IONUX.MapBlacklist.push(type);
+    }; 
+    IONUX.Dashboard.Resources.trigger('reset');
+  },
+});
+
+
+/* 
+- - - - - - - - - - - - - - - - - 
+  Asset Lists
+- - - - - - - - - - - - - - - - - 
+*/
+
+IONUX.Collections.ListResources = Backbone.Collection.extend({
+  initialize: function(models, options){
+    this.resource_id = options.resource_id;
+  },
+  url: function() {
+   return '/related_objects/'+this.resource_id+'/';
+  },
+  parse: function(resp) {
+    var related_objects = [];
+    _.each(resp.data, function(obj){related_objects.push(obj)});
+    console.log('related_objects', related_objects);
+    return related_objects;
+  }
+});
+
+
+IONUX.Views.List = Backbone.View.extend({
+  el: '#2163993',
+
+  initialize: function(){
+    _.bindAll(this);
+    this.collection.on('reset', this.render_table);
+  },
+
+  render: function(){
+    this.$el.show();
+    return this;
+  },
+  
+  render_table: function(){
+    console.log('render_table');
+    new IONUX.Views.DataTable({el: this.$el, data: this.collection.toJSON()});
+    
+    // if (!_.isEmpty(IONUX.MapBlacklist)) {
+    //   var filtered_resources = []
+    //   _.each(IONUX.Dashboard.ListResources.models, function(resource) {
+    //     if (!_.contains(IONUX.MapBlacklist, resource.get('type_')) && !_.contains(IONUX.MapBlacklist, resource.get('lcstate'))) {
+    //       filtered_resources.push(resource.toJSON());
+    //     };
+    //   });
+    //   new IONUX.Views.DataTable({el: this.$el, data: filtered_resources});
+    // } else {
+    //   new IONUX.Views.DataTable({el: this.$el, data: this.collection.toJSON()});
+    // };
   },
 });

@@ -35,21 +35,22 @@
                     </div>                
                 </div>
             </div>
-    		<div id="container" class="container-fluid">
-    		    <div class="row-fluid">
-    				<div id="sidebar" class="span2"> </div> <!-- div#sidebar -->
-    				<div id="info" class="span10">
-    				    <div id="error" style="display:none;"><h1>Error occurred.</h1></div>
-    	          <div id="dynamic-container" class="viewcontainer"> </div>
-    				</div>
-    			</div> <!-- div.row -->
-    		 </div> <!-- div.container-fluid -->
+        <div id="container" class="container-fluid">
+          <div class="row-fluid">
+            <div id="sidebar" class="span2"> </div> <!-- div#sidebar -->
+            <div id="info" class="span10">
+              <div id="error" style="display:none;"><h1>Error occurred.</h1></div>
+                <div id="dynamic-container" class="viewcontainer"> </div>
+            </div>
+          </div> <!-- div.row -->
+        </div> <!-- div.container-fluid -->
 	    </div> <!-- div.wrapper -->
         
         <div id="footer"> </div>
         <script type="text/template" id="dashboard-tmpl"><![CDATA[{% include 'partials/dashboard.html' %}]]></script>
         <script type="text/template" id="dashboard-content-tmpl"><![CDATA[{% include 'partials/dashboard_content.html' %}]]></script>
-        <script type="text/template" id="dashboard-selector-list-tmpl"><![CDATA[{% include 'partials/dashboard_selector_list.html' %}]]></script>
+        <script type="text/template" id="dashboard-observatory-list-tmpl"><![CDATA[{% include 'partials/dashboard_observatory_list.html' %}]]></script>
+        <script type="text/template" id="dashboard-org-list-tmpl"><![CDATA[{% include 'partials/dashboard_org_list.html' %}]]></script>
         
         <script type="text/template" id="topbar-tmpl"><![CDATA[{% include 'partials/topbar.html' %}]]></script>
         <script type="text/template" id="edit-resource-tmpl"><![CDATA[{% include 'partials/edit_resource.html' %}]]></script>
