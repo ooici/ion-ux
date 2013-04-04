@@ -251,16 +251,16 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
           var ne = self.start_point; // NE
         }
         else if (e.latLng.lat() <= self.start_point.lat() && e.latLng.lng() >= self.start_point.lng()) {
-          var sw = new google.maps.LatLng(e.latLng.ib, self.start_point.lng());  // e.latLng; // SE
-          var ne = new google.maps.LatLng(self.start_point.lat(), e.latLng.jb);  // self.start_point // NW
+          var sw = new google.maps.LatLng(e.latLng.jb, self.start_point.lng());  // e.latLng; // SE
+          var ne = new google.maps.LatLng(self.start_point.lat(), e.latLng.kb);  // self.start_point // NW
         }
         else if (e.latLng.lat() >= self.start_point.lat() && e.latLng.lng() >= self.start_point.lng()) {
           var sw = self.start_point; // SW
           var ne = e.latLng; // NE
         }
         else if (e.latLng.lat() >= self.start_point.lat() && e.latLng.lng() <= self.start_point.lng()) {
-          var sw = new google.maps.LatLng(self.start_point.lat(), e.latLng.jb); // e.latLng; // NW
-          var ne = new google.maps.LatLng(e.latLng.ib, self.start_point.lng()); // self.start_point; // SE
+          var sw = new google.maps.LatLng(self.start_point.lat(), e.latLng.kb); // e.latLng; // NW
+          var ne = new google.maps.LatLng(e.latLng.jb, self.start_point.lng()); // self.start_point; // SE
         }
 
         bounds = new google.maps.LatLngBounds(sw, ne); 
@@ -276,7 +276,7 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
     google.maps.event.addListenerOnce(self.map, 'mousedown', function(e) {
       self.rectangle.setVisible(true);
 
-      self.start_point = new google.maps.LatLng(e.latLng.ib, e.latLng.jb);
+      self.start_point = new google.maps.LatLng(e.latLng.jb, e.latLng.kb);
     });
 
     var mu_listener1, mu_listener2 = null;
