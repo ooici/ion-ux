@@ -83,8 +83,6 @@ IONUX.Views.OrgSelector = IONUX.Views.ResourceSelector.extend({
 - - - - - - - - - - - - - - - - - 
 */
 
-IONUX.MapBlacklist = [];
-
 IONUX.Models.MapResource = Backbone.Model.extend({
   defaults: {
     geospatial_point_center: {
@@ -245,6 +243,7 @@ IONUX.Views.Map = Backbone.View.extend({
 - - - - - - - - - - - - - - - - - 
 */
 
+IONUX.MapBlacklist = [];
 
 IONUX.Views.MapFilter = Backbone.View.extend({
   el: '#map-filter',
@@ -266,7 +265,7 @@ IONUX.Views.MapFilter = Backbone.View.extend({
     ]
   },
   template: '\
-    <h3>Filter</h3>\
+    <h3>Select</h3>\
     <div class="">\
       <input id="radio-assets" type="radio" name="map_filter" value="asset" checked />&nbsp;Asset&nbsp;\
       <input id="radio-data" type="radio" name="map_filter" value="data" />&nbsp;Data&nbsp;\
@@ -336,7 +335,7 @@ IONUX.Views.MapFilter = Backbone.View.extend({
 
 /* 
 - - - - - - - - - - - - - - - - - 
-  Asset Lists
+  Asset List
 - - - - - - - - - - - - - - - - - 
 */
 
@@ -350,13 +349,12 @@ IONUX.Collections.ListResources = Backbone.Collection.extend({
   parse: function(resp) {
     var related_objects = [];
     _.each(resp.data, function(obj){related_objects.push(obj)});
-    console.log('related_objects', related_objects);
     return related_objects;
   }
 });
 
 
-IONUX.Views.List = Backbone.View.extend({
+IONUX.Views.AssetList = Backbone.View.extend({
   el: '#2163993',
 
   initialize: function(){
@@ -385,4 +383,41 @@ IONUX.Views.List = Backbone.View.extend({
     //   new IONUX.Views.DataTable({el: this.$el, data: this.collection.toJSON()});
     // };
   },
+});
+
+/* 
+- - - - - - - - - - - - - - - - - 
+  List Filter
+- - - - - - - - - - - - - - - - - 
+*/
+
+IONUX.Views.ListFilter = Backbone.View.extend({
+  el: '#list-filter',
+  filter_options: {
+    short_list: [
+      {label: 'Data Product', type: 'DataProduct'},
+      {label: 'Instrument', type: 'InstrumentDevice'},
+      {label: 'Platform', type: 'PlatformDevice'},
+      {label: 'Station', type: 'PlatformSite'},
+      {label: 'Subsite', type: ''},
+      {label: 'Site', type: 'Observatory'},
+      {label: 'Facility', type: 'Org'},
+    ],
+    long_list: [
+      {label: 'Data Products', type: 'DataProduct'}
+    ]
+  },
+  template: '\
+    <h3>Resource Type</h3>\
+    <div id="long-filter"></div>\
+    <div id="short-filter"></div>\
+  ',
+  events: {},
+  initialize: function() {
+    _.bindAll(this);
+  },
+  render: function() {
+    this.$el.show().html(this.template);
+    return this;
+  }
 });

@@ -29,11 +29,12 @@ IONUX.Router = Backbone.Router.extend({
     $('#main').html($('#dashboard-content-tmpl').html());
     $('#2163993').off() //.empty();
     IONUX.Dashboard.Orgs = new IONUX.Collections.Orgs();
-    IONUX.Dashboard.OrgsView = new IONUX.Views.OrgSelector({collection: IONUX.Dashboard.Orgs, title: 'Facilities'});
+    IONUX.Dashboard.OrgsView = new IONUX.Views.OrgSelector({collection: IONUX.Dashboard.Orgs, title: 'Facility'});
     IONUX.Dashboard.Orgs.fetch({
       reset: true, 
       success: function(resp) {
         $('#2163993').show();
+        new IONUX.Views.ListFilter().render().el;
       },
     });
   },
@@ -62,7 +63,7 @@ IONUX.Router = Backbone.Router.extend({
     
     // Render Sidebar
     IONUX.Dashboard.Observatories = new IONUX.Collections.Observatories();
-    IONUX.Dashboard.ObservatoriesView = new IONUX.Views.ObservatorySelector({collection: IONUX.Dashboard.Observatories, title: 'Sites'});
+    IONUX.Dashboard.ObservatoriesView = new IONUX.Views.ObservatorySelector({collection: IONUX.Dashboard.Observatories, title: 'Site/Subsite'});
     IONUX.Dashboard.Observatories.fetch({
       reset: true,
       success: function(resp){
