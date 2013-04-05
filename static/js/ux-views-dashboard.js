@@ -20,7 +20,7 @@ IONUX.Views.ViewControls = Backbone.View.extend({
   render_map_view: function(e) {
     if (e) e.preventDefault();
     $('#btn-map').addClass('active').siblings('.active').removeClass('active');
-    IONUX.ROUTER.navigate('/dev/dashboard', true);
+    IONUX.ROUTER.navigate('/', true);
   },
   render_list_view: function(e) {
     if (e) e.preventDefault();
@@ -51,7 +51,7 @@ IONUX.Collections.Observatories = Backbone.Collection.extend({
 });
 
 IONUX.Views.ResourceSelector = Backbone.View.extend({
-  el: '#selector-list',
+  el: '#resource-selector',
   initialize: function(){
     _.bindAll(this);
     this.title = this.options.title;
@@ -59,7 +59,7 @@ IONUX.Views.ResourceSelector = Backbone.View.extend({
   },
   render: function(){
     this.$el.removeClass('placeholder');
-    this.$el.html(this.template({resources: this.collection.toJSON(), title: this.title}));
+    this.$el.show().html(this.template({resources: this.collection.toJSON(), title: this.title}));
     return this;
   },
 })
@@ -131,7 +131,8 @@ IONUX.Views.Map = Backbone.View.extend({
     if (!_.isEmpty(IONUX.MapBlacklist)) {
       var filtered_resources = []
       _.each(IONUX.Dashboard.MapResources.models, function(resource) {
-        if (!_.contains(IONUX.MapBlacklist, resource.get('type_')) && !_.contains(IONUX.MapBlacklist, resource.get('lcstate'))) {
+        if (!_.contains(IONUX.MapBlacklist, resource.get('type_')) 
+            && !_.contains(IONUX.MapBlacklist, resource.get('lcstate'))) {
           filtered_resources.push(resource.toJSON());
         };
       });
@@ -148,7 +149,8 @@ IONUX.Views.Map = Backbone.View.extend({
       center: new google.maps.LatLng(39.8106460, -98.5569760),
       zoom: 3,
       mapTypeId: google.maps.MapTypeId.TERRAIN,
-      disableDefaultUI: true
+      disableDefaultUI: true,
+      scrollwheel: false,
     });
     this.markerClusterer = new MarkerClusterer(this.map);
   },
