@@ -377,7 +377,9 @@ function render_page(resource_type, resource_id, model) {
     // Todo: find the cause of double content-wrapping on these two items
     $('#2163118 .content-wrapper:last').remove();
     $('#2164400 .content-wrapper:last').remove();
-  };
+  } else if (resource_type == "UserInfo" && IONUX.SESSION_MODEL.get('user_id') == resource_id) {
+    IONUX.SESSION_MODEL.fetch();
+  }
   
   _.each($('.v02 .'+resource_type), function(el){
     $(el).find('.content-wrapper:first').css('height', '200px').jScrollPane({autoReinitialise: true});

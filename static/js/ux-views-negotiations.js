@@ -67,7 +67,7 @@ IONUX.Views.RequestRole = Backbone.View.extend({
       success: function(resp) {
         self.modal.modal('hide');
         $(_.template(IONUX.Templates.full_modal_template, {header_text:'Request Received',
-                                                           body: 'Your request has been received and will be reviewed by a manager.',
+                                                           body: 'Your request has been received and will be reviewed by a manager. When it is approved, you will either need to visit your Account Settings page or logout and login again.',
                                                            buttons: "<button class='btn-blue' data-dismiss='modal'>OK</button>"})).modal()
           .on('hide', function() {
             $('#action-modal').remove();
@@ -442,6 +442,13 @@ IONUX.Views.NegotiationCommands = Backbone.View.extend({
                                                            buttons: "<button class='btn-blue' data-dismiss='modal'>OK</button>"})).modal()
           .on('hide', function() {
             $('#action-modal').remove();
+
+            // if this was a negotiation to get a new role, and we accepted, we need to reload the user session model
+            // this doesn't check all the conditions
+            if (verb == "accept") {
+              IONUX.SESSION_MODEL.fetch();
+            }
+
             Backbone.history.fragment = null; // Clear history fragment to allow for page "refresh".
             IONUX.ROUTER.navigate(window.location.pathname, {trigger: true});
           });
