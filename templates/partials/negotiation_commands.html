@@ -3,13 +3,24 @@
 </div>
 <div class="modal-body">
   <p>
-    Please accept or reject this access/role proposal.
+    Please accept or reject this access/role proposal. If you would like to give a reason
+    please enter it in the box below.
   </p>
 
-  <dl>
-    <dt>Request Submitted</dt>
-    <dd><%= submitted %></dd>
-  </dl>
+  <form class="form-horizontal">
+    <div class="control-group">
+      <label class="control-label" for="submitted">Request Submitted</label>
+      <div class="controls">
+        <input name="submitted" class="input-block-level" disabled value="<%= submitted %>" />
+      </div>
+    </div>
+    <div class="control-group">
+      <label class="control-label" for="reason">Reason</label>
+      <div class="controls">
+        <textarea name="reason" rows="4" class="input-block-level"></textarea>
+      </div>
+    </div>
+  </form>
 </div>
 <div class="modal-footer">
   <button id="btn-accept" class="btn-blue">Accept</button>

@@ -249,8 +249,9 @@ def accept_reject_negotiation():
     negotiation_id = request.form.get('negotiation_id', None)
     verb           = request.form.get('verb', None)
     originator     = request.form.get('originator', None)
+    reason         = request.form.get('reason', None)
 
-    resp = ServiceApi.accept_reject_negotiation(negotiation_id, verb, originator)
+    resp = ServiceApi.accept_reject_negotiation(negotiation_id, verb, originator, reason)
     return render_json_response(resp)
 
 @app.route('/<resource_type>/status/<resource_id>/transition/', methods=['POST'])

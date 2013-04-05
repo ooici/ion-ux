@@ -240,7 +240,7 @@ class ServiceApi(object):
         return service_gateway_post('org_management', 'negotiate', params={'sap':sap})
 
     @staticmethod
-    def accept_reject_negotiation(negotiation_id, verb, originator):
+    def accept_reject_negotiation(negotiation_id, verb, originator, reason):
         if not verb in ["accept", "reject"]:
             return error_message("Unknown verb %s" % verb)
 
@@ -248,6 +248,7 @@ class ServiceApi(object):
 
         post_data = {'negotiation_id': negotiation_id,
                      'verb':           verb,
+                     'reason':         reason,
                      'originator':     originator}
 
         if "actor_id" in session:

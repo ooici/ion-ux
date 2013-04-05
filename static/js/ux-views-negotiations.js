@@ -429,11 +429,15 @@ IONUX.Views.NegotiationCommands = Backbone.View.extend({
     // all current checks)
     var originator = (this.neg.originator == "PROVIDER") ? "consumer" : "provider";
     // /HACK
+
+    var reason = this.$('textarea[name="reason"]').val();
+
     $.ajax({
       type: 'POST',
       url: window.location.protocol + "//" + window.location.host + "/negotiation/",
       data: {negotiation_id: this.neg_id,
              verb: verb,
+             reason: reason,
              originator: originator},
       success: function(resp) {
         self.modal.modal('hide');
