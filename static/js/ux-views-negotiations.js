@@ -408,6 +408,7 @@ IONUX.Views.NegotiationCommands = Backbone.View.extend({
     _.bindAll(this);
     var row_info_list = this.options.data[0].split("::");
     this.neg_id = row_info_list[0];
+    this.neg = _.findWhere(window.MODEL_DATA.open_requests, {negotiation_id:this.neg_id});
   },
   render: function(){
     this.modal = $(IONUX.Templates.modal_template).html(this.template({negotiation_id: this.neg_id,
@@ -419,12 +420,21 @@ IONUX.Views.NegotiationCommands = Backbone.View.extend({
     this.setElement('#action-modal');
     return this;
   },
-  accept_or_reject: function(urlstr, header_text, body_text) {
+  accept_or_reject: function(verb, header_text, body_text) {
     var self = this;
+
+    // HACK ALERT
+    // very hard to determine what originator we need to specify so we're shortcutting it
+    // use the OPPOSITE of what's in the request we're working with (we assume it's passed
+    // all current checks)
+    var originator = (this.neg.originator == "PROVIDER") ? "consumer" : "provider";
+    // /HACK
     $.ajax({
       type: 'POST',
-      url: window.location.protocol + "//" + window.location.host + "/negotiation/" + urlstr + "/",
-      data: {negotiation_id: this.neg_id},
+      url: window.location.protocol + "//" + window.location.host + "/negotiation/",
+      data: {negotiation_id: this.neg_id,
+             verb: verb,
+             originator: originator},
       success: function(resp) {
         self.modal.modal('hide');
         $(_.template(IONUX.Templates.full_modal_template, {header_text: header_text,

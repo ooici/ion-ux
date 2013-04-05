@@ -243,18 +243,14 @@ def request_exclusive_access(resource_type, resource_id):
     resp = ServiceApi.request_exclusive_access(resource_id, actor_id, org_id, full_expiration)
     return render_json_response(resp)
 
-@app.route('/negotiation/accept/', methods=['POST'])
+@app.route('/negotiation/', methods=['POST'])
 @login_required
-def accept_negotiation():
+def accept_reject_negotiation():
     negotiation_id = request.form.get('negotiation_id', None)
-    resp = ServiceApi.accept_negotiation(negotiation_id)
-    return render_json_response(resp)
+    verb           = request.form.get('verb', None)
+    originator     = request.form.get('originator', None)
 
-@app.route('/negotiation/reject/', methods=['POST'])
-@login_required
-def reject_negotiation():
-    negotiation_id = request.form.get('negotiation_id', None)
-    resp = ServiceApi.reject_negotiation(negotiation_id)
+    resp = ServiceApi.accept_reject_negotiation(negotiation_id, verb, originator)
     return render_json_response(resp)
 
 @app.route('/<resource_type>/status/<resource_id>/transition/', methods=['POST'])

@@ -240,41 +240,23 @@ class ServiceApi(object):
         return service_gateway_post('org_management', 'negotiate', params={'sap':sap})
 
     @staticmethod
-    def _accept_reject_negotiation(negotiation_id, accept_value):
-        if not accept_value in [3,4]:
-            return error_message("Unknown accept_value %s" % accept_value)
+    def accept_reject_negotiation(negotiation_id, verb, originator):
+        if not verb in ["accept", "reject"]:
+            return error_message("Unknown verb %s" % verb)
 
-        # read the negotiation first so we can determine the sap to send
-        negotiation = service_gateway_get('resource_registry', 'read', params={'object_id': negotiation_id})
-        proposal = negotiation['proposals'][0]
-        neg_type = proposal['type_']
+        url, _ = build_post_request("ion-negotiations", None, base=GATEWAY_BASE_URL)
 
-        sap = {'type_': neg_type,
-               'negotiation_id': negotiation_id,
-               'sequence_num': int(proposal['sequence_num']) + 1,
-               'originator': 2,
-               'proposal_status': accept_value,
-               'consumer': proposal['consumer'],
-               'provider': proposal['provider']}
+        post_data = {'negotiation_id': negotiation_id,
+                     'verb':           verb,
+                     'originator':     originator}
 
-        # add specific fields to sap for the type
-        if neg_type == "AcquireResourceExclusiveProposal":
-            sap.update({'expiration': proposal['expiration'],
-                        'resource_id': proposal['resource_id']})
-        elif neg_type == "AcquireResourceProposal":
-            sap.update({'resource_id': proposal['resource_id']})
-        elif neg_type == "RequestRoleProposal":
-            sap.update({'role_name': proposal['role_name']})
+        if "actor_id" in session:
+            post_data['serviceRequest'] = {'requester' : session['actor_id'],
+                                           'expiry'    : session['valid_until']}
 
-        return service_gateway_post('org_management', 'negotiate', params={'sap':sap})
-
-    @staticmethod
-    def accept_negotiation(negotiation_id):
-        return ServiceApi._accept_reject_negotiation(negotiation_id, 3) # 3 == accepted
-
-    @staticmethod
-    def reject_negotiation(negotiation_id):
-        return ServiceApi._accept_reject_negotiation(negotiation_id, 4) # 4 == rejected
+        data={'payload': json.dumps(post_data)}
+        req = requests.post(url, data)
+        return render_service_gateway_response(req)
 
     @staticmethod
     def get_event_types():

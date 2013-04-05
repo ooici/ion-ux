@@ -319,7 +319,7 @@ function render_page(resource_type, resource_id, model) {
     var raw_table_data = get_descendant_properties(window.MODEL_DATA, data_path);
     if (!_.isEmpty(raw_table_data)) {
         var opts = {el: $(el), data: raw_table_data}
-        if (data_path == "open_requests") {
+        if (data_path == "open_requests" && IONUX.SESSION_MODEL.is_logged_in()) {
             _.extend(opts, {popup_view: IONUX.Views.NegotiationCommands,
                             popup_label: "Accept/Reject",
                             popup_filter_method: negotiation_show_controls});
