@@ -244,7 +244,7 @@ class ServiceApi(object):
         if not verb in ["accept", "reject"]:
             return error_message("Unknown verb %s" % verb)
 
-        url, _ = build_post_request("ion-negotiations", None, base=GATEWAY_BASE_URL)
+        url, _ = build_post_request("resolve-org-negotiation", None)
 
         post_data = {'negotiation_id': negotiation_id,
                      'verb':           verb,
