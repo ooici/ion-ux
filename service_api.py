@@ -174,7 +174,7 @@ class ServiceApi(object):
                'consumer': actor_id,
                'provider': resource_id,
                'proposal_status': 1,
-               'description': "Role Request",
+               'description': "Role Request: %s" % role_name,
                'role_name': role_name }
 
         return service_gateway_post('org_management', 'negotiate', params={'sap':sap})
@@ -204,7 +204,7 @@ class ServiceApi(object):
                'consumer': actor_id,
                'provider': resource_id,
                'proposal_status': 1,
-               'description': "Role Invite",
+               'description': "Role Invite: %s" % role_name,
                'role_name': role_name }
 
         return service_gateway_post('org_management', 'negotiate', params={'negotiation_type': 2,
