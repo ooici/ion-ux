@@ -15,6 +15,7 @@ IONUX.Views.ViewControls = Backbone.View.extend({
     _.bindAll(this);
   },
   render: function() {
+    this.$el.show();
     return this;
   },  
   render_map_view: function(e) {
@@ -25,7 +26,7 @@ IONUX.Views.ViewControls = Backbone.View.extend({
   render_list_view: function(e) {
     if (e) e.preventDefault();
     $('#btn-resources').addClass('active').siblings('.active').removeClass('active');
-    IONUX.ROUTER.navigate('/dev/dashboard/resources', true);
+    IONUX.ROUTER.navigate('/resources', true);
   },
 });
 
@@ -114,7 +115,7 @@ IONUX.Views.Map = Backbone.View.extend({
     _.bindAll(this);
     this.draw_map();
     this.render_table();
-    this.model.on('change', this.pan_map);
+    this.model.on('change', this.draw_map);
     this.collection.on('update_markers', this.draw_markers);
     this.collection.on('reset', this.render_table);
   },
