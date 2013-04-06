@@ -94,7 +94,6 @@ IONUX.Router = Backbone.Router.extend({
       });
     new IONUX.Views.Footer({resource_id: resource_id, resource_type: resource_type}).render().el;
   },
-  
   command: function(resource_type, resource_id){
     $('#error').hide();
     $('#dynamic-container').show();
@@ -103,12 +102,19 @@ IONUX.Router = Backbone.Router.extend({
     // $('.v02').empty();
     var resource_extension = new IONUX.Models.ResourceExtension({resource_type: resource_type, resource_id: resource_id});
     if (resource_type == 'InstrumentDevice') {
+      var resource_extension = new IONUX.Models.ResourceExtension({resource_type: resource_type, resource_id: resource_id});
       new IONUX.Views.InstrumentCommandFacepage({model: resource_extension, el: '.v02'});
     } else if (resource_type == 'PlatformDevice') {
+      var resource_extension = new IONUX.Models.ResourceExtension({resource_type: resource_type, resource_id: resource_id});
       new IONUX.Views.PlatformCommandFacepage({model: resource_extension, el: '.v02'});
+    } else if (resource_type == 'DataProcess') {
+      var resource_extension = new IONUX.Models.ResourceExtension({resource_type: 'InformationResource', resource_id: resource_id});
+      console.log('found');
+      new IONUX.Views.TaskableResourceCommandFacepage({model: resource_extension, el: '.v02'});
     };
     resource_extension.fetch()
       .success(function(model, resp){
+        console.log('resource_extension', resp);
         render_page(resource_type, resource_id, model);
       });
     new IONUX.Views.Footer({resource_id: null, resource_type: null}).render().el;

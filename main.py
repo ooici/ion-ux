@@ -357,7 +357,6 @@ def start_instrument_agent(instrument_device_id, agent_command, cap_type=None, s
         elif agent_command == 'start':
             command_response = ServiceApi.instrument_agent_start(instrument_device_id)
         elif agent_command == 'stop':
-            print 'zzzzstops'
             command_response = ServiceApi.instrument_agent_stop(instrument_device_id)
         else:
             if agent_command == 'RESOURCE_AGENT_EVENT_GO_DIRECT_ACCESS':
@@ -369,6 +368,36 @@ def start_instrument_agent(instrument_device_id, agent_command, cap_type=None, s
         elif agent_command == 'get_resource':
             command_response = ServiceApi.get_resource(instrument_device_id)
     return render_json_response(command_response)
+
+
+
+@app.route('/DataProcess/command/<instrument_device_id>/<agent_command>/', methods=['GET', 'POST', 'PUT'])
+# @login_required
+def command_taskable(instrument_device_id, agent_command, cap_type=None, session_type=None):
+    print 'command_taskable'
+    command_response = 'command_response'
+
+    # cap_type = request.args.get('cap_type')
+    # if request.method in ('POST', 'PUT'):
+    #     if agent_command == 'set_resource':
+    #         resource_params = json.loads(request.data)
+    #         set_params = ServiceApi.set_resource(instrument_device_id, resource_params)
+    #     elif agent_command == 'start':
+    #         command_response = ServiceApi.instrument_agent_start(instrument_device_id)
+    #     elif agent_command == 'stop':
+    #         command_response = ServiceApi.instrument_agent_stop(instrument_device_id)
+    #     else:
+    #         if agent_command == 'RESOURCE_AGENT_EVENT_GO_DIRECT_ACCESS':
+    #             session_type = request.args.get('session_type')
+    #         command_response = ServiceApi.instrument_execute(instrument_device_id, agent_command, cap_type, session_type)
+    # else:
+    #     if agent_command == 'get_capabilities':
+    #         command_response = ServiceApi.instrument_agent_get_capabilities(instrument_device_id)
+    #     elif agent_command == 'get_resource':
+    #         command_response = ServiceApi.get_resource(instrument_device_id)
+    return render_json_response(command_response)
+
+
 
 
 @app.route('/PlatformDevice/command/<platform_device_id>/<agent_command>/')

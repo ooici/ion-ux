@@ -179,9 +179,12 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
         alert("IONUX.Views.ViewActions - ACTION: submenu_toggle");
     },
     action__command:function(){
-        var resource_type = window.MODEL_DATA['resource_type'];
+        var rt = window.MODEL_DATA['resource_type'];
+        var resource_type = rt == 'InformationResource' ? 'DataProcess' : rt; // Todo: fix routes.
         var resource_id = window.MODEL_DATA['_id'];
-        if (resource_type == 'InstrumentDevice' || resource_type == 'PlatformDevice'){
+        if (resource_type == 'InstrumentDevice' 
+            || resource_type == 'PlatformDevice'
+            || resource_type == 'DataProcess'){
             var router = new IONUX.Router();
             router.navigate('/'+resource_type+'/command/'+resource_id+'/', {trigger:true});
         } else {
