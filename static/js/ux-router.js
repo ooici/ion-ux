@@ -325,7 +325,7 @@ function render_page(resource_type, resource_id, model) {
     var raw_table_data = get_descendant_properties(window.MODEL_DATA, data_path);
     if (!_.isEmpty(raw_table_data)) {
         var opts = {el: $(el), data: raw_table_data}
-        if (data_path == "open_requests") {
+        if (data_path == "open_requests" && IONUX.SESSION_MODEL.is_logged_in()) {
             _.extend(opts, {popup_view: IONUX.Views.NegotiationCommands,
                             popup_label: "Accept/Reject",
                             popup_filter_method: negotiation_show_controls});
@@ -383,7 +383,9 @@ function render_page(resource_type, resource_id, model) {
     // Todo: find the cause of double content-wrapping on these two items
     $('#2163118 .content-wrapper:last').remove();
     $('#2164400 .content-wrapper:last').remove();
-  };
+  } else if (resource_type == "UserInfo" && IONUX.SESSION_MODEL.get('user_id') == resource_id) {
+    IONUX.SESSION_MODEL.fetch();
+  }
   
   _.each($('.v02 .'+resource_type), function(el){
     $(el).find('.content-wrapper:first').css('height', '200px').jScrollPane({autoReinitialise: true});

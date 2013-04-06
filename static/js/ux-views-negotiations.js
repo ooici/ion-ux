@@ -67,7 +67,7 @@ IONUX.Views.RequestRole = Backbone.View.extend({
       success: function(resp) {
         self.modal.modal('hide');
         $(_.template(IONUX.Templates.full_modal_template, {header_text:'Request Received',
-                                                           body: 'Your request has been received and will be reviewed by a manager.',
+                                                           body: 'Your request has been received and will be reviewed by a manager. When it is approved, you will either need to visit your Account Settings page or logout and login again.',
                                                            buttons: "<button class='btn-blue' data-dismiss='modal'>OK</button>"})).modal()
           .on('hide', function() {
             $('#action-modal').remove();
@@ -408,6 +408,7 @@ IONUX.Views.NegotiationCommands = Backbone.View.extend({
     _.bindAll(this);
     var row_info_list = this.options.data[0].split("::");
     this.neg_id = row_info_list[0];
+    this.neg = _.findWhere(window.MODEL_DATA.open_requests, {negotiation_id:this.neg_id});
   },
   render: function(){
     this.modal = $(IONUX.Templates.modal_template).html(this.template({negotiation_id: this.neg_id,
@@ -419,12 +420,25 @@ IONUX.Views.NegotiationCommands = Backbone.View.extend({
     this.setElement('#action-modal');
     return this;
   },
-  accept_or_reject: function(urlstr, header_text, body_text) {
+  accept_or_reject: function(verb, header_text, body_text) {
     var self = this;
+
+    // HACK ALERT
+    // very hard to determine what originator we need to specify so we're shortcutting it
+    // use the OPPOSITE of what's in the request we're working with (we assume it's passed
+    // all current checks)
+    var originator = (this.neg.originator == "PROVIDER") ? "consumer" : "provider";
+    // /HACK
+
+    var reason = this.$('textarea[name="reason"]').val();
+
     $.ajax({
       type: 'POST',
-      url: window.location.protocol + "//" + window.location.host + "/negotiation/" + urlstr + "/",
-      data: {negotiation_id: this.neg_id},
+      url: window.location.protocol + "//" + window.location.host + "/negotiation/",
+      data: {negotiation_id: this.neg_id,
+             verb: verb,
+             reason: reason,
+             originator: originator},
       success: function(resp) {
         self.modal.modal('hide');
         $(_.template(IONUX.Templates.full_modal_template, {header_text: header_text,
@@ -432,6 +446,13 @@ IONUX.Views.NegotiationCommands = Backbone.View.extend({
                                                            buttons: "<button class='btn-blue' data-dismiss='modal'>OK</button>"})).modal()
           .on('hide', function() {
             $('#action-modal').remove();
+
+            // if this was a negotiation to get a new role, and we accepted, we need to reload the user session model
+            // this doesn't check all the conditions
+            if (verb == "accept") {
+              IONUX.SESSION_MODEL.fetch();
+            }
+
             Backbone.history.fragment = null; // Clear history fragment to allow for page "refresh".
             IONUX.ROUTER.navigate(window.location.pathname, {trigger: true});
           });
