@@ -14,7 +14,7 @@ todo:
 INTERACTIONS_OBJECT = {};
 INTERACTIONS_OBJECT.block_interactions = ['More Info'];
 INTERACTIONS_OBJECT.group_interactions = ['More Info', /*'Submenu', 'Edit'*/];
-INTERACTIONS_OBJECT.view_interactions = ['Subscribe', 'Lifecycle', 'Edit', /*'Submenu',*/ 'Command', 'Download'];
+INTERACTIONS_OBJECT.view_interactions = ['Subscribe', 'Lifecycle', 'Edit', /*'Submenu',*/ 'Command', 'Download', 'Report Issue'];
 INTERACTIONS_OBJECT.event_interactions = ['Add Event'];
 INTERACTIONS_OBJECT.attachment_interactions = ['Upload Attachment'];
 INTERACTIONS_OBJECT.negotiation_interactions = {owner: ['View Requests'], nonmember: ['Enroll']};
@@ -129,6 +129,7 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
         this.on("action__submenu_toggle", this.action__submenu_toggle);
         this.on("action__command", this.action__command);
         this.on("action__download", this.action__download);
+        this.on("action__report_issue", this.action__report_issue);
     },
     
     // action__subscribe:function(){
@@ -195,6 +196,31 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
         } else {
             alert("Download not available for this resource.");
         };
+    },
+    action__report_issue: function(e) {
+      // generate guid to use
+      // from http://stackoverflow.com/a/2117523/84732
+      var slug = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+                return v.toString(16);
+      });
+
+      // generate event
+      $.ajax({
+        type: 'POST',
+        url: window.location.href + 'publish_event/',
+        data: {description:slug,
+               event_type:'InformationContentStatusEvent'},
+      });
+
+      // trigger mailto link (adapted from http://www.webmasterworld.com/javascript/3290040.htm)
+      var email = "helpdesk@oceanobservatories.org";
+      var subject = "OOI Report Issue (" + slug + ") - " + window.MODEL_DATA.resource_type + " " + window.MODEL_DATA.resource.name;
+      var body = "RESOURCE ID: " + window.MODEL_DATA.resource._id + "%0D%0AISSUE ID: " + slug + "%0D%0A%0D%0APlease keep the above identifiers in this email for cross-reference purposes. Below, describe the issue you are encountering:%0D%0A%0D%0A%0D%0A";
+      var mailto_link = 'mailto:' + email + '?subject=' + subject + '&body=' + body;
+
+      win = window.open(mailto_link,'email_issue');
+      if (win && win.open &&!win.closed) win.close();
     },
     action_org__invite_user: function(e) {
       var model = new IONUX.Collections.Resources(null, {resource_type: 'UserInfo'});

@@ -276,6 +276,10 @@ def publish_event(resource_type, resource_id):
     sub_type    = None
     description = request.form['description']
 
+    # possible override for event type - if comes from a source like "report issue"
+    if 'event_type' in request.form:
+        event_type = request.form['event_type']
+
     resp = ServiceApi.publish_event(event_type, resource_id, resource_type, sub_type, description)
     return render_json_response(resp)
 
