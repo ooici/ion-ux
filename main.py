@@ -322,6 +322,13 @@ def related_objects(resource_id):
     related_objects = ServiceApi.find_related_objects(resource_id)
     return render_json_response(related_objects)
 
+@app.route('/map/<resource_id>/', methods=['GET'])
+@app.route('/resources/', methods=['GET'])
+@app.route('/resources/<resource_id>/', methods=['GET'])
+def dashboard_redirect(resource_id=None):
+    '''Temporary redict until dashboard init supports html requests.'''
+    return redirect('/')
+
 # -----------------------------------------------------------------------------
 # COMMAND RESOURCE PAGES
 # -----------------------------------------------------------------------------

@@ -45,7 +45,7 @@ IONUX.Router = Backbone.Router.extend({
           model: IONUX.Dashboard.MapResource
         });
         
-        new IONUX.Views.DashboardTable({el: $('#dashboard-container #2163993'), data: resp.toJSON()});
+        new IONUX.Views.DashboardTable({el: $('#dashboard-container #2163993'), collection: IONUX.Dashboard.MapResources});
         
         new IONUX.Views.MapFilter().render().el;
         new IONUX.Views.ViewControls().render().el;
@@ -71,7 +71,7 @@ IONUX.Router = Backbone.Router.extend({
         IONUX.Dashboard.MapResource.set(active_resource_attributes);
         IONUX.Dashboard.MapResource.trigger('map:draw');
 
-        new IONUX.Views.DashboardTable({el: $('#dashboard-container #2163993'), data: resp.toJSON()});
+        new IONUX.Views.DashboardTable({el: $('#dashboard-container #2163993'), collection: resp});
       }
     });
   },
@@ -80,13 +80,14 @@ IONUX.Router = Backbone.Router.extend({
     $('#dynamic-container').empty().hide();
     $('#dashboard-container').empty().html($('#dashboard-main-tmpl').html());
     $('#resource-selector, #list-filter, #map-filter').off().empty().hide(); // Todo: until view manager
-    $('#2163993').off() //.empty();
+    $('#dashboard-container #2163993').off(); //.empty();
+    
     IONUX.Dashboard.Orgs = new IONUX.Collections.Orgs();
     IONUX.Dashboard.OrgsView = new IONUX.Views.OrgSelector({collection: IONUX.Dashboard.Orgs, title: 'Facility'});
     IONUX.Dashboard.Orgs.fetch({
       reset: true, 
       success: function(resp) {
-        $('#dashboard #2163993').show();
+        $('#dashboard-container #2163993').show();
         new IONUX.Views.ListFilter().render().el;
       },
     });
@@ -95,20 +96,21 @@ IONUX.Router = Backbone.Router.extend({
   dashboard_list_resource: function(resource_id){
     console.log('dashboard_list_resource');
     $('#dynamic-container').empty().hide();
-    $('#dashboard-container').html($('#dashboard-main-tmpl').html());
+    $('#dashboard-container').show();
+
     $('#2163993').off().empty().append('<div id="spinner"></div>').show();
     new Spinner(IONUX.Spinner.large).spin(document.getElementById('spinner'));
 
     if (IONUX.Dashboard.ListResources === undefined) {
       IONUX.Dashboard.ListResources = new IONUX.Collections.ListResources(null, {resource_id: resource_id});
-      // new IONUX.Views.AssetList({collection: IONUX.Dashboard.ListResources});
     };
+    
     IONUX.Dashboard.ListResources.resource_id = resource_id;
     IONUX.Dashboard.ListResources.set([]);
     IONUX.Dashboard.ListResources.fetch({
       reset:true,
       success: function(resp){
-        new IONUX.Views.DashboardTable({el: $('#2163993'), data: resp.toJSON()});
+        new IONUX.Views.DashboardTable({el: $('#2163993'), collection: resp, list_table: true});
       },
     });
   },

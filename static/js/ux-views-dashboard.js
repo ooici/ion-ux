@@ -244,9 +244,32 @@ IONUX.Views.Map = Backbone.View.extend({
 
 IONUX.Views.DashboardTable = IONUX.Views.DataTable.extend({
   initialize: function() {
+    _.bindAll(this);
     this.$el.show();
+    this.blacklist = this.options.list_table ? IONUX.ListBlacklist : IONUX.MapBlacklist;
+    this.filter_data();
+    this.collection.on('data:filter_render', this.filter_and_render);
     IONUX.Views.DataTable.prototype.initialize.call(this);
-  }
+  },
+  
+  filter_data: function() {
+    this.options.data = [];
+    if (!_.isEmpty(this.blacklist)) {
+       _.each(this.collection.models, function(resource) {
+         if (!_.contains(this.blacklist, resource.get('type_')) && 
+             !_.contains(this.blacklist, resource.get('lcstate'))) {
+           this.options.data.push(resource.toJSON());
+         };
+       }, this);
+    } else {
+      this.options.data = this.collection.toJSON();
+    };
+  },
+  
+  filter_and_render: function() {
+    this.filter_data();
+    this.render();
+  },
 });
 
 
@@ -341,7 +364,7 @@ IONUX.Views.MapFilter = Backbone.View.extend({
     } else {
       IONUX.MapBlacklist.push(type);
     }; 
-    IONUX.Dashboard.MapResources.trigger('reset');
+    IONUX.Dashboard.MapResources.trigger('data:filter_render');
   },
 });
 
@@ -404,6 +427,8 @@ IONUX.Collections.ListResources = Backbone.Collection.extend({
 - - - - - - - - - - - - - - - - - 
 */
 
+IONUX.ListBlacklist = [];
+
 IONUX.Views.ListFilter = Backbone.View.extend({
   el: '#list-filter',
   filter_options: {
@@ -423,14 +448,42 @@ IONUX.Views.ListFilter = Backbone.View.extend({
   template: '\
     <h3>Resource Type</h3>\
     <div id="long-filter"></div>\
-    <div id="short-filter"></div>\
-  ',
-  events: {},
+    <div id="short-filter"></div>',
+  item_template: _.template('<div class="filter-option">\
+                             <%= label %> <input type="checkbox" value="<%= type %>" <%= checked %> />\
+                             </div>'),
+  events: {
+    'click .filter-option': 'set_filter'
+  },
+  
   initialize: function() {
     _.bindAll(this);
   },
+  
   render: function() {
     this.$el.show().html(this.template);
+    this.render_short_list();
     return this;
-  }
+  },
+  
+  render_short_list: function() {
+    var long_list = this.$el.find('#long-filter');
+    _.each(this.filter_options.short_list, function(option) {
+      option['checked'] = _.contains(IONUX.ListBlacklist, option['lcstate']) ? "" : "checked";
+      long_list.append(this.item_template(option));
+    }, this);
+  },
+  
+  set_filter: function(e){
+    console.log('set_filter');
+    var filter_elmt = $(e.target);
+    var type = filter_elmt.val();
+    if (filter_elmt.is(':checked')) {
+      var index = IONUX.ListBlacklist.indexOf(type)
+      IONUX.ListBlacklist.splice(index);
+    } else {
+      IONUX.ListBlacklist.push(type);
+    }; 
+    IONUX.Dashboard.ListResources.trigger('data:filter_render');
+  },
 });
