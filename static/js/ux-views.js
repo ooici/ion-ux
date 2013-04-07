@@ -64,7 +64,9 @@ IONUX.Views.Lifecycle = Backbone.View.extend({
 
 IONUX.Views.Search = Backbone.View.extend({
   el: '#search-production',
-  template: _.template('<div id="input-search-button" class="btn-input-search saved_search_mini_input"></div><input id="sidebar-search" class="textfield-search" type="text" /><br /><a class="btn-advanced-search" href="#">Advanced Search</a>'),
+  template: _.template('<div id="input-search-button" class="btn-input-search saved_search_mini_input"></div>\
+                        <input id="sidebar-search" class="textfield-search" type="text" />\
+                        <a class="btn-advanced-search" href="#">Advanced Search</a>'),
   events: {
     'click .btn-input-search': 'search_on_click',
     'keypress #sidebar-search': 'search_on_enter',

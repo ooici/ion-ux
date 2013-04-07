@@ -149,6 +149,7 @@ IONUX.Router = Backbone.Router.extend({
   },
   search: function(query){
     $('#error').hide();
+    $('#dashboard-container').hide();
     $('#dynamic-container').show().html(LOADING_TEMPLATE);
     var search_model = new IONUX.Models.Search();
     // use heuristics to determine what kind of query we have here
