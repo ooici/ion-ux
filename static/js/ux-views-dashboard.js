@@ -114,10 +114,10 @@ IONUX.Views.Map = Backbone.View.extend({
   initialize: function(){
     _.bindAll(this);
     this.draw_map();
-    this.render_table();
-    this.model.on('change', this.draw_map);
-    this.collection.on('update_markers', this.draw_markers);
-    this.collection.on('reset', this.render_table);
+    // this.render_table();
+    this.model.on('map:draw', this.draw_map);
+    // this.collection.on('reset', this.draw_markers);
+    // this.collection.on('reset', this.render_table);
   },
 
   render: function(){
@@ -125,23 +125,23 @@ IONUX.Views.Map = Backbone.View.extend({
     return this;
   },
   
-  render_table: function(){
-    console.log('render_table');
-    var resource_table = $('#2163993');
-    resource_table.show();
-    if (!_.isEmpty(IONUX.MapBlacklist)) {
-      var filtered_resources = []
-      _.each(IONUX.Dashboard.MapResources.models, function(resource) {
-        if (!_.contains(IONUX.MapBlacklist, resource.get('type_')) 
-            && !_.contains(IONUX.MapBlacklist, resource.get('lcstate'))) {
-          filtered_resources.push(resource.toJSON());
-        };
-      });
-      new IONUX.Views.DataTable({el: resource_table, data: filtered_resources});
-    } else {
-      new IONUX.Views.DataTable({el: resource_table, data: this.collection.toJSON()});
-    };
-  },
+  // render_table: function() {
+  //   console.log('render_table');
+  //   var resource_table = $('#2163993');
+  //   resource_table.show();
+  //   if (!_.isEmpty(IONUX.MapBlacklist)) {
+  //     var filtered_resources = []
+  //     _.each(IONUX.Dashboard.MapResources.models, function(resource) {
+  //       if (!_.contains(IONUX.MapBlacklist, resource.get('type_')) 
+  //           && !_.contains(IONUX.MapBlacklist, resource.get('lcstate'))) {
+  //         filtered_resources.push(resource.toJSON());
+  //       };
+  //     });
+  //     new IONUX.Views.DataTable({el: resource_table, data: filtered_resources});
+  //   } else {
+  //     new IONUX.Views.DataTable({el: resource_table, data: this.collection.toJSON()});
+  //   };
+  // },
   
   draw_map: function(map_options, container_server) {
     console.log('draw_map');
@@ -154,6 +154,8 @@ IONUX.Views.Map = Backbone.View.extend({
       scrollwheel: false,
     });
     this.markerClusterer = new MarkerClusterer(this.map);
+    this.pan_map();
+    this.draw_markers();
   },
   
   draw_markers: function() {
@@ -177,11 +179,11 @@ IONUX.Views.Map = Backbone.View.extend({
       var sw = new google.maps.LatLng(s, w);
       var bounds = new google.maps.LatLngBounds(sw, ne)
       this.map.fitBounds(bounds);
-      this.draw_markers();
+      // this.draw_markers();
     } catch(err) {
       console.log('pan_map error:', err);
-      this.draw_map();
-      this.draw_markers();
+      // this.draw_map();
+      // this.draw_markers();
     }
   },
   
@@ -237,6 +239,14 @@ IONUX.Views.Map = Backbone.View.extend({
       _lon = _lon + _offset;
     }
   },
+});
+
+
+IONUX.Views.DashboardTable = IONUX.Views.DataTable.extend({
+  initialize: function() {
+    this.$el.show();
+    IONUX.Views.DataTable.prototype.initialize.call(this);
+  }
 });
 
 
@@ -356,37 +366,37 @@ IONUX.Collections.ListResources = Backbone.Collection.extend({
   }
 });
 
-
-IONUX.Views.AssetList = Backbone.View.extend({
-  el: '#2163993',
-
-  initialize: function(){
-    _.bindAll(this);
-    this.collection.on('reset', this.render_table);
-  },
-
-  render: function(){
-    this.$el.show();
-    return this;
-  },
-  
-  render_table: function(){
-    console.log('render_table');
-    new IONUX.Views.DataTable({el: this.$el, data: this.collection.toJSON()});
-    
-    // if (!_.isEmpty(IONUX.MapBlacklist)) {
-    //   var filtered_resources = []
-    //   _.each(IONUX.Dashboard.ListResources.models, function(resource) {
-    //     if (!_.contains(IONUX.MapBlacklist, resource.get('type_')) && !_.contains(IONUX.MapBlacklist, resource.get('lcstate'))) {
-    //       filtered_resources.push(resource.toJSON());
-    //     };
-    //   });
-    //   new IONUX.Views.DataTable({el: this.$el, data: filtered_resources});
-    // } else {
-    //   new IONUX.Views.DataTable({el: this.$el, data: this.collection.toJSON()});
-    // };
-  },
-});
+// IONUX.Views.AssetList = Backbone.View.extend({
+//   el: '#2163993',
+// 
+//   initialize: function(){
+//     _.bindAll(this);
+//     this.collection.on('reset', this.render_table);
+//   },
+// 
+//   render: function(){
+//     this.$el.show();
+//     return this;
+//   },
+//   
+//   render_table: function(){
+//     console.log('render_table');
+//     
+//     new IONUX.Views.DataTable({el: this.$el, data: this.collection.toJSON()});
+//     
+//     // if (!_.isEmpty(IONUX.MapBlacklist)) {
+//     //   var filtered_resources = []
+//     //   _.each(IONUX.Dashboard.ListResources.models, function(resource) {
+//     //     if (!_.contains(IONUX.MapBlacklist, resource.get('type_')) && !_.contains(IONUX.MapBlacklist, resource.get('lcstate'))) {
+//     //       filtered_resources.push(resource.toJSON());
+//     //     };
+//     //   });
+//     //   new IONUX.Views.DataTable({el: this.$el, data: filtered_resources});
+//     // } else {
+//     //   new IONUX.Views.DataTable({el: this.$el, data: this.collection.toJSON()});
+//     // };
+//   },
+// });
 
 /* 
 - - - - - - - - - - - - - - - - - 

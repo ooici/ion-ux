@@ -24,24 +24,29 @@ IONUX.Router = Backbone.Router.extend({
     "create_account": "create_account",
     // 'dev/dashboard': 'dev_dashboard',
   },
-
+  
   dashboard_map: function(){
-    $('#dynamic-container').html($('#dashboard-main-tmpl').html());
+    $('#dynamic-container').empty().hide();
+    $('#dashboard-container').hide();
     $('#resource-selector, #list-filter, #map-filter').off().empty().hide(); // Todo: until view manager
     
-    // Render Sidebar
+    // Render Sidebar - need to move this into init and implement timing/triggers.
     IONUX.Dashboard.Observatories = new IONUX.Collections.Observatories();
     IONUX.Dashboard.ObservatoriesView = new IONUX.Views.ObservatorySelector({collection: IONUX.Dashboard.Observatories, title: 'Site/Subsite'});
     IONUX.Dashboard.Observatories.fetch({
       reset: true,
       success: function(resp){
+        $('#dashboard-container').show();
         IONUX.Dashboard.MapResources = new IONUX.Collections.MapResources(resp.models, {resource_id: null});
         IONUX.Dashboard.MapResource = new IONUX.Models.MapResource();
-        new IONUX.Views.Map({
+        
+        IONUX.Dashboard.MapView = new IONUX.Views.Map({
           collection: IONUX.Dashboard.MapResources,
           model: IONUX.Dashboard.MapResource
         });
-        IONUX.Dashboard.MapResources.trigger('update_markers');
+        
+        new IONUX.Views.DashboardTable({el: $('#dashboard-container #2163993'), data: resp.toJSON()});
+        
         new IONUX.Views.MapFilter().render().el;
         new IONUX.Views.ViewControls().render().el;
       },
@@ -49,25 +54,31 @@ IONUX.Router = Backbone.Router.extend({
   },
   
   dashboard_map_resource: function(resource_id){
-    // $('#dynamic-container').html($('#dashboard-main-tmpl').html());
-    $('#2163993').off().empty().append('<div id="spinner"></div>');
+    $('#dynamic-container').empty().hide();
+    $('#dashboard-container').show();
+
+    var table_elmt = $('#dashboard-container #2163993');
+    table_elmt.off().empty().append('<div id="spinner"></div>');
     new Spinner(IONUX.Spinner.large).spin(document.getElementById('2163993'));
+    
     var active_resource_attributes = IONUX.Dashboard.Observatories.findWhere({_id: resource_id})['attributes'];
-    IONUX.Dashboard.MapResources.trigger('update_markers');
+
     IONUX.Dashboard.MapResources.resource_id = resource_id;
     IONUX.Dashboard.MapResources.set([]);
     IONUX.Dashboard.MapResources.fetch({
       reset: true,
       success: function(resp) {
         IONUX.Dashboard.MapResource.set(active_resource_attributes);
-        // console.log('ActiveResource', IONUX.Dashboard.MapResource.toJSON());
-        // console.log('Resources', IONUX.Dashboard.MapResources.toJSON());
+        IONUX.Dashboard.MapResource.trigger('map:draw');
+
+        new IONUX.Views.DashboardTable({el: $('#dashboard-container #2163993'), data: resp.toJSON()});
       }
     });
   },
   
   dashboard_list: function() {
-    $('#dynamic-container').empty().html($('#dashboard-main-tmpl').html());
+    $('#dynamic-container').empty().hide();
+    $('#dashboard-container').empty().html($('#dashboard-main-tmpl').html());
     $('#resource-selector, #list-filter, #map-filter').off().empty().hide(); // Todo: until view manager
     $('#2163993').off() //.empty();
     IONUX.Dashboard.Orgs = new IONUX.Collections.Orgs();
@@ -75,56 +86,59 @@ IONUX.Router = Backbone.Router.extend({
     IONUX.Dashboard.Orgs.fetch({
       reset: true, 
       success: function(resp) {
-        $('#2163993').show();
+        $('#dashboard #2163993').show();
         new IONUX.Views.ListFilter().render().el;
       },
     });
   },
   
   dashboard_list_resource: function(resource_id){
-    $('#dynamic-container').html($('#dashboard-main-tmpl').html());
-    $('#2163993').off().empty().append('<div id="spinner"></div>');
+    console.log('dashboard_list_resource');
+    $('#dynamic-container').empty().hide();
+    $('#dashboard-container').html($('#dashboard-main-tmpl').html());
+    $('#2163993').off().empty().append('<div id="spinner"></div>').show();
     new Spinner(IONUX.Spinner.large).spin(document.getElementById('spinner'));
+
     if (IONUX.Dashboard.ListResources === undefined) {
       IONUX.Dashboard.ListResources = new IONUX.Collections.ListResources(null, {resource_id: resource_id});
-      new IONUX.Views.AssetList({collection: IONUX.Dashboard.ListResources});
+      // new IONUX.Views.AssetList({collection: IONUX.Dashboard.ListResources});
     };
     IONUX.Dashboard.ListResources.resource_id = resource_id;
     IONUX.Dashboard.ListResources.set([]);
     IONUX.Dashboard.ListResources.fetch({
       reset:true,
       success: function(resp){
-        console.log('success', resp);
+        new IONUX.Views.DashboardTable({el: $('#2163993'), data: resp.toJSON()});
       },
     });
   },
 
-  dev_dashboard: function() {
-    // TEMP page setup.
-    $('#footer').remove(); // Remove legacy footer.
-    $('.wrapper').html($('#dashboard-tmpl').html());
-    $('#main').html($('#dashboard-content-tmpl').html());
-    
-    // Move to IONUX in production
-    new IONUX.Views.ViewControls().render().el;
-    
-    // Render Sidebar
-    IONUX.Dashboard.Observatories = new IONUX.Collections.Observatories();
-    IONUX.Dashboard.ObservatoriesView = new IONUX.Views.ObservatorySelector({collection: IONUX.Dashboard.Observatories, title: 'Site/Subsite'});
-    IONUX.Dashboard.Observatories.fetch({
-      reset: true,
-      success: function(resp){
-        IONUX.Dashboard.MapResources = new IONUX.Collections.MapResources(resp.models, {resource_id: null});
-        IONUX.Dashboard.MapResource = new IONUX.Models.MapResource();
-        new IONUX.Views.Map({
-          collection: IONUX.Dashboard.MapResources,
-          model: IONUX.Dashboard.MapResource
-        });
-        IONUX.Dashboard.MapResources.trigger('update_markers');
-        new IONUX.Views.MapFilter().render().el;
-      },
-    });
-  },
+  // dev_dashboard: function() {
+  //   // TEMP page setup.
+  //   $('#footer').remove(); // Remove legacy footer.
+  //   $('.wrapper').html($('#dashboard-tmpl').html());
+  //   $('#main').html($('#dashboard-content-tmpl').html());
+  //   
+  //   // Move to IONUX in production
+  //   new IONUX.Views.ViewControls().render().el;
+  //   
+  //   // Render Sidebar
+  //   IONUX.Dashboard.Observatories = new IONUX.Collections.Observatories();
+  //   IONUX.Dashboard.ObservatoriesView = new IONUX.Views.ObservatorySelector({collection: IONUX.Dashboard.Observatories, title: 'Site/Subsite'});
+  //   IONUX.Dashboard.Observatories.fetch({
+  //     reset: true,
+  //     success: function(resp){
+  //       IONUX.Dashboard.MapResources = new IONUX.Collections.MapResources(resp.models, {resource_id: null});
+  //       IONUX.Dashboard.MapResource = new IONUX.Models.MapResource();
+  //       new IONUX.Views.Map({
+  //         collection: IONUX.Dashboard.MapResources,
+  //         model: IONUX.Dashboard.MapResource
+  //       });
+  //       IONUX.Dashboard.MapResources.trigger('update_markers');
+  //       new IONUX.Views.MapFilter().render().el;
+  //     },
+  //   });
+  // },
 
 
   edit: function(){
@@ -169,7 +183,7 @@ IONUX.Router = Backbone.Router.extend({
     new IONUX.Views.Footer({resource_id: null, resource_type: resource_type}).render().el;
   },
   page: function(resource_type, view_type, resource_id){
-    $('#error').hide();
+    $('#dashboard-container').hide();
     $('#dynamic-container').show().html(LOADING_TEMPLATE);
     var resource_extension = new IONUX.Models.ResourceExtension({resource_type: resource_type, resource_id: resource_id});
     resource_extension.fetch()
@@ -331,7 +345,7 @@ function get_renderable_resource_type(resource_type)
 // Renders a page based on resource_type
 function render_page(resource_type, resource_id, model) {
   var start_render = new Date().getTime();
-
+  console.log($('#dynamic-container')[0]);
    // get most displayable resource type - by derived or otherwise
   resource_type = get_renderable_resource_type(resource_type);
   

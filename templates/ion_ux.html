@@ -51,10 +51,11 @@
               <div id="map-filter"> </div>
               <div id="list-filter"> </div>
             </div> <!-- div#sidebar -->
-            <div id="dynamic-container" class="span10" style="height:100%" >
+            <div id="dynamic-container" class="span10" style="display:none;height:100%"> </div>
+            <div id="dashboard-container" class="span10" style="height:100%" >
               <div id="map_canvas" style="display:none;"> </div>
               <div id="2163993" style="display:none;">
-              <p id="select-facility">Select a Facility</p>
+                <p id="select-facility">Select a Facility</p>
               </div>
             </div>
           </div> <!-- div.row -->
@@ -125,7 +126,10 @@
         -->
         
         <script src="/static/js/jquery-1.9.1.min.js"> </script>
-        <script src="/static/js/jquery-ui.min.js"> </script>
+        <!-- <script src="/static/js/jquery-ui.min.js"> </script> -->
+
+        <script src="/static/js/jquery.cookie.js"> </script>
+        <script src="/static/js/spin.min.js"> </script>
         <script src="/static/js/bootstrap.min.js"> </script>
         <script src="/static/js/json2.js"> </script>
         <script src="/static/js/underscore-1.4.4.min.js "> </script>
