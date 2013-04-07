@@ -150,8 +150,18 @@ IONUX.Router = Backbone.Router.extend({
   search: function(query){
     $('#error').hide();
     $('#dynamic-container').show().html(LOADING_TEMPLATE);
-    var search_model = new IONUX.Models.Search({search_query: query});
-    search_model.fetch()
+    var search_model = new IONUX.Models.Search();
+    // use heuristics to determine what kind of query we have here
+    var fetch_opts = {};
+    if (query.indexOf("adv=1&") == 0) {
+      // advanced search, set fetch_opts properly
+      fetch_opts.type = 'POST';
+      fetch_opts.data = {'adv_query_string': query}
+      search_model.set({search_query: "advanced"})
+    } else {
+      search_model.set({search_query: query});
+    }
+    search_model.fetch(fetch_opts)
       .success(function(resp){
         console.log('Search success:', resp);
         $('#dynamic-container').html($('#2163152').html());
@@ -197,7 +207,6 @@ IONUX.Router = Backbone.Router.extend({
       });
     // new IONUX.Views.Footer({resource_id: resource_id, resource_type: resource_type}).render().el;
   },
-  
   command: function(resource_type, resource_id){
     $('#error').hide();
     $('#dynamic-container').show();
@@ -206,12 +215,19 @@ IONUX.Router = Backbone.Router.extend({
     // $('.v02').empty();
     var resource_extension = new IONUX.Models.ResourceExtension({resource_type: resource_type, resource_id: resource_id});
     if (resource_type == 'InstrumentDevice') {
+      var resource_extension = new IONUX.Models.ResourceExtension({resource_type: resource_type, resource_id: resource_id});
       new IONUX.Views.InstrumentCommandFacepage({model: resource_extension, el: '.v02'});
     } else if (resource_type == 'PlatformDevice') {
+      var resource_extension = new IONUX.Models.ResourceExtension({resource_type: resource_type, resource_id: resource_id});
       new IONUX.Views.PlatformCommandFacepage({model: resource_extension, el: '.v02'});
+    } else if (resource_type == 'DataProcess') {
+      var resource_extension = new IONUX.Models.ResourceExtension({resource_type: 'InformationResource', resource_id: resource_id});
+      console.log('found');
+      new IONUX.Views.TaskableResourceCommandFacepage({model: resource_extension, el: '.v02'});
     };
     resource_extension.fetch()
       .success(function(model, resp){
+        console.log('resource_extension', resp);
         render_page(resource_type, resource_id, model);
       });
     new IONUX.Views.Footer({resource_id: null, resource_type: null}).render().el;
@@ -303,19 +319,18 @@ function replace_url_with_html_links(text) {
 // If this method returns true, there should be a column indicating
 // the view will be shown on row click.
 function negotiation_show_controls(row_data) {
-  // row data first column should always be of form resource_id/resource_type
-  // use this info to go and look up the real item, because UI columns may change
-  var neg = _.findWhere(window.MODEL_DATA.open_negotiations, {_id:row_data[0].split("::")[0]});
+  var neg_id = row_data[0].split("::")[0];
+
+  var neg = _.findWhere(window.MODEL_DATA.open_requests, {negotiation_id:neg_id});
   if (neg &&
       window.MODEL_DATA.resource_type == "Org" &&
-      neg.proposals[0].originator == 1 && // originator == user proposed (1)
+      neg.originator == "CONSUMER" &&
       _.contains(IONUX.SESSION_MODEL.get('roles')[window.MODEL_DATA.resource.org_governance_name], 'ORG_MANAGER'))
     return true;
 
   if (neg &&
       window.MODEL_DATA.resource_type == "UserInfo" &&
-      neg.proposals[0].originator == 2 && // originator == org proposed (2)
-      neg.proposals[0].consumer == IONUX.SESSION_MODEL.get('actor_id'))   // this is likely redundant
+      neg.originator == "PROVIDER")
     return true;
 
   return false;
@@ -415,7 +430,7 @@ function render_page(resource_type, resource_id, model) {
     var raw_table_data = get_descendant_properties(window.MODEL_DATA, data_path);
     if (!_.isEmpty(raw_table_data)) {
         var opts = {el: $(el), data: raw_table_data}
-        if (data_path == "open_negotiations") {
+        if (data_path == "open_requests" && IONUX.SESSION_MODEL.is_logged_in()) {
             _.extend(opts, {popup_view: IONUX.Views.NegotiationCommands,
                             popup_label: "Accept/Reject",
                             popup_filter_method: negotiation_show_controls});
@@ -473,7 +488,9 @@ function render_page(resource_type, resource_id, model) {
     // Todo: find the cause of double content-wrapping on these two items
     $('#2163118 .content-wrapper:last').remove();
     $('#2164400 .content-wrapper:last').remove();
-  };
+  } else if (resource_type == "UserInfo" && IONUX.SESSION_MODEL.get('user_id') == resource_id) {
+    IONUX.SESSION_MODEL.fetch();
+  }
   
   _.each($('.v02 .'+resource_type), function(el){
     $(el).find('.content-wrapper:first').css('height', '200px').jScrollPane({autoReinitialise: true});

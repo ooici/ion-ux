@@ -584,6 +584,11 @@ h4, .h4-span {
   text-transform: uppercase;
 }
 
+hr {
+  border-top-color: #222;
+  border-bottom-color: #333;
+}
+
 #container {
   padding-top: 72px;
 }
@@ -1204,4 +1209,48 @@ ul.nav {
 
 #user-profile-overlay .bbf-del {
   margin-top: 5px;
+}
+
+#advanced-search-overlay {
+  width: 960px;
+  margin-left: -480px;
+}
+
+#advanced-search-overlay .modal-body {
+  height: 600px;
+  max-height: 600px;
+}
+
+#advanced-search-overlay #adv_map {
+  width: 680px;
+  height: 450px;
+}
+
+#advanced-search-overlay #limit_search_checkboxes {
+  margin-left: 30px;
+}
+
+#advanced-search-overlay h4 {
+  margin: 0px;
+}
+
+#advanced-search-overlay form {
+  margin: 0px;
+}
+
+#advanced-search-overlay #searchterms_holder label {
+  font-size: 0.9em;
+  margin: 0px;
+}
+
+#advanced-search-overlay .filter-item {
+  padding: 0px;
+}
+
+#advanced-search-overlay .filter-add i, #advanced-search-overlay .filter-remove i {
+  margin-top: 3px;
+}
+
+#advanced-search-overlay .filter-add, #advanced-search-overlay .filter-remove {
+  border-radius: 3px;
 }

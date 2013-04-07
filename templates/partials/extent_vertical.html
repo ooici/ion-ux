@@ -4,13 +4,13 @@
 <% if (data) { %>
     <div class="upper-bound">
         Upper bound <br />
-        <input type="text" class="textfield_geo" value="<%= data.geospatial_vertical_max %>" disabled />
+        <input type="text" class="textfield_geo" name="vertical-upper-bound" value="<%= data.geospatial_vertical_max %>" disabled />
         <!-- Todo: proper positioning -->
         <div class="toggle_sealevel_passive" style="width:20px;display:inline;position:relative;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
         
     </div>
     <div class="lower-bound">
-        <input type="text" class="textfield_geo" value="<%= data.geospatial_vertical_min %>" disabled />
+        <input type="text" class="textfield_geo" name="vertical-lower-bound" value="<%= data.geospatial_vertical_min %>" disabled />
         <!-- Todo: proper positioning -->
         <div class="toggle_sealevel_result" style="width:20px;display:inline;position:relative;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div><br />
         Lower bound

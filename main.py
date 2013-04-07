@@ -11,7 +11,7 @@ from config import FLASK_HOST, FLASK_PORT, GATEWAY_HOST, GATEWAY_PORT, LOGGED_IN
 from service_api import ServiceApi, error_message
 from layout_api import LayoutApi
 from jinja2 import Template
-from urlparse import urlparse
+from urlparse import urlparse, parse_qs
 import re
 import os
 
@@ -71,11 +71,39 @@ def index():
 # SEARCH & ATTACHMENTS
 # -----------------------------------------------------------------------------
 
-@app.route('/search/', methods=['GET'])
+@app.route('/search/', methods=['GET', 'POST'])
 def search(query=None):
     if request.is_xhr:
-        search_query = escape(request.args.get('query'))
-        search_results = ServiceApi.search(quote(search_query))
+        if request.method == "GET":
+            search_query = escape(request.args.get('query'))
+            search_results = ServiceApi.search(quote(search_query))
+        else:
+            print request.form
+            adv_query_string = request.form['adv_query_string']
+            adv_query_chunks = parse_qs(adv_query_string)
+
+            print "chunks", adv_query_chunks
+
+            geospatial_bounds = {'north': adv_query_chunks.get('north', [''])[0],
+                                  'east': adv_query_chunks.get('east', [''])[0],
+                                 'south': adv_query_chunks.get('south', [''])[0],
+                                  'west': adv_query_chunks.get('west', [''])[0]}
+
+            vertical_bounds   = {'lower': adv_query_chunks.get('vertical-lower-bound', [''])[0],
+                                 'upper': adv_query_chunks.get('vertical-upper-bound', [''])[0]}
+
+            temporal_bounds   = {'from': adv_query_chunks.get('temporal-from-ctrl', [''])[0],
+                                   'to': adv_query_chunks.get('temporal-to-ctrl', [''])[0]}
+
+            search_criteria   = zip(adv_query_chunks.get('filter_var', []),
+                                    adv_query_chunks.get('filter_operator', []),
+                                    adv_query_chunks.get('filter_arg', []))
+
+            search_results    = ServiceApi.adv_search(geospatial_bounds,
+                                                      vertical_bounds,
+                                                      temporal_bounds,
+                                                      search_criteria)
+
         return render_json_response(search_results)
     else:
         return render_app_template(request.path)
@@ -214,18 +242,15 @@ def request_exclusive_access(resource_type, resource_id):
     resp = ServiceApi.request_exclusive_access(resource_id, actor_id, org_id, full_expiration)
     return render_json_response(resp)
 
-@app.route('/negotiation/accept/', methods=['POST'])
+@app.route('/negotiation/', methods=['POST'])
 @login_required
-def accept_negotiation():
+def accept_reject_negotiation():
     negotiation_id = request.form.get('negotiation_id', None)
-    resp = ServiceApi.accept_negotiation(negotiation_id)
-    return render_json_response(resp)
+    verb           = request.form.get('verb', None)
+    originator     = request.form.get('originator', None)
+    reason         = request.form.get('reason', None)
 
-@app.route('/negotiation/reject/', methods=['POST'])
-@login_required
-def reject_negotiation():
-    negotiation_id = request.form.get('negotiation_id', None)
-    resp = ServiceApi.reject_negotiation(negotiation_id)
+    resp = ServiceApi.accept_reject_negotiation(negotiation_id, verb, originator, reason)
     return render_json_response(resp)
 
 @app.route('/<resource_type>/status/<resource_id>/transition/', methods=['POST'])
@@ -249,6 +274,10 @@ def publish_event(resource_type, resource_id):
 
     sub_type    = None
     description = request.form['description']
+
+    # possible override for event type - if comes from a source like "report issue"
+    if 'event_type' in request.form:
+        event_type = request.form['event_type']
 
     resp = ServiceApi.publish_event(event_type, resource_id, resource_type, sub_type, description)
     return render_json_response(resp)
@@ -355,6 +384,36 @@ def start_instrument_agent(instrument_device_id, agent_command, cap_type=None, s
         elif agent_command == 'get_resource':
             command_response = ServiceApi.get_resource(instrument_device_id)
     return render_json_response(command_response)
+
+
+
+@app.route('/DataProcess/command/<instrument_device_id>/<agent_command>/', methods=['GET', 'POST', 'PUT'])
+# @login_required
+def command_taskable(instrument_device_id, agent_command, cap_type=None, session_type=None):
+    print 'command_taskable'
+    command_response = 'command_response'
+
+    # cap_type = request.args.get('cap_type')
+    # if request.method in ('POST', 'PUT'):
+    #     if agent_command == 'set_resource':
+    #         resource_params = json.loads(request.data)
+    #         set_params = ServiceApi.set_resource(instrument_device_id, resource_params)
+    #     elif agent_command == 'start':
+    #         command_response = ServiceApi.instrument_agent_start(instrument_device_id)
+    #     elif agent_command == 'stop':
+    #         command_response = ServiceApi.instrument_agent_stop(instrument_device_id)
+    #     else:
+    #         if agent_command == 'RESOURCE_AGENT_EVENT_GO_DIRECT_ACCESS':
+    #             session_type = request.args.get('session_type')
+    #         command_response = ServiceApi.instrument_execute(instrument_device_id, agent_command, cap_type, session_type)
+    # else:
+    #     if agent_command == 'get_capabilities':
+    #         command_response = ServiceApi.instrument_agent_get_capabilities(instrument_device_id)
+    #     elif agent_command == 'get_resource':
+    #         command_response = ServiceApi.get_resource(instrument_device_id)
+    return render_json_response(command_response)
+
+
 
 
 @app.route('/PlatformDevice/command/<platform_device_id>/<agent_command>/')
