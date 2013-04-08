@@ -161,7 +161,7 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
           .on('shown', function(){
              var notifications = new IONUX.Collections.Notifications();
              new IONUX.Views.Notifications({collection: notifications});
-             notifications.fetch();
+             notifications.fetch({reset:true});
            })
           .on('hide',function(){
             $('#action-modal').remove();
