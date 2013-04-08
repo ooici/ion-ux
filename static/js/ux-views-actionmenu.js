@@ -122,6 +122,13 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
           }
         }
 
+        // remove COMMAND/DOWNLOAD unless certain types
+        if (!_.contains(['PlatformDevice', 'InstrumentDevice', 'TaskableResource'], window.MODEL_DATA.resource_type))
+          this.interaction_items.splice(this.interaction_items.indexOf('Command'), 1);
+
+        if (window.MODEL_DATA.resource_type != 'DataProduct')
+          this.interaction_items.splice(this.interaction_items.indexOf('Download'), 1);
+
         this.create_actionmenu();
         this.on("action__subscribe", this.action__subscribe);
         this.on("action__lifecycle", this.action__lifecycle);
