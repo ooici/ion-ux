@@ -221,13 +221,13 @@ class ServiceApi(object):
                                                                            'sap':sap})
 
     @staticmethod
-    def request_access(resource_id, actor_id, org_id):
+    def request_access(resource_id, res_name, actor_id, org_id):
         sap = {'type_': 'AcquireResourceProposal',
                'originator': 1,
                'consumer': actor_id,
                'provider': org_id,
                'proposal_status': 1,
-               'description': "Access Request",
+               'description': "Access Request: %s" % res_name,
                'resource_id': resource_id }
 
         return service_gateway_post('org_management', 'negotiate', params={'sap':sap})

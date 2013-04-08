@@ -213,9 +213,10 @@ def offer_user_role(resource_type, resource_id):
 @login_required
 def request_access(resource_type, resource_id):
     org_id = request.form.get('org_id', None)
+    res_name = request.form.get('res_name', None)
     actor_id = session.get('actor_id') if session.has_key('actor_id') else None
 
-    resp = ServiceApi.request_access(resource_id, actor_id, org_id)
+    resp = ServiceApi.request_access(resource_id, res_name, actor_id, org_id)
     return render_json_response(resp)
 
 @app.route('/<resource_type>/status/<resource_id>/release_access/', methods=['POST'])
