@@ -5,8 +5,6 @@ import base64
 import hashlib
 import time
 
-from urllib import quote
-
 from config import FLASK_HOST, FLASK_PORT, GATEWAY_HOST, GATEWAY_PORT, LOGGED_IN, PRODUCTION, SECRET_KEY, UI_MODE, PORTAL_ROOT
 from service_api import ServiceApi, error_message
 from layout_api import LayoutApi
@@ -75,14 +73,12 @@ def index():
 def search(query=None):
     if request.is_xhr:
         if request.method == "GET":
-            search_query = escape(request.args.get('query'))
-            search_results = ServiceApi.search(quote(search_query))
+            search_query = request.args.get('query')
+            search_results = ServiceApi.search(search_query)
+            return render_json_response(search_results)
         else:
-            print request.form
             adv_query_string = request.form['adv_query_string']
             adv_query_chunks = parse_qs(adv_query_string)
-
-            print "chunks", adv_query_chunks
 
             geospatial_bounds = {'north': adv_query_chunks.get('north', [''])[0],
                                   'east': adv_query_chunks.get('east', [''])[0],
