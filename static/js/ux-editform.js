@@ -3,11 +3,11 @@ Form styling:
   - Sort order: alphabetically
 */
 
-
-var EditResourceModel = Backbone.Model.extend({
-
+IONUX.Models.EditResourceModel = Backbone.Model.extend({
+  idAttribute: '_id',
   initialize: function(options){
     this.resource_type = options.resource_type;
+    this.resource_id = options.resource_id;
     this.black_list = options.black_list || [];
     this.nest_depth_factor = options.nest_depth_factor || 50;
     Backbone.Form.helpers.keyToTitle = this.key_to_title;
@@ -15,11 +15,11 @@ var EditResourceModel = Backbone.Model.extend({
   },
 
   url: function(){
-    return "/resource_type_edit/"+this.resource_type+'/';
+    return "/resource_type_edit/"+this.resource_type+'/'+this.resource_id+'/';
   },
 
   parse: function(resp){
-    return resp.data.GatewayResponse;
+    return resp.data;
   },
 
   schema: function(){
@@ -154,26 +154,44 @@ IONUX.Views.EditResource = Backbone.View.extend({
     'click #cancel-edit': 'cancel'
   }, 
   initialize: function(){
+    this.init_time = new Date().getTime();
     _.bindAll(this);
     this.form = new Backbone.Form({model: this.model}).render();
-    this.base_url = window.location.pathname.replace(/edit$/,'');
+    this.base_url = window.location.href.replace(/edit$/,'');
+    this.render();
   },
   render: function(){
-    view_elmt = $('.viewcontainer').children('.row-fluid');
-    view_elmt.empty().html(this.$el.html(this.template));
+    // Insert form but leave page header
+    $('#dynamic-container > .row-fluid').html(this.$el.html(this.template));
     $('#form-container').html(this.form.el);
-    return this;
   },
   submit_form: function(){
-    this.model.clear(); // clear to remove attrs not in model.schema.
-    this.model.set(this.form.getValue());
-    var self = this;
-    this.model.save()
-      .done(function(resp){
-        IONUX.ROUTER.navigate(self.base_url,{trigger:true});
-    });
+    console.log('submit_form');
+
+    console.log('before:name', this.model.get('name'));
+    console.log('before:controllable', this.model.get('controllable'), typeof this.model.get('controllable'));
+    this.form.commit({ validate: true });
+    console.log('after:name', this.model.get('name'));
+    console.log('after:controllable', this.model.get('controllable'), typeof this.model.get('controllable'));
+
+    this.model.unset('resource_id');
+    this.model.unset('resource_type');
+
+    // this.model.save();
+    // var data = this.form.getValue();
+    // this.model.clear(); // clear to remove attrs not in model.schema.
+    // this.model.set(this.form.getValue());
+    // var self = this;
+    // this.model.save()
+    //   .done(function(resp){
+    //     IONUX.ROUTER.navigate(self.base_url,{trigger:true});
+    // });
   },
   cancel: function(){
     IONUX.ROUTER.navigate(this.base_url,{trigger:true});
   },
 });
+
+function validator_test() {
+  console.log('validator_test');
+};

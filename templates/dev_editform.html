@@ -100,21 +100,80 @@
   "reference_urls": [], 
   "last_calibration_datetime": "", 
   "lcstate": "DEPLOYED_AVAILABLE"
-}}
+}};
+
+
     </script>
 {% endblock %}
 
 {% block document_ready %}
   $(function(){
     IONUX.init();
-    var black_list = ['resource._id', 'resource._rev', 'resource.ts_created', 'resource.ts_updated', 'resource.lcstate', 'resource.type_', 'resource.alt_ids'];
+    var black_list = ['resource._id', 'resource._rev', 'resource.ts_created', 'resource.ts_updated', 'lcstate', 'resource.type_', 'resource.alt_ids'];
 
-nfmodel = new EditResourceModel({resource_type:"InstrumentDevice", black_list:black_list});
-//nfmodel = new EditResourceModel({resource_type:"InstrumentAgentInstance", black_list:black_list});
-nform = new Backbone.Form({model: nfmodel }).render();
-nfmodel.fetch();
+    // After refactor
+    // var m = new IONUX.Models.EditResourceModel({
+    //   resource_type: 'InstrumentDevice',
+    //   resource_id: '3b377afaed3c4362b8bad0d7de7df76e'
+    // });
+    // 
+    // m.fetch({
+    //   success: function(resp) {
+    //     nform = new Backbone.Form({model: resp}).render();
+    //     $("#dynamic-container").show().append(nform.el);
+    //   }
+    // });
 
-$("#dynamic-container").append(nform.el);
+    
+    // WORKING EXPERIMENT
+    // var test_data = new IONUX.Models.Resource({resource_id: '0103c463b6314f5ab818c05f55576e6c'});
+    // test_data.fetch({
+    //   async: false,
+    //   success: function(resp) {
+    //     resp.set('resource_type', resp.get('type_'));
+    //     resp.set('black_list', black_list);
+    //   },
+    // });
+    // 
+    // var nmodel = new IONUX.Models.EditResourceModel(test_data.toJSON());
+    // // nmodel.fetch();
+    // // new_model.fetch();
+    // // test_data['resource_type'] = "InstrumentDevice";
+    // // test_data['black_list'] = black_list;
+    // // console.log('test_data', test_data);
+    // // nfmodel = new EditResourceModel(test_data);
+    // nform = new Backbone.Form({model: nmodel}).render();
+    // $("#dynamic-container").show().append(nform.el);
+    // nform.commit();
+
+    // - - - - - - - - 
+    
+    // EXPERIMENT TWO
+    
+    test_data = _.clone(TEST_MODEL_DATA['resource']);
+    test_data['resource_type'] = "InstrumentDevice";
+    test_data['black_list'] = black_list;
+
+    nfmodel = new IONUX.Models.EditResourceModel(test_data);
+    //nfmodel = new EditResourceModel({resource_type:"InstrumentAgentInstance", black_list:black_list});
+    nform = new Backbone.Form({model: nfmodel }).render();
+    // nfmodel.fetch();
+    console.log('nform', nform.schema)
+    
+    $("#dynamic-container").show().append(nform.el);
+
+
+
+    
+    // ORIGINAL
+    // nfmodel = new EditResourceModel({resource_type:"InstrumentDevice", black_list:black_list});
+    // //nfmodel = new EditResourceModel({resource_type:"InstrumentAgentInstance", black_list:black_list});
+    // nform = new Backbone.Form({model: nfmodel }).render();
+    // nfmodel.fetch();
+    // 
+    // $("#dynamic-container").append(nform.el);
+    
+    // - - - - - - - - 
 
 //TEMP STYLING:
 $(".form-horizontal .control-label").css({"width":"300px", "margin-right":"10px"});
