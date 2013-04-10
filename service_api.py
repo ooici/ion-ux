@@ -3,6 +3,7 @@ from flask import session, jsonify, abort
 from config import GATEWAY_HOST, GATEWAY_PORT
 from copy import deepcopy
 from instrument_command import BLACKLIST
+import re
 
 GATEWAY_BASE_URL = 'http://%s:%d' % (GATEWAY_HOST, GATEWAY_PORT)
 SERVICE_GATEWAY_BASE_URL = '%s/ion-service' % (GATEWAY_BASE_URL)
@@ -40,6 +41,58 @@ class ServiceApi(object):
 
     @staticmethod
     def search(search_query):
+
+        query = None
+
+        # simple search for possible raw query language
+        raw_starts = ["search '", "belongs to", "has '", "in '"]
+        searchlow = search_query.lower()
+        for raw in raw_starts:
+            if searchlow.startswith(raw):
+                query = search_query
+
+        # if not a raw query
+        if not query:
+            # split into ors
+            # from http://stackoverflow.com/a/1180180/84732
+            rors = re.compile(' or (?=(?:(?:[^"]*"){2})*[^"]*$)', flags=re.IGNORECASE)
+            exprs = rors.split(search_query)
+
+            search_template = "SEARCH '%s' %s '%s' FROM 'resources_index' LIMIT 100"
+            queries = []
+            for expr in exprs:
+                val   = expr
+                verb  = "IS"
+                field = "_all"
+
+                # allow specifying specific field with = sign
+                # must allow following rules to be applied too
+                if val[0] != '"' and val[-1] != '"' and "=" in val:
+                    field, val = val.split("=", 1)
+
+                # allow "LIKE" searching with ~
+                if val[0] == "~":
+                    val = val[1:]
+                    verb = "LIKE"
+                # quotes on both sides mean exact match only
+                elif val[0] == '"' and val[-1] == '"':
+                    val = val[1:-1]
+                # add *s, but only when no quotes, ~, or existence of one side with a star
+                elif val[0] != "*" and val[-1] != "*":
+                    val = "*%s*" % val
+
+                queries.append(search_template % (field, verb, val))
+
+            query = " OR ".join(queries)
+
+        url = build_get_request(SERVICE_GATEWAY_BASE_URL, 'discovery', 'parse', params={'search_request':query, 'id_only':False})
+        resp = requests.get(url)
+        search_json = json.loads(resp.content)
+        if search_json['data'].has_key('GatewayResponse'):
+            return search_json['data']['GatewayResponse']
+
+        return search_json['data']
+
         search_url = "http://%s:%d/ion-service/discovery/parse?search_request=SEARCH'_all'LIKE'%s'FROM'resources_index'LIMIT100" % (GATEWAY_HOST, GATEWAY_PORT, search_query)
         search_results = requests.get(search_url)
         search_json = json.loads(search_results.content)
@@ -221,13 +274,13 @@ class ServiceApi(object):
                                                                            'sap':sap})
 
     @staticmethod
-    def request_access(resource_id, actor_id, org_id):
+    def request_access(resource_id, res_name, actor_id, org_id):
         sap = {'type_': 'AcquireResourceProposal',
                'originator': 1,
                'consumer': actor_id,
                'provider': org_id,
                'proposal_status': 1,
-               'description': "Access Request",
+               'description': "Access Request: %s" % res_name,
                'resource_id': resource_id }
 
         return service_gateway_post('org_management', 'negotiate', params={'sap':sap})
