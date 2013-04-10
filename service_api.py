@@ -907,6 +907,8 @@ class ResourceTypeSchema(object):
             return {"type": "List", "itemType": "Object"}
         elif resource_str_type in ["list", "tuple"]:
             return {"type": "List"}
+        # elif resource_str_type == "dict":
+        #     return {"type": "Object", "subSchema": {"key": {'type': 'Text'}, "val": {'value': 'Text'}}}
         elif resource_str_type == "bool":
             return {"type": "Radio", "options": [True, False]}
         elif resource_str_type == "int":

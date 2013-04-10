@@ -26,6 +26,7 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
     var schema = this.get_resource_type_schema();
     //resource_type_schema = resource_type_schema['schema'];
     //var schema = this.make_schema(resource_type_schema);
+    console.log('schema', schema);
     return schema;
   },
 
@@ -159,6 +160,7 @@ IONUX.Views.EditResource = Backbone.View.extend({
     this.form = new Backbone.Form({model: this.model}).render();
     this.base_url = window.location.href.replace(/edit$/,'');
     this.render();
+    console.log(this.model.toJSON());
   },
   render: function(){
     // Insert form but leave page header
