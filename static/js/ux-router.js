@@ -88,7 +88,6 @@ IONUX.Router = Backbone.Router.extend({
       reset: true, 
       success: function(resp) {
         $('#dashboard-container #2163993').show();
-        new IONUX.Views.ListFilter().render().el;
       },
     });
   },
@@ -110,7 +109,8 @@ IONUX.Router = Backbone.Router.extend({
     IONUX.Dashboard.ListResources.fetch({
       reset:true,
       success: function(resp){
-        new IONUX.Views.DashboardTable({el: $('#2163993'), collection: resp, list_table: true});
+        new IONUX.Views.ListFilter().render().el;
+        new IONUX.Views.ResourceTable({el: $('#2163993'), collection: resp, list_table: true});
       },
     });
   },
