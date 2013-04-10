@@ -342,8 +342,8 @@ function negotiation_show_controls(row_data) {
 function get_renderable_resource_type(resource_type)
 {
   // FIX/HACK: Observatory shouldn't be on its own, it should be a site
-  if (resource_type == "Observatory")
-    return "Site";
+  // if (resource_type == "Observatory")
+  //   return "Site";
 
   // conduct initial search of window.LAYOUT
   var re = _.find(window.LAYOUT.spec.restypes, function(v, k) { return v.name == resource_type; });
@@ -362,10 +362,9 @@ function get_renderable_resource_type(resource_type)
 // Renders a page based on resource_type
 function render_page(resource_type, resource_id, model) {
   var start_render = new Date().getTime();
-  console.log($('#dynamic-container')[0]);
    // get most displayable resource type - by derived or otherwise
   resource_type = get_renderable_resource_type(resource_type);
-  
+
   window.MODEL_DATA = model.data;
   window.MODEL_DATA['resource_type'] = resource_type;
 
@@ -496,9 +495,8 @@ function render_page(resource_type, resource_id, model) {
     $(el).find('.content-wrapper:first').css('height', '200px').jScrollPane({autoReinitialise: true});
   });
   
-
-  // Action Menus
   
+  // Action Menus
   _.each($('.v01 .group .nav, .v02 .group .nav'), function(el) {
     // Todo: finish attachments/events menus
     var group_name = $(el).find('li:first a').text();
@@ -515,7 +513,7 @@ function render_page(resource_type, resource_id, model) {
   });
   
   _.each($('.v01 .'+resource_type+'.block, .v02 .'+resource_type+'.block'), function(el) {
-    new IONUX.Views.BlockActions({el:$(el)});
+    new IONUX.Views.BlockActions({el: el});
   });
   
   new IONUX.Views.ViewActions({el: '.'+resource_type+' .heading-right'});

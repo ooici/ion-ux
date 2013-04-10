@@ -277,6 +277,7 @@ IONUX.Views.GroupActions = IONUX.Views.ActionMenu.extend({
         this.on("action__more_info", this.action__more_info);
         this.on("action__submenu_toggle", this.action__submenu_toggle);
         this.on("action__edit", this.action__edit);
+        this.create_actionmenu();
     },
 
     action__more_info:function(){
@@ -307,6 +308,7 @@ IONUX.Views.BlockActions = IONUX.Views.ActionMenu.extend({
         this.on("action__detailed_view", this.action__detailed_view);
         this.on("action__hide", this.action__hide);
         this.on("action__edit", this.action__edit);
+        this.create_actionmenu();
     },
 
     action__more_info:function(target){
@@ -338,6 +340,7 @@ IONUX.Views.EventActions = IONUX.Views.ActionMenu.extend({
     initialize: function() {
         this.interaction_items = INTERACTIONS_OBJECT.event_interactions;
         this.on("action__add_event", this.add_event);
+        this.create_actionmenu();
     },
     
     add_event: function(){
@@ -357,6 +360,7 @@ IONUX.Views.AttachmentActions = IONUX.Views.ActionMenu.extend({
     initialize: function() {
         this.interaction_items = INTERACTIONS_OBJECT.attachment_interactions;
         this.on("action__upload_attachment", this.upload_attachment);
+        this.create_actionmenu();
     },
     
     upload_attachment: function(){
@@ -372,6 +376,7 @@ IONUX.Views.NegotiationActions = IONUX.Views.ActionMenu.extend({
     initialize: function() {
       this.interaction_items = INTERACTIONS_OBJECT.negotiation_interactions['nonmember'];
       this.on('action__enroll', this.enroll);
+      this.create_actionmenu();
     },
     
     enroll: function(){
