@@ -61,6 +61,11 @@ class ServiceApi(object):
         return site_data_products
 
     @staticmethod
+    def activate_primary(deployment_id):
+        activate = service_gateway_post('observatory_management', 'activate_deployment', params={'deployment_id': deployment_id})
+        return activate
+
+    @staticmethod
     def search(search_query):
 
         query = None

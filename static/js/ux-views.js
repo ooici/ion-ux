@@ -1172,6 +1172,103 @@ IONUX.Views.CreateResourceView = Backbone.View.extend({
   }
 });
 
+IONUX.Views.ActivateAsPrimaryDeployment = Backbone.View.extend({
+  template: _.template($("#activate-as-primary-deployment").html()),
+  template_confirm: _.template($("#activate-as-primary-deployment-confirm").html()),
+  buttons_one: '<button id="btn-activate-primary" class="btn-blue">Activate</button><button class="btn-general" data-dismiss="modal">Cancel</button>',
+  buttons_two: '<button id="btn-confirm-activate" class="btn-blue">Confirm</button>',
+  events: {
+    'click #btn-activate-primary': 'activate_primary_clicked',
+    'click #btn-confirm-activate': 'confirm_clicked'
+  },
+  render: function() {
+    var modal_template_vars = {header_text:"Set Primary Deployment: " + window.MODEL_DATA.resource.name,
+                               body: "",
+                               buttons: this.buttons_one};
+
+    var template_vars = {deployments: window.MODEL_DATA.deployments};
+
+    this.modal = $(_.template(IONUX.Templates.full_modal_template, modal_template_vars));
+    this.modal.find('.modal-body').html(this.template(template_vars));
+    this.modal.modal('show')
+      .on('hide', function() {
+        $('#action-modal').remove();
+      });
+    this.setElement('#action-modal');
+
+    var curdeployment = _.find(_.pairs(window.MODEL_DATA.deployment_info), function(v) { return v[1].is_primary; });
+    if (curdeployment) {
+      this.$('select[name="deployment"]').val(curdeployment[0]);
+    }
+
+    return this;
+  },
+  activate_primary_clicked: function() {
+    var curdeployment      = _.find(_.pairs(window.MODEL_DATA.deployment_info), function(v) { return v[1].is_primary; }),
+        curdeployment_text = null,
+        curdevice          = null;
+
+    if (curdeployment) {
+      curdevice = window.MODEL_DATA.deployment_info[curdeployment[0]].device_name;
+      curdeployment_text = _.findWhere(window.MODEL_DATA.deployments, {'_id': curdeployment[0]}).name;
+    } else {
+      curdeployment_text = "None";
+      curdevice = "None";
+    }
+
+    this.newdeployment = _.findWhere(window.MODEL_DATA.deployments, {'_id': this.$('select[name="deployment"]').val()});
+    var newdevice = window.MODEL_DATA.deployment_info[this.newdeployment._id].device_name;
+
+    if (curdeployment && curdeployment.length > 0 && this.newdeployment._id == curdeployment[0]) {
+      this.modal.find('.modal-body').html('<p>This deployment (' + this.newdeployment.name + ') is already the primary.</p>');
+      this.modal.find('#btn-activate-primary').remove();
+      return;
+    }
+
+    var template_vars = {current_deployment: curdeployment_text,
+                         current_device: curdevice,
+                         new_deployment: this.newdeployment.name,
+                         new_device: newdevice};
+
+    this.modal.find('.modal-body').html(this.template_confirm(template_vars));
+    this.modal.find('#btn-activate-primary').replaceWith(this.buttons_two);
+  },
+  confirm_clicked: function() {
+    var url = window.location.protocol + "//" + window.location.host + "/activate_primary/",
+       vals = {deployment_id: this.newdeployment._id},
+       self = this;
+    
+    $.post(url, vals)
+      .done(function(resp) {
+        self.modal.modal('hide');
+
+        Backbone.history.fragment = null; // Clear history fragment to allow for page "refresh".
+        IONUX.ROUTER.navigate(window.location.pathname, {trigger: true});
+      })
+      .fail(function(resp) {
+        console.error(resp);
+      });
+  }
+});
+
+IONUX.Views.DeactivateAsPrimaryDeployment = Backbone.View.extend({
+  template: _.template($("#deactivate-as-primary-deployment").html()),
+  events: {
+    'click #btn-deactivate-primary': 'deactivate_primary_clicked'
+  },
+  render: function() {
+    this.modal = $(IONUX.Templates.modal_template).html(this.template({resource_name:window.MODEL_DATA.resource.name}));
+    this.modal.modal('show')
+      .on('hide', function() {
+        $('#action-modal').remove();
+      });
+    this.setElement('#action-modal');
+    return this;
+  },
+  deactivate_primary_clicked: function() {
+    console.log("hotcha");
+  }
+});
 
 // LEFT FOR REFERENCE
 // IONUX.Views.UserRegistration = IONUX.Views.CreateNewView.extend({

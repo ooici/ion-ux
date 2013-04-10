@@ -1,0 +1,13 @@
+<form class="form-horizontal">
+  <div class="control-group">
+    <label class="control-label" for="deployment">New Primary Deployment</label>
+    <div class="controls">
+      <select name="deployment">
+        <% _.each(deployments, function(d) { %>
+        <option value="<%= d._id %>"><%= d.name %></option>
+        <% }) %>
+      </select>
+    </div>
+  </div>
+</form>
+

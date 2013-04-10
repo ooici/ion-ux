@@ -405,6 +405,13 @@ def dashboard_redirect(resource_id=None):
     '''Temporary redict until dashboard init supports html requests.'''
     return redirect('/')
 
+@app.route('/activate_primary/', methods=['POST'])
+@login_required
+def activate_primary():
+    deployment_id = request.form.get('deployment_id', None)
+    primary = ServiceApi.activate_primary(deployment_id)
+    return render_json_response(primary)
+
 # -----------------------------------------------------------------------------
 # COMMAND RESOURCE PAGES
 # -----------------------------------------------------------------------------
