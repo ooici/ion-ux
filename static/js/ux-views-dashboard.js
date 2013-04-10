@@ -288,8 +288,7 @@ IONUX.Views.ResourceTable = IONUX.Views.DataTable.extend({
     this.options.data = [];
     if (!_.isEmpty(this.whitelist)) {
        _.each(this.collection.models, function(resource) {
-         if (!_.contains(this.whitelist, resource.get('type_')) && 
-             !_.contains(this.whitelist, resource.get('lcstate'))) {
+         if (_.contains(this.whitelist, resource.get('type_'))) {
            this.options.data.push(resource.toJSON());
          };
        }, this);
