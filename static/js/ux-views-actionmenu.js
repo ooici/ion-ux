@@ -122,6 +122,13 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
           }
         }
 
+        // remove COMMAND/DOWNLOAD unless certain types
+        if (!_.contains(['PlatformDevice', 'InstrumentDevice', 'TaskableResource'], window.MODEL_DATA.resource_type))
+          this.interaction_items.splice(this.interaction_items.indexOf('Command'), 1);
+
+        if (window.MODEL_DATA.resource_type != 'DataProduct')
+          this.interaction_items.splice(this.interaction_items.indexOf('Download'), 1);
+
         this.create_actionmenu();
         this.on("action__subscribe", this.action__subscribe);
         this.on("action__lifecycle", this.action__lifecycle);
@@ -154,7 +161,7 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
           .on('shown', function(){
              var notifications = new IONUX.Collections.Notifications();
              new IONUX.Views.Notifications({collection: notifications});
-             notifications.fetch();
+             notifications.fetch({reset:true});
            })
           .on('hide',function(){
             $('#action-modal').remove();
@@ -208,18 +215,21 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
                 return v.toString(16);
       });
 
+      var ridtext = "RESOURCE ID: " + window.MODEL_DATA.resource._id;
+      var iidtext = "ISSUE ID: " + slug;
+
       // generate event
       $.ajax({
         type: 'POST',
         url: window.location.href + 'publish_event/',
-        data: {description:slug,
-               event_type:'InformationContentStatusEvent'},
+        data: {description: ridtext + "\n" + iidtext,
+               event_type:'ResourceIssueReportedEvent'},
       });
 
       // trigger mailto link (adapted from http://www.webmasterworld.com/javascript/3290040.htm)
       var email = "helpdesk@oceanobservatories.org";
       var subject = "OOI Report Issue (" + slug + ") - " + window.MODEL_DATA.resource_type + " " + window.MODEL_DATA.resource.name;
-      var body = "RESOURCE ID: " + window.MODEL_DATA.resource._id + "%0D%0AISSUE ID: " + slug + "%0D%0A%0D%0APlease keep the above identifiers in this email for cross-reference purposes. Below, describe the issue you are encountering:%0D%0A%0D%0A%0D%0A";
+      var body = ridtext + "%0D%0A" + iidtext + "%0D%0A%0D%0APlease keep the above identifiers in this email for cross-reference purposes. Below, describe the issue you are encountering:%0D%0A%0D%0A%0D%0A";
       var mailto_link = 'mailto:' + email + '?subject=' + subject + '&body=' + body;
 
       win = window.open(mailto_link,'email_issue');
@@ -267,6 +277,7 @@ IONUX.Views.GroupActions = IONUX.Views.ActionMenu.extend({
         this.on("action__more_info", this.action__more_info);
         this.on("action__submenu_toggle", this.action__submenu_toggle);
         this.on("action__edit", this.action__edit);
+        this.create_actionmenu();
     },
 
     action__more_info:function(){
@@ -297,6 +308,7 @@ IONUX.Views.BlockActions = IONUX.Views.ActionMenu.extend({
         this.on("action__detailed_view", this.action__detailed_view);
         this.on("action__hide", this.action__hide);
         this.on("action__edit", this.action__edit);
+        this.create_actionmenu();
     },
 
     action__more_info:function(target){
@@ -328,6 +340,7 @@ IONUX.Views.EventActions = IONUX.Views.ActionMenu.extend({
     initialize: function() {
         this.interaction_items = INTERACTIONS_OBJECT.event_interactions;
         this.on("action__add_event", this.add_event);
+        this.create_actionmenu();
     },
     
     add_event: function(){
@@ -347,6 +360,7 @@ IONUX.Views.AttachmentActions = IONUX.Views.ActionMenu.extend({
     initialize: function() {
         this.interaction_items = INTERACTIONS_OBJECT.attachment_interactions;
         this.on("action__upload_attachment", this.upload_attachment);
+        this.create_actionmenu();
     },
     
     upload_attachment: function(){
@@ -362,6 +376,7 @@ IONUX.Views.NegotiationActions = IONUX.Views.ActionMenu.extend({
     initialize: function() {
       this.interaction_items = INTERACTIONS_OBJECT.negotiation_interactions['nonmember'];
       this.on('action__enroll', this.enroll);
+      this.create_actionmenu();
     },
     
     enroll: function(){

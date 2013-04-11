@@ -265,7 +265,8 @@ IONUX.Views.RequestAccess = Backbone.View.extend({
     $.ajax({
       type: 'POST',
       url: window.location.href + 'request_access/',
-      data: {org_id: org_id},
+      data: {org_id: org_id,
+             res_name: window.MODEL_DATA.resource.name},
       success: function(resp) {
         self.modal.modal('hide');
         $(_.template(IONUX.Templates.full_modal_template, {header_text:'Request Received',

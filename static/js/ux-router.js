@@ -88,7 +88,6 @@ IONUX.Router = Backbone.Router.extend({
       reset: true, 
       success: function(resp) {
         $('#dashboard-container #2163993').show();
-        new IONUX.Views.ListFilter().render().el;
       },
     });
   },
@@ -110,7 +109,8 @@ IONUX.Router = Backbone.Router.extend({
     IONUX.Dashboard.ListResources.fetch({
       reset:true,
       success: function(resp){
-        new IONUX.Views.DashboardTable({el: $('#2163993'), collection: resp, list_table: true});
+        new IONUX.Views.ListFilter().render().el;
+        new IONUX.Views.ResourceTable({el: $('#2163993'), collection: resp, list_table: true});
       },
     });
   },
@@ -175,10 +175,9 @@ IONUX.Router = Backbone.Router.extend({
       // advanced search, set fetch_opts properly
       fetch_opts.type = 'POST';
       fetch_opts.data = {'adv_query_string': query}
-      search_model.set({search_query: "advanced"})
-    } else {
-      search_model.set({search_query: query});
+      query = "advanced";
     }
+    search_model.set({search_query: query})
     search_model.fetch(fetch_opts)
       .success(function(resp){
         console.log('Search success:', resp);
@@ -213,8 +212,8 @@ IONUX.Router = Backbone.Router.extend({
     new IONUX.Views.Footer({resource_id: null, resource_type: resource_type}).render().el;
   },
   page: function(resource_type, view_type, resource_id){
+    console.log('page');
     $('#dashboard-container').hide();
-
     // Todo move into own view
     $('#dynamic-container').html('<div id="spinner"></div>').show();
     new Spinner(IONUX.Spinner.large).spin(document.getElementById('spinner'));
@@ -364,8 +363,8 @@ function negotiation_show_controls(row_data) {
 function get_renderable_resource_type(resource_type)
 {
   // FIX/HACK: Observatory shouldn't be on its own, it should be a site
-  if (resource_type == "Observatory")
-    return "Site";
+  // if (resource_type == "Observatory")
+  //   return "Site";
 
   // conduct initial search of window.LAYOUT
   var re = _.find(window.LAYOUT.spec.restypes, function(v, k) { return v.name == resource_type; });
@@ -384,40 +383,47 @@ function get_renderable_resource_type(resource_type)
 // Renders a page based on resource_type
 function render_page(resource_type, resource_id, model) {
   var start_render = new Date().getTime();
+<<<<<<< HEAD
   
   // get most displayable resource type - by derived or otherwise
   resource_type = get_renderable_resource_type(resource_type);;
   
+=======
+   // get most displayable resource type - by derived or otherwise
+  resource_type = get_renderable_resource_type(resource_type);
+
+>>>>>>> master
   window.MODEL_DATA = model.data;
   window.MODEL_DATA['resource_type'] = resource_type;
-
+  
   var attribute_group_elmts = $('.'+resource_type+' .attribute_group_ooi');
   _.each(attribute_group_elmts, function(el){
-      var data_path = $(el).data('path');
-      var data = get_descendant_properties(window.MODEL_DATA, data_path);
-      new IONUX.Views.AttributeGroup({el: $(el), data: window.MODEL_DATA}).render().el;
+    var data_path = $(el).data('path');
+    var data = get_descendant_properties(window.MODEL_DATA, data_path);
+    new IONUX.Views.AttributeGroup({el: $(el), data: window.MODEL_DATA}).render().el;
   });
+  
 
   var text_static_elmts = $('.'+resource_type+' .text_static_ooi');
   _.each(text_static_elmts, function(el){
       new IONUX.Views.TextStatic({el: $(el)}).render().el;
   });
-
+  
   var text_short_elmts = $('.'+resource_type+' .text_short_ooi');
   _.each(text_short_elmts, function(el){
       new IONUX.Views.TextShort({el: $(el), data_model: window.MODEL_DATA}).render().el;
   });
-
+  
   var text_extended_elmts = $('.'+resource_type+' .text_extended_ooi');
   _.each(text_extended_elmts, function(el){
       new IONUX.Views.TextExtended({el: $(el), data_model: window.MODEL_DATA}).render().el;
   });
-
+  
   var icon_elmts = $('.'+resource_type+' .icon_ooi');
   _.each(icon_elmts, function(el) {
       new IONUX.Views.Icon({el: $(el)}).render().el;
   });
-
+  
   _.each($('.'+resource_type+' .image_ooi'), function(el) {
       var data_path = $(el).data('path');
       var data = get_descendant_properties(window.MODEL_DATA, data_path);
@@ -435,7 +441,7 @@ function render_page(resource_type, resource_id, model) {
               $(el).html($('<span>').addClass('badge_status_graphic_unknown').html('&nbsp;'));
       };
   });
-
+  
   var badge_elmts = $('.'+resource_type+' .badge_ooi');
   _.each(badge_elmts, function(el) {
     new IONUX.Views.Badge({el: $(el), data_model: window.MODEL_DATA}).render().el;
@@ -445,7 +451,7 @@ function render_page(resource_type, resource_id, model) {
   _.each(list_elmts, function(el) {
     new IONUX.Views.List({el: $(el), data_model: window.MODEL_DATA}).render().el;
   });
-  
+
   var table_elmts = $('.'+resource_type+' .table_ooi');
   _.each(table_elmts, function(el) {
     var data_path = $(el).data('path');
@@ -479,19 +485,19 @@ function render_page(resource_type, resource_id, model) {
     var data = get_descendant_properties(window.MODEL_DATA, data_path);
     if (data) new IONUX.Views.ExtentGeospatial({el: $(el), data: data}).render().el;
   });
-  
+
   var extent_vertical_elmts = $('.'+resource_type+' .extent_vertical_ooi');
   _.each(extent_vertical_elmts, function(el){
     var data_path = $(el).data('path');
     var data = get_descendant_properties(window.MODEL_DATA, data_path);
     if (data) new IONUX.Views.ExtentVertical({el: $(el), data: data}).render().el;
   });
-
+  
   var extent_temporal_elmts = $('.'+resource_type+' .extent_temporal_ooi');
   _.each(extent_temporal_elmts, function(el) {
     new IONUX.Views.ExtentTemporal({el: $(el)}).render().el;
   });
-
+  
   var checkbox_elmts = $('.'+resource_type+' .checkbox_ooi');
   _.each(checkbox_elmts, function(el) {
     new IONUX.Views.Checkbox({el: $(el), data_model: window.MODEL_DATA}).render().el;
@@ -515,12 +521,13 @@ function render_page(resource_type, resource_id, model) {
   }
   
   _.each($('.v02 .'+resource_type), function(el){
-    $(el).find('.content-wrapper:first').css('height', '200px').jScrollPane({autoReinitialise: true});
+    $(el).find('.content-wrapper:first').css('height', '200px');
+    // Spikes CPU to 100%
+    //.jScrollPane({autoReinitialise: true});
   });
   
-
-  // Action Menus
   
+  // Action Menus
   _.each($('.v01 .group .nav, .v02 .group .nav'), function(el) {
     // Todo: finish attachments/events menus
     var group_name = $(el).find('li:first a').text();
@@ -537,23 +544,29 @@ function render_page(resource_type, resource_id, model) {
   });
   
   _.each($('.v01 .'+resource_type+'.block, .v02 .'+resource_type+'.block'), function(el) {
-    new IONUX.Views.BlockActions({el:$(el)});
+    new IONUX.Views.BlockActions({el: el});
   });
-  
   new IONUX.Views.ViewActions({el: '.'+resource_type+' .heading-right'});
+  
+  
+  
 
   // Show the relevant elements and click to enable the Bootstrap tabs.
   $('li.' + resource_type + ', div.' + resource_type).show();
-  $('.span9 ul, .span3 ul, .span12 ul').find('li.' + resource_type + ':first').find('a').click();  
-  $('.tab-pane').find('.'+resource_type+':visible:first').css('margin-left', 0);
-  // DataTables column sizing
+
   $('a[data-toggle="tab"]').on('shown', function (e){
     var table = $($(e.target).attr('href')).find('.'+resource_type+' .table_ooi');
+    // Big performance hit with the line below. Need to optimize.
     if (table.length) $(table).find('table').last().dataTable().fnAdjustColumnSizing();
-  });
-  _.each($('.'+resource_type+' .table_ooi'), function(table){
-    $(table).find('table').last().dataTable().fnAdjustColumnSizing();
-  });
-  
+  });  
+
+  $('.span9 ul, .span3 ul, .span12 ul').find('li.' + resource_type + ':first').find('a').click(); 
+  $('#dynamic-container .tab-pane').find('.'+resource_type+':visible:first').css('margin-left', 0);
+
+  // DataTables column sizing
+  // _.each($('.'+resource_type+' .table_ooi'), function(table){
+  //   $(table).find('table').last().dataTable().fnAdjustColumnSizing();
+  // });
+
   console.log('render_page elapsed: ', new Date().getTime() - start_render);
 };

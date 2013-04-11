@@ -246,7 +246,7 @@ IONUX.Views.DashboardTable = IONUX.Views.DataTable.extend({
   initialize: function() {
     _.bindAll(this);
     this.$el.show();
-    this.blacklist = this.options.list_table ? IONUX.ListBlacklist : IONUX.MapBlacklist;
+    this.blacklist = this.options.list_table ? IONUX.ListWhitelist : IONUX.MapBlacklist;
     this.filter_data();
     this.collection.on('data:filter_render', this.filter_and_render);
     IONUX.Views.DataTable.prototype.initialize.call(this);
@@ -271,6 +271,38 @@ IONUX.Views.DashboardTable = IONUX.Views.DataTable.extend({
     this.render();
   },
 });
+
+
+IONUX.Views.ResourceTable = IONUX.Views.DataTable.extend({
+  initialize: function() {
+    console.log('whitelist');
+    _.bindAll(this);
+    this.$el.show();
+    this.whitelist = IONUX.ListWhitelist;
+    this.filter_data();
+    this.collection.on('data:filter_render', this.filter_and_render);
+    IONUX.Views.DataTable.prototype.initialize.call(this);
+  },
+  
+  filter_data: function() {
+    this.options.data = [];
+    if (!_.isEmpty(this.whitelist)) {
+       _.each(this.collection.models, function(resource) {
+         if (_.contains(this.whitelist, resource.get('type_'))) {
+           this.options.data.push(resource.toJSON());
+         };
+       }, this);
+    } else {
+      this.options.data = []; //this.collection.toJSON();
+    };
+  },
+  
+  filter_and_render: function() {
+    this.filter_data();
+    this.render();
+  },
+});
+
 
 
 /* 
@@ -427,7 +459,7 @@ IONUX.Collections.ListResources = Backbone.Collection.extend({
 - - - - - - - - - - - - - - - - - 
 */
 
-IONUX.ListBlacklist = [];
+IONUX.ListWhitelist = [];
 
 IONUX.Views.ListFilter = Backbone.View.extend({
   el: '#list-filter',
@@ -453,7 +485,7 @@ IONUX.Views.ListFilter = Backbone.View.extend({
                              <%= label %> <input type="checkbox" value="<%= type %>" <%= checked %> />\
                              </div>'),
   events: {
-    'click .filter-option': 'set_filter'
+    'click .filter-option input': 'set_filter'
   },
   
   initialize: function() {
@@ -469,7 +501,7 @@ IONUX.Views.ListFilter = Backbone.View.extend({
   render_short_list: function() {
     var long_list = this.$el.find('#long-filter');
     _.each(this.filter_options.short_list, function(option) {
-      option['checked'] = _.contains(IONUX.ListBlacklist, option['lcstate']) ? "" : "checked";
+      option['checked'] = _.contains(IONUX.ListWhitelist, option['type']) ? "checked" : "";
       long_list.append(this.item_template(option));
     }, this);
   },
@@ -479,11 +511,12 @@ IONUX.Views.ListFilter = Backbone.View.extend({
     var filter_elmt = $(e.target);
     var type = filter_elmt.val();
     if (filter_elmt.is(':checked')) {
-      var index = IONUX.ListBlacklist.indexOf(type)
-      IONUX.ListBlacklist.splice(index);
+      IONUX.ListWhitelist.push(type);
     } else {
-      IONUX.ListBlacklist.push(type);
+      var index = IONUX.ListWhitelist.indexOf(type)
+      IONUX.ListWhitelist.splice(index, 1);
     }; 
     IONUX.Dashboard.ListResources.trigger('data:filter_render');
+    console.log(IONUX.ListWhitelist);
   },
 });

@@ -85,7 +85,7 @@ IONUX.Views.Search = Backbone.View.extend({
     if (e.keyCode == 13) this.navigate_to_search_results();
   },
   navigate_to_search_results: function() {
-    var search_term = this.$el.find('#sidebar-search').attr('value');
+    var search_term = this.$el.find('#sidebar-search').val();
     IONUX.ROUTER.navigate('/search/?'+ encodeURI(search_term), {trigger:true});
   },
   advanced_search: function(e){

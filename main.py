@@ -5,8 +5,6 @@ import base64
 import hashlib
 import time
 
-from urllib import quote
-
 from config import FLASK_HOST, FLASK_PORT, GATEWAY_HOST, GATEWAY_PORT, LOGGED_IN, PRODUCTION, SECRET_KEY, UI_MODE, PORTAL_ROOT
 from service_api import ServiceApi, error_message
 from layout_api import LayoutApi
@@ -75,14 +73,12 @@ def index():
 def search(query=None):
     if request.is_xhr:
         if request.method == "GET":
-            search_query = escape(request.args.get('query'))
-            search_results = ServiceApi.search(quote(search_query))
+            search_query = request.args.get('query')
+            search_results = ServiceApi.search(search_query)
+            return render_json_response(search_results)
         else:
-            print request.form
             adv_query_string = request.form['adv_query_string']
             adv_query_chunks = parse_qs(adv_query_string)
-
-            print "chunks", adv_query_chunks
 
             geospatial_bounds = {'north': adv_query_chunks.get('north', [''])[0],
                                   'east': adv_query_chunks.get('east', [''])[0],
@@ -213,9 +209,10 @@ def offer_user_role(resource_type, resource_id):
 @login_required
 def request_access(resource_type, resource_id):
     org_id = request.form.get('org_id', None)
+    res_name = request.form.get('res_name', None)
     actor_id = session.get('actor_id') if session.has_key('actor_id') else None
 
-    resp = ServiceApi.request_access(resource_id, actor_id, org_id)
+    resp = ServiceApi.request_access(resource_id, res_name, actor_id, org_id)
     return render_json_response(resp)
 
 @app.route('/<resource_type>/status/<resource_id>/release_access/', methods=['POST'])
