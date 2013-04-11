@@ -195,8 +195,9 @@ IONUX.Router = Backbone.Router.extend({
     new IONUX.Views.Footer({resource_id: null, resource_type: resource_type}).render().el;
   },
   page: function(resource_type, view_type, resource_id){
+    console.log('page');
     $('#dashboard-container').hide();
-    $('#dynamic-container').show().html(LOADING_TEMPLATE);
+    $('#dynamic-container').empty().show().html(LOADING_TEMPLATE);
     var resource_extension = new IONUX.Models.ResourceExtension({resource_type: resource_type, resource_id: resource_id});
     resource_extension.fetch()
       .success(function(model, resp) {
@@ -367,34 +368,35 @@ function render_page(resource_type, resource_id, model) {
 
   window.MODEL_DATA = model.data;
   window.MODEL_DATA['resource_type'] = resource_type;
-
+  
   var attribute_group_elmts = $('.'+resource_type+' .attribute_group_ooi');
   _.each(attribute_group_elmts, function(el){
-      var data_path = $(el).data('path');
-      var data = get_descendant_properties(window.MODEL_DATA, data_path);
-      new IONUX.Views.AttributeGroup({el: $(el), data: window.MODEL_DATA}).render().el;
+    var data_path = $(el).data('path');
+    var data = get_descendant_properties(window.MODEL_DATA, data_path);
+    new IONUX.Views.AttributeGroup({el: $(el), data: window.MODEL_DATA}).render().el;
   });
+  
 
   var text_static_elmts = $('.'+resource_type+' .text_static_ooi');
   _.each(text_static_elmts, function(el){
       new IONUX.Views.TextStatic({el: $(el)}).render().el;
   });
-
+  
   var text_short_elmts = $('.'+resource_type+' .text_short_ooi');
   _.each(text_short_elmts, function(el){
       new IONUX.Views.TextShort({el: $(el), data_model: window.MODEL_DATA}).render().el;
   });
-
+  
   var text_extended_elmts = $('.'+resource_type+' .text_extended_ooi');
   _.each(text_extended_elmts, function(el){
       new IONUX.Views.TextExtended({el: $(el), data_model: window.MODEL_DATA}).render().el;
   });
-
+  
   var icon_elmts = $('.'+resource_type+' .icon_ooi');
   _.each(icon_elmts, function(el) {
       new IONUX.Views.Icon({el: $(el)}).render().el;
   });
-
+  
   _.each($('.'+resource_type+' .image_ooi'), function(el) {
       var data_path = $(el).data('path');
       var data = get_descendant_properties(window.MODEL_DATA, data_path);
@@ -412,7 +414,7 @@ function render_page(resource_type, resource_id, model) {
               $(el).html($('<span>').addClass('badge_status_graphic_unknown').html('&nbsp;'));
       };
   });
-
+  
   var badge_elmts = $('.'+resource_type+' .badge_ooi');
   _.each(badge_elmts, function(el) {
     new IONUX.Views.Badge({el: $(el), data_model: window.MODEL_DATA}).render().el;
@@ -422,7 +424,7 @@ function render_page(resource_type, resource_id, model) {
   _.each(list_elmts, function(el) {
     new IONUX.Views.List({el: $(el), data_model: window.MODEL_DATA}).render().el;
   });
-  
+
   var table_elmts = $('.'+resource_type+' .table_ooi');
   _.each(table_elmts, function(el) {
     var data_path = $(el).data('path');
@@ -456,19 +458,19 @@ function render_page(resource_type, resource_id, model) {
     var data = get_descendant_properties(window.MODEL_DATA, data_path);
     if (data) new IONUX.Views.ExtentGeospatial({el: $(el), data: data}).render().el;
   });
-  
+
   var extent_vertical_elmts = $('.'+resource_type+' .extent_vertical_ooi');
   _.each(extent_vertical_elmts, function(el){
     var data_path = $(el).data('path');
     var data = get_descendant_properties(window.MODEL_DATA, data_path);
     if (data) new IONUX.Views.ExtentVertical({el: $(el), data: data}).render().el;
   });
-
+  
   var extent_temporal_elmts = $('.'+resource_type+' .extent_temporal_ooi');
   _.each(extent_temporal_elmts, function(el) {
     new IONUX.Views.ExtentTemporal({el: $(el)}).render().el;
   });
-
+  
   var checkbox_elmts = $('.'+resource_type+' .checkbox_ooi');
   _.each(checkbox_elmts, function(el) {
     new IONUX.Views.Checkbox({el: $(el), data_model: window.MODEL_DATA}).render().el;
@@ -492,7 +494,9 @@ function render_page(resource_type, resource_id, model) {
   }
   
   _.each($('.v02 .'+resource_type), function(el){
-    $(el).find('.content-wrapper:first').css('height', '200px').jScrollPane({autoReinitialise: true});
+    $(el).find('.content-wrapper:first').css('height', '200px');
+    // Spikes CPU to 100%
+    //.jScrollPane({autoReinitialise: true});
   });
   
   
@@ -515,21 +519,27 @@ function render_page(resource_type, resource_id, model) {
   _.each($('.v01 .'+resource_type+'.block, .v02 .'+resource_type+'.block'), function(el) {
     new IONUX.Views.BlockActions({el: el});
   });
-  
   new IONUX.Views.ViewActions({el: '.'+resource_type+' .heading-right'});
+  
+  
+  
 
   // Show the relevant elements and click to enable the Bootstrap tabs.
   $('li.' + resource_type + ', div.' + resource_type).show();
-  $('.span9 ul, .span3 ul, .span12 ul').find('li.' + resource_type + ':first').find('a').click();  
-  $('.tab-pane').find('.'+resource_type+':visible:first').css('margin-left', 0);
-  // DataTables column sizing
+
   $('a[data-toggle="tab"]').on('shown', function (e){
     var table = $($(e.target).attr('href')).find('.'+resource_type+' .table_ooi');
+    // Big performance hit with the line below. Need to optimize.
     if (table.length) $(table).find('table').last().dataTable().fnAdjustColumnSizing();
-  });
-  _.each($('.'+resource_type+' .table_ooi'), function(table){
-    $(table).find('table').last().dataTable().fnAdjustColumnSizing();
-  });
-  
+  });  
+
+  $('.span9 ul, .span3 ul, .span12 ul').find('li.' + resource_type + ':first').find('a').click(); 
+  $('#dynamic-container .tab-pane').find('.'+resource_type+':visible:first').css('margin-left', 0);
+
+  // DataTables column sizing
+  // _.each($('.'+resource_type+' .table_ooi'), function(table){
+  //   $(table).find('table').last().dataTable().fnAdjustColumnSizing();
+  // });
+
   console.log('render_page elapsed: ', new Date().getTime() - start_render);
 };
