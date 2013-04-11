@@ -62,7 +62,7 @@ class ServiceApi(object):
             queries = []
             for expr in exprs:
                 val   = expr
-                verb  = "IS"
+                verb  = "MATCH"
                 field = "_all"
 
                 # allow specifying specific field with = sign
@@ -76,10 +76,8 @@ class ServiceApi(object):
                     verb = "LIKE"
                 # quotes on both sides mean exact match only
                 elif val[0] == '"' and val[-1] == '"':
+                    verb = "IS"
                     val = val[1:-1]
-                # add *s, but only when no quotes, ~, or existence of one side with a star
-                elif val[0] != "*" and val[-1] != "*":
-                    val = "*%s*" % val
 
                 queries.append(search_template % (field, verb, val))
 
