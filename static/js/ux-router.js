@@ -383,16 +383,9 @@ function get_renderable_resource_type(resource_type)
 // Renders a page based on resource_type
 function render_page(resource_type, resource_id, model) {
   var start_render = new Date().getTime();
-<<<<<<< HEAD
-  
   // get most displayable resource type - by derived or otherwise
   resource_type = get_renderable_resource_type(resource_type);;
-  
-=======
-   // get most displayable resource type - by derived or otherwise
-  resource_type = get_renderable_resource_type(resource_type);
 
->>>>>>> master
   window.MODEL_DATA = model.data;
   window.MODEL_DATA['resource_type'] = resource_type;
   
