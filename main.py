@@ -132,6 +132,11 @@ def attachment_create():
     dat = {'files':[{'name':fd.filename, 'size':fd.content_length}]}
     return jsonify(dat)
 
+@app.route('/attachment/<attachment_id>', methods=['DELETE'])
+def attachment_delete(attachment_id):
+    retval = ServiceApi.delete_resource_attachment(attachment_id)
+    return jsonify(retval)
+
 # -----------------------------------------------------------------------------
 # EVENT SUBSCRIPTIONS
 # -----------------------------------------------------------------------------

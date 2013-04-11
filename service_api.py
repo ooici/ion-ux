@@ -191,6 +191,13 @@ class ServiceApi(object):
         return req
 
     @staticmethod
+    def delete_resource_attachment(attachment_id):
+        url = build_get_request(SERVICE_GATEWAY_BASE_URL, 'attachment', attachment_id)
+        req = requests.delete(url)
+
+        return req
+
+    @staticmethod
     def transition_lcstate(resource_id, transition_event):
         req = service_gateway_get('resource_management', 'execute_lifecycle_transition', params={'resource_id': resource_id, 'transition_event': transition_event})
         return req
