@@ -1,0 +1,20 @@
+<div class="modal-header">
+  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+  <h1>Attachment: <%= name %></h1>
+</div>
+<div class="modal-body">
+  <p>
+    Name: <%= name %><br />
+    Description: <%= desc %><br />
+    Mime-type: <%= mime %><br />
+    Keywords: <%= keywords %>
+  </p>
+  <p>
+    <button id="btn-download" data-dismiss="modal" class="btn-general">Download</button>
+    <button class="btn-general" data-dismiss="modal" href="<%= fp_url %>">Facepage</button>
+  </p>
+
+</div>
+<div class="modal-footer">
+  <button class="btn-blue" data-dismiss="modal">Close</button>
+</div>
