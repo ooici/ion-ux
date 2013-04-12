@@ -196,7 +196,7 @@ class ServiceApi(object):
         url = build_get_request(SERVICE_GATEWAY_BASE_URL, 'attachment', attachment_id)
         req = requests.delete(url)
 
-        return req
+        return render_service_gateway_response(req)
 
     @staticmethod
     def transition_lcstate(resource_id, transition_event):

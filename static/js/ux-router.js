@@ -435,6 +435,10 @@ function render_page(resource_type, resource_id, model) {
             _.extend(opts, {popup_view: IONUX.Views.NegotiationCommands,
                             popup_label: "Accept/Reject",
                             popup_filter_method: negotiation_show_controls});
+        } else if (data_path == "attachments") {
+          _.extend(opts, {popup_view: IONUX.Views.AttachmentZoomView,
+                          popup_label: "View",
+                          popup_filter_method: function() { return true; }});
         } 
         var table = new IONUX.Views.DataTable(opts);
     } else {

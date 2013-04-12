@@ -934,6 +934,78 @@ IONUX.Views.ResourceAddAttachmentView = Backbone.View.extend({
 
 });
 
+IONUX.Views.AttachmentZoomView = Backbone.View.extend({
+  template: _.template($("#attachment-zoom-tmpl").html()),
+  events: {
+    'click #btn-download': 'download',
+    'click #btn-delete': 'confirm_delete',
+    'click #btn-confirm-delete': 'delete_attachment'
+  },
+  initialize: function(){
+    _.bindAll(this);
+
+    var row_info_list = this.options.data[0].split("::");
+    this.attachment_id = row_info_list[0];
+    this.attachment = _.findWhere(window.MODEL_DATA.attachments, {_id:this.attachment_id});
+  },
+  render: function() {
+    var attachment_info         = {}
+    attachment_info['name']     = this.attachment.name;
+    attachment_info['desc']     = this.attachment.description;
+    attachment_info['mime']     = this.attachment.content_type;
+    attachment_info['keywords'] = this.attachment.keywords.join(", ");
+    attachment_info['fp_url']   = '/InformationResource/face/'+this.attachment_id+'/';
+
+    this.modal = $(IONUX.Templates.modal_template).html(this.template(attachment_info));
+    if (this.can_delete()) {
+      this.modal.find('.modal-body p:last').append("<button id='btn-delete' class='btn-general'>Delete</button>");
+    }
+
+    this.modal.modal('show')
+      .on('hide', function() {
+        $('#action-modal').remove();
+      });
+    this.setElement('#action-modal');
+    return this;
+  },
+  download: function(e) {
+    var url = "/attachment/"+this.attachment_id+"/?name="+this.attachment.name;
+    window.open(url);
+  },
+  can_delete: function() {
+    return IONUX.is_logged_in() && IONUX.SESSION_MODEL.get('actor_id') == this.attachment.created_by ||
+           IONUX.is_owner();
+  },
+  confirm_delete: function(e) {
+    var newel = $("<div class='alert'><button type='button' class='close' data-dismiss='alert'>&times;</button><p>Are you sure you want to delete this attachment?</p><button class='btn-blue' id='btn-confirm-delete'>Delete</button></div>");
+    newel.appendTo(this.modal.find('.modal-body')).hide().slideDown(100);
+  },
+  delete_attachment: function(e) {
+
+    this.$('.alert').alert('close');
+    var self = this;
+
+    // user must be either owner or org manager
+    if (this.can_delete()) {
+
+      $.ajax({
+        type: 'DELETE',
+        url: window.location.protocol + "//" + window.location.host + "/attachment/" + this.attachment_id + "/",
+        error: function(jqxhr, textstatus, errorthrown) {
+          var newel = $("<div class='alert alert-error'><button type='button' class='close' data-dismiss='alert'>&times;</button><p>An error occured: " + textstatus + ": " + errorthrown + "</p></div>");
+          newel.appendTo(this.modal.find('.modal-body')).hide().slideDown(100);
+        },
+        success: function(resp) {
+          self.modal.modal('hide');
+
+          Backbone.history.fragment = null; // Clear history fragment to allow for page "refresh".
+          IONUX.ROUTER.navigate(window.location.pathname, {trigger: true});
+        }
+      });
+    }
+  }
+});
+
 IONUX.Views.CreateAccountView = Backbone.View.extend({
   tagName: "div",
   template: _.template($("#create-account-modal-tmpl").html()),
