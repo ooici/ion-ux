@@ -926,7 +926,8 @@ IONUX.Views.ResourceAddAttachmentView = Backbone.View.extend({
       $('img.spinner', '#resource-add-attachment-overlay').css('display', 'inline-block');
 
       this.up_trigger.formData = { 'description' : $('#description').val(),
-                                   'resource_id' : window.MODEL_DATA['_id'] };
+                                   'resource_id' : window.MODEL_DATA['_id'],
+                                   'keywords'    : this.$('#keywords').val()};
       this.up_trigger.submit();
     }
   },

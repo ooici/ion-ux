@@ -167,7 +167,7 @@ class ServiceApi(object):
         return req
 
     @staticmethod
-    def create_resource_attachment(resource_id, attachment_name, attachment_description, attachment_type, attachment_content_type, content):
+    def create_resource_attachment(resource_id, attachment_name, attachment_description, attachment_type, attachment_content_type, content, keywords):
         # use build_post_request to get url
         url, _ = build_post_request('attachment', None)
 
@@ -178,6 +178,7 @@ class ServiceApi(object):
                               'expiry'    : session['valid_until']})
 
         post_data.update({'resource_id'             : resource_id,
+                          'keywords'                : keywords,
                           'attachment_name'         : attachment_name,
                           'attachment_description'  : attachment_description,
                           'attachment_type'         : attachment_type,
