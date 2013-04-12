@@ -356,41 +356,8 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
           new this.options.popup_view({data:table_row_data, datatable:this.datatable}).render().el;
           return;
         }
-        // Check for type_ attachment and pop modal to let user
-        // choose between downloading an attachment or viewing
-        // its metadata on a face page.
-        // 
-        // Todo - temporary work around until our
-        // DataTables is extended with a proper solution.
-        if (resource_type == 'Attachment') {
-          var attachment_info = {}
-          attachment_info['name'] = table_row_data[2];
-          attachment_info['desc'] = table_row_data[3];
-          attachment_info['mime'] = table_row_data[1];
-          attachment_info['dl_url'] = "/attachment/"+resource_id+"/?name="+table_row_data[2];
-          attachment_info['fp_url'] = '/InformationResource/face/'+resource_id+'/';
 
-          var attachment_tmpl = _.template('<div id="action-modal" class="modal hide modal-ooi">\
-                                   <div class="modal-header">\
-                                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>\
-                                     <h1>Attachment</h1>\
-                                   </div>\
-                                   <div class="modal-body">\
-                                      <p>Name: <%= name %><br />\
-                                      Description: <%= desc %><br />\
-                                      Mime-type: <%= mime %></p>\
-                                      <p><a id="download" data-dismiss="modal" onclick="window.open(\'<%= dl_url %>\')" class="btn-general">Download</a>\
-                                      <a class="btn-general" data-dismiss="modal" href="<%= fp_url %>">Facepage</a></p>\
-                                   </div>\
-                                   <div class="modal-footer">\
-                                      <button data-dismiss="modal" class="btn-blue">Close</button>\
-                                   </div>\
-                                  </div>', attachment_info);
-          $(attachment_tmpl).modal('show');
-
-        } else {
-          var url = "/"+resource_type+"/face/"+resource_id+"/";
-          IONUX.ROUTER.navigate(url, {trigger:true});
-        };
+        var url = "/"+resource_type+"/face/"+resource_id+"/";
+        IONUX.ROUTER.navigate(url, {trigger:true});
     }
 });

@@ -167,7 +167,7 @@ class ServiceApi(object):
         return req
 
     @staticmethod
-    def create_resource_attachment(resource_id, attachment_name, attachment_description, attachment_type, attachment_content_type, content):
+    def create_resource_attachment(resource_id, attachment_name, attachment_description, attachment_type, attachment_content_type, content, keywords):
         # use build_post_request to get url
         url, _ = build_post_request('attachment', None)
 
@@ -178,6 +178,7 @@ class ServiceApi(object):
                               'expiry'    : session['valid_until']})
 
         post_data.update({'resource_id'             : resource_id,
+                          'keywords'                : keywords,
                           'attachment_name'         : attachment_name,
                           'attachment_description'  : attachment_description,
                           'attachment_type'         : attachment_type,
@@ -189,6 +190,13 @@ class ServiceApi(object):
         req = requests.post(url, post_data, files=post_files)
 
         return req
+
+    @staticmethod
+    def delete_resource_attachment(attachment_id):
+        url = build_get_request(SERVICE_GATEWAY_BASE_URL, 'attachment', attachment_id)
+        req = requests.delete(url)
+
+        return render_service_gateway_response(req)
 
     @staticmethod
     def transition_lcstate(resource_id, transition_event):
