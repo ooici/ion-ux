@@ -168,26 +168,21 @@ class ServiceApi(object):
 
     @staticmethod
     def create_resource_attachment(resource_id, attachment_name, attachment_description, attachment_type, attachment_content_type, content, keywords):
-        # use build_post_request to get url
-        url, _ = build_post_request('attachment', None)
-
         # form our own data
-        post_data = {}
-        if "actor_id" in session:
-            post_data.update({'requester' : session['actor_id'],
-                              'expiry'    : session['valid_until']})
+        post_data = {'resource_id'             : resource_id,
+                     'keywords'                : keywords,
+                     'attachment_name'         : attachment_name,
+                     'attachment_description'  : attachment_description,
+                     'attachment_type'         : attachment_type,
+                     'attachment_content_type' : attachment_content_type}
 
-        post_data.update({'resource_id'             : resource_id,
-                          'keywords'                : keywords,
-                          'attachment_name'         : attachment_name,
-                          'attachment_description'  : attachment_description,
-                          'attachment_type'         : attachment_type,
-                          'attachment_content_type' : attachment_content_type})
+        # use build_post_request to get url
+        url, req = build_post_request('attachment', None, params=post_data)
 
         post_files = { 'file': (attachment_name, content) }
 
         # make our own post
-        req = requests.post(url, post_data, files=post_files)
+        req = requests.post(url, req, files=post_files)
 
         return req
 
