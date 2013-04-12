@@ -1,9 +1,9 @@
-import requests, json, time, pprint
+import requests, json, time, pprint, re, ast
 from flask import session, jsonify, abort
 from config import GATEWAY_HOST, GATEWAY_PORT
 from copy import deepcopy
 from instrument_command import BLACKLIST
-import re
+# import re
 
 GATEWAY_BASE_URL = 'http://%s:%d' % (GATEWAY_HOST, GATEWAY_PORT)
 SERVICE_GATEWAY_BASE_URL = '%s/ion-service' % (GATEWAY_BASE_URL)
@@ -165,6 +165,36 @@ class ServiceApi(object):
 
     @staticmethod
     def update_resource(resource_obj):
+
+        # Hack to convert strings into objects, booleans
+        # as a workaround to shortcomings dynamically generating 
+        # backbone-forms (booleans and user-defined key-values, such as
+        # custom_attributes). See ResourceTypeSchema() below, or 
+        # /static/js/ux-editform.js for current implementation.
+
+        for (k,v) in resource_obj.iteritems():
+            if isinstance(v, unicode):
+                if v.startswith('{'):
+                    try:
+                        resource_obj.update({k: ast.literal_eval(str(v))})
+                    except Exception, e:
+                        # pass it to the backend for validation?
+                        pass
+            
+            # catch any objects that were
+            elif v == '[object Object]':
+                resource_obj.update({k: {}})
+            
+            if v == 'true':
+                resource_obj.update({k: True})
+            elif v == 'false':
+                resource_obj.update({k: False})
+            
+            print 'update_resource: ', k, type(resource_obj[k])
+            
+            if v == 'agent_config':
+                print v
+            
         req = service_gateway_post('resource_management', 'update_resource', params={'resource': resource_obj})
         return req
 
@@ -960,8 +990,6 @@ class ResourceTypeSchema(object):
             return {"type": "List", "itemType": "Object"}
         elif resource_str_type in ["list", "tuple"]:
             return {"type": "List"}
-        # elif resource_str_type == "dict":
-        #     return {"type": "Object", "subSchema": {"key": {'type': 'Text'}, "val": {'value': 'Text'}}}
         elif resource_str_type == "bool":
             return {"type": "Radio", "options": [True, False]}
         elif resource_str_type == "int":
@@ -1076,8 +1104,6 @@ def build_post_request(service_name, operation_name, params=None, web_requester_
     elif "actor_id" in session:
         post_data['serviceRequest']['requester'] = session['actor_id']
         post_data['serviceRequest']['expiry'] = session['valid_until']
-        
-    print 'xxx - post_data', post_data
     data={'payload': json.dumps(post_data)}
     pretty_console_log('SERVICE GATEWAY POST URL/DATA', url, data)
     return url, data

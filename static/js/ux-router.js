@@ -155,8 +155,6 @@ IONUX.Router = Backbone.Router.extend({
     
     m.fetch({
       success: function(resp) {
-        console.log('resp', resp);
-        console.log('resp.toJSON()', resp.toJSON());
         new IONUX.Views.EditResource({model: resp});
       }
     });
