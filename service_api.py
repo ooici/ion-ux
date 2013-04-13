@@ -178,7 +178,7 @@ class ServiceApi(object):
                     try:
                         resource_obj.update({k: ast.literal_eval(str(v))})
                     except Exception, e:
-                        # pass it to the backend for validation?
+                        # pass it to the backend for validation and error?
                         pass
             
             # catch any objects that were
@@ -996,6 +996,8 @@ class ResourceTypeSchema(object):
             return "Number"
         elif resource_str_type == "str":
             return "Text"
+        elif resource_str_type == "dict":
+            return "TextArea"
         else:
             return "Text"
 

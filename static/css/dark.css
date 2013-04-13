@@ -60,7 +60,7 @@ fieldset {
   margin-top: 20px;
 }
 
-.controls input {
+.controls input, .controls textarea {
   padding: 5px;
   color: #ccc;
   height: 25px;
@@ -68,6 +68,11 @@ fieldset {
   border: solid 1px #666;
   box-shadow: none;
   -webkit-box-shadow: none;
+}
+
+.controls textarea {
+  height: 150px;
+  width: 400px;
 }
 
 
