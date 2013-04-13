@@ -1,3 +1,5 @@
+
+
 IONUX.Models.EditableResource = Backbone.Model.extend({
   idAttribute: '_id',
   schema: function(){
@@ -68,7 +70,17 @@ IONUX.Models.Session = Backbone.Model.extend({
     }
 });
 
-IONUX.Models.Resource = Backbone.Model.extend({});
+IONUX.Models.Resource = Backbone.Model.extend({
+  initialize: function(options) {
+    this.resource_id = options.resource_id
+  },
+  url: function() {
+    return '/resource/read/'+this.resource_id+'/';
+  },
+  parse: function(resp) {
+    return resp.data;
+  },
+});
 
 IONUX.Models.EventType = Backbone.Model.extend({
     url: '/event_types/',

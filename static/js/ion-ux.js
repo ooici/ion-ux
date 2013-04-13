@@ -6,25 +6,6 @@ IONUX = {
   Collections:{},
   Views: {},
   Router: {},
-  Spinner: {
-    large: {
-      lines: 13, 
-      length: 7,
-      width: 4,
-      radius: 10,
-      corners: 1,
-      rotate: 0,
-      color: '#999',
-      speed: 1,
-      trail: 60,
-      shadow: false,
-      hwaccel: false,
-      className: 'spinner',
-      zIndex: 2e9,
-      top: 'auto',
-      left: 'auto'
-    }
-  },
   init: function(){
     var router = new IONUX.Router();
     IONUX.ROUTER = router; // Is this too close to IONUX.Router?
@@ -59,5 +40,25 @@ IONUX = {
     var user_id = IONUX.SESSION_MODEL.get('user_id');
     var owner_match = _.findWhere(MODEL_DATA.owners, {_id: user_id}) ? true : false;
     return owner_match;
-  }
+  },
+  Spinner: {
+    large: {
+      lines: 13, 
+      length: 7,
+      width: 4,
+      radius: 10,
+      corners: 1,
+      rotate: 0,
+      color: '#999',
+      speed: 1,
+      trail: 60,
+      shadow: false,
+      hwaccel: false,
+      className: 'spinner',
+      zIndex: 2e9,
+      top: 'auto',
+      left: 'auto'
+    }
+  },
+  EditResourceBlacklist: []
 }

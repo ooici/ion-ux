@@ -180,8 +180,8 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
         });
     },
     action__edit: function(){
-      alert('Resource editing is currently disabled.');
-      // IONUX.ROUTER.navigate(window.location.pathname + 'edit', {trigger:true});
+      // alert('Resource editing is currently disabled.');
+      IONUX.ROUTER.navigate(window.location.pathname + 'edit', {trigger:true});
     },
     action__submenu_toggle:function(){
         alert("IONUX.Views.ViewActions - ACTION: submenu_toggle");
@@ -388,3 +388,4 @@ IONUX.Views.NegotiationActions = IONUX.Views.ActionMenu.extend({
       }
     },
 });
+// 

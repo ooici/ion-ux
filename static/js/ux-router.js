@@ -143,14 +143,29 @@ IONUX.Router = Backbone.Router.extend({
   // },
 
 
-  edit: function(){
-    var editable_resource = new IONUX.Models.EditableResource(window.MODEL_DATA.resource);
-    new IONUX.Views.EditResource({model: editable_resource}).render().el;
+  edit: function() {
+    // Todo move into own view
+    $('#dynamic-container > .row-fluid').html('<div id="spinner"></div>').show();
+    new Spinner(IONUX.Spinner.large).spin(document.getElementById('spinner'));
+    
+    var m = new IONUX.Models.EditResourceModel({
+      resource_type: window.MODEL_DATA.resource.type_,
+      resource_id: window.MODEL_DATA.resource._id
+    });
+    
+    m.fetch({
+      success: function(resp) {
+        new IONUX.Views.EditResource({model: resp});
+      }
+    });
   },
+  
   search: function(query){
-    $('#error').hide();
     $('#dashboard-container').hide();
-    $('#dynamic-container').show().html(LOADING_TEMPLATE);
+    // Todo move into own view
+    $('#dynamic-container').html('<div id="spinner"></div>').show();
+    new Spinner(IONUX.Spinner.large).spin(document.getElementById('spinner'));
+    
     var search_model = new IONUX.Models.Search();
     // use heuristics to determine what kind of query we have here
     var fetch_opts = {};
@@ -197,7 +212,10 @@ IONUX.Router = Backbone.Router.extend({
   page: function(resource_type, view_type, resource_id){
     console.log('page');
     $('#dashboard-container').hide();
-    $('#dynamic-container').empty().show().html(LOADING_TEMPLATE);
+    // Todo move into own view
+    $('#dynamic-container').html('<div id="spinner"></div>').show();
+    new Spinner(IONUX.Spinner.large).spin(document.getElementById('spinner'));
+    
     var resource_extension = new IONUX.Models.ResourceExtension({resource_type: resource_type, resource_id: resource_id});
     resource_extension.fetch()
       .success(function(model, resp) {
@@ -363,8 +381,8 @@ function get_renderable_resource_type(resource_type)
 // Renders a page based on resource_type
 function render_page(resource_type, resource_id, model) {
   var start_render = new Date().getTime();
-   // get most displayable resource type - by derived or otherwise
-  resource_type = get_renderable_resource_type(resource_type);
+  // get most displayable resource type - by derived or otherwise
+  resource_type = get_renderable_resource_type(resource_type);;
 
   window.MODEL_DATA = model.data;
   window.MODEL_DATA['resource_type'] = resource_type;
