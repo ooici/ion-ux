@@ -939,7 +939,8 @@ IONUX.Views.AttachmentZoomView = Backbone.View.extend({
   events: {
     'click #btn-download': 'download',
     'click #btn-delete': 'confirm_delete',
-    'click #btn-confirm-delete': 'delete_attachment'
+    'click #btn-confirm-delete': 'delete_attachment',
+    'click #btn-facepage': 'goto_facepage'
   },
   initialize: function(){
     _.bindAll(this);
@@ -954,7 +955,6 @@ IONUX.Views.AttachmentZoomView = Backbone.View.extend({
     attachment_info['desc']     = this.attachment.description;
     attachment_info['mime']     = this.attachment.content_type;
     attachment_info['keywords'] = this.attachment.keywords.join(", ");
-    attachment_info['fp_url']   = '/InformationResource/face/'+this.attachment_id+'/';
 
     this.modal = $(IONUX.Templates.modal_template).html(this.template(attachment_info));
     if (this.can_delete()) {
@@ -1003,6 +1003,10 @@ IONUX.Views.AttachmentZoomView = Backbone.View.extend({
         }
       });
     }
+  },
+  goto_facepage: function(e) {
+    Backbone.history.fragment = null; // Clear history fragment to allow for page "refresh".
+    IONUX.ROUTER.navigate('/InformationResource/face/'+this.attachment_id+'/', {trigger: true});
   }
 });
 
