@@ -133,15 +133,17 @@ class ServiceApi(object):
                 v = str(item[2])
 
                 if item[1].lower() == "contains":
-                    q['value'] = "*{0}*".format(v)
+                    q['match'] = v
                 elif item[1].lower() == "starts with":
                     q['value'] = "{0}*".format(v)
                 elif item[1].lower() == "ends with":
                     q['value'] = "*{0}".format(v)
                 elif item[1].lower() == "like":
                     q['fuzzy'] = v
+                elif item[1].lower() == "matches":
+                    q['value'] = v
                 else:
-                    q['value'] = v       # matches or anything we didn't get
+                    q['match'] = v       # anything we didn't get
 
                 queries.append(q)
 

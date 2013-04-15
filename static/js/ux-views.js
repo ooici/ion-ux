@@ -373,7 +373,7 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
     var sel = $(evt.currentTarget);
     var filter_container = sel.parent();
 
-    var operators = ['like', 'contains', 'matches', 'starts with', 'ends with'];
+    var operators = ['contains', 'like', 'matches', 'starts with', 'ends with'];
 
     // determine if the selected field is a dropdown type or an entry type
     var entry = _.findWhere(this.filter_fields, {'label': sel.find("option:selected").text() });
