@@ -974,7 +974,7 @@ class ResourceTypeSchema(object):
 
     def find_types(self, data, parent_resource_type):
         prt_schema = data["schemas"][parent_resource_type]
-        types = []
+        types = [['type_', 'hidden']]
         for (name, val) in prt_schema.iteritems():
             if val["decorators"].has_key("ContentType"):
                 if val["decorators"]["ContentType"] in self.fundamental_types:
@@ -1001,6 +1001,8 @@ class ResourceTypeSchema(object):
             return "Text"
         elif resource_str_type == "dict":
             return "TextArea"
+        elif resource_str_type == "hidden":
+            return {"type": "Hidden"}
         else:
             return "Text"
 
