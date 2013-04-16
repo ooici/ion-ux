@@ -1131,6 +1131,11 @@ ul.nav {
   color: inherit;
 }
 
+/* generic editing fixes */
+.bbf-list li {
+    margin: 10px 0px;
+}
+
 /* Version modal overlay specific settings */
 #version-overlay {
   text-align: left;
