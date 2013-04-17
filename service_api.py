@@ -601,13 +601,22 @@ class ServiceApi(object):
     def tasktable_get_capabilities(resource_id):
         taskable = service_gateway_get('resource_management', 'get_capabilities', raw_return=True, params={'resource_id':resource_id})
         # commands = [t for t in taskable if t['cap_type'] == 3]
-        commands = {'resource_params': [], 'commands': []}
+        capabilities = {'resource_params': {}, 'commands': []}
+        resource_param_names = []
+        
         for t in taskable:
             if t['cap_type'] == 3:
-                commands['commands'].append(t)
+                capabilities['commands'].append(t)
             elif t['cap_type'] == 4:
-                commands['resource_params'].append(t['name'])
-        return commands
+                resource_param_names.append(t['name'])
+        
+        if resource_param_names:
+            resource_params_request = service_gateway_get('resource_management', 'get_resource', params={'resource_id': resource_id, 'params': resource_param_names})
+            for k,v in resource_params_request.iteritems():
+                if k in resource_param_names:
+                    capabilities['resource_params'].update({k:v})
+        
+        return capabilities
 
 
     @staticmethod
