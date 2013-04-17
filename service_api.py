@@ -919,7 +919,7 @@ class ResourceTypeSchema(object):
             return {"type": "List"}
         elif resource_str_type == "bool":
             return {"type": "Radio", "options": [True, False]}
-        elif resource_str_type == "int":
+        elif resource_str_type in ["int", "float"]:
             return "Number"
         elif resource_str_type == "str":
             return "Text"
