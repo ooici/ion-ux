@@ -1,86 +1,52 @@
-// Todo: change names across command pages
+IONUX.Views.TaskableResourceParams = IONUX.Views.ResourceParams.extend({
+  events: {
+    'click .save-params': 'save_params',
+  },
+  render: function(){
+    this.$el.html(this.template);
+    this.$el.prepend(this.resource_params_form.el);
+    this.$el.find('input').prop('readonly', true);
+    return this;
+  },
+  save_params: function(e){
+    alert('Save is currently disabled.');
+  }
+});
+
 IONUX.Views.TaskableResourceCommandFacepage = Backbone.View.extend({
   el: "#dynamic-container",
-  template: _.template($("#instrument-command-facepage-tmpl").html()),
+  template: _.template($("#taskable-command-facepage-tmpl").html()),
   command_template: _.template($('#instrument-command-tmpl').html()),
   events: {
-    'click #start-instrument-agent-instance': 'start_agent',
-    'click #stop-instrument-agent-instance': 'stop_agent',
+    // 'click #start-instrument-agent-instance': 'start_agent',
+    // 'click #stop-instrument-agent-instance': 'stop_agent',
     'click .get_capabilities': 'get_capabilities',
     'click .execute-command': 'execute_command',
   },
     
   initialize: function(){
-    _.bindAll(this, "render", "start_agent" ); // "stop_agent""issue_command"
+    _.bindAll(this);
     this.model.bind("change", this.render);
-    alert('initialize');
   },
 
   render: function(){
     $('#dynamic-container .v02').prepend('')
     this.$el.prepend(this.template(this.model.toJSON())).show();
-    var agent_process_id = this.model.get('agent_instance')['agent_process_id'];
-    if (agent_process_id) {
-        $("#start-instrument-agent-instance").hide();
-        $("#stop-instrument-agent-instance, .instrument-commands").show();
-        this.get_capabilities();
-    };
-  },
-  
-  start_agent: function(evt){
-    var start_btn = $(evt.target);
-    start_btn.prop('disabled', true);
-    start_btn.prop('value', 'Starting Instrument Agent...');
-    var self = this;
-    $.ajax({
-        type: 'POST',
-        url: 'start/',
-        success: function() {
-          $('.instrument-commands').show();
-          start_btn.prop('disabled', false);
-          start_btn.prop('value', 'Start Instrument Agent');
-          start_btn.hide();
-          $(' #stop-instrument-agent-instance').show();
-          self.get_capabilities();
-        }
-    });    
-    return false;
-  },
-  
-  stop_agent: function(evt){
-    var stop_btn = $(evt.target);
-    stop_btn.prop('disabled', true);
-    stop_btn.prop('value', 'Stopping Instrument Agent...')
-    $.ajax({
-      type: 'POST',
-      url: 'stop/',
-      success: function() {
-        stop_btn.hide();
-        stop_btn.prop('disabled', false);
-        stop_btn.prop('value', 'Stop Instrument Agent');
-        $('#start-instrument-agent-instance').show();
-        // $('.instrument-commands').hide();
-        $('#resource-form').empty();
-        $('#cmds tbody').empty();
-      }
-    });
-    return false;
+    this.get_capabilities();
   },
   
   execute_command: function(evt){
     evt.preventDefault();
+    
     var execute_elmt = $(evt.target);
     execute_elmt.text("Executing...")
     execute_elmt.prop('disabled', true);
     $('#cmds').find('button').prop('disabled', true);
-    
+
     var cap_type = execute_elmt.data('cap-type');
     var command = execute_elmt.data('command');
     var url = command + '/?cap_type='+cap_type;
-    if (command == 'RESOURCE_AGENT_EVENT_GO_DIRECT_ACCESS') {
-      url += '&session_type='+this.$el.find('option:selected').val();
-    };
-    
+
     var self = this;
     $.ajax({
       type: 'POST',
@@ -107,24 +73,19 @@ IONUX.Views.TaskableResourceCommandFacepage = Backbone.View.extend({
         url: 'get_capabilities?cap_type=abc123',
         dataType: 'json',
         success: function(resp){
-          console.log('get_capabilities resp: ', resp);
           self.render_commands(resp.data.commands);
+          new IONUX.Views.TaskableResourceParams({model: new IONUX.Models.ResourceParams(resp.data.resource_params)}).render().el;
           // Catch 'GatewayError' caused by unsupported/invalid state.
-          if (!_.isEmpty(resp.data.resource_params) && !_.has(resp.data.resource_params, 'GatewayError')){
-            new IONUX.Views.ResourceParams({model: new IONUX.Models.ResourceParams(resp.data.resource_params)}).render().el;
-          } else {
-            $('#resource-form').empty();
-          };
+          // if (!_.isEmpty(resp.data.resource_params) && !_.has(resp.data.resource_params, 'GatewayError')){
+          //   new IONUX.Views.ResourceParams({model: new IONUX.Models.ResourceParams(resp.data.resource_params)}).render().el;
+          // } else {
+          //   $('#resource-form').empty();
+          // };
         }
       });
   },
   
   render_commands: function(options) {
-    var cmd_tmpl = '<tr class="execute_command">\
-                    <td style="width:90%;"><%= name %></td>\
-                    <td style="text-align:right">\
-                    <button class="btn-blue execute-command" data-cap-type="<%= cap_type %>" data-command="<%= name %>">Execute</button>\
-                    </td></tr>'
     var self = this;
     _.each(options, function(option){
       $('#cmds tbody').append(self.command_template(option));

@@ -150,28 +150,28 @@
     
     // EXPERIMENT TWO
     
-    test_data = _.clone(TEST_MODEL_DATA['resource']);
-    test_data['resource_type'] = "InstrumentDevice";
-    test_data['black_list'] = black_list;
-
-    nfmodel = new IONUX.Models.EditResourceModel(test_data);
-    //nfmodel = new EditResourceModel({resource_type:"InstrumentAgentInstance", black_list:black_list});
-    nform = new Backbone.Form({model: nfmodel }).render();
-    // nfmodel.fetch();
-    console.log('nform', nform.schema)
-    
-    $("#dynamic-container").show().append(nform.el);
+    // test_data = _.clone(TEST_MODEL_DATA['resource']);
+    // test_data['resource_type'] = "InstrumentDevice";
+    // test_data['black_list'] = black_list;
+    // 
+    // nfmodel = new IONUX.Models.EditResourceModel(test_data);
+    // //nfmodel = new EditResourceModel({resource_type:"InstrumentAgentInstance", black_list:black_list});
+    // nform = new Backbone.Form({model: nfmodel }).render();
+    // // nfmodel.fetch();
+    // console.log('nform', nform.schema)
+    // 
+    // $("#dynamic-container").show().append(nform.el);
 
 
 
     
     // ORIGINAL
-    // nfmodel = new EditResourceModel({resource_type:"InstrumentDevice", black_list:black_list});
-    // //nfmodel = new EditResourceModel({resource_type:"InstrumentAgentInstance", black_list:black_list});
-    // nform = new Backbone.Form({model: nfmodel }).render();
-    // nfmodel.fetch();
-    // 
-    // $("#dynamic-container").append(nform.el);
+    nfmodel = new IONUX.Models.EditResourceModel({resource_type:"InstrumentDevice", black_list:black_list});
+    //nfmodel = new EditResourceModel({resource_type:"InstrumentAgentInstance", black_list:black_list});
+    nform = new Backbone.Form({model: nfmodel }).render();
+    nfmodel.fetch();
+    
+    $("#dynamic-container").show().append(nform.el);
     
     // - - - - - - - - 
 

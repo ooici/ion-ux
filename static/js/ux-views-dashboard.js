@@ -40,6 +40,7 @@ IONUX.Views.ViewControls = Backbone.View.extend({
 IONUX.Collections.Orgs = Backbone.Collection.extend({
   url: '/Org/list/',
   parse: function(resp) {
+    console.log('Orgs', resp);
     return resp.data;
   }
 });
@@ -47,6 +48,7 @@ IONUX.Collections.Orgs = Backbone.Collection.extend({
 IONUX.Collections.Observatories = Backbone.Collection.extend({
   url: '/Observatory/list/',
   parse: function(resp) {
+    console.log('Observatory', resp);
     return resp.data;
   }
 });
@@ -149,11 +151,11 @@ IONUX.Views.Map = Backbone.View.extend({
     this.map = new google.maps.Map(document.getElementById('map_canvas'), {
       center: new google.maps.LatLng(39.8106460, -98.5569760),
       zoom: 3,
-      mapTypeId: google.maps.MapTypeId.TERRAIN,
+      mapTypeId: google.maps.MapTypeId.SATELLITE,
       disableDefaultUI: true,
-      scrollwheel: false,
+      // scrollwheel: false,
     });
-    this.markerClusterer = new MarkerClusterer(this.map);
+    this.markerClusterer = new MarkerClusterer(this.map, null,{maxZoom:10});
     this.pan_map();
     this.draw_markers();
   },
@@ -164,6 +166,7 @@ IONUX.Views.Map = Backbone.View.extend({
     _.each(this.collection.models, function(resource) {
       var lat = resource.get('geospatial_point_center')['lat'];
       var lon = resource.get('geospatial_point_center')['lon'];
+      console.log('lat', lat, 'lon', lon);
       self.create_marker(lat, lon, null, '_text',"<P>Insert HTML here.</P>", null);
     });    
   },
@@ -188,6 +191,7 @@ IONUX.Views.Map = Backbone.View.extend({
   },
   
   create_marker: function(_lat, _lon, _icon, _hover_text, _info_content, _table_row) {
+    console.log('create_marker');
     if (!_lat || !_lon) return null;
     // Add marker to map
     latLng = new google.maps.LatLng(_lat, _lon);
@@ -197,7 +201,9 @@ IONUX.Views.Map = Backbone.View.extend({
       icon: _icon,
       title: _hover_text
     });
-
+    
+    console.log('marker', marker);
+    
     // mouse click opens infoWindow
     if (_info_content) {
       var iw = new google.maps.InfoWindow({content: _info_content});

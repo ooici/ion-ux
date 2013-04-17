@@ -536,7 +536,7 @@ class ServiceApi(object):
     @staticmethod
     def instrument_agent_get_capabilities(instrument_device_id):
         agent_req = service_gateway_agent_request(instrument_device_id, 'get_capabilities', params={})
-        
+
         # Temp hack to catch error
         if isinstance(agent_req, dict) and agent_req.has_key('GatewayError'):
             return agent_req
@@ -586,6 +586,27 @@ class ServiceApi(object):
             # capabilities.update({'agent_params': agent_params})
                 
         return capabilities
+
+
+    @staticmethod
+    def taskable_execute(resource_id, command):
+        command_obj = {'type_': 'AgentCommand', 'command': command, 'args':[], 'kwargs':{}}
+        taskable = service_gateway_post('resource_management', 'execute_resource', params={'resource_id':resource_id, 'command': command_obj})
+        return taskable
+
+
+    @staticmethod
+    def tasktable_get_capabilities(resource_id):
+        taskable = service_gateway_get('resource_management', 'get_capabilities', raw_return=True, params={'resource_id':resource_id})
+        # commands = [t for t in taskable if t['cap_type'] == 3]
+        commands = {'resource_params': [], 'commands': []}
+        for t in taskable:
+            if t['cap_type'] == 3:
+                commands['commands'].append(t)
+            elif t['cap_type'] == 4:
+                commands['resource_params'].append(t['name'])
+        return commands
+
 
     @staticmethod
     def set_resource(device_id, params):
@@ -1062,10 +1083,10 @@ def build_get_request(base, service_name, operation_name=None, params=None):
 
     return url
 
-def service_gateway_get(service_name, operation_name, params=None, base=SERVICE_GATEWAY_BASE_URL):
+def service_gateway_get(service_name, operation_name, params=None, raw_return=None, base=SERVICE_GATEWAY_BASE_URL):
     service_gateway_request = requests.get(build_get_request(base, service_name, operation_name, params))
     pretty_console_log('SERVICE GATEWAY GET RESPONSE', service_gateway_request.content)
-    return render_service_gateway_response(service_gateway_request)
+    return render_service_gateway_response(service_gateway_request, raw_return=raw_return)
 
 def render_service_gateway_response(service_gateway_resp, raw_return=None):
     if service_gateway_resp.status_code == 200:

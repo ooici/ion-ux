@@ -239,7 +239,7 @@ IONUX.Router = Backbone.Router.extend({
     } else if (resource_type == 'PlatformDevice') {
       var resource_extension = new IONUX.Models.ResourceExtension({resource_type: resource_type, resource_id: resource_id});
       new IONUX.Views.PlatformCommandFacepage({model: resource_extension, el: '.v02'});
-    } else if (resource_type == 'DataProcess') {
+    } else if (resource_type == 'TaskableResource') {
       var resource_extension = new IONUX.Models.ResourceExtension({resource_type: 'InformationResource', resource_id: resource_id});
       console.log('found');
       new IONUX.Views.TaskableResourceCommandFacepage({model: resource_extension, el: '.v02'});

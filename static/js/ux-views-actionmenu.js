@@ -192,7 +192,7 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
         var resource_id = window.MODEL_DATA['_id'];
         if (resource_type == 'InstrumentDevice' 
             || resource_type == 'PlatformDevice'
-            || resource_type == 'DataProcess'){
+            || resource_type == 'TaskableResource'){
             var router = new IONUX.Router();
             router.navigate('/'+resource_type+'/command/'+resource_id+'/', {trigger:true});
         } else {

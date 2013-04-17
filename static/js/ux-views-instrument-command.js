@@ -21,6 +21,9 @@ IONUX.Models.ResourceParams = Backbone.Model.extend({
 });
 
 
+
+// NOTE: Base class for IONUX.Views.TaskableResourceParams
+// in static/js/ux-views-taskable-command.js
 IONUX.Views.ResourceParams = Backbone.View.extend({
   el: '#resource-form',
   template: '<div><button class="btn-blue save-params">Save</button></div>',
@@ -55,7 +58,7 @@ IONUX.Views.ResourceParams = Backbone.View.extend({
       }
     });
   }
-})
+});
 
 
 
