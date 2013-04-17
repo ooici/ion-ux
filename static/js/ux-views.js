@@ -373,7 +373,7 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
     var sel = $(evt.currentTarget);
     var filter_container = sel.parent();
 
-    var operators = ['like', 'contains', 'matches', 'starts with', 'ends with'];
+    var operators = ['contains', 'like', 'matches', 'starts with', 'ends with'];
 
     // determine if the selected field is a dropdown type or an entry type
     var entry = _.findWhere(this.filter_fields, {'label': sel.find("option:selected").text() });
@@ -939,7 +939,8 @@ IONUX.Views.AttachmentZoomView = Backbone.View.extend({
   events: {
     'click #btn-download': 'download',
     'click #btn-delete': 'confirm_delete',
-    'click #btn-confirm-delete': 'delete_attachment'
+    'click #btn-confirm-delete': 'delete_attachment',
+    'click #btn-facepage': 'goto_facepage'
   },
   initialize: function(){
     _.bindAll(this);
@@ -954,7 +955,6 @@ IONUX.Views.AttachmentZoomView = Backbone.View.extend({
     attachment_info['desc']     = this.attachment.description;
     attachment_info['mime']     = this.attachment.content_type;
     attachment_info['keywords'] = this.attachment.keywords.join(", ");
-    attachment_info['fp_url']   = '/InformationResource/face/'+this.attachment_id+'/';
 
     this.modal = $(IONUX.Templates.modal_template).html(this.template(attachment_info));
     if (this.can_delete()) {
@@ -1003,6 +1003,10 @@ IONUX.Views.AttachmentZoomView = Backbone.View.extend({
         }
       });
     }
+  },
+  goto_facepage: function(e) {
+    Backbone.history.fragment = null; // Clear history fragment to allow for page "refresh".
+    IONUX.ROUTER.navigate('/InformationResource/face/'+this.attachment_id+'/', {trigger: true});
   }
 });
 

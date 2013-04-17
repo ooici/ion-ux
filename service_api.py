@@ -133,15 +133,17 @@ class ServiceApi(object):
                 v = str(item[2])
 
                 if item[1].lower() == "contains":
-                    q['value'] = "*{0}*".format(v)
+                    q['match'] = v
                 elif item[1].lower() == "starts with":
                     q['value'] = "{0}*".format(v)
                 elif item[1].lower() == "ends with":
                     q['value'] = "*{0}".format(v)
                 elif item[1].lower() == "like":
                     q['fuzzy'] = v
+                elif item[1].lower() == "matches":
+                    q['value'] = v
                 else:
-                    q['value'] = v       # matches or anything we didn't get
+                    q['match'] = v       # anything we didn't get
 
                 queries.append(q)
 
@@ -993,7 +995,7 @@ class ResourceTypeSchema(object):
 
     def find_types(self, data, parent_resource_type):
         prt_schema = data["schemas"][parent_resource_type]
-        types = []
+        types = [['type_', 'hidden']]
         for (name, val) in prt_schema.iteritems():
             if val["decorators"].has_key("ContentType"):
                 if val["decorators"]["ContentType"] in self.fundamental_types:
@@ -1020,6 +1022,8 @@ class ResourceTypeSchema(object):
             return "Text"
         elif resource_str_type == "dict":
             return "TextArea"
+        elif resource_str_type == "hidden":
+            return {"type": "Hidden"}
         else:
             return "Text"
 
