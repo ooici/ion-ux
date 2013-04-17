@@ -22,7 +22,7 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
 
   parse: function(resp){
     _.each(resp.data, function(v, k) {
-      if (_.isObject(v) && !_.isArray(v) && !_.isUndefined(v)) {
+      if (_.isObject(v) && !_.isArray(v) && !v.hasOwnProperty('type_')) {
         resp.data[k] = JSON.stringify(v);
       };
     });

@@ -1,4 +1,4 @@
-import requests, json, time, pprint, re, ast
+import requests, json, time, pprint, re
 from flask import session, jsonify, abort
 from config import GATEWAY_HOST, GATEWAY_PORT
 from copy import deepcopy
@@ -172,29 +172,29 @@ class ServiceApi(object):
         # custom_attributes). See ResourceTypeSchema() below, or 
         # /static/js/ux-editform.js for current implementation.
 
-        for (k,v) in resource_obj.iteritems():
+        for k, v in resource_obj.iteritems():
             if isinstance(v, unicode):
                 if v.startswith('{'):
                     try:
-                        resource_obj.update({k: ast.literal_eval(str(v))})
-                    except Exception, e:
+                        resource_obj.update({k: json.loads(str(v))})
+                    except Exception as e:
                         # pass it to the backend for validation and error?
                         pass
-            
+
             # catch any objects that were
             elif v == '[object Object]':
                 resource_obj.update({k: {}})
-            
+
             if v == 'true':
                 resource_obj.update({k: True})
             elif v == 'false':
                 resource_obj.update({k: False})
-            
-            print 'update_resource: ', k, type(resource_obj[k])
-            
+
+            #print 'update_resource: ', k, type(resource_obj[k]), resource_obj[k]
+
             if v == 'agent_config':
                 print v
-            
+
         req = service_gateway_post('resource_management', 'update_resource', params={'resource': resource_obj})
         return req
 
