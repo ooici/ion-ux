@@ -40,7 +40,7 @@ IONUX.Views.ViewControls = Backbone.View.extend({
 IONUX.Collections.Orgs = Backbone.Collection.extend({
   url: '/Org/list/',
   parse: function(resp) {
-    console.log('Orgs', resp);
+    // console.log('Orgs', resp);
     return resp.data;
   }
 });
@@ -48,7 +48,7 @@ IONUX.Collections.Orgs = Backbone.Collection.extend({
 IONUX.Collections.Observatories = Backbone.Collection.extend({
   url: '/Observatory/list/',
   parse: function(resp) {
-    console.log('Observatory', resp);
+    // console.log('Observatory', resp);
     return resp.data;
   }
 });

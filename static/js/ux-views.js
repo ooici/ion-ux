@@ -729,27 +729,63 @@ IONUX.Views.AttributeGroup = Backbone.View.extend({
 IONUX.Views.TextShort = Backbone.View.extend({
     template: _.template('<span><%= label %>:</span>&nbsp;<%= text_short %>'),
     template_no_label: _.template('<%= text_short %>'),
-    template_attr_group: _.template('<div class="row-fluid"><div class="span5 text-short-label"><%= label %>:&nbsp;</div><div class="span7 text-short-value"><%= text_short %></div></div>'),
-
+    template_attr_group: _.template('<div class="row-fluid">\
+                                      <div class="span5 text-short-label">\
+                                        <%= label %>:&nbsp;\
+                                      </div>\
+                                      <div class="span7 text-short-value">\
+                                        <% if (link) { %>\
+                                          <a href="<%= link %>"><%= text_short %></a>\
+                                        <% } else { %>\
+                                          <%= text_short %>\
+                                        <% } %>\
+                                      </div>\
+                                    </div>'),
+    
+    template_link: _.template('<div class="row-fluid"><div class="span5 text-short-label"><%= label %>:&nbsp;</div><div class="span7 text-short-value"><%= text_short %></div></div>'),
+    initialize: function(){
+      _.bindAll(this);
+      this.data_path = this.$el.data('path');
+      this.build_link();
+    },
     render: function(){
-        var data_path = this.$el.data('path');
-        if (data_path){
-            var label = this.$el.data('label');
-            var text_short = get_descendant_properties(this.options.data_model, data_path);
-            if (this.$el.parent().is('.heading-left') || label == "NO LABEL"){
-              this.$el.html(this.template_no_label({text_short: text_short}));
-            } else if (this.$el.parent().is('.heading-right')) {
-              this.$el.html(this.template({label: label, text_short: text_short}));
-            } else {
-              this.$el.html(this.template_attr_group({label: label, text_short: text_short}));
-            };
-        } else {
-            // this.$el.css('color', 'orange');
-            // var integration_info = this.$el.text();
-            // integration_log(this.$el.attr('id'), this.$el.data('path'), integration_info);
+      var data_path = this.$el.data('path');
+      if (data_path){
+          var label = this.$el.data('label');
+          var text_short = get_descendant_properties(this.options.data_model, data_path);
+          if (this.$el.parent().is('.heading-left') || label == "NO LABEL"){
+            this.$el.html(this.template_no_label({text_short: text_short}));
+          } else if (this.$el.parent().is('.heading-right')) {
+            this.$el.html(this.template({label: label, text_short: text_short}));
+          } else {
+            this.$el.html(this.template_attr_group({label: label, text_short: text_short, link:this.link_url}));
+          };
+      };
+      
+      return this;
+    },
+
+    build_link: function() {
+      if (!_.isUndefined(this.data_path)) {
+        var path_array = this.data_path.split('.');
+        if (_.contains(path_array, 'name')) {
+          var idx = _.lastIndexOf(path_array, 'name');
+
+          var type_path = _.clone(path_array);
+          type_path[idx] = 'type_';
+          
+          var id_path = _.clone(path_array);
+          id_path[idx] = '_id';
+          
+          var link_id = get_descendant_properties(window.MODEL_DATA, id_path.join('.'));
+          var link_type = get_descendant_properties(window.MODEL_DATA, type_path.join('.'));
+          
+          if (link_id && link_type) {
+            this.link_url = '/'+link_type+'/face/'+link_id+'/';
+          };
         };
-        return this;
-    }
+      };
+    },
 });
 
 

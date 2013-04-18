@@ -358,19 +358,16 @@ function negotiation_show_controls(row_data) {
 // Returns a displayable resource type for the resource_type given.
 // If the type is not displayable, traverse up the heirarchy of resources
 // until one is found.
-function get_renderable_resource_type(resource_type)
-{
-  // FIX/HACK: Observatory shouldn't be on its own, it should be a site
-  // if (resource_type == "Observatory")
-  //   return "Site";
+function get_renderable_resource_type(resource_type) {
+  // Check for alt_resource_type and skip if found
+  var alt_resource_type = window.MODEL_DATA.resource.alt_resource_type;
+  if (!_.isEmpty(alt_resource_type)) return alt_resource_type;
 
   // conduct initial search of window.LAYOUT
   var re = _.find(window.LAYOUT.spec.restypes, function(v, k) { return v.name == resource_type; });
-
   while (re != null) {
     if ($("." + re.name).length > 0)
       return re.name;
-
     re = window.LAYOUT.spec.restypes[re.super];
   }
 
@@ -381,10 +378,11 @@ function get_renderable_resource_type(resource_type)
 // Renders a page based on resource_type
 function render_page(resource_type, resource_id, model) {
   var start_render = new Date().getTime();
-  // get most displayable resource type - by derived or otherwise
-  resource_type = get_renderable_resource_type(resource_type);;
-
   window.MODEL_DATA = model.data;
+  
+  resource_type = get_renderable_resource_type(resource_type);
+  console.log('resource_type', resource_type);
+
   window.MODEL_DATA['resource_type'] = resource_type;
   
   var attribute_group_elmts = $('.'+resource_type+' .attribute_group_ooi');
