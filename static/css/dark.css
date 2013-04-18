@@ -506,6 +506,16 @@ ul.dropdown-menu li:hover {
   background: #202020;
 }
 
+.attribute_group_dynamic_ooi h5 {
+  font-weight: normal;
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.attribute_group_dynamic_ooi .text_wrap {
+  white-space: normal;
+}
+
 /* ---------------------------------------------------------------
 / ACTION MENU STYLING
 --------------------------------------------------------------- */

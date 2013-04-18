@@ -151,7 +151,7 @@ IONUX.Views.Map = Backbone.View.extend({
     this.map = new google.maps.Map(document.getElementById('map_canvas'), {
       center: new google.maps.LatLng(39.8106460, -98.5569760),
       zoom: 3,
-      mapTypeId: google.maps.MapTypeId.SATELLITE,
+      mapTypeId: google.maps.MapTypeId.TERRAIN,
       disableDefaultUI: true,
       // scrollwheel: false,
     });
