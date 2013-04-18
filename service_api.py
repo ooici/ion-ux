@@ -1,4 +1,4 @@
-import requests, json, time, pprint, re, ast
+import requests, json, time, pprint, re
 from flask import session, jsonify, abort
 from config import GATEWAY_HOST, GATEWAY_PORT
 from copy import deepcopy
@@ -172,29 +172,29 @@ class ServiceApi(object):
         # custom_attributes). See ResourceTypeSchema() below, or 
         # /static/js/ux-editform.js for current implementation.
 
-        for (k,v) in resource_obj.iteritems():
+        for k, v in resource_obj.iteritems():
             if isinstance(v, unicode):
                 if v.startswith('{'):
                     try:
-                        resource_obj.update({k: ast.literal_eval(str(v))})
-                    except Exception, e:
+                        resource_obj.update({k: json.loads(str(v))})
+                    except Exception as e:
                         # pass it to the backend for validation and error?
                         pass
-            
+
             # catch any objects that were
             elif v == '[object Object]':
                 resource_obj.update({k: {}})
-            
+
             if v == 'true':
                 resource_obj.update({k: True})
             elif v == 'false':
                 resource_obj.update({k: False})
-            
-            print 'update_resource: ', k, type(resource_obj[k])
-            
+
+            #print 'update_resource: ', k, type(resource_obj[k]), resource_obj[k]
+
             if v == 'agent_config':
                 print v
-            
+
         req = service_gateway_post('resource_management', 'update_resource', params={'resource': resource_obj})
         return req
 
@@ -853,7 +853,7 @@ class ServiceApi(object):
     @staticmethod
     def resource_type_schema(resource_type):
         rts = ResourceTypeSchema(resource_type)
-        return rts()
+        return rts.get_backbone_schema()
 
     @staticmethod
     def find_user_credentials_by_actor_id(actor_id):
@@ -873,169 +873,60 @@ class ResourceTypeSchema(object):
     def __init__(self, root_resource_type, fundamental_types=None):
         self.root_resource_type = root_resource_type
         self.fundamental_types = fundamental_types or ["dict", "list", "tuple", "bool", "int", "float", "str"]
+        self.schemas = {}
 
-    def __call__(self):
-        """
-        Get the root resource's schema, then recursively get all child resource schemas. 
-        """
-        data_resp = self.get_data(self.root_resource_type)
-        sub_resources, enum_types = self.find_sub_types(data_resp, self.root_resource_type)
-        path = None
-        schema_data = self.find_types(data_resp, self.root_resource_type)
-        enum_data = self.get_enum_data(enum_types)
-        [schema_data.update(d) for d in enum_data]
-        [schema_data.pop(d[0]) for d in enum_types]
-        while sub_resources:
-            schema_resource_name, schema_resource_type = sub_resources.pop(0)
-            path = (path + "." + str(schema_resource_name)) if path else schema_resource_name
-            data_resp = self.get_data(schema_resource_type)
-            sub_resources_current, enum_types_current = self.find_sub_types(data_resp, schema_resource_type)
-            sub_resources.extend(sub_resources_current)
-            schema_data_current = self.find_types(data_resp, schema_resource_type)
-            sub_schema_data = dict([(path + "." + str(key), val) for (key, val) in schema_data_current.iteritems()])
-            schema_data.update(sub_schema_data)
-            enum_data = self.get_enum_data(enum_types_current)
-            [schema_data.update(d) for d in enum_data]
-            [schema_data.pop(d[0]) for d in enum_types_current]
-        schema = self.nest_schema_data(schema_data)
-        return schema
+    def get_backbone_schema(self, resource_type=None):
+        resource_type = resource_type or self.root_resource_type
+        cur_schema    = self.get_data(resource_type)
+        ret_schema    = {'type_':{'type':'Hidden'}}
 
-    def nest_schema_data(self, schema_data):
-        """
-        Create Backbone Forms compliant schema structure.
-        """
-        all_added_data, all_removed_keys = [], set()
-        for (key, val) in schema_data.iteritems():
-            if isinstance(val, dict) and ("itemType" in val):
-                if val["itemType"] == "Object":
-                    if "." not in key: #is root level key
-                        nested_data, removed_keys = self._get_sub_nesting(schema_data, str(key))
-                        all_added_data.append(nested_data)
-                        all_removed_keys.update(removed_keys)
-        [schema_data.pop(key) for key in all_removed_keys]
-        [schema_data.update(data) for data in all_added_data]
-        return schema_data
+        for k, v in cur_schema.iteritems():
+            if v['type'] == "list":
+                list_slug = {'type':'List'}
+                item_type = v.get('decorators', {}).get('ContentType', None)
+                if item_type and not item_type in self.fundamental_types:
+                    list_slug.update({'itemType': 'Object', 'subSchema': self.get_backbone_schema(item_type)}) # RECURSE
 
-    def _get_sub_nesting(self, schema_data, nested_root):
-        """
-        Recursively form sub resources into a 
-        Backbone Forms compliant schema structure.
-        """
-        current_nested_name = nested_root
-        nested_data = DotDict({nested_root: {"type":"List", "itemType":"Object", "subSchema":{}}})
-        removed_keys = set() #keys to be removed from flat schema (replaced with nested)
-        sditems = schema_data.iteritems()
-        all_nested_keys = [key for (key, val) in sditems if key.startswith(current_nested_name+".")]
-        nest_level = nested_root.count(".")
-        nesting_count = [k.count(".") for k in all_nested_keys]
-        if len(nesting_count) == 0:
-            return nested_data, removed_keys
-        max_nest_level = max(nesting_count)
-        while max_nest_level >= nest_level:
-            for (key, val) in schema_data.iteritems():
-                if key.startswith(current_nested_name+"."):
-                    removed_keys.add(key)
-                    next_nested_name = current_nested_name
-                    if key.count(".") == nest_level:
-                        nestkey = key.replace(".", ".subSchema.")
-                        fulllist = nestkey.split(".")
-                        nestlist = fulllist[:-1]
-                        attrname = fulllist[-1]
-                        nested_data_ref = None
-                        while nestlist:
-                            if nested_data_ref is None:
-                                nested_data_ref = getattr(nested_data, nestlist.pop(0))
-                            else:
-                                nested_data_ref = getattr(nested_data_ref, nestlist.pop(0))
-                        if isinstance(val, dict) and ("itemType" in val):
-                            if val["itemType"] == "Object":
-                                val.update({"subSchema":{}})
-                                setattr(nested_data_ref, attrname, val)
-                        else:
-                            setattr(nested_data_ref, attrname, val)
-            nest_level += 1
-        # import pprint; pp = pprint.PrettyPrinter(indent=2); pp.pprint(nested_data)
-        return nested_data, removed_keys
+                ret_schema[k] = list_slug
+            elif v['type'] in self.fundamental_types:
+                if 'enum_type' in v:
+                    ret_schema[k] = {"type": "Select", "options": self.get_enum_options(v['enum_type'])}
+                else:
+                    ret_schema[k] = self._resource_type_to_form_schema(v['type'])
+            else:
+                ret_schema[k] = {'type':'Object', 'subSchema': self.get_backbone_schema(v['type'])} # RECURSE
+
+        return ret_schema
+
+    def get_enum_options(self, enum_type):
+        enum_schema = self.get_data(enum_type)
+        options = [{'label':v, 'val':k} for k,v in enum_schema.iteritems()]
+        return options
 
     def get_data(self, resource_type):
+        if resource_type in self.schemas:
+            return self.schemas[resource_type]
+
         resp = service_gateway_get('resource_type_schema', resource_type, params={})
-        return resp
-
-    def get_enum_data(self, enum_types):
-        enum_data = []
-        for etypetuple in enum_types:
-            ename, etype = etypetuple
-            resp = service_gateway_get('resource_type_schema', etype, params={})
-            etype_schemas = resp["schemas"][etype]
-            for (name, vals) in etype_schemas.iteritems():
-                optionskv = resp["schemas"][vals["enum_type"]]
-                options = optionskv.values()
-                name = ename+'.'+name 
-                enum_data.append({name: {"type": "Select", "options": options}})
-        return enum_data
-
-    def find_sub_types(self, data, parent_resource_type):
-        """
-        Look inside data's 'schema' to find sub types.
-
-        Sub-resources can be:
-            - a 'resource type' (a sub-schema for this resource needs to be fetched)
-            - a 'enum_type' (enum options need to be fetched)
-            - one of 'self.fundamental_types' (no sub-schema needs to be fetched)
-
-        """
-        prt_schema = data["schemas"][parent_resource_type]
-        sub_resources, enum_types = [], []
-        for (name, val) in prt_schema.iteritems():
-            if val.has_key("decorators"):
-                if val["decorators"].has_key("ContentType"):
-                    content_type = val["decorators"]["ContentType"]
-                    if content_type not in self.fundamental_types:
-                        sub_resources.append([name, content_type])
-            if val.has_key("type"):
-                stype = val["type"]
-                if stype not in self.fundamental_types: # must be an 'enum_type'
-                    rtype = val["default"]["type_"]
-                    rschema = data["schemas"][rtype]
-                    enums = [key for (key, valdict) in rschema.iteritems() if "enum_type" in valdict]
-                    if any(enums):
-                        enum_types.append([name, stype])
-        return sub_resources, enum_types
-
-    def find_types(self, data, parent_resource_type):
-        prt_schema = data["schemas"][parent_resource_type]
-        types = [['type_', 'hidden']]
-        for (name, val) in prt_schema.iteritems():
-            if val["decorators"].has_key("ContentType"):
-                if val["decorators"]["ContentType"] in self.fundamental_types:
-                    types.append([name, val["type"]])
-                else:
-                    types.append([name, "sub_type"])
-            else:
-                types.append([name, val["type"]])
-        return dict([(name, self._resource_type_to_form_schema(stype)) for (name, stype) in types])
+        self.schemas.update(resp['schemas'])
+        return resp['schemas'][resource_type]
 
     def _resource_type_to_form_schema(self, resource_str_type):
         """
         Mapping between given string type and HTML form type.
         """
-        if resource_str_type == "sub_type":
-            return {"type": "List", "itemType": "Object"}
-        elif resource_str_type in ["list", "tuple"]:
+        if resource_str_type in ["list", "tuple"]:
             return {"type": "List"}
         elif resource_str_type == "bool":
             return {"type": "Radio", "options": [True, False]}
-        elif resource_str_type == "int":
+        elif resource_str_type in ["int", "float"]:
             return "Number"
         elif resource_str_type == "str":
             return "Text"
         elif resource_str_type == "dict":
             return "TextArea"
-        elif resource_str_type == "hidden":
-            return {"type": "Hidden"}
         else:
             return "Text"
-
 
 class DotDict(dict):
     marker = object()
