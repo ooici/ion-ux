@@ -885,6 +885,12 @@ class ResourceTypeSchema(object):
             if v['type'] == "list":
                 list_slug = {'type':'List'}
                 item_type = v.get('decorators', {}).get('ContentType', None)
+
+                # HACK HACK HACK - some contenttypes list multiple types, we can't deal with that yet
+                # just use the first
+                if item_type and "," in item_type:
+                    item_type = item_type.split(",", 1)[0]
+
                 if item_type and not item_type in self.fundamental_types:
                     list_slug.update({'itemType': 'Object', 'subSchema': self.get_backbone_schema(item_type)}) # RECURSE
 
@@ -909,7 +915,6 @@ class ResourceTypeSchema(object):
         return hasattr(config, 'USE_CACHE') and config.USE_CACHE
 
     def get_data(self, resource_type):
-        print "requesting", resource_type
         if self._use_cache:
             if not hasattr(current_app, 'schema_cache'):
                 current_app.schema_cache = SimpleCache(default_timeout=3600)
@@ -918,7 +923,6 @@ class ResourceTypeSchema(object):
         else:
             schema = self.schemas.get(resource_type, None)
 
-        print "echmea is", schema is not None
         if schema:
             return schema
 
