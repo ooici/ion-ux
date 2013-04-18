@@ -1,9 +1,11 @@
 import requests, json, time, pprint, re
-from flask import session, jsonify, abort
+from flask import session, jsonify, abort, current_app
 from config import GATEWAY_HOST, GATEWAY_PORT
 from copy import deepcopy
 from instrument_command import BLACKLIST
+from werkzeug.contrib.cache import SimpleCache
 # import re
+import config
 
 GATEWAY_BASE_URL = 'http://%s:%d' % (GATEWAY_HOST, GATEWAY_PORT)
 SERVICE_GATEWAY_BASE_URL = '%s/ion-service' % (GATEWAY_BASE_URL)
@@ -867,7 +869,6 @@ class ServiceApi(object):
     def get_version():
         return service_gateway_get('version', None)
 
-
 class ResourceTypeSchema(object):
 
     def __init__(self, root_resource_type, fundamental_types=None):
@@ -884,6 +885,12 @@ class ResourceTypeSchema(object):
             if v['type'] == "list":
                 list_slug = {'type':'List'}
                 item_type = v.get('decorators', {}).get('ContentType', None)
+
+                # HACK HACK HACK - some contenttypes list multiple types, we can't deal with that yet
+                # just use the first
+                if item_type and "," in item_type:
+                    item_type = item_type.split(",", 1)[0]
+
                 if item_type and not item_type in self.fundamental_types:
                     list_slug.update({'itemType': 'Object', 'subSchema': self.get_backbone_schema(item_type)}) # RECURSE
 
@@ -903,12 +910,28 @@ class ResourceTypeSchema(object):
         options = [{'label':v, 'val':k} for k,v in enum_schema.iteritems()]
         return options
 
+    @property
+    def _use_cache(self):
+        return hasattr(config, 'USE_CACHE') and config.USE_CACHE
+
     def get_data(self, resource_type):
-        if resource_type in self.schemas:
-            return self.schemas[resource_type]
+        if self._use_cache:
+            if not hasattr(current_app, 'schema_cache'):
+                current_app.schema_cache = SimpleCache(default_timeout=3600)
+
+            schema = current_app.schema_cache.get(resource_type)
+        else:
+            schema = self.schemas.get(resource_type, None)
+
+        if schema:
+            return schema
 
         resp = service_gateway_get('resource_type_schema', resource_type, params={})
-        self.schemas.update(resp['schemas'])
+        if self._use_cache:
+            current_app.schema_cache.set_many(resp['schemas'])
+        else:
+            self.schemas.update(resp['schemas'])
+
         return resp['schemas'][resource_type]
 
     def _resource_type_to_form_schema(self, resource_str_type):
