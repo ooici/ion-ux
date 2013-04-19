@@ -1,3 +1,34 @@
+IONUX.Views.AttributeGroupDynamic = Backbone.View.extend({
+  template: _.template('<div class="row-fluid">\
+                          <div class="span5 text-short-label">\
+                            <%= label %>:&nbsp;\
+                          </div>\
+                          <div class="span7 text_wrap">\
+                            <%= text_short %>\
+                          </div>\
+                        </div>'),
+
+  initialize: function(){
+    var data_path = this.$el.data('path');
+    var data_obj = get_descendant_properties(window.MODEL_DATA, data_path);
+    this.render_attributes(data_obj);
+  },
+
+  render: function(k,v) {
+    this.$el.append(this.template({label:k,text_short:v}));
+  },
+  render_attributes: function(data_obj){
+    _.each(data_obj, function(v,k) {
+      if (_.isObject(v)) {
+        this.$el.append('<h5>'+k+'</h5>');
+        this.render_attributes(v);
+      } else {
+        this.render(k, v);
+      };
+    }, this);
+  },
+});
+
 // UI Representation Base View
 IONUX.Views.Base = Backbone.View.extend({
     events: {
@@ -681,19 +712,10 @@ IONUX.Views.AttributeGroup = Backbone.View.extend({
     template: _.template($('#attribute-group-tmpl').html()),
     render: function(){
         this.$el.html(this.template({label: this.$el.data('label')}));
-
         var root_path = this.$el.data('path');
         var data = get_descendant_properties(this.options.data, root_path)
         var metadata = this._get_attribute_group_metadata();
-        
-        if (data && metadata) {
-            this._build_attribute_group(data, metadata, root_path);
-        } else {
-            // this.$el.find('.content-wrapper').append("Attribute Group missing.");
-            // if (metadata) this.$el.find('.content-wrapper').append('<br />Metadata found: ATTRIBUTE_GROUP_' + this.$el.attr('id'));
-            // this.$el.css('color', 'orange');
-        };
-
+        if (data && metadata) this._build_attribute_group(data, metadata, root_path);
         return this;
     },
     

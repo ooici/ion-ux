@@ -31,6 +31,10 @@ LOGGED_IN = True
 PRODUCTION = False
 CACHED_LAYOUT = True
 
+# whether to use the cache for:
+# - schema retrieval
+USE_CACHE = False
+
 # Config the UI as either 'PRODUCTION', 'DEVELOPMENT' OR 'INTEGRATION'
 # 'PRODUCTION' option for end-user UI
 # 'DEVELOPMENT' option for end-user UI and development sidebar

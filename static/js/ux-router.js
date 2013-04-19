@@ -392,6 +392,10 @@ function render_page(resource_type, resource_id, model) {
     new IONUX.Views.AttributeGroup({el: $(el), data: window.MODEL_DATA}).render().el;
   });
   
+  var attribute_group_dynamic_elmts = $('.'+resource_type+' .attribute_group_dynamic_ooi')
+  _.each(attribute_group_dynamic_elmts, function(el){
+    new IONUX.Views.AttributeGroupDynamic({el: $(el)}) //.render().el;
+  });
 
   var text_static_elmts = $('.'+resource_type+' .text_static_ooi');
   _.each(text_static_elmts, function(el){
