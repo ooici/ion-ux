@@ -37,6 +37,7 @@ IONUX.Router = Backbone.Router.extend({
       reset: true,
       success: function(resp){
         $('#dashboard-container').show();
+        $('#resource-selector #list').jScrollPane({autoReinitialise: true}); // Todo: move into view
         IONUX.Dashboard.MapResources = new IONUX.Collections.MapResources(resp.models, {resource_id: null});
         IONUX.Dashboard.MapResource = new IONUX.Models.MapResource();
         

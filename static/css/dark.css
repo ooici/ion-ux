@@ -1,3 +1,9 @@
+#resource-selector #list {
+  height: 379px;
+/*  min-height: 200px;*/
+  overflow: auto;
+}
+
 select#direct_access {
   width: 100px;
   background-color: #ffffff;
