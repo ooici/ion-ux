@@ -298,7 +298,7 @@ def page(resource_type, resource_id):
     if request.is_xhr:
         if request.method == 'PUT':
             resource_obj = json.loads(request.data)
-            updated_resource = ServiceApi.update_resource(resource_obj)
+            updated_resource = ServiceApi.update_resource(resource_type, resource_obj)
             return render_json_response(updated_resource)
         else:
             return
@@ -471,7 +471,7 @@ def resource_type_edit(resource_type, resource_id):
         return jsonify(data=resource_json)
     if request.method == 'PUT':
         resource_obj = json.loads(request.data)
-        updated_resource = ServiceApi.update_resource(resource_obj)
+        updated_resource = ServiceApi.update_resource(resource_type, resource_obj)
         return render_json_response(updated_resource)
     if request.method == 'POST':
         #TODO 

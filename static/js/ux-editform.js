@@ -24,7 +24,9 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
     _.each(resp.data, function(v, k) {
       if (_.isObject(v) && !_.isArray(v) && !v.hasOwnProperty('type_')) {
         resp.data[k] = JSON.stringify(v);
-      };
+      } else if (_.isArray(v) && !_.every(v, function(vv) { return vv.hasOwnProperty('type_') })) {
+        resp.data[k] = _.map(v, JSON.stringify);
+      }
     });
     return resp.data;
   },
@@ -146,13 +148,25 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
 //   },
 // });
 
+Backbone.Form.editors.IntSelect = Backbone.Form.editors.Select.extend({
+  getValue: function() {
+    var v = this.$el.val();
+    var iv = parseInt(v);
+    if (iv.toString() == v) {
+      return iv;
+    }
+
+    return v;
+  }
+});
+
 IONUX.Views.EditResource = Backbone.View.extend({
   tagName: 'div',
   template: _.template($('#edit-resource-tmpl').html()),
   events: {
     'click #save-resource': 'submit_form',
     'click #cancel-edit': 'cancel'
-  }, 
+  },
   initialize: function(){
     this.init_time = new Date().getTime();
     _.bindAll(this);

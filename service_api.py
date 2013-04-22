@@ -166,7 +166,11 @@ class ServiceApi(object):
         return search_json['data']
 
     @staticmethod
-    def update_resource(resource_obj):
+    def update_resource(resource_type, resource_obj):
+
+        # grab the schema again - if this is cached, this will be quick!
+        r = ResourceTypeSchema(resource_type)
+        schema = r.get_data(resource_type)
 
         # Hack to convert strings into objects, booleans
         # as a workaround to shortcomings dynamically generating 
@@ -897,7 +901,7 @@ class ResourceTypeSchema(object):
                 ret_schema[k] = list_slug
             elif v['type'] in self.fundamental_types:
                 if 'enum_type' in v:
-                    ret_schema[k] = {"type": "Select", "options": self.get_enum_options(v['enum_type'])}
+                    ret_schema[k] = {"type": "IntSelect", "options": self.get_enum_options(v['enum_type'])}
                 else:
                     ret_schema[k] = self._resource_type_to_form_schema(v['type'])
             else:
