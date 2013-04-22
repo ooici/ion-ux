@@ -32,8 +32,31 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
   },
 
   schema: function(){
+    var self = this;
     var schema = this.get_resource_type_schema();
+    _.each(schema, function(v, k) {
+      if (v.type == "List" && v.itemType == "Object") {
+        v.itemToString = _.partial(self.item_to_string, v.subSchema);
+        schema[k] = v;
+      }
+    });
     return _.omit(schema, this.black_list)
+  },
+
+  item_to_string: function(subschema, v) {
+    v = v || {};
+
+    var parts =[];
+    _.each(subschema, function(s, k) {
+      var desc = Backbone.Form.helpers.keyToTitle(k),
+          val = v[k];
+        if (_.isUndefined(val) || _.isNull(val)) val = '';
+        if (_.isArray(val)) val = "(" + val.length + " item" + (val.length != 1 ? "s" : "") + ")";
+
+        parts.push(desc + ': ' + val);
+    });
+
+    return parts.join('<br />');
   },
 
   // make_schema: function(resource_type_schema){
