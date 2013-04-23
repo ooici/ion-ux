@@ -59,7 +59,6 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
 
     _.each(sorted, function(a) {
       sorted_schema[a[0]] = a[1];
-      console.log(a[0] + " - " + a[1]);
     });
 
     return sorted_schema;
