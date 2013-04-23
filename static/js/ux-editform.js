@@ -222,6 +222,9 @@ IONUX.Views.EditResource = Backbone.View.extend({
     // Insert form but leave page header
     $('#dynamic-container > .row-fluid').html(this.$el.html(this.template));
     $('#form-container').html(this.form.el);
+
+    // HACK HACK to fix up embedded object spacing
+    this.$('.bbf-object').parent().prev('label').css({float:'none'});
   },
   submit_form: function(){
     var self = this;
