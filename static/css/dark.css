@@ -1,3 +1,10 @@
+#resource-selector #list {
+  height: 250px;
+/*  height: 379px; aligns with map*/
+  overflow: auto;
+  outline: 0;
+}
+
 select#direct_access {
   width: 100px;
   background-color: #ffffff;

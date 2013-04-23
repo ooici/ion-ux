@@ -37,6 +37,7 @@ IONUX.Router = Backbone.Router.extend({
       reset: true,
       success: function(resp){
         $('#dashboard-container').show();
+        $('#resource-selector #list').jScrollPane({autoReinitialise: true}); // Todo: move into view
         IONUX.Dashboard.MapResources = new IONUX.Collections.MapResources(resp.models, {resource_id: null});
         IONUX.Dashboard.MapResource = new IONUX.Models.MapResource();
         
@@ -544,9 +545,6 @@ function render_page(resource_type, resource_id, model) {
     new IONUX.Views.BlockActions({el: el});
   });
   new IONUX.Views.ViewActions({el: '.'+resource_type+' .heading-right'});
-  
-  
-  
 
   // Show the relevant elements and click to enable the Bootstrap tabs.
   $('li.' + resource_type + ', div.' + resource_type).show();
@@ -564,6 +562,10 @@ function render_page(resource_type, resource_id, model) {
   // _.each($('.'+resource_type+' .table_ooi'), function(table){
   //   $(table).find('table').last().dataTable().fnAdjustColumnSizing();
   // });
+
+  // Hack to hide extra groups from appear. 
+  // Todo: add resource_type class to .group
+  $('.group:not(:has(.'+resource_type+'))').hide();
 
   console.log('render_page elapsed: ', new Date().getTime() - start_render);
 };

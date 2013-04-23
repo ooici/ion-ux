@@ -48,7 +48,6 @@ IONUX.Collections.Orgs = Backbone.Collection.extend({
 IONUX.Collections.Observatories = Backbone.Collection.extend({
   url: '/Observatory/list/',
   parse: function(resp) {
-    // console.log('Observatory', resp);
     return resp.data;
   }
 });
@@ -65,14 +64,37 @@ IONUX.Views.ResourceSelector = Backbone.View.extend({
     this.$el.show().html(this.template({resources: this.collection.toJSON(), title: this.title}));
     return this;
   },
-})
+});
 
 IONUX.Views.ObservatorySelector = IONUX.Views.ResourceSelector.extend({
   template: _.template($('#dashboard-observatory-list-tmpl').html()),
-  events: {'click .resource-link': 'focus_map'},
-  focus_map: function(e){
-    e.preventDefault();
-  }
+  
+  initialize: function(){
+    _.bindAll(this);
+    this.title = this.options.title;
+    this.collection.on('reset', this.render);
+  },
+
+  render: function(){
+    this.$el.removeClass('placeholder');
+    this.$el.show().html(this.template({resources: this.build_menu(), title: this.title}));
+    return this;
+  },
+  
+  build_menu: function(){
+    // Grab all spatial names, then uniques; separate for clarity.
+    var spatial_area_names = _.map(this.collection.models, function(resource) {
+      var san = resource.get('spatial_area_name');
+      if (san != '') return san;
+    });
+    var unique_spatial_area_names = _.uniq(spatial_area_names);
+    
+    var resource_list = {};
+    _.each(unique_spatial_area_names, function(san) {
+      resource_list[san] = _.map(this.collection.where({spatial_area_name: san}), function(resource) { return resource.toJSON()});
+    }, this);
+    return resource_list;
+  },
 });
 
 IONUX.Views.OrgSelector = IONUX.Views.ResourceSelector.extend({
@@ -116,7 +138,6 @@ IONUX.Views.Map = Backbone.View.extend({
   initialize: function(){
     _.bindAll(this);
     this.draw_map();
-    // this.render_table();
     this.model.on('map:draw', this.draw_map);
     // this.collection.on('reset', this.draw_markers);
     // this.collection.on('reset', this.render_table);
@@ -126,24 +147,6 @@ IONUX.Views.Map = Backbone.View.extend({
     this.$el.show();
     return this;
   },
-  
-  // render_table: function() {
-  //   console.log('render_table');
-  //   var resource_table = $('#2163993');
-  //   resource_table.show();
-  //   if (!_.isEmpty(IONUX.MapBlacklist)) {
-  //     var filtered_resources = []
-  //     _.each(IONUX.Dashboard.MapResources.models, function(resource) {
-  //       if (!_.contains(IONUX.MapBlacklist, resource.get('type_')) 
-  //           && !_.contains(IONUX.MapBlacklist, resource.get('lcstate'))) {
-  //         filtered_resources.push(resource.toJSON());
-  //       };
-  //     });
-  //     new IONUX.Views.DataTable({el: resource_table, data: filtered_resources});
-  //   } else {
-  //     new IONUX.Views.DataTable({el: resource_table, data: this.collection.toJSON()});
-  //   };
-  // },
   
   draw_map: function(map_options, container_server) {
     console.log('draw_map');
@@ -166,7 +169,7 @@ IONUX.Views.Map = Backbone.View.extend({
     _.each(this.collection.models, function(resource) {
       var lat = resource.get('geospatial_point_center')['lat'];
       var lon = resource.get('geospatial_point_center')['lon'];
-      console.log('lat', lat, 'lon', lon);
+      // console.log('lat', lat, 'lon', lon);
       self.create_marker(lat, lon, null, '_text',"<P>Insert HTML here.</P>", null);
     });    
   },
@@ -202,7 +205,7 @@ IONUX.Views.Map = Backbone.View.extend({
       title: _hover_text
     });
     
-    console.log('marker', marker);
+    // console.log('marker', marker);
     
     // mouse click opens infoWindow
     if (_info_content) {
