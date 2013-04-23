@@ -40,7 +40,29 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
         schema[k] = v;
       }
     });
-    return _.omit(schema, this.black_list)
+    schema = _.omit(schema, this.black_list)
+
+    // pull out name/description first, then sort by alphabetical order
+    var sorted_schema = {}
+    if (schema.hasOwnProperty('name')) {
+      sorted_schema['name'] = schema['name'];
+      delete schema['name']
+    }
+    if (schema.hasOwnProperty('description')) {
+      sorted_schema['description'] = schema['description'];
+      delete schema['description']
+    }
+
+    var sorted = _.sortBy(_.pairs(schema), function(s) {
+      return s[0];
+    });
+
+    _.each(sorted, function(a) {
+      sorted_schema[a[0]] = a[1];
+      console.log(a[0] + " - " + a[1]);
+    });
+
+    return sorted_schema;
   },
 
   item_to_string: function(subschema, v) {
