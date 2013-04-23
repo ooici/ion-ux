@@ -899,7 +899,11 @@ class ResourceTypeSchema(object):
                     list_slug.update({'itemType': 'Object', 'subSchema': self.get_backbone_schema(item_type)}) # RECURSE
 
                 if 'default' in v and len(v['default']) and isinstance(v['default'][0], dict):
-                    list_slug.update({'itemType': 'Object', 'subSchema': {kk:'Text' for kk in v['default'][0]}})
+                    dict_schema = {}
+                    for kk in v['default'][0]:
+                        dict_schema[kk] = "Text"
+
+                    list_slug.update({'itemType': 'Object', 'subSchema': dict_schema})
 
                 ret_schema[k] = list_slug
             elif v['type'] in self.fundamental_types:
