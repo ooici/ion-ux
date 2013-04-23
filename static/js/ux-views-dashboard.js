@@ -138,7 +138,6 @@ IONUX.Views.Map = Backbone.View.extend({
   initialize: function(){
     _.bindAll(this);
     this.draw_map();
-    // this.render_table();
     this.model.on('map:draw', this.draw_map);
     // this.collection.on('reset', this.draw_markers);
     // this.collection.on('reset', this.render_table);
@@ -148,24 +147,6 @@ IONUX.Views.Map = Backbone.View.extend({
     this.$el.show();
     return this;
   },
-  
-  // render_table: function() {
-  //   console.log('render_table');
-  //   var resource_table = $('#2163993');
-  //   resource_table.show();
-  //   if (!_.isEmpty(IONUX.MapBlacklist)) {
-  //     var filtered_resources = []
-  //     _.each(IONUX.Dashboard.MapResources.models, function(resource) {
-  //       if (!_.contains(IONUX.MapBlacklist, resource.get('type_')) 
-  //           && !_.contains(IONUX.MapBlacklist, resource.get('lcstate'))) {
-  //         filtered_resources.push(resource.toJSON());
-  //       };
-  //     });
-  //     new IONUX.Views.DataTable({el: resource_table, data: filtered_resources});
-  //   } else {
-  //     new IONUX.Views.DataTable({el: resource_table, data: this.collection.toJSON()});
-  //   };
-  // },
   
   draw_map: function(map_options, container_server) {
     console.log('draw_map');
