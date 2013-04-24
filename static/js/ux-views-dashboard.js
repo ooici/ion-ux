@@ -383,7 +383,7 @@ IONUX.Views.MapFilter = Backbone.View.extend({
     ]
   },
   template: '\
-    <h3>Select</h3>\
+    <h3>Selector</h3>\
     <div class="panelize">\
       <input id="radio-assets" type="radio" name="map_filter" value="asset" checked />&nbsp;Asset&nbsp;\
       <input id="radio-data" type="radio" name="map_filter" value="data" />&nbsp;Data&nbsp;\

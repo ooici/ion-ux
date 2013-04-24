@@ -32,7 +32,7 @@ IONUX.Router = Backbone.Router.extend({
     
     // Render Sidebar - need to move this into init and implement timing/triggers.
     IONUX.Dashboard.Observatories = new IONUX.Collections.Observatories();
-    IONUX.Dashboard.ObservatoriesView = new IONUX.Views.ObservatorySelector({collection: IONUX.Dashboard.Observatories, title: 'Site/Subsite'});
+    IONUX.Dashboard.ObservatoriesView = new IONUX.Views.ObservatorySelector({collection: IONUX.Dashboard.Observatories, title: 'Site'});
     IONUX.Dashboard.Observatories.fetch({
       reset: true,
       success: function(resp){
