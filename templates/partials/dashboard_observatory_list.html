@@ -1,23 +1,25 @@
 <h3><%= title %></h3>
-<div id="list">
-  <ul>
-  <% _.each(resources, function(nested_resources, san) { %>
-    <li>
-      <%= san %>
-      <ul>
-        <% _.each(nested_resources, function(resource) { %>
-          <li>
-            <a href="/map/<%= resource._id %>">
-              <% if (resource.local_name) { %>
-                <%= resource.local_name %>
-              <% } else { %>
-                <%= resource.name %>
-              <% }; %>
-            </a>
-          </li>
-        <% }); %>
-      </ul>
-    </li>
-  <% }) %>
-  </ul>
+<div class="panelize">
+  <div id="list">
+    <ul>
+    <% _.each(resources, function(nested_resources, san) { %>
+      <li class="li_observatory_spatial">
+        <%= san %>
+        <ul>
+          <% _.each(nested_resources, function(resource) { %>
+            <li class="li_observatory">
+              <a href="/map/<%= resource._id %>">
+                <% if (resource.local_name) { %>
+                  <%= resource.local_name %>
+                <% } else { %>
+                  <%= resource.name %>
+                <% }; %>
+              </a>
+            </li>
+          <% }); %>
+        </ul>
+      </li>
+    <% }) %>
+    </ul>
+  </div>
 </div>

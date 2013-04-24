@@ -46,7 +46,7 @@ IONUX.Router = Backbone.Router.extend({
           model: IONUX.Dashboard.MapResource
         });
         
-        new IONUX.Views.DashboardTable({el: $('#dashboard-container #2163993'), collection: IONUX.Dashboard.MapResources});
+        // new IONUX.Views.DashboardTable({el: $('#dashboard-container #2163993'), collection: IONUX.Dashboard.MapResources});
         
         new IONUX.Views.MapFilter().render().el;
         new IONUX.Views.ViewControls().render().el;
@@ -70,7 +70,7 @@ IONUX.Router = Backbone.Router.extend({
       reset: true,
       success: function(resp) {
         IONUX.Dashboard.MapResource.set(active_resource_attributes);
-        IONUX.Dashboard.MapResource.trigger('map:draw');
+        IONUX.Dashboard.MapResource.trigger('pan:map');
 
         new IONUX.Views.DashboardTable({el: $('#dashboard-container #2163993'), collection: resp});
       }
