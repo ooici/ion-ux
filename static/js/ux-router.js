@@ -422,9 +422,6 @@ function render_page(resource_type, resource_id, model) {
       var data_path = $(el).data('path');
       var data = get_descendant_properties(window.MODEL_DATA, data_path);
       switch(data){
-          case 1:
-              $(el).html($('<span>').addClass('badge_status_graphic_unknown').html('&nbsp;'));
-              break;
           case 2:
               $(el).html($('<span>').addClass('badge_status_graphic_ok').html('&nbsp;'));
               break;
@@ -433,8 +430,9 @@ function render_page(resource_type, resource_id, model) {
               break;
           case 4:
               $(el).html($('<span>').addClass('badge_status_graphic_critical').html('&nbsp;'));
-          default: // Default to unknown if value is not present. remove after confirming values always returned.
-            $(el).html($('<span>').addClass('badge_status_graphic_unknown').html('&nbsp;'));
+              break;
+          default:
+              $(el).html($('<span>').addClass('badge_status_graphic_unknown').html('&nbsp;'));
       };
   });
   
