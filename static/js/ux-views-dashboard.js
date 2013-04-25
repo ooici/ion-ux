@@ -366,7 +366,12 @@ IONUX.MapBlacklist = [];
 IONUX.Views.MapFilter = Backbone.View.extend({
   el: '#map-filter',
   filter_options: {
-    asset_options: [
+    short_asset_options: [
+      {label: 'Station', type: 'PlatformSite'},
+      {label: 'Instrument', type: 'InstrumentSite'},
+      {label: 'Platform', type: 'PlatformDevice'},
+    ],
+    long_asset_options: [
       {label: 'Station', type: 'PlatformSite'},
       {label: 'Instrument', type: 'InstrumentSite'},
       {label: 'Platform', type: 'PlatformDevice'},
@@ -383,13 +388,20 @@ IONUX.Views.MapFilter = Backbone.View.extend({
     ]
   },
   template: '\
-    <h3>Selector</h3>\
+    <h3>Selector\
+      <!-- <span class="dropdown pull-right">\
+        <a data-toggle="dropdown" href="#">DD</a>\
+        <ul class="dropdown-menu">\
+          <li><a class="show-short-list btn-navigation-plain" href="#">Short List</a></li>\
+          <li><a class="show-long-list btn-navigation-plain" href="#">Long List</a></li>\
+        </ul>\
+      </span> -->\
+    </h3>\
     <div class="panelize">\
       <input id="radio-assets" type="radio" name="map_filter" value="asset" checked />&nbsp;Asset&nbsp;\
       <input id="radio-data" type="radio" name="map_filter" value="data" />&nbsp;Data&nbsp;\
     </div>\
     <div id="asset-filter" class="panelize"></div>\
-    <div id="data-filter"></div>\
     <h3>Lifecycle</h3>\
     <div id="lcstate-filter" class="panelize"></div>\
   ',
@@ -397,6 +409,7 @@ IONUX.Views.MapFilter = Backbone.View.extend({
   events: {
     'click .filter-option': 'set_filter'
   },
+  
   initialize: function(){
     _.bindAll(this);
   },
@@ -414,7 +427,7 @@ IONUX.Views.MapFilter = Backbone.View.extend({
     var lcstate_tmpl = '<div class="filter-option"><%= label %> <input type="checkbox" value="<%= lcstate %>" <%= checked %> /></div>';
 
     var assets_elmt = this.$el.find('#asset-filter');
-    _.each(this.filter_options.asset_options, function(option) {
+    _.each(this.filter_options.short_asset_options, function(option) {
       option['checked'] = _.contains(IONUX.MapBlacklist, option['type']) ? "" : "checked";
       assets_elmt.append(_.template(item_tmpl, option));
     });
@@ -529,8 +542,10 @@ IONUX.Views.ListFilter = Backbone.View.extend({
   },
   template: '\
     <h3>Resource Type</h3>\
-    <div id="long-filter"></div>\
-    <div id="short-filter"></div>',
+    <div class="panelize">\
+      <div id="long-filter"></div>\
+      <div id="short-filter"></div>\
+    </div>',
   item_template: _.template('<div class="filter-option">\
                              <%= label %> <input type="checkbox" value="<%= type %>" <%= checked %> />\
                              </div>'),

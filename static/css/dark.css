@@ -1,3 +1,69 @@
+ul.resource-ul {
+  padding: 0;
+  margin: 0;
+  list-style: none; 
+}
+
+.resource-ul li {
+  padding-left: 0;
+  line-height: 20px;
+  font-size: 13px;
+}
+
+.resource-ul li:hover {
+  background: #034971;
+}
+
+.resource-ul li:hover:before {
+  background: #034971;
+  background-image: url(/static/img/sprite2.png);
+  background-position: -150px -716px;
+}
+
+.resource-ul li:before {
+  content: '';
+  width: 16px;
+  height: 20px;
+  left: 11px;
+  display:block;
+  position: absolute;
+  background-color: #333;
+  background-image: url(/static/img/sprite2.png);
+  background-position: -120px -716px;
+}
+
+.primary-link {
+  padding-left: 24px;
+}
+
+.primary-link:link, .primary-link:visited {
+  color: #d3d3d3;
+  font-weight: 300;
+  text-decoration: none;
+}
+
+.secondary-link {
+  margin-top: 4px;
+  background-image: url(/static/img/sprite2.png);
+  background-position: -60px -900px;
+}
+
+.secondary-link:hover {
+  color: #034971;
+  background-color: #034971;
+  background-position: -120px -900px;
+}
+
+.burger {
+  height: 12px;
+  width: 12px;
+  background: yellow;
+  cursor: pointer;
+}
+
+
+
+
 #list {
   font-weight: 300;
   font-size: 13px;
