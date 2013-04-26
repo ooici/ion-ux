@@ -883,7 +883,7 @@ class ResourceTypeSchema(object):
     def get_backbone_schema(self, resource_type=None):
         resource_type = resource_type or self.root_resource_type
         cur_schema    = self.get_data(resource_type)
-        ret_schema    = {'type_':{'type':'Hidden'}}
+        ret_schema    = {'type_':{'type':'Hidden', 'default': resource_type}}
 
         for k, v in cur_schema.iteritems():
             if v['type'] == "list":
@@ -897,6 +897,7 @@ class ResourceTypeSchema(object):
 
                 if item_type and not item_type in self.fundamental_types:
                     list_slug.update({'itemType': 'Object', 'subSchema': self.get_backbone_schema(item_type)}) # RECURSE
+                    list_slug.update({'itemType': 'IonObject', 'subSchema': self.get_backbone_schema(item_type)}) # RECURSE
 
                 if 'default' in v and len(v['default']) and isinstance(v['default'][0], dict):
                     dict_schema = {}
@@ -912,7 +913,7 @@ class ResourceTypeSchema(object):
                 else:
                     ret_schema[k] = self._resource_type_to_form_schema(v['type'])
             else:
-                ret_schema[k] = {'type':'Object', 'subSchema': self.get_backbone_schema(v['type'])} # RECURSE
+                ret_schema[k] = {'type':'IonObject', 'subSchema': self.get_backbone_schema(v['type'])} # RECURSE
 
         return ret_schema
 
