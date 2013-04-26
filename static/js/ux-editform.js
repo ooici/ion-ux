@@ -35,7 +35,7 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
     var self = this;
     var schema = this.get_resource_type_schema();
     _.each(schema, function(v, k) {
-      if (v.type == "List" && v.itemType == "Object") {
+      if (v.type == "List" && v.itemType == "IonObject") {
         v.itemToString = _.partial(self.item_to_string, v.subSchema);
         schema[k] = v;
       }
@@ -346,4 +346,38 @@ Backbone.Form.editors.List.Phone = Backbone.Form.editors.Base.extend({
       this.typel.val(value.phone_type);
   },
 });
+
+Backbone.Form.editors.IonObject = Backbone.Form.editors.Object.extend({
+  initialize: function(options) {
+    Backbone.Form.editors.Object.prototype.initialize.call(this, options);
+    if (!(this.schema.subSchema.hasOwnProperty('type_') && this.schema.subSchema.type_['default'])) {
+      throw new Error("Missing required 'schema.subSchema.type_.default' property");
+    }
+
+    // provide default if new object
+    if (_.isEmpty(this.value))
+      this.value.type_ = this.schema.subSchema.type_['default'];
+  }
+});
+
+Backbone.Form.editors.List.IonObject = Backbone.Form.editors.List.Object.extend({
+  initialize: function(options) {
+    console.log(options);
+    Backbone.Form.editors.List.Object.prototype.initialize.call(this, options);
+
+    // fixup: base looks for Object string literal to assign nestedSchema,
+    // so we have to manually do it here
+    this.nestedSchema = this.schema.subSchema;
+
+    // register for when the form opens
+    this.on('open', this.fill_default);
+  },
+  fill_default: function() {
+    // this.modal.options.content is the reference to the backbone form on the modal
+
+    if (!this.modal.options.content.fields.type_.getValue())
+      this.modal.options.content.fields.type_.setValue(this.nestedSchema.type_['default']);
+  }
+});
+
 
