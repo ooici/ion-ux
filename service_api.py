@@ -38,7 +38,7 @@ class ServiceApi(object):
     
     @staticmethod
     def find_related_sites(resource_id):
-        related_sites = service_gateway_get('observatory_management', 'find_related_sites', params={'parent_resource_id': resource_id})
+        related_sites = service_gateway_get('observatory_management', 'find_related_sites', params={'parent_resource_id': resource_id, 'include_parents': True})
         return related_sites
 
     @staticmethod
@@ -166,7 +166,11 @@ class ServiceApi(object):
         return search_json['data']
 
     @staticmethod
-    def update_resource(resource_obj):
+    def update_resource(resource_type, resource_obj):
+
+        # grab the schema again - if this is cached, this will be quick!
+        r = ResourceTypeSchema(resource_type)
+        schema = r.get_data(resource_type)
 
         # Hack to convert strings into objects, booleans
         # as a workaround to shortcomings dynamically generating 
@@ -879,7 +883,7 @@ class ResourceTypeSchema(object):
     def get_backbone_schema(self, resource_type=None):
         resource_type = resource_type or self.root_resource_type
         cur_schema    = self.get_data(resource_type)
-        ret_schema    = {'type_':{'type':'Hidden'}}
+        ret_schema    = {'type_':{'type':'Hidden', 'default': resource_type}}
 
         for k, v in cur_schema.iteritems():
             if v['type'] == "list":
@@ -893,15 +897,23 @@ class ResourceTypeSchema(object):
 
                 if item_type and not item_type in self.fundamental_types:
                     list_slug.update({'itemType': 'Object', 'subSchema': self.get_backbone_schema(item_type)}) # RECURSE
+                    list_slug.update({'itemType': 'IonObject', 'subSchema': self.get_backbone_schema(item_type)}) # RECURSE
+
+                if 'default' in v and len(v['default']) and isinstance(v['default'][0], dict):
+                    dict_schema = {}
+                    for kk in v['default'][0]:
+                        dict_schema[kk] = "Text"
+
+                    list_slug.update({'itemType': 'Object', 'subSchema': dict_schema})
 
                 ret_schema[k] = list_slug
             elif v['type'] in self.fundamental_types:
                 if 'enum_type' in v:
-                    ret_schema[k] = {"type": "Select", "options": self.get_enum_options(v['enum_type'])}
+                    ret_schema[k] = {"type": "IntSelect", "options": self.get_enum_options(v['enum_type'])}
                 else:
                     ret_schema[k] = self._resource_type_to_form_schema(v['type'])
             else:
-                ret_schema[k] = {'type':'Object', 'subSchema': self.get_backbone_schema(v['type'])} # RECURSE
+                ret_schema[k] = {'type':'IonObject', 'subSchema': self.get_backbone_schema(v['type'])} # RECURSE
 
         return ret_schema
 

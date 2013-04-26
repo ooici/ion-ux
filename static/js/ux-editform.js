@@ -24,14 +24,60 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
     _.each(resp.data, function(v, k) {
       if (_.isObject(v) && !_.isArray(v) && !v.hasOwnProperty('type_')) {
         resp.data[k] = JSON.stringify(v);
-      };
+      } else if (_.isArray(v) && !_.every(v, function(vv) { return vv.hasOwnProperty('type_') })) {
+        resp.data[k] = _.map(v, JSON.stringify);
+      }
     });
     return resp.data;
   },
 
   schema: function(){
+    var self = this;
     var schema = this.get_resource_type_schema();
-    return _.omit(schema, this.black_list)
+    _.each(schema, function(v, k) {
+      if (v.type == "List" && v.itemType == "IonObject") {
+        v.itemToString = _.partial(self.item_to_string, v.subSchema);
+        schema[k] = v;
+      }
+    });
+    schema = _.omit(schema, this.black_list)
+
+    // pull out name/description first, then sort by alphabetical order
+    var sorted_schema = {}
+    if (schema.hasOwnProperty('name')) {
+      sorted_schema['name'] = schema['name'];
+      delete schema['name']
+    }
+    if (schema.hasOwnProperty('description')) {
+      sorted_schema['description'] = schema['description'];
+      delete schema['description']
+    }
+
+    var sorted = _.sortBy(_.pairs(schema), function(s) {
+      return s[0];
+    });
+
+    _.each(sorted, function(a) {
+      sorted_schema[a[0]] = a[1];
+    });
+
+    return sorted_schema;
+  },
+
+  item_to_string: function(subschema, v) {
+    v = v || {};
+
+    var parts =[];
+    _.each(subschema, function(s, k) {
+      var desc = Backbone.Form.helpers.keyToTitle(k),
+          val = v[k];
+        if (_.isUndefined(val) || _.isNull(val)) val = '';
+        if (_.isArray(val)) val = "(" + val.length + " item" + (val.length != 1 ? "s" : "") + ")";
+
+        parts.push(desc + ': ' + val);
+    });
+
+    return parts.join('<br />');
   },
 
   // make_schema: function(resource_type_schema){
@@ -146,13 +192,25 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
 //   },
 // });
 
+Backbone.Form.editors.IntSelect = Backbone.Form.editors.Select.extend({
+  getValue: function() {
+    var v = this.$el.val();
+    var iv = parseInt(v);
+    if (iv.toString() == v) {
+      return iv;
+    }
+
+    return v;
+  }
+});
+
 IONUX.Views.EditResource = Backbone.View.extend({
   tagName: 'div',
   template: _.template($('#edit-resource-tmpl').html()),
   events: {
     'click #save-resource': 'submit_form',
     'click #cancel-edit': 'cancel'
-  }, 
+  },
   initialize: function(){
     this.init_time = new Date().getTime();
     _.bindAll(this);
@@ -164,6 +222,9 @@ IONUX.Views.EditResource = Backbone.View.extend({
     // Insert form but leave page header
     $('#dynamic-container > .row-fluid').html(this.$el.html(this.template));
     $('#form-container').html(this.form.el);
+
+    // HACK HACK to fix up embedded object spacing
+    this.$('.bbf-object').parent().prev('label').css({float:'none'});
   },
   submit_form: function(){
     var self = this;
@@ -262,11 +323,8 @@ Backbone.Form.editors.List.Phone = Backbone.Form.editors.Base.extend({
   render: function() {
     this.numel = $("<input type='text' name='phone_number' />")
     this.typel = $("<select name='phone_type'><option value='work'>Work</option><option value='mobile'>Mobile</option><option value='home'>Home</option><option value='other'>Other</option></select>")
-    this.smsel = $("<input type='checkbox' name='sms' />");
     this.$el.append(this.numel);
     this.$el.append(this.typel);
-    this.$el.append("<label>SMS</label>")
-    this.$el.append(this.smsel);
 
     this.$el.addClass('form-inline');
 
@@ -277,7 +335,6 @@ Backbone.Form.editors.List.Phone = Backbone.Form.editors.Base.extend({
   getValue: function() {
     var retval = { 'phone_number' : this.numel.val(),
                    'phone_type'   : this.typel.val(),
-                   'sms'          : this.smsel.is(':checked'),
                    'type_'        : 'Phone' };
     return retval;
   },
@@ -287,9 +344,40 @@ Backbone.Form.editors.List.Phone = Backbone.Form.editors.Base.extend({
       this.numel.val(value.phone_number);
     if (value && value.hasOwnProperty('phone_type'))
       this.typel.val(value.phone_type);
-    if (value && value.hasOwnProperty('sms'))
-      this.smsel.attr('checked', value.sms);
   },
-  
 });
+
+Backbone.Form.editors.IonObject = Backbone.Form.editors.Object.extend({
+  initialize: function(options) {
+    Backbone.Form.editors.Object.prototype.initialize.call(this, options);
+    if (!(this.schema.subSchema.hasOwnProperty('type_') && this.schema.subSchema.type_['default'])) {
+      throw new Error("Missing required 'schema.subSchema.type_.default' property");
+    }
+
+    // provide default if new object
+    if (_.isEmpty(this.value))
+      this.value.type_ = this.schema.subSchema.type_['default'];
+  }
+});
+
+Backbone.Form.editors.List.IonObject = Backbone.Form.editors.List.Object.extend({
+  initialize: function(options) {
+    console.log(options);
+    Backbone.Form.editors.List.Object.prototype.initialize.call(this, options);
+
+    // fixup: base looks for Object string literal to assign nestedSchema,
+    // so we have to manually do it here
+    this.nestedSchema = this.schema.subSchema;
+
+    // register for when the form opens
+    this.on('open', this.fill_default);
+  },
+  fill_default: function() {
+    // this.modal.options.content is the reference to the backbone form on the modal
+
+    if (!this.modal.options.content.fields.type_.getValue())
+      this.modal.options.content.fields.type_.setValue(this.nestedSchema.type_['default']);
+  }
+});
+
 

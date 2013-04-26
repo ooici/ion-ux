@@ -1,3 +1,224 @@
+/*
+  MAP NAVIGATION
+*/
+
+ul.map-ul {
+  padding: 0;
+  margin: 0;
+  list-style: none; 
+}
+
+.map-ul > li {
+  padding-left: 0;
+  line-height: 20px;
+  font-size: 13px;
+}
+
+.map-ul > li:hover {
+  background: #034971;
+}
+
+.map-ul > li:hover:before {
+  background: #034971;
+  background-image: url(/static/img/sprite2.png);
+  background-position: -30px -716px;
+}
+
+.map-ul > li:before {
+  content: '';
+  width: 16px;
+  height: 20px;
+  left: 11px;
+  display:block;
+  position: absolute;
+  background-image: url(/static/img/sprite2.png);
+  background-position: 0 -716px;
+}
+
+.map-ul ul {
+  background: #333;
+}
+
+.map-ul li a.primary-link {
+  padding-left: 30px;
+}
+
+.map-ul li a.secondary-link {
+  width: 16px;
+  height: 16px;
+  margin-top: 4px;
+  background-image: url(/static/img/sprite2.png);
+  background-position: -360px -360px;
+}
+
+.map-ul li a.secondary-link:hover {
+  color: #034971;
+  background-color: #034971;
+  background-position: -300px -360px;
+}
+
+
+
+/*
+  NESTED MAP NAVIGATION
+*/
+
+
+ul.map-nested-ul {
+  padding: 0;
+  margin: 0;
+  list-style: none; 
+}
+
+.map-nested-ul > li {
+  padding-left: 0;
+  line-height: 20px;
+  font-size: 13px;
+}
+
+.map-nested-ul > li:hover {
+  background: #034971;
+}
+
+.map-nested-ul > li:hover:before {
+  background: #034971;
+  background-image: url(/static/img/sprite2.png);
+  background-position: -90px -716px;
+}
+
+.map-nested-ul > li:before {
+  content: '';
+  width: 16px;
+  height: 20px;
+  left: 31px;
+  display:block;
+  position: absolute;
+  background-image: url(/static/img/sprite2.png);
+  background-position: -60px -716px;
+}
+
+.map-nested-ul li a.primary-link {
+  padding-left: 50px;
+}
+
+/*
+  RESOURCE LIST NAVIGATION
+*/
+
+ul.resource-ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.resource-ul li {
+  padding-left: 0;
+  line-height: 20px;
+  font-size: 13px;
+}
+
+.resource-ul li:hover {
+  background: #034971;
+}
+
+.resource-ul li:hover:before {
+  background: #034971;
+  background-image: url(/static/img/sprite2.png);
+  background-position: -150px -716px;
+}
+
+.resource-ul li:before {
+  content: '';
+  width: 16px;
+  height: 20px;
+  left: 11px;
+  display:block;
+  position: absolute;
+  background-color: #333;
+  background-image: url(/static/img/sprite2.png);
+  background-position: -120px -716px;
+}
+
+.primary-link {
+  padding-left: 24px;
+}
+
+.primary-link:link, .primary-link:visited {
+  color: #d3d3d3;
+  font-weight: 300;
+  text-decoration: none;
+}
+
+.secondary-link {
+  margin-top: 4px;
+  background-image: url(/static/img/sprite2.png);
+  background-position: -60px -900px;
+}
+
+.secondary-link:hover {
+  color: #034971;
+  background-color: #034971;
+  background-position: -120px -900px;
+}
+
+
+
+
+.burger {
+  height: 12px;
+  width: 12px;
+  background: yellow;
+  cursor: pointer;
+}
+
+
+
+
+
+.panelize {
+/*  padding-left: 5px;
+  padding-top: 5px;
+  width: 193px;
+  height: 105px; */  
+  border-top: #666 1px solid;
+  border-left: #666 1px solid;
+  background-color: #333;
+/*  border-right: #000 1px solid;*/
+  border-bottom: #000 1px solid;
+/*  padding: 5px;*/
+}
+
+#resource-selector {
+  background: #333;
+}
+
+#resource-selector #list {
+  height: 250px;
+/* height: 379px; /* aligns with map */
+  overflow: auto;
+  outline: 0;
+}
+
+/*#list, #list ul a {
+  color: #d3d3d3;
+  font-weight: 300;
+}
+
+#list ul a:hover {
+  color: red;
+  background: blue;
+}
+
+#list ul {
+  padding: 0;
+  margin: 0;
+}
+
+#list ul ul li {
+  margin: 0;
+  padding: 0 0 0 15px;
+}*/
+
 select#direct_access {
   width: 100px;
   background-color: #ffffff;
@@ -1168,7 +1389,7 @@ ul.nav {
   width: 90%;
 }
 
-#user-profile-overlay .bbf-object {
+.bbf-object {
   margin-left: -180px;
 }
 

@@ -1,6 +1,11 @@
 <h3><%= title %></h3>
-<ul>
-<% _.each(resources, function(resource) { %>
-  <li class="resource-link"><a href="/resources/<%= resource._id %>"><%= resource.name %></a></li>
-<% }) %>
+<div class="panelize">
+  <ul class="resource-ul">
+    <% _.each(resources, function(resource) { %>
+      <li class="resource-link">
+        <a class="primary-link" href="/resources/<%= resource._id %>"><%= resource.name %></a>
+        <a class="secondary-link pull-right" style="width:16px;height:16px;" href="/<%= resource.type_ %>/face/<%= resource._id%>/">&nbsp;</a>
+      </li>
+    <% }) %>
+  </div>
 </ul>

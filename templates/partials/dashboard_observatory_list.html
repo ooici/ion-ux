@@ -1,6 +1,24 @@
 <h3><%= title %></h3>
-<ul>
-<% _.each(resources, function(resource) { %>
-  <li class="resource-link"><a href="/map/<%= resource._id %>"><%= resource.name %></a></li>
-<% }) %>
-</ul>
+<div class="panelize">
+  <div id="list">
+    <% _.each(resources, function(nested_resources, san) { %>
+      <ul class="map-ul">
+        <li ><a class="primary-link" href="#"><%= san %></a><a href="#" class="secondary-link pull-right">&nbsp;</a></li>
+      </ul>
+      <!-- TODO: nest and style parent nodes appropriately. This is temporary. -->
+      <ul class="map-nested-ul">
+          <% _.each(nested_resources, function(resource) { %>
+            <li class="">
+              <a class="primary-link" href="/map/<%= resource._id %>">
+                <% if (resource.local_name) { %>
+                  <%= resource.local_name %>
+                <% } else { %>
+                  <%= resource.name %>
+                <% }; %>
+              </a>
+            </li>
+          <% }); %>
+        </ul>
+    <% }) %>
+  </div>
+</div>

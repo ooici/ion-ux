@@ -85,6 +85,7 @@ html, body {
   padding: 5px 10px;
   border-top: solid 1px #9a9a9a;
   border-bottom: solid 1px #000;
+/*  border-right: solid 1px #000;*/
   letter-spacing: 1px;
   text-shadow: -1px -1px 1px #000000;
 }
@@ -137,7 +138,7 @@ html, body {
 = = = = = = = = = = = = = = = = = = = = 
 */
 
-#resource-navigation {
+/*#resource-navigation {
   color: white;
 }
 
@@ -151,7 +152,7 @@ html, body {
   line-height: 15px;
   font-size: 12px;
 }
-
+*/
 .btn-view {
   margin: 0px;
   border-top: solid 1px #666;

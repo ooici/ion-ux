@@ -32,11 +32,12 @@ IONUX.Router = Backbone.Router.extend({
     
     // Render Sidebar - need to move this into init and implement timing/triggers.
     IONUX.Dashboard.Observatories = new IONUX.Collections.Observatories();
-    IONUX.Dashboard.ObservatoriesView = new IONUX.Views.ObservatorySelector({collection: IONUX.Dashboard.Observatories, title: 'Site/Subsite'});
+    IONUX.Dashboard.ObservatoriesView = new IONUX.Views.ObservatorySelector({collection: IONUX.Dashboard.Observatories, title: 'Site'});
     IONUX.Dashboard.Observatories.fetch({
       reset: true,
       success: function(resp){
         $('#dashboard-container').show();
+        $('#resource-selector #list').jScrollPane({autoReinitialise: true}); // Todo: move into view
         IONUX.Dashboard.MapResources = new IONUX.Collections.MapResources(resp.models, {resource_id: null});
         IONUX.Dashboard.MapResource = new IONUX.Models.MapResource();
         
@@ -45,7 +46,7 @@ IONUX.Router = Backbone.Router.extend({
           model: IONUX.Dashboard.MapResource
         });
         
-        new IONUX.Views.DashboardTable({el: $('#dashboard-container #2163993'), collection: IONUX.Dashboard.MapResources});
+        // new IONUX.Views.DashboardTable({el: $('#dashboard-container #2163993'), collection: IONUX.Dashboard.MapResources});
         
         new IONUX.Views.MapFilter().render().el;
         new IONUX.Views.ViewControls().render().el;
@@ -68,8 +69,13 @@ IONUX.Router = Backbone.Router.extend({
     IONUX.Dashboard.MapResources.fetch({
       reset: true,
       success: function(resp) {
+        console.log('resp', resp);
+        
+        var resource_types = _.map(resp.models, function(r) { return r.get('type_')});
+        console.log(_.uniq(resource_types));
+        
         IONUX.Dashboard.MapResource.set(active_resource_attributes);
-        IONUX.Dashboard.MapResource.trigger('map:draw');
+        IONUX.Dashboard.MapResource.trigger('pan:map');
 
         new IONUX.Views.DashboardTable({el: $('#dashboard-container #2163993'), collection: resp});
       }
@@ -88,6 +94,7 @@ IONUX.Router = Backbone.Router.extend({
       reset: true, 
       success: function(resp) {
         $('#dashboard-container #2163993').show();
+        new IONUX.Views.ListFilter().render().el;
       },
     });
   },
@@ -109,7 +116,6 @@ IONUX.Router = Backbone.Router.extend({
     IONUX.Dashboard.ListResources.fetch({
       reset:true,
       success: function(resp){
-        new IONUX.Views.ListFilter().render().el;
         new IONUX.Views.ResourceTable({el: $('#2163993'), collection: resp, list_table: true});
       },
     });
@@ -421,13 +427,13 @@ function render_page(resource_type, resource_id, model) {
       var data_path = $(el).data('path');
       var data = get_descendant_properties(window.MODEL_DATA, data_path);
       switch(data){
-          case 1:
+          case 2:
               $(el).html($('<span>').addClass('badge_status_graphic_ok').html('&nbsp;'));
               break;
-          case 2:
+          case 3:
               $(el).html($('<span>').addClass('badge_status_graphic_warning').html('&nbsp;'));
               break;
-          case 3:
+          case 4:
               $(el).html($('<span>').addClass('badge_status_graphic_critical').html('&nbsp;'));
               break;
           default:
@@ -544,9 +550,6 @@ function render_page(resource_type, resource_id, model) {
     new IONUX.Views.BlockActions({el: el});
   });
   new IONUX.Views.ViewActions({el: '.'+resource_type+' .heading-right'});
-  
-  
-  
 
   // Show the relevant elements and click to enable the Bootstrap tabs.
   $('li.' + resource_type + ', div.' + resource_type).show();
@@ -564,6 +567,10 @@ function render_page(resource_type, resource_id, model) {
   // _.each($('.'+resource_type+' .table_ooi'), function(table){
   //   $(table).find('table').last().dataTable().fnAdjustColumnSizing();
   // });
+
+  // Hack to hide extra groups from appear. 
+  // Todo: add resource_type class to .group
+  $('.group:not(:has(.'+resource_type+'))').hide();
 
   console.log('render_page elapsed: ', new Date().getTime() - start_render);
 };
