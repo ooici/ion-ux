@@ -219,6 +219,9 @@
 
     function handleDataQueryResponse(response) {
 
+        // Stop the spinner
+        chart_spinner.stop();
+
         if (response.isError()) {
             alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
             return;
@@ -230,8 +233,6 @@
         // If an empty data table was returned, exit gracefully
         if (_dt.getNumberOfRows() == 0) {
             alert("No data was found in storage. Please try again in a bit");
-            // Stop the spinner
-            chart_spinner.stop();
             return;
         }
 
@@ -270,9 +271,6 @@
             data_series_hires = gdt_to_highcharts_data(_dt);
             drawChart(false, mergeAndSortHcData(data_series_overview, data_series_hires, data_series_rt));
         }
-
-        // Stop the spinner
-        chart_spinner.stop();
     }
 
 
