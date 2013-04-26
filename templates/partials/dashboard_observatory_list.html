@@ -1,14 +1,15 @@
 <h3><%= title %></h3>
 <div class="panelize">
   <div id="list">
-    <ul>
     <% _.each(resources, function(nested_resources, san) { %>
-      <li class="li_observatory_spatial">
-        <%= san %>
-        <ul>
+      <ul class="map-ul">
+        <li ><a class="primary-link" href="#"><%= san %></a><a href="#" class="secondary-link pull-right">&nbsp;</a></li>
+      </ul>
+      <!-- TODO: nest and style parent nodes appropriately. This is temporary. -->
+      <ul class="map-nested-ul">
           <% _.each(nested_resources, function(resource) { %>
-            <li class="li_observatory">
-              <a href="/map/<%= resource._id %>">
+            <li class="">
+              <a class="primary-link" href="/map/<%= resource._id %>">
                 <% if (resource.local_name) { %>
                   <%= resource.local_name %>
                 <% } else { %>
@@ -18,8 +19,6 @@
             </li>
           <% }); %>
         </ul>
-      </li>
     <% }) %>
-    </ul>
   </div>
 </div>

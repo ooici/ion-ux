@@ -68,6 +68,10 @@ IONUX.Views.ResourceSelector = Backbone.View.extend({
 
 IONUX.Views.ObservatorySelector = IONUX.Views.ResourceSelector.extend({
   template: _.template($('#dashboard-observatory-list-tmpl').html()),
+  
+  events: {
+    'click .map-ul > li a.primary-link': 'spatial_area_name'
+  }, 
 
   initialize: function(){
     _.bindAll(this);
@@ -94,6 +98,12 @@ IONUX.Views.ObservatorySelector = IONUX.Views.ResourceSelector.extend({
       resource_list[san] = _.map(this.collection.where({spatial_area_name: san}), function(resource) { return resource.toJSON()});
     }, this);
     return resource_list;
+  },
+  
+  spatial_area_name: function(e){
+    // Todo: catching clicks until panning to children geo bounds is implemented
+    e.preventDefault();
+    return false;
   },
 });
 
@@ -522,7 +532,7 @@ IONUX.Collections.ListResources = Backbone.Collection.extend({
 - - - - - - - - - - - - - - - - - 
 */
 
-IONUX.ListWhitelist = [];
+IONUX.ListWhitelist = ['DataProduct', 'InstrumentDevice', 'PlatformDevice', 'PlatformSite', 'StationSite', 'Observatory'];
 
 IONUX.Views.ListFilter = Backbone.View.extend({
   el: '#list-filter',
@@ -532,9 +542,7 @@ IONUX.Views.ListFilter = Backbone.View.extend({
       {label: 'Instrument', type: 'InstrumentDevice'},
       {label: 'Platform', type: 'PlatformDevice'},
       {label: 'Station', type: 'PlatformSite'},
-      {label: 'Subsite', type: ''},
       {label: 'Site', type: 'Observatory'},
-      {label: 'Facility', type: 'Org'},
     ],
     long_list: [
       {label: 'Data Products', type: 'DataProduct'}

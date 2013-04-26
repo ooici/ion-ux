@@ -69,6 +69,11 @@ IONUX.Router = Backbone.Router.extend({
     IONUX.Dashboard.MapResources.fetch({
       reset: true,
       success: function(resp) {
+        console.log('resp', resp);
+        
+        var resource_types = _.map(resp.models, function(r) { return r.get('type_')});
+        console.log(_.uniq(resource_types));
+        
         IONUX.Dashboard.MapResource.set(active_resource_attributes);
         IONUX.Dashboard.MapResource.trigger('pan:map');
 
