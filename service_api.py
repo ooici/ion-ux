@@ -434,6 +434,15 @@ class ServiceApi(object):
         return extension
 
     @staticmethod
+    def get_prepare(resource_type, resource_id, user_id):
+        if resource_type == 'InstrumentDevice':
+            prepare = service_gateway_get('instrument_management', 'prepare_instrument_device_support', params={'instrument_device_id':resource_id})
+        elif resource_type == 'PlatformDevice':
+            prepare = service_gateway_get('instrument_management', 'prepare_platform_device_support', param={'platform_device_id':resource_id})
+
+        return prepare
+
+    @staticmethod
     def initiate_realtime_visualization(data_product_id):
         real_time_data = service_gateway_get('visualization_service', 'initiate_realtime_visualization', params= {'data_product_id': data_product_id, 'callback': 'chart.init_realtime_visualization_cb', 'return_format': 'raw_json'})
     

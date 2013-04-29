@@ -483,9 +483,9 @@ def edit(resource_type, resource_id):
 @app.route('/resource_type_edit/<resource_type>/<resource_id>/', methods=['GET', 'POST', 'PUT'])
 def resource_type_edit(resource_type, resource_id):
     if request.method == 'GET':
-        resource = ServiceApi.find_by_resource_id(resource_id)
-        resource_json = json.loads(resource.data)['data']
-        return jsonify(data=resource_json)
+        #resource = ServiceApi.find_by_resource_id(resource_id)
+        resource = ServiceApi.get_prepare(resource_type, resource_id, None)
+        return jsonify(data=resource)
     if request.method == 'PUT':
         resource_obj = json.loads(request.data)
         updated_resource = ServiceApi.update_resource(resource_type, resource_obj)
