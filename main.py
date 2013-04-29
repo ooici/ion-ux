@@ -434,7 +434,7 @@ def map2():
 def visualization(operation_name):
     overview_url = 'http://%s:%d/ion-service/visualization_service/%s?%s' % (GATEWAY_HOST, GATEWAY_PORT, operation_name, request.query_string)
     if request.method == 'POST':
-        req = requests.post(overview_url, request.data)
+        req = requests.post(overview_url, request.form)
     else:
         req = requests.get(overview_url)
     return req.content
