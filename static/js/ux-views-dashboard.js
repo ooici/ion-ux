@@ -504,8 +504,8 @@ IONUX.Views.ListFilter = Backbone.View.extend({
       <div id="long-filter"></div>\
       <div id="short-filter"></div>\
     </div>',
-  item_template: _.template('<div class="filter-option">\
-                             <%= label %> <input type="checkbox" value="<%= type %>" <%= checked %> />\
+  item_template: _.template('<div class="filter-option resource-option">\
+                             <%= label %> <div class="pull-right"><input type="checkbox" value="<%= type %>" <%= checked %> /></div>\
                              </div>'),
   events: {
     'click .filter-option input': 'set_filter'
