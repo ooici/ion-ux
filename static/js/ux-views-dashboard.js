@@ -390,10 +390,10 @@ IONUX.Views.MapFilter = Backbone.View.extend({
         </ul>\
       </span> -->\
     </h3>\
-    <div class="panelize">\
+    <!-- <div class="panelize">\
       <input id="radio-assets" type="radio" name="map_filter" value="asset" checked />&nbsp;Asset&nbsp;\
       <input id="radio-data" type="radio" name="map_filter" value="data" />&nbsp;Data&nbsp;\
-    </div>\
+    </div>-->\
     <div id="asset-filter" class="panelize"></div>\
     <h3>Lifecycle</h3>\
     <div id="lcstate-filter" class="panelize"></div>\
@@ -416,8 +416,8 @@ IONUX.Views.MapFilter = Backbone.View.extend({
   render_filter_options: function(options){
     // Should not be in separate templates? 
     // Waiting for definitive filter behavior before consolidating.
-    var item_tmpl = '<div class="filter-option"><%= label %> <input type="checkbox" value="<%= type %>" <%= checked %> /></div>';
-    var lcstate_tmpl = '<div class="filter-option"><%= label %> <input type="checkbox" value="<%= lcstate %>" <%= checked %> /></div>';
+    var item_tmpl = '<div class="filter-option resource-option"><%= label %> <div class="pull-right"><input type="checkbox" value="<%= type %>" <%= checked %> /></div></div>';
+    var lcstate_tmpl = '<div class="filter-option lcstate-option"><%= label %> <div class="pull-right"><input type="checkbox" value="<%= lcstate %>" <%= checked %> /></div></div>';
 
     var assets_elmt = this.$el.find('#asset-filter');
     _.each(this.filter_options.short_asset_options, function(option) {

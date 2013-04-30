@@ -1,3 +1,36 @@
+/* Dashboard filter styling */
+
+.filter-option:before {
+  content: '';
+  width: 16px;
+  height: 20px;
+  left: 11px;
+  display:block;
+  position: absolute;
+}
+
+.filter-option {
+  color: #d3d3d3;
+  padding-left: 30px;
+  line-height: 20px;
+  font-size: 13px;
+  font-weight: 300;
+}
+
+.filter-option > .pull-right {
+  padding-right: 5px;
+}
+
+.resource-option:before {
+  background-image: url(/static/img/sprite2.png);
+  background-position: -60px -596px;
+}
+
+.lcstate-option:before {
+  background-image: url(/static/img/sprite2.png);
+  background-position: -60px -836px;
+}
+
 /*
   MAP NAVIGATION
 */
