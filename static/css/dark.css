@@ -188,11 +188,11 @@ ul.resource-ul {
 /*  padding: 5px;*/
 }
 
-#resource-selector {
+#observatory-selector {
   background: #333;
 }
 
-#resource-selector #list {
+#observatory-selector #list {
   height: 250px;
 /* height: 379px; /* aligns with map */
   overflow: auto;

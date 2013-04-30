@@ -2,8 +2,6 @@
 // in sync. Possibly move MapBlacklist into it's own collection and listen
 // for change events.
 
-IONUX.DashboardView = "Map";
-
 IONUX.Views.ViewControls = Backbone.View.extend({
   el: '#view-controls',
   dashboard_template: _.template($('#dashboard-content-tmpl').html()),
@@ -17,15 +15,13 @@ IONUX.Views.ViewControls = Backbone.View.extend({
   render: function() {
     this.$el.show();
     return this;
-  },  
+  },
   render_map_view: function(e) {
     if (e) e.preventDefault();
-    $('#btn-map').addClass('active').siblings('.active').removeClass('active');
     IONUX.ROUTER.navigate('/', true);
   },
   render_list_view: function(e) {
     if (e) e.preventDefault();
-    $('#btn-resources').addClass('active').siblings('.active').removeClass('active');
     IONUX.ROUTER.navigate('/resources', true);
   },
 });
@@ -40,7 +36,6 @@ IONUX.Views.ViewControls = Backbone.View.extend({
 IONUX.Collections.Orgs = Backbone.Collection.extend({
   url: '/Org/list/',
   parse: function(resp) {
-    // console.log('Orgs', resp);
     return resp.data;
   }
 });
@@ -52,36 +47,29 @@ IONUX.Collections.Observatories = Backbone.Collection.extend({
   }
 });
 
+
 IONUX.Views.ResourceSelector = Backbone.View.extend({
-  el: '#resource-selector',
   initialize: function(){
     _.bindAll(this);
     this.title = this.options.title;
-    this.collection.on('reset', this.render);
+    this.listenTo(this.collection, 'reset', this.render);
   },
   render: function(){
     this.$el.removeClass('placeholder');
-    this.$el.show().html(this.template({resources: this.collection.toJSON(), title: this.title}));
+    this.$el.html(this.template({resources: this.collection.toJSON(), title: this.title}));
+    this.$el.find('#list').jScrollPane({autoReinitialise: true});
     return this;
-  },
+  }
 });
 
+
 IONUX.Views.ObservatorySelector = IONUX.Views.ResourceSelector.extend({
+  el: '#observatory-selector',
   template: _.template($('#dashboard-observatory-list-tmpl').html()),
-  
-  events: {
-    'click .map-ul > li a.primary-link': 'spatial_area_name'
-  }, 
-
-  initialize: function(){
-    _.bindAll(this);
-    this.title = this.options.title;
-    this.collection.on('reset', this.render);
-  },
-
   render: function(){
     this.$el.removeClass('placeholder');
-    this.$el.show().html(this.template({resources: this.build_menu(), title: this.title}));
+    this.$el.html(this.template({resources: this.build_menu(), title: this.title}));
+    this.$el.find('#list').jScrollPane({autoReinitialise: true});
     return this;
   },
   
@@ -98,16 +86,12 @@ IONUX.Views.ObservatorySelector = IONUX.Views.ResourceSelector.extend({
       resource_list[san] = _.map(this.collection.where({spatial_area_name: san}), function(resource) { return resource.toJSON()});
     }, this);
     return resource_list;
-  },
-  
-  spatial_area_name: function(e){
-    // Todo: catching clicks until panning to children geo bounds is implemented
-    e.preventDefault();
-    return false;
-  },
+  }
 });
 
+
 IONUX.Views.OrgSelector = IONUX.Views.ResourceSelector.extend({
+  el: '#org-selector',
   template: _.template($('#dashboard-org-list-tmpl').html()),
 });
 
@@ -149,7 +133,7 @@ IONUX.Views.Map = Backbone.View.extend({
     this.active_marker = null; // Track clicked icon
     this.draw_map();
     this.model.on('pan:map', this.pan_map);
-    // this.collection.on('reset', this.draw_markers);
+    this.collection.on('reset', this.draw_markers);
     // this.collection.on('reset', this.render_table);
   },
 
@@ -335,7 +319,6 @@ IONUX.Views.DashboardTable = IONUX.Views.DataTable.extend({
 
 IONUX.Views.ResourceTable = IONUX.Views.DataTable.extend({
   initialize: function() {
-    console.log('whitelist');
     _.bindAll(this);
     this.$el.show();
     this.whitelist = IONUX.ListWhitelist;
@@ -448,7 +431,6 @@ IONUX.Views.MapFilter = Backbone.View.extend({
       lcstate_elmt.append(_.template(lcstate_tmpl, option));
     });
     
-    // Waiting for resource_registry calls
     // var data_elmt = this.$el.find('#data-filter');
     // _.each(this.filter_options.data_options, function(option) {
     //   data_elmt.append(_.template(item_tmpl, option));
@@ -460,7 +442,6 @@ IONUX.Views.MapFilter = Backbone.View.extend({
   },
   
   set_filter: function(e){
-    console.log('set_filter');
     var filter_elmt = $(e.target);
     var type = filter_elmt.val();
     if (filter_elmt.is(':checked')) {
@@ -470,7 +451,7 @@ IONUX.Views.MapFilter = Backbone.View.extend({
       IONUX.MapBlacklist.push(type);
     }; 
     IONUX.Dashboard.MapResources.trigger('data:filter_render');
-  },
+  }
 });
 
 
@@ -494,37 +475,6 @@ IONUX.Collections.ListResources = Backbone.Collection.extend({
   }
 });
 
-// IONUX.Views.AssetList = Backbone.View.extend({
-//   el: '#2163993',
-// 
-//   initialize: function(){
-//     _.bindAll(this);
-//     this.collection.on('reset', this.render_table);
-//   },
-// 
-//   render: function(){
-//     this.$el.show();
-//     return this;
-//   },
-//   
-//   render_table: function(){
-//     console.log('render_table');
-//     
-//     new IONUX.Views.DataTable({el: this.$el, data: this.collection.toJSON()});
-//     
-//     // if (!_.isEmpty(IONUX.MapBlacklist)) {
-//     //   var filtered_resources = []
-//     //   _.each(IONUX.Dashboard.ListResources.models, function(resource) {
-//     //     if (!_.contains(IONUX.MapBlacklist, resource.get('type_')) && !_.contains(IONUX.MapBlacklist, resource.get('lcstate'))) {
-//     //       filtered_resources.push(resource.toJSON());
-//     //     };
-//     //   });
-//     //   new IONUX.Views.DataTable({el: this.$el, data: filtered_resources});
-//     // } else {
-//     //   new IONUX.Views.DataTable({el: this.$el, data: this.collection.toJSON()});
-//     // };
-//   },
-// });
 
 /* 
 - - - - - - - - - - - - - - - - - 
@@ -566,7 +516,7 @@ IONUX.Views.ListFilter = Backbone.View.extend({
   },
   
   render: function() {
-    this.$el.show().html(this.template);
+    this.$el.html(this.template);
     this.render_short_list();
     return this;
   },
