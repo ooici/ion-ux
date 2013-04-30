@@ -36,7 +36,7 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
     var schema = this.get_resource_type_schema();
     _.each(schema, function(v, k) {
       if (v.type == "List" && v.itemType == "IonObject") {
-        v.itemToString = _.partial(self.item_to_string, v.subSchema);
+        v.itemToString = _.partial(self.item_to_string, v);
         schema[k] = v;
       }
     });
@@ -64,11 +64,17 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
     return sorted_schema;
   },
 
-  item_to_string: function(subschema, v) {
+  item_to_string: function(schema, v) {
     v = v || {};
 
+    if (schema.hasOwnProperty('multi')) {
+      schema = schema.multi[v.type_];
+    } else {
+      schema = schema.subSchema;
+    }
+
     var parts =[];
-    _.each(subschema, function(s, k) {
+    _.each(schema, function(s, k) {
       var desc = Backbone.Form.helpers.keyToTitle(k),
           val = v[k];
         if (_.isUndefined(val) || _.isNull(val)) val = '';
@@ -362,7 +368,6 @@ Backbone.Form.editors.IonObject = Backbone.Form.editors.Object.extend({
 
 Backbone.Form.editors.List.IonObject = Backbone.Form.editors.List.Object.extend({
   initialize: function(options) {
-    console.log(options);
     Backbone.Form.editors.List.Object.prototype.initialize.call(this, options);
 
     // fixup: base looks for Object string literal to assign nestedSchema,
@@ -377,7 +382,62 @@ Backbone.Form.editors.List.IonObject = Backbone.Form.editors.List.Object.extend(
 
     if (!this.modal.options.content.fields.type_.getValue())
       this.modal.options.content.fields.type_.setValue(this.nestedSchema.type_['default']);
-  }
+  },
+  openEditor: function() {
+    this.switchSchema(this.value);
+    if (this.schema.hasOwnProperty('multi')) {
+      this.once('open', this.makeTypeDropdown);
+    }
+    Backbone.Form.editors.List.Object.prototype.openEditor.call(this);
+  },
+  switchSchema: function(value) {
+    /**
+     * Switches this.nestedSchema out based on the value. Used for heterogenous lists.
+     * Only has any effect if this.schema has a multi property set.
+     */
+    if (this.schema.hasOwnProperty('multi')) {
+      if (value) {
+        this.nestedSchema = this.schema.multi[value.type_];
+      } else {
+        this.nestedSchema = this.schema.multi[_.first(_.keys(this.schema.multi))];
+      }
+    }
+  },
+  makeTypeDropdown: function() {
+    var self = this,
+          el = this.modal.$el.find('.modal-body'),
+        mhel = $("<div class='modal-header' style='text-align:right'></div>").insertBefore(el),
+         sel = $("<select name='typeselect'></select>").appendTo(mhel);
+
+    _.each(this.schema.multi, function(v, k) {
+      sel.append("<option value='" + k + "'>" + k + "</option>");
+    });
+
+    if (!this.value) {
+      sel.change(function() {
+        var val = $(this).val();
+        var newschema = self.schema.multi[val];
+
+        var newform = new Backbone.Form({
+          schema: newschema,
+          data: {type_: val}
+        });
+
+        self.modal.options.content = newform;
+        newform.render();
+        el.html(newform.$el);
+      });
+    } else {
+      sel.val(this.value.type_);
+      sel.attr('disabled', 'disabled');
+    }
+  },
+  onModalSubmitted: function(form, modal) {
+    /**
+     * Fixup override - form here is bound to the old form. Call base and use the current one.
+     */
+    Backbone.Form.editors.List.Object.prototype.onModalSubmitted.call(this, modal.options.content, modal);
+  },
 });
 
 

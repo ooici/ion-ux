@@ -892,12 +892,18 @@ class ResourceTypeSchema(object):
 
                 # HACK HACK HACK - some contenttypes list multiple types, we can't deal with that yet
                 # just use the first
+                multi = {}
                 if item_type and "," in item_type:
-                    item_type = item_type.split(",", 1)[0]
+                    all_types = item_type.split(',')
+                    for t in all_types:
+                        multi[t] = self.get_backbone_schema(t)
+
+                    item_type = all_types[0]
 
                 if item_type and not item_type in self.fundamental_types:
-                    list_slug.update({'itemType': 'Object', 'subSchema': self.get_backbone_schema(item_type)}) # RECURSE
                     list_slug.update({'itemType': 'IonObject', 'subSchema': self.get_backbone_schema(item_type)}) # RECURSE
+                    if multi:
+                        list_slug.update({'multi':multi})
 
                 if 'default' in v and len(v['default']) and isinstance(v['default'][0], dict):
                     dict_schema = {}
