@@ -509,7 +509,6 @@ def resource_type_edit_existing(resource_type, object_id):
         resp_json = json.loads(read_response.text)
         return jsonify(data=resp_json["data"])
 
-
 @app.route('/<resource_type>/<resource_id>/', methods=['GET'])
 @app.route('/resource/read/<resource_id>/', methods=['GET'])
 def resource_by_id(resource_id, resource_type=None):
@@ -530,6 +529,12 @@ def layout3():
 def reset_ui():
     reset_ui = ServiceApi.ui_reset()
     return jsonify(data=reset_ui)
+
+@app.route('/ui/navigation/', methods=['GET'])
+def ui_navigation():
+    observatories = ServiceApi.find_by_resource_type('Observatory')
+    orgs = ServiceApi.find_by_resource_type('Org')
+    return jsonify(data={'orgs': orgs, 'observatories': observatories})
 
 
 # -----------------------------------------------------------------------------
