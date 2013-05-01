@@ -434,11 +434,30 @@ class ServiceApi(object):
         return extension
 
     @staticmethod
+    def create_resource(resource_type, org_id):
+        prepare = ServiceApi.get_prepare(resource_type, None, None)
+
+        create_op = prepare['create_request']
+        resource = prepare['resource'].copy()
+        resource.update({'name':'new'})
+
+        resp = service_gateway_post(create_op['service_name'], create_op['service_operation'], params={create_op['request_parameters'].keys()[0]: resource})
+        return resp
+
+    @staticmethod
     def get_prepare(resource_type, resource_id, user_id):
         if resource_type == 'InstrumentDevice':
-            prepare = service_gateway_get('instrument_management', 'prepare_instrument_device_support', params={'instrument_device_id':resource_id})
+            params = {}
+            if resource_id:
+                params['instrument_device_id'] = resource_id
+
+            prepare = service_gateway_get('instrument_management', 'prepare_instrument_device_support', params=params)
         elif resource_type == 'PlatformDevice':
-            prepare = service_gateway_get('instrument_management', 'prepare_platform_device_support', param={'platform_device_id':resource_id})
+            params = {}
+            if resource_id:
+                params['platform_device_id'] = resource_id
+
+            prepare = service_gateway_get('instrument_management', 'prepare_platform_device_support', params=params)
 
         return prepare
 

@@ -361,8 +361,10 @@ Backbone.Form.editors.IonObject = Backbone.Form.editors.Object.extend({
     }
 
     // provide default if new object
-    if (_.isEmpty(this.value))
+    if (_.isEmpty(this.value)) {
+      if (!this.value) this.value = {};
       this.value.type_ = this.schema.subSchema.type_['default'];
+    }
   }
 });
 

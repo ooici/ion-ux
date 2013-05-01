@@ -1098,6 +1098,47 @@ IONUX.Views.CreateAccountView = Backbone.View.extend({
   }
 });
 
+IONUX.Views.CreateResourceView = Backbone.View.extend({
+  tagName: "div",
+  template: _.template($("#create-resource-modal-tmpl").html()),
+  events: {
+    'click #create-resource': 'createResourceClicked'
+  },
+  render: function() {
+    $('body').append(this.$el);
+    var modal_html = this.template();
+    this.$el.append(modal_html);
+
+    var self = this;
+    this.modal = $('#create-resource-overlay').modal()
+      .on('hidden', function() {
+        self.$el.remove();
+      });
+    return this;
+  },
+  createResourceClicked: function() {
+    var url = window.location.protocol + "//" + window.location.host + "/create/",
+      rtype = this.$('select[name="resource-type"]').val(),
+       vals = {'resource_type': rtype,
+               'org_id': IONUX.Dashboard.ListResources.resource_id },
+       self = this;
+    
+    self.modal.modal('hide');
+
+    // TODO: not the correct spot for these
+    $('#dashboard-container').hide();
+    $('#dynamic-container > .row-fluid').html('<div id="spinner"></div>').show();
+    new Spinner(IONUX.Spinner.large).spin(document.getElementById('spinner'));
+
+    $.post(url, vals)
+      .success(function(resp) {
+
+        Backbone.history.fragment = null; // Clear history fragment to allow for page "refresh".
+        IONUX.ROUTER.navigate('/' + rtype + '/face/' + resp.data + '/edit', {trigger: true});
+      });
+  }
+});
+
 
 // LEFT FOR REFERENCE
 // IONUX.Views.UserRegistration = IONUX.Views.CreateNewView.extend({

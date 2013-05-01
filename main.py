@@ -162,6 +162,12 @@ def event_types():
     event_types = ServiceApi.get_event_types()
     return jsonify(data=event_types)
 
+@app.route('/create/', methods=['POST'])
+@login_required
+def create_resource():
+    resp = ServiceApi.create_resource(request.form.get('resource_type', None), request.form.get('org_id', None))
+    return render_json_response(resp)
+
 @app.route('/<resource_type>/status/<resource_id>/subscribe/', methods=['GET'])
 @app.route('/<resource_type>/face/<resource_id>/subscribe/', methods=['GET'])
 @app.route('/<resource_type>/related/<resource_id>/subscribe/', methods=['GET'])
