@@ -158,7 +158,7 @@ IONUX.Views.Map = Backbone.View.extend({
         backgroundPosition: '-410px -410px',
         height: 60,
         width: 60,
-        url: 'http://localhost:3000/static/img/sprite2.png',
+        url: '/static/img/sprite2.png',
         textSize: '0',
       }]
     });
