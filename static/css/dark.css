@@ -1,4 +1,86 @@
-/* Dashboard filter styling */
+/* 
+  TEMP - BOOTSTRAP MARGINS
+*/
+
+.container-fluid {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+#dynamic-container {
+  width: 83.85%;
+  margin-left: 0;
+}
+
+
+/* 
+  PAGE HEADER
+*/
+
+.page-header1 {
+  background: #333;
+  border-top: 1px solid #999;
+  border-bottom: 1px solid #000;
+}
+
+input#sidebar-search {
+  background: #1E1E1E;
+  border-top: 1px solid #000;
+  border-left:1px solid #000;
+  border-right:1px solid #999;
+  border-bottom: 1px solid #999;
+  font-size:10px;
+  font-weight:300;
+  letter-spacing:1px;
+  color: #fff;
+  text-align:left;
+  padding-left:5px;
+  padding-right:5px;
+}
+
+
+a.btn-advanced-search  {
+  font-size:10px; font- weight:300; 
+  letter-spacing:1px; 
+  color: #BCBEC0; 
+  text-align:left; 
+  text-shadow: -1px -1px 1px #000000;
+  text-transform: uppercase;
+  margin-left:15px; 
+  height:20px; 
+  padding: 5px 10px; 
+  border-top: 1px solid #666;
+  border-left: 1px solid #666;
+  border-right: 1px solid #000;
+  border-bottom: 1px solid #000;
+  border-radius: 3px;
+  background: #4d4d4d; /* Old browsers */
+  background: -moz-linear-gradient(top,  #4d4d4d 0%, #333333 50%, #272727 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#4d4d4d), color-stop(50%,#333333), color-stop(100%,#272727)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top,  #4d4d4d 0%,#333333 50%,#272727 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top,  #4d4d4d 0%,#333333 50%,#272727 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top,  #4d4d4d 0%,#333333 50%,#272727 100%); /* IE10+ */
+  background: linear-gradient(to bottom,  #4d4d4d 0%,#333333 50%,#272727 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4d4d4d', endColorstr='#272727',GradientType=0 ); /* IE6-9 */
+}
+
+a.btn-advanced-search:hover {
+  background: #666666; /* Old browsers */
+  background: -moz-linear-gradient(top,  #666666 0%, #4d4d4d 50%, #272727 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#666666), color-stop(50%,#4d4d4d), color-stop(100%,#272727)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top,  #666666 0%,#4d4d4d 50%,#272727 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top,  #666666 0%,#4d4d4d 50%,#272727 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top,  #666666 0%,#4d4d4d 50%,#272727 100%); /* IE10+ */
+  background: linear-gradient(to bottom,  #666666 0%,#4d4d4d 50%,#272727 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#666666', endColorstr='#272727',GradientType=0 ); /* IE6-9 */
+  text-decoration: none;
+  color: #fff;
+}
+
+
+/* 
+  DASHBOARD FILTER STYLING
+*/
 
 .filter-option:before {
   content: '';
@@ -173,7 +255,7 @@ ul.resource-ul {
 }
 
 .primary-link {
-  padding-left: 24px;
+  padding-left: 30px;
 }
 
 .primary-link:link, .primary-link:visited {
@@ -920,7 +1002,7 @@ hr {
   background: -moz-linear-gradient(center top, #e0e0e0 0%, #e6e3e6 25%, #e6e3e6 25%, #ffffff 100%);
 }
 
-input.btn-general, button.btn-general, a.btn-general, a.btn-footer, a.btn-advanced-search {
+input.btn-general, button.btn-general, a.btn-general, a.btn-footer {
   color:#999; font-size:11px;
   font-weight:400;
   letter-spacing:2px;
@@ -941,8 +1023,21 @@ input.btn-general, button.btn-general, a.btn-general, a.btn-footer, a.btn-advanc
   background: -moz-linear-gradient(center top, #3d3d3d 0%, #333333 75%, #333333 75%, #2e2e2e 100%);
 }
 
-input.btn-general:hover, button.btn-general:hover, a.btn-general:hover, a.btn-advanced-search:hover {background: #666666; color:#fff; border: solid #fff 1px;}
-input.btn-general:active, button.btn-general:active, a.btn-general:active, a.btn-advanced-search:active {background: #333333; color:#fff; border: solid #fff 1px;} 
+input.btn-general:hover,
+button.btn-general:hover, 
+a.btn-general:hover {
+  background: #666666; 
+  color:#fff; 
+  border: solid #fff 1px;
+}
+
+input.btn-general:active,
+button.btn-general:active,
+a.btn-general:active {
+  background: #333333;
+  color:#fff;
+  border: solid #fff 1px;
+} 
 
 a.btn-footer {
   margin: 0px 5px;
@@ -982,7 +1077,7 @@ a.btn-footer {
 }
 
 .user-nav {
-  padding-top: 33px;
+  padding: 18px 18px 0 0;
   text-align: right;
 }
 

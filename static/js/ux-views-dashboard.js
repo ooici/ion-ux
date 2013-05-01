@@ -154,12 +154,13 @@ IONUX.Views.Map = Backbone.View.extend({
     });
     this.markerClusterer = new MarkerClusterer(this.map, null, {
       maxZoom: 10, 
-      // styles: {
-      //   backgroundPosition: '-430px -1px',
-      //   height: 60,
-      //   width: 60,
-      //   url: 'http://localhost:3000/static/img/sprite.png'
-      // }
+      styles: [{
+        backgroundPosition: '-410px -410px',
+        height: 60,
+        width: 60,
+        url: 'http://localhost:3000/static/img/sprite2.png',
+        textSize: '0',
+      }]
     });
     this.pan_map();
     this.draw_markers();
