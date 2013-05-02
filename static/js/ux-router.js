@@ -65,7 +65,7 @@ IONUX.Router = Backbone.Router.extend({
         var resource_types = _.map(resp.models, function(r) { return r.get('type_')});
         IONUX.Dashboard.MapResource.set(active_resource_attributes);
         IONUX.Dashboard.MapResource.trigger('pan:map');
-        new IONUX.Views.DashboardTable({el: $('#dynamic-container #2163993'), collection: resp});
+        new IONUX.Views.MapDashboardTable({el: $('#dynamic-container #2163993'), collection: resp});
         
         // Catch back button and redraw
         if (!$('#dynamic-container > #map-canvas').is(':empty')) {

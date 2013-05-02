@@ -289,6 +289,39 @@ IONUX.Views.Map = Backbone.View.extend({
 });
 
 
+IONUX.Views.MapDashboardTable = IONUX.Views.DataTable.extend({
+  initialize: function() {
+    _.bindAll(this);
+    this.$el.show();
+    this.whitelist = this.options.list_table ? IONUX.ListWhitelist : IONUX.MapWhitelist;
+    this.filter_data();
+    this.collection.on('data:filter_render', this.filter_and_render);
+    IONUX.Views.DataTable.prototype.initialize.call(this);
+  },
+  
+  filter_data: function() {
+    this.options.data = [];
+    if (!_.isEmpty(this.whitelist)) {
+       _.each(this.collection.models, function(resource) {
+         var rt = resource.get('alt_resource_type') ? resource.get('alt_resource_type') : resource.get('type_');
+         var lc = resource.get('lcstate');
+         if (_.contains(this.whitelist, rt) && _.contains(this.whitelist, lc)) {
+           this.options.data.push(resource.toJSON());
+         };
+       }, this);
+    } else {
+      this.options.data = this.collection.toJSON();
+    };
+  },
+  
+  filter_and_render: function() {
+    this.filter_data();
+    this.render();
+  },
+});
+
+
+
 IONUX.Views.DashboardTable = IONUX.Views.DataTable.extend({
   initialize: function() {
     _.bindAll(this);
@@ -357,15 +390,15 @@ IONUX.Views.ResourceTable = IONUX.Views.DataTable.extend({
 - - - - - - - - - - - - - - - - - 
 */
 
-IONUX.MapBlacklist = [];
+IONUX.MapWhitelist = [];
 
 IONUX.Views.MapFilter = Backbone.View.extend({
   el: '#map-filter',
   filter_options: {
     short_asset_options: [
-      {label: 'Station', type: 'PlatformSite'},
+      {label: 'Station', type: 'StationSite'},
       {label: 'Instrument', type: 'InstrumentSite'},
-      {label: 'Platform', type: 'PlatformDevice'},
+      {label: 'Platform', type: 'PlatformSite'},
     ],
     long_asset_options: [
       {label: 'Station', type: 'PlatformSite'},
@@ -403,7 +436,7 @@ IONUX.Views.MapFilter = Backbone.View.extend({
   ',
 
   events: {
-    'click .filter-option': 'set_filter'
+    'click .filter-option input': 'set_filter'
   },
   
   initialize: function(){
@@ -419,25 +452,20 @@ IONUX.Views.MapFilter = Backbone.View.extend({
   render_filter_options: function(options){
     // Should not be in separate templates? 
     // Waiting for definitive filter behavior before consolidating.
-    var item_tmpl = '<div class="filter-option resource-option"><%= label %> <div class="pull-right"><input type="checkbox" value="<%= type %>" <%= checked %> /></div></div>';
-    var lcstate_tmpl = '<div class="filter-option lcstate-option"><%= label %> <div class="pull-right"><input type="checkbox" value="<%= lcstate %>" <%= checked %> /></div></div>';
+    var item_tmpl = '<div class="filter-option resource-option"><%= label %> <div class="pull-right"><input type="checkbox" value="<%= type %>" checked /></div></div>';
+    var lcstate_tmpl = '<div class="filter-option lcstate-option"><%= label %> <div class="pull-right"><input type="checkbox" value="<%= lcstate %>" checked /></div></div>';
 
     var assets_elmt = this.$el.find('#asset-filter');
     _.each(this.filter_options.short_asset_options, function(option) {
-      option['checked'] = _.contains(IONUX.MapBlacklist, option['type']) ? "" : "checked";
+      IONUX.MapWhitelist.push(option['type']);
       assets_elmt.append(_.template(item_tmpl, option));
     });
     
     var lcstate_elmt = this.$el.find('#lcstate-filter');
     _.each(this.filter_options.lcstate_options, function(option) {
-      option['checked'] = _.contains(IONUX.MapBlacklist, option['lcstate']) ? "" : "checked";
+      IONUX.MapWhitelist.push(option['lcstate']);
       lcstate_elmt.append(_.template(lcstate_tmpl, option));
     });
-    
-    // var data_elmt = this.$el.find('#data-filter');
-    // _.each(this.filter_options.data_options, function(option) {
-    //   data_elmt.append(_.template(item_tmpl, option));
-    // });
   },
   
   toggle_filter: function(e) {
@@ -448,12 +476,13 @@ IONUX.Views.MapFilter = Backbone.View.extend({
     var filter_elmt = $(e.target);
     var type = filter_elmt.val();
     if (filter_elmt.is(':checked')) {
-      var index = IONUX.MapBlacklist.indexOf(type)
-      IONUX.MapBlacklist.splice(index);
+      IONUX.MapWhitelist.push(type);
     } else {
-      IONUX.MapBlacklist.push(type);
-    }; 
+      var index = IONUX.MapWhitelist.indexOf(type)
+      IONUX.MapWhitelist.splice(index, 1);
+    };
     IONUX.Dashboard.MapResources.trigger('data:filter_render');
+    return;
   }
 });
 
