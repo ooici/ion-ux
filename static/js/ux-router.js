@@ -45,7 +45,10 @@ IONUX.Router = Backbone.Router.extend({
     $('#left .resources-view').hide();
     $('#left .map-view').show();
     $('#btn-map').addClass('active').siblings('.active').removeClass('active');
-
+    
+    $('#list').find('.active').removeClass('active');
+    $('#list').find("[data-resource-id='"+resource_id+"']").addClass('active');
+    
     // Catch back button
     if ($('#dynamic-container > #map_canvas').length < 1) {
       $('#dynamic-container').html($('#dashboard-map-tmpl').html()).show();
@@ -83,6 +86,8 @@ IONUX.Router = Backbone.Router.extend({
     $('#left .resources-view').show();
     $('#btn-resources').addClass('active').siblings('.active').removeClass('active');
     
+    $('.resource-ul').find('.active').removeClass('active');
+    
     $('#dynamic-container').html($('#dashboard-resources-tmpl').html()).show();
   },
   
@@ -91,6 +96,10 @@ IONUX.Router = Backbone.Router.extend({
     $('#left .resources-view').show();
     $('#btn-resources').addClass('active').siblings('.active').removeClass('active');
     
+    // NOTE: active style is also applied in IONUX.Views.OrgSelector (secondary-link)
+    $('.resource-ul').find('.active').removeClass('active');
+    $('.resource-ul').find("[data-resource-id='"+resource_id+"']").addClass('active');
+
     $('#dynamic-container').html($('#dashboard-resources-tmpl').html()).show();
     $('#2163993:visible').off().empty().append('<div id="spinner"></div>').show();
     new Spinner(IONUX.Spinner.large).spin(document.getElementById('spinner'));

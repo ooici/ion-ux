@@ -93,6 +93,13 @@ IONUX.Views.ObservatorySelector = IONUX.Views.ResourceSelector.extend({
 IONUX.Views.OrgSelector = IONUX.Views.ResourceSelector.extend({
   el: '#org-selector',
   template: _.template($('#dashboard-org-list-tmpl').html()),
+  events: {
+    'click .secondary-link': 'set_active_li'
+  },
+  set_active_li: function(e){
+    $('.resource-ul').find('.active').removeClass('active');
+    $(e.target).parent('li').addClass('active');
+  }
 });
 
 
