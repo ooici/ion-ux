@@ -8,7 +8,7 @@
       <!-- TODO: nest and style parent nodes appropriately. This is temporary. -->
       <ul class="map-nested-ul">
           <% _.each(nested_resources, function(resource) { %>
-            <li class="">
+            <li data-resource-id="<%= resource._id %>" class="">
               <a class="primary-link" href="/map/<%= resource._id %>">
                 <% if (resource.local_name) { %>
                   <%= resource.local_name %>

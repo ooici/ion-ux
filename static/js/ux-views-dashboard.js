@@ -93,6 +93,13 @@ IONUX.Views.ObservatorySelector = IONUX.Views.ResourceSelector.extend({
 IONUX.Views.OrgSelector = IONUX.Views.ResourceSelector.extend({
   el: '#org-selector',
   template: _.template($('#dashboard-org-list-tmpl').html()),
+  events: {
+    'click .secondary-link': 'set_active_li'
+  },
+  set_active_li: function(e){
+    $('.resource-ul').find('.active').removeClass('active');
+    $(e.target).parent('li').addClass('active');
+  }
 });
 
 
@@ -122,21 +129,46 @@ IONUX.Collections.MapResources = Backbone.Collection.extend({
   parse: function(resp) {
     var related_sites = [];
     _.each(resp.data, function(site){related_sites.push(site)});
+    make_iso_timestamps(related_sites);
     return related_sites;
   }
 });
 
 IONUX.Views.Map = Backbone.View.extend({
   el: '#map_canvas',
+  
+  markers: {
+    na_icon: {
+        anchor: new google.maps.Point(30, 30),
+        origin: new google.maps.Point(420, 180),
+        size: new google.maps.Size(60, 60),
+        url: '/static/img/sprite.png'
+    },
+    na_icon_hover: {
+      anchor: new google.maps.Point(30, 30),
+      origin: new google.maps.Point(480, 180),
+      size: new google.maps.Size(60, 60),
+      url: '/static/img/sprite.png'
+    },
+    na_icon_active: {
+        anchor: new google.maps.Point(30, 30),
+        origin: new google.maps.Point(540, 180),
+        size: new google.maps.Size(60, 60),
+        url: '/static/img/sprite.png'
+    }
+  },
+  
+  
   initialize: function(){
     _.bindAll(this);
+    this.sprite_url = '/static/img/sprite.png';
     this.active_marker = null; // Track clicked icon
     this.draw_map();
     this.model.on('pan:map', this.pan_map);
-    this.collection.on('reset', this.draw_markers);
+    // this.collection.on('reset', this.draw_markers);
     // this.collection.on('reset', this.render_table);
   },
-
+  
   render: function(){
     this.$el.show();
     return this;
@@ -151,6 +183,8 @@ IONUX.Views.Map = Backbone.View.extend({
       mapTypeId: google.maps.MapTypeId.TERRAIN,
       disableDefaultUI: true,
       // scrollwheel: false,
+      zoomControl: true,
+      zoomControlOptions: {style: google.maps.ZoomControlStyle.SMALL, position: google.maps.ControlPosition.TOP_RIGHT}
     });
     this.markerClusterer = new MarkerClusterer(this.map, null, {
       maxZoom: 10, 
@@ -158,12 +192,12 @@ IONUX.Views.Map = Backbone.View.extend({
         backgroundPosition: '-410px -410px',
         height: 60,
         width: 60,
-        url: 'http://localhost:3000/static/img/sprite2.png',
+        url: '/static/img/sprite2.png',
         textSize: '0',
       }]
     });
-    this.pan_map();
     this.draw_markers();
+    this.pan_map();
   },
   
   draw_markers: function() {
@@ -191,6 +225,10 @@ IONUX.Views.Map = Backbone.View.extend({
       var sw = new google.maps.LatLng(s, w);
       var bounds = new google.maps.LatLngBounds(sw, ne)
       this.map.fitBounds(bounds);
+
+      // Set active marker based on resource_id
+      var m = _.findWhere(this.markerClusterer.getMarkers(), {resource_id: this.model.get('_id')});
+      m.setIcon(this.markers.na_icon_active);
     } catch(err) {
       console.log('pan_map error:', err);
     }
@@ -199,65 +237,41 @@ IONUX.Views.Map = Backbone.View.extend({
   create_marker: function(_lat, _lon, _icon, _hover_text, _info_content, _table_row, resource_id) {
     if (!_lat || !_lon) return null;
 
-    // Once we get status in find_related, these will be
-    // moved into their own dictionary.
-    var sprite_url = '/static/img/sprite.png'
-    var na_icon = {
-        anchor: new google.maps.Point(30, 30),
-        origin: new google.maps.Point(420, 180),
-        size: new google.maps.Size(60, 60),
-        url: sprite_url
-    };
-    var na_icon_hover = {
-      anchor: new google.maps.Point(30, 30),
-      origin: new google.maps.Point(480, 180),
-      size: new google.maps.Size(60, 60),
-      url: sprite_url
-    };
-    var na_icon_active = {
-        anchor: new google.maps.Point(30, 30),
-        origin: new google.maps.Point(540, 180),
-        size: new google.maps.Size(60, 60),
-        url: sprite_url
-    };
     latLng = new google.maps.LatLng(_lat, _lon);
     var marker = new google.maps.Marker({
       map: this.map,
       position: latLng,
-      icon: na_icon,
+      icon: this.markers.na_icon,
       title: _hover_text,
       resource_id: resource_id
     });
     
-    var iw = new google.maps.InfoWindow({content: _info_content});
+    // var iw = new google.maps.InfoWindow({content: _info_content});
     var _map = this.map;
     
-    // Event when marker is clicked
+
     var self = this;
     google.maps.event.addListener(marker, 'click', function(_map) {
-      // iw.open(this.map, marker);
-      
-      if (self.active_marker) self.active_marker.setIcon(na_icon);
-      marker.setIcon(na_icon_active);
+      // // iw.open(this.map, marker);
+      if (self.active_marker) self.active_marker.setIcon(self.markers.na_icon);
+      marker.setIcon(self.markers.na_icon_active);
       self.active_marker = marker;
       if (typeof marker.resource_id != 'undefined') {
         IONUX.ROUTER.navigate('/map/'+marker.resource_id, {trigger:true});
       };
     });
 
-    // Event for mouseover
     google.maps.event.addListener(marker, 'mouseover', function() {
       // _table_row.style.backgroundColor = _row_highlight_color;
-      if (marker.icon !== na_icon_active) {
-        marker.setIcon(na_icon_hover);
+      if (marker.icon !== self.markers.na_icon_active) {
+        marker.setIcon(self.markers.na_icon_hover);
       };
     });
     
-    // Event for mouseout
     google.maps.event.addListener(marker, 'mouseout', function() {
       // _table_row.style.backgroundColor = _row_background_color;
-      if (marker.icon !== na_icon_active) {
-        marker.setIcon(na_icon);
+      if (marker.icon !== self.markers.na_icon_active) {
+        marker.setIcon(self.markers.na_icon);
       };
     });
     
@@ -285,6 +299,39 @@ IONUX.Views.Map = Backbone.View.extend({
     }
   },
 });
+
+
+IONUX.Views.MapDashboardTable = IONUX.Views.DataTable.extend({
+  initialize: function() {
+    _.bindAll(this);
+    this.$el.show();
+    this.whitelist = this.options.list_table ? IONUX.ListWhitelist : IONUX.MapWhitelist;
+    this.filter_data();
+    this.collection.on('data:filter_render', this.filter_and_render);
+    IONUX.Views.DataTable.prototype.initialize.call(this);
+  },
+  
+  filter_data: function() {
+    this.options.data = [];
+    if (!_.isEmpty(this.whitelist)) {
+       _.each(this.collection.models, function(resource) {
+         var rt = resource.get('alt_resource_type') ? resource.get('alt_resource_type') : resource.get('type_');
+         var lc = resource.get('lcstate');
+         if (_.contains(this.whitelist, rt) && _.contains(this.whitelist, lc)) {
+           this.options.data.push(resource.toJSON());
+         };
+       }, this);
+    } else {
+      this.options.data = this.collection.toJSON();
+    };
+  },
+  
+  filter_and_render: function() {
+    this.filter_data();
+    this.render();
+  },
+});
+
 
 
 IONUX.Views.DashboardTable = IONUX.Views.DataTable.extend({
@@ -355,15 +402,15 @@ IONUX.Views.ResourceTable = IONUX.Views.DataTable.extend({
 - - - - - - - - - - - - - - - - - 
 */
 
-IONUX.MapBlacklist = [];
+IONUX.MapWhitelist = [];
 
 IONUX.Views.MapFilter = Backbone.View.extend({
   el: '#map-filter',
   filter_options: {
     short_asset_options: [
-      {label: 'Station', type: 'PlatformSite'},
+      {label: 'Station', type: 'StationSite'},
       {label: 'Instrument', type: 'InstrumentSite'},
-      {label: 'Platform', type: 'PlatformDevice'},
+      {label: 'Platform', type: 'PlatformSite'},
     ],
     long_asset_options: [
       {label: 'Station', type: 'PlatformSite'},
@@ -401,7 +448,7 @@ IONUX.Views.MapFilter = Backbone.View.extend({
   ',
 
   events: {
-    'click .filter-option': 'set_filter'
+    'click .filter-option input': 'set_filter'
   },
   
   initialize: function(){
@@ -417,25 +464,20 @@ IONUX.Views.MapFilter = Backbone.View.extend({
   render_filter_options: function(options){
     // Should not be in separate templates? 
     // Waiting for definitive filter behavior before consolidating.
-    var item_tmpl = '<div class="filter-option resource-option"><%= label %> <div class="pull-right"><input type="checkbox" value="<%= type %>" <%= checked %> /></div></div>';
-    var lcstate_tmpl = '<div class="filter-option lcstate-option"><%= label %> <div class="pull-right"><input type="checkbox" value="<%= lcstate %>" <%= checked %> /></div></div>';
+    var item_tmpl = '<div class="filter-option resource-option"><%= label %> <div class="pull-right"><input type="checkbox" value="<%= type %>" checked /></div></div>';
+    var lcstate_tmpl = '<div class="filter-option lcstate-option"><%= label %> <div class="pull-right"><input type="checkbox" value="<%= lcstate %>" checked /></div></div>';
 
     var assets_elmt = this.$el.find('#asset-filter');
     _.each(this.filter_options.short_asset_options, function(option) {
-      option['checked'] = _.contains(IONUX.MapBlacklist, option['type']) ? "" : "checked";
+      IONUX.MapWhitelist.push(option['type']);
       assets_elmt.append(_.template(item_tmpl, option));
     });
     
     var lcstate_elmt = this.$el.find('#lcstate-filter');
     _.each(this.filter_options.lcstate_options, function(option) {
-      option['checked'] = _.contains(IONUX.MapBlacklist, option['lcstate']) ? "" : "checked";
+      IONUX.MapWhitelist.push(option['lcstate']);
       lcstate_elmt.append(_.template(lcstate_tmpl, option));
     });
-    
-    // var data_elmt = this.$el.find('#data-filter');
-    // _.each(this.filter_options.data_options, function(option) {
-    //   data_elmt.append(_.template(item_tmpl, option));
-    // });
   },
   
   toggle_filter: function(e) {
@@ -446,12 +488,13 @@ IONUX.Views.MapFilter = Backbone.View.extend({
     var filter_elmt = $(e.target);
     var type = filter_elmt.val();
     if (filter_elmt.is(':checked')) {
-      var index = IONUX.MapBlacklist.indexOf(type)
-      IONUX.MapBlacklist.splice(index);
+      IONUX.MapWhitelist.push(type);
     } else {
-      IONUX.MapBlacklist.push(type);
-    }; 
+      var index = IONUX.MapWhitelist.indexOf(type)
+      IONUX.MapWhitelist.splice(index, 1);
+    };
     IONUX.Dashboard.MapResources.trigger('data:filter_render');
+    return;
   }
 });
 
@@ -472,6 +515,7 @@ IONUX.Collections.ListResources = Backbone.Collection.extend({
   parse: function(resp) {
     var related_objects = [];
     _.each(resp.data, function(obj){related_objects.push(obj)});
+    make_iso_timestamps(related_objects);
     return related_objects;
   }
 });
