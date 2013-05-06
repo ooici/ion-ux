@@ -493,8 +493,10 @@ def resource_type_edit(resource_type, resource_id):
         resource = ServiceApi.get_prepare(resource_type, resource_id, None)
         return jsonify(data=resource)
     if request.method == 'PUT':
-        resource_obj = json.loads(request.data)
-        updated_resource = ServiceApi.update_resource(resource_type, resource_obj)
+        data = json.loads(request.data)
+        resource_obj = data['resource']
+        resource_assocs = data['assocs']
+        updated_resource = ServiceApi.update_resource(resource_type, resource_obj, resource_assocs)
         return render_json_response(updated_resource)
     if request.method == 'POST':
         #TODO 
