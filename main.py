@@ -129,7 +129,9 @@ def attachment_create():
                                                    attachment_type,
                                                    fd.mimetype,
                                                    fd,
-                                                   request.form['keywords'])
+                                                   request.form['keywords'],
+                                                   request.form['created_by'],
+                                                   request.form['modified_by'])
 
     dat = {'files':[{'name':fd.filename, 'size':fd.content_length}]}
     return jsonify(dat)

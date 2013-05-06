@@ -985,7 +985,9 @@ IONUX.Views.ResourceAddAttachmentView = Backbone.View.extend({
 
       this.up_trigger.formData = { 'description' : $('#description').val(),
                                    'resource_id' : window.MODEL_DATA['_id'],
-                                   'keywords'    : this.$('#keywords').val()};
+                                   'keywords'    : this.$('#keywords').val(),
+                                   'created_by'  : this.$('#created_by').val(),
+                                   'modified_by' : this.$('#modified_by').val()};
       this.up_trigger.submit();
     }
   },
@@ -1008,11 +1010,14 @@ IONUX.Views.AttachmentZoomView = Backbone.View.extend({
     this.attachment = _.findWhere(window.MODEL_DATA.attachments, {_id:this.attachment_id});
   },
   render: function() {
-    var attachment_info         = {}
-    attachment_info['name']     = this.attachment.name;
-    attachment_info['desc']     = this.attachment.description;
-    attachment_info['mime']     = this.attachment.content_type;
-    attachment_info['keywords'] = this.attachment.keywords.join(", ");
+    var attachment_info = {
+      'name'        : this.attachment.name,
+      'desc'        : this.attachment.description,
+      'mime'        : this.attachment.content_type,
+      'keywords'    : this.attachment.keywords.join(", "),
+      'created_by'  : this.attachment.created_by,
+      'modified_by' : this.attachment.modified_by
+    };
 
     this.modal = $(IONUX.Templates.modal_template).html(this.template(attachment_info));
     if (this.can_delete()) {

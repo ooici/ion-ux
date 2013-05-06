@@ -204,14 +204,16 @@ class ServiceApi(object):
         return req
 
     @staticmethod
-    def create_resource_attachment(resource_id, attachment_name, attachment_description, attachment_type, attachment_content_type, content, keywords):
+    def create_resource_attachment(resource_id, attachment_name, attachment_description, attachment_type, attachment_content_type, content, keywords, created_by, modified_by):
         # form our own data
         post_data = {'resource_id'             : resource_id,
                      'keywords'                : keywords,
                      'attachment_name'         : attachment_name,
                      'attachment_description'  : attachment_description,
                      'attachment_type'         : attachment_type,
-                     'attachment_content_type' : attachment_content_type}
+                     'attachment_content_type' : attachment_content_type,
+                     'attachment_created_by'   : created_by,
+                     'attachment_modified_by'  : modified_by}
 
         # use build_post_request to get url
         url, req = build_post_request('attachment', None, params=post_data)
