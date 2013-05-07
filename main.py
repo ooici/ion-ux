@@ -34,16 +34,26 @@ def get_versions():
 
     return g.ion_ux_version
 
+def clean_session():
+    for key in session.keys():
+        session.pop(key, None)
+
 def render_app_template(current_url):
     tmpl = Template(LayoutApi.process_layout())
     return render_template(tmpl)
-    
+
 def render_json_response(service_api_response):
     if isinstance(service_api_response, dict) and service_api_response.has_key('GatewayError'):
         if PRODUCTION:
             del service_api_response['GatewayError']['Trace']
+
+        # if we've expired, that means we need to relogin
+        if service_api_response['GatewayError']['NeedLogin']:
+            clean_session()
+
         error_response = make_response(json.dumps({'data': service_api_response}), 400)
         error_response.headers['Content-Type'] = 'application/json'
+
         return error_response
     else:
         return jsonify(data=service_api_response)
@@ -646,8 +656,7 @@ def userprofile():
 
 @app.route('/signoff/', methods=['GET'])
 def logout():
-    for key in session.keys():
-        session.pop(key, None)
+    clean_session()
     return redirect('/')
 
 @app.route('/session/', methods=['GET'])
