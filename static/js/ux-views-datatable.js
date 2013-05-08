@@ -155,15 +155,15 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
 
     status_indicator: function(obj){
         switch(obj.aData[obj.iDataColumn]){
-            case 1:
+            case 2:
                 var status = 'STATUS: OK';
                 var status_css = 'status_ok_mini';
                 break;
-            case 2:
+            case 3:
                 var status = 'STATUS: WARNING';
                 var status_css = 'status_warning_alert_mini';
                 break;
-            case 3:
+            case 4:
                 var status = 'STATUS: CRITICAL';
                 var status_css = 'status_critical_alert_mini';
                 break;
