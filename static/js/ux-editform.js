@@ -31,9 +31,13 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
 
     // in place transformations of data
     var parsed = _.object(_.map(data, function(v, k) {
+
+      // turn objects (dicts) that don't have a type_ field into a string
       if (_.isObject(v) && !_.isArray(v) && !v.hasOwnProperty('type_')) {
         return [k, JSON.stringify(v)];
-      } else if (_.isArray(v) && !_.every(v, function(vv) { return vv.hasOwnProperty('type_') })) {
+      }
+      // turn lists of objects that don't have a type_ field into strings
+      else if (_.isArray(v) && _.every(v, function(vv) { return _.isObject(vv) && !vv.hasOwnProperty('type_') })) {
         return [k, _.map(v, JSON.stringify)];
       }
       return [k, v];
@@ -64,6 +68,25 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
     var keys     = _.keys(this.prepare.associations);
     var resource = _.omit(attrs, keys);
     var assocs   = _.pick(attrs, keys);
+
+    // reverse in-place transformation of data (from parse stage)
+    resource = _.object(_.map(resource, function(v, k) {
+
+      // turn stringified single object back into json object
+      if (_.isString(v) && v.substring(0) == "{") {
+        try {
+          return [k, JSON.parse(v)];
+        } catch(err) { } // silent continue and let old value fall through
+      }
+      // turn list of stringified objects back into objects
+      else if (_.isArray(v) && _.every(v, function(vv) { return _.isString(vv) && vv.substring(0) == "{" })) {
+        try {
+          return [k, _.map(v, JSON.parse)];
+        } catch(err) { } // silent continue and let old value fall through
+      }
+
+      return [k, v];
+    }));
 
     retval = {'resource':resource,
               'assocs':assocs}
