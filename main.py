@@ -34,16 +34,27 @@ def get_versions():
 
     return g.ion_ux_version
 
+def clean_session():
+    for key in session.keys():
+        session.pop(key, None)
+
 def render_app_template(current_url):
     tmpl = Template(LayoutApi.process_layout())
     return render_template(tmpl)
-    
+
 def render_json_response(service_api_response):
     if isinstance(service_api_response, dict) and service_api_response.has_key('GatewayError'):
         if PRODUCTION:
             del service_api_response['GatewayError']['Trace']
+
+        # if we've expired, that means we need to relogin
+        if service_api_response['GatewayError']['Exception'] == "Unauthorized" and "expired" in service_api_response['GatewayError']['Message']:
+            clean_session()
+            service_api_response['GatewayError']['NeedLogin'] = True
+
         error_response = make_response(json.dumps({'data': service_api_response}), 400)
         error_response.headers['Content-Type'] = 'application/json'
+
         return error_response
     else:
         return jsonify(data=service_api_response)
@@ -549,28 +560,39 @@ def ui_navigation():
 
 @app.route('/signon/', methods=['GET'])
 def signon():
+
+    def nav():
+        if 'login_redir' in session:
+            return redirect(session.pop('login_redir'))
+
+        return redirect('/')
+
     user_name = request.args.get('user')
     if user_name:
         if not PRODUCTION:
             ServiceApi.signon_user_testmode(user_name)
-        return redirect('/')
-    
+        return nav()
+
     # carriage returns were removed on the cilogon portal side,
     # restore them before processing
     raw_cert = request.args.get('cert')
     if not raw_cert:
-        return redirect('/')
+        return nav()
 
     certificate = base64.b64decode(raw_cert)
 
     # call backend to signon user
     # will stash user id, expiry, is_registered and roles in session
-    ServiceApi.signon_user(certificate)    
+    ServiceApi.signon_user(certificate)
 
-    return redirect('/')
+    return nav()
 
-@app.route('/login/', methods=['GET'])
-def login():
+@app.route('/login/', defaults={'redir':None}, methods=['GET'])
+@app.route('/login/<path:redir>', methods=['GET'])
+def login(redir):
+    if redir:
+        session['login_redir'] = redir
+
     url = urlparse(request.url)
     if url.scheme == 'http':
         https_url = re.sub('http://','https://',request.url)
@@ -646,8 +668,7 @@ def userprofile():
 
 @app.route('/signoff/', methods=['GET'])
 def logout():
-    for key in session.keys():
-        session.pop(key, None)
+    clean_session()
     return redirect('/')
 
 @app.route('/session/', methods=['GET'])
