@@ -560,28 +560,39 @@ def ui_navigation():
 
 @app.route('/signon/', methods=['GET'])
 def signon():
+
+    def nav():
+        if 'login_redir' in session:
+            return redirect(session.pop('login_redir'))
+
+        return redirect('/')
+
     user_name = request.args.get('user')
     if user_name:
         if not PRODUCTION:
             ServiceApi.signon_user_testmode(user_name)
-        return redirect('/')
-    
+        return nav()
+
     # carriage returns were removed on the cilogon portal side,
     # restore them before processing
     raw_cert = request.args.get('cert')
     if not raw_cert:
-        return redirect('/')
+        return nav()
 
     certificate = base64.b64decode(raw_cert)
 
     # call backend to signon user
     # will stash user id, expiry, is_registered and roles in session
-    ServiceApi.signon_user(certificate)    
+    ServiceApi.signon_user(certificate)
 
-    return redirect('/')
+    return nav()
 
-@app.route('/login/', methods=['GET'])
-def login():
+@app.route('/login/', defaults={'redir':None}, methods=['GET'])
+@app.route('/login/<path:redir>', methods=['GET'])
+def login(redir):
+    if redir:
+        session['login_redir'] = redir
+
     url = urlparse(request.url)
     if url.scheme == 'http':
         https_url = re.sub('http://','https://',request.url)

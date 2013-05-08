@@ -38,7 +38,7 @@ IONUX.Views.Error = Backbone.View.extend({
     return;
   },
   relogin: function() {
-    window.location.href = "/login/";
+    window.location.href = "/login/" + window.location.pathname.substring(1);  // remove preceding slash
     return;
   }
 });

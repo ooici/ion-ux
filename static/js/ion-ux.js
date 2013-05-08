@@ -103,7 +103,7 @@ IONUX = {
       try {
         var json_obj = JSON.parse(resp['responseText'])
         var error_obj = json_obj.data.GatewayError;
-        console.error(error_obj);
+        //console.error(error_obj);
       } catch(err) {
         // not all errors are JSON or GatewayErrors.. still support them
         error_obj = {Message:resp['responseText']}
