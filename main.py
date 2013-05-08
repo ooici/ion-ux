@@ -48,8 +48,9 @@ def render_json_response(service_api_response):
             del service_api_response['GatewayError']['Trace']
 
         # if we've expired, that means we need to relogin
-        if service_api_response['GatewayError']['NeedLogin']:
+        if service_api_response['GatewayError']['Exception'] == "Unauthorized" and "expired" in service_api_response['GatewayError']['Message']:
             clean_session()
+            service_api_response['GatewayError']['NeedLogin'] = True
 
         error_response = make_response(json.dumps({'data': service_api_response}), 400)
         error_response.headers['Content-Type'] = 'application/json'
