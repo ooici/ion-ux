@@ -204,7 +204,8 @@ class ServiceApi(object):
         reqs = [req]
 
         # handle associations
-        if len(resource_assocs):
+        # @TODO: intentionally disabled, not working correctly yet
+        if False and len(resource_assocs):
 
             # get prepare statement to build urls
             prepare = ServiceApi.get_prepare(resource_type, resource_obj['_id'], None)
