@@ -1,0 +1,39 @@
+<div id="create-resource-overlay" class="modal-ooi modal hide">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h1>Create Resource</h1>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal">
+            <div class="control-group">
+                <label class="control-label" for="org">Facility</label>
+                <div class="controls">
+                    <select name="org">
+                        <% _.each(orgs, function(o) { %>
+                            <option value="<%= o._id %>"><%= o.name %></option>
+                        <% }) %>
+                    </select>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="resource-type">Resource Type</label>
+                <div class="controls">
+                    <select name="resource-type" size="7">
+                        <option value="DataProcessDefinition">Data Process Definition</option>
+                        <option value="DataProcess">Data Process</option>
+                        <option value="DataProduct">Data Product</option>
+                        <option value="Deployment">Deployment</option>
+                        <option value="InstrumentAgentInstance">Instrument Agent Instance</option>
+                        <option value="InstrumentDevice">Instrument Device</option>
+                        <option value="PlatformDevice">Platform Device</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button id="create-resource" class="btn-blue btn-save">Create Resource</button>
+        <button id="create-account-cancel" data-dismiss="modal" class="btn-blue btn-cancel">Cancel</button>
+    </div>
+</div>
+

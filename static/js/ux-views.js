@@ -1105,8 +1105,12 @@ IONUX.Views.CreateResourceView = Backbone.View.extend({
     'click #create-resource': 'createResourceClicked'
   },
   render: function() {
+    var orgs = _.filter(_.pluck(IONUX.Dashboard.Orgs.models, 'attributes'), function(o) {
+      return _.contains(_.keys(IONUX.SESSION_MODEL.get('roles')), o.org_governance_name);
+    });
+
     $('body').append(this.$el);
-    var modal_html = this.template();
+    var modal_html = this.template({orgs:orgs});
     this.$el.append(modal_html);
 
     var self = this;
@@ -1119,15 +1123,14 @@ IONUX.Views.CreateResourceView = Backbone.View.extend({
   createResourceClicked: function() {
     var url = window.location.protocol + "//" + window.location.host + "/create/",
       rtype = this.$('select[name="resource-type"]').val(),
+        org = this.$('select[name="org"]').val(),
        vals = {'resource_type': rtype,
-               'org_id': IONUX.Dashboard.ListResources.resource_id },
+               'org_id': org},
        self = this;
     
     self.modal.modal('hide');
 
-    // TODO: not the correct spot for these
-    $('#dashboard-container').hide();
-    $('#dynamic-container > .row-fluid').html('<div id="spinner"></div>').show();
+    $('#dynamic-container').html('<div id="spinner"></div>').show();
     new Spinner(IONUX.Spinner.large).spin(document.getElementById('spinner'));
 
     $.post(url, vals)
