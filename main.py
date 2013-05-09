@@ -34,16 +34,27 @@ def get_versions():
 
     return g.ion_ux_version
 
+def clean_session():
+    for key in session.keys():
+        session.pop(key, None)
+
 def render_app_template(current_url):
     tmpl = Template(LayoutApi.process_layout())
     return render_template(tmpl)
-    
+
 def render_json_response(service_api_response):
     if isinstance(service_api_response, dict) and service_api_response.has_key('GatewayError'):
         if PRODUCTION:
             del service_api_response['GatewayError']['Trace']
+
+        # if we've expired, that means we need to relogin
+        if service_api_response['GatewayError']['Exception'] == "Unauthorized" and "expired" in service_api_response['GatewayError']['Message']:
+            clean_session()
+            service_api_response['GatewayError']['NeedLogin'] = True
+
         error_response = make_response(json.dumps({'data': service_api_response}), 400)
         error_response.headers['Content-Type'] = 'application/json'
+
         return error_response
     else:
         return jsonify(data=service_api_response)
@@ -129,7 +140,9 @@ def attachment_create():
                                                    attachment_type,
                                                    fd.mimetype,
                                                    fd,
-                                                   request.form['keywords'])
+                                                   request.form['keywords'],
+                                                   request.form['created_by'],
+                                                   request.form['modified_by'])
 
     dat = {'files':[{'name':fd.filename, 'size':fd.content_length}]}
     return jsonify(dat)
@@ -148,6 +161,12 @@ def attachment_delete(attachment_id):
 def event_types():
     event_types = ServiceApi.get_event_types()
     return jsonify(data=event_types)
+
+@app.route('/create/', methods=['POST'])
+@login_required
+def create_resource():
+    resp = ServiceApi.create_resource(request.form.get('resource_type', None), request.form.get('org_id', None))
+    return render_json_response(resp)
 
 @app.route('/<resource_type>/status/<resource_id>/subscribe/', methods=['GET'])
 @app.route('/<resource_type>/face/<resource_id>/subscribe/', methods=['GET'])
@@ -470,12 +489,14 @@ def edit(resource_type, resource_id):
 @app.route('/resource_type_edit/<resource_type>/<resource_id>/', methods=['GET', 'POST', 'PUT'])
 def resource_type_edit(resource_type, resource_id):
     if request.method == 'GET':
-        resource = ServiceApi.find_by_resource_id(resource_id)
-        resource_json = json.loads(resource.data)['data']
-        return jsonify(data=resource_json)
+        #resource = ServiceApi.find_by_resource_id(resource_id)
+        resource = ServiceApi.get_prepare(resource_type, resource_id, None)
+        return jsonify(data=resource)
     if request.method == 'PUT':
-        resource_obj = json.loads(request.data)
-        updated_resource = ServiceApi.update_resource(resource_type, resource_obj)
+        data = json.loads(request.data)
+        resource_obj = data['resource']
+        resource_assocs = data['assocs']
+        updated_resource = ServiceApi.update_resource(resource_type, resource_obj, resource_assocs)
         return render_json_response(updated_resource)
     if request.method == 'POST':
         #TODO 
@@ -547,28 +568,39 @@ def ui_navigation():
 
 @app.route('/signon/', methods=['GET'])
 def signon():
+
+    def nav():
+        if 'login_redir' in session:
+            return redirect(session.pop('login_redir'))
+
+        return redirect('/')
+
     user_name = request.args.get('user')
     if user_name:
         if not PRODUCTION:
             ServiceApi.signon_user_testmode(user_name)
-        return redirect('/')
-    
+        return nav()
+
     # carriage returns were removed on the cilogon portal side,
     # restore them before processing
     raw_cert = request.args.get('cert')
     if not raw_cert:
-        return redirect('/')
+        return nav()
 
     certificate = base64.b64decode(raw_cert)
 
     # call backend to signon user
     # will stash user id, expiry, is_registered and roles in session
-    ServiceApi.signon_user(certificate)    
+    ServiceApi.signon_user(certificate)
 
-    return redirect('/')
+    return nav()
 
-@app.route('/login/', methods=['GET'])
-def login():
+@app.route('/login/', defaults={'redir':None}, methods=['GET'])
+@app.route('/login/<path:redir>', methods=['GET'])
+def login(redir):
+    if redir:
+        session['login_redir'] = redir
+
     url = urlparse(request.url)
     if url.scheme == 'http':
         https_url = re.sub('http://','https://',request.url)
@@ -644,8 +676,7 @@ def userprofile():
 
 @app.route('/signoff/', methods=['GET'])
 def logout():
-    for key in session.keys():
-        session.pop(key, None)
+    clean_session()
     return redirect('/')
 
 @app.route('/session/', methods=['GET'])

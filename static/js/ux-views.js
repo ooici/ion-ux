@@ -985,7 +985,9 @@ IONUX.Views.ResourceAddAttachmentView = Backbone.View.extend({
 
       this.up_trigger.formData = { 'description' : $('#description').val(),
                                    'resource_id' : window.MODEL_DATA['_id'],
-                                   'keywords'    : this.$('#keywords').val()};
+                                   'keywords'    : this.$('#keywords').val(),
+                                   'created_by'  : this.$('#created_by').val(),
+                                   'modified_by' : this.$('#modified_by').val()};
       this.up_trigger.submit();
     }
   },
@@ -1008,11 +1010,14 @@ IONUX.Views.AttachmentZoomView = Backbone.View.extend({
     this.attachment = _.findWhere(window.MODEL_DATA.attachments, {_id:this.attachment_id});
   },
   render: function() {
-    var attachment_info         = {}
-    attachment_info['name']     = this.attachment.name;
-    attachment_info['desc']     = this.attachment.description;
-    attachment_info['mime']     = this.attachment.content_type;
-    attachment_info['keywords'] = this.attachment.keywords.join(", ");
+    var attachment_info = {
+      'name'        : this.attachment.name,
+      'desc'        : this.attachment.description,
+      'mime'        : this.attachment.content_type,
+      'keywords'    : this.attachment.keywords.join(", "),
+      'created_by'  : this.attachment.created_by,
+      'modified_by' : this.attachment.modified_by
+    };
 
     this.modal = $(IONUX.Templates.modal_template).html(this.template(attachment_info));
     if (this.can_delete()) {
@@ -1090,6 +1095,50 @@ IONUX.Views.CreateAccountView = Backbone.View.extend({
   },
   get_credentials_clicked: function() {
     window.location.href = window.location.protocol + "//" + window.location.host + "/login/";
+  }
+});
+
+IONUX.Views.CreateResourceView = Backbone.View.extend({
+  tagName: "div",
+  template: _.template($("#create-resource-modal-tmpl").html()),
+  events: {
+    'click #create-resource': 'createResourceClicked'
+  },
+  render: function() {
+    var orgs = _.filter(_.pluck(IONUX.Dashboard.Orgs.models, 'attributes'), function(o) {
+      return _.contains(_.keys(IONUX.SESSION_MODEL.get('roles')), o.org_governance_name);
+    });
+
+    $('body').append(this.$el);
+    var modal_html = this.template({orgs:orgs});
+    this.$el.append(modal_html);
+
+    var self = this;
+    this.modal = $('#create-resource-overlay').modal()
+      .on('hidden', function() {
+        self.$el.remove();
+      });
+    return this;
+  },
+  createResourceClicked: function() {
+    var url = window.location.protocol + "//" + window.location.host + "/create/",
+      rtype = this.$('select[name="resource-type"]').val(),
+        org = this.$('select[name="org"]').val(),
+       vals = {'resource_type': rtype,
+               'org_id': org},
+       self = this;
+    
+    self.modal.modal('hide');
+
+    $('#dynamic-container').html('<div id="spinner"></div>').show();
+    new Spinner(IONUX.Spinner.large).spin(document.getElementById('spinner'));
+
+    $.post(url, vals)
+      .success(function(resp) {
+
+        Backbone.history.fragment = null; // Clear history fragment to allow for page "refresh".
+        IONUX.ROUTER.navigate('/' + rtype + '/face/' + resp.data + '/edit', {trigger: true});
+      });
   }
 });
 

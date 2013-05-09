@@ -2,16 +2,21 @@
   <h1>Error</h1>
 </div>
 <div class="modal-body error">
-  <h4><%= error_obj.Message %></h4>
+  <h4><%- error_obj.Message %></h4>
+  <% if (force_logout) { %>
+  <p>Your credentials have expired. You must sign in again to continue.</p>
+  <% } %>
   <p style="margin-top:15px;"><a class="btn-general external" target="_blank" href="mailto:helpdesk@oceanobservatories.org">Email Helpdesk</a></p>
   <% if (_.has(error_obj, 'Trace')) { %>
-    <p class="error-trace">
-      <%= error_obj.Trace %>
-    </p>
+    <pre class="error-trace">
+      <%- error_obj.Trace %>
+    </pre>
   <% } %>
 </div>
 <div class="modal-footer">
-  <% if (open_modal) { %>
+  <% if (force_logout) { %>
+    <button id="relogin" class="btn-blue">Sign In</button>
+  <% } else if (open_modal) { %>
     <button class="btn-blue" data-dismiss="modal">OK</button>
   <% } else { %>
     <button id="back" class="btn-blue" data-dismiss="modal">Back</button>

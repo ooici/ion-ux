@@ -1,3 +1,17 @@
+a:link, a:visited {
+  color: #999;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #00AEEF;
+  text-decoration: underline;
+}
+
+a:active {
+  color: #5C9FC4;
+}
+
 /* 
   TEMP - BOOTSTRAP MARGINS
 */
@@ -747,143 +761,65 @@ max-width: none;
 
 /* ---------------------------------------------------------------
 ACTION MENU STYLING
-Intentionally verbose and redundant until styles are determined
-for heading, group and block elements.
 --------------------------------------------------------------- */
 
-/*
- HEADING
-*/
-
-.v00 .block .btn-group.open .btn.dropdown-toggle {
-  color: #ccc;
-  background-color: transparent;
+.hamburger:before {
+  content: '';
+  width: 16px;
+  height: 20px;
+  left: 8px;
+  display:block;
+  position: absolute;
+  background-image: url(/static/img/sprite2.png);
+  background-position: -180px -180px;
 }
 
-.v00 .block .btn-group .btn {
+.hamburger:hover:before {
+  content: '';
+  width: 16px;
+  height: 20px;
+  left: 8px;
+  display:block;
+  position: absolute;
+  background-image: url(/static/img/sprite2.png);
+  background-position: -240px -180px;
+}
+
+.btn-group.open .hamburger:before {
+  background-position: -240px -180px;
+}
+
+
+#search-production .btn, .block .btn, .filter-header .btn {
+  display: inline-block;
+  padding: 4px 12px;
+  margin-bottom: 0;
   font-size: 14px;
-  text-transform:uppercase;
-  background: transparent;
-  border: none;
+  line-height: 16px;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  color: #333333;
   text-shadow: none;
-  box-shadow: none;
-  padding:0;
-  margin:0 3px 0 0;
-  color: #666;
-}
-
-.v00 .block .btn-group .btn .caret  {
-  display: inline-block;
-  width: 0;
-  height: 0;
-  text-indent: -99999px;
-  vertical-align: top;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top: 4px solid #666;
-  margin-left: 2px;
-  content: "\2193";
-}
-
-.v00 .block .btn-group.open .btn.dropdown-toggle {
-  color: #ccc;
   background-color: transparent;
-}
-
-.v00 .block .btn-group.open .btn .caret {
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top: 4px solid #ccc;
-}
-
-/*
- GROUP
-*/
-
-.group .btn-group.open .btn.dropdown-toggle {
-  color: #ccc;
-  background-color: transparent;
-}
-
-.group .btn-group .btn {
-  font-size: 12px;
-  text-transform:uppercase;
-  background: transparent;
+  background-image: none;
   border: none;
-  text-shadow: none;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
   box-shadow: none;
-  padding:0;
-  margin:0 3px 0 0;
-  color: #666;
 }
 
-.group .btn-group .btn .caret  {
-  display: inline-block;
-  width: 0;
-  height: 0;
-  text-indent: -99999px;
-  vertical-align: top;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top: 4px solid #666;
-  margin-left: 2px;
-  content: "\2193";
+
+#search-production .btn {
+  margin-top: 9px;
 }
 
-.group .btn-group.open .btn.dropdown-toggle {
-  color: #ccc;
+.btn-group.open .btn.dropdown-toggle {
   background-color: transparent;
-}
-
-.group .btn-group.open .btn .caret {
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top: 4px solid #ccc;
-}
-
-/*
- BLOCK
-*/
-
-.block .btn-group.open .btn.dropdown-toggle {
-  color: #ccc;
-  background-color: transparent;
-}
-
-.block .btn-group .btn {
-  font-size: 10px;
-  text-transform:uppercase;
-  background: transparent;
-  border: none;
-  text-shadow: none;
   box-shadow: none;
-  padding:0;
-  margin:0 3px 0 0;
-  color: #ccc;
-}
-
-.block .btn-group .btn .caret  {
-  display: inline-block;
-  width: 0;
-  height: 0;
-  text-indent: -99999px;
-  vertical-align: top;
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top: 4px solid #ccc;
-  margin-left: 2px;
-  content: "\2193";
-}
-
-.block .btn-group.open .btn.dropdown-toggle {
-  color: #fff;
-  background-color: transparent;
-}
-
-.block .btn-group.open .btn .caret {
-  border-left: 4px solid transparent;
-  border-right: 4px solid transparent;
-  border-top: 4px solid #fff;
 }
 
 
@@ -895,9 +831,13 @@ for heading, group and block elements.
 }
 
 ul.dropdown-menu {
-  background: #222;
-  border: solid 1px #333;
-  margin: 1px 0 0;
+  background-color:#666666; 
+  padding:5px; 
+  font-family:Signika Negative; 
+  font-size:10px; 
+  font-weight:300; 
+  letter-spacing:1px; 
+  color:#D1D3D4;
 }
 
 ul.dropdown-menu li {
@@ -909,8 +849,8 @@ ul.dropdown-menu li {
 }
 
 ul.dropdown-menu li:hover {
-  color: #ddd;
-  background: #202020;
+  color: #fff;
+  background: #444;
 }
 
 .attribute_group_dynamic_ooi h5 {
@@ -1021,11 +961,6 @@ hr {
 
 .v00 ul {
   display: none;
-}
-
-
-#search-production {
-  position:relative;
 }
 
 .btn-input-search {
@@ -1288,7 +1223,7 @@ h2 {
   letter-spacing: 3px; 
   font-size:9px; 
   font-weight: 600;
-  line-height: 18px;
+  line-height: 20px;
   color:#CCCCCC;
   text-transform: uppercase;
   margin: 0 0 5px;
@@ -1693,4 +1628,8 @@ ul.nav {
 
 #advanced-search-overlay .filter-add, #advanced-search-overlay .filter-remove {
   border-radius: 3px;
+}
+
+#create-resource-overlay select {
+  width: 100%;
 }

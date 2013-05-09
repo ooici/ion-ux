@@ -21,7 +21,7 @@
                 <label class="control-label" for="description">Description</label>
                 <div class="controls">
                     <input type="text" id="description" name="description" class="input-block-level" maxlength="128" />
-                    <span class="help-inline">A brief description about the attachment (128 char max)</span>
+                    <span class="help-inline">A brief description (128 char max)</span>
                 </div>
             </div>
             <div class="control-group">
@@ -29,6 +29,20 @@
                 <div class="controls">
                     <input type="text" id="keywords" name="keywords" class="input-block-level" maxlength="128" />
                     <span class="help-inline">Enter any number of keywords, separated by commas</span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="created_by">Author</label>
+                <div class="controls">
+                    <input type="text" id="created_by" name="created_by" class="input-block-level" maxlength="127" />
+                    <span class="help-inline">The original author of the file</span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="modified_by">Last Modified By</label>
+                <div class="controls">
+                    <input type="text" id="modified_by" name="modified_by" class="input-block-level" maxlength="127" />
+                    <span class="help-inline">The person responsible for the most recent version</span>
                 </div>
             </div>
         </form>

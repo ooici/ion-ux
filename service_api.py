@@ -165,11 +165,11 @@ class ServiceApi(object):
         return search_json['data']
 
     @staticmethod
-    def update_resource(resource_type, resource_obj):
+    def update_resource(resource_type, resource_obj, resource_assocs):
 
         # grab the schema again - if this is cached, this will be quick!
-        r = ResourceTypeSchema(resource_type)
-        schema = r.get_data(resource_type)
+        #r = ResourceTypeSchema(resource_type)
+        #schema = r.get_data(resource_type)
 
         # Hack to convert strings into objects, booleans
         # as a workaround to shortcomings dynamically generating 
@@ -201,17 +201,71 @@ class ServiceApi(object):
                 print v
 
         req = service_gateway_post('resource_management', 'update_resource', params={'resource': resource_obj})
-        return req
+        reqs = [req]
+
+        # handle associations
+        # @TODO: intentionally disabled, not working correctly yet
+        if False and len(resource_assocs):
+
+            # get prepare statement to build urls
+            prepare = ServiceApi.get_prepare(resource_type, resource_obj['_id'], None)
+            assocs = prepare['associations']
+
+            def mod_assoc(assoc_mod, val):
+                if not assoc_mod:
+                    raise StandardError("no request available")
+
+                params = assoc_mod['request_parameters'].copy()
+                params.update({assoc_mod['resource_identifier']: val})
+
+                #print params
+                req = service_gateway_post(assoc_mod['service_name'],
+                                           assoc_mod['service_operation'],
+                                           params=params)
+
+                return req
+
+            for k,v in resource_assocs.iteritems():
+                print k, v
+                curval = assocs[k]['associated_resources']
+
+                if assocs[k]['multiple_associations']:
+                    pass
+                else:
+                    # single
+                    if len(curval) == 1:
+                        # @TODO this is very clunky
+                        firstval = curval[0]
+                        curval = firstval['s']
+                        if curval == resource_obj['_id']:
+                            curval = firstval['o']
+
+                        if curval != v:
+                            # unassoc
+                            reqs.append(mod_assoc(assocs[k]['unassign_request'], curval))
+
+                            # assoc
+                            reqs.append(mod_assoc(assocs[k]['assign_request'], v))
+                    else:
+                        assert len(curval) == 0
+
+                        if v:
+                            # assoc
+                            reqs.append(mod_assoc(assocs[k]['assign_request'], v))
+
+        return reqs
 
     @staticmethod
-    def create_resource_attachment(resource_id, attachment_name, attachment_description, attachment_type, attachment_content_type, content, keywords):
+    def create_resource_attachment(resource_id, attachment_name, attachment_description, attachment_type, attachment_content_type, content, keywords, created_by, modified_by):
         # form our own data
         post_data = {'resource_id'             : resource_id,
                      'keywords'                : keywords,
                      'attachment_name'         : attachment_name,
                      'attachment_description'  : attachment_description,
                      'attachment_type'         : attachment_type,
-                     'attachment_content_type' : attachment_content_type}
+                     'attachment_content_type' : attachment_content_type,
+                     'attachment_created_by'   : created_by,
+                     'attachment_modified_by'  : modified_by}
 
         # use build_post_request to get url
         url, req = build_post_request('attachment', None, params=post_data)
@@ -412,7 +466,7 @@ class ServiceApi(object):
         elif resource_type == 'DataProcessDefinition':
             extension = service_gateway_get('data_process_management', 'get_data_process_definition_extension', params= {'data_process_definition_id': resource_id, 'user_id': user_id})
         elif resource_type == 'Org':
-            extension = service_gateway_get('org_management', 'get_marine_facility_extension', params= {'org_id': resource_id, 'user_id': user_id})
+            extension = service_gateway_get('observatory_management', 'get_marine_facility_extension', params= {'org_id': resource_id, 'user_id': user_id})
         elif resource_type in ('Observatory', 'Subsite', 'PlatformSite', 'InstrumentSite'):
             extension = service_gateway_get('observatory_management', 'get_site_extension', params= {'site_id': resource_id, 'user_id': user_id})
         elif resource_type == 'NotificationRequest':
@@ -430,6 +484,41 @@ class ServiceApi(object):
         #else:
         #    extension = error_message(msg="Resource extension for %s is not available." % resource_type)
         return extension
+
+    @staticmethod
+    def create_resource(resource_type, org_id):
+        prepare = ServiceApi.get_prepare(resource_type, None, None)
+
+        create_op = prepare['create_request']
+        resource = prepare['resource'].copy()
+        resource.update({'name':'new'})
+
+        resp = service_gateway_post(create_op['service_name'], create_op['service_operation'], params={create_op['request_parameters'].keys()[0]: resource})
+        return resp
+
+    @staticmethod
+    def get_prepare(resource_type, resource_id, user_id):
+        if resource_type == 'InstrumentDevice':
+            params = {}
+            if resource_id:
+                params['instrument_device_id'] = resource_id
+
+            prepare = service_gateway_get('instrument_management', 'prepare_instrument_device_support', params=params)
+        elif resource_type == 'PlatformDevice':
+            params = {}
+            if resource_id:
+                params['platform_device_id'] = resource_id
+
+            prepare = service_gateway_get('instrument_management', 'prepare_platform_device_support', params=params)
+        else:
+            # GENERIC VERSION
+            params = {'resource_type':resource_type}
+            if resource_id:
+                params['resource_id'] = resource_id
+
+            prepare = service_gateway_get('resource_registry', 'prepare_resource_support', params=params)
+
+        return prepare
 
     @staticmethod
     def initiate_realtime_visualization(data_product_id):
@@ -958,7 +1047,7 @@ class ResourceTypeSchema(object):
         if resource_str_type in ["list", "tuple"]:
             return {"type": "List"}
         elif resource_str_type == "bool":
-            return {"type": "Radio", "options": [True, False]}
+            return {"type": "Checkbox"}#, "options": [True, False]}
         elif resource_str_type in ["int", "float"]:
             return "Number"
         elif resource_str_type == "str":
@@ -1081,6 +1170,7 @@ def service_gateway_post(service_name, operation_name, params=None, raw_return=N
     service_gateway_request = requests.post(url, data)
     pretty_console_log('SERVICE GATEWAY POST RESPONSE', service_gateway_request.content)
     return render_service_gateway_response(service_gateway_request, raw_return=raw_return)
+    return None
 
 def build_agent_request(agent_id, operation_name, params=None):
     url = '%s/%s/%s' % (AGENT_GATEWAY_BASE_URL, agent_id, operation_name)
@@ -1127,4 +1217,4 @@ def error_message(msg=None):
     return error_msg
 
 def pretty_console_log(label, content, data=None):
-    print '\n Service Gateway: ', '%s : %s' % (label, content), '\n\n'
+    print '\n Service Gateway: ', '%s : %s : %s' % (label, content, data), '\n\n'

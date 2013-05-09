@@ -21,6 +21,7 @@ IONUX = {
         Backbone.history.start({pushState:true, hashChange: false});
         new IONUX.Views.Topbar({model: IONUX.SESSION_MODEL}).render().el
         new IONUX.Views.Search().render().el;
+        new IONUX.Views.DashboardActions({el: '#search-production'});
         new IONUX.Views.HelpMenu({model: IONUX.SESSION_MODEL}).render().el;
         // nag popup!
         if (IONUX.SESSION_MODEL.get('is_logged_in') && !IONUX.SESSION_MODEL.get('is_registered'))
@@ -52,7 +53,6 @@ IONUX = {
       
         console.log('IONUX.Dashboard.Orgs', IONUX.Dashboard.Orgs);
         console.log('IONUX.Dashboard.Observatories', IONUX.Dashboard.Observatories);
-        
       }
     });
     
@@ -100,10 +100,21 @@ IONUX = {
   },
   setup_ajax_error: function(){
     $(document).ajaxError(function(evt, resp){
-      var error_obj = JSON.parse(resp['responseText'])['data']['GatewayError'];
+      try {
+        var json_obj = JSON.parse(resp['responseText'])
+        var error_obj = json_obj.data.GatewayError;
+        //console.error(error_obj);
+      } catch(err) {
+        // not all errors are JSON or GatewayErrors.. still support them
+        error_obj = {Message:resp['responseText']}
+      }
+
       var open_modal = $('.modal-ooi').is(':visible') ? true : false;
       if (open_modal) $('#action-modal').modal('hide').remove();
-      new IONUX.Views.Error({error_obj:error_obj,open_modal:open_modal}).render().el;
+
+      var force_logout = error_obj.hasOwnProperty('NeedLogin') && error_obj.NeedLogin == true;
+
+      new IONUX.Views.Error({error_obj:error_obj,open_modal:open_modal, force_logout:force_logout}).render().el;
     });
   },
   is_logged_in: function(){

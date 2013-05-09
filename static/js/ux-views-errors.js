@@ -6,14 +6,19 @@ IONUX.Views.Error = Backbone.View.extend({
   template: _.template($('#error-tmpl').html()),
   events: {
     'click #back': 'back',
-    'click #dashboard': 'dashboard'
+    'click #dashboard': 'dashboard',
+    'click #relogin': 'relogin'
   },
   initialize: function(){
     _.bindAll(this);
   },
   render: function(){
     var self = this;
-    $(this.modal_template).html(this.template({error_obj: this.options.error_obj, open_modal: this.options.open_modal})).modal()
+    $(this.modal_template).html(this.template({error_obj: this.options.error_obj,
+                                               open_modal: this.options.open_modal,
+                                               force_logout: this.options.force_logout}))
+      .modal({keyboard:!this.options_force_logout,
+              backdrop:(this.options.force_logout) ? 'static' : true})
       .on('hidden', function() {
         $('#action-modal').remove();
       });
@@ -30,6 +35,10 @@ IONUX.Views.Error = Backbone.View.extend({
   dashboard: function(){
     console.log('dashboard clicked.');
     IONUX.ROUTER.navigate('/', {trigger:true});
+    return;
+  },
+  relogin: function() {
+    window.location.href = "/login/" + window.location.pathname.substring(1);  // remove preceding slash
     return;
   }
 });

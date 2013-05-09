@@ -20,15 +20,78 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
     return "/resource_type_edit/"+this.resource_type+'/'+this.resource_id+'/';
   },
 
-  parse: function(resp){
-    _.each(resp.data, function(v, k) {
+  parse: function(resp) {
+    var data = resp.data;
+    if (data == null) return data;
+
+    if (data.hasOwnProperty('type_') && data.type_.indexOf('Prepare') != -1) {
+      this.prepare = data;
+      data = data.resource;
+    }
+
+    // in place transformations of data
+    var parsed = _.object(_.map(data, function(v, k) {
+
+      // turn objects (dicts) that don't have a type_ field into a string
       if (_.isObject(v) && !_.isArray(v) && !v.hasOwnProperty('type_')) {
-        resp.data[k] = JSON.stringify(v);
-      } else if (_.isArray(v) && !_.every(v, function(vv) { return vv.hasOwnProperty('type_') })) {
-        resp.data[k] = _.map(v, JSON.stringify);
+        return [k, JSON.stringify(v)];
       }
-    });
-    return resp.data;
+      // turn lists of objects that don't have a type_ field into strings
+      else if (_.isArray(v) && _.every(v, function(vv) { return _.isObject(vv) && !vv.hasOwnProperty('type_') })) {
+        return [k, _.map(v, JSON.stringify)];
+      }
+      return [k, v];
+    }));
+
+    console.log(this.prepare);
+    
+    // add values for any existing associations
+    if (this.prepare && !_.isEmpty(this.prepare.associations)) {
+      _.each(this.prepare.associations, function(v, k) {
+        if (v.associated_resources.length > 0)
+          // figure out which side is the correct side for the value here
+          // @TODO clunky
+          if (v.associated_resources[0].s == parsed._id)
+            parsed[k] = v.associated_resources[0].o;
+          else
+            parsed[k] = v.associated_resources[0].s;
+      });
+    }
+
+    return parsed;
+  },
+
+  toJSON: function() {
+    var attrs = _.clone(this.attributes);
+
+    // scrape out any associations
+    var keys     = _.keys(this.prepare.associations);
+    var resource = _.omit(attrs, keys);
+    var assocs   = _.pick(attrs, keys);
+
+    // reverse in-place transformation of data (from parse stage)
+    resource = _.object(_.map(resource, function(v, k) {
+
+      // turn stringified single object back into json object
+      if (_.isString(v) && v.substring(0) == "{") {
+        try {
+          return [k, JSON.parse(v)];
+        } catch(err) { } // silent continue and let old value fall through
+      }
+      // turn list of stringified objects back into objects
+      else if (_.isArray(v) && _.every(v, function(vv) { return _.isString(vv) && vv.substring(0) == "{" })) {
+        try {
+          return [k, _.map(v, JSON.parse)];
+        } catch(err) { } // silent continue and let old value fall through
+      }
+
+      return [k, v];
+    }));
+
+    retval = {'resource':resource,
+              'assocs':assocs}
+    //
+    return retval;
   },
 
   schema: function(){
@@ -61,6 +124,15 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
       sorted_schema[a[0]] = a[1];
     });
 
+    // add on any associations
+    if (this.prepare && !_.isEmpty(this.prepare.associations)) {
+      _.each(this.prepare.associations, function(v, k) {
+        sorted_schema[k] = {title: k,
+                            type: 'Select',
+                            options: [{val:null, label:'-'}].concat(_.map(v.resources, function(r) { return {val:r._id, label:r.name} }))};
+      });
+    }
+
     return sorted_schema;
   },
 
@@ -86,43 +158,9 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
     return parts.join('<br />');
   },
 
-  // make_schema: function(resource_type_schema){
-  //   var paths = this.object_to_paths(this.attributes);
-  //   var self = this;
-  //   var schema_full = {};
-  //   _.each(paths, function(key, val){
-  //     var form_type_and_options = self.resource_type_schema_form_type(resource_type_schema, key);
-  //     var form_type = form_type_and_options[0], options = form_type_and_options[1];
-  //     var margin_left = self.nest_depth(key) * self.nest_depth_factor;
-  //     var keyschema = {type: form_type, options:options,
-  //                     fieldClass: "nestedform", 
-  //                     fieldAttrs:{style: "margin-left:"+margin_left+"px"}};
-  //     //TODO: only add 'options' if non-empty list?
-  //     schema_full[key] = keyschema;
-  //   });
-  //   var schema = _.omit(schema_full, this.black_list); // remove black_listed
-  //   return schema
-  // },
-
-  // resource_type_schema_form_type: function(resource_type_schema_obj, data_key){
-  //   //XXX is this still needed?
-  //   var root_type = 'resource'; //XXX make more general
-  //   var form_type_and_options = ["Text", []];
-  //   _.each(resource_type_schema_obj, function(key, val){
-  //     var regex_str = root_type + '.' + val;
-  //     var reg = new RegExp(regex_str);
-  //     var match = reg.exec(data_key);
-  //     if (!_.isNull(match)){
-  //        form_type_and_options = key;
-  //     }
-  //     //console.log(regex_str, key, val, data_key, match, form_type);
-  //   });
-  //  return form_type_and_options; 
-  // },
-
   get_resource_type_schema: function(){
     /* NOTE: this is a blocking ajax call (async:false) */
-    var url = "/resource_type_schema/"+this.resource_type; 
+    var url = "/resource_type_schema/"+this.resource_type + "/"; 
     var data = null;
     $.ajax({url:url, type:"GET", dataType:"json", async:false})
       .always(function(){})
@@ -165,38 +203,6 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
     return result;
   }
 });
-
-// Removed 4-11-13 as duplication in ion-ux-models.
-// IONUX.Models.EditableResource = Backbone.Model.extend({
-//   idAttribute: '_id',
-//   schema: function(){
-//     return this.make_schema();
-//   },
-//   initialize: function(){},
-//   url: function(){
-//     return window.location.pathname.replace(/edit$/,'');
-//   },
-//   make_schema: function(){
-//     var self = this;
-//     var schema = {};
-//     _.each(this.attributes, function(value, key){
-//       if (!_.isObject(value) && !(key=='ts_updated' || key=='ts_created')){
-//         console.log(key, value, typeof value);
-//         switch(typeof(value)){
-//           case 'boolean':
-//             schema[key] = 'Checkbox';
-//             break;
-//           case 'number':
-//             schema[key] = 'Number';
-//             break;
-//           default:
-//             schema[key] = 'Text'
-//         };
-//       };
-//     });
-//     return schema;
-//   },
-// });
 
 Backbone.Form.editors.IntSelect = Backbone.Form.editors.Select.extend({
   getValue: function() {
@@ -361,8 +367,10 @@ Backbone.Form.editors.IonObject = Backbone.Form.editors.Object.extend({
     }
 
     // provide default if new object
-    if (_.isEmpty(this.value))
+    if (_.isEmpty(this.value)) {
+      if (!this.value) this.value = {};
       this.value.type_ = this.schema.subSchema.type_['default'];
+    }
   }
 });
 

@@ -25,6 +25,9 @@ IONUX.Router = Backbone.Router.extend({
   },
   
   dashboard_map: function(){
+    this._remove_dashboard_menu();
+    new IONUX.Views.DashboardActions({el: '#search-production'});
+    
     $('#left .resources-view').hide();
     $('#left .map-view').show();
     $('#btn-map').addClass('active').siblings('.active').removeClass('active');
@@ -42,6 +45,8 @@ IONUX.Router = Backbone.Router.extend({
   },
   
   dashboard_map_resource: function(resource_id) {
+    this._remove_dashboard_menu();
+    new IONUX.Views.DashboardActions({el: '#search-production'});
     $('#left .resources-view').hide();
     $('#left .map-view').show();
     $('#btn-map').addClass('active').siblings('.active').removeClass('active');
@@ -82,6 +87,9 @@ IONUX.Router = Backbone.Router.extend({
   },
   
   dashboard_list: function() {
+    this._remove_dashboard_menu();
+    new IONUX.Views.DashboardActions({el: '#search-production'});
+    
     $('#left .map-view').hide();
     $('#left .resources-view').show();
     $('#btn-resources').addClass('active').siblings('.active').removeClass('active');
@@ -92,6 +100,9 @@ IONUX.Router = Backbone.Router.extend({
   },
   
   dashboard_list_resource: function(resource_id){
+    this._remove_dashboard_menu();
+    new IONUX.Views.DashboardActions({el: '#search-production'});
+    
     $('#left .map-view').hide();
     $('#left .resources-view').show();
     $('#btn-resources').addClass('active').siblings('.active').removeClass('active');
@@ -118,18 +129,22 @@ IONUX.Router = Backbone.Router.extend({
     });
   },
 
-  edit: function() {
+  edit: function(resource_type, view_type, resource_id) {
     // Todo move into own view
     $('#dynamic-container > .row-fluid').html('<div id="spinner"></div>').show();
     new Spinner(IONUX.Spinner.large).spin(document.getElementById('spinner'));
     
     var m = new IONUX.Models.EditResourceModel({
-      resource_type: window.MODEL_DATA.resource.type_,
-      resource_id: window.MODEL_DATA.resource._id
+      resource_type: resource_type,
+      resource_id: resource_id
     });
     
     m.fetch({
       success: function(resp) {
+        $('#dashboard-container').hide();
+        $('#dynamic-container').show();
+        $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS[view_type]).html());
+        $('.span9 li,.span3 li').hide();
         new IONUX.Views.EditResource({model: resp});
       }
     });
@@ -185,28 +200,30 @@ IONUX.Router = Backbone.Router.extend({
     new IONUX.Views.Footer({resource_id: null, resource_type: resource_type}).render().el;
   },
   page: function(resource_type, view_type, resource_id){
-    console.log('page');
     $('#dashboard-container').hide();
     // Todo move into own view
     $('#dynamic-container').html('<div id="spinner"></div>').show();
     new Spinner(IONUX.Spinner.large).spin(document.getElementById('spinner'));
     
     var resource_extension = new IONUX.Models.ResourceExtension({resource_type: resource_type, resource_id: resource_id});
+    var self = this;
     resource_extension.fetch()
       .success(function(model, resp) {
         $('#dynamic-container').show();
         $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS[view_type]).html());
         $('.span9 li,.span3 li').hide();
+        self._remove_dashboard_menu();
         render_page(resource_type, resource_id, model);
       });
     // new IONUX.Views.Footer({resource_id: resource_id, resource_type: resource_type}).render().el;
   },
   command: function(resource_type, resource_id){
-    $('#error').hide();
+    this._remove_dashboard_menu();
     $('#dynamic-container').show();
     $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS['command']).html());
     $('.span9 li,.span3 li').hide();
-    // $('.v02').empty();
+    
+
     var resource_extension = new IONUX.Models.ResourceExtension({resource_type: resource_type, resource_id: resource_id});
     if (resource_type == 'InstrumentDevice') {
       var resource_extension = new IONUX.Models.ResourceExtension({resource_type: resource_type, resource_id: resource_id});
@@ -221,7 +238,6 @@ IONUX.Router = Backbone.Router.extend({
     };
     resource_extension.fetch()
       .success(function(model, resp){
-        console.log('resource_extension', resp);
         render_page(resource_type, resource_id, model);
       });
     new IONUX.Views.Footer({resource_id: null, resource_type: null}).render().el;
@@ -288,6 +304,10 @@ IONUX.Router = Backbone.Router.extend({
 
   _reset: function(){ //reset the UI
     $(".viewcontainer").hide();
+  },
+  
+  _remove_dashboard_menu: function() {
+    $('#search-production .action-menu').remove();
   }
 });
 
@@ -447,8 +467,23 @@ function render_page(resource_type, resource_id, model) {
       var heading = $(el).data('label');
       $(el).find('.filter-header').prepend('<div class="table-heading">'+heading+'</div>');
     };
-  
+    
+    // 
+
+    
+    console.log('table name', $(el).data('label'));
+    var label = $(el).data('label');
+    switch(label){
+      case 'Attachments':
+        new IONUX.Views.AttachmentActions({el:$(el).find('.filter-header')});
+        break;
+      case 'Events':
+        new IONUX.Views.EventActions({el:$(el).find('.filter-header')});
+        break;
+    };
+    
     $(el).find('table').last().dataTable().fnAdjustColumnSizing();
+    
   });
   
   var extent_geospatial_elmts = $('.'+resource_type+' .extent_geospatial_ooi');
@@ -498,27 +533,10 @@ function render_page(resource_type, resource_id, model) {
     //.jScrollPane({autoReinitialise: true});
   });
   
-  
-  // Action Menus
-  _.each($('.v01 .group .nav, .v02 .group .nav'), function(el) {
-    // Todo: finish attachments/events menus
-    var group_name = $(el).find('li:first a').text();
-    switch(group_name){
-      case 'Attachments':
-        new IONUX.Views.AttachmentActions({el:$(el)});
-        break;
-      case 'Recent Events':
-        new IONUX.Views.EventActions({el:$(el)});
-        break;
-      default:
-        new IONUX.Views.GroupActions({el:$(el)});
-    };
-  });
-  
   _.each($('.v01 .'+resource_type+'.block, .v02 .'+resource_type+'.block'), function(el) {
     new IONUX.Views.BlockActions({el: el});
   });
-  new IONUX.Views.ViewActions({el: '.'+resource_type+' .heading-right'});
+  new IONUX.Views.ViewActions({el: '#search-production'});
 
   // Show the relevant elements and click to enable the Bootstrap tabs.
   $('li.' + resource_type + ', div.' + resource_type).show();
