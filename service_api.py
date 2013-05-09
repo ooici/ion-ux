@@ -510,8 +510,12 @@ class ServiceApi(object):
 
             prepare = service_gateway_get('instrument_management', 'prepare_platform_device_support', params=params)
         else:
-            # TODO WRONG
-            prepare = ServiceApi.find_by_resource_id(resource_id)
+            # GENERIC VERSION
+            params = {'resource_type':resource_type}
+            if resource_id:
+                params['resource_id'] = resource_id
+
+            prepare = service_gateway_get('resource_registry', 'prepare_resource_support', params=params)
 
         return prepare
 
@@ -1113,7 +1117,7 @@ def build_get_request(base, service_name, operation_name=None, params=None):
 
 def service_gateway_get(service_name, operation_name, params=None, raw_return=None, base=SERVICE_GATEWAY_BASE_URL):
     service_gateway_request = requests.get(build_get_request(base, service_name, operation_name, params))
-    pretty_console_log('SERVICE GATEWAY GET RESPONSE', 'cint')#, service_gateway_request.content)
+    pretty_console_log('SERVICE GATEWAY GET RESPONSE', service_gateway_request.content)
     return render_service_gateway_response(service_gateway_request, raw_return=raw_return)
 
 def render_service_gateway_response(service_gateway_resp, raw_return=None):
