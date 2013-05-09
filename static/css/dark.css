@@ -831,9 +831,13 @@ ACTION MENU STYLING
 }
 
 ul.dropdown-menu {
-  background: #222;
-  border: solid 1px #333;
-  margin: 1px 0 0;
+  background-color:#666666; 
+  padding:5px; 
+  font-family:Signika Negative; 
+  font-size:10px; 
+  font-weight:300; 
+  letter-spacing:1px; 
+  color:#D1D3D4;
 }
 
 ul.dropdown-menu li {
@@ -845,8 +849,8 @@ ul.dropdown-menu li {
 }
 
 ul.dropdown-menu li:hover {
-  color: #ddd;
-  background: #202020;
+  color: #fff;
+  background: #444;
 }
 
 .attribute_group_dynamic_ooi h5 {
