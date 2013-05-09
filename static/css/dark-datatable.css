@@ -165,12 +165,14 @@ table.table tr.odd td {
     width:15px;
     height:15px;
     cursor:pointer;
+    margin-top: 3px;
 }
 .filter_passive {
-    background-position:-240px -60px !important; /* fixme */
+    background-image: url(/static/img/sprite2.png);
+    background-position:-180px -58px !important; /* fixme */
 }
-.filter_passive:hover {
-    background-position:-300px -60px !important; /* fixme */
+.filter_passive:hover, .filter_passive.active {
+    background-position:-300px -58px !important; /* fixme */
 }
 
 .filter-controls {

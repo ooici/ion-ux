@@ -15,12 +15,14 @@ INTERACTIONS_OBJECT = {};
 INTERACTIONS_OBJECT.block_interactions = ['More Info'];
 INTERACTIONS_OBJECT.group_interactions = ['More Info', /*'Submenu', 'Edit'*/];
 INTERACTIONS_OBJECT.view_interactions = ['Subscribe', 'Lifecycle', 'Edit', /*'Submenu',*/ 'Command', 'Download', 'Report Issue'];
+INTERACTIONS_OBJECT.dashboard_interactions = ['Create Resource'];
 INTERACTIONS_OBJECT.event_interactions = ['Add Event'];
 INTERACTIONS_OBJECT.attachment_interactions = ['Upload Attachment'];
 INTERACTIONS_OBJECT.negotiation_interactions = {owner: ['View Requests'], nonmember: ['Enroll']};
 
 
 IONUX.Views.ActionMenu = Backbone.View.extend({
+    modal_template: '<div id="action-modal" class="modal hide fade modal-ooi">',
     events:  {
         "click .dropdown-menu li": "action_control_click"
     },
@@ -42,8 +44,8 @@ IONUX.Views.ActionMenu = Backbone.View.extend({
 
     create_actionmenu: function(){
         var dropdown_button_tmpl =
-            '<div class="btn-group pull-right">'+
-            '<a class="btn dropdown-toggle" data-toggle="dropdown">Actions<span class="caret"></span></a>'+
+            '<div class="action-menu btn-group pull-right">'+
+            '<a class="btn dropdown-toggle" data-toggle="dropdown"><span class="hamburger">&nbsp;</span></a>'+
             '<ul class="dropdown-menu"><% _.each(dropdown_items, function(item) { %> <li><%= item %></li> <% }); %></ul>'+
             '</div>';
         var dropdown_items = INTERACTIONS_OBJECT.block_interactions; 
@@ -59,12 +61,24 @@ IONUX.Views.ActionMenu = Backbone.View.extend({
     }
 });
 
-
-IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
-    modal_template: '<div id="action-modal" class="modal hide fade modal-ooi">',
+IONUX.Views.DashboardActions = IONUX.Views.ActionMenu.extend({
     initialize: function() {
         _.bindAll(this);
-        this.interaction_items = INTERACTIONS_OBJECT.view_interactions.slice(0);    // ensure clone
+        this.interaction_items = INTERACTIONS_OBJECT.dashboard_interactions.slice(0); // ensure clone 
+        this.create_actionmenu();
+        this.on("action__create_resource", this.create_resource);
+    },
+    
+    create_resource: function(){
+      console.log('create_resource');
+    },
+});
+
+IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
+    // modal_template: '<div id="action-modal" class="modal hide fade modal-ooi">',
+    initialize: function() {
+        _.bindAll(this);
+        this.interaction_items = INTERACTIONS_OBJECT.view_interactions.slice(0);  // ensure clone
 
         // append resource-specific items here
         if (window.MODEL_DATA.resource_type == 'Org') {

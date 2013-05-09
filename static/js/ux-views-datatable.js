@@ -300,11 +300,11 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         var filter_items = this.$el.find(".filter-items");
         var filter_controls = this.$el.find(".filter-controls");
         if (target.hasClass("hidden")){ 
-            target.removeClass("hidden");
+            target.removeClass("hidden").addClass('active');
             this.add_filter_item(null);
             filter_items.slideDown("fast", function(){ filter_controls.show();});
         } else {
-            target.addClass("hidden");
+            target.addClass("hidden").removeClass('active');
             filter_controls.hide();
             filter_items.slideUp("fast");
         }

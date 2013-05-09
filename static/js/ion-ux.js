@@ -21,6 +21,7 @@ IONUX = {
         Backbone.history.start({pushState:true, hashChange: false});
         new IONUX.Views.Topbar({model: IONUX.SESSION_MODEL}).render().el
         new IONUX.Views.Search().render().el;
+        new IONUX.Views.DashboardActions({el: '#search-production'});
         new IONUX.Views.HelpMenu({model: IONUX.SESSION_MODEL}).render().el;
         // nag popup!
         if (IONUX.SESSION_MODEL.get('is_logged_in') && !IONUX.SESSION_MODEL.get('is_registered'))
@@ -52,7 +53,6 @@ IONUX = {
       
         console.log('IONUX.Dashboard.Orgs', IONUX.Dashboard.Orgs);
         console.log('IONUX.Dashboard.Observatories', IONUX.Dashboard.Observatories);
-        
       }
     });
     
