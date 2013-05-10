@@ -26,7 +26,7 @@ IONUX.Router = Backbone.Router.extend({
   
   dashboard_map: function(){
     this._remove_dashboard_menu();
-    new IONUX.Views.DashboardActions({el: '#search-production'});
+    new IONUX.Views.DashboardActions();
     
     $('#left .resources-view').hide();
     $('#left .map-view').show();
@@ -46,7 +46,7 @@ IONUX.Router = Backbone.Router.extend({
   
   dashboard_map_resource: function(resource_id) {
     this._remove_dashboard_menu();
-    new IONUX.Views.DashboardActions({el: '#search-production'});
+    new IONUX.Views.DashboardActions();
     $('#left .resources-view').hide();
     $('#left .map-view').show();
     $('#btn-map').addClass('active').siblings('.active').removeClass('active');
@@ -88,7 +88,7 @@ IONUX.Router = Backbone.Router.extend({
   
   dashboard_list: function() {
     this._remove_dashboard_menu();
-    new IONUX.Views.DashboardActions({el: '#search-production'});
+    new IONUX.Views.DashboardActions();
     
     $('#left .map-view').hide();
     $('#left .resources-view').show();
@@ -101,7 +101,7 @@ IONUX.Router = Backbone.Router.extend({
   
   dashboard_list_resource: function(resource_id){
     this._remove_dashboard_menu();
-    new IONUX.Views.DashboardActions({el: '#search-production'});
+    new IONUX.Views.DashboardActions();
     
     $('#left .map-view').hide();
     $('#left .resources-view').show();
@@ -306,6 +306,7 @@ IONUX.Router = Backbone.Router.extend({
   },
   
   _remove_dashboard_menu: function() {
+    console.log('_remove_dashboard_menu');
     $('#search-production .action-menu').remove();
   }
 });
@@ -533,7 +534,7 @@ function render_page(resource_type, resource_id, model) {
   _.each($('.v01 .'+resource_type+'.block, .v02 .'+resource_type+'.block'), function(el) {
     new IONUX.Views.BlockActions({el: el});
   });
-  new IONUX.Views.ViewActions({el: '#search-production'});
+  new IONUX.Views.ViewActions();
 
   // Show the relevant elements and click to enable the Bootstrap tabs.
   $('li.' + resource_type + ', div.' + resource_type).show();

@@ -26,7 +26,12 @@ IONUX.Views.ActionMenu = Backbone.View.extend({
     events:  {
         "click .dropdown-menu li": "action_control_click"
     },
-
+    
+    dropdown_button_tmpl: '<div class="action-menu btn-group pull-right">\
+    <a class="btn dropdown-toggle" data-toggle="dropdown"><span class="hamburger">&nbsp;</span></a>\
+    <ul class="dropdown-menu"><% _.each(dropdown_items, function(item) { %> <li><%= item %></li> <% }); %></ul>\
+    </div>',
+    
     action_controls_onhover: function(evt){
         if (evt.type == 'mouseenter') {
             var btn = $(this.el).find(".btn-group");
@@ -43,14 +48,18 @@ IONUX.Views.ActionMenu = Backbone.View.extend({
     },
 
     create_actionmenu: function(){
-        var dropdown_button_tmpl =
-            '<div class="action-menu btn-group pull-right">'+
-            '<a class="btn dropdown-toggle" data-toggle="dropdown"><span class="hamburger">&nbsp;</span></a>'+
-            '<ul class="dropdown-menu"><% _.each(dropdown_items, function(item) { %> <li><%= item %></li> <% }); %></ul>'+
-            '</div>';
-        var dropdown_items = INTERACTIONS_OBJECT.block_interactions; 
-        var html = _.template(dropdown_button_tmpl, {"dropdown_items":this.interaction_items});
+        var html = _.template(this.dropdown_button_tmpl, {"dropdown_items":this.interaction_items});
         $(this.el).prepend(html);
+    },
+    
+    // Prepends menu at the view level
+    create_view_actionmenu: function() {
+      var html = _.template(this.dropdown_button_tmpl, {"dropdown_items":this.interaction_items});
+      this.$el.prepend(html);
+      $('#search-production').prepend(html);
+      // Better way to bind? Issue is removing element to unbind events
+      // depending on 
+      this.setElement('#search-production .action-menu');
     },
 
     action_control_click: function(evt) {
@@ -65,10 +74,10 @@ IONUX.Views.DashboardActions = IONUX.Views.ActionMenu.extend({
     initialize: function() {
         _.bindAll(this);
         this.interaction_items = INTERACTIONS_OBJECT.dashboard_interactions.slice(0); // ensure clone 
-        this.create_actionmenu();
+        this.create_view_actionmenu();
         this.on("action__create_resource", this.create_resource);
     },
-    
+        
     create_resource: function(){
       new IONUX.Views.CreateResourceView().render();
     },
@@ -143,7 +152,7 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
         if (window.MODEL_DATA.resource_type != 'DataProduct')
           this.interaction_items.splice(this.interaction_items.indexOf('Download'), 1);
 
-        this.create_actionmenu();
+        this.create_view_actionmenu();
         this.on("action__subscribe", this.action__subscribe);
         this.on("action__lifecycle", this.action__lifecycle);
         this.on("action__edit", this.action__edit);
@@ -152,17 +161,7 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
         this.on("action__download", this.action__download);
         this.on("action__report_issue", this.action__report_issue);
     },
-    
-    // action__subscribe:function(){
-    //     $(this.modal_template).modal({keyboard:false})
-    //         .on('shown', function(){
-    //             new IONUX.Views.Subscribe().render().el;
-    //         })
-    //         .on('hide',function(){
-    //             $('#action-modal').remove();
-    //     });
-    // },
-    
+        
     action__subscribe:function(){
         var subscribe_template = '<div id="action-modal" class="modal hide fade modal-ooi">\
                                     <div class="modal-header"><h1>Notifications</h1></div>\
@@ -194,7 +193,6 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
         });
     },
     action__edit: function(){
-      // alert('Resource editing is currently disabled.');
       IONUX.ROUTER.navigate(window.location.pathname + 'edit', {trigger:true});
     },
     action__submenu_toggle:function(){
