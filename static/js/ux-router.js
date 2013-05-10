@@ -195,6 +195,7 @@ IONUX.Router = Backbone.Router.extend({
       });
     new IONUX.Views.Footer({resource_id: null, resource_type: resource_type}).render().el;
   },
+  
   page: function(resource_type, view_type, resource_id){
     $('#dashboard-container').hide();
     // Todo move into own view
@@ -211,32 +212,31 @@ IONUX.Router = Backbone.Router.extend({
         self._remove_dashboard_menu();
         render_page(resource_type, resource_id, model);
       });
-    // new IONUX.Views.Footer({resource_id: resource_id, resource_type: resource_type}).render().el;
   },
+  
   command: function(resource_type, resource_id){
-    this._remove_dashboard_menu();
-    $('#dynamic-container').show();
-    $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS['command']).html());
-    $('.span9 li,.span3 li').hide();
-    
+    $('#dynamic-container').html('<div id="spinner"></div>').show();
+    new Spinner(IONUX.Spinner.large).spin(document.getElementById('spinner'));
 
-    var resource_extension = new IONUX.Models.ResourceExtension({resource_type: resource_type, resource_id: resource_id});
     if (resource_type == 'InstrumentDevice') {
       var resource_extension = new IONUX.Models.ResourceExtension({resource_type: resource_type, resource_id: resource_id});
-      new IONUX.Views.InstrumentCommandFacepage({model: resource_extension, el: '.v02'});
+      var CommandView = IONUX.Views.InstrumentCommandFacepage;
     } else if (resource_type == 'PlatformDevice') {
       var resource_extension = new IONUX.Models.ResourceExtension({resource_type: resource_type, resource_id: resource_id});
-      new IONUX.Views.PlatformCommandFacepage({model: resource_extension, el: '.v02'});
+      var CommandView = IONUX.Views.PlatformCommandFacepage;
+      // new IONUX.Views.PlatformCommandFacepage({model: resource_extension, el: '.v02'});
     } else if (resource_type == 'TaskableResource') {
       var resource_extension = new IONUX.Models.ResourceExtension({resource_type: 'InformationResource', resource_id: resource_id});
-      console.log('found');
-      new IONUX.Views.TaskableResourceCommandFacepage({model: resource_extension, el: '.v02'});
+      var CommandView = IONUX.Views.TaskableResourceCommandFacepage;
     };
+    
     resource_extension.fetch()
-      .success(function(model, resp){
+      .success(function(model, resp) {
+        $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS['command']).html());
+        $('.span9 li,.span3 li').hide();
+        new CommandView({model: resource_extension, el: '.v02'}).render().el;
         render_page(resource_type, resource_id, model);
       });
-    new IONUX.Views.Footer({resource_id: null, resource_type: null}).render().el;
   },
 
   user_profile: function() {
@@ -245,7 +245,6 @@ IONUX.Router = Backbone.Router.extend({
     model.fetch()
       .done(function(data) {
         $("#dynamic-container").show();
-        //$("#dynamic-container").html(data);
         new IONUX.Views.EditUserRegistration({model: model}).render();
       });
   },
@@ -368,6 +367,8 @@ function get_renderable_resource_type(resource_type) {
 
 // Renders a page based on resource_type
 function render_page(resource_type, resource_id, model) {
+  $('#search-production .action-menu').remove();
+  
   var start_render = new Date().getTime();
   window.MODEL_DATA = model.data;
   
@@ -463,11 +464,7 @@ function render_page(resource_type, resource_id, model) {
       var heading = $(el).data('label');
       $(el).find('.filter-header').prepend('<div class="table-heading">'+heading+'</div>');
     };
-    
-    // 
 
-    
-    console.log('table name', $(el).data('label'));
     var label = $(el).data('label');
     switch(label){
       case 'Attachments':

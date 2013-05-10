@@ -27,6 +27,7 @@ IONUX.Views.PlatformCommandFacepage = Backbone.View.extend({
     
     $('#start-instrument-agent-instance').attr('value', 'Start Platform Agent');
     $('#stop-instrument-agent-instance').attr('value', 'Stop Platform Agent');
+    return this;
   },
   
   issue_command: function(evt){

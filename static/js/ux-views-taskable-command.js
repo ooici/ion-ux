@@ -33,6 +33,7 @@ IONUX.Views.TaskableResourceCommandFacepage = Backbone.View.extend({
     $('#dynamic-container .v02').prepend('')
     this.$el.prepend(this.template(this.model.toJSON())).show();
     this.get_capabilities();
+    return this;
   },
   
   execute_command: function(evt){
