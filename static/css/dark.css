@@ -1629,3 +1629,7 @@ ul.nav {
 #advanced-search-overlay .filter-add, #advanced-search-overlay .filter-remove {
   border-radius: 3px;
 }
+
+#create-resource-overlay select {
+  width: 100%;
+}

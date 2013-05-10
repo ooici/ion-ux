@@ -162,6 +162,12 @@ def event_types():
     event_types = ServiceApi.get_event_types()
     return jsonify(data=event_types)
 
+@app.route('/create/', methods=['POST'])
+@login_required
+def create_resource():
+    resp = ServiceApi.create_resource(request.form.get('resource_type', None), request.form.get('org_id', None))
+    return render_json_response(resp)
+
 @app.route('/<resource_type>/status/<resource_id>/subscribe/', methods=['GET'])
 @app.route('/<resource_type>/face/<resource_id>/subscribe/', methods=['GET'])
 @app.route('/<resource_type>/related/<resource_id>/subscribe/', methods=['GET'])
@@ -483,12 +489,14 @@ def edit(resource_type, resource_id):
 @app.route('/resource_type_edit/<resource_type>/<resource_id>/', methods=['GET', 'POST', 'PUT'])
 def resource_type_edit(resource_type, resource_id):
     if request.method == 'GET':
-        resource = ServiceApi.find_by_resource_id(resource_id)
-        resource_json = json.loads(resource.data)['data']
-        return jsonify(data=resource_json)
+        #resource = ServiceApi.find_by_resource_id(resource_id)
+        resource = ServiceApi.get_prepare(resource_type, resource_id, None)
+        return jsonify(data=resource)
     if request.method == 'PUT':
-        resource_obj = json.loads(request.data)
-        updated_resource = ServiceApi.update_resource(resource_type, resource_obj)
+        data = json.loads(request.data)
+        resource_obj = data['resource']
+        resource_assocs = data['assocs']
+        updated_resource = ServiceApi.update_resource(resource_type, resource_obj, resource_assocs)
         return render_json_response(updated_resource)
     if request.method == 'POST':
         #TODO 

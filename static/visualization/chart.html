@@ -393,6 +393,9 @@
     // also handles when the high-res updates are merged with the overview.
     function drawChart(_first_draw_flag, _data) {
 
+        // Occasionally an empty data set slips in
+        if (_data == null || _data.length == 0 ) return;
+
         // Handle tables in a special way
         if (curr_chart_type == 'table') {
             drawTable(dataTable_overview);
@@ -556,6 +559,7 @@
         }
         // If it was not a first draw, it was the high res data
         else {
+
             var view_window_width = chart.xAxis[0].getExtremes().max - chart.xAxis[0].getExtremes().min;
 
             // note the view extremes and reset after the chart has been drawn
@@ -591,7 +595,6 @@
         table = new google.visualization.Table(document.getElementById('chart_div'));
 
         table.draw(_data);
-
     }
 
 
@@ -668,8 +671,8 @@
         }
 
         // Starter the spinner to tell user that real-time data is being updated
-        var spin_target = document.getElementById('chart_div');
-        chart_spinner.spin(spin_target);
+        //var spin_target = document.getElementById('chart_div');
+        //chart_spinner.spin(spin_target);
 
         var rt_gdt = response.getDataTable();
         var rt_hc_data = gdt_to_highcharts_data(rt_gdt);
@@ -704,7 +707,7 @@
         }
 
         // stop spinner
-        chart_spinner.stop();
+        //chart_spinner.stop();
 
     }
 
@@ -857,7 +860,8 @@
         var xAxisPixels = chart.xAxis[0].width
         var viewWinMaxPixels = (chart_visible_end_date - xDataMin) * xAxisPixels / (xDataMax - xDataMin);
 
-        if (xAxisPixels - viewWinMaxPixels <= 2) realtime_sticky_view = true;
+        // If view window position is within a couple of pixels of the right end, raise the sticky window flag
+        if ((xAxisPixels - viewWinMaxPixels) <= 3) realtime_sticky_view = true;
         else
             realtime_sticky_view = false;
 

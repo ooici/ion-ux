@@ -70,7 +70,7 @@ IONUX.Views.DashboardActions = IONUX.Views.ActionMenu.extend({
     },
     
     create_resource: function(){
-      console.log('create_resource');
+      new IONUX.Views.CreateResourceView().render();
     },
 });
 
