@@ -58,7 +58,7 @@ IONUX.Views.ActionMenu = Backbone.View.extend({
       this.$el.prepend(html);
       $('#search-production').prepend(html);
       // Better way to bind? Issue is removing element to unbind events
-      // depending on 
+      // depending on context (dashboard vs. face page, etc.)
       this.setElement('#search-production .action-menu');
     },
 
