@@ -52,7 +52,13 @@ class ServiceApi(object):
             if searchlow.startswith(raw):
                 query = search_query
 
-        # if not a raw query
+        # is this a resource id only?
+        if not query:
+            rrid = re.compile('^[a-z0-9]{32}$')
+            if rrid.match(search_query):
+                query = "SEARCH '_id' MATCH '%s' FROM 'resources_index' LIMIT 100" % search_query
+
+        # if not a raw query or resource id
         if not query:
             # split into ors
             # from http://stackoverflow.com/a/1180180/84732
