@@ -125,7 +125,7 @@ def attachment(attachment_id):
     attachment_name = request.args.get('name') if request.args.get('name') else 'OOI_%s' % attachment_id
     attachment_filename = '%s%s' % (attachment_name, attachment_ext)
 
-    return send_file(attachment, attachment_filename=attachment_name, as_attachment=True)
+    return send_file(attachment, attachment_filename=attachment_filename, as_attachment=True)
 
 @app.route('/attachment/', methods=['POST'])
 def attachment_create():
@@ -151,6 +151,13 @@ def attachment_create():
 def attachment_delete(attachment_id):
     resp = ServiceApi.delete_resource_attachment(attachment_id)
     return render_json_response(resp)
+
+@app.route('/attachment/<attachment_id>/is_owner/<actor_id>/', methods=['GET'])
+def attachment_is_owner(attachment_id, actor_id):
+    if not actor_id:
+        return jsonify({'data':False})
+
+    return ServiceApi.attachment_is_owner(attachment_id, actor_id)
 
 # -----------------------------------------------------------------------------
 # EVENT SUBSCRIPTIONS

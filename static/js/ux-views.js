@@ -1008,6 +1008,7 @@ IONUX.Views.AttachmentZoomView = Backbone.View.extend({
     var row_info_list = this.options.data[0].split("::");
     this.attachment_id = row_info_list[0];
     this.attachment = _.findWhere(window.MODEL_DATA.attachments, {_id:this.attachment_id});
+    this._can_delete();   // kick off ajax request
   },
   render: function() {
     var attachment_info = {
@@ -1020,9 +1021,10 @@ IONUX.Views.AttachmentZoomView = Backbone.View.extend({
     };
 
     this.modal = $(IONUX.Templates.modal_template).html(this.template(attachment_info));
-    if (this.can_delete()) {
+
+    this.can_delete(function() {
       this.modal.find('.modal-body p:last').append("<button id='btn-delete' class='btn-general'>Delete</button>");
-    }
+    });
 
     this.modal.modal('show')
       .on('hide', function() {
@@ -1035,9 +1037,38 @@ IONUX.Views.AttachmentZoomView = Backbone.View.extend({
     var url = "/attachment/"+this.attachment_id+"/?name="+this.attachment.name;
     window.open(url);
   },
-  can_delete: function() {
-    return IONUX.is_logged_in() && IONUX.SESSION_MODEL.get('actor_id') == this.attachment.created_by ||
-           IONUX.is_owner();
+  _can_delete: function() {
+    // kicks off async get request, called from init, ensures this.cdreq exists
+    var url = window.location.protocol + "//" + window.location.host + "/attachment/" + this.attachment_id + "/is_owner/" + IONUX.SESSION_MODEL.get('actor_id') + "/";
+    console.log(url);
+    this.cdreq = $.get(url);
+    return this.cdreq;
+  },
+  can_delete: function(cbfunc) {
+    // DELETE IF: user is owner of resource, user is an org manager, or if they are the owner of the attachment (requires ajax call)
+    // you pass in a callback and if they are allowed to delete, your callback is run (this set to this current view object)
+
+    if (window.MODEL_DATA.hasOwnProperty('orgs')) {
+      if (_.any(_.map(_.pluck(window.MODEL_DATA.orgs, 'org_governance_name'), function(o) {
+        return _.contains(IONUX.SESSION_MODEL.get('roles')[o], 'ORG_MANAGER');
+      }))) {
+        cbfunc.call(this);
+        return;
+      }
+    }
+
+    _.contains(IONUX.SESSION_MODEL.get('roles')[window.MODEL_DATA.resource.org_governance_name], 'ORG_MANAGER')
+    if (IONUX.is_owner()) {
+      cbfunc.call(this);
+      return;
+    }
+
+    var self = this;
+
+    this.cdreq.done(function(res) {
+      if (res.data == true)
+        cbfunc.call(self);
+    }); 
   },
   confirm_delete: function(e) {
     var newel = $("<div class='alert'><button type='button' class='close' data-dismiss='alert'>&times;</button><p>Are you sure you want to delete this attachment?</p><button class='btn-blue' id='btn-confirm-delete'>Delete</button></div>");
@@ -1049,8 +1080,7 @@ IONUX.Views.AttachmentZoomView = Backbone.View.extend({
     var self = this;
 
     // user must be either owner or org manager
-    if (this.can_delete()) {
-
+    this.can_delete(function() {
       $.ajax({
         type: 'DELETE',
         url: window.location.protocol + "//" + window.location.host + "/attachment/" + this.attachment_id + "/",
@@ -1065,7 +1095,7 @@ IONUX.Views.AttachmentZoomView = Backbone.View.extend({
           IONUX.ROUTER.navigate(window.location.pathname, {trigger: true});
         }
       });
-    }
+    });
   },
   goto_facepage: function(e) {
     Backbone.history.fragment = null; // Clear history fragment to allow for page "refresh".

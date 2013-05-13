@@ -291,6 +291,15 @@ class ServiceApi(object):
         return render_service_gateway_response(req)
 
     @staticmethod
+    def attachment_is_owner(attachment_id, actor_id):
+        ret = service_gateway_get('resource_registry', 'find_associations', params={'predicate': 'hasOwner',
+                                                                                    'subject': attachment_id,
+                                                                                    'object': actor_id,
+                                                                                    'id_only': True},
+                                  raw_return=True)
+        return jsonify({'data':len(ret) > 0})
+
+    @staticmethod
     def transition_lcstate(resource_id, transition_event):
         req = service_gateway_get('resource_management', 'execute_lifecycle_transition', params={'resource_id': resource_id, 'transition_event': transition_event})
         return req
