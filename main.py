@@ -295,7 +295,6 @@ def change_lcstate(resource_type, resource_id):
 @app.route('/<resource_type>/status/<resource_id>/publish_event/', methods=['POST'])
 @app.route('/<resource_type>/face/<resource_id>/publish_event/', methods=['POST'])
 @app.route('/<resource_type>/related/<resource_id>/publish_event/', methods=['POST'])
-@login_required
 def publish_event(resource_type, resource_id):
     if resource_type == 'InstrumentDevice':
         event_type = 'DeviceOperatorEvent'
