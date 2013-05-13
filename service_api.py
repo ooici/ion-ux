@@ -986,8 +986,8 @@ class ResourceTypeSchema(object):
                 list_slug = {'type':'List'}
                 item_type = v.get('decorators', {}).get('ContentType', None)
 
-                # HACK HACK HACK - some contenttypes list multiple types, we can't deal with that yet
-                # just use the first
+                # for schemas with multiple possible types, use the first as the default, and set all of them
+                # in a cusstom key "multi"
                 multi = {}
                 if item_type and "," in item_type:
                     all_types = item_type.split(',')
@@ -1007,6 +1007,11 @@ class ResourceTypeSchema(object):
                         dict_schema[kk] = "Text"
 
                     list_slug.update({'itemType': 'Object', 'subSchema': dict_schema})
+
+                sizehint = v.get('decorators', {}).get('EditSizeHint', None)
+                if sizehint:
+                    if sizehint == "Large":
+                        list_slug.update({'itemType': 'TextArea'})
 
                 ret_schema[k] = list_slug
             elif v['type'] in self.fundamental_types:
