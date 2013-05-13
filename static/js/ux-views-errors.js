@@ -7,7 +7,8 @@ IONUX.Views.Error = Backbone.View.extend({
   events: {
     'click #back': 'back',
     'click #dashboard': 'dashboard',
-    'click #relogin': 'relogin'
+    'click #relogin': 'relogin',
+    'click #cancel_relogin': 'cancel_relogin'
   },
   initialize: function(){
     _.bindAll(this);
@@ -39,6 +40,10 @@ IONUX.Views.Error = Backbone.View.extend({
   },
   relogin: function() {
     window.location.href = "/login/" + window.location.pathname.substring(1);  // remove preceding slash
+    return;
+  },
+  cancel_relogin: function() {
+    window.location.reload();
     return;
   }
 });
