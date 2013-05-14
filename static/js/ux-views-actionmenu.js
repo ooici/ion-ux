@@ -14,7 +14,7 @@ todo:
 INTERACTIONS_OBJECT = {};
 INTERACTIONS_OBJECT.block_interactions = ['More Info'];
 INTERACTIONS_OBJECT.group_interactions = ['More Info', /*'Submenu', 'Edit'*/];
-INTERACTIONS_OBJECT.view_interactions = ['Subscribe', 'Lifecycle', 'Edit', /*'Submenu',*/ 'Command', 'Download', 'Report Issue'];
+INTERACTIONS_OBJECT.view_interactions = ['Subscribe', 'Lifecycle', 'Edit', /*'Submenu',*/ 'Command', 'Download', 'Report Issue', 'Refresh Page'];
 INTERACTIONS_OBJECT.dashboard_interactions = ['Create Resource'];
 INTERACTIONS_OBJECT.event_interactions = ['Add Event'];
 INTERACTIONS_OBJECT.attachment_interactions = ['Upload Attachment'];
@@ -160,6 +160,7 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
         this.on("action__command", this.action__command);
         this.on("action__download", this.action__download);
         this.on("action__report_issue", this.action__report_issue);
+        this.on("action__refresh_page", this.action__refresh_page);
     },
         
     action__subscribe:function(){
@@ -247,6 +248,13 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
       win = window.open(mailto_link,'email_issue');
       if (win && win.open &&!win.closed) win.close();
     },
+    
+    action__refresh_page: function(e){
+      var href = Backbone.history.getFragment($(this).attr('href'));
+      Backbone.history.fragment = null;
+      Backbone.history.navigate(href, true);
+    },
+    
     action_org__invite_user: function(e) {
       var model = new IONUX.Collections.Resources(null, {resource_type: 'UserInfo'});
       model.fetch()
