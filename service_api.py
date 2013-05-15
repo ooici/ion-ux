@@ -1083,7 +1083,20 @@ class ResourceTypeSchema(object):
                     item_type = all_types[0]
 
                 if item_type and not item_type in self.fundamental_types:
-                    list_slug.update({'itemType': 'IonObject', 'subSchema': self.get_backbone_schema(item_type)}) # RECURSE
+                    sub_schema = self.get_backbone_schema(item_type) # RECURSE
+
+                    # if there's no length to this schema, it might be an abstract base type, so get
+                    # all possibilities
+                    if not len(sub_schema):
+                        # get all derived types
+                        url = build_get_request(SERVICE_GATEWAY_BASE_URL, 'list_resource_types', None, params={'type':item_type})
+                        resp = requests.get(url)
+                        derived_types = json.loads(resp.content)['GatewayResponse']
+
+                        for t in derived_types:
+                            multi[t] = self.get_backbone_schema(t)
+
+                    list_slug.update({'itemType': 'IonObject', 'subSchema': sub_schema})
                     if multi:
                         list_slug.update({'multi':multi})
 
@@ -1104,9 +1117,25 @@ class ResourceTypeSchema(object):
                 if 'enum_type' in v:
                     ret_schema[k] = {"type": "IntSelect", "options": self.get_enum_options(v['enum_type'])}
                 else:
-                    ret_schema[k] = self._resource_type_to_form_schema(v['type'])
+                    ret_schema[k] = self._resource_type_to_form_schema(v['type'], v)
             else:
-                ret_schema[k] = {'type':'IonObject', 'subSchema': self.get_backbone_schema(v['type'])} # RECURSE
+                sub_schema = self.get_backbone_schema(v['type']) # RECURSE
+                # if there's no length to this schema, it might be an abstract base type, so get
+                multi = {}
+                # all possibilities
+                if not len(sub_schema) or len(sub_schema) == 1 and 'type_' in sub_schema:
+                    # get all derived types
+                    url = build_get_request(SERVICE_GATEWAY_BASE_URL, 'list_resource_types', None, params={'type':v['type']})
+                    resp = requests.get(url)
+                    derived_types = json.loads(resp.content)['data']['GatewayResponse']
+                    derived_types.remove(v['type'])
+
+                    for t in derived_types:
+                        multi[t] = self.get_backbone_schema(t)
+
+                ret_schema[k] = {'type':'IonObject', 'subSchema': sub_schema}
+                if multi:
+                    ret_schema[k]['multi'] = multi
 
         return ret_schema
 
@@ -1139,22 +1168,30 @@ class ResourceTypeSchema(object):
 
         return resp['schemas'][resource_type]
 
-    def _resource_type_to_form_schema(self, resource_str_type):
+    def _resource_type_to_form_schema(self, resource_str_type, extra=None):
         """
         Mapping between given string type and HTML form type.
         """
+        retval = None
         if resource_str_type in ["list", "tuple"]:
-            return {"type": "List"}
+            retval = {"type": "List"}
         elif resource_str_type == "bool":
-            return {"type": "Checkbox"}#, "options": [True, False]}
+            retval = {"type": "Checkbox"}#, "options": [True, False]}
         elif resource_str_type in ["int", "float"]:
-            return "Number"
+            retval = {"type": "Number"}
         elif resource_str_type == "str":
-            return "Text"
+            retval = {"type": "Text"}
         elif resource_str_type == "dict":
-            return "TextArea"
+            retval = {"type": "TextArea"}
         else:
-            return "Text"
+            retval = {"type": "Text"}
+
+        if extra and isinstance(extra, dict):
+            sizehint = extra.get('decorators', {}).get('EditSizeHint', None)
+            if sizehint and sizehint == "Large":
+                retval.update({'type': 'TextArea'})
+
+        return retval
 
 class DotDict(dict):
     marker = object()

@@ -407,21 +407,6 @@ Backbone.Form.editors.List.Phone = Backbone.Form.editors.Base.extend({
   },
 });
 
-Backbone.Form.editors.IonObject = Backbone.Form.editors.Object.extend({
-  initialize: function(options) {
-    Backbone.Form.editors.Object.prototype.initialize.call(this, options);
-    if (!(this.schema.subSchema.hasOwnProperty('type_') && this.schema.subSchema.type_['default'])) {
-      throw new Error("Missing required 'schema.subSchema.type_.default' property");
-    }
-
-    // provide default if new object
-    if (_.isEmpty(this.value)) {
-      if (!this.value) this.value = {};
-      this.value.type_ = this.schema.subSchema.type_['default'];
-    }
-  }
-});
-
 Backbone.Form.editors.List.IonObject = Backbone.Form.editors.List.Object.extend({
   initialize: function(options) {
     Backbone.Form.editors.List.Object.prototype.initialize.call(this, options);
@@ -494,6 +479,21 @@ Backbone.Form.editors.List.IonObject = Backbone.Form.editors.List.Object.extend(
      */
     Backbone.Form.editors.List.Object.prototype.onModalSubmitted.call(this, modal.options.content, modal);
   },
+});
+
+Backbone.Form.editors.IonObject = Backbone.Form.editors.List.IonObject.extend({
+  initialize: function(options) {
+    Backbone.Form.editors.List.IonObject.prototype.initialize.call(this, options);
+    if (!(this.schema.subSchema.hasOwnProperty('type_') && this.schema.subSchema.type_['default'])) {
+      throw new Error("Missing required 'schema.subSchema.type_.default' property");
+    }
+
+    // provide default if new object
+    if (_.isEmpty(this.value)) {
+      if (!this.value) this.value = {};
+      this.value.type_ = this.schema.subSchema.type_['default'];
+    }
+  }
 });
 
 
