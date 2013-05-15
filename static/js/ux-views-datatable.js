@@ -279,7 +279,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
             '<select class="column"><% _.each(columns, function(e){%> <option value="<%= e.replace(/ /g, "_") %>"><%= e %></option><%});%></select>',
             '<select class="operator"><% _.each(operators, function(e){%> <option value="<%= e.replace(/ /g, "_") %>"><%= e %></option><%});%></select>',
             '<input class="argument" type="text" value="">',
-            '<span class="filter-add">+</span><span class="filter-remove">-</span>',
+            '<span class="filter-add"></span><span class="filter-remove"></span>',
           '</div>'].join('');
         var columns = this.get_filter_columns();
         var data = {"columns":columns, "operators":OPERATORS};
@@ -303,6 +303,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
             target.removeClass("hidden").addClass('active');
             this.add_filter_item(null);
             filter_items.slideDown("fast", function(){ filter_controls.show();});
+            this.$el.find('.filter-remove').first().hide(); // Hide the first minus (-) button per spec from designers.
         } else {
             target.addClass("hidden").removeClass('active');
             filter_controls.hide();

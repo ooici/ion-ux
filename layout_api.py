@@ -189,8 +189,8 @@ class LayoutApi(object):
                             block_h3_elmt = _make_element(block_elmt, 'h3', content=block_label)
                     if group_position == 'V00':
                         block_container_elmt = block_elmt
-                        left_elmt = _make_element(block_container_elmt, 'div', css='span4 heading-left')
-                        right_elmt = _make_element(block_container_elmt, 'div', css='span8 heading-right')
+                        left_elmt = _make_element(block_container_elmt, 'div', css='span6 heading-left')
+                        right_elmt = _make_element(block_container_elmt, 'div', css='span6 heading-right')
                     else:
                         block_container_elmt = _make_element(block_elmt, 'div')
                     

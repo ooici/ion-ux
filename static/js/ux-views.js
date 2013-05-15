@@ -1,9 +1,9 @@
 IONUX.Views.AttributeGroupDynamic = Backbone.View.extend({
   template: _.template('<div class="row-fluid">\
-                          <div class="span5 text-short-label">\
+                          <div class="span4 text-short-label">\
                             <%= label %>:&nbsp;\
                           </div>\
-                          <div class="span7 text_wrap">\
+                          <div class="span8 text_wrap">\
                             <%= text_short %>\
                           </div>\
                         </div>'),
@@ -752,10 +752,10 @@ IONUX.Views.TextShort = Backbone.View.extend({
     template: _.template('<span><%= label %>:</span>&nbsp;<%= text_short %>'),
     template_no_label: _.template('<%= text_short %>'),
     template_attr_group: _.template('<div class="row-fluid">\
-                                      <div class="span5 text-short-label">\
+                                      <div class="span4 text-short-label">\
                                         <%= label %>:&nbsp;\
                                       </div>\
-                                      <div class="span7 text-short-value">\
+                                      <div class="span8 text-short-value">\
                                         <% if (link) { %>\
                                           <a href="<%= link %>"><%= text_short %></a>\
                                         <% } else { %>\
@@ -764,7 +764,7 @@ IONUX.Views.TextShort = Backbone.View.extend({
                                       </div>\
                                     </div>'),
     
-    template_link: _.template('<div class="row-fluid"><div class="span5 text-short-label"><%= label %>:&nbsp;</div><div class="span7 text-short-value"><%= text_short %></div></div>'),
+    template_link: _.template('<div class="row-fluid"><div class="span4 text-short-label"><%= label %>:&nbsp;</div><div class="span8 text-short-value"><%= text_short %></div></div>'),
     initialize: function(){
       _.bindAll(this);
       this.data_path = this.$el.data('path');
