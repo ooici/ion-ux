@@ -250,29 +250,57 @@ class ServiceApi(object):
 
                 return req
 
+            def get_assocd_id(assoc):
+                """
+                Returns the associated id of the given association to this current resource,
+                either subject or object side.
+
+                @TODO this feels clunky
+                """
+                cur = assoc['s']
+                if cur == resource_obj['_id']:
+                    cur = assoc['o']
+                return cur
+
             for k,v in resource_assocs.iteritems():
                 print k, v
                 curval = assocs[k]['associated_resources']
 
                 if assocs[k]['multiple_associations']:
-                    pass
+                    # get a list of current assocs
+                    cur_assocs = set(map(get_assocd_id, curval))
+
+                    # now a list of new assocs
+                    assert v is None or isinstance(v, list)
+                    if v is None:
+                        v = []
+                    new_assocs = set(v)
+
+                    # get list of removals: things in current not in new
+                    to_remove = cur_assocs.difference(new_assocs)
+
+                    # get list of additions: things in new not in current
+                    to_add = new_assocs.difference(cur_assocs)
+
+                    for aid in to_remove:
+                        reqs.append(mod_assoc(assocs[k]['unassign_request'], aid))
+
+                    for aid in to_add:
+                        reqs.append(mod_assoc(assocs[k]['assign_request'], aid))
+
                 else:
                     # single
                     if len(curval) == 1:
-                        # @TODO this is very clunky
-                        firstval = curval[0]
-                        curval = firstval['s']
-                        if curval == resource_obj['_id']:
-                            curval = firstval['o']
+                        curid = get_assocd_id(curval[0])
 
-                        if curval != v:
+                        if curid != v:
                             # unassoc
-                            reqs.append(mod_assoc(assocs[k]['unassign_request'], curval))
+                            reqs.append(mod_assoc(assocs[k]['unassign_request'], curid))
 
                             # assoc
                             reqs.append(mod_assoc(assocs[k]['assign_request'], v))
                     else:
-                        assert len(curval) == 0
+                        assert len(curval) == 0, "curval is %s" % curval
 
                         if v:
                             # assoc

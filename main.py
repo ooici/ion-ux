@@ -522,53 +522,17 @@ def edit(resource_type, resource_id):
     parent_url = re.sub(r'edit$', '', request.url)
     return redirect(parent_url)
 
-@app.route('/resource_type_edit/<resource_type>/<resource_id>/', methods=['GET', 'POST', 'PUT'])
+@app.route('/resource_type_edit/<resource_type>/<resource_id>/', methods=['GET', 'PUT'])
 def resource_type_edit(resource_type, resource_id):
     if request.method == 'GET':
-        #resource = ServiceApi.find_by_resource_id(resource_id)
         resource = ServiceApi.get_prepare(resource_type, resource_id, None)
-        return jsonify(data=resource)
+        return render_json_response(resource)
     if request.method == 'PUT':
         data = json.loads(request.data)
         resource_obj = data['resource']
         resource_assocs = data['assocs']
         updated_resource = ServiceApi.update_resource(resource_type, resource_obj, resource_assocs)
         return render_json_response(updated_resource)
-    if request.method == 'POST':
-        #TODO 
-        update_payload = "..."
-        update_url = 'http://%s:%d/ion-service/resource_registry/update' % (GATEWAY_HOST, GATEWAY_PORT)
-        update_response = requests.post(update_url, data={"payload":update_payload})
-        return ""
-
-# Original by Alex
-# @app.route('/resource_type_edit/<resource_type>/', methods=['GET', 'POST'])
-# def resource_type_edit(resource_type):
-#     if request.method == 'GET':
-#         create_payload = '{"serviceRequest": { "serviceName": "resource_registry", "serviceOp": "create", "params": {"object": { "type_": "%s"} }, "expiry": "0" } }' % (resource_type)
-#         create_url = 'http://%s:%d/ion-service/resource_registry/create' % (GATEWAY_HOST, GATEWAY_PORT)
-#         create_response = requests.post(create_url, data={"payload":create_payload})
-#         print "RESPONSE: ", create_response.text
-#         object_id = json.loads(create_response.text)["data"]["GatewayResponse"][0]
-#         #http://sg.a.oceanobservatories.org:5000/ion-service/resource_registry/read?object_id=d52dad3e134d44bea8d3294a7cdd0392
-#         read_url = 'http://%s:%d/ion-service/resource_registry/read?object_id=%s' % (GATEWAY_HOST, GATEWAY_PORT, object_id)
-#         read_response = requests.get(read_url)
-#         resp_json = json.loads(read_response.text)
-#         return jsonify(data=resp_json["data"])
-#     if request.method == 'POST':
-#         #TODO 
-#         update_payload = "..."
-#         update_url = 'http://%s:%d/ion-service/resource_registry/update' % (GATEWAY_HOST, GATEWAY_PORT)
-#         update_response = requests.post(update_url, data={"payload":update_payload})
-#         return ""
-
-@app.route('/resource_type_edit/<resource_type>/<object_id>', methods=['GET', 'POST'])
-def resource_type_edit_existing(resource_type, object_id):
-    if request.method == 'GET':
-        read_url = 'http://%s:%d/ion-service/resource_registry/read?object_id=%s' % (GATEWAY_HOST, GATEWAY_PORT, object_id)
-        read_response = requests.get(read_url)
-        resp_json = json.loads(read_response.text)
-        return jsonify(data=resp_json["data"])
 
 @app.route('/<resource_type>/<resource_id>/', methods=['GET'])
 @app.route('/resource/read/<resource_id>/', methods=['GET'])
