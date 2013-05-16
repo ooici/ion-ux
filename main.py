@@ -43,14 +43,34 @@ def render_app_template(current_url):
     return render_template(tmpl)
 
 def render_json_response(service_api_response):
-    if isinstance(service_api_response, dict) and service_api_response.has_key('GatewayError'):
+    def decorate_error_response(response):
         if PRODUCTION:
-            del service_api_response['GatewayError']['Trace']
+            del response['GatewayError']['Trace']
 
         # if we've expired, that means we need to relogin
-        if service_api_response['GatewayError']['Exception'] == "Unauthorized" and "expired" in service_api_response['GatewayError']['Message']:
+        if response['GatewayError']['Exception'] == "Unauthorized" and "expired" in response['GatewayError']['Message']:
             clean_session()
-            service_api_response['GatewayError']['NeedLogin'] = True
+            response['GatewayError']['NeedLogin'] = True
+
+        return response
+
+    def is_error_response(response):
+        return isinstance(response, dict) and response.has_key('GatewayError')
+
+    if isinstance(service_api_response, list):
+        for r in service_api_response:
+            if is_error_response(r):
+                decorate_error_response(r)
+
+        if any(map(is_error_response, service_api_response)):
+            error_response = make_response(json.dumps({'data': service_api_response}), 400)
+            error_response.headers['Content-Type'] = 'application/json'
+
+            return error_response
+
+    if is_error_response(service_api_response):
+
+        decorate_error_response(service_api_response)
 
         error_response = make_response(json.dumps({'data': service_api_response}), 400)
         error_response.headers['Content-Type'] = 'application/json'
@@ -451,7 +471,7 @@ def start_platform_agent(platform_device_id, agent_command, cap_type=None, agent
 # -----------------------------------------------------------------------------
 
 @app.route('/map.kml', methods=['GET'])
-def map():
+def google_map():
     kml = ServiceApi.fetch_map(ui_server=request.args.get('ui_server'), unique_key=request.args.get('unique_key'))
     return kml
 

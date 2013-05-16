@@ -69,19 +69,23 @@ IONUX = {
     $(document).ajaxError(function(evt, resp){
       try {
         var json_obj = JSON.parse(resp['responseText'])
-        var error_obj = json_obj.data.GatewayError;
-        //console.error(error_obj);
+        var error_obj = null;
+        if (_.isArray(json_obj.data)) {
+          error_obj = _.pluck(_.compact(json_obj.data), 'GatewayError');
+        } else {
+          error_obj = [json_obj.data.GatewayError];
+        } 
       } catch(err) {
         // not all errors are JSON or GatewayErrors.. still support them
-        error_obj = {Message:resp['responseText']}
+        error_obj = [{Message:resp['responseText']}]
       }
 
       var open_modal = $('.modal-ooi').is(':visible') ? true : false;
       if (open_modal) $('#action-modal').modal('hide').remove();
 
-      var force_logout = error_obj.hasOwnProperty('NeedLogin') && error_obj.NeedLogin == true;
+      var force_logout = _.any(_.compact(_.pluck(error_obj, 'NeedLogin')));
 
-      new IONUX.Views.Error({error_obj:error_obj,open_modal:open_modal, force_logout:force_logout}).render().el;
+      new IONUX.Views.Error({error_objs:error_obj,open_modal:open_modal, force_logout:force_logout}).render().el;
     });
   },
   is_logged_in: function(){
