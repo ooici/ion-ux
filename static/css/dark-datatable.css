@@ -1,3 +1,10 @@
+
+/* Override Bootstrap's default margin-bottom to eliminated
+   unwanted margin/scrolling in DataTables. */
+.table_ooi .table {
+  margin-bottom: 0;
+}
+
 .dataTable td {
   	max-width: 250px;
   	white-space: nowrap;
@@ -119,7 +126,7 @@ table.table tr.odd td {
     border:1px solid #333;
 }
 .dataTables_wrapper {
-    background-color:#5D5D5D;
+  /* background-color:#5D5D5D;*/
 }
 .dataTables_wrapper label {
     color:#ccc;
