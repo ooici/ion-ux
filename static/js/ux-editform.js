@@ -97,6 +97,14 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
       return [k, v];
     }));
 
+    var self = this;
+    var omit_keys = _.filter(keys, function(k) {
+      var v = self.prepare.associations[k];
+      return _.isEmpty(v.unassign_request) && v.associated_resources.length > 0;
+    });
+
+    assocs = _.omit(assocs, omit_keys);
+
     retval = {'resource':resource,
               'assocs':assocs}
     //
@@ -146,6 +154,12 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
           // add a blank item to the front of options so it can be "unassociated"
           // @TODO correct?
           item_schema.options = [{val:null, label:'-'}].concat(item_schema.options);
+        }
+
+        // don't allow editing of items with no unassign and a value already
+        if (_.isEmpty(v.unassign_request) && v.associated_resources.length > 0) {
+          item_schema.editorAttrs = {'disabled':'disabled'}
+          item_schema.help = "This association is already set and may not be edited.";
         }
         sorted_schema[k] = item_schema;
       });

@@ -241,7 +241,11 @@ class ServiceApi(object):
                     raise StandardError("no request available")
 
                 params = assoc_mod['request_parameters'].copy()
-                params.update({assoc_mod['resource_identifier']: val})
+                rid_param = assoc_mod['resource_identifier']
+                for k,v in params.iteritems():
+                    if "$(%s)" % rid_param == v:
+                        params[k] = val
+                        break
 
                 #print params
                 req = service_gateway_post(assoc_mod['service_name'],
@@ -263,8 +267,8 @@ class ServiceApi(object):
                 return cur
 
             for k,v in resource_assocs.iteritems():
-                print k, v
                 curval = assocs[k]['associated_resources']
+                #print k, v, curval
 
                 if assocs[k]['multiple_associations']:
                     # get a list of current assocs
@@ -297,8 +301,9 @@ class ServiceApi(object):
                             # unassoc
                             reqs.append(mod_assoc(assocs[k]['unassign_request'], curid))
 
-                            # assoc
-                            reqs.append(mod_assoc(assocs[k]['assign_request'], v))
+                            # assoc, only if value occurs though
+                            if v:
+                                reqs.append(mod_assoc(assocs[k]['assign_request'], v))
                     else:
                         assert len(curval) == 0, "curval is %s" % curval
 
@@ -574,6 +579,18 @@ class ServiceApi(object):
                 params['platform_device_id'] = resource_id
 
             prepare = service_gateway_get('instrument_management', 'prepare_platform_device_support', params=params)
+        elif resource_type == "InstrumentAgentInstance":
+            params = {}
+            if resource_id:
+                params['instrument_agent_instance_id'] = resource_id
+
+            prepare = service_gateway_get('instrument_management', 'prepare_instrument_agent_instance_support', params=params)
+        elif resource_type == "DataProduct":
+            params = {}
+            if resource_id:
+                params['data_product_id'] = resource_id
+
+            prepare = service_gateway_get('data_product_management', 'prepare_data_product_support', params=params)
         else:
             # GENERIC VERSION
             params = {'resource_type':resource_type}
