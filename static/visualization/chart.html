@@ -76,6 +76,7 @@
     var dp_parameters = []; // ['temp', 'pressure', 'conductivity'];
     var curr_parameter_visibility = {};
     var precisions = {};
+    var display_names = {};
 
     var container_server =  "http://" + window.location.host;
 
@@ -126,12 +127,11 @@
 
         dp_id = parent.window.location.pathname.split('/')[3]
 
-        /*
         // prompt user for dp id if none was passed in the url
         if (dp_id == null || dp_id.length <32) {
             dp_id=prompt("Please enter Data Product Id","");
             if (dp_id == null) return;
-        }*/
+        }
 
 
         console.log('dp_id: ', dp_id);
@@ -204,6 +204,8 @@
             return;
         }
 
+        display_names = dp_metadata['parameter_display_names'];
+
         // calculate and init a few things
         avg_data_rate = dp_metadata['time_steps'] / (dp_metadata['time_bounds'][1] - dp_metadata['time_bounds'][0]);
 
@@ -219,16 +221,6 @@
     function fetchData(dqp) {
 
         var query;
-
-        /*
-        //query = new google.visualization.Query(container_server + "/ion-service/visualization_service/get_visualization_data?data_product_id=" + dp_id + "&visualization_parameters=" + JSON.stringify(viz_params) + "&tqx=reqId:" + _reqId + "&return_mimetype=application/json");
-        query = new google.visualization.Query(container_server + "/visualization/get_visualization_data/?data_product_id=" + dp_id +
-                "&visualization_parameters=" + encodeURIComponent(JSON.stringify(dqp)));
-        console.debug("Fetching data : ", query);
-
-        // Send the query with a callback function.
-        query.send(handleDataQueryResponse);
-        */
 
         jQuery.ajax ({
             url: container_server + "/visualization/get_visualization_data/?data_product_id=" + dp_id +
@@ -251,13 +243,6 @@
 
         // Stop the spinner
         chart_spinner.stop();
-
-        /*
-        if (response.isError()) {
-            console.debug('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
-            return;
-        }
-        */
 
         // Check if null was returned
         if (response["data"]) {
@@ -285,7 +270,7 @@
                 precision = parseInt(_dt.getColumnProperty(i,'precision'));
                 //console.debug("Precision of " + _dt.getColumnLabel(i) + " is " + precision);
                 if (typeof(precision) == 'number') {
-                    precisions[_dt.getColumnLabel(i)] = precision;
+                    precisions[getNormalizedName(_dt.getColumnLabel(i))] = precision;
                 }
             }
 
@@ -343,7 +328,7 @@
                 _data[j] = [_dt.getValue(j,0).getTime(), _dt.getValue(j,i)];
             }
 
-            _series["name"] = _dt.getColumnLabel(i);
+            _series["name"] = getNormalizedName(_dt.getColumnLabel(i));
 
             // Check for precision information
             if (_series["name"] in precisions) {
@@ -410,6 +395,15 @@
         return _hc_data;
     }
 
+    function getNormalizedName(name) {
+
+        if ((name in display_names) && (display_names[name] != "")) {
+            return display_names[name];
+        }
+        else {
+            return name;
+        }
+    }
 
     // This function is supposed to take care of a few cases. It draws the chart for the first time (overview) and then
     // also handles when the high-res updates are merged with the overview.
