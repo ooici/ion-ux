@@ -126,11 +126,13 @@
 
         dp_id = parent.window.location.pathname.split('/')[3]
 
+        /*
         // prompt user for dp id if none was passed in the url
         if (dp_id == null || dp_id.length <32) {
             dp_id=prompt("Please enter Data Product Id","");
             if (dp_id == null) return;
-        }
+        }*/
+
 
         console.log('dp_id: ', dp_id);
 
@@ -168,33 +170,33 @@
         data_series_overview = [];
 
         /// Get meta data for the data product id. It will be used to retrieve the correct data
+        var dqp = setDataQueryParams("metadata", null, null, null, null);
+
         jQuery.ajax ({
-            url: container_server + "/visualization/get_data_product_metadata/?data_product_id=" + dp_id + "&callback=dp_metadata_cb&return_mimetype=application/json",
-            dataType: 'jsonp',
-            jsonpCallback: 'dp_metadata_cb',
+            url: container_server + "/visualization/get_visualization_data/?data_product_id=" + dp_id +
+                    "&visualization_parameters=" + encodeURIComponent(JSON.stringify(dqp)),
+            dataType: 'json',
+            success: dp_metadata_cb,
             error: function(jqXHR, status, err_type) {
                 console.debug("Error retrieving metadata for the data_product : " + jqXHR.responseText);
             }
         });
 
-        /*       jQuery.ajax ({
-         type: 'POST',
-         url: container_server + "/visualization/get_data_product_metadata/?return_mimetype=application/json",
-         data: {data_product_id: dp_id, callback: "dp_metadata_cb"},
-         dataType: 'json',
-         success: 'dp_metadata_cb'
-         });
-         */
-
     }
 
-    function dp_metadata_cb(response) {
+    function dp_metadata_cb(response, textStatus, jqXHR) {
 
         if (response == null) {
             document.getElementById('chart_div').innerHTML = "No Data Available.";
             return;
         }
-        dp_metadata = response;
+        if(response["data"]) {
+            dp_metadata = jQuery.parseJSON(response["data"]);
+        }
+        else {
+            console.debug("Error: Did not receive metadata for the dataproduct");
+            return;
+        }
 
         // Check to see if valid metadata was returned
         if (dp_metadata['time_steps'] < 1 || dp_metadata['time_bounds'][0] == -9999.0 || dp_metadata['time_bounds'][1] == -9999.0) {
@@ -209,21 +211,34 @@
         var num_of_actual_data_points = (dp_metadata['time_bounds'][1] - dp_metadata['time_bounds'][0]) * avg_data_rate;
         dataTable_overview_stride_factor = Math.ceil(num_of_actual_data_points / chart_x_res);
 
-        var vp = setVizParams(dp_parameters, dp_metadata['time_bounds'][0], dp_metadata['time_bounds'][1], dataTable_overview_stride_factor);
-        fetchData(vp);
+        var dqp = setDataQueryParams("google_dt", dp_parameters, dp_metadata['time_bounds'][0], dp_metadata['time_bounds'][1], dataTable_overview_stride_factor);
+        fetchData(dqp);
     }
 
 
-    function fetchData(vp) {
+    function fetchData(dqp) {
 
         var query;
 
+        /*
         //query = new google.visualization.Query(container_server + "/ion-service/visualization_service/get_visualization_data?data_product_id=" + dp_id + "&visualization_parameters=" + JSON.stringify(viz_params) + "&tqx=reqId:" + _reqId + "&return_mimetype=application/json");
-        query = new google.visualization.Query(container_server + "/visualization/get_visualization_data/?data_product_id=" + dp_id + "&visualization_parameters=" + JSON.stringify(vp) + "&return_mimetype=application/json");
+        query = new google.visualization.Query(container_server + "/visualization/get_visualization_data/?data_product_id=" + dp_id +
+                "&visualization_parameters=" + encodeURIComponent(JSON.stringify(dqp)));
         console.debug("Fetching data : ", query);
 
         // Send the query with a callback function.
         query.send(handleDataQueryResponse);
+        */
+
+        jQuery.ajax ({
+            url: container_server + "/visualization/get_visualization_data/?data_product_id=" + dp_id +
+                    "&visualization_parameters=" + encodeURIComponent(JSON.stringify(dqp)),
+            dataType: 'json',
+            success: handleDataQueryResponse,
+            error: function(jqXHR, status, err_type) {
+                console.debug("Error retrieving data for the data_product : " + jqXHR.responseText);
+            }
+        });
 
         // Starter the spinner to tell user that more data is coming
         var spin_target = document.getElementById('chart_div');
@@ -237,13 +252,21 @@
         // Stop the spinner
         chart_spinner.stop();
 
+        /*
         if (response.isError()) {
-            alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
+            console.debug('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
             return;
         }
+        */
 
-        // Translate response in to the format, highstocks understands
-        var _dt = response.getDataTable();
+        // Check if null was returned
+        if (response["data"]) {
+            var _dt = new google.visualization.DataTable(response["data"].replace(/\bNaN\b/g, "null"));
+        }
+        else {
+            console.debug('No valid data available.');
+            return;
+        }
 
         // If an empty data table was returned, exit gracefully
         if (_dt.getNumberOfRows() == 0) {
@@ -260,7 +283,7 @@
             // Extract and store precision info from the datatable
             for (var i=1; i < _dt.getNumberOfColumns(); i++) {
                 precision = parseInt(_dt.getColumnProperty(i,'precision'));
-                console.debug("Precision of " + _dt.getColumnLabel(i) + " is " + precision);
+                //console.debug("Precision of " + _dt.getColumnLabel(i) + " is " + precision);
                 if (typeof(precision) == 'number') {
                     precisions[_dt.getColumnLabel(i)] = precision;
                 }
@@ -293,7 +316,6 @@
             data_series_hires = gdt_to_highcharts_data(_dt);
             drawChart(false, mergeAndSortHcData(data_series_overview, data_series_hires, data_series_rt));
         }
-
 
     }
 
@@ -632,31 +654,46 @@
 
         // Init the realtime queues and pipeline on the container
         jQuery.ajax ({
-            url: container_server + "/visualization/initiate_realtime_visualization/?data_product_id=" + dp_id + "&return_mimetype=application/json",
-            dataType: 'jsonp',
-            jsonpCallback: 'initRealtimeViewCb'  // Has to correspond with the server side response
+            url: container_server + "/visualization/initiate_realtime_visualization_data/?data_product_id=" + dp_id,
+            dataType: 'json',
+            success: initRealtimeViewCb,  // Has to correspond with the server side response
+            error: function(jqXHR, status, err_type) {
+                console.debug("Error retrieving token for realtime queue: " + jqXHR.responseText);
+            }
         });
 
     }
 
-    function initRealtimeViewCb(qt) {
+    function initRealtimeViewCb(resp, textStatus, jqXHR ) {
 
-        if (!qt) {
+        if (!resp) {
             console.debug("Not a valid query token. Will not show real-time data.");
             return;
         }
 
-        rt_query_token = qt;
-        console.debug ("Query Token : " + qt);
+        rt_query_token = jQuery.parseJSON(resp['data'])['rt_query_token'];
+        console.debug ("Query Token : " + rt_query_token);
 
-        // {sendMethod:'scriptInjection'} specifies cross domain query .. oddly its needed to get realtime queries
-        // to work within the UX
-        rt_query = new google.visualization.Query(container_server + "/visualization/get_realtime_visualization_data/?query_token=" + rt_query_token +"&return_mimetype=application/json",
+        /*
+        rt_query = new google.visualization.Query(container_server + "/visualization/get_realtime_visualization_data/?query_token=" + rt_query_token,
                 {sendMethod:'scriptInjection'});
 
         // Set up query to refresh every x seconds with a callback function.
         rt_query.setRefreshInterval(5);
         rt_query.send(handleRealtimeQueryResponse);
+        */
+
+        // Make a query for realtime update and set it to repeat every X millisecs
+        rt_query = setInterval(function(){
+            jQuery.ajax ({
+                url: container_server + "/visualization/get_realtime_visualization_data/?query_token=" + rt_query_token,
+                dataType: 'json',
+                success: handleRealtimeQueryResponse,  // Has to correspond with the server side response
+                error: function(jqXHR, status, err_type) {
+                    console.debug("Error retrieving data for realtime updates: " + jqXHR.responseText);
+                }
+            });
+        }, 5000);
 
     }
 
@@ -665,16 +702,24 @@
         // If there was no data, do nothing
         if (!response) return;
 
+        /*
         if (response.isError()) {
-            alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
+            console.debug('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
             return;
         }
+        */
 
         // Starter the spinner to tell user that real-time data is being updated
         //var spin_target = document.getElementById('chart_div');
         //chart_spinner.spin(spin_target);
 
-        var rt_gdt = response.getDataTable();
+        if (response["data"]) {
+            var rt_gdt = new google.visualization.DataTable(response["data"].replace(/\bNaN\b/g, "null"));
+        }
+        else {
+            console.debug('No new data available yet ...');
+            return;
+        }
         var rt_hc_data = gdt_to_highcharts_data(rt_gdt);
 
         // If the returned data series is empty .. do nothing
@@ -715,7 +760,7 @@
 
         // Stop the automatic query
         if (rt_query) {
-            rt_query.abort();
+            clearInterval(rt_query);
         }
 
         chart_spinner.stop();
@@ -827,13 +872,16 @@
     }
 
     function chartCleanup() {
+        // Kill the realtime queries
+        stopRealtimeView();
+
         console.debug ("Terminating queues associated with token : " + rt_query_token);
         // terminate the realtime queues on the server side
         if (rt_query_token && rt_query_token != null && rt_query_token != "null") {
 
             jQuery.ajax ({
                 url: container_server + "/visualization/terminate_realtime_visualization_data/?query_token=" + rt_query_token,
-                dataType: 'jsonp',
+                dataType: 'json',
                 success: function(response) {
                     console.debug("Real-time Termination acknowledged:" + response);
                 },
@@ -897,30 +945,32 @@
             }
         }
 
-        var vp = setVizParams(dp_parameters,
+        var dqp = setDataQueryParams("google_dt", dp_parameters,
                 Math.round(adjusted_start_date/1000),
                 Math.round(adjusted_end_date/1000),
                 curr_stride_factor);
-        fetchData(vp);
+        fetchData(dqp);
 
         // NO CACHING SCHEME  *************************
 
     }
 
-    function setVizParams(_dt_params, _start_time, _end_time, _stride_factor) {
+    function setDataQueryParams(_query_type, _dt_params, _start_time, _end_time, _stride_factor) {
 
-        // prep the dictionary
-        var viz_params = {};
-        viz_params['parameters'] = _dt_params; // Comma separated list of variables to be plotted. If empty,
+        // prep the dictionary as a string of value : key comma separated list
+        var dq_params = {};
+        dq_params['query_type'] = _query_type; // google_dt, mpl_image, metadata.
+                                            // This parameter helps the service decide which internal handler to call
+        dq_params['parameters'] = _dt_params; // Comma separated list of variables to be plotted. If empty,
         // all variables are plotted
 
-        viz_params["start_time"] = _start_time;
-        viz_params["end_time"] = _end_time;
-        viz_params['stride_time'] = _stride_factor;
+        dq_params["start_time"] = _start_time;
+        dq_params["end_time"] = _end_time;
+        dq_params['stride_time'] = _stride_factor;
 
-        viz_params['use_direct_access'] = 0;  // 1 for yes, 0 for no
+        dq_params['use_direct_access'] = 0;  // 1 for yes, 0 for no
 
-        return viz_params;
+        return dq_params;
     }
 
     function initSpinner() {

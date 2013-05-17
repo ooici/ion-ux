@@ -455,19 +455,17 @@ def map2():
 # GOOGLE VISUALIZATION API
 # -----------------------------------------------------------------------------
 
-@app.route('/visualization/<operation_name>/', methods=['GET', 'POST'])
+@app.route('/visualization/<operation_name>/', methods=['GET'])
 def visualization(operation_name):
-    overview_url = 'http://%s:%d/ion-service/visualization_service/%s?%s' % (GATEWAY_HOST, GATEWAY_PORT, operation_name, request.query_string)
-    if request.method == 'POST':
-        print 'zzzzzz'
-        # dp = request.form['data_product_id']
-        print 'dp', request.form['data_product_id']
-        req = requests.post(overview_url, {'data_product_id': request.form['data_product_id']})
-        print 'req', req.content
-    else:
-        req = requests.get(overview_url)
-    return req.content
+    visualization_parameters = {}
+    for k,v in request.args.iteritems():
+        visualization_parameters.update({k:v})
+    req = ServiceApi.visualization(operation_name, visualization_parameters)
+    #return req
+    return render_json_response(req)
 
+
+"""
 @app.route('/viz/initiate_realtime_visualization/<data_product_id>/', methods=['GET'])
 def initiate_realtime_visualization2(data_product_id):
     resp = requests.get("http://localhost:5000/ion-service/visualization_service/initiate_realtime_visualization?data_product_id=" + data_product_id + "&callback=chart_instance.init_realtime_visualization_cb&return_format=raw_json")
@@ -477,6 +475,7 @@ def initiate_realtime_visualization2(data_product_id):
 def get_realtime_visualization_data2(query_token):
     resp = requests.get("http://localhost:5000/ion-service/visualization_service/get_realtime_visualization_data?query_token=" + query_token +"&return_format=raw_json")
     return resp.content
+"""
 
 # -----------------------------------------------------------------------------
 # UI API

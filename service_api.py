@@ -31,6 +31,10 @@ AGENT_REQUEST_TEMPLATE = {
 
 class ServiceApi(object):
     @staticmethod
+    def visualization(operation_name, visualization_parameters):
+        return service_gateway_get('visualization', operation_name, raw_return=True, params=visualization_parameters)
+
+    @staticmethod
     def find_related_objects(resource_id):
         related_objects = service_gateway_get('resource_registry', 'find_objects', params={'subject': resource_id, 'predicate': 'hasResource'})
         return related_objects
@@ -537,6 +541,7 @@ class ServiceApi(object):
 
         return prepare
 
+    """
     @staticmethod
     def initiate_realtime_visualization(data_product_id):
         real_time_data = service_gateway_get('visualization_service', 'initiate_realtime_visualization', params= {'data_product_id': data_product_id, 'callback': 'chart.init_realtime_visualization_cb', 'return_format': 'raw_json'})
@@ -549,7 +554,7 @@ class ServiceApi(object):
     def get_overview_visualization_data(data_product_id):
         overview_data = service_gateway_get('visualization_service', 'get_visualization_data', params={'data_product_id': data_product_id, 'return_format': 'raw_json'})
         return overview_data
-        
+    """
         
     # USER REQUESTS
     # ---------------------------------------------------------------------------
@@ -600,11 +605,13 @@ class ServiceApi(object):
             res = service_gateway_get('org_management', 'deny_request', params={'org_id': org_id, 'request_id': request_id, 'reason': reason})
         return res
 
+    """
     @staticmethod
     def fetch_map(ui_server, unique_key):
         # TODO: service_gateway_get to support dict arguments
         map_kml = requests.get('http://%s:%d/ion-service/visualization_service/get_data_product_kml?visualization_parameters={"unique_key":"%s","ui_server":"%s"}&return_mimetype=application/json' % (GATEWAY_HOST, GATEWAY_PORT, unique_key, ui_server))
         return map_kml.content
+    """
     
     # INSTRUMENT COMMAND
     # ---------------------------------------------------------------------------
