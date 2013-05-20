@@ -179,7 +179,6 @@ IONUX.Collections.DataProductGroupList = Backbone.Collection.extend({
   url: '/get_data_product_group_list/',
   parse: function(resp) {
     console.log('dp_group_list', resp.data);
-    
     return resp.data;
   }
 });
@@ -410,9 +409,8 @@ IONUX.Views.MapDataProductTable = IONUX.Views.DataTable.extend({
   initialize: function() {
     _.bindAll(this);
     this.$el.show();
-    // this.whitelist = this.options.list_table ? IONUX.ListWhitelist : IONUX.MapWhitelist;
-    // this.filter_data();
-    // this.collection.on('data:filter_render', this.filter_and_render);
+    this.whitelist = IONUX.DataProductWhitelist;
+    this.collection.on('data:filter_render', this.filter_and_render);
 
     this.options.data = this.collection.toJSON();
     IONUX.Views.DataTable.prototype.initialize.call(this);
@@ -424,9 +422,12 @@ IONUX.Views.MapDataProductTable = IONUX.Views.DataTable.extend({
        _.each(this.collection.models, function(resource) {
          var rt = resource.get('alt_resource_type') ? resource.get('alt_resource_type') : resource.get('type_');
          var lc = resource.get('lcstate');
-         if (_.contains(this.whitelist, rt) && _.contains(this.whitelist, lc)) {
-           this.options.data.push(resource.toJSON());
-         };
+           if (_.contains(this.whitelist, lc)) {
+              this.options.data.push(resource.toJSON());
+            };
+         // if (_.contains(this.whitelist, rt) && _.contains(this.whitelist, lc)) {
+         //   this.options.data.push(resource.toJSON());
+         // };
        }, this);
     } else {
       this.options.data = this.collection.toJSON();
@@ -685,3 +686,89 @@ IONUX.Views.ListFilter = Backbone.View.extend({
     console.log(IONUX.ListWhitelist);
   },
 });
+
+
+
+/* 
+- - - - - - - - - - - - - - - - - 
+  DataProduct Filter
+- - - - - - - - - - - - - - - - - 
+*/
+
+
+IONUX.DataProductWhitelist = [];
+IONUX.Views.DataProductFilter = Backbone.View.extend({
+  el: '#map-data-filter',
+  filter_options: {
+    lcstate_options: [
+      {label: 'Draft', lcstate: 'DRAFT'},
+      {label: 'Planned', lcstate: 'PLANNED'},
+      {label: 'Integrated', lcstate: 'INTEGRATED'},
+      {label: 'Deployed', lcstate: 'DEPLOYED'},
+      {label: 'Retired', lcstate: 'RETIRED'}
+    ]
+  },
+  template: '\
+    <!-- <div class="panelize">\
+      <input id="radio-assets" type="radio" name="map_filter" value="asset" checked />&nbsp;Asset&nbsp;\
+      <input id="radio-data" type="radio" name="map_filter" value="data" />&nbsp;Data&nbsp;\
+    </div>-->\
+    <div id="dataproduct-filter" class="panelize"></div>\
+    <h3>Lifecycle</h3>\
+    <div id="lcstate-filter" class="panelize"></div>\
+  ',
+
+  events: {
+    'click .filter-option input': 'set_filter'
+  },
+  
+  initialize: function(){
+    _.bindAll(this);
+    this.group_list = this.options.group_list;
+    console.log('this.group_list', this.group_list);
+  },
+  
+  render: function(){
+    this.$el.html(this.template);
+    this.render_filter_options();
+    return this;
+  },
+  
+  render_filter_options: function(options){
+    // Should not be in separate templates? 
+    // Waiting for definitive filter behavior before consolidating.
+    var item_tmpl = '<div class="filter-option resource-option"><%= type %> <div class="pull-right"><input type="checkbox" value="<%= type %>" checked disabled/></div></div>';
+    var lcstate_tmpl = '<div class="filter-option lcstate-option"><%= label %> <div class="pull-right"><input type="checkbox" value="<%= lcstate %>" checked /></div></div>';
+
+    var dp_elmt = this.$el.find('#dataproduct-filter');
+    _.each(this.group_list, function(option) {
+      IONUX.DataProductWhitelist.push(option);
+      dp_elmt.append(_.template(item_tmpl, {type: option}));
+    });
+    
+    var lcstate_elmt = this.$el.find('#lcstate-filter');
+    _.each(this.filter_options.lcstate_options, function(option) {
+      IONUX.DataProductWhitelist.push(option['lcstate']);
+      lcstate_elmt.append(_.template(lcstate_tmpl, option));
+    });
+  },
+  
+  toggle_filter: function(e) {
+    this.$el.toggleClass('data-filter');
+  },
+  
+  set_filter: function(e){
+    var filter_elmt = $(e.target);
+    var type = filter_elmt.val();
+    if (filter_elmt.is(':checked')) {
+      IONUX.DataProductWhitelist.push(type);
+    } else {
+      var index = IONUX.DataProductWhitelist.indexOf(type)
+      IONUX.DataProductWhitelist.splice(index, 1);
+    };
+    IONUX.Dashboard.MapDataResources.trigger('data:filter_render');
+    console.log('IONUX.DataProductWhitelist', IONUX.DataProductWhitelist);
+    return;
+  }
+});
+

@@ -36,6 +36,7 @@ IONUX.Router = Backbone.Router.extend({
     if (!IONUX.Dashboard.MapResources || !IONUX.Dashboard.MapResource) {
       IONUX.Dashboard.MapResources = new IONUX.Collections.MapResources([], {resource_id: null});
       IONUX.Dashboard.MapResource = new IONUX.Models.MapResource();
+      IONUX.Dashboard.MapDataResources = new IONUX.Collections.MapDataProducts([], {resource_id: null});
     };
  
     IONUX.Dashboard.MapView = new IONUX.Views.Map({
@@ -78,8 +79,11 @@ IONUX.Router = Backbone.Router.extend({
         }
       });
     } else {
-      var dp = new IONUX.Collections.MapDataProducts(null, {resource_id: resource_id});
-      dp.fetch({
+      
+      IONUX.Dashboard.MapDataResources.resource_id = resource_id;
+      // var dp = new IONUX.Collections.MapDataProducts(null, {resource_id: resource_id});
+      IONUX.Dashboard.MapDataResources.set([]);
+      IONUX.Dashboard.MapDataResources.fetch({
         success: function(resp){
           new IONUX.Views.MapDataProductTable({el: $('#dynamic-container #2163993'), collection: resp});
         },

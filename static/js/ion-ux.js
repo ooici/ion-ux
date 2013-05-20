@@ -52,50 +52,18 @@ IONUX = {
         new IONUX.Views.ListFilter().render().el;
         
         new IONUX.Views.DataAssetFilter().render().el;
+
+        $.ajax({
+            url: '/get_data_product_group_list/',
+            success: function(resp, resp2) {
+              new IONUX.Views.DataProductFilter({group_list: resp.data}).render().el;
+            }
+        });
       }
     });
     
-    
     router.handle_navigation();
     return router;
-    
-    
-    
-    // .complete(function(resp) {
-    //   Backbone.history.start({pushState:true, hashChange: false});
-    // 
-    //   new IONUX.Views.Topbar({model: IONUX.SESSION_MODEL}).render().el
-    //   new IONUX.Views.Search().render().el;
-    //   new IONUX.Views.HelpMenu({model: IONUX.SESSION_MODEL}).render().el;
-    //   
-    // 
-    //   
-    //   // Bootstrap navigation menu
-    //   $.ajax({
-    //     async: false,
-    //     url: '/ui/navigation/',
-    //     success: function(resp) {
-    //       console.log('ui/navigation', resp);
-    // 
-    //       // Set up view mode
-    //       IONUX.Dashboard.ViewMode = new IONUX.Models.ViewMode();
-    //       new IONUX.Views.ViewControls({model: IONUX.Dashboard.ViewMode}).render().el;
-    //       
-    //       IONUX.Dashboard.Observatories.set(resp.data.observatories);
-    //       new IONUX.Views.ObservatorySelector({collection: IONUX.Dashboard.Observatories, title: 'Site'}).render().el;
-    // 
-    // 
-    //       router.handle_navigation();
-    //       return router;
-    // 
-    //       console.log('IONUX.Dashboard.Observatories', IONUX.Dashboard.Observatories);
-    //     }
-    //   });
-    //   
-    //   // nag popup!
-    //   if (IONUX.SESSION_MODEL.get('is_logged_in') && !IONUX.SESSION_MODEL.get('is_registered'))
-    //     router.user_profile();
-    // });
   },
   setup_ajax_error: function(){
     $(document).ajaxError(function(evt, resp){
