@@ -66,6 +66,11 @@ class ServiceApi(object):
         return activate
 
     @staticmethod
+    def deactivate_primary(deployment_id):
+        deactivate = service_gateway_post('observatory_management', 'deactivate_deployment', params={'deployment_id': deployment_id})
+        return deactivate
+
+    @staticmethod
     def search(search_query):
 
         query = None

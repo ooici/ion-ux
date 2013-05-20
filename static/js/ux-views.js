@@ -1257,7 +1257,16 @@ IONUX.Views.DeactivateAsPrimaryDeployment = Backbone.View.extend({
     'click #btn-deactivate-primary': 'deactivate_primary_clicked'
   },
   render: function() {
-    this.modal = $(IONUX.Templates.modal_template).html(this.template({resource_name:window.MODEL_DATA.resource.name}));
+    var curdeployment = _.find(_.pairs(window.MODEL_DATA.deployment_info), function(v) { return v[1].is_primary; });
+    if (curdeployment.length == 0)
+      return;
+    this.deployment_id = curdeployment[0];
+    var primary_deployment = window.MODEL_DATA.deployment_info[this.deployment_id].name;
+
+    var template_vars = {resource_name: window.MODEL_DATA.resource.name,
+                         primary_deployment: primary_deployment};
+
+    this.modal = $(IONUX.Templates.modal_template).html(this.template(template_vars));
     this.modal.modal('show')
       .on('hide', function() {
         $('#action-modal').remove();
@@ -1266,7 +1275,20 @@ IONUX.Views.DeactivateAsPrimaryDeployment = Backbone.View.extend({
     return this;
   },
   deactivate_primary_clicked: function() {
-    console.log("hotcha");
+    var url = window.location.protocol + "//" + window.location.host + "/deactivate_primary/",
+       vals = {deployment_id: this.deployment._id},
+       self = this;
+    
+    $.post(url, vals)
+      .done(function(resp) {
+        self.modal.modal('hide');
+
+        Backbone.history.fragment = null; // Clear history fragment to allow for page "refresh".
+        IONUX.ROUTER.navigate(window.location.pathname, {trigger: true});
+      })
+      .fail(function(resp) {
+        console.error(resp);
+      });
   }
 });
 

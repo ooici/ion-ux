@@ -412,6 +412,13 @@ def activate_primary():
     primary = ServiceApi.activate_primary(deployment_id)
     return render_json_response(primary)
 
+@app.route('/deactivate_primary/', methods=['POST'])
+@login_required
+def deactivate_primary():
+    deployment_id = request.form.get('deployment_id', None)
+    deactivate_primary = ServiceApi.deactivate_primary(deployment_id)
+    return render_json_response(deactivate_primary)
+
 # -----------------------------------------------------------------------------
 # COMMAND RESOURCE PAGES
 # -----------------------------------------------------------------------------
