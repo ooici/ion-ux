@@ -45,6 +45,22 @@ class ServiceApi(object):
         return related_sites
 
     @staticmethod
+    def get_data_product_group_list():
+        dp_group_list = service_gateway_get('data_product_management', 'get_data_product_group_list', raw_return=True, params={})
+        return dp_group_list
+
+
+    @staticmethod
+    def find_site_data_products(resource_id):
+        site_data_products = service_gateway_get('observatory_management',
+                                                 'find_site_data_products',
+                                                 raw_return=True,
+                                                 params={'parent_resource_id': resource_id,
+                                                         'include_data_products': True
+                                                        })
+        return site_data_products
+
+    @staticmethod
     def search(search_query):
 
         query = None

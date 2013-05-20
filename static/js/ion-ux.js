@@ -50,6 +50,8 @@ IONUX = {
         IONUX.Dashboard.Orgs.reset(resp.data.orgs);
         new IONUX.Views.OrgSelector({collection: IONUX.Dashboard.Orgs, title: 'Facility'}).render().el;
         new IONUX.Views.ListFilter().render().el;
+        
+        new IONUX.Views.DataAssetFilter().render().el;
       }
     });
     

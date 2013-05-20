@@ -26,6 +26,44 @@ IONUX.Views.ViewControls = Backbone.View.extend({
   },
 });
 
+// Keeps track of state -- possibly move into it's own model and bind listeners.
+IONUX.CurrentFilter = 'dataproduct';
+IONUX.Views.DataAssetFilter = Backbone.View.extend({
+  el: '#map-asset-data-menu',
+  template: _.template('<span class="data-filter active" data-mode="dataproduct">Data</span><span class="asset-filter" data-mode="asset">Asset</span>'),
+  initialize: function() {
+    console.log('IONUX.Views.DataAssetFilter');
+  },
+  events: {
+    'click span': 'filter',
+  }, 
+  render: function(){
+    this.$el.html(this.template);
+    return this;
+  },
+  filter: function(e) {
+    var target = $(e.target);
+    target.addClass('active').siblings().removeClass('active');
+
+    var mode = target.data('mode');
+    IONUX.CurrentFilter = mode;
+    if (mode == 'dataproduct') {
+      $('#left .asset-mode').hide();
+      $("#left .dataproduct-mode").show();
+    } else {
+      $("#left .dataproduct-mode").hide();
+      $('#left .asset-mode').show();
+    };
+    
+    this.apply_routing();
+  },
+  apply_routing: function() {
+    if (window.location.pathname.length > 1) {
+      Backbone.history.fragment = null;
+      IONUX.ROUTER.navigate(window.location.pathname, {trigger: true});
+    };
+  },
+});
 
 /* 
 - - - - - - - - - - - - - - - - - 
@@ -134,6 +172,40 @@ IONUX.Collections.MapResources = Backbone.Collection.extend({
   }
 });
 
+
+
+
+IONUX.Collections.DataProductGroupList = Backbone.Collection.extend({
+  url: '/get_data_product_group_list/',
+  parse: function(resp) {
+    console.log('dp_group_list', resp.data);
+    
+    return resp.data;
+  }
+});
+
+
+IONUX.Collections.MapDataProducts = Backbone.Collection.extend({
+  initialize: function(models, options){
+    this.resource_id = options.resource_id;
+  },
+  url: function() {
+   return '/find_site_data_products/'+this.resource_id+'/';
+  },
+  parse: function(resp) {
+    console.log('raw data', resp.data);
+    var data_products = [];
+    if (!_.isEmpty(resp.data.data_product_resources)) {
+      data_products = _.map(resp.data.data_product_resources, function(v,k) {
+        return v;
+      });
+    };
+    console.log('data_products', data_products);
+    return data_products;
+  }
+});
+
+
 IONUX.Views.Map = Backbone.View.extend({
   el: '#map_canvas',
   
@@ -194,6 +266,7 @@ IONUX.Views.Map = Backbone.View.extend({
         width: 60,
         url: '/static/img/sprite2.png',
         textSize: '0',
+        maxZoom: 15
       }]
     });
     this.draw_markers();
@@ -333,6 +406,41 @@ IONUX.Views.MapDashboardTable = IONUX.Views.DataTable.extend({
 });
 
 
+IONUX.Views.MapDataProductTable = IONUX.Views.DataTable.extend({
+  initialize: function() {
+    _.bindAll(this);
+    this.$el.show();
+    // this.whitelist = this.options.list_table ? IONUX.ListWhitelist : IONUX.MapWhitelist;
+    // this.filter_data();
+    // this.collection.on('data:filter_render', this.filter_and_render);
+
+    this.options.data = this.collection.toJSON();
+    IONUX.Views.DataTable.prototype.initialize.call(this);
+  },
+  
+  filter_data: function() {
+    this.options.data = [];
+    if (!_.isEmpty(this.whitelist)) {
+       _.each(this.collection.models, function(resource) {
+         var rt = resource.get('alt_resource_type') ? resource.get('alt_resource_type') : resource.get('type_');
+         var lc = resource.get('lcstate');
+         if (_.contains(this.whitelist, rt) && _.contains(this.whitelist, lc)) {
+           this.options.data.push(resource.toJSON());
+         };
+       }, this);
+    } else {
+      this.options.data = this.collection.toJSON();
+    };
+  },
+  
+  filter_and_render: function() {
+    this.filter_data();
+    this.render();
+  },
+});
+
+
+
 
 IONUX.Views.DashboardTable = IONUX.Views.DataTable.extend({
   initialize: function() {
@@ -403,7 +511,6 @@ IONUX.Views.ResourceTable = IONUX.Views.DataTable.extend({
 */
 
 IONUX.MapWhitelist = [];
-
 IONUX.Views.MapFilter = Backbone.View.extend({
   el: '#map-filter',
   filter_options: {
@@ -429,15 +536,6 @@ IONUX.Views.MapFilter = Backbone.View.extend({
     ]
   },
   template: '\
-    <h3>Selector\
-      <!-- <span class="dropdown pull-right">\
-        <a data-toggle="dropdown" href="#">DD</a>\
-        <ul class="dropdown-menu">\
-          <li><a class="show-short-list btn-navigation-plain" href="#">Short List</a></li>\
-          <li><a class="show-long-list btn-navigation-plain" href="#">Long List</a></li>\
-        </ul>\
-      </span> -->\
-    </h3>\
     <!-- <div class="panelize">\
       <input id="radio-assets" type="radio" name="map_filter" value="asset" checked />&nbsp;Asset&nbsp;\
       <input id="radio-data" type="radio" name="map_filter" value="data" />&nbsp;Data&nbsp;\
@@ -456,7 +554,7 @@ IONUX.Views.MapFilter = Backbone.View.extend({
   },
   
   render: function(){
-    this.$el.show().html(this.template);
+    this.$el.html(this.template);
     this.render_filter_options();
     return this;
   },
@@ -528,7 +626,6 @@ IONUX.Collections.ListResources = Backbone.Collection.extend({
 */
 
 IONUX.ListWhitelist = ['DataProduct', 'InstrumentDevice', 'PlatformDevice', 'PlatformSite', 'StationSite', 'Observatory'];
-
 IONUX.Views.ListFilter = Backbone.View.extend({
   el: '#list-filter',
   filter_options: {

@@ -367,7 +367,18 @@ def related_objects(resource_id):
     related_objects = ServiceApi.find_related_objects(resource_id)
     return render_json_response(related_objects)
 
+@app.route('/get_data_product_group_list/', methods=['GET'])
+def get_data_product_group_list():
+    dp_group_list = ServiceApi.get_data_product_group_list()
+    return render_json_response(dp_group_list)
+
+@app.route('/find_site_data_products/<resource_id>/', methods=['GET'])
+def find_site_data_products(resource_id):
+    site_data_products = ServiceApi.find_site_data_products(resource_id)
+    return render_json_response(site_data_products)
+
 @app.route('/map/<resource_id>/', methods=['GET'])
+@app.route('/map/data/<resource_id>', methods=['GET'])
 @app.route('/resources/', methods=['GET'])
 @app.route('/resources/<resource_id>/', methods=['GET'])
 def dashboard_redirect(resource_id=None):
