@@ -573,23 +573,32 @@
             });
 
         }
-        // If it was not a first draw, it was the high res data
+        // If it was not a first draw, it was the higher res data
         else {
 
-            var view_window_width = chart.xAxis[0].getExtremes().max - chart.xAxis[0].getExtremes().min;
+            var i, view_window_width = chart.xAxis[0].getExtremes().max - chart.xAxis[0].getExtremes().min;
 
-            // note the view extremes and reset after the chart has been drawn
-            for (var i=0; i < _data.length; i++) {
+            // note the view extremes and reset after the chart has been drawn. Also find the longest series
+            // since not all are the same length.
+            var longest_series_idx = 0;
+            var longest_series_length = 0;
+            for (i=0; i < _data.length; i++) {
                 chart.series[i].setData(_data[i]["data"], false);
 
+                if (_data[i]["data"].length > longest_series_length) {
+                    longest_series_length = _data[i]["data"].length;
+                    longest_series_idx = i;
+                }
             }
 
             // update the navigator series .. its the last one
             chart.series[chart.series.length - 1].setData(_data[0]["data"], false);
 
+
             // now if the realtime_sticky_view is enabled, adjust the x axis range to reflect this
             if (realtime_sticky_view) {
-                var xaxis_view_max = _data[0]["data"][_data[0]["data"].length - 1][0];
+
+                var xaxis_view_max = _data[longest_series_idx]["data"][_data[longest_series_idx]["data"].length - 1][0];
                 var xaxis_view_min = xaxis_view_max - view_window_width;
 
                 setExtremesMethodFlag = true;
