@@ -1276,7 +1276,7 @@ IONUX.Views.DeactivateAsPrimaryDeployment = Backbone.View.extend({
   },
   deactivate_primary_clicked: function() {
     var url = window.location.protocol + "//" + window.location.host + "/deactivate_primary/",
-       vals = {deployment_id: this.deployment._id},
+       vals = {deployment_id: this.deployment_id},
        self = this;
     
     $.post(url, vals)
