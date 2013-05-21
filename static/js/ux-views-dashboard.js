@@ -26,6 +26,44 @@ IONUX.Views.ViewControls = Backbone.View.extend({
   },
 });
 
+// Keeps track of state -- possibly move into it's own model and bind listeners.
+IONUX.CurrentFilter = 'dataproduct';
+IONUX.Views.DataAssetFilter = Backbone.View.extend({
+  el: '#map-asset-data-menu',
+  template: _.template('<span class="data-filter active" data-mode="dataproduct">Data</span><span class="asset-filter" data-mode="asset">Asset</span>'),
+  initialize: function() {
+    console.log('IONUX.Views.DataAssetFilter');
+  },
+  events: {
+    'click span': 'filter',
+  }, 
+  render: function(){
+    this.$el.html(this.template);
+    return this;
+  },
+  filter: function(e) {
+    var target = $(e.target);
+    target.addClass('active').siblings().removeClass('active');
+
+    var mode = target.data('mode');
+    IONUX.CurrentFilter = mode;
+    if (mode == 'dataproduct') {
+      $('#left .asset-mode').hide();
+      $("#left .dataproduct-mode").show();
+    } else {
+      $("#left .dataproduct-mode").hide();
+      $('#left .asset-mode').show();
+    };
+    
+    this.apply_routing();
+  },
+  apply_routing: function() {
+    if (window.location.pathname.length > 1) {
+      Backbone.history.fragment = null;
+      IONUX.ROUTER.navigate(window.location.pathname, {trigger: true});
+    };
+  },
+});
 
 /* 
 - - - - - - - - - - - - - - - - - 
@@ -134,6 +172,39 @@ IONUX.Collections.MapResources = Backbone.Collection.extend({
   }
 });
 
+
+
+
+IONUX.Collections.DataProductGroupList = Backbone.Collection.extend({
+  url: '/get_data_product_group_list/',
+  parse: function(resp) {
+    console.log('dp_group_list', resp.data);
+    return resp.data;
+  }
+});
+
+
+IONUX.Collections.MapDataProducts = Backbone.Collection.extend({
+  initialize: function(models, options){
+    this.resource_id = options.resource_id;
+  },
+  url: function() {
+   return '/find_site_data_products/'+this.resource_id+'/';
+  },
+  parse: function(resp) {
+    console.log('raw data', resp.data);
+    var data_products = [];
+    if (!_.isEmpty(resp.data.data_product_resources)) {
+      data_products = _.map(resp.data.data_product_resources, function(v,k) {
+        return v;
+      });
+    };
+    console.log('data_products', data_products);
+    return data_products;
+  }
+});
+
+
 IONUX.Views.Map = Backbone.View.extend({
   el: '#map_canvas',
   
@@ -194,6 +265,7 @@ IONUX.Views.Map = Backbone.View.extend({
         width: 60,
         url: '/static/img/sprite2.png',
         textSize: '0',
+        maxZoom: 15
       }]
     });
     this.draw_markers();
@@ -333,6 +405,43 @@ IONUX.Views.MapDashboardTable = IONUX.Views.DataTable.extend({
 });
 
 
+IONUX.Views.MapDataProductTable = IONUX.Views.DataTable.extend({
+  initialize: function() {
+    _.bindAll(this);
+    this.$el.show();
+    this.whitelist = IONUX.DataProductWhitelist;
+    this.collection.on('data:filter_render', this.filter_and_render);
+
+    this.options.data = this.collection.toJSON();
+    IONUX.Views.DataTable.prototype.initialize.call(this);
+  },
+  
+  filter_data: function() {
+    this.options.data = [];
+    if (!_.isEmpty(this.whitelist)) {
+       _.each(this.collection.models, function(resource) {
+         var rt = resource.get('alt_resource_type') ? resource.get('alt_resource_type') : resource.get('type_');
+         var lc = resource.get('lcstate');
+           if (_.contains(this.whitelist, lc)) {
+              this.options.data.push(resource.toJSON());
+            };
+         // if (_.contains(this.whitelist, rt) && _.contains(this.whitelist, lc)) {
+         //   this.options.data.push(resource.toJSON());
+         // };
+       }, this);
+    } else {
+      this.options.data = this.collection.toJSON();
+    };
+  },
+  
+  filter_and_render: function() {
+    this.filter_data();
+    this.render();
+  },
+});
+
+
+
 
 IONUX.Views.DashboardTable = IONUX.Views.DataTable.extend({
   initialize: function() {
@@ -403,7 +512,6 @@ IONUX.Views.ResourceTable = IONUX.Views.DataTable.extend({
 */
 
 IONUX.MapWhitelist = [];
-
 IONUX.Views.MapFilter = Backbone.View.extend({
   el: '#map-filter',
   filter_options: {
@@ -429,15 +537,6 @@ IONUX.Views.MapFilter = Backbone.View.extend({
     ]
   },
   template: '\
-    <h3>Selector\
-      <!-- <span class="dropdown pull-right">\
-        <a data-toggle="dropdown" href="#">DD</a>\
-        <ul class="dropdown-menu">\
-          <li><a class="show-short-list btn-navigation-plain" href="#">Short List</a></li>\
-          <li><a class="show-long-list btn-navigation-plain" href="#">Long List</a></li>\
-        </ul>\
-      </span> -->\
-    </h3>\
     <!-- <div class="panelize">\
       <input id="radio-assets" type="radio" name="map_filter" value="asset" checked />&nbsp;Asset&nbsp;\
       <input id="radio-data" type="radio" name="map_filter" value="data" />&nbsp;Data&nbsp;\
@@ -456,7 +555,7 @@ IONUX.Views.MapFilter = Backbone.View.extend({
   },
   
   render: function(){
-    this.$el.show().html(this.template);
+    this.$el.html(this.template);
     this.render_filter_options();
     return this;
   },
@@ -528,7 +627,6 @@ IONUX.Collections.ListResources = Backbone.Collection.extend({
 */
 
 IONUX.ListWhitelist = ['DataProduct', 'InstrumentDevice', 'PlatformDevice', 'PlatformSite', 'StationSite', 'Observatory'];
-
 IONUX.Views.ListFilter = Backbone.View.extend({
   el: '#list-filter',
   filter_options: {
@@ -588,3 +686,89 @@ IONUX.Views.ListFilter = Backbone.View.extend({
     console.log(IONUX.ListWhitelist);
   },
 });
+
+
+
+/* 
+- - - - - - - - - - - - - - - - - 
+  DataProduct Filter
+- - - - - - - - - - - - - - - - - 
+*/
+
+
+IONUX.DataProductWhitelist = [];
+IONUX.Views.DataProductFilter = Backbone.View.extend({
+  el: '#map-data-filter',
+  filter_options: {
+    lcstate_options: [
+      {label: 'Draft', lcstate: 'DRAFT'},
+      {label: 'Planned', lcstate: 'PLANNED'},
+      {label: 'Integrated', lcstate: 'INTEGRATED'},
+      {label: 'Deployed', lcstate: 'DEPLOYED'},
+      {label: 'Retired', lcstate: 'RETIRED'}
+    ]
+  },
+  template: '\
+    <!-- <div class="panelize">\
+      <input id="radio-assets" type="radio" name="map_filter" value="asset" checked />&nbsp;Asset&nbsp;\
+      <input id="radio-data" type="radio" name="map_filter" value="data" />&nbsp;Data&nbsp;\
+    </div>-->\
+    <div id="dataproduct-filter" class="panelize"></div>\
+    <h3>Lifecycle</h3>\
+    <div id="lcstate-filter" class="panelize"></div>\
+  ',
+
+  events: {
+    'click .filter-option input': 'set_filter'
+  },
+  
+  initialize: function(){
+    _.bindAll(this);
+    this.group_list = this.options.group_list;
+    console.log('this.group_list', this.group_list);
+  },
+  
+  render: function(){
+    this.$el.html(this.template);
+    this.render_filter_options();
+    return this;
+  },
+  
+  render_filter_options: function(options){
+    // Should not be in separate templates? 
+    // Waiting for definitive filter behavior before consolidating.
+    var item_tmpl = '<div class="filter-option resource-option"><%= type %> <div class="pull-right"><input type="checkbox" value="<%= type %>" checked disabled/></div></div>';
+    var lcstate_tmpl = '<div class="filter-option lcstate-option"><%= label %> <div class="pull-right"><input type="checkbox" value="<%= lcstate %>" checked /></div></div>';
+
+    var dp_elmt = this.$el.find('#dataproduct-filter');
+    _.each(this.group_list, function(option) {
+      IONUX.DataProductWhitelist.push(option);
+      dp_elmt.append(_.template(item_tmpl, {type: option}));
+    });
+    
+    var lcstate_elmt = this.$el.find('#lcstate-filter');
+    _.each(this.filter_options.lcstate_options, function(option) {
+      IONUX.DataProductWhitelist.push(option['lcstate']);
+      lcstate_elmt.append(_.template(lcstate_tmpl, option));
+    });
+  },
+  
+  toggle_filter: function(e) {
+    this.$el.toggleClass('data-filter');
+  },
+  
+  set_filter: function(e){
+    var filter_elmt = $(e.target);
+    var type = filter_elmt.val();
+    if (filter_elmt.is(':checked')) {
+      IONUX.DataProductWhitelist.push(type);
+    } else {
+      var index = IONUX.DataProductWhitelist.indexOf(type)
+      IONUX.DataProductWhitelist.splice(index, 1);
+    };
+    IONUX.Dashboard.MapDataResources.trigger('data:filter_render');
+    console.log('IONUX.DataProductWhitelist', IONUX.DataProductWhitelist);
+    return;
+  }
+});
+

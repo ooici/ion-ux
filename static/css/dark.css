@@ -1,5 +1,50 @@
+#map-asset-data-menu {
+  margin: 0;
+  padding: 0;
+  background: #333;
+  color: #999;
+  font-size: 10px;
+  text-transform: uppercase;
+  line-height: 10px;
+  font-weight: 400;
+  border-top: solid 1px #666;
+  border-right: solid 1px #000;
+  border-bottom: solid 1px #000;
+  border-left: solid 1px #666;
+  letter-spacing: 1px;
+  text-shadow: -1px -1px 1px #000;
+  width: 100%;
+}
 
+#map-asset-data-menu span {
+  background: #333;
+  width: 40%;
+  display: inline-block;
+  line-height: 38px;
+  cursor: pointer;
+  padding-left: 10%;
+  position: relative;
+}
 
+#map-asset-data-menu span.active {
+}
+
+#map-asset-data-menu span:before {
+  content: '';
+  width: 20px;
+  height: 20px;
+  left: 0;
+  top: 10px;
+  display:inline-block;
+  position: relative;
+  background-image: url(/static/img/sprite2.png);
+  background-position: -180px -480px;
+}
+
+#map-asset-data-menu span.active:before {
+  background-image: url(/static/img/sprite2.png);
+  background-position: -360px -480px;
+}
 
 /* HEADING */
 
@@ -1414,7 +1459,6 @@ h2 {
 
 .v01 h3, .v01 .block h3,
 .v02 h3, .v02 .block h3 {
-  
   margin: 0;
   padding: 0;
   background: #333;
@@ -1878,4 +1922,18 @@ ul.nav {
 
 #create-resource-overlay select {
   width: 100%;
+}
+
+#action-modal dl dt {
+  float: left;
+  width: 50%;
+  text-transform: uppercase;
+}
+
+#action-modal dl dt:after {
+  content: ":";
+}
+
+#action-modal dl dd {
+  margin-bottom: 5px;
 }

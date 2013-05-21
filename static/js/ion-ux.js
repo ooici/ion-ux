@@ -50,68 +50,42 @@ IONUX = {
         IONUX.Dashboard.Orgs.reset(resp.data.orgs);
         new IONUX.Views.OrgSelector({collection: IONUX.Dashboard.Orgs, title: 'Facility'}).render().el;
         new IONUX.Views.ListFilter().render().el;
+        
+        new IONUX.Views.DataAssetFilter().render().el;
+
+        $.ajax({
+            url: '/get_data_product_group_list/',
+            success: function(resp, resp2) {
+              new IONUX.Views.DataProductFilter({group_list: resp.data}).render().el;
+            }
+        });
       }
     });
     
-    
     router.handle_navigation();
     return router;
-    
-    
-    
-    // .complete(function(resp) {
-    //   Backbone.history.start({pushState:true, hashChange: false});
-    // 
-    //   new IONUX.Views.Topbar({model: IONUX.SESSION_MODEL}).render().el
-    //   new IONUX.Views.Search().render().el;
-    //   new IONUX.Views.HelpMenu({model: IONUX.SESSION_MODEL}).render().el;
-    //   
-    // 
-    //   
-    //   // Bootstrap navigation menu
-    //   $.ajax({
-    //     async: false,
-    //     url: '/ui/navigation/',
-    //     success: function(resp) {
-    //       console.log('ui/navigation', resp);
-    // 
-    //       // Set up view mode
-    //       IONUX.Dashboard.ViewMode = new IONUX.Models.ViewMode();
-    //       new IONUX.Views.ViewControls({model: IONUX.Dashboard.ViewMode}).render().el;
-    //       
-    //       IONUX.Dashboard.Observatories.set(resp.data.observatories);
-    //       new IONUX.Views.ObservatorySelector({collection: IONUX.Dashboard.Observatories, title: 'Site'}).render().el;
-    // 
-    // 
-    //       router.handle_navigation();
-    //       return router;
-    // 
-    //       console.log('IONUX.Dashboard.Observatories', IONUX.Dashboard.Observatories);
-    //     }
-    //   });
-    //   
-    //   // nag popup!
-    //   if (IONUX.SESSION_MODEL.get('is_logged_in') && !IONUX.SESSION_MODEL.get('is_registered'))
-    //     router.user_profile();
-    // });
   },
   setup_ajax_error: function(){
     $(document).ajaxError(function(evt, resp){
       try {
         var json_obj = JSON.parse(resp['responseText'])
-        var error_obj = json_obj.data.GatewayError;
-        //console.error(error_obj);
+        var error_obj = null;
+        if (_.isArray(json_obj.data)) {
+          error_obj = _.pluck(_.compact(json_obj.data), 'GatewayError');
+        } else {
+          error_obj = [json_obj.data.GatewayError];
+        } 
       } catch(err) {
         // not all errors are JSON or GatewayErrors.. still support them
-        error_obj = {Message:resp['responseText']}
+        error_obj = [{Message:resp['responseText']}]
       }
 
       var open_modal = $('.modal-ooi').is(':visible') ? true : false;
       if (open_modal) $('#action-modal').modal('hide').remove();
 
-      var force_logout = error_obj.hasOwnProperty('NeedLogin') && error_obj.NeedLogin == true;
+      var force_logout = _.any(_.compact(_.pluck(error_obj, 'NeedLogin')));
 
-      new IONUX.Views.Error({error_obj:error_obj,open_modal:open_modal, force_logout:force_logout}).render().el;
+      new IONUX.Views.Error({error_objs:error_obj,open_modal:open_modal, force_logout:force_logout}).render().el;
     });
   },
   is_logged_in: function(){

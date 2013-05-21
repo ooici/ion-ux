@@ -45,6 +45,32 @@ class ServiceApi(object):
         return related_sites
 
     @staticmethod
+    def get_data_product_group_list():
+        dp_group_list = service_gateway_get('data_product_management', 'get_data_product_group_list', raw_return=True, params={})
+        return dp_group_list
+
+
+    @staticmethod
+    def find_site_data_products(resource_id):
+        site_data_products = service_gateway_get('observatory_management',
+                                                 'find_site_data_products',
+                                                 raw_return=True,
+                                                 params={'parent_resource_id': resource_id,
+                                                         'include_data_products': True
+                                                        })
+        return site_data_products
+
+    @staticmethod
+    def activate_primary(deployment_id):
+        activate = service_gateway_post('observatory_management', 'activate_deployment', params={'deployment_id': deployment_id})
+        return activate
+
+    @staticmethod
+    def deactivate_primary(deployment_id):
+        deactivate = service_gateway_post('observatory_management', 'deactivate_deployment', params={'deployment_id': deployment_id})
+        return deactivate
+
+    @staticmethod
     def search(search_query):
 
         query = None
@@ -214,8 +240,7 @@ class ServiceApi(object):
         reqs = [req]
 
         # handle associations
-        # @TODO: intentionally disabled, not working correctly yet
-        if False and len(resource_assocs):
+        if len(resource_assocs):
 
             # get prepare statement to build urls
             prepare = ServiceApi.get_prepare(resource_type, resource_obj['_id'], None)
@@ -226,7 +251,11 @@ class ServiceApi(object):
                     raise StandardError("no request available")
 
                 params = assoc_mod['request_parameters'].copy()
-                params.update({assoc_mod['resource_identifier']: val})
+                rid_param = assoc_mod['resource_identifier']
+                for k,v in params.iteritems():
+                    if "$(%s)" % rid_param == v:
+                        params[k] = val
+                        break
 
                 #print params
                 req = service_gateway_post(assoc_mod['service_name'],
@@ -235,29 +264,58 @@ class ServiceApi(object):
 
                 return req
 
+            def get_assocd_id(assoc):
+                """
+                Returns the associated id of the given association to this current resource,
+                either subject or object side.
+
+                @TODO this feels clunky
+                """
+                cur = assoc['s']
+                if cur == resource_obj['_id']:
+                    cur = assoc['o']
+                return cur
+
             for k,v in resource_assocs.iteritems():
-                print k, v
                 curval = assocs[k]['associated_resources']
+                #print k, v, curval
 
                 if assocs[k]['multiple_associations']:
-                    pass
+                    # get a list of current assocs
+                    cur_assocs = set(map(get_assocd_id, curval))
+
+                    # now a list of new assocs
+                    assert v is None or isinstance(v, list)
+                    if v is None:
+                        v = []
+                    new_assocs = set(v)
+
+                    # get list of removals: things in current not in new
+                    to_remove = cur_assocs.difference(new_assocs)
+
+                    # get list of additions: things in new not in current
+                    to_add = new_assocs.difference(cur_assocs)
+
+                    for aid in to_remove:
+                        reqs.append(mod_assoc(assocs[k]['unassign_request'], aid))
+
+                    for aid in to_add:
+                        reqs.append(mod_assoc(assocs[k]['assign_request'], aid))
+
                 else:
                     # single
                     if len(curval) == 1:
-                        # @TODO this is very clunky
-                        firstval = curval[0]
-                        curval = firstval['s']
-                        if curval == resource_obj['_id']:
-                            curval = firstval['o']
+                        curid = get_assocd_id(curval[0])
 
-                        if curval != v:
+                        if curid != v:
                             # unassoc
-                            reqs.append(mod_assoc(assocs[k]['unassign_request'], curval))
+                            reqs.append(mod_assoc(assocs[k]['unassign_request'], curid))
 
-                            # assoc
-                            reqs.append(mod_assoc(assocs[k]['assign_request'], v))
+                            # assoc, only if value occurs though
+                            if v:
+                                reqs.append(mod_assoc(assocs[k]['assign_request'], v))
                     else:
-                        assert len(curval) == 0
+                        assert len(curval) == 0, "curval is %s" % curval
 
                         if v:
                             # assoc
@@ -531,6 +589,18 @@ class ServiceApi(object):
                 params['platform_device_id'] = resource_id
 
             prepare = service_gateway_get('instrument_management', 'prepare_platform_device_support', params=params)
+        elif resource_type == "InstrumentAgentInstance":
+            params = {}
+            if resource_id:
+                params['instrument_agent_instance_id'] = resource_id
+
+            prepare = service_gateway_get('instrument_management', 'prepare_instrument_agent_instance_support', params=params)
+        elif resource_type == "DataProduct":
+            params = {}
+            if resource_id:
+                params['data_product_id'] = resource_id
+
+            prepare = service_gateway_get('data_product_management', 'prepare_data_product_support', params=params)
         else:
             # GENERIC VERSION
             params = {'resource_type':resource_type}
