@@ -118,6 +118,10 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
       if (v.type == "List" && v.itemType == "IonObject") {
         v.itemToString = _.partial(self.item_to_string, v);
         schema[k] = v;
+      } else if (v.type == "IonObject" && !v.help) {
+        v.help = 'Click the value to edit';
+        v.itemToString = _.partial(self.item_to_string, v);
+        schema[k] = v;
       }
     });
     schema = _.omit(schema, this.black_list)
@@ -181,10 +185,12 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
     _.each(schema, function(s, k) {
       var desc = Backbone.Form.helpers.keyToTitle(k),
           val = v[k];
-        if (_.isUndefined(val) || _.isNull(val)) val = '';
-        if (_.isArray(val)) val = "(" + val.length + " item" + (val.length != 1 ? "s" : "") + ")";
+        if (s.type != 'Hidden') {
+          if (_.isUndefined(val) || _.isNull(val)) val = '';
+          if (_.isArray(val)) val = "(" + val.length + " item" + (val.length != 1 ? "s" : "") + ")";
 
-        parts.push(desc + ': ' + val);
+          parts.push(desc + ': ' + val);
+        }
     });
 
     return parts.join('<br />');
