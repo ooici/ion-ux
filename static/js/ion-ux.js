@@ -57,6 +57,7 @@ IONUX = {
             url: '/get_data_product_group_list/',
             success: function(resp, resp2) {
               new IONUX.Views.DataProductFilter({group_list: resp.data}).render().el;
+              $('#left .map-view').show();
             }
         });
       }

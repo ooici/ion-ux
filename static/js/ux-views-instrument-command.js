@@ -1,3 +1,58 @@
+IONUX.Models.AgentParams = Backbone.Model.extend({
+  initialize: function(attributes, options) {
+    this.schema = options.schema;
+  },
+  url: function() {
+    return location.href + 'set_agent/'
+  },
+  // schema: function(){
+  //   return this.agent_schema;
+  // }
+});
+
+
+IONUX.Views.AgentParams = Backbone.View.extend({
+  el: '#agent-form',
+  template: '<div><button class="btn-blue save-params">Save</button></div>',
+  events: {
+    'click .save-params': 'save_params',
+  },
+  initialize: function(){
+    _.bindAll(this);
+    this.resource_params_form = new Backbone.Form({model: this.model}).render();
+  },
+  render: function(){
+    this.$el.html(this.template);
+    this.$el.prepend(this.resource_params_form.el);
+    
+    // Quick hack to disable and hide backbone-forms buttons.
+    // Todo: implement custom form templates in IONUX.Templates
+    this.$el.find('.bbf-add, .bbf-del').remove();
+    
+    return this;
+  },
+  save_params: function(e){
+    console.log('IONUX.View.AgentParams SAVE!');
+    
+    // var self = this;
+    // var btn = $(e.target);
+    // btn.prop('disabled', true).text('Saving...');
+    // this.$el.find('input').prop('disabled', true);
+    // this.resource_params_form.commit();
+    // var attrs = this.model.toJSON(); // Hack to force fn complete below. Better way?
+    // this.model.save(attrs, {
+    //   complete: function(resp){
+    //     btn.prop('disabled', false).text('Save');
+    //     self.$el.find('input').prop('disabled', false);
+    //   }
+    // });
+  }
+});
+
+
+
+
+
 IONUX.Models.ResourceParams = Backbone.Model.extend({
   initialize: function() {
     // console.log('ResourceParams Model initialize:', this.attributes);
@@ -19,7 +74,6 @@ IONUX.Models.ResourceParams = Backbone.Model.extend({
     return sch;
   }
 });
-
 
 
 // NOTE: Base class for IONUX.Views.TaskableResourceParams
@@ -169,8 +223,16 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
         url: 'get_capabilities?cap_type=abc123',
         dataType: 'json',
         success: function(resp){
-          console.log('get_capabilities resp: ', resp);
+          console.log('get_capabilities resp: ', resp.data);
           self.render_commands(resp.data.commands);
+          
+          if (!_.isEmpty(resp.data.agent_params)) {
+            window.ap = new IONUX.Models.AgentParams({}, {schema: resp.data.agent_schema});
+            new IONUX.Views.AgentParams({model: new IONUX.Models.AgentParams(resp.data.agent_params, {schema: resp.data.agent_schema})}).render().el;
+          };
+          
+          
+          
           // Catch 'GatewayError' caused by unsupported/invalid state.
           if (!_.isEmpty(resp.data.resource_params) && !_.has(resp.data.resource_params, 'GatewayError')){
             new IONUX.Views.ResourceParams({model: new IONUX.Models.ResourceParams(resp.data.resource_params)}).render().el;
@@ -180,7 +242,6 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
         }
       });
   },
-  
   render_commands: function(options) {
     var cmd_tmpl = '<tr class="execute_command">\
                     <td style="width:90%;"><%= name %></td>\

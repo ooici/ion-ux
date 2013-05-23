@@ -27,7 +27,8 @@ IONUX.Router = Backbone.Router.extend({
   
   dashboard_map: function(){
     this._remove_dashboard_menu();
-    // new IONUX.Views.DashboardActions();
+    $('.map-nested-ul').find('.active').removeClass('active');
+    
     $('#left .resources-view').hide();
     $('#left .map-view').show();
     $('#btn-map').addClass('active').siblings('.active').removeClass('active');
@@ -50,9 +51,7 @@ IONUX.Router = Backbone.Router.extend({
     new IONUX.Views.DashboardActions();
     $('#left .resources-view').hide();
     $('#left .map-view').show();
-    $('#btn-map').addClass('active').siblings('.active').removeClass('active');
-    
-    $('#list').find('.active').removeClass('active');
+    $('.map-nested-ul').find('.active').removeClass('active');
     $('#list').find("[data-resource-id='"+resource_id+"']").addClass('active');
     
     // Catch back button
@@ -68,6 +67,16 @@ IONUX.Router = Backbone.Router.extend({
     IONUX.Dashboard.MapResource.set(active_resource_attributes);
     IONUX.Dashboard.MapResource.trigger('pan:map');
     
+    function check_map() {
+      // Catch back button and redraw
+      if (!$('#dynamic-container > #map-canvas').is(':empty')) {
+        IONUX.Dashboard.MapView = new IONUX.Views.Map({
+          collection: IONUX.Dashboard.Observatories,
+          model: IONUX.Dashboard.MapResource
+        });
+      };
+    };
+    
     if (IONUX.CurrentFilter == 'asset') {
       IONUX.Dashboard.MapResources.resource_id = resource_id;
       IONUX.Dashboard.MapResources.set([]);
@@ -76,16 +85,16 @@ IONUX.Router = Backbone.Router.extend({
         success: function(resp) {
           var resource_types = _.map(resp.models, function(r) { return r.get('type_')});
           new IONUX.Views.MapDashboardTable({el: $('#dynamic-container #2163993'), collection: resp});
+          check_map();
         }
       });
     } else {
-      
       IONUX.Dashboard.MapDataResources.resource_id = resource_id;
-      // var dp = new IONUX.Collections.MapDataProducts(null, {resource_id: resource_id});
       IONUX.Dashboard.MapDataResources.set([]);
       IONUX.Dashboard.MapDataResources.fetch({
         success: function(resp){
           new IONUX.Views.MapDataProductTable({el: $('#dynamic-container #2163993'), collection: resp});
+          check_map();
         },
       });
     };

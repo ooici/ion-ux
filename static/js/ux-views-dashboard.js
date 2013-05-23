@@ -58,7 +58,7 @@ IONUX.Views.DataAssetFilter = Backbone.View.extend({
     this.apply_routing();
   },
   apply_routing: function() {
-    if (window.location.pathname.length > 1) {
+    if (window.location.pathname.length > 1 && window.location.pathname.split('/')[1] == 'map') {
       Backbone.history.fragment = null;
       IONUX.ROUTER.navigate(window.location.pathname, {trigger: true});
     };
@@ -731,6 +731,7 @@ IONUX.Views.DataProductFilter = Backbone.View.extend({
   render: function(){
     this.$el.html(this.template);
     this.render_filter_options();
+    this.$el.find('#dataproduct-filter').jScrollPane({autoReinitialise: true});
     return this;
   },
   
