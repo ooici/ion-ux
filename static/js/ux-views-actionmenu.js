@@ -118,14 +118,6 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
           }
         } else if (_.contains(['PlatformDevice', 'InstrumentDevice', 'DataProduct'], window.MODEL_DATA.resource_type)) {
 
-          if (!window.MODEL_DATA.resource_type != 'DataProduct' && IONUX.is_logged_in()) {
-            this.interaction_items.push("Activate as Primary Deployment");
-            this.on("action__activate_as_primary_deployment", this.action_dev__activate_primary);
-
-            this.interaction_items.push("Deactivate as Primary Deployment");
-            this.on("action__deactivate_as_primary_deployment", this.action_dev__deactivate_primary);
-          }
-
           if (IONUX.is_logged_in() && !IONUX.is_owner()) {
             // check commitments on current object for resource commitments for the current owner
             var resource_commitments = _.filter(window.MODEL_DATA.commitments, function (c) { return c.commitment.type_ == "ResourceCommitment" && c.consumer == IONUX.SESSION_MODEL.get('actor_id'); });
@@ -395,7 +387,9 @@ IONUX.Views.DeploymentActions = IONUX.Views.ActionMenu.extend({
     },
     
     action__activate_as_primary_deployment: function(e) {
-      new IONUX.Views.ActivateAsPrimaryDeployment().render().el;
+      if (window.MODEL_DATA.deployments.length > 0) {
+        new IONUX.Views.ActivateAsPrimaryDeployment().render().el;
+      }
     },
     action__deactivate_as_primary_deployment: function(e) {
       new IONUX.Views.DeactivateAsPrimaryDeployment().render().el;

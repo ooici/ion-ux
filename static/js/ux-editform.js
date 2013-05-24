@@ -118,6 +118,10 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
       if (v.type == "List" && v.itemType == "IonObject") {
         v.itemToString = _.partial(self.item_to_string, v);
         schema[k] = v;
+      } else if (v.type == "IonObject" && !v.help) {
+        v.help = 'Click the value to edit';
+        v.itemToString = _.partial(self.item_to_string, v);
+        schema[k] = v;
       }
     });
     schema = _.omit(schema, this.black_list)
@@ -181,10 +185,12 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
     _.each(schema, function(s, k) {
       var desc = Backbone.Form.helpers.keyToTitle(k),
           val = v[k];
-        if (_.isUndefined(val) || _.isNull(val)) val = '';
-        if (_.isArray(val)) val = "(" + val.length + " item" + (val.length != 1 ? "s" : "") + ")";
+        if (s.type != 'Hidden') {
+          if (_.isUndefined(val) || _.isNull(val)) val = '';
+          if (_.isArray(val)) val = "(" + val.length + " item" + (val.length != 1 ? "s" : "") + ")";
 
-        parts.push(desc + ': ' + val);
+          parts.push(desc + ': ' + val);
+        }
     });
 
     return parts.join('<br />');
@@ -407,21 +413,6 @@ Backbone.Form.editors.List.Phone = Backbone.Form.editors.Base.extend({
   },
 });
 
-Backbone.Form.editors.IonObject = Backbone.Form.editors.Object.extend({
-  initialize: function(options) {
-    Backbone.Form.editors.Object.prototype.initialize.call(this, options);
-    if (!(this.schema.subSchema.hasOwnProperty('type_') && this.schema.subSchema.type_['default'])) {
-      throw new Error("Missing required 'schema.subSchema.type_.default' property");
-    }
-
-    // provide default if new object
-    if (_.isEmpty(this.value)) {
-      if (!this.value) this.value = {};
-      this.value.type_ = this.schema.subSchema.type_['default'];
-    }
-  }
-});
-
 Backbone.Form.editors.List.IonObject = Backbone.Form.editors.List.Object.extend({
   initialize: function(options) {
     Backbone.Form.editors.List.Object.prototype.initialize.call(this, options);
@@ -494,6 +485,21 @@ Backbone.Form.editors.List.IonObject = Backbone.Form.editors.List.Object.extend(
      */
     Backbone.Form.editors.List.Object.prototype.onModalSubmitted.call(this, modal.options.content, modal);
   },
+});
+
+Backbone.Form.editors.IonObject = Backbone.Form.editors.List.IonObject.extend({
+  initialize: function(options) {
+    Backbone.Form.editors.List.IonObject.prototype.initialize.call(this, options);
+    if (!(this.schema.subSchema.hasOwnProperty('type_') && this.schema.subSchema.type_['default'])) {
+      throw new Error("Missing required 'schema.subSchema.type_.default' property");
+    }
+
+    // provide default if new object
+    if (_.isEmpty(this.value)) {
+      if (!this.value) this.value = {};
+      this.value.type_ = this.schema.subSchema.type_['default'];
+    }
+  }
 });
 
 

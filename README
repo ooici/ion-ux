@@ -96,5 +96,6 @@ A fab script has been provided to facilitate deployment to a remote VM.  To prep
 
 Now you run the fab script, which will prompt you for necessary information to complete the deployment.  Currently, the script supports deployment to ux-test and ion-alpha.  Utilize one of the following command lines to deploy to ion-alpha or ion-beta.
 
+        > fab ion_dev deploy
         > fab ion_alpha deploy
         > fab ion_beta deploy
