@@ -609,6 +609,13 @@ class ServiceApi(object):
                 params['data_product_id'] = resource_id
 
             prepare = service_gateway_get('data_product_management', 'prepare_data_product_support', params=params)
+
+        elif resource_type == "InstrumentAgent":
+            params = {}
+            if resource_id:
+                params['instrument_agent_id'] = resource_id
+
+            prepare = service_gateway_get('instrument_management', 'prepare_instrument_agent_support', params=params)
         else:
             # GENERIC VERSION
             params = {'resource_type':resource_type}
