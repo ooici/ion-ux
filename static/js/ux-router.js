@@ -506,6 +506,9 @@ function render_page(resource_type, resource_id, model) {
       case 'Events':
         new IONUX.Views.EventActions({el:$(el).find('.filter-header')});
         break;
+      case 'Deployments':
+        new IONUX.Views.DeploymentActions({el:$(el).find('.filter-header')});
+        break;
     };
     
     $(el).find('table').last().dataTable().fnAdjustColumnSizing();

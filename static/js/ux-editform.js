@@ -48,13 +48,22 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
     // add values for any existing associations
     if (this.prepare && !_.isEmpty(this.prepare.associations)) {
       _.each(this.prepare.associations, function(v, k) {
-        if (v.associated_resources.length > 0)
+        if (v.associated_resources.length > 0) {
           // figure out which side is the correct side for the value here
           // @TODO clunky
-          if (v.associated_resources[0].s == parsed._id)
-            parsed[k] = v.associated_resources[0].o;
-          else
-            parsed[k] = v.associated_resources[0].s;
+          var assocval = _.map(v.associated_resources, function(ar) {
+            if (ar.s == parsed._id) {
+              return ar.o;
+            }
+            return ar.s;
+          });
+
+          if (!v.multiple_associations) {
+            assocval = assocval[0];
+          }
+
+          parsed[k] = assocval;
+        }
       });
     }
 
@@ -88,6 +97,14 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
       return [k, v];
     }));
 
+    var self = this;
+    var omit_keys = _.filter(keys, function(k) {
+      var v = self.prepare.associations[k];
+      return _.isEmpty(v.unassign_request) && v.associated_resources.length > 0;
+    });
+
+    assocs = _.omit(assocs, omit_keys);
+
     retval = {'resource':resource,
               'assocs':assocs}
     //
@@ -99,6 +116,10 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
     var schema = this.get_resource_type_schema();
     _.each(schema, function(v, k) {
       if (v.type == "List" && v.itemType == "IonObject") {
+        v.itemToString = _.partial(self.item_to_string, v);
+        schema[k] = v;
+      } else if (v.type == "IonObject" && !v.help) {
+        v.help = 'Click the value to edit';
         v.itemToString = _.partial(self.item_to_string, v);
         schema[k] = v;
       }
@@ -127,9 +148,24 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
     // add on any associations
     if (this.prepare && !_.isEmpty(this.prepare.associations)) {
       _.each(this.prepare.associations, function(v, k) {
-        sorted_schema[k] = {title: k,
-                            type: 'Select',
-                            options: [{val:null, label:'-'}].concat(_.map(v.resources, function(r) { return {val:r._id, label:r.name} }))};
+        var item_schema = {title: k,
+                           type: 'Select',
+                           options: _.map(v.resources, function(r) { return {val:r._id, label:r.name} })};
+
+        if (v.multiple_associations) {
+          item_schema.type = 'MultiSelect';
+        } else {
+          // add a blank item to the front of options so it can be "unassociated"
+          // @TODO correct?
+          item_schema.options = [{val:null, label:'-'}].concat(item_schema.options);
+        }
+
+        // don't allow editing of items with no unassign and a value already
+        if (_.isEmpty(v.unassign_request) && v.associated_resources.length > 0) {
+          item_schema.editorAttrs = {'disabled':'disabled'}
+          item_schema.help = "This association is already set and may not be edited.";
+        }
+        sorted_schema[k] = item_schema;
       });
     }
 
@@ -149,10 +185,12 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
     _.each(schema, function(s, k) {
       var desc = Backbone.Form.helpers.keyToTitle(k),
           val = v[k];
-        if (_.isUndefined(val) || _.isNull(val)) val = '';
-        if (_.isArray(val)) val = "(" + val.length + " item" + (val.length != 1 ? "s" : "") + ")";
+        if (s.type != 'Hidden') {
+          if (_.isUndefined(val) || _.isNull(val)) val = '';
+          if (_.isArray(val)) val = "(" + val.length + " item" + (val.length != 1 ? "s" : "") + ")";
 
-        parts.push(desc + ': ' + val);
+          parts.push(desc + ': ' + val);
+        }
     });
 
     return parts.join('<br />');
@@ -213,6 +251,22 @@ Backbone.Form.editors.IntSelect = Backbone.Form.editors.Select.extend({
     }
 
     return v;
+  }
+});
+
+Backbone.Form.editors.MultiSelect = Backbone.Form.editors.Select.extend({
+  render: function() {
+    Backbone.Form.editors.Select.prototype.render.call(this);
+    this.$el.attr('multiple', 'multiple');
+
+    // call setValue again because it didn't know we were doing multiple when it was called
+    this.setValue(this.value);
+
+    return this;
+  },
+  setValue: function(value) {
+    this.value = value;
+    Backbone.Form.editors.Select.prototype.setValue.call(this, value);
   }
 });
 
@@ -359,21 +413,6 @@ Backbone.Form.editors.List.Phone = Backbone.Form.editors.Base.extend({
   },
 });
 
-Backbone.Form.editors.IonObject = Backbone.Form.editors.Object.extend({
-  initialize: function(options) {
-    Backbone.Form.editors.Object.prototype.initialize.call(this, options);
-    if (!(this.schema.subSchema.hasOwnProperty('type_') && this.schema.subSchema.type_['default'])) {
-      throw new Error("Missing required 'schema.subSchema.type_.default' property");
-    }
-
-    // provide default if new object
-    if (_.isEmpty(this.value)) {
-      if (!this.value) this.value = {};
-      this.value.type_ = this.schema.subSchema.type_['default'];
-    }
-  }
-});
-
 Backbone.Form.editors.List.IonObject = Backbone.Form.editors.List.Object.extend({
   initialize: function(options) {
     Backbone.Form.editors.List.Object.prototype.initialize.call(this, options);
@@ -446,6 +485,21 @@ Backbone.Form.editors.List.IonObject = Backbone.Form.editors.List.Object.extend(
      */
     Backbone.Form.editors.List.Object.prototype.onModalSubmitted.call(this, modal.options.content, modal);
   },
+});
+
+Backbone.Form.editors.IonObject = Backbone.Form.editors.List.IonObject.extend({
+  initialize: function(options) {
+    Backbone.Form.editors.List.IonObject.prototype.initialize.call(this, options);
+    if (!(this.schema.subSchema.hasOwnProperty('type_') && this.schema.subSchema.type_['default'])) {
+      throw new Error("Missing required 'schema.subSchema.type_.default' property");
+    }
+
+    // provide default if new object
+    if (_.isEmpty(this.value)) {
+      if (!this.value) this.value = {};
+      this.value.type_ = this.schema.subSchema.type_['default'];
+    }
+  }
 });
 
 

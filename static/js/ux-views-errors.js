@@ -14,8 +14,24 @@ IONUX.Views.Error = Backbone.View.extend({
     _.bindAll(this);
   },
   render: function(){
-    var self = this;
-    $(this.modal_template).html(this.template({error_obj: this.options.error_obj,
+    var   self = this,
+      headline = "Error";
+
+    _.each(this.options.error_objs, function(eo) {
+        eo.is_html = eo.Message.indexOf("<") == 0;
+        if (eo.is_html) {
+          // http://stackoverflow.com/questions/7839889/trying-to-select-a-body-tag-from-html-that-is-returned-by-get-request
+          eo.Message = eo.Message.replace(/^[\S\s]*<body[^>]*?>/i, "")
+                                 .replace(/<\/body[\S\s]*$/i, "");
+        }
+    });
+
+    if (this.options.error_objs.length > 1) {
+      headline = "Error (" + this.options.error_objs.length + " total)";
+    }
+
+    $(this.modal_template).html(this.template({headline: headline,
+                                               error_objs: this.options.error_objs,
                                                open_modal: this.options.open_modal,
                                                force_logout: this.options.force_logout}))
       .modal({keyboard:!this.options_force_logout,

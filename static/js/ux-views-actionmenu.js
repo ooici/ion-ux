@@ -18,6 +18,7 @@ INTERACTIONS_OBJECT.view_interactions = ['Subscribe', 'Lifecycle', 'Edit', /*'Su
 INTERACTIONS_OBJECT.dashboard_interactions = ['Create Resource'];
 INTERACTIONS_OBJECT.event_interactions = ['Add Event'];
 INTERACTIONS_OBJECT.attachment_interactions = ['Upload Attachment'];
+INTERACTIONS_OBJECT.deployment_interactions = ['Activate as Primary Deployment', 'Deactivate as Primary Deployment'];
 INTERACTIONS_OBJECT.negotiation_interactions = {owner: ['View Requests'], nonmember: ['Enroll']};
 
 
@@ -65,7 +66,7 @@ IONUX.Views.ActionMenu = Backbone.View.extend({
     action_control_click: function(evt) {
         evt.preventDefault();
         var action_name = $(evt.target).text();
-        var action_event = "action__" + action_name.replace(/ /g, "_").toLowerCase()
+        var action_event = "action__" + action_name.replace(/ /g, "_").toLowerCase();
         this.trigger(action_event, $(evt.target));
     }
 });
@@ -116,6 +117,7 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
             }
           }
         } else if (_.contains(['PlatformDevice', 'InstrumentDevice', 'DataProduct'], window.MODEL_DATA.resource_type)) {
+
           if (IONUX.is_logged_in() && !IONUX.is_owner()) {
             // check commitments on current object for resource commitments for the current owner
             var resource_commitments = _.filter(window.MODEL_DATA.commitments, function (c) { return c.commitment.type_ == "ResourceCommitment" && c.consumer == IONUX.SESSION_MODEL.get('actor_id'); });
@@ -371,6 +373,29 @@ IONUX.Views.EventActions = IONUX.Views.ActionMenu.extend({
       }
     },
 });
+
+IONUX.Views.DeploymentActions = IONUX.Views.ActionMenu.extend({
+    "events": _.extend({
+        "hover": "action_controls_onhover",
+    }, IONUX.Views.ActionMenu.prototype.events),
+
+    initialize: function() {
+        this.interaction_items = INTERACTIONS_OBJECT.deployment_interactions;
+        this.on("action__activate_as_primary_deployment", this.action__activate_as_primary_deployment);
+        this.on("action__deactivate_as_primary_deployment", this.action__deactivate_as_primary_deployment);
+        this.create_actionmenu();
+    },
+    
+    action__activate_as_primary_deployment: function(e) {
+      if (window.MODEL_DATA.deployments.length > 0) {
+        new IONUX.Views.ActivateAsPrimaryDeployment().render().el;
+      }
+    },
+    action__deactivate_as_primary_deployment: function(e) {
+      new IONUX.Views.DeactivateAsPrimaryDeployment().render().el;
+    },
+});
+
 
 IONUX.Views.AttachmentActions = IONUX.Views.ActionMenu.extend({
     "events": _.extend({

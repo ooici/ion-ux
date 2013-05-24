@@ -1940,3 +1940,17 @@ ul.nav {
 #create-resource-overlay select {
   width: 100%;
 }
+
+#action-modal dl dt {
+  float: left;
+  width: 50%;
+  text-transform: uppercase;
+}
+
+#action-modal dl dt:after {
+  content: ":";
+}
+
+#action-modal dl dd {
+  margin-bottom: 5px;
+}

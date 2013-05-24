@@ -450,7 +450,7 @@ IONUX.Models.UserRegistrationModel = IONUX.Models.EditableResource.extend({
     var o = IONUX.Models.EditableResource.prototype.toJSON.call(this);
     o = this.attr_convert_serialize(o);
 
-    o['contact']['type_'] = 'ContactInfo';
+    o['contact']['type_'] = 'ContactInformation';
 
     return o;
   },

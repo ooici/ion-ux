@@ -1,17 +1,23 @@
 <div class="modal-header">
-  <h1>Error</h1>
+  <h1><%= headline %></h1>
 </div>
 <div class="modal-body error">
-  <h4><%- error_obj.Message %></h4>
+  <% _.each(error_objs, function(error_obj) { %>
+    <% if (error_obj.is_html) { %>
+    <%= error_obj.Message %>
+    <% } else { %>
+    <h4><%- error_obj.Message %></h4>
+    <% } %>
+    <% if (_.has(error_obj, 'Trace')) { %>
+      <pre class="error-trace">
+        <%- error_obj.Trace %>
+      </pre>
+    <% } %>
+  <% }) %>
   <% if (force_logout) { %>
   <p>Your credentials have expired. You must sign in again to continue.</p>
   <% } %>
   <p style="margin-top:15px;"><a class="btn-general external" target="_blank" href="mailto:helpdesk@oceanobservatories.org">Email Helpdesk</a></p>
-  <% if (_.has(error_obj, 'Trace')) { %>
-    <pre class="error-trace">
-      <%- error_obj.Trace %>
-    </pre>
-  <% } %>
 </div>
 <div class="modal-footer">
   <% if (force_logout) { %>

@@ -173,9 +173,11 @@ host = None
 gateway_host = 'sg.a.oceanobservatories.org'
 gateway_port = None
 
-def ux_dev():
+def ion_dev():
     global host
-    host = 'ux-dev.oceanobservatories.org'
+    global gateway_host;
+    host = 'ion-dev.oceanobservatories.org'
+    gateway_host = 'sg.dev.oceanobservatories.org'
 
 def ion_alpha():
     global host
