@@ -570,10 +570,18 @@ class ServiceApi(object):
 
         create_op = prepare['create_request']
         resource = prepare['resource'].copy()
-        resource.update({'name':'new'})
+        resource.update({'name':'New %s' % resource_type})
 
         resp = service_gateway_post(create_op['service_name'], create_op['service_operation'], params={create_op['request_parameters'].keys()[0]: resource})
-        return resp
+
+        if isinstance(resp, dict) and "GatewayError" in resp:
+            resp2 = None
+        else:
+            resp2 = service_gateway_post('resource_registry', 'create_association', params={'subject':org_id,
+                                                                                            'predicate': 'hasResource',
+                                                                                            'object': resp})
+
+        return [resp, resp2]
 
     @staticmethod
     def get_prepare(resource_type, resource_id, user_id):
