@@ -1,10 +1,97 @@
-IONUX.Models.AgentParams = Backbone.Model.extend({
+IONUX.Models.ResourceParams2 = Backbone.Model.extend({
   initialize: function(attributes, options) {
     this.schema = options.schema;
+    _.each(this.attributes, function(v,k) {
+      // console.log(k, typeof(v), v);
+      if (typeof(v) === 'object' && !_.isArray(v)) {
+        this.set(k, JSON.stringify(v));
+      };
+      
+      if (_.isArray(v)) {
+        console.log('v', v);
+        _.each(v, function(vv, kk) {
+          console.log('kk vv', kk, vv);
+          this.get(k)[kk] = JSON.stringify(vv);
+        }, this);
+      };
+    }, this);
   },
   url: function() {
     return location.href + 'set_agent/'
   },
+  
+  parse: function(resp) {
+    console.log('parse', resp);
+  }
+  // schema: function(){
+  //   return this.agent_schema;
+  // }
+});
+
+
+IONUX.Views.ResourceParams2 = Backbone.View.extend({
+  el: '#resource-form2',
+  template: '<div><button class="btn-blue save-params">Save</button></div>',
+  events: {
+    'click .save-params': 'save_params',
+  },
+  initialize: function(){
+    _.bindAll(this);
+    this.resource_params_form = new Backbone.Form({model: this.model}).render();
+  },
+  render: function(){
+    this.$el.html(this.template);
+    this.$el.prepend(this.resource_params_form.el);
+    
+    // Quick hack to disable and hide backbone-forms buttons.
+    // Todo: implement custom form templates in IONUX.Templates
+    this.$el.find('.bbf-add, .bbf-del').remove();
+    
+    return this;
+  },
+  save_params: function(e){
+    console.log('IONUX.View.AgentParams SAVE!');
+    // var self = this;
+    // var btn = $(e.target);
+    // btn.prop('disabled', true).text('Saving...');
+    // this.$el.find('input').prop('disabled', true);
+    // this.resource_params_form.commit();
+    // var attrs = this.model.toJSON(); // Hack to force fn complete below. Better way?
+    // this.model.save(attrs, {
+    //   complete: function(resp){
+    //     btn.prop('disabled', false).text('Save');
+    //     self.$el.find('input').prop('disabled', false);
+    //   }
+    // });
+  }
+});
+
+
+IONUX.Models.AgentParams = Backbone.Model.extend({
+  initialize: function(attributes, options) {
+    this.schema = options.schema;
+    _.each(this.attributes, function(v,k) {
+      // console.log(k, typeof(v), v);
+      if (typeof(v) === 'object' && !_.isArray(v)) {
+        this.set(k, JSON.stringify(v));
+      };
+      
+      if (_.isArray(v)) {
+        console.log('v', v);
+        _.each(v, function(vv, kk) {
+          console.log('kk vv', kk, vv);
+          this.get(k)[kk] = JSON.stringify(vv);
+        }, this);
+      };
+    }, this);
+  },
+  url: function() {
+    return location.href + 'set_agent/'
+  },
+  
+  parse: function(resp) {
+    console.log('parse', resp);
+  }
   // schema: function(){
   //   return this.agent_schema;
   // }
@@ -33,7 +120,6 @@ IONUX.Views.AgentParams = Backbone.View.extend({
   },
   save_params: function(e){
     console.log('IONUX.View.AgentParams SAVE!');
-    
     // var self = this;
     // var btn = $(e.target);
     // btn.prop('disabled', true).text('Saving...');
@@ -176,6 +262,7 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
         stop_btn.prop('value', 'Stop Instrument Agent');
         $('#start-instrument-agent-instance').show();
         // $('.instrument-commands').hide();
+        $('#agent-form').empty();
         $('#resource-form').empty();
         $('#cmds tbody').empty();
       }

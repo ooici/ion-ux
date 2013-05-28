@@ -542,8 +542,10 @@ class ServiceApi(object):
             extension = service_gateway_get('data_process_management', 'get_data_process_definition_extension', params= {'data_process_definition_id': resource_id, 'user_id': user_id})
         elif resource_type == 'Org':
             extension = service_gateway_get('observatory_management', 'get_marine_facility_extension', params= {'org_id': resource_id, 'user_id': user_id})
-        elif resource_type in ('Observatory', 'Subsite', 'PlatformSite', 'InstrumentSite'):
+        elif resource_type in ('Observatory', 'Subsite', 'PlatformSite'):
             extension = service_gateway_get('observatory_management', 'get_site_extension', params= {'site_id': resource_id, 'user_id': user_id})
+        elif resource_type == 'InstrumentSite':
+            extension = service_gateway_get('observatory_management', 'get_instrument_site_extension', params= {'site_id': resource_id, 'user_id': user_id})
         elif resource_type == 'Deployment':
             extension = service_gateway_get('observatory_management', 'get_deployment_extension', params= {'deployment_id': resource_id, 'user_id': user_id})
         elif resource_type == 'NotificationRequest':
@@ -724,17 +726,20 @@ class ServiceApi(object):
     @staticmethod
     def instrument_agent_get_capabilities(instrument_device_id):
 
-        def _to_form_schema(schema_type, schema_visibility=None, schema_display_name=None):
-            if schema_type in ['list', 'tuple']:
-                item = {'type': 'List', 'listType': 'Text'}
-            elif schema_type == 'bool':
-                item = {'type': 'Checkbox'}
-            elif schema_type in ['int', 'float']:
-                item = {'type': 'Number'}
-            elif schema_type == 'str':
+        def _to_form_schema(schema_type=None, schema_visibility=None, schema_display_name=None):
+            if schema_type:
+                if schema_type in ['list', 'tuple']:
+                    item = {'type': 'List', 'listType': 'TextArea'}
+                elif schema_type == 'bool':
+                    item = {'type': 'Checkbox'}
+                elif schema_type in ['int', 'float']:
+                    item = {'type': 'Number'}
+                elif schema_type == 'str':
+                    item = {'type': 'Text'}
+                elif schema_type == 'dict':
+                    item = {'type': 'TextArea'}
+            else:
                 item = {'type': 'Text'}
-            elif schema_type == 'dict':
-                item = {'type': 'TextArea'}
             
             if schema_visibility == 'READ_ONLY':
                 item.update({'editorAttrs': {'disabled': True}})
@@ -748,6 +753,7 @@ class ServiceApi(object):
         if isinstance(agent_req, dict) and agent_req.has_key('GatewayError'): # Temp hack to catch error
             return agent_req
 
+        capabilities = {}
         commands = []
         agent_param_names = []
         resource_param_names = []
@@ -764,38 +770,20 @@ class ServiceApi(object):
                     agent_schema.update({ param['name']: _to_form_schema(param['schema']['type'], param['schema']['visibility'], param['schema']['display_name'])})
             if cap_type == 4:
                 resource_param_names.append(param['name'])
+                resource_schema.update({ param['name']: _to_form_schema(None, param['schema']['visibility'], None)})
         
         if agent_param_names:
             agent_params = service_gateway_agent_request(instrument_device_id, 'get_agent', params={'params': agent_param_names})
         
         if resource_param_names:
             resource_params = service_gateway_agent_request(instrument_device_id, 'get_resource', params={'params': resource_param_names})
-            # resource_params = {}
-            # for k,v in resource_params_request.iteritems():
-            #     if k in BLACKLIST:
-            #         continue
-            #     resource_params.update({k:v})
-            #     if isinstance(v, float):
-            #         resource_params[k] = str(v)
-            # # TEMP: workaround to convert 0.0 strings for JavaScript/JSON.
-            # resource_params = {}
-            # for k,v in resource_params_request.iteritems():
-            #     if k in BLACKLIST:
-            #         continue
-            #     else:
-            #         resource_params.update({k:v})
-            #     if isinstance(v, float):
-            #         resource_params[k] = str(v)
-        else:
-            resource_params = []
-        
-        
-        capabilities = {}
+            capabilities.update({'resource_params': resource_params})        
+
         capabilities.update({'agent_schema': agent_schema})
         capabilities.update({'resource_schema': resource_schema})
         capabilities.update({'agent_params': agent_params})
         capabilities.update({'original': agent_req})
-        capabilities.update({'resource_params': resource_params})
+
         capabilities.update({'commands': commands})
         
         # capabilities.update({'agent_params': agent_params})
@@ -851,12 +839,6 @@ class ServiceApi(object):
         agent_request = service_gateway_agent_request(device_id, 'set_resource', params={'params': new_params})
         return agent_request
 
-
-    # @staticmethod
-    # def get_resource(device_id):
-    #     # params = ["PTCA1", "PA1", "WBOTC", "PCALDATE", "STORETIME", "CPCOR", "PTCA2", "OUTPUTSV", "SAMPLENUM", "TCALDATE", "OUTPUTSAL", "NAVG", "POFFSET", "INTERVAL", "SYNCWAIT", "CJ", "CI", "CH", "TA0", "TA1", "TA2", "TA3", "RCALDATE", "CG", "CTCOR", "PTCB0", "PTCB1", "PTCB2", "CCALDATE", "PA0", "TXREALTIME", "PA2", "SYNCMODE", "PTCA0", "RTCA2", "RTCA1", "RTCA0"]
-    #     agent_request = service_gateway_agent_request(device_id, 'get_resource', params={'params': params})
-    #     return agent_request
 
     # PLATFORM COMMAND
     # ---------------------------------------------------------------------------
