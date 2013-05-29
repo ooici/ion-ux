@@ -68,7 +68,7 @@
      */
 
     // Global variables
-    var chart, table, dataTable, dataTable_overview, dp_id, dp_metadata, dataView_overview;
+    var chart, table, dataTable, dataTable_overview, dp_id, dp_metadata;
     var data_series_overview, data_series_hires, data_series_rt;
 
     var dataTable_overview_stride_factor = 1;
@@ -120,20 +120,18 @@
     ];
 
     // Google library specific loads for all the supported chart types
-    google.load("visualization", "1", {packages: ['table', 'motionchart']});
+    google.load("visualization", "1", {packages: ['table']});
     google.setOnLoadCallback(initChart);
 
     function initChart() {
 
         dp_id = parent.window.location.pathname.split('/')[3]
 
-        /*
         // prompt user for dp id if none was passed in the url
         if (dp_id == null || dp_id.length <32) {
             dp_id=prompt("Please enter Data Product Id","");
             if (dp_id == null) return;
         }
-        */
 
         console.log('dp_id: ', dp_id);
 
@@ -276,7 +274,7 @@
             }
 
             // Extract other views/formats from the datatable
-            dataView_overview = new google.visualization.DataView(_dt);
+            //dataView_overview = new google.visualization.DataView(_dt);
             data_series_overview = gdt_to_highcharts_data(_dt);
 
             // Do one more check to see if any data is really avalable for charting
@@ -618,9 +616,14 @@
 
         if (table) { delete table;}
         $("#chart_div").empty();
-        table = new google.visualization.Table(document.getElementById('chart_div'));
 
-        table.draw(_data);
+        // Apply a date formatter to the first column to convert to UTC timezone..
+        // Apparently google charts ignores time zone by default
+        var df = new google.visualization.DateFormat({timeZone:0});
+        df.format(_data, 0);
+
+        table = new google.visualization.Table(document.getElementById('chart_div'));
+        table.draw(_data, {allowHtml:true});
     }
 
 
