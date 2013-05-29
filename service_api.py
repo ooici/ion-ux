@@ -544,8 +544,16 @@ class ServiceApi(object):
             extension = service_gateway_get('data_process_management', 'get_data_process_definition_extension', params= {'data_process_definition_id': resource_id, 'user_id': user_id})
         elif resource_type == 'Org':
             extension = service_gateway_get('observatory_management', 'get_marine_facility_extension', params= {'org_id': resource_id, 'user_id': user_id})
-        elif resource_type in ('Observatory', 'Subsite', 'PlatformSite', 'InstrumentSite'):
-            extension = service_gateway_get('observatory_management', 'get_site_extension', params= {'site_id': resource_id, 'user_id': user_id})
+        elif resource_type == 'Observatory':
+            extension = service_gateway_get('observatory_management', 'get_observatory_site_extension', params= {'site_id': resource_id, 'user_id': user_id})
+        elif resource_type == 'PlatformComponentSite':
+            extension = service_gateway_get('observatory_management', 'get_platform_component_site_extension', params= {'site_id': resource_id, 'user_id': user_id})
+        elif resource_type == 'PlatformAssemblySite':
+            extension = service_gateway_get('observatory_management', 'get_platform_assembly_site_extension', params= {'site_id': resource_id, 'user_id': user_id})
+        elif resource_type == 'StationSite':
+            extension = service_gateway_get('observatory_management', 'get_platform_station_site_extension', params= {'site_id': resource_id, 'user_id': user_id})
+        elif resource_type == 'InstrumentSite':
+            extension = service_gateway_get('observatory_management', 'get_instrument_site_extension', params= {'site_id': resource_id, 'user_id': user_id})
         elif resource_type == 'Deployment':
             extension = service_gateway_get('observatory_management', 'get_deployment_extension', params= {'deployment_id': resource_id, 'user_id': user_id})
         elif resource_type == 'NotificationRequest':
