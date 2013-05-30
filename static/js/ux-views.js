@@ -793,23 +793,24 @@ IONUX.Views.TextShort = Backbone.View.extend({
         var path_array = this.data_path.split('.');
         if (_.contains(path_array, 'name')) {
           var idx = _.lastIndexOf(path_array, 'name');
-
-          var type_path = _.clone(path_array);
-          type_path[idx] = 'type_';
-
-          var alt_type_path = _.clone(path_array);
-          alt_type_path[idx] = 'alt_resource_type';
           
+          // Get link id
           var id_path = _.clone(path_array);
           id_path[idx] = '_id';
-          
           var link_id = get_descendant_properties(window.MODEL_DATA, id_path.join('.'));
           
+          // Get alt_resource_type and type_
+          var alt_type_path = _.clone(path_array);
+          alt_type_path[idx] = 'alt_resource_type';
+          var type_path = _.clone(path_array);
+          type_path[idx] = 'type_';
+          
+          // Attempt to get alt_resource_type, fall back on type_
           var link_type = get_descendant_properties(window.MODEL_DATA, alt_type_path.join('.'));
-          if (typeof(link_type) == 'undefined') {
+          if (typeof(link_type) == 'undefined' || link_type == '') {
             link_type = get_descendant_properties(window.MODEL_DATA, type_path.join('.'));
           };
-
+          
           if (link_id && link_type) {
             this.link_url = '/'+link_type+'/face/'+link_id+'/';
           };
