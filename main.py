@@ -430,7 +430,7 @@ def instrument_command(instrument_device_id, agent_command, cap_type=None, sessi
     if request.method in ('POST', 'PUT'):
         if agent_command == 'set_resource':
             resource_params = json.loads(request.data)
-            set_params = ServiceApi.set_resource(instrument_device_id, resource_params)
+            command_response = ServiceApi.set_resource(instrument_device_id, resource_params)
         elif agent_command == 'start':
             command_response = ServiceApi.instrument_agent_start(instrument_device_id)
         elif agent_command == 'stop':

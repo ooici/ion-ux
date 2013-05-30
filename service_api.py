@@ -542,8 +542,14 @@ class ServiceApi(object):
             extension = service_gateway_get('data_process_management', 'get_data_process_definition_extension', params= {'data_process_definition_id': resource_id, 'user_id': user_id})
         elif resource_type == 'Org':
             extension = service_gateway_get('observatory_management', 'get_marine_facility_extension', params= {'org_id': resource_id, 'user_id': user_id})
-        elif resource_type in ('Observatory', 'Subsite', 'PlatformSite'):
-            extension = service_gateway_get('observatory_management', 'get_site_extension', params= {'site_id': resource_id, 'user_id': user_id})
+        elif resource_type == 'Observatory':
+            extension = service_gateway_get('observatory_management', 'get_observatory_site_extension', params= {'site_id': resource_id, 'user_id': user_id})
+        elif resource_type == 'PlatformComponentSite':
+            extension = service_gateway_get('observatory_management', 'get_platform_component_site_extension', params= {'site_id': resource_id, 'user_id': user_id})
+        elif resource_type == 'PlatformAssemblySite':
+            extension = service_gateway_get('observatory_management', 'get_platform_assembly_site_extension', params= {'site_id': resource_id, 'user_id': user_id})
+        elif resource_type == 'StationSite':
+            extension = service_gateway_get('observatory_management', 'get_platform_station_site_extension', params= {'site_id': resource_id, 'user_id': user_id})
         elif resource_type == 'InstrumentSite':
             extension = service_gateway_get('observatory_management', 'get_instrument_site_extension', params= {'site_id': resource_id, 'user_id': user_id})
         elif resource_type == 'Deployment':
@@ -570,10 +576,18 @@ class ServiceApi(object):
 
         create_op = prepare['create_request']
         resource = prepare['resource'].copy()
-        resource.update({'name':'new'})
+        resource.update({'name':'New %s' % resource_type})
 
         resp = service_gateway_post(create_op['service_name'], create_op['service_operation'], params={create_op['request_parameters'].keys()[0]: resource})
-        return resp
+
+        if isinstance(resp, dict) and "GatewayError" in resp:
+            resp2 = None
+        else:
+            resp2 = service_gateway_post('resource_registry', 'create_association', params={'subject':org_id,
+                                                                                            'predicate': 'hasResource',
+                                                                                            'object': resp})
+
+        return [resp, resp2]
 
     @staticmethod
     def get_prepare(resource_type, resource_id, user_id):
@@ -601,6 +615,13 @@ class ServiceApi(object):
                 params['data_product_id'] = resource_id
 
             prepare = service_gateway_get('data_product_management', 'prepare_data_product_support', params=params)
+
+        elif resource_type == "InstrumentAgent":
+            params = {}
+            if resource_id:
+                params['instrument_agent_id'] = resource_id
+
+            prepare = service_gateway_get('instrument_management', 'prepare_instrument_agent_support', params=params)
         else:
             # GENERIC VERSION
             params = {'resource_type':resource_type}
@@ -715,7 +736,7 @@ class ServiceApi(object):
     def instrument_execute(instrument_device_id, command, cap_type, session_type=None):
         if cap_type == '1':
             agent_op = "execute_agent"
-        elif cap_type == '3':
+        elif cap_type in ('3','4'):
             agent_op = "execute_resource"
         params = {"command": {"type_": "AgentCommand", "command": command}}
         if command == 'RESOURCE_AGENT_EVENT_GO_DIRECT_ACCESS':
@@ -742,6 +763,7 @@ class ServiceApi(object):
                 item = {'type': 'Text'}
             
             if schema_visibility in ('READ_ONLY', 'IMMUTABLE'):
+                print 'IMMUTABLE!!!'
                 item.update({'editorAttrs': {'disabled': True}})
 
             if schema_display_name:
@@ -771,6 +793,7 @@ class ServiceApi(object):
             if cap_type == 4:
                 resource_param_names.append(param['name'])
                 resource_schema.update({ param['name']: _to_form_schema(param['schema']['value']['type'], param['schema']['visibility'], None)})
+                
         
         if agent_param_names:
             agent_params = service_gateway_agent_request(instrument_device_id, 'get_agent', params={'params': agent_param_names})

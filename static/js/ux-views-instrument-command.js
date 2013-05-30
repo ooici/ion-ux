@@ -2,27 +2,22 @@ IONUX.Models.ResourceParams2 = Backbone.Model.extend({
   initialize: function(attributes, options) {
     this.schema = options.schema;
     _.each(this.attributes, function(v,k) {
-      // console.log(k, typeof(v), v);
       if (typeof(v) === 'object' && !_.isArray(v)) {
         this.set(k, JSON.stringify(v));
       };
       
       if (_.isArray(v)) {
-        console.log('v', v);
         _.each(v, function(vv, kk) {
-          console.log('kk vv', kk, vv);
           this.get(k)[kk] = JSON.stringify(vv);
         }, this);
       };
     }, this);
   },
   url: function() {
-    return location.href + 'set_agent/'
+    return location.href + 'set_resource/'
   },
   
-  parse: function(resp) {
-    console.log('parse', resp);
-  }
+  parse: function(resp) {},
   // schema: function(){
   //   return this.agent_schema;
   // }
@@ -30,7 +25,8 @@ IONUX.Models.ResourceParams2 = Backbone.Model.extend({
 
 
 IONUX.Views.ResourceParams2 = Backbone.View.extend({
-  el: '#resource-form2',
+  // el: '#resource-form2',
+  tagName: 'div',
   template: '<div><button class="btn-blue save-params">Save</button></div>',
   events: {
     'click .save-params': 'save_params',
@@ -40,7 +36,7 @@ IONUX.Views.ResourceParams2 = Backbone.View.extend({
     this.resource_params_form = new Backbone.Form({model: this.model}).render();
   },
   render: function(){
-    this.$el.html(this.template);
+    $('#resource-form2').html(this.$el.html(this.template));
     this.$el.prepend(this.resource_params_form.el);
     
     // Quick hack to disable and hide backbone-forms buttons.
@@ -50,19 +46,26 @@ IONUX.Views.ResourceParams2 = Backbone.View.extend({
     return this;
   },
   save_params: function(e){
-    console.log('IONUX.View.AgentParams SAVE!');
-    // var self = this;
-    // var btn = $(e.target);
-    // btn.prop('disabled', true).text('Saving...');
-    // this.$el.find('input').prop('disabled', true);
-    // this.resource_params_form.commit();
-    // var attrs = this.model.toJSON(); // Hack to force fn complete below. Better way?
-    // this.model.save(attrs, {
-    //   complete: function(resp){
-    //     btn.prop('disabled', false).text('Save');
-    //     self.$el.find('input').prop('disabled', false);
-    //   }
-    // });
+    console.log('IONUX.View.ResourceParams2 SAVE!');
+    var self = this;
+    var btn = $(e.target);
+    btn.prop('disabled', true).text('Saving...');
+    this.$el.find('input').prop('disabled', true);
+    this.resource_params_form.commit();
+    // console.log(this.model.toJSON());
+    // 
+    // this.$el.find('input').prop('disabled', false);
+    // btn.prop('disabled', true).text('Saving');
+    
+    
+    var attrs = this.model.toJSON(); // Hack to force fn complete below. Better way?
+    console.log('this.model.url', this.model.url());
+    this.model.save(attrs, {
+      complete: function(resp){
+        btn.prop('disabled', false).text('Save');
+        self.$el.find('input').prop('disabled', false);
+      }
+    });
   }
 });
 
@@ -77,9 +80,9 @@ IONUX.Models.AgentParams = Backbone.Model.extend({
       };
       
       if (_.isArray(v)) {
-        console.log('v', v);
+        // console.log('v', v);
         _.each(v, function(vv, kk) {
-          console.log('kk vv', kk, vv);
+          // console.log('kk vv', kk, vv);
           this.get(k)[kk] = JSON.stringify(vv);
         }, this);
       };
@@ -314,18 +317,26 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
           self.render_commands(resp.data.commands);
           
           if (!_.isEmpty(resp.data.agent_params)) {
-            window.ap = new IONUX.Models.AgentParams({}, {schema: resp.data.agent_schema});
+            // window.ap = new IONUX.Models.AgentParams({}, {schema: resp.data.agent_schema});
             new IONUX.Views.AgentParams({model: new IONUX.Models.AgentParams(resp.data.agent_params, {schema: resp.data.agent_schema})}).render().el;
           };
           
+          if (!_.isEmpty(resp.data.resource_params)) {
+            // window.rp = new IONUX.Models.ResourceParams2({}, {schema: resp.data.resource_params});
+            new IONUX.Views.ResourceParams2({model: new IONUX.Models.ResourceParams2(resp.data.resource_params, {schema: resp.data.resource_schema})}).render().el;
+          };
           
+          // if (!_.isEmpty(resp.data.resource_params)) {
+          //   window.rp = new IONUX.Models.AgentParams({}, {schema: resp.data.agent_schema});
+          //   new IONUX.Views.AgentParams({model: new IONUX.Models.rParams(resp.data.resource_params, {schema: resp.data.resource_schema})}).render().el;
+          // };
           
           // Catch 'GatewayError' caused by unsupported/invalid state.
-          if (!_.isEmpty(resp.data.resource_params) && !_.has(resp.data.resource_params, 'GatewayError')){
-            new IONUX.Views.ResourceParams({model: new IONUX.Models.ResourceParams(resp.data.resource_params)}).render().el;
-          } else {
-            $('#resource-form').empty();
-          };
+          // if (!_.isEmpty(resp.data.resource_params) && !_.has(resp.data.resource_params, 'GatewayError')){
+          //   new IONUX.Views.ResourceParams({model: new IONUX.Models.ResourceParams(resp.data.resource_params)}).render().el;
+          // } else {
+          //   $('#resource-form').empty();
+          // };
         }
       });
   },

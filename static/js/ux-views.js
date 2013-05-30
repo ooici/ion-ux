@@ -775,6 +775,7 @@ IONUX.Views.TextShort = Backbone.View.extend({
       if (data_path){
           var label = this.$el.data('label');
           var text_short = get_descendant_properties(this.options.data_model, data_path);
+
           if (this.$el.parent().is('.heading-left') || label == "NO LABEL"){
             this.$el.html(this.template_no_label({text_short: text_short}));
           } else if (this.$el.parent().is('.heading-right')) {
@@ -795,13 +796,20 @@ IONUX.Views.TextShort = Backbone.View.extend({
 
           var type_path = _.clone(path_array);
           type_path[idx] = 'type_';
+
+          var alt_type_path = _.clone(path_array);
+          alt_type_path[idx] = 'alt_resource_type';
           
           var id_path = _.clone(path_array);
           id_path[idx] = '_id';
           
           var link_id = get_descendant_properties(window.MODEL_DATA, id_path.join('.'));
-          var link_type = get_descendant_properties(window.MODEL_DATA, type_path.join('.'));
           
+          var link_type = get_descendant_properties(window.MODEL_DATA, alt_type_path.join('.'));
+          if (typeof(link_type) == 'undefined') {
+            link_type = get_descendant_properties(window.MODEL_DATA, type_path.join('.'));
+          };
+
           if (link_id && link_type) {
             this.link_url = '/'+link_type+'/face/'+link_id+'/';
           };
@@ -1165,9 +1173,10 @@ IONUX.Views.CreateResourceView = Backbone.View.extend({
 
     $.post(url, vals)
       .success(function(resp) {
+        var new_res_id = resp.data[0];
 
         Backbone.history.fragment = null; // Clear history fragment to allow for page "refresh".
-        IONUX.ROUTER.navigate('/' + rtype + '/face/' + resp.data + '/edit', {trigger: true});
+        IONUX.ROUTER.navigate('/' + rtype + '/face/' + new_res_id + '/edit', {trigger: true});
       });
   }
 });

@@ -148,16 +148,46 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
     // add on any associations
     if (this.prepare && !_.isEmpty(this.prepare.associations)) {
       _.each(this.prepare.associations, function(v, k) {
+        var additional_options = {}
+        var resources = _.map(v.resources, function(r) { return {val:r._id, label:r.name} });
+        if (v.hasOwnProperty('group')) {
+          // restrict the choices based on the value of the group_by association
+          var get_related_resources = function(curkey) {
+            var resource_ids = v.group.resources[curkey];
+
+            var opts = _.map(_.filter(v.resources, function(r) {
+              return _.contains(resource_ids, r._id);
+            }), function(r) { return {val:r._id, label:r.name } });
+
+            // add the blank option if appropriate
+            if (!v.multiple_associations) {
+              opts = [{val:null, label:'-'}].concat(opts);
+            }
+
+            return opts;
+          }
+
+          // set up refresh ability: give a function that will yield the 'options' portion of
+          // this schema
+          var rel_assoc = v.group.group_by;
+          resources = get_related_resources(self.attributes[rel_assoc]);
+
+          additional_options = {refresh: {attr: rel_assoc,
+                                          src: k,
+                                          func: get_related_resources},
+                                help: "The list of values here will change when " + rel_assoc + " is updated."};
+        } else {
+          if (!v.multiple_associations) {
+            resources = [{val:null, label:'-'}].concat(resources);
+          }
+        }
         var item_schema = {title: k,
                            type: 'Select',
-                           options: _.map(v.resources, function(r) { return {val:r._id, label:r.name} })};
+                           options: resources}
+        item_schema = _.extend(item_schema, additional_options);
 
         if (v.multiple_associations) {
           item_schema.type = 'MultiSelect';
-        } else {
-          // add a blank item to the front of options so it can be "unassociated"
-          // @TODO correct?
-          item_schema.options = [{val:null, label:'-'}].concat(item_schema.options);
         }
 
         // don't allow editing of items with no unassign and a value already
@@ -283,6 +313,21 @@ IONUX.Views.EditResource = Backbone.View.extend({
     this.form = new Backbone.Form({model: this.model}).render();
     this.base_url = window.location.pathname.replace(/edit$/,'');
     this.render();
+
+    // find any (top-level) schema items that need dynamic event changing
+    var self = this;
+    _.each(this.form.schema, function(v, k) {
+      if (v.hasOwnProperty('refresh')) {
+        self.form.on(v.refresh.attr + ':change', function(f, ed) {
+          var opts = v.refresh.func(ed.$el.val());
+
+          // update the other editor's options with our new options
+          var othered = self.form.fields[v.refresh.src].editor;
+          othered.schema.options = opts;
+          othered.setOptions(opts);
+        });
+      }
+    });
   },
   render: function(){
     // Insert form but leave page header

@@ -119,7 +119,17 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         var data_keys = _.map(table_metadata, function(arr){return arr[2];});
         var self = this;
         _.each(data_objs, function(data_obj, index){
-            var resource_type = data_obj['type_'] ? data_obj['type_'] : data_obj['_type']; // Elasticsearch results give the object type as '_type'.
+
+            // type_ (elasticsearch results)
+            if (data_obj.hasOwnProperty('_type')) {
+               var resource_type = data_obj['_type'];
+            // alt_resource_type for PlatformSite only
+            } else if (data_obj['type_'] == 'PlatformSite' && data_obj.hasOwnProperty('alt_resource_type')) {
+                var resource_type = data_obj['alt_resource_type'];
+            } else {
+               var resource_type = data_obj['type_'];
+            };
+            
             var data_row = [data_obj['_id'] + "::" + resource_type]; //Initialize with hidden 'row info' element data element.
             _.each(data_keys, function(key){
                 // Needed to check for variable and look up full path if found.
@@ -352,13 +362,13 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         var resource_type = row_info_list[1];
         
         if (resource_type.match(/Event$/)) return false;
-
-        if (this.options.hasOwnProperty('popup_view') && this.options.popup_filter_method(table_row_data)) {
-          new this.options.popup_view({data:table_row_data, datatable:this.datatable}).render().el;
-          return;
-        }
-
-        var url = "/"+resource_type+"/face/"+resource_id+"/";
-        IONUX.ROUTER.navigate(url, {trigger:true});
+          
+          if (this.options.hasOwnProperty('popup_view') && this.options.popup_filter_method(table_row_data)) {
+            new this.options.popup_view({data:table_row_data, datatable:this.datatable}).render().el;
+            return;
+          }
+          
+          var url = "/"+resource_type+"/face/"+resource_id+"/";
+          IONUX.ROUTER.navigate(url, {trigger:true});
     }
 });
