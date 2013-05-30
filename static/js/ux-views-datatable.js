@@ -119,16 +119,15 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         var data_keys = _.map(table_metadata, function(arr){return arr[2];});
         var self = this;
         _.each(data_objs, function(data_obj, index){
-            
-            // alt_resource_type
-            if (data_obj.hasOwnProperty('alt_resource_type')) {
-              var resource_type = data_obj['alt_resource_type'];
-            // type_
-            } else if (data_obj.hasOwnProperty('type_')) {
-              var resource_type = data_obj['type_']
-            // _type (elasticsearch )
-            } else if (data_obj.hasOwnProperty('_type')) {
-               var resource_type = data_obj['_type']; 
+
+            // type_ (elasticsearch results)
+            if (data_obj.hasOwnProperty('_type')) {
+               var resource_type = data_obj['_type'];
+            // alt_resource_type for PlatformSite only
+            } else if (data_obj['type_'] == 'PlatformSite' && data_obj.hasOwnProperty('alt_resource_type')) {
+                var resource_type = data_obj['alt_resource_type'];
+            } else {
+               var resource_type = data_obj['type_'];
             };
             
             var data_row = [data_obj['_id'] + "::" + resource_type]; //Initialize with hidden 'row info' element data element.
