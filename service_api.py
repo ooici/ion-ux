@@ -734,14 +734,14 @@ class ServiceApi(object):
                     item = {'type': 'Checkbox'}
                 elif schema_type in ['int', 'float']:
                     item = {'type': 'Number'}
-                elif schema_type == 'str':
+                elif schema_type in ('str', 'string'):
                     item = {'type': 'Text'}
                 elif schema_type == 'dict':
                     item = {'type': 'TextArea'}
             else:
                 item = {'type': 'Text'}
             
-            if schema_visibility == 'READ_ONLY':
+            if schema_visibility in ('READ_ONLY', 'IMMUTABLE'):
                 item.update({'editorAttrs': {'disabled': True}})
 
             if schema_display_name:
@@ -770,7 +770,7 @@ class ServiceApi(object):
                     agent_schema.update({ param['name']: _to_form_schema(param['schema']['type'], param['schema']['visibility'], param['schema']['display_name'])})
             if cap_type == 4:
                 resource_param_names.append(param['name'])
-                resource_schema.update({ param['name']: _to_form_schema(None, param['schema']['visibility'], None)})
+                resource_schema.update({ param['name']: _to_form_schema(param['schema']['value']['type'], param['schema']['visibility'], None)})
         
         if agent_param_names:
             agent_params = service_gateway_agent_request(instrument_device_id, 'get_agent', params={'params': agent_param_names})
