@@ -127,9 +127,6 @@
   background-position: -420px -900px;
 }
 
-
-
-
 .heading-right {
   text-align: right;
 }
@@ -217,9 +214,6 @@
   background-position: 0px -300px;
 }
 
-
-
-
 /* Old stuff ... 
 
 .image_ooi {
@@ -235,12 +229,6 @@
 }
 
 */
-
-
-
-
-
-
 
 .image_ooi span {
   position: relative;
@@ -264,21 +252,7 @@
   top: -20px;*/
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
 /* /HEADING */
-
-
 
 a:link, a:visited {
   color: #999;
@@ -379,6 +353,41 @@ a.btn-advanced-search:hover {
   DASHBOARD FILTER STYLING
 */
 
+#dataproduct-filter {
+  height: 275px;
+}
+
+#dataproduct-filter .filter-option {
+  margin-right: 0;
+}
+
+#map-data-filter #lcstate-filter .filter-option {
+  margin-right: 8px;
+}
+
+.data-filter-option:before {
+  content: '';
+  width: 16px;
+  height: 20px;
+  left: 11px;
+  display:inline-block;
+  position: absolute;
+}
+
+.data-filter-option {
+  color: #999;
+  padding-left: 30px;
+  line-height: 20px;
+  font-size: 13px;
+  font-weight: 300;
+/*  width: 80%;*/
+/*  margin-right: 30px;*/
+  display: inlineqq;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .filter-option:before {
   content: '';
   width: 16px;
@@ -394,6 +403,14 @@ a.btn-advanced-search:hover {
   line-height: 20px;
   font-size: 13px;
   font-weight: 300;
+/*  margin-right: 30px;*/
+}
+
+td.filter-option {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100px;
 }
 
 .filter-option > .pull-right {
@@ -790,10 +807,8 @@ fieldset {
 
 .controls textarea {
   height: 150px;
-  width: 400px;
+  width: 90%;
 }
-
-
 
 .table-heading {
   font-family: Signika Negative; 
