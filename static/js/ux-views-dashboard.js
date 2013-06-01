@@ -258,7 +258,8 @@ IONUX.Views.Map = Backbone.View.extend({
       zoomControlOptions: {style: google.maps.ZoomControlStyle.SMALL, position: google.maps.ControlPosition.TOP_RIGHT}
     });
     this.markerClusterer = new MarkerClusterer(this.map, null, {
-      maxZoom: 10, 
+      maxZoom: 10,
+      gridSize: 10, 
       styles: [{
         backgroundPosition: '-410px -410px',
         height: 60,

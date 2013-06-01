@@ -807,10 +807,8 @@ fieldset {
 
 .controls textarea {
   height: 150px;
-  width: 400px;
+  width: 90%;
 }
-
-
 
 .table-heading {
   font-family: Signika Negative; 

@@ -763,7 +763,6 @@ class ServiceApi(object):
                 item = {'type': 'Text'}
             
             if schema_visibility in ('READ_ONLY', 'IMMUTABLE'):
-                print 'IMMUTABLE!!!'
                 item.update({'editorAttrs': {'disabled': True}})
 
             if schema_display_name:
@@ -793,7 +792,6 @@ class ServiceApi(object):
             if cap_type == 4:
                 resource_param_names.append(param['name'])
                 resource_schema.update({ param['name']: _to_form_schema(param['schema']['value']['type'], param['schema']['visibility'], None)})
-                
         
         if agent_param_names:
             agent_params = service_gateway_agent_request(instrument_device_id, 'get_agent', params={'params': agent_param_names})
@@ -808,9 +806,7 @@ class ServiceApi(object):
         capabilities.update({'original': agent_req})
 
         capabilities.update({'commands': commands})
-        
-        # capabilities.update({'agent_params': agent_params})
-                
+
         return capabilities
 
 
@@ -841,6 +837,11 @@ class ServiceApi(object):
                     capabilities['resource_params'].update({k:v})
         
         return capabilities
+    
+    @staticmethod
+    def set_agent(device_id, params):
+        agent_request = service_gateway_agent_request(device_id, 'set_agent', params={'params': params})
+        return agent_request
 
 
     @staticmethod

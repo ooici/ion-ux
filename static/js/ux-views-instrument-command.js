@@ -1,6 +1,11 @@
+// Resource and Agent views can probably be optimized into
+// parent and child classes after some testing.
+
 IONUX.Models.ResourceParams2 = Backbone.Model.extend({
   initialize: function(attributes, options) {
     this.schema = options.schema;
+    console.log(this.schema);
+
     _.each(this.attributes, function(v,k) {
       if (typeof(v) === 'object' && !_.isArray(v)) {
         this.set(k, JSON.stringify(v));
@@ -17,10 +22,46 @@ IONUX.Models.ResourceParams2 = Backbone.Model.extend({
     return location.href + 'set_resource/'
   },
   
-  parse: function(resp) {},
-  // schema: function(){
-  //   return this.agent_schema;
-  // }
+  parse: function(resp) {
+    // Placeholder
+  },
+
+  toJSON: function() {
+    var values = this.remove_readonly_and_example();
+    
+    // Turn stringified objects and lists of stringified objects 
+    // back into to objects - courtesy of Dave F.
+    _.each(values, function(v,k) {
+      if (_.isString(v) && v.charAt(0) == '{') {
+        try {
+          values[k] = JSON.parse(v);
+        } catch(e) {}
+      } else if (_.isArray(v) && _.every(v, function(vv) { return _.isString(vv) && vv.charAt(0) == '{' })) {
+        try {
+          values[k] = _.map(v, JSON.parse);
+        } catch(e) { }
+      };
+    });
+    
+    return values;
+  },
+  
+  remove_readonly_and_example: function() {
+    var model_attrs = _.clone(this.attributes);
+    
+    if (_.has(model_attrs, 'RCALDATE')) delete model_attrs['RCALDATE'];
+    if (_.has(model_attrs, 'example')) delete model_attrs['example'];
+
+    _.each(model_attrs, function(v,k) {
+      try {
+        if (this.schema[k]['editorAttrs']['disabled']) {
+          delete model_attrs[k];
+        }
+      } catch(e) {};
+    }, this);
+    
+    return model_attrs;
+  },
 });
 
 
@@ -52,14 +93,12 @@ IONUX.Views.ResourceParams2 = Backbone.View.extend({
     btn.prop('disabled', true).text('Saving...');
     this.$el.find('input').prop('disabled', true);
     this.resource_params_form.commit();
-    // console.log(this.model.toJSON());
-    // 
-    // this.$el.find('input').prop('disabled', false);
-    // btn.prop('disabled', true).text('Saving');
-    
-    
     var attrs = this.model.toJSON(); // Hack to force fn complete below. Better way?
-    console.log('this.model.url', this.model.url());
+    console.log('attrs', attrs);
+
+    // console.log('this.model.url', this.model.url());
+    // console.log('this.model save!', attrs);
+
     this.model.save(attrs, {
       complete: function(resp){
         btn.prop('disabled', false).text('Save');
@@ -73,31 +112,65 @@ IONUX.Views.ResourceParams2 = Backbone.View.extend({
 IONUX.Models.AgentParams = Backbone.Model.extend({
   initialize: function(attributes, options) {
     this.schema = options.schema;
+    
+    // Parse values here until params are returned from a
+    // separate API call and parse() can be used instead.
     _.each(this.attributes, function(v,k) {
-      // console.log(k, typeof(v), v);
       if (typeof(v) === 'object' && !_.isArray(v)) {
         this.set(k, JSON.stringify(v));
       };
       
       if (_.isArray(v)) {
-        // console.log('v', v);
         _.each(v, function(vv, kk) {
-          // console.log('kk vv', kk, vv);
           this.get(k)[kk] = JSON.stringify(vv);
         }, this);
       };
     }, this);
   },
+
   url: function() {
     return location.href + 'set_agent/'
   },
-  
+
   parse: function(resp) {
-    console.log('parse', resp);
-  }
-  // schema: function(){
-  //   return this.agent_schema;
-  // }
+    // Placeholder
+  },
+  
+  toJSON: function() {
+    var values = this.remove_readonly_and_example();
+
+    // Turn stringified objects and lists of stringified objects 
+    // back into to objects - courtesy of Dave F.
+    _.each(values, function(v,k) {
+      if (_.isString(v) && v.charAt(0) == '{') {
+        try {
+          values[k] = JSON.parse(v);
+        } catch(e) {}
+      } else if (_.isArray(v) && _.every(v, function(vv) { return _.isString(vv) && vv.charAt(0) == '{' })) {
+        try {
+          values[k] = _.map(v, JSON.parse);
+        } catch(e) { }
+      };
+    });
+    
+    return values;
+  },
+  
+  remove_readonly_and_example: function() {
+    var model_attrs = _.clone(this.attributes);
+
+    if (_.has(model_attrs, 'example')) delete model_attrs['example'];
+
+    _.each(model_attrs, function(v,k) {
+      try {
+        if (this.schema[k]['editorAttrs']['disabled']) {
+          delete model_attrs[k];
+        }
+      } catch(e) {};
+    }, this);
+    
+    return model_attrs;
+  },
 });
 
 
@@ -122,19 +195,20 @@ IONUX.Views.AgentParams = Backbone.View.extend({
     return this;
   },
   save_params: function(e){
-    console.log('IONUX.View.AgentParams SAVE!');
-    // var self = this;
-    // var btn = $(e.target);
-    // btn.prop('disabled', true).text('Saving...');
-    // this.$el.find('input').prop('disabled', true);
-    // this.resource_params_form.commit();
-    // var attrs = this.model.toJSON(); // Hack to force fn complete below. Better way?
-    // this.model.save(attrs, {
-    //   complete: function(resp){
-    //     btn.prop('disabled', false).text('Save');
-    //     self.$el.find('input').prop('disabled', false);
-    //   }
-    // });
+    var self = this;
+    var btn = $(e.target);
+    btn.prop('disabled', true).text('Saving...');
+    this.$el.find('input, textarea').prop('disabled', true);
+    this.resource_params_form.commit();
+    var attrs = this.model.toJSON(); // Hack to force fn complete below. Better way?
+    console.log('attrs', attrs);
+    
+    this.model.save(attrs, {
+      complete: function(resp){
+        btn.prop('disabled', false).text('Save');
+        self.$el.find('input, textarea').prop('disabled', false);
+      }
+    });
   }
 });
 
@@ -143,9 +217,7 @@ IONUX.Views.AgentParams = Backbone.View.extend({
 
 
 IONUX.Models.ResourceParams = Backbone.Model.extend({
-  initialize: function() {
-    // console.log('ResourceParams Model initialize:', this.attributes);
-  },
+  initialize: function() {},
   url: function() {
     return location.href + 'set_resource/'
   },  
@@ -286,6 +358,9 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
     if (command == 'RESOURCE_AGENT_EVENT_GO_DIRECT_ACCESS') {
       url += '&session_type='+this.$el.find('option:selected').val();
     };
+    
+    // Clear any form data to prevent submission.
+    $('#resource-form2, #agent-form').empty();
     
     var self = this;
     $.ajax({
