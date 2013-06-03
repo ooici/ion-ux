@@ -275,8 +275,6 @@ IONUX.Views.ResourceParams = Backbone.View.extend({
   }
 });
 
-
-
 IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
   el: "#dynamic-container",
   template: _.template($("#instrument-command-facepage-tmpl").html()),
@@ -392,12 +390,10 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
           self.render_commands(resp.data.commands);
           
           if (!_.isEmpty(resp.data.agent_params)) {
-            // window.ap = new IONUX.Models.AgentParams({}, {schema: resp.data.agent_schema});
             new IONUX.Views.AgentParams({model: new IONUX.Models.AgentParams(resp.data.agent_params, {schema: resp.data.agent_schema})}).render().el;
           };
           
           if (!_.isEmpty(resp.data.resource_params)) {
-            // window.rp = new IONUX.Models.ResourceParams2({}, {schema: resp.data.resource_params});
             new IONUX.Views.ResourceParams2({model: new IONUX.Models.ResourceParams2(resp.data.resource_params, {schema: resp.data.resource_schema})}).render().el;
           };
           

@@ -423,9 +423,9 @@ def deactivate_primary():
 # COMMAND RESOURCE PAGES
 # -----------------------------------------------------------------------------
 
-@app.route('/InstrumentDevice/command/<instrument_device_id>/<agent_command>/', methods=['GET', 'POST', 'PUT'])
+@app.route('/<device_type>/command/<instrument_device_id>/<agent_command>/', methods=['GET', 'POST', 'PUT'])
 # @login_required
-def instrument_command(instrument_device_id, agent_command, cap_type=None, session_type=None):
+def instrument_command(device_type, instrument_device_id, agent_command, cap_type=None, session_type=None):
     cap_type = request.args.get('cap_type')
     if request.method in ('POST', 'PUT'):
         if agent_command == 'set_agent':
@@ -464,7 +464,7 @@ def taskable_command(resource_id, command, cap_type=None, session_type=None):
             command_response = ServiceApi.tasktable_get_capabilities(resource_id)
     return render_json_response(command_response)
 
-@app.route('/PlatformDevice/command/<platform_device_id>/<agent_command>/')
+# @app.route('/PlatformDevice/command/<platform_device_id>/<agent_command>/')
 @app.route('/PlatformDevice/command/<platform_device_id>/<agent_command>/<agent_instance_id>/')
 def start_platform_agent(platform_device_id, agent_command, cap_type=None, agent_instance_id=None):
     cap_type = request.args.get('cap_type')
