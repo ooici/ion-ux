@@ -411,9 +411,9 @@ IONUX.Views.MapDataProductTable = IONUX.Views.DataTable.extend({
     this.$el.show();
     this.whitelist = IONUX.DataProductWhitelist;
     this.collection.on('data:filter_render', this.filter_and_render);
-
     this.options.data = this.collection.toJSON();
     IONUX.Views.DataTable.prototype.initialize.call(this);
+    this.filter_and_render();
   },
   
   filter_data: function() {
@@ -425,9 +425,6 @@ IONUX.Views.MapDataProductTable = IONUX.Views.DataTable.extend({
            if (_.contains(this.whitelist, lc) && _.contains(this.whitelist, opn)) {
               this.options.data.push(resource.toJSON());
             };
-         // if (_.contains(this.whitelist, rt) && _.contains(this.whitelist, lc)) {
-         //   this.options.data.push(resource.toJSON());
-         // };
        }, this);
     } else {
       this.options.data = this.collection.toJSON();
@@ -774,3 +771,45 @@ IONUX.Views.DataProductFilter = Backbone.View.extend({
   }
 });
 
+
+
+
+INTERACTIONS_OBJECT.dp_filter_intereactions = ['Select All', 'Select None'];
+IONUX.Views.DPFilterActions = IONUX.Views.ActionMenu.extend({
+  dropdown_button_tmpl: '<div class="dataproduct-mode action-menu btn-group pull-right">\
+  <a class="btn dropdown-toggle" data-toggle="dropdown"><span class="hamburger">&nbsp;</span></a>\
+  <ul class="dropdown-menu"><% _.each(dropdown_items, function(item) { %> <li><%= item %></li> <% }); %></ul>\
+  </div>',
+  
+  "events": _.extend({
+        "hover": "action_controls_onhover",
+    }, IONUX.Views.ActionMenu.prototype.events),
+
+    initialize: function() {
+        this.interaction_items = INTERACTIONS_OBJECT.dp_filter_intereactions;
+        this.on("action__select_all", this.action__select_all);
+        this.on("action__select_none", this.action__select_none);
+        this.create_actionmenu();
+    },
+
+    action__select_all:function(target){
+      console.log('action__select_all');
+      
+      _.each($('#dataproduct-filter input:not(:checked)'), function(el) {
+        var item = $(el).val();
+        IONUX.DataProductWhitelist.push(item);
+        $(el).prop('checked', true);
+      });
+      IONUX.Dashboard.MapDataResources.trigger('data:filter_render');
+    },
+    
+    action__select_none:function(target){
+      _.each($('#dataproduct-filter input:checked'), function(el) {
+        var item = $(el).val();
+        var item_idx = IONUX.DataProductWhitelist.indexOf(item);
+        IONUX.DataProductWhitelist.splice(item_idx, 1);
+        $(el).prop('checked', false);
+      });
+      IONUX.Dashboard.MapDataResources.trigger('data:filter_render');
+    }
+});

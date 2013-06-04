@@ -75,12 +75,11 @@ html, body {
   color: #D1D3D4;
   font-size: 11px;
   text-transform: uppercase;
-  line-height: 10px;
+  line-height: 20px;
   font-weight: 400;
-  padding: 5px 10px;
+  padding: 0 0 0 10px;
   border-top: solid 1px #9a9a9a;
   border-bottom: solid 1px #000;
-/*  border-right: solid 1px #000;*/
   letter-spacing: 1px;
   text-shadow: -1px -1px 1px #000000;
 }

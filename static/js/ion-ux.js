@@ -52,7 +52,8 @@ IONUX = {
         new IONUX.Views.ListFilter().render().el;
         
         new IONUX.Views.DataAssetFilter().render().el;
-
+        new IONUX.Views.DPFilterActions({el: '#map-filter-heading'});
+        
         $.ajax({
             url: '/get_data_product_group_list/',
             success: function(resp, resp2) {
