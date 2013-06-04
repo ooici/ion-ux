@@ -194,6 +194,7 @@
             dp_metadata = jQuery.parseJSON(response["data"]);
         }
         else {
+            document.getElementById('chart_div').innerHTML = "No Data Available.";
             console.debug("Error: Did not receive metadata for the dataproduct");
             stopRealtimeView();
             return;
@@ -201,7 +202,7 @@
 
         // Check to see if valid metadata was returned
         if (dp_metadata['time_steps'] < 1 || dp_metadata['time_bounds'][0] == -9999.0 || dp_metadata['time_bounds'][1] == -9999.0) {
-            document.getElementById('chart_div').innerHTML = "No data available for this data product.";
+            document.getElementById('chart_div').innerHTML = "No data available.";
             stopRealtimeView();
             return;
         }
