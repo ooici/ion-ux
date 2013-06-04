@@ -738,7 +738,7 @@ IONUX.Views.DataProductFilter = Backbone.View.extend({
   render_filter_options: function(options){
     // Should not be in separate templates? 
     // Waiting for definitive filter behavior before consolidating.
-    var item_tmpl = '<div class="filter-option resource-option"><%= type %> <div class="pull-right"><input type="checkbox" value="<%= type %>" checked /></div></div>';
+    var item_tmpl = '<div class="filter-option dataproduct-option" title="<%= type %>"><span style="display:inline-block;width:150px;text-overflow:ellipsis;white-space: nowrap;overflow: hidden;"><%= type %></span> <div class="pull-right"><input type="checkbox" value="<%= type %>" checked /></div></div>';
     var lcstate_tmpl = '<div class="filter-option lcstate-option"><%= label %> <div class="pull-right"><input type="checkbox" value="<%= lcstate %>" checked /></div></div>';
 
     var dp_elmt = this.$el.find('#dataproduct-filter');
