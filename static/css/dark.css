@@ -310,7 +310,7 @@ input#sidebar-search {
 }
 
 
-a.btn-advanced-search  {
+a.btn-black, a.btn-advanced-search  {
   font-size:10px; font- weight:300; 
   letter-spacing:1px; 
   color: #BCBEC0; 
@@ -335,7 +335,7 @@ a.btn-advanced-search  {
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4d4d4d', endColorstr='#272727',GradientType=0 ); /* IE6-9 */
 }
 
-a.btn-advanced-search:hover {
+a.btn-black:hover, a.btn-advanced-search:hover {
   background: #666666; /* Old browsers */
   background: -moz-linear-gradient(top,  #666666 0%, #4d4d4d 50%, #272727 100%); /* FF3.6+ */
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#666666), color-stop(50%,#4d4d4d), color-stop(100%,#272727)); /* Chrome,Safari4+ */
@@ -749,6 +749,10 @@ select#direct_access {
 
 select#new-commands {
   width: 350px;
+}
+
+.agent {
+  padding: 15px 0;
 }
 
 .agent-start-stop {

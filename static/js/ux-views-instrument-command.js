@@ -280,25 +280,20 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
   template: _.template($("#instrument-command-facepage-tmpl").html()),
   command_template: _.template($('#instrument-command-tmpl').html()),
   events: {
-    'click #start-instrument-agent-instance': 'start_agent',
-    'click #stop-instrument-agent-instance': 'stop_agent',
+    'click #start': 'start_agent',
+    'click #stop': 'stop_agent',
     'click .get_capabilities': 'get_capabilities',
     'click .execute-command': 'execute_command',
   },
     
   initialize: function(){
-    _.bindAll(this, "render", "start_agent" ); // "stop_agent""issue_command"
+    _.bindAll(this);
     this.model.bind("change", this.render);
+    this.get_capabilities();
   },
 
   render: function(){
     this.$el.prepend(this.template(this.model.toJSON())).show();
-    var agent_process_id = this.model.get('agent_instance')['agent_process_id'];
-    if (agent_process_id) {
-        $("#start-instrument-agent-instance").hide();
-        $("#stop-instrument-agent-instance, .instrument-commands").show();
-        this.get_capabilities();
-    };
     return this;
   },
   
@@ -311,11 +306,9 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
         type: 'POST',
         url: 'start/',
         success: function() {
-          $('.instrument-commands').show();
           start_btn.prop('disabled', false);
           start_btn.prop('value', 'Start Instrument Agent');
           start_btn.hide();
-          $(' #stop-instrument-agent-instance').show();
           self.get_capabilities();
         }
     });    
@@ -325,19 +318,17 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
   stop_agent: function(evt){
     var stop_btn = $(evt.target);
     stop_btn.prop('disabled', true);
-    stop_btn.prop('value', 'Stopping Instrument Agent...')
+    stop_btn.prop('value', 'Stopping Instrument Agent...');
+    var self = this;
     $.ajax({
       type: 'POST',
       url: 'stop/',
       success: function() {
-        stop_btn.hide();
+        $('#stop, .get_capabilities').hide();
         stop_btn.prop('disabled', false);
         stop_btn.prop('value', 'Stop Instrument Agent');
-        $('#start-instrument-agent-instance').show();
-        // $('.instrument-commands').hide();
-        $('#agent-form').empty();
-        $('#resource-form').empty();
-        $('#cmds tbody').empty();
+        $('#start').show();
+        $('#agent-form, #resource-form2, #cmds tbody').empty();
       }
     });
     return false;
@@ -385,8 +376,10 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
       $.ajax({
         url: 'get_capabilities?cap_type=abc123',
         dataType: 'json',
+        global: false,
         success: function(resp){
-          console.log('get_capabilities resp: ', resp.data);
+          $('.get_capabilities').show();
+          $('#stop').show();
           self.render_commands(resp.data.commands);
           
           if (!_.isEmpty(resp.data.agent_params)) {
@@ -398,7 +391,6 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
           };
           
           // if (!_.isEmpty(resp.data.resource_params)) {
-          //   window.rp = new IONUX.Models.AgentParams({}, {schema: resp.data.agent_schema});
           //   new IONUX.Views.AgentParams({model: new IONUX.Models.rParams(resp.data.resource_params, {schema: resp.data.resource_schema})}).render().el;
           // };
           
@@ -408,7 +400,20 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
           // } else {
           //   $('#resource-form').empty();
           // };
-        }
+        },
+        error: function(resp){
+          // Per recommendation, checking for Not Found to determine if an agent is running. 
+          try {
+            var error_msg = JSON.parse(resp['responseText'])['data']['GatewayError']['Exception'];
+            if (error_msg == 'NotFound') {
+              $('#start').show();
+              $('.get_capabilities').hide();
+            };
+          } catch(err) {
+            error_obj = [{Message:resp['responseText']}];
+            new IONUX.Views.Error({error_objs:error_obj,open_modal:false, force_logout:false}).render().el;
+          };
+        },
       });
   },
   render_commands: function(options) {

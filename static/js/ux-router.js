@@ -108,7 +108,6 @@ IONUX.Router = Backbone.Router.extend({
     var dp = new IONUX.Collections.MapDataProducts(null, {resource_id: resource_id});
     dp.fetch({
       success: function(resp){
-        console.log('dashboard_map_data', resp);
         new IONUX.Views.MapDataProductTable({el: $('#dynamic-container #2163993'), collection: resp});
       },
     });

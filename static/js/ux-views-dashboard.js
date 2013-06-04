@@ -178,7 +178,6 @@ IONUX.Collections.MapResources = Backbone.Collection.extend({
 IONUX.Collections.DataProductGroupList = Backbone.Collection.extend({
   url: '/get_data_product_group_list/',
   parse: function(resp) {
-    console.log('dp_group_list', resp.data);
     return resp.data;
   }
 });
@@ -192,14 +191,14 @@ IONUX.Collections.MapDataProducts = Backbone.Collection.extend({
    return '/find_site_data_products/'+this.resource_id+'/';
   },
   parse: function(resp) {
-    console.log('raw data', resp.data);
     var data_products = [];
     if (!_.isEmpty(resp.data.data_product_resources)) {
-      data_products = _.map(resp.data.data_product_resources, function(v,k) {
-        return v;
+      data_products = _.filter(resp.data.data_product_resources, function(v,k) {
+        return !_.isEmpty(v.ooi_product_name); // Only display those with ooi_product_name
       });
+      make_iso_timestamps(data_products);
     };
-    console.log('data_products', data_products);
+    
     return data_products;
   }
 });
@@ -421,9 +420,9 @@ IONUX.Views.MapDataProductTable = IONUX.Views.DataTable.extend({
     this.options.data = [];
     if (!_.isEmpty(this.whitelist)) {
        _.each(this.collection.models, function(resource) {
-         var rt = resource.get('alt_resource_type') ? resource.get('alt_resource_type') : resource.get('type_');
+         var opn = resource.get('ooi_product_name')
          var lc = resource.get('lcstate');
-           if (_.contains(this.whitelist, lc)) {
+           if (_.contains(this.whitelist, lc) && _.contains(this.whitelist, opn)) {
               this.options.data.push(resource.toJSON());
             };
          // if (_.contains(this.whitelist, rt) && _.contains(this.whitelist, lc)) {
@@ -739,7 +738,7 @@ IONUX.Views.DataProductFilter = Backbone.View.extend({
   render_filter_options: function(options){
     // Should not be in separate templates? 
     // Waiting for definitive filter behavior before consolidating.
-    var item_tmpl = '<div class="filter-option resource-option"><%= type %> <div class="pull-right"><input type="checkbox" value="<%= type %>" checked disabled/></div></div>';
+    var item_tmpl = '<div class="filter-option resource-option"><%= type %> <div class="pull-right"><input type="checkbox" value="<%= type %>" checked /></div></div>';
     var lcstate_tmpl = '<div class="filter-option lcstate-option"><%= label %> <div class="pull-right"><input type="checkbox" value="<%= lcstate %>" checked /></div></div>';
 
     var dp_elmt = this.$el.find('#dataproduct-filter');
@@ -768,8 +767,9 @@ IONUX.Views.DataProductFilter = Backbone.View.extend({
       var index = IONUX.DataProductWhitelist.indexOf(type)
       IONUX.DataProductWhitelist.splice(index, 1);
     };
+    
+    console.log('set_filter', IONUX.DataProductWhitelist);
     IONUX.Dashboard.MapDataResources.trigger('data:filter_render');
-    console.log('IONUX.DataProductWhitelist', IONUX.DataProductWhitelist);
     return;
   }
 });
