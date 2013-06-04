@@ -49,7 +49,6 @@ class ServiceApi(object):
         dp_group_list = service_gateway_get('data_product_management', 'get_data_product_group_list', raw_return=True, params={})
         return dp_group_list
 
-
     @staticmethod
     def find_site_data_products(resource_id):
         site_data_products = service_gateway_get('observatory_management',
@@ -72,7 +71,6 @@ class ServiceApi(object):
 
     @staticmethod
     def search(search_query):
-
         query = None
 
         # simple search for possible raw query language
@@ -738,7 +736,7 @@ class ServiceApi(object):
     def instrument_execute(instrument_device_id, command, cap_type, session_type=None):
         if cap_type == '1':
             agent_op = "execute_agent"
-        elif cap_type == '3':
+        elif cap_type in ('3','4'):
             agent_op = "execute_resource"
         params = {"command": {"type_": "AgentCommand", "command": command}}
         if command == 'RESOURCE_AGENT_EVENT_GO_DIRECT_ACCESS':
@@ -748,56 +746,67 @@ class ServiceApi(object):
 
     @staticmethod
     def instrument_agent_get_capabilities(instrument_device_id):
-        agent_req = service_gateway_agent_request(instrument_device_id, 'get_capabilities', params={})
 
-        # Temp hack to catch error
-        if isinstance(agent_req, dict) and agent_req.has_key('GatewayError'):
-            return agent_req
-        else:
-            commands = []
-            agent_param_names = []
-            resource_param_names = []
-            
-            for param in agent_req:
-                cap_type = param['cap_type']
-                if cap_type == 1 or cap_type == 3:
-                    commands.append(param)
-                if cap_type == 2:
-                    agent_param_names.append(param['name'])
-                if cap_type == 4:
-                    resource_param_names.append(param['name'])
-            
-            if resource_param_names:
-                resource_params_request = service_gateway_agent_request(instrument_device_id, 'get_resource', params={'params': resource_param_names})
-                resource_params = {}
-                for k,v in resource_params_request.iteritems():
-                    if k in BLACKLIST:
-                        continue
-                    resource_params.update({k:v})
-                    if isinstance(v, float):
-                        resource_params[k] = str(v)
-                # TEMP: workaround to convert 0.0 strings for JavaScript/JSON.
-                resource_params = {}
-                for k,v in resource_params_request.iteritems():
-                    if k in BLACKLIST:
-                        continue
-                    else:
-                        resource_params.update({k:v})
-                    if isinstance(v, float):
-                        resource_params[k] = str(v)
+        def _to_form_schema(schema_type=None, schema_visibility=None, schema_display_name=None):
+            if schema_type:
+                if schema_type in ['list', 'tuple']:
+                    item = {'type': 'List', 'listType': 'TextArea'}
+                elif schema_type == 'bool':
+                    item = {'type': 'Checkbox'}
+                elif schema_type in ['int', 'float']:
+                    item = {'type': 'Number'}
+                elif schema_type in ('str', 'string'):
+                    item = {'type': 'Text'}
+                elif schema_type == 'dict':
+                    item = {'type': 'TextArea'}
             else:
-                resource_params = []
+                item = {'type': 'Text'}
             
-            # if agent_param_names:
-            #     agent_params = service_gateway_agent_request(instrument_device_id, 'get_resource', params={'params': agent_param_names})
-            # else:
-            #     agent_params = []
+            if schema_visibility in ('READ_ONLY', 'IMMUTABLE'):
+                item.update({'editorAttrs': {'disabled': True}})
+
+            if schema_display_name:
+                item.update({'title': schema_display_name})
             
-            capabilities = {}
-            capabilities.update({'resource_params': resource_params})
-            capabilities.update({'commands': commands})
-            # capabilities.update({'agent_params': agent_params})
-                
+            return item
+
+        agent_req = service_gateway_agent_request(instrument_device_id, 'get_capabilities', params={})
+        if isinstance(agent_req, dict) and agent_req.has_key('GatewayError'): # Temp hack to catch error
+            return agent_req
+
+        capabilities = {}
+        commands = []
+        agent_param_names = []
+        resource_param_names = []
+        agent_schema = {}
+        resource_schema = {}
+        
+        for param in agent_req:
+            cap_type = param['cap_type']
+            if cap_type == 1 or cap_type == 3:
+                commands.append(param)
+            if cap_type == 2:
+                agent_param_names.append(param['name'])
+                if param['schema']:
+                    agent_schema.update({ param['name']: _to_form_schema(param['schema']['type'], param['schema']['visibility'], param['schema']['display_name'])})
+            if cap_type == 4:
+                resource_param_names.append(param['name'])
+                resource_schema.update({ param['name']: _to_form_schema(param['schema']['value']['type'], param['schema']['visibility'], None)})
+        
+        if agent_param_names:
+            agent_params = service_gateway_agent_request(instrument_device_id, 'get_agent', params={'params': agent_param_names})
+        
+        if resource_param_names:
+            resource_params = service_gateway_agent_request(instrument_device_id, 'get_resource', params={'params': resource_param_names})
+            capabilities.update({'resource_params': resource_params})        
+
+        capabilities.update({'agent_schema': agent_schema})
+        capabilities.update({'resource_schema': resource_schema})
+        capabilities.update({'agent_params': agent_params})
+        capabilities.update({'original': agent_req})
+
+        capabilities.update({'commands': commands})
+
         return capabilities
 
 
@@ -828,6 +837,11 @@ class ServiceApi(object):
                     capabilities['resource_params'].update({k:v})
         
         return capabilities
+    
+    @staticmethod
+    def set_agent(device_id, params):
+        agent_request = service_gateway_agent_request(device_id, 'set_agent', params={'params': params})
+        return agent_request
 
 
     @staticmethod
@@ -849,12 +863,6 @@ class ServiceApi(object):
         agent_request = service_gateway_agent_request(device_id, 'set_resource', params={'params': new_params})
         return agent_request
 
-
-    # @staticmethod
-    # def get_resource(device_id):
-    #     # params = ["PTCA1", "PA1", "WBOTC", "PCALDATE", "STORETIME", "CPCOR", "PTCA2", "OUTPUTSV", "SAMPLENUM", "TCALDATE", "OUTPUTSAL", "NAVG", "POFFSET", "INTERVAL", "SYNCWAIT", "CJ", "CI", "CH", "TA0", "TA1", "TA2", "TA3", "RCALDATE", "CG", "CTCOR", "PTCB0", "PTCB1", "PTCB2", "CCALDATE", "PA0", "TXREALTIME", "PA2", "SYNCMODE", "PTCA0", "RTCA2", "RTCA1", "RTCA0"]
-    #     agent_request = service_gateway_agent_request(device_id, 'get_resource', params={'params': params})
-    #     return agent_request
 
     # PLATFORM COMMAND
     # ---------------------------------------------------------------------------

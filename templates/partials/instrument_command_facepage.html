@@ -5,32 +5,17 @@
     <div class="row-fluid">
         <div class="span8">
           <h3>Start/Stop Agent</h3>
-          <div class="row-fluid">
+          <div class="row-fluid agent">
             <div class="span6">
-              <div class="agent-start-stop">
-                <input type="submit" id="start-instrument-agent-instance" value="Start Instrument Agent" class="btn-blue"/>
-                <input type="submit" id="stop-instrument-agent-instance" value="Stop Instrument Agent" class="btn-blue" style="display:none;"/>
+              <div class="">
+                <input type="submit" id="start" value="Start Instrument Agent" class="btn-blue" style="display:none"/>
+                <input type="submit" id="stop" value="Stop Instrument Agent" class="btn-blue" style="display:none;"/>
               </div>
             </div>
             <div class="span6">
-              <button class="btn-general get_capabilities pull-right">Get Capabilities</button>
+              <button class="btn-general get_capabilities pull-right" style="display:none;">Get Capabilities</button>
             </div>
           </div>
-
-          <!-- <div class="instrument-commands attr_block" style="display: none;">
-            <h3>Command</h3>
-            <div class="row-fluid">
-              <div class="span6">
-                <form class="form">
-                  <select id="new-commands"> </select>
-                  <input type="submit" value="Execute" name="Send Command" class="btn-blue issue_command"/>
-                </form>
-              </div>
-              <div class="span6">
-                <button class="btn-general get_capabilities pull-right">Get Capabilities</button>                
-              </div>
-            </div>
-          </div>  -->
           
           <h3>Commands</h3>
           <table id="cmds" class="command-tbl">
@@ -38,15 +23,18 @@
           </table>
           
           <h3>Agent Parameters</h3>
+          <div id="agent-form"></div>
           <table id="agent-params" class="table_ooi">
             <tbody></tbody>
           </table>
           
           <h3>Resource Parameters</h3>
+          <div id="resource-form2"></div>
+
           <div id="resource-form"></div>
-          <table id="resource-params" class="table_ooi">
+          <!-- <table id="resource-params" class="table_ooi">
             <tbody></tbody>
-          </table>
+          </table> -->
         </div> <!--.span8 -->
 
         <div class="span4">
