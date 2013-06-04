@@ -187,6 +187,7 @@
 
         if (response == null) {
             document.getElementById('chart_div').innerHTML = "No Data Available.";
+            stopRealtimeView();
             return;
         }
         if(response["data"]) {
