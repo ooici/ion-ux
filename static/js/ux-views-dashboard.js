@@ -260,9 +260,9 @@ IONUX.Views.Map = Backbone.View.extend({
       maxZoom: 10,
       gridSize: 10, 
       styles: [{
-        backgroundPosition: '-410px -410px',
-        height: 60,
-        width: 60,
+        backgroundPosition: '-420px -420px',
+        height: 50,
+        width: 50,
         url: '/static/img/sprite2.png',
         textSize: '0',
         maxZoom: 15
