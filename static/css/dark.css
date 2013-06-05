@@ -325,8 +325,6 @@ a:active {
   background: -ms-linear-gradient(top,  #323232 0%,#282828 50%,#1e1e1e 100%); /* IE10+ */
   background: linear-gradient(to bottom,  #323232 0%,#282828 50%,#1e1e1e 100%); /* W3C */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#323232', endColorstr='#1e1e1e',GradientType=0 ); /* IE6-8 */
-  border-left: 1px solid #454545;
-  border-right: 1px solid #000000;
   border-top: 1px solid #454545;
   border-bottom: 1px solid #000000;
 }
