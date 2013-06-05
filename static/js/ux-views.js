@@ -1217,7 +1217,8 @@ IONUX.Views.ActivateAsPrimaryDeployment = Backbone.View.extend({
     var curdeployment      = _.find(_.pairs(window.MODEL_DATA.deployment_info), function(v) { return v[1].is_primary; }),
         curdeployent_id    = null,
         curdeployment_text = null,
-        curdevice          = null;
+        curdevice          = null,
+        self               = this;
 
     if (curdeployment) {
       curdevice          = window.MODEL_DATA.deployment_info[curdeployment[0]].device_name;
@@ -1229,7 +1230,7 @@ IONUX.Views.ActivateAsPrimaryDeployment = Backbone.View.extend({
     }
 
     this.newdeployment = _.findWhere(window.MODEL_DATA.deployments, {'_id': this.$('select[name="deployment"]').val()});
-    var newdevice = window.MODEL_DATA.deployment_info[this.newdeployment._id].device_name;
+    var newdevice = _.find(window.MODEL_DATA.deployment_info, function(d) { return d.resource_id == self.newdeployment._id; }).device_name;
 
     if (curdeployment && curdeployment.length > 0 && this.newdeployment._id == curdeployment_id) {
       this.modal.find('.modal-body').html('<p>This deployment (' + this.newdeployment.name + ') is already the primary.</p>');
@@ -1269,11 +1270,14 @@ IONUX.Views.DeactivateAsPrimaryDeployment = Backbone.View.extend({
     'click #btn-deactivate-primary': 'deactivate_primary_clicked'
   },
   render: function() {
-    var curdeployment = _.find(_.pairs(window.MODEL_DATA.deployment_info), function(v) { return v[1].is_primary; });
+    var curdeployment = _.find(_.pairs(window.MODEL_DATA.deployment_info), function(v) { return v[1].is_primary; }),
+        self          = this;
+
     if (curdeployment.length == 0)
       return;
-    this.deployment_id = curdeployment[0];
-    var primary_deployment = window.MODEL_DATA.deployment_info[this.deployment_id].name;
+
+    this.deployment_id = window.MODEL_DATA.deployment_info[curdeployment[0]].resource_id;
+    var primary_deployment = _.find(window.MODEL_DATA.deployment_info, function(d) { return d.resource_id == self.deployment_id; }).name;
 
     var template_vars = {resource_name: window.MODEL_DATA.resource.name,
                          primary_deployment: primary_deployment};
