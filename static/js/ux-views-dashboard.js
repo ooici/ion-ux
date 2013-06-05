@@ -793,8 +793,6 @@ IONUX.Views.DPFilterActions = IONUX.Views.ActionMenu.extend({
     },
 
     action__select_all:function(target){
-      console.log('action__select_all');
-      
       _.each($('#dataproduct-filter input:not(:checked)'), function(el) {
         var item = $(el).val();
         IONUX.DataProductWhitelist.push(item);

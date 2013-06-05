@@ -1,3 +1,14 @@
+.error-trace {
+  color: #999;
+  border-top: solid 2px #222;
+  padding: 15px 0;
+  margin: 20px 0;
+  background: #000;
+  font-size: 11px;
+  font-family: Andale Mono, monospace;
+  line-height: 18px;
+}
+
 #dynamic-container > .row-fluid {
   border-top: solid 1px #333;
 }

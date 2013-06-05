@@ -403,15 +403,27 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
         },
         error: function(resp){
           // Per recommendation, checking for Not Found to determine if an agent is running. 
+          // Mostly dulplicated from global $.ajaxError in static/js/ion-ux.js
+          
+          var open_modal = $('.modal-ooi').is(':visible') ? true : false;
+          if (open_modal) $('#action-modal').modal('hide').remove();
+          
           try {
-            var error_msg = JSON.parse(resp['responseText'])['data']['GatewayError']['Exception'];
+            var json_obj = JSON.parse(resp['responseText']);
+            var error_msg = json_obj.data.GatewayError.Exception;
+            var error_obj = [json_obj.data.GatewayError];
+                        
             if (error_msg == 'NotFound') {
               $('#start').show();
               $('.get_capabilities').hide();
+            } else if (error_msg == 'Unauthorized') {
+              new IONUX.Views.Error({error_objs:error_obj,open_modal:open_modal, force_logout:true}).render().el;
+            } else {
+              new IONUX.Views.Error({error_objs:error_obj,open_modal:open_modal, force_logout:false}).render().el;
             };
           } catch(err) {
             error_obj = [{Message:resp['responseText']}];
-            new IONUX.Views.Error({error_objs:error_obj,open_modal:false, force_logout:false}).render().el;
+            new IONUX.Views.Error({error_objs:error_obj,open_modal:open_modal, force_logout:false}).render().el;
           };
         },
       });
