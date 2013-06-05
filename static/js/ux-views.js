@@ -1215,12 +1215,14 @@ IONUX.Views.ActivateAsPrimaryDeployment = Backbone.View.extend({
   },
   activate_primary_clicked: function() {
     var curdeployment      = _.find(_.pairs(window.MODEL_DATA.deployment_info), function(v) { return v[1].is_primary; }),
+        curdeployent_id    = null,
         curdeployment_text = null,
         curdevice          = null;
 
     if (curdeployment) {
-      curdevice = window.MODEL_DATA.deployment_info[curdeployment[0]].device_name;
-      curdeployment_text = _.findWhere(window.MODEL_DATA.deployments, {'_id': curdeployment[0]}).name;
+      curdevice          = window.MODEL_DATA.deployment_info[curdeployment[0]].device_name;
+      curdeployment_id   = window.MODEL_DATA.deployment_info[curdeployment[0]].resource_id;
+      curdeployment_text = _.findWhere(window.MODEL_DATA.deployments, {'_id': curdeployment_id}).name;
     } else {
       curdeployment_text = "None";
       curdevice = "None";
@@ -1229,7 +1231,7 @@ IONUX.Views.ActivateAsPrimaryDeployment = Backbone.View.extend({
     this.newdeployment = _.findWhere(window.MODEL_DATA.deployments, {'_id': this.$('select[name="deployment"]').val()});
     var newdevice = window.MODEL_DATA.deployment_info[this.newdeployment._id].device_name;
 
-    if (curdeployment && curdeployment.length > 0 && this.newdeployment._id == curdeployment[0]) {
+    if (curdeployment && curdeployment.length > 0 && this.newdeployment._id == curdeployment_id) {
       this.modal.find('.modal-body').html('<p>This deployment (' + this.newdeployment.name + ') is already the primary.</p>');
       this.modal.find('#btn-activate-primary').remove();
       return;
