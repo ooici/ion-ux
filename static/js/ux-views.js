@@ -750,7 +750,7 @@ IONUX.Views.AttributeGroup = Backbone.View.extend({
 
 IONUX.Views.TextShort = Backbone.View.extend({
     template: _.template('<span><%= label %>:</span>&nbsp;<%= text_short %>'),
-    template_no_label: _.template('<%= text_short %>'),
+    template_no_label: _.template('<span><%= text_short %></span>'),
     template_attr_group: _.template('<div class="row-fluid">\
                                       <div class="span4 text-short-label">\
                                         <%= label %>:&nbsp;\
@@ -776,8 +776,15 @@ IONUX.Views.TextShort = Backbone.View.extend({
           var label = this.$el.data('label');
           var text_short = get_descendant_properties(this.options.data_model, data_path);
 
-          if (this.$el.parent().is('.heading-left') || label == "NO LABEL"){
+          if (label == "NO LABEL"){
             this.$el.html(this.template_no_label({text_short: text_short}));
+            if (this.$el.parent().is('.heading-left')) {
+              // Experimental tooltip support (this also handles hover over CSS pseudo element)
+              this.$el.tooltip({
+                title: 'Resource Type: ' + window.MODEL_DATA.resource.type_.toUpperCase(),
+                placement: 'bottom'
+              });
+            };
           } else if (this.$el.parent().is('.heading-right')) {
             this.$el.html(this.template({label: label, text_short: text_short}));
           } else {

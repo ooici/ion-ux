@@ -405,7 +405,6 @@ function render_page(resource_type, resource_id, model) {
   window.MODEL_DATA = model.data;
   
   resource_type = get_renderable_resource_type(resource_type);
-  console.log('resource_type', resource_type);
 
   window.MODEL_DATA['resource_type'] = resource_type;
   
@@ -444,19 +443,29 @@ function render_page(resource_type, resource_id, model) {
   _.each($('.'+resource_type+' .image_ooi'), function(el) {
       var data_path = $(el).data('path');
       var data = get_descendant_properties(window.MODEL_DATA, data_path);
+      
+      var title_label = data_path.split('.')[1].split('_')[0];
+      var title_label = title_label.charAt(0).toUpperCase() + title_label.slice(1);
+      
       switch(data){
           case 2:
               $(el).html($('<span>').addClass('badge_status_graphic_ok').html('&nbsp;'));
+              var title = title_label + ": OK";
               break;
           case 3:
               $(el).html($('<span>').addClass('badge_status_graphic_warning').html('&nbsp;'));
+              var title = title_label + ": WARNING";
               break;
           case 4:
               $(el).html($('<span>').addClass('badge_status_graphic_critical').html('&nbsp;'));
+              var title = title_label + ": CRITICAL";
               break;
           default:
               $(el).html($('<span>').addClass('badge_status_graphic_unknown').html('&nbsp;'));
+              var title = title_label + ": UNKNOWN";
       };
+      
+      $(el).tooltip({title: title, placement: 'left'});
   });
   
   var badge_elmts = $('.'+resource_type+' .badge_ooi');

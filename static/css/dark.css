@@ -1,3 +1,14 @@
+
+/* Override Bootstrap tooltip styles */
+.tooltip-inner {
+  background-color: white;
+  color: #000;
+}
+
+.tooltip.bottom .tooltip-arrow, .tooltip.left .tooltip-arrow  {
+  display:none;
+}
+
 .nsf-ol {
   background-color: #1E1E1E;
   padding-top: 10px;
@@ -287,25 +298,9 @@
   background-position: 0px -300px;
 }
 
-/* Old stuff ... 
-
-.image_ooi {
-  padding: 3px 10px;
-  display: block;
-  color: transparent;
-}
-
 .image_ooi span {
   position: relative;
-  padding: 4px 8px 4px 4px;
-  top: -5px;
-}
-
-*/
-
-.image_ooi span {
-  position: relative;
-  padding: 4px 15px 4px 4px;
+  padding: 4px 15px 6px 4px;
   top: -5px;
   width: 18px;
   height: 18px;
@@ -314,15 +309,6 @@
   position: relative;
   top: -25px;
   left: -4px;
-/*  position: relative;
-  padding: 4px 15px 4px 4px;
-  top: -5px;
-  width: 16px;
-  height: 16px;
-  content: ' ';
-  display: inline-block;
-  position: relative;
-  top: -20px;*/
 }
 
 /* /HEADING */
