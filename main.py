@@ -419,6 +419,20 @@ def deactivate_primary():
     deactivate_primary = ServiceApi.deactivate_primary(deployment_id)
     return render_json_response(deactivate_primary)
 
+@app.route('/activate_persistence/', methods=['POST'])
+@login_required
+def activate_persistence():
+    data_product_id = request.form.get('data_product_id', None)
+    pers = ServiceApi.activate_persistence(data_product_id)
+    return render_json_response(pers)
+
+@app.route('/suspend_persistence/', methods=['POST'])
+@login_required
+def suspend_persistence():
+    data_product_id = request.form.get('data_product_id', None)
+    pers = ServiceApi.suspend_persistence(data_product_id)
+    return render_json_response(pers)
+
 # -----------------------------------------------------------------------------
 # COMMAND RESOURCE PAGES
 # -----------------------------------------------------------------------------

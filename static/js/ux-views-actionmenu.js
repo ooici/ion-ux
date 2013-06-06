@@ -20,6 +20,7 @@ INTERACTIONS_OBJECT.event_interactions = ['Add Event'];
 INTERACTIONS_OBJECT.attachment_interactions = ['Upload Attachment'];
 INTERACTIONS_OBJECT.deployment_interactions = ['Activate as Primary Deployment', 'Deactivate as Primary Deployment'];
 INTERACTIONS_OBJECT.negotiation_interactions = {owner: ['View Requests'], nonmember: ['Enroll']};
+INTERACTIONS_OBJECT.persistence_interactions = ['Activate Persistence', 'Suspend Persistence'];
 
 
 IONUX.Views.ActionMenu = Backbone.View.extend({
@@ -117,6 +118,18 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
             }
           }
         } else if (_.contains(['PlatformDevice', 'InstrumentDevice', 'DataProduct'], window.MODEL_DATA.resource_type)) {
+
+          // activate/suspend persistence are specific to dataproduct only
+          // @TODO who is allowed to make these calls?
+          if (IONUX.is_logged_in() && window.MODEL_DATA.resource_type == 'DataProduct') {
+            if (!window.MODEL_DATA.computed.is_persisted.value) {
+              this.interaction_items.push(INTERACTIONS_OBJECT.persistence_interactions[0]);
+              this.on("action__activate_persistence", this.action_data_product__activate_persistence);
+            } else {
+              this.interaction_items.push(INTERACTIONS_OBJECT.persistence_interactions[1]);
+              this.on("action__suspend_persistence", this.action_data_product__suspend_persistence);
+            }
+          }
 
           if (IONUX.is_logged_in() && !IONUX.is_owner()) {
             // check commitments on current object for resource commitments for the current owner
@@ -284,6 +297,12 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
     },
     action__release_exclusive_access: function(commitment_id, e) {
       new IONUX.Views.ReleaseExclusiveAccess({commitment_id: commitment_id}).render().el;
+    },
+    action_data_product__activate_persistence: function(e) {
+      new IONUX.Views.ActivateDataProductPersistence().render().el;
+    },
+    action_data_product__suspend_persistence: function(e) {
+      new IONUX.Views.SuspendDataProductPersistence().render().el;
     },
 });
 

@@ -70,6 +70,16 @@ class ServiceApi(object):
         return deactivate
 
     @staticmethod
+    def activate_persistence(data_product_id):
+        res = service_gateway_post('data_product_management', 'activate_data_product_persistence', params={'data_product_id':data_product_id})
+        return res
+
+    @staticmethod
+    def suspend_persistence(data_product_id):
+        res = service_gateway_post('data_product_management', 'suspend_data_product_persistence', params={'data_product_id':data_product_id})
+        return res
+
+    @staticmethod
     def search(search_query):
         query = None
 

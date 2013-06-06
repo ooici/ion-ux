@@ -1308,6 +1308,79 @@ IONUX.Views.DeactivateAsPrimaryDeployment = Backbone.View.extend({
   }
 });
 
+IONUX.Views.ActivateDataProductPersistence = Backbone.View.extend({
+  events: {
+    'click #btn-activate-persistence': 'activate_persistence_clicked'
+  },
+  buttons: '<button id="btn-activate-persistence" class="btn-blue">Activate Persistence</button><button class="btn-general" data-dismiss="modal">Cancel</button>',
+  render: function() {
+    var modal_template_vars = {header_text:"Activate Persistence: " + window.MODEL_DATA.resource.name,
+                               body: "Click activate below to activate persistence for this data product.",
+                               buttons: this.buttons};
+
+    this.modal = $(_.template(IONUX.Templates.full_modal_template, modal_template_vars));
+    this.modal.modal('show')
+      .on('hide', function() {
+        $('#action-modal').remove();
+      });
+    this.setElement('#action-modal');
+    return this;
+  },
+  activate_persistence_clicked: function() {
+    var url = window.location.protocol + "//" + window.location.host + "/activate_persistence/",
+       vals = {data_product_id: window.MODEL_DATA.resource._id},
+       self = this;
+    
+    $.post(url, vals)
+      .done(function(resp) {
+        self.modal.modal('hide');
+
+        Backbone.history.fragment = null; // Clear history fragment to allow for page "refresh".
+        IONUX.ROUTER.navigate(window.location.pathname, {trigger: true});
+      })
+      .fail(function(resp) {
+        console.error(resp);
+      });
+  },
+});
+
+IONUX.Views.SuspendDataProductPersistence = Backbone.View.extend({
+  events: {
+    'click #btn-suspend-persistence': 'suspend_persistence_clicked'
+  },
+  buttons: '<button id="btn-suspend-persistence" class="btn-blue">Suspend Persistence</button><button class="btn-general" data-dismiss="modal">Cancel</button>',
+  render: function() {
+    var modal_template_vars = {header_text:"Suspend Persistence: " + window.MODEL_DATA.resource.name,
+                               body: "Click Suspend below to suspend persistence for this data product.",
+                               buttons: this.buttons};
+
+    this.modal = $(_.template(IONUX.Templates.full_modal_template, modal_template_vars));
+    this.modal.modal('show')
+      .on('hide', function() {
+        $('#action-modal').remove();
+      });
+    this.setElement('#action-modal');
+    return this;
+  },
+  suspend_persistence_clicked: function() {
+    var url = window.location.protocol + "//" + window.location.host + "/suspend_persistence/",
+       vals = {data_product_id: window.MODEL_DATA.resource._id},
+       self = this;
+    
+    $.post(url, vals)
+      .done(function(resp) {
+        self.modal.modal('hide');
+
+        Backbone.history.fragment = null; // Clear history fragment to allow for page "refresh".
+        IONUX.ROUTER.navigate(window.location.pathname, {trigger: true});
+      })
+      .fail(function(resp) {
+        console.error(resp);
+      });
+  },
+});
+
+
 // LEFT FOR REFERENCE
 // IONUX.Views.UserRegistration = IONUX.Views.CreateNewView.extend({
 //   el: "#user-registration-container",
