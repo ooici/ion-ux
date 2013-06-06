@@ -26,16 +26,20 @@
     </head>
     <body>
         <div class="wrapper">
-          <div id="header" class="navbar navbar-fixed-top">
-            <div class="container-fluid">
-              <div class="row-fluid">
-                <div class="span6"><br /><!-- <img id="ooi-logo" src="/static/img/ooi-logo.png" alt="OOI" width="100" /> --></div>
-                <div id="topbar" class="span6 user-nav"> </div> <!-- User navigation -->
+          <div class="navbar navbar-fixed-top">
+            <div id="header">
+              <div class="container-fluid">
+                <div class="row-fluid">
+                  <div class="span6">
+                    <a href="/" title="Ocean Observatories Initiative"><img id="ooi-logo" src="/static/img/newbanner_ooilogo.png" alt="OOI" /></a>
+                  </div>
+                  <div id="topbar" class="span6 user-nav"> </div> <!-- User navigation -->
+                </div>
               </div>
-            </div>
+            </div> <!-- header -->
           </div>
         <div id="container" class="container-fluid">
-          <div class="row-fluid page-header1">
+          <div class="row-fluid dashboard-search">
             <div id="view-controls" class="span2" style="display:none;">
               <button id="btn-map" class="btn-view active">Map</button>
               <button id="btn-resources" class="btn-view">Resources</button>
@@ -53,11 +57,22 @@
                 <div id="map-filter" class="asset-mode" style="display:none;"> </div>
               </div> <!-- .map-view -->
               
-              <div class="resources-view" style="display:none">
+              <div class="resources-view" style="display:none;">
                 <div id="org-selector" class="resources-view" style=""> </div>
                 <div id="list-filter" class="resources-view" style=""> </div>
               </div> <!-- .resources-view -->
-
+              
+              <div class="nsf-ol">
+                <div class="logos">
+                  <div class="nsf"> </div>
+                  <div class="ol"> </div>
+                </div>
+                <div class="about">
+                  Funding for the <a href="http://www.oceanobservatories.org/" target="OOI">Ocean Observatories Initiative</a> is provided by the <a href="http://www.nsf.gov" target="NSF">National Science Foundation</a> through a Cooperative Agreement with the <a href="http://www.oceanleadership.org/" target="COL">Consortium for Ocean Leadership</a>.
+                </div>
+              </div>
+              
+              
             </div> <!-- div#sidebar -->
             <div id="dynamic-container" class="span10" style="display:none;height:100%"> </div>
           </div> <!-- div.row -->

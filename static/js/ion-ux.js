@@ -61,7 +61,13 @@ IONUX = {
               $('#left .map-view').show();
             }
         });
-      }
+      },
+      complete: function(resp){
+        // Wrapper initially hidden to prevent
+        // unformed content from appearing while
+        // API calls being made to draw the dashboard;
+        $('.wrapper').show();
+      },
     });
     
     router.handle_navigation();
