@@ -24,7 +24,6 @@
   float: left;
 }
 
-
 .nsf:before, .ol:before {
   content: '';
   width: 75px;

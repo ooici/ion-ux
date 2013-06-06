@@ -18,7 +18,7 @@ IONUX.Views.PlatformCommandFacepage = Backbone.View.extend({
   },
 
   render: function(){
-    this.$el.empty().html(this.template(this.model.toJSON())).show();
+    this.$el.prepend(this.template(this.model.toJSON())).show();
     var agent_process_id = this.model.get('agent_instance')['agent_process_id'];
     if (agent_process_id) {
         $("#start-instrument-agent-instance").hide();
