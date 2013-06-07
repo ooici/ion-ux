@@ -227,14 +227,7 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
   },
 
   get_resource_type_schema: function(){
-    /* NOTE: this is a blocking ajax call (async:false) */
-    var url = "/resource_type_schema/"+this.resource_type + "/"; 
-    var data = null;
-    $.ajax({url:url, type:"GET", dataType:"json", async:false})
-      .always(function(){})
-      .done(function(resp){data = resp;})
-      .fail(function(){})
-    return data["schema"];
+    return this.prepare.resource_backbone_schema;
   },
 
   nest_depth: function(val){
