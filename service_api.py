@@ -769,6 +769,11 @@ class ServiceApi(object):
                     item = {'type': 'Text'}
                 elif schema_type == 'dict':
                     item = {'type': 'TextArea'}
+                # TEMP: catchall
+                else:
+                    item = {'type': 'Text'}
+                    
+                    
             else:
                 item = {'type': 'Text'}
             
