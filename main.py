@@ -556,7 +556,7 @@ def edit(resource_type, resource_id):
 @app.route('/resource_type_edit/<resource_type>/<resource_id>/', methods=['GET', 'PUT'])
 def resource_type_edit(resource_type, resource_id):
     if request.method == 'GET':
-        resource = ServiceApi.get_prepare(resource_type, resource_id, None)
+        resource = ServiceApi.get_prepare(resource_type, resource_id, None, True)
         return render_json_response(resource)
     if request.method == 'PUT':
         data = json.loads(request.data)

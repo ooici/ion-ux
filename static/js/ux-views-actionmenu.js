@@ -96,7 +96,7 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
 
           // ENROLLMENT
           if (IONUX.is_logged_in()) {
-            if (IONUX.is_owner()) {
+            if (_.contains(IONUX.SESSION_MODEL.get('roles')[window.MODEL_DATA.resource.org_governance_name], 'ORG_MANAGER')) {
               // INVITE USER
               this.interaction_items.push("Invite User");
               this.on("action__invite_user", this.action_org__invite_user);

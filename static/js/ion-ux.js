@@ -88,6 +88,8 @@ IONUX = {
         error_obj = [{Message:resp['responseText']}]
       }
 
+      $('#spinner').remove();
+
       var open_modal = $('.modal-ooi').is(':visible') ? true : false;
       if (open_modal) $('#action-modal').modal('hide').remove();
 

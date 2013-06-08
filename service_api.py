@@ -600,7 +600,13 @@ class ServiceApi(object):
         return [resp, resp2]
 
     @staticmethod
-    def get_prepare(resource_type, resource_id, user_id):
+    def get_prepare(resource_type, resource_id, user_id, get_backbone_schema=False):
+
+        # because of the way the UI changes the type that comes in here, we can't really trust it
+        # this means we need to read the resource to get the type first then use that.
+        res = service_gateway_get('resource_registry', 'read', params={'object_id': resource_id})
+        resource_type = res['type_']
+
         if resource_type == 'InstrumentDevice':
             params = {}
             if resource_id:
@@ -639,6 +645,10 @@ class ServiceApi(object):
                 params['resource_id'] = resource_id
 
             prepare = service_gateway_get('resource_registry', 'prepare_resource_support', params=params)
+
+        # now, get the backbone schema if requested, using the converted type we got above
+        if get_backbone_schema:
+            prepare['resource_backbone_schema'] = ServiceApi.resource_type_schema(resource_type)
 
         return prepare
 
