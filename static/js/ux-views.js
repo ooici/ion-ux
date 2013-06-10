@@ -178,6 +178,11 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
       zoom: 1,
       mapTypeId: google.maps.MapTypeId.ROADMAP,
       draggable: false,
+      zoomControlOptions: {
+        style: google.maps.ZoomControlStyle.SMALL
+      },
+      mapTypeControl: false,
+      streetViewControl: false,
     };
 
     $('#advanced-search-overlay').modal()
