@@ -2085,6 +2085,10 @@ ul.nav {
   border-radius: 3px;
 }
 
+#advanced-search-overlay .toggle_sealevel_result, #advanced-search-overlay .toggle_sealevel_passive {
+  cursor: pointer;
+}
+
 #create-resource-overlay select {
   width: 100%;
 }

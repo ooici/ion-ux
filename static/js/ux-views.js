@@ -134,6 +134,7 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
     "click .filter-remove": "remove_filter_item",
     "click #btn-adv-search": "search_clicked",
     "change select[name='filter_var']": "filter_field_changed",
+    "click .vertical-bounds-positive": "toggle_sealevel",
   },
   geodata: { geospatial_latitude_limit_north: null,
              geospatial_latitude_limit_south: null,
@@ -348,9 +349,36 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
     mu_listener2 = google.maps.event.addListenerOnce(self.rectangle, 'mouseup', muphandler);
   },
   search_clicked: function(e) {
-    var search_term = "adv=1&" + this.$('form').serialize(); // marker at front to make distinguishing queries easier
+    var form_values = this.$('form').serializeArray();
+    form_values.splice(0, 0, {name:'adv', value:1})   // insert advanced key on the front
 
-    IONUX.ROUTER.navigate('/search/?'+ encodeURI(search_term), {trigger:true});
+    // switch into an object - much easier to access directly
+    var formObj = _.object(_.map(form_values, function(v) {
+      return [v.name, v.value];
+    }));
+
+    // normalize into "down" facing vertical if switched to up
+    if (this.$('.vertical-bounds-positive').hasClass('toggle_sealevel_passive')) {
+      if (formObj['vertical-lower-bound']) {
+        formObj['vertical-lower-bound'] = -formObj['vertical-lower-bound'];
+      }
+      if (formObj['vertical-upper-bound']) {
+        formObj['vertical-upper-bound'] = -formObj['vertical-upper-bound'];
+      }
+      if (formObj['vertical-upper-bound'] < formObj['vertical-lower-bound']) {
+        var tmp = formObj['vertical-upper-bound'];
+        formObj['vertical-upper-bound'] = formObj['vertical-lower-bound'];
+        formObj['vertical-lower-bound'] = tmp;
+      }
+    }
+
+    form_values = _.map(_.pairs(formObj), function(v) { 
+      return {name:v[0], value:v[1]};
+    });
+
+    var search_term = $.param(form_values); 
+
+    IONUX.ROUTER.navigate('/search/?'+ search_term, {trigger:true});
     $('#advanced-search-overlay').modal('hide');
 
   },
@@ -489,6 +517,14 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
       this_filter_item.remove();
       return;
     }
+  },
+  toggle_sealevel: function(evt) {
+    var target = $(evt.target);
+    target.toggleClass('toggle_sealevel_passive');
+    target.toggleClass('toggle_sealevel_result');
+
+    var newtext = (target.hasClass('toggle_sealevel_passive')) ? "UP" : "DOWN";
+    target.next('span').text(newtext);
   },
 });
 
