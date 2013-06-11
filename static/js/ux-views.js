@@ -383,12 +383,12 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
 
   },
   filter_fields: [
+    {field: 'name'                  , label: 'Name'                     , values: []} ,
     {field: 'ooi_short_name'        , label: 'OOI Data Product Code'    , values: []} ,
     {field: 'ooi_product_name'      , label: 'Data Product Type'        , values: []} ,
     {field: 'description'           , label: 'Description'              , values: []} ,
     {field: 'instrument_family'     , label: 'Instrument Family'        , values: []} ,
     {field: 'lcstate'               , label: 'Lifecycle State'          , values: ['DRAFT','PLANNED','DEVELOPED','INTEGRATED','DEPLOYED','RETIRED']} ,
-    {field: 'name'                  , label: 'Name'                     , values: []} ,
     {field: 'alt_ids'               , label: 'OOI Reference Designator' , values: []} ,
     {field: 'name'                  , label: 'Organization'             , values: []} ,
     {field: 'platform_family'       , label: 'Platform Family'          , values: []} ,
@@ -507,8 +507,9 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
       target.parents('.filter-item').after(filter_item);
     }
 
-    // preselect name field
-    filter_item.find('select[name="filter_var"] option[value="name"]:contains("Name")').attr('selected', 'selected').change();
+    // seems to be no way to get this to cooperate, so we'll just select the first item
+    var sel = filter_item.find('select[name="filter_var"]');
+    sel.change();
   },
   remove_filter_item: function(evt) {
     var this_filter_item = $(evt.target).parents('.filter-item');
