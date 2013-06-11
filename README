@@ -94,8 +94,9 @@ A fab script has been provided to facilitate deployment to a remote VM.  To prep
 
         easy_install fabric
 
-Now you run the fab script, which will prompt you for necessary information to complete the deployment.  Currently, the script supports deployment to ux-test and ion-alpha.  Utilize one of the following command lines to deploy to ion-alpha or ion-beta.
+Now you run the fab script, which will prompt you for necessary information to complete the deployment.  Currently, the script supports deployment to ion systems listed below.  You should deploy as the 'ux' user which needs to be configured by operations (with your ssh key).  Utilize one of the following command lines to deploy.
 
         > fab ion_dev deploy
         > fab ion_alpha deploy
         > fab ion_beta deploy
+        > fab ion_stage deploy
