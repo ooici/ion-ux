@@ -408,20 +408,6 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
               disabled: disabled
             }).render().el;
           };
-          
-          
-          
-          
-          // if (!_.isEmpty(resp.data.resource_params)) {
-          //   new IONUX.Views.AgentParams({model: new IONUX.Models.rParams(resp.data.resource_params, {schema: resp.data.resource_schema})}).render().el;
-          // };
-          
-          // Catch 'GatewayError' caused by unsupported/invalid state.
-          // if (!_.isEmpty(resp.data.resource_params) && !_.has(resp.data.resource_params, 'GatewayError')){
-          //   new IONUX.Views.ResourceParams({model: new IONUX.Models.ResourceParams(resp.data.resource_params)}).render().el;
-          // } else {
-          //   $('#resource-form').empty();
-          // };
         },
         error: function(resp){
           // Per recommendation, checking for Not Found to determine if an agent is running. 
