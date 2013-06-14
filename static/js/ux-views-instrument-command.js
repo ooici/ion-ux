@@ -74,12 +74,19 @@ IONUX.Views.ResourceParams2 = Backbone.View.extend({
   },
   initialize: function(){
     _.bindAll(this);
+    this.disabled = this.options.disabled;
     this.resource_params_form = new Backbone.Form({model: this.model}).render();
   },
   render: function(){
     $('#resource-form2').html(this.$el.html(this.template));
     this.$el.prepend(this.resource_params_form.el);
     
+    // disable form if 'set_resource' is not in capabilities;
+    if (this.disabled) {
+      this.$el.find('input, textarea').attr('disabled', true);
+      this.$el.find('.save-params').attr('disabled', true).text('Save (Disabled)');
+    };
+
     // Quick hack to disable and hide backbone-forms buttons.
     // Todo: implement custom form templates in IONUX.Templates
     this.$el.find('.bbf-add, .bbf-del').remove();
@@ -87,17 +94,12 @@ IONUX.Views.ResourceParams2 = Backbone.View.extend({
     return this;
   },
   save_params: function(e){
-    console.log('IONUX.View.ResourceParams2 SAVE!');
     var self = this;
     var btn = $(e.target);
     btn.prop('disabled', true).text('Saving...');
     this.$el.find('input').prop('disabled', true);
     this.resource_params_form.commit();
     var attrs = this.model.toJSON(); // Hack to force fn complete below. Better way?
-    console.log('attrs', attrs);
-
-    // console.log('this.model.url', this.model.url());
-    // console.log('this.model save!', attrs);
 
     this.model.save(attrs, {
       complete: function(resp){
@@ -183,10 +185,17 @@ IONUX.Views.AgentParams = Backbone.View.extend({
   initialize: function(){
     _.bindAll(this);
     this.resource_params_form = new Backbone.Form({model: this.model}).render();
+    this.disabled = this.options.disabled;
   },
   render: function(){
     this.$el.html(this.template);
     this.$el.prepend(this.resource_params_form.el);
+    
+    // disable form if 'set_agent' is not in capabilities;
+    if (this.disabled) {
+      this.$el.find('input, textarea').attr('disabled', true);
+      this.$el.find('.save-params').attr('disabled', true).text('Save (Disabled)');
+    };
     
     // Quick hack to disable and hide backbone-forms buttons.
     // Todo: implement custom form templates in IONUX.Templates
@@ -201,7 +210,6 @@ IONUX.Views.AgentParams = Backbone.View.extend({
     this.$el.find('input, textarea').prop('disabled', true);
     this.resource_params_form.commit();
     var attrs = this.model.toJSON(); // Hack to force fn complete below. Better way?
-    console.log('attrs', attrs);
     
     this.model.save(attrs, {
       complete: function(resp){
@@ -382,13 +390,27 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
           $('#stop').show();
           self.render_commands(resp.data.commands);
           
+          // temp for troubleshooting
+          window.cap = resp;
+          
           if (!_.isEmpty(resp.data.agent_params)) {
-            new IONUX.Views.AgentParams({model: new IONUX.Models.AgentParams(resp.data.agent_params, {schema: resp.data.agent_schema})}).render().el;
+            var disabled = !_.findWhere(resp.data.original, {name: 'set_agent'}) ? true : false;
+            new IONUX.Views.AgentParams({
+              model: new IONUX.Models.AgentParams(resp.data.agent_params, {schema: resp.data.agent_schema}),
+              disabled: disabled
+            }).render().el;
           };
           
           if (!_.isEmpty(resp.data.resource_params)) {
-            new IONUX.Views.ResourceParams2({model: new IONUX.Models.ResourceParams2(resp.data.resource_params, {schema: resp.data.resource_schema})}).render().el;
+            var disabled = !_.findWhere(resp.data.original, {name: 'set_resource'}) ? true : false;
+            new IONUX.Views.ResourceParams2({
+              model: new IONUX.Models.ResourceParams2(resp.data.resource_params, {schema: resp.data.resource_schema}),
+              disabled: disabled
+            }).render().el;
           };
+          
+          
+          
           
           // if (!_.isEmpty(resp.data.resource_params)) {
           //   new IONUX.Views.AgentParams({model: new IONUX.Models.rParams(resp.data.resource_params, {schema: resp.data.resource_schema})}).render().el;
