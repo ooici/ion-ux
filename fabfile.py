@@ -46,23 +46,21 @@ class Deploy:
     def deploy_cilogon(self):
         print("Executing on %s as %s" % (env.host, env.user))
         # Remove/recreate web app extract and install dirs
-        run('sudo rm -rf %s' % self.remote_extract_dir)
+        run('rm -rf %s' % self.remote_extract_dir)
         with settings(warn_only=True):
             run('mkdir %s' % self.remote_extract_dir)
         with settings(warn_only=True):
-            sudo('rm -rf %s' % self.remote_deploy_dir, shell=False)
+            run('rm -rf %s' % self.remote_deploy_dir, shell=False)
         with settings(warn_only=True):
-            sudo('mkdir %s' % self.remote_deploy_dir, shell=False)
+            run('mkdir %s' % self.remote_deploy_dir, shell=False)
 
 
         put('cilogon.tar', '%s/cilogon.tar' % self.remote_extract_dir)
-        sudo('tar -xf %s/cilogon.tar -C %s' % (self.remote_extract_dir, self.remote_deploy_dir), shell=False)
-        sudo('mkdir %s/cilogon-wsgi/temp' % self.remote_deploy_dir, shell=False)
-        sudo('mkdir %s/cilogon-wsgi/temp/data' % self.remote_deploy_dir, shell=False)
-        sudo('mkdir %s/cilogon-wsgi/temp/lookup' % self.remote_deploy_dir, shell=False)
-        sudo('chgrp -R root %s' % self.remote_deploy_dir, shell=False)
-        sudo('chown -R root %s' % self.remote_deploy_dir, shell=False)
-        sudo('chmod -R 777 %s/cilogon-wsgi/temp' % self.remote_deploy_dir, shell=False)
+        run('tar -xf %s/cilogon.tar -C %s' % (self.remote_extract_dir, self.remote_deploy_dir), shell=False)
+        run('mkdir %s/cilogon-wsgi/temp' % self.remote_deploy_dir, shell=False)
+        run('mkdir %s/cilogon-wsgi/temp/data' % self.remote_deploy_dir, shell=False)
+        run('mkdir %s/cilogon-wsgi/temp/lookup' % self.remote_deploy_dir, shell=False)
+        run('chmod -R 777 %s/cilogon-wsgi/temp' % self.remote_deploy_dir, shell=False)
 
     def config_flask(self):
         # Create config.py file from template
@@ -99,18 +97,16 @@ class Deploy:
             run('mkdir  %s' % self.remote_extract_dir)
         # Remove/recreate deploy and flask dir
         with settings(warn_only=True):
-            sudo('rm -rf %s' % flask_root, shell=False)
+            run('rm -rf %s' % flask_root, shell=False)
         with settings(warn_only=True):
-            sudo('mkdir  %s' % self.remote_deploy_dir, shell=False)
+            run('mkdir  %s' % self.remote_deploy_dir, shell=False)
         with settings(warn_only=True):
-            sudo('mkdir  %s' % flask_root, shell=False)
+            run('mkdir  %s' % flask_root, shell=False)
         # Deploy
         put('ux.tar', '%s/ux.tar' % self.remote_extract_dir)
-        sudo('tar -xf %s/ux.tar -C %s' % (self.remote_extract_dir, flask_root), shell=False)
-        sudo('mkdir %s/public' % self.remote_deploy_dir, shell=False)
-        sudo('mkdir %s/logs' % self.remote_deploy_dir, shell=False)
-        sudo('chgrp -R root %s' % self.remote_deploy_dir, shell=False)
-        sudo('chown -R root %s' % self.remote_deploy_dir, shell=False)
+        run('tar -xf %s/ux.tar -C %s' % (self.remote_extract_dir, flask_root), shell=False)
+        run('mkdir %s/public' % self.remote_deploy_dir, shell=False)
+        run('mkdir %s/logs' % self.remote_deploy_dir, shell=False)
 
     def deploy(self, ssh_user, web_host, web_port=3000, remote_extract_dir='/tmp/ux', remote_deploy_dir='/www/ux', remote_relative_flask_dir='flask',
                gateway_host='sg.a.oceanobservatories.org', gateway_port=5000, secret_key=None):
@@ -187,9 +183,11 @@ def ux_test():
     print 'Deprecated...Please use "fab ion-alpha deploy"'
     exit()
 
-def ux_stage():
-    print 'Deprecated...Please use "fab ion-beta deploy"'
-    exit()
+def ion_stage():
+    global host
+    global gateway_host;
+    host = 'ion-stage.oceanobservatories.org'
+    gateway_host = 'sg.s.oceanobservatories.org'
 
 def ion_beta():
     global host
@@ -204,7 +202,7 @@ def gateway_sg():
 def deploy():
     global host, gateway_host, gateway_port
     web_host = host or prompt('Web application hostname: ', default='ux-test.oceanobservatories.org')
-    ssh_user = prompt('Username for remote host: ', default=getpass.getuser())
+    ssh_user = prompt('Username for remote host: ', default='ux')
     gateway_host= prompt('Service Gateway Service hostname: ', default=gateway_host)
     gateway_port= gateway_port or prompt('Service Gateway Service port: ', default='5000')
     deploy = Deploy()

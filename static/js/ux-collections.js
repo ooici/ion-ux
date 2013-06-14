@@ -1,6 +1,8 @@
 // For generic cases
 IONUX.Collections.Resources = Backbone.Collection.extend({
-  model: IONUX.Models.Resource,
+  //model: IONUX.Models.Resource,
+  // can't use this model type here because its parse is suited for retreive on itself, not
+  // for use with a collection.
   initialize: function(models, options){
       this.resource_type = options.resource_type;
   },

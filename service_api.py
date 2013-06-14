@@ -615,8 +615,9 @@ class ServiceApi(object):
 
         # because of the way the UI changes the type that comes in here, we can't really trust it
         # this means we need to read the resource to get the type first then use that.
-        res = service_gateway_get('resource_registry', 'read', params={'object_id': resource_id})
-        resource_type = res['type_']
+        if resource_id:
+            res = service_gateway_get('resource_registry', 'read', params={'object_id': resource_id})
+            resource_type = res['type_']
 
         if resource_type == 'InstrumentDevice':
             params = {}

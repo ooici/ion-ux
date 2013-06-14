@@ -2045,6 +2045,17 @@ ul.nav {
   height: 450px;
 }
 
+/*
+ * shearing fix from http://stackoverflow.com/questions/9141249/twitter-bootstrap-css-affecting-google-maps
+ */
+#advanced-search-overlay #adv_map img {
+  max-width: none; 
+}
+#advanced-search-overlay #adv_map label {
+  width: auto;
+  display: inline;
+}
+
 #advanced-search-overlay #limit_search_checkboxes {
   margin-left: 30px;
 }
@@ -2072,6 +2083,10 @@ ul.nav {
 
 #advanced-search-overlay .filter-add, #advanced-search-overlay .filter-remove {
   border-radius: 3px;
+}
+
+#advanced-search-overlay .toggle_sealevel_result, #advanced-search-overlay .toggle_sealevel_passive {
+  cursor: pointer;
 }
 
 #create-resource-overlay select {
