@@ -30,6 +30,17 @@ AGENT_REQUEST_TEMPLATE = {
 
 
 class ServiceApi(object):
+    
+    @staticmethod
+    def find_status():
+        params = {
+            'parent_resource_ids': ['c03756d6674044d6b8dd2e4aedd2c364', '5611c485da184263b646aa4844313870'],
+            'include_status': True
+        }
+        
+        return service_gateway_get('observatory_management', 'get_sites_devices_status', raw_return=True, params=params)
+    
+    
     @staticmethod
     def visualization(operation_name, visualization_parameters):
         return service_gateway_get('visualization', operation_name, raw_return=True, params=visualization_parameters)
@@ -589,7 +600,7 @@ class ServiceApi(object):
         resource.update({'name':'New %s' % resource_type})
 
         resp = service_gateway_post(create_op['service_name'], create_op['service_operation'], params={create_op['request_parameters'].keys()[0]: resource})
-
+        
         if isinstance(resp, dict) and "GatewayError" in resp:
             resp2 = None
         else:

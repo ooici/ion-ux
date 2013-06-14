@@ -212,30 +212,30 @@ IONUX.Views.Map = Backbone.View.extend({
         anchor: new google.maps.Point(30, 30),
         origin: new google.maps.Point(420, 180),
         size: new google.maps.Size(60, 60),
-        url: '/static/img/sprite.png'
+        url: '/static/img/sprite2.png'
     },
     na_icon_hover: {
       anchor: new google.maps.Point(30, 30),
       origin: new google.maps.Point(480, 180),
       size: new google.maps.Size(60, 60),
-      url: '/static/img/sprite.png'
+      url: '/static/img/sprite2.png'
     },
     na_icon_active: {
         anchor: new google.maps.Point(30, 30),
         origin: new google.maps.Point(540, 180),
         size: new google.maps.Size(60, 60),
-        url: '/static/img/sprite.png'
+        url: '/static/img/sprite2.png'
     }
   },
   
   
   initialize: function(){
     _.bindAll(this);
-    this.sprite_url = '/static/img/sprite.png';
+    this.sprite_url = '/static/img/sprite2.png';
     this.active_marker = null; // Track clicked icon
     this.draw_map();
     this.model.on('pan:map', this.pan_map);
-    // this.collection.on('reset', this.draw_markers);
+    this.collection.on('reset', this.draw_markers);
     // this.collection.on('reset', this.render_table);
   },
   

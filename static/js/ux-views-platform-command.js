@@ -91,6 +91,7 @@ IONUX.Views.PlatformCommandFacepage = Backbone.View.extend({
         url: 'get_capabilities?cap_type=abc123',
         dataType: 'json',
         success: function(resp){
+          console.log('get_capabilities', resp);
             self.render_commands(resp.data.commands);
         },
         error: function(resp) {

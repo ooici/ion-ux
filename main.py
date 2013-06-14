@@ -396,6 +396,11 @@ def get_data_product_group_list():
 def find_site_data_products(resource_id):
     site_data_products = ServiceApi.find_site_data_products(resource_id)
     return render_json_response(site_data_products)
+    
+@app.route('/find_status/', methods=['GET', 'POST'])
+def find_status():
+    status = ServiceApi.find_status()
+    return render_json_response(status)
 
 @app.route('/map/<resource_id>/', methods=['GET'])
 @app.route('/map/data/<resource_id>', methods=['GET'])
