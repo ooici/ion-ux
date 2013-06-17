@@ -1,3 +1,80 @@
+// Temporary hard-coding based on user input
+IONUX.Notifications = [
+  {
+    label: 'Communication Lost/Restored', 
+    event_type: 'ResourceAgentConnectionLostErrorEvent',
+    desc: 'Communications have failed to a device or communication has been restored.'
+  },
+  {
+    label: 'Device Error', 
+    event_type: 'ResourceAgentErrorEvent',
+    desc: 'A problem associated with a device has been detected.'
+  },
+  {
+    label: 'Issue reported', 
+    event_type: 'ResourceIssueReportedEvent',
+    desc: 'An issue has been reported by a user.'
+  },
+  {
+    label: 'Lifecycle state change', 
+    event_type: 'ResourceLifecycleEvent',
+    desc: 'Lifecycle state has been changed.'
+  },
+  {
+    label: 'Agent operational state change', 
+    event_type: 'Agent operational state change',
+    desc: 'Agent operational state change'
+  },
+  {
+    label: 'Managed Resource operational state change', 
+    event_type: 'ResourceAgentResourceStateEvent',
+    desc: 'The agent\'s managed resource state has changed'
+  },
+  {
+    label: 'Operator event on device', 
+    event_type: 'DeviceOperatorEvent',
+    desc: 'An operator has logged an event manually on a device.'
+  },
+  {
+    label: 'Operator event on device',
+    event_type: 'DeviceOperatorEvent',
+    desc: 'An operator has logged an event manually on a device',
+    only: ['InstrumentDevice', 'PlatformDevice']
+  },
+  {
+    label: 'Operator event on resource', 
+    event_type: 'ResourceOperatorEvent',
+    desc: 'An operator has logged an event manually on a non-device resource.',
+    restrict: ['InstrumentDevice', 'PlatformDevice']
+  },
+  {
+    label: 'QC alert', 
+    event_type: 'ParameterQCEvent',
+    desc: 'QC processing has detected an error.'
+  },
+  {
+    label: 'Request received', 
+    event_type: 'OrgNegotiationInitiatedEvent',
+    desc: 'A role, enrollment, or access request has been submitted to the Facility.'
+  },
+  {
+    label: 'Resource modified', 
+    event_type: 'ResourceModifiedEvent',
+    desc: 'The resource has been modified.'
+  },
+  {
+    label: 'Status alert/change', 
+    event_type: 'DeviceStatusEvent',
+    desc: 'A status alert has been issued or status has recovered.'
+  },
+  {
+    label: 'Aggregate Status alert/change', 
+    event_type: 'DeviceAggregateStatusEvent',
+    desc: 'An aggregated Status alert has been issued or the aggregated status has recovered.'
+  },
+]
+
+
 IONUX.Models.Notification = Backbone.Model.extend({
   idAttribute: '_id'
 });
@@ -21,9 +98,11 @@ IONUX.Views.Notifications = Backbone.View.extend({
     _.bindAll(this);
     this.collection.on('reset', this.render);
     this.user_notifications = window.MODEL_DATA['computed']['user_notification_requests']['value'];
+    console.log('user_notifications', this.user_notifications);
   },
   render: function() {
     this.$el.html(this.template);
+    this.$el.find('table thead').hide();
     var table_body = this.$el.find('table tbody');
     var self = this;
     _.each(this.collection.models, function(notification) {
@@ -48,6 +127,7 @@ IONUX.Views.NotificationItem = Backbone.View.extend({
     this.model.on('change', this.render);
   },
   render: function(){
+    // console.log('NotificationItem', this.model.toJSON());
     this.$el.html(this.template({notification: this.model.toJSON()}));
     return this;
   },
@@ -75,58 +155,3 @@ IONUX.Views.NotificationItem = Backbone.View.extend({
     });
   }
 });
-
-// IONUX.Views.Subscribe = Backbone.View.extend({
-//     el: '#action-modal',
-//     template: _.template($('#subscribe-tmpl').html()),
-//     events: {
-//         'click #btn-subscribe': 'subscribe'
-//     },
-//     render: function() {
-//         this.$el.html(this.template);
-//         this.get_event_types();
-//         return this;
-//     },
-//     subscribe: function(evt){
-//         evt.preventDefault();
-//         var button_elmt = $(evt.target);
-//         var select_elmt = this.$el.find('select');
-//         var selected_option = this.$el.find('option:selected');
-//         var event_type = selected_option.attr("value");
-//         var resource_name = window.MODEL_DATA['resource']['name'];
-//         // button_elmt.attr("disabled", "disabled");
-//         // select_elmt.attr("disabled", "disabled");
-//         var self = this;
-//         $.ajax({
-//           url: 'subscribe/?event_type='+event_type+'?resource_name='+resource_name,
-//           dataType: 'json',
-//           success: function(resp){
-//               self.$el.find('.modal-body').prepend('<div class="alert alert-success">Subscription successful.</div>');
-//           },
-//           // error: function() {
-//           //     self.$el.find('.modal-body').prepend('<div class="alert alert-error">Subscription error.</div>');
-//           // },
-//           // complete: function(resp){
-//           // }
-//         });
-//     },
-//     get_event_types: function(evt) {
-//          var self = this;
-//          $.ajax({
-//            url: '/event_types/',
-//            dataType: 'json',
-//            success: function(resp){
-//                var select_elmt = $('#event-types');
-//                select_elmt.empty();
-//                var option_tmpl = '<option value="<%= event_type_name %>"><%= event_type_name %></option>'
-//                _.each(resp.data, function(event_type_name){
-//                    select_elmt.append(_.template(option_tmpl, {event_type_name: event_type_name}));
-//                });
-//            },
-//            error: function(resp) {
-//                console.log('Error: ', resp);
-//            }
-//          }); 
-//      },
-// });
-

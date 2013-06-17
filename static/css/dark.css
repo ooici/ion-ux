@@ -1427,7 +1427,7 @@ a.btn-footer {
 /* ---------------------------------------------------------------
   TEMP USER-NAV - ALL BLUE BUTTONS TO GET THIS STYLE EVENTUALLY
 --------------------------------------------------------------- */
-
+.btn-newblue,
 .user-nav a.btn-navigation {
   border-radius: 3px;
   background: #2d658c; /* Old browsers */
@@ -1452,6 +1452,13 @@ a.btn-footer {
   text-shadow: -1px -1px 1px #000000;
 }
 
+button.btn-newblue {
+  padding: 0 10px;
+  text-transform: uppercase;
+  font-size: 9px;
+}
+
+.btn-newblue:hover,
 .user-nav a.btn-navigation:hover {
   background: #6692a9; /* Old browsers */
   /* IE9 SVG, needs conditional override of 'filter' to 'none' */

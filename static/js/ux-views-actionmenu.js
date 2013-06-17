@@ -180,7 +180,7 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
         
     action__subscribe:function(){
         var subscribe_template = '<div id="action-modal" class="modal hide fade modal-ooi">\
-                                    <div class="modal-header"><h1>Notifications</h1></div>\
+                                    <div class="modal-header"><h1>Send Notification On:</h1></div>\
                                     <div class="modal-body">Loading...</div>\
                                     <div class="modal-footer">\
                                       <button id="btn-subscribe-cancel" type="button" data-dismiss="modal" class="btn-blue">Close</button>\
@@ -188,9 +188,9 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
                                   </div>';
         $(subscribe_template).modal({keyboard:false})
           .on('shown', function(){
-             var notifications = new IONUX.Collections.Notifications();
-             new IONUX.Views.Notifications({collection: notifications});
-             notifications.fetch({reset:true});
+             var notifications = new IONUX.Collections.Notifications(IONUX.Notifications);
+             new IONUX.Views.Notifications({collection: notifications}).render().el;
+             // notifications.fetch({reset:true});
            })
           .on('hide',function(){
             $('#action-modal').remove();

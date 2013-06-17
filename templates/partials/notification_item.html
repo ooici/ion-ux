@@ -1,9 +1,9 @@
-<td><%= notification.event_type %></td>
+<td><%= notification.label %></td>
 <td>
   <% if (_.has(notification, '_id')) { %>
-    <button class="btn-blue btn-unsubscribe">Unsubscribe</button></td>
+    <button class="btn-newblue btn-unsubscribe">Unsubscribe</button></td>
   <% } else { %>
-    <button class="btn-blue btn-subscribe">Subscribe</button>
+    <button class="btn-newblue btn-subscribe">Subscribe</button>
   <% } %>
 </td>
   

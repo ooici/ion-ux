@@ -236,7 +236,6 @@ IONUX.Views.Map = Backbone.View.extend({
     this.draw_map();
     this.model.on('pan:map', this.pan_map);
     this.collection.on('reset', this.draw_markers);
-    // this.collection.on('reset', this.render_table);
   },
   
   render: function(){
@@ -252,7 +251,6 @@ IONUX.Views.Map = Backbone.View.extend({
       zoom: 3,
       mapTypeId: google.maps.MapTypeId.TERRAIN,
       disableDefaultUI: true,
-      // scrollwheel: false,
       zoomControl: true,
       zoomControlOptions: {style: google.maps.ZoomControlStyle.SMALL, position: google.maps.ControlPosition.TOP_RIGHT}
     });
@@ -278,8 +276,6 @@ IONUX.Views.Map = Backbone.View.extend({
     _.each(this.collection.models, function(resource) {
       var lat = resource.get('geospatial_point_center')['lat'];
       var lon = resource.get('geospatial_point_center')['lon'];
-      // console.log('lat', lat, 'lon', lon);
-
       var rid = resource.get('_id');
       var rname = resource.get('name');
       self.create_marker(lat, lon, null, rname,"<P>Insert HTML here.</P>", null, rid);
