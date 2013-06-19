@@ -211,37 +211,133 @@ IONUX.Views.Map = Backbone.View.extend({
     na_icon: {
         anchor: new google.maps.Point(30, 30),
         origin: new google.maps.Point(420, 180),
-        size: new google.maps.Size(60, 60),
+        size: new google.maps.Size(50, 50),
         url: '/static/img/sprite2.png'
     },
     na_icon_hover: {
       anchor: new google.maps.Point(30, 30),
       origin: new google.maps.Point(480, 180),
-      size: new google.maps.Size(60, 60),
+      size: new google.maps.Size(50, 50),
       url: '/static/img/sprite2.png'
     },
     na_icon_active: {
         anchor: new google.maps.Point(30, 30),
         origin: new google.maps.Point(540, 180),
-        size: new google.maps.Size(60, 60),
+        size: new google.maps.Size(50, 50),
         url: '/static/img/sprite2.png'
-    }
+    },
+    
+    critical_icon: {
+        anchor: new google.maps.Point(30, 30),
+        origin: new google.maps.Point(420, 180),
+        size: new google.maps.Size(50, 50),
+        url: '/static/img/sprite2.png'
+    },
+    critical_icon_hover: {
+      anchor: new google.maps.Point(30, 30),
+      origin: new google.maps.Point(480, 180),
+      size: new google.maps.Size(50, 50),
+      url: '/static/img/sprite2.png'
+    },
+    critical_icon_active: {
+        anchor: new google.maps.Point(30, 30),
+        origin: new google.maps.Point(540, 180),
+        size: new google.maps.Size(50, 50),
+        url: '/static/img/sprite2.png'
+    },
+    
+    warning_icon: {
+        anchor: new google.maps.Point(30, 30),
+        origin: new google.maps.Point(420, 180),
+        size: new google.maps.Size(50, 50),
+        url: '/static/img/sprite2.png'
+    },
+    warning_icon_hover: {
+      anchor: new google.maps.Point(30, 30),
+      origin: new google.maps.Point(480, 180),
+      size: new google.maps.Size(50, 50),
+      url: '/static/img/sprite2.png'
+    },
+    warning_icon_active: {
+        anchor: new google.maps.Point(30, 30),
+        origin: new google.maps.Point(540, 180),
+        size: new google.maps.Size(50, 50),
+        url: '/static/img/sprite2.png'
+    },
+    
+    ok_icon: {
+        anchor: new google.maps.Point(30, 30),
+        origin: new google.maps.Point(420, 180),
+        size: new google.maps.Size(50, 50),
+        url: '/static/img/sprite2.png'
+    },
+    ok_icon_hover: {
+      anchor: new google.maps.Point(30, 30),
+      origin: new google.maps.Point(480, 180),
+      size: new google.maps.Size(50, 50),
+      url: '/static/img/sprite2.png'
+    },
+    ok_icon_active: {
+        anchor: new google.maps.Point(30, 30),
+        origin: new google.maps.Point(540, 180),
+        size: new google.maps.Size(50, 50),
+        url: '/static/img/sprite2.png'
+    },
+    
   },
-  
   
   initialize: function(){
     _.bindAll(this);
     this.sprite_url = '/static/img/sprite2.png';
     this.active_marker = null; // Track clicked icon
-    this.draw_map();
+    
     this.model.on('pan:map', this.pan_map);
+    this.model.on('set:active', this.set_active_marker);
     this.collection.on('reset', this.draw_markers);
-    // this.collection.on('reset', this.render_table);
+    
+    this.draw_map();
+    this.draw_markers();
   },
-  
-  render: function(){
-    this.$el.show();
-    return this;
+    
+  group_spatial_area_names: function(){
+    this.spatial_area_names = {};
+    var sans = _.uniq(this.collection.pluck('spatial_area_name'));
+    _.each(sans, function(san) {
+
+      var resources = this.collection.where({'spatial_area_name': san});
+      
+      var north_points = _.map(resources, function(resource) {return resource.get('constraint_list')[0]['geospatial_latitude_limit_north']});
+      var north = _.max(north_points);
+      
+      var east_points = _.map(resources, function(resource) {return resource.get('constraint_list')[0]['geospatial_longitude_limit_east']});
+      var east = _.max(east_points);
+      
+      var south_points = _.map(resources, function(resource) {return resource.get('constraint_list')[0]['geospatial_latitude_limit_south']});
+      var south = _.min(south_points);
+      
+      var west_points = _.map(resources, function(resource) {return resource.get('constraint_list')[0]['geospatial_longitude_limit_west']});
+      var west = _.min(west_points);
+      
+      
+      // Catch single items and add some padding to avoid 
+      // Google Maps 'Image Not Found' when panning to a tight boundary.
+      if (resources.length < 2) {
+        north += 1.0;
+        east += 1.0;
+        south -= 1.0;
+        west -= 1.0;
+      };
+      
+      if (! _.has(this.spatial_area_names, san)) {
+        this.spatial_area_names[san] = {
+          north: north,
+          east: east,
+          south: south,
+          west: west
+        };
+      };
+    
+    }, this); // _.each
   },
   
   draw_map: function(map_options, container_server) {
@@ -250,7 +346,7 @@ IONUX.Views.Map = Backbone.View.extend({
     this.map = new google.maps.Map(document.getElementById('map_canvas'), {
       center: new google.maps.LatLng(39.8106460, -98.5569760),
       zoom: 3,
-      mapTypeId: google.maps.MapTypeId.TERRAIN,
+      mapTypeId: google.maps.MapTypeId.SATELLITE,
       disableDefaultUI: true,
       // scrollwheel: false,
       zoomControl: true,
@@ -268,18 +364,15 @@ IONUX.Views.Map = Backbone.View.extend({
         maxZoom: 15
       }]
     });
-    this.draw_markers();
-    this.pan_map();
   },
   
   draw_markers: function() {
     console.log('draw_markers');
+    this.group_spatial_area_names();
     var self = this;
     _.each(this.collection.models, function(resource) {
       var lat = resource.get('geospatial_point_center')['lat'];
       var lon = resource.get('geospatial_point_center')['lon'];
-      // console.log('lat', lat, 'lon', lon);
-
       var rid = resource.get('_id');
       var rname = resource.get('name');
       self.create_marker(lat, lon, null, rname,"<P>Insert HTML here.</P>", null, rid);
@@ -287,20 +380,19 @@ IONUX.Views.Map = Backbone.View.extend({
   },
   
   pan_map: function() {
-    console.log('pan_map');
     try {
-      var n = this.model.get('constraint_list')[0]['geospatial_latitude_limit_north'];
-      var e = this.model.get('constraint_list')[0]['geospatial_longitude_limit_east'];
-      var s = this.model.get('constraint_list')[0]['geospatial_latitude_limit_south'];
-      var w = this.model.get('constraint_list')[0]['geospatial_longitude_limit_west'];
+      var san = this.model.get('spatial_area_name');
+      if (san) {
+        var n = this.spatial_area_names[san]['north'];
+        var e = this.spatial_area_names[san]['east'];
+        var s = this.spatial_area_names[san]['south'];
+        var w = this.spatial_area_names[san]['west'];
+      };
+      
       var ne = new google.maps.LatLng(n, e);
       var sw = new google.maps.LatLng(s, w);
       var bounds = new google.maps.LatLngBounds(sw, ne)
       this.map.fitBounds(bounds);
-
-      // Set active marker based on resource_id
-      var m = _.findWhere(this.markerClusterer.getMarkers(), {resource_id: this.model.get('_id')});
-      m.setIcon(this.markers.na_icon_active);
     } catch(err) {
       console.log('pan_map error:', err);
     }
@@ -321,13 +413,8 @@ IONUX.Views.Map = Backbone.View.extend({
     // var iw = new google.maps.InfoWindow({content: _info_content});
     var _map = this.map;
     
-
     var self = this;
     google.maps.event.addListener(marker, 'click', function(_map) {
-      // // iw.open(this.map, marker);
-      if (self.active_marker) self.active_marker.setIcon(self.markers.na_icon);
-      marker.setIcon(self.markers.na_icon_active);
-      self.active_marker = marker;
       if (typeof marker.resource_id != 'undefined') {
         IONUX.ROUTER.navigate('/map/'+marker.resource_id, {trigger:true});
       };
@@ -348,6 +435,17 @@ IONUX.Views.Map = Backbone.View.extend({
     });
     
     this.markerClusterer.addMarker(marker);
+  },
+  
+  set_active_marker: function(){
+    if (this.active_marker) this.clear_active_marker();
+    var active_resource_id = this.model.get('_id');
+    this.active_marker = _.findWhere(this.markerClusterer.markers_, {resource_id: active_resource_id});
+    this.active_marker.setIcon(this.markers.na_icon_active);
+  },
+  
+  clear_active_marker: function() {
+    this.active_marker.setIcon(this.markers.na_icon);
   },
 
   clear_all_markers: function(){
@@ -436,8 +534,6 @@ IONUX.Views.MapDataProductTable = IONUX.Views.DataTable.extend({
     this.render();
   },
 });
-
-
 
 
 IONUX.Views.DashboardTable = IONUX.Views.DataTable.extend({
