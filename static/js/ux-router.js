@@ -44,6 +44,9 @@ IONUX.Router = Backbone.Router.extend({
       collection: IONUX.Dashboard.Observatories,
       model: IONUX.Dashboard.MapResource
     });
+    
+    // TEMP: this triggers reset in Firefox.
+    IONUX.Dashboard.Observatories.trigger('reset');
   },
   
   dashboard_map_resource: function(resource_id) {
@@ -71,6 +74,7 @@ IONUX.Router = Backbone.Router.extend({
     function check_map() {
       // Catch back button and redraw
       if (!$('#dynamic-container > #map-canvas').is(':empty')) {
+        console.log('empty')
         IONUX.Dashboard.MapView = new IONUX.Views.Map({
           collection: IONUX.Dashboard.Observatories,
           model: IONUX.Dashboard.MapResource

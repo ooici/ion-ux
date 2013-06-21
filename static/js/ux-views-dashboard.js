@@ -207,103 +207,134 @@ IONUX.Collections.MapDataProducts = Backbone.Collection.extend({
 IONUX.Views.Map = Backbone.View.extend({
   el: '#map_canvas',
   
-  markers: {
-    na_icon: {
+  new_markers: {
+    na: {
+      icon: {
         anchor: new google.maps.Point(30, 30),
         origin: new google.maps.Point(420, 180),
         size: new google.maps.Size(50, 50),
         url: '/static/img/sprite2.png'
-    },
-    na_icon_hover: {
-      anchor: new google.maps.Point(30, 30),
-      origin: new google.maps.Point(480, 180),
-      size: new google.maps.Size(50, 50),
-      url: '/static/img/sprite2.png'
-    },
-    na_icon_active: {
+      },
+      hover: {
         anchor: new google.maps.Point(30, 30),
-        origin: new google.maps.Point(540, 180),
+        origin: new google.maps.Point(480, 180),
         size: new google.maps.Size(50, 50),
         url: '/static/img/sprite2.png'
+      },
+      active: {
+          anchor: new google.maps.Point(30, 30),
+          origin: new google.maps.Point(540, 180),
+          size: new google.maps.Size(50, 50),
+          url: '/static/img/sprite2.png'
+      }
     },
     
-    critical_icon: {
+    critical: {
+      icon: {
         anchor: new google.maps.Point(30, 30),
-        origin: new google.maps.Point(420, 180),
+        origin: new google.maps.Point(420, 60),
         size: new google.maps.Size(50, 50),
         url: '/static/img/sprite2.png'
-    },
-    critical_icon_hover: {
-      anchor: new google.maps.Point(30, 30),
-      origin: new google.maps.Point(480, 180),
-      size: new google.maps.Size(50, 50),
-      url: '/static/img/sprite2.png'
-    },
-    critical_icon_active: {
+      },
+      hover: {
         anchor: new google.maps.Point(30, 30),
-        origin: new google.maps.Point(540, 180),
+        origin: new google.maps.Point(480, 60),
         size: new google.maps.Size(50, 50),
         url: '/static/img/sprite2.png'
+      },
+      active: {
+          anchor: new google.maps.Point(30, 30),
+          origin: new google.maps.Point(540, 60),
+          size: new google.maps.Size(50, 50),
+          url: '/static/img/sprite2.png'
+      },
     },
-    
-    warning_icon: {
+
+    warning: {
+      icon: {
+          anchor: new google.maps.Point(30, 30),
+          origin: new google.maps.Point(420, 120),
+          size: new google.maps.Size(50, 50),
+          url: '/static/img/sprite2.png'
+      },
+      hover: {
         anchor: new google.maps.Point(30, 30),
-        origin: new google.maps.Point(420, 180),
+        origin: new google.maps.Point(480, 120),
         size: new google.maps.Size(50, 50),
         url: '/static/img/sprite2.png'
+      },
+      active: {
+          anchor: new google.maps.Point(30, 30),
+          origin: new google.maps.Point(540, 180),
+          size: new google.maps.Size(50, 50),
+          url: '/static/img/sprite2.png'
+      },
     },
-    warning_icon_hover: {
-      anchor: new google.maps.Point(30, 30),
-      origin: new google.maps.Point(480, 180),
-      size: new google.maps.Size(50, 50),
-      url: '/static/img/sprite2.png'
-    },
-    warning_icon_active: {
+
+    ok: {
+      icon: {
+          anchor: new google.maps.Point(30, 30),
+          origin: new google.maps.Point(420, 0),
+          size: new google.maps.Size(50, 50),
+          url: '/static/img/sprite2.png'
+      },
+      hover: {
         anchor: new google.maps.Point(30, 30),
-        origin: new google.maps.Point(540, 180),
+        origin: new google.maps.Point(480, 0),
         size: new google.maps.Size(50, 50),
         url: '/static/img/sprite2.png'
-    },
-    
-    ok_icon: {
-        anchor: new google.maps.Point(30, 30),
-        origin: new google.maps.Point(420, 180),
-        size: new google.maps.Size(50, 50),
-        url: '/static/img/sprite2.png'
-    },
-    ok_icon_hover: {
-      anchor: new google.maps.Point(30, 30),
-      origin: new google.maps.Point(480, 180),
-      size: new google.maps.Size(50, 50),
-      url: '/static/img/sprite2.png'
-    },
-    ok_icon_active: {
-        anchor: new google.maps.Point(30, 30),
-        origin: new google.maps.Point(540, 180),
-        size: new google.maps.Size(50, 50),
-        url: '/static/img/sprite2.png'
-    },
-    
+      },
+      active: {
+          anchor: new google.maps.Point(30, 30),
+          origin: new google.maps.Point(540, 0),
+          size: new google.maps.Size(50, 50),
+          url: '/static/img/sprite2.png'
+      },
+    }
   },
   
   initialize: function(){
     _.bindAll(this);
     this.sprite_url = '/static/img/sprite2.png';
     this.active_marker = null; // Track clicked icon
+    this.sites_status_loaded = false;
     
     this.model.on('pan:map', this.pan_map);
     this.model.on('set:active', this.set_active_marker);
     this.collection.on('reset', this.draw_markers);
-    
+    this.collection.on('reset', this.get_sites_status);
+
     this.draw_map();
-    this.draw_markers();
+  },
+  
+  get_sites_status: function() {
+    var resource_ids = this.collection.pluck('_id');
+    console.log('get_sites_status', resource_ids);
+    
+    $('#map_canvas').append('<div id="loading-status" style="">Loading Status...</div>')
+    
+    var self = this;
+    $.ajax({
+      type: 'POST',
+      contentType: 'application/json',
+      url: '/get_sites_status/',
+      data: JSON.stringify({resource_ids: resource_ids}),
+      dataType: 'json',
+      success: function(resp) {
+        $('#loading-status').remove();
+        self.sites_status_loaded = true;
+        self.sites_status = resp.data;
+        self.clear_all_markers();
+        self.draw_markers();
+      }
+    });
   },
     
   group_spatial_area_names: function(){
     this.spatial_area_names = {};
     var sans = _.uniq(this.collection.pluck('spatial_area_name'));
     _.each(sans, function(san) {
-
+      
       var resources = this.collection.where({'spatial_area_name': san});
       
       var north_points = _.map(resources, function(resource) {return resource.get('constraint_list')[0]['geospatial_latitude_limit_north']});
@@ -317,7 +348,6 @@ IONUX.Views.Map = Backbone.View.extend({
       
       var west_points = _.map(resources, function(resource) {return resource.get('constraint_list')[0]['geospatial_longitude_limit_west']});
       var west = _.min(west_points);
-      
       
       // Catch single items and add some padding to avoid 
       // Google Maps 'Image Not Found' when panning to a tight boundary.
@@ -400,14 +430,40 @@ IONUX.Views.Map = Backbone.View.extend({
   
   create_marker: function(_lat, _lon, _icon, _hover_text, _info_content, _table_row, resource_id) {
     if (!_lat || !_lon) return null;
-
+    
     latLng = new google.maps.LatLng(_lat, _lon);
+    
+    if (this.sites_status_loaded) {
+      try {
+        var status_code = this.sites_status[resource_id]['site_aggregate_status'][resource_id];
+        switch(status_code) {
+          case 2:
+            var resource_status = 'ok';
+            break;
+          case 3:
+            var resource_status = 'warning';
+            break;
+          case 4:
+            var resource_status = 'critical';
+            break
+          default:
+            var resource_status = 'na';
+        }
+      } catch(err) {
+        console.log('create_marker status error:', err);
+        var resource_status = 'na';
+      };
+    } else {
+      var resource_status = 'na';
+    };
+        
     var marker = new google.maps.Marker({
       map: this.map,
       position: latLng,
-      icon: this.markers.na_icon,
+      icon: this.new_markers[resource_status].icon,
       title: _hover_text,
-      resource_id: resource_id
+      resource_id: resource_id,
+      resource_status: resource_status
     });
     
     // var iw = new google.maps.InfoWindow({content: _info_content});
@@ -422,15 +478,15 @@ IONUX.Views.Map = Backbone.View.extend({
 
     google.maps.event.addListener(marker, 'mouseover', function() {
       // _table_row.style.backgroundColor = _row_highlight_color;
-      if (marker.icon !== self.markers.na_icon_active) {
-        marker.setIcon(self.markers.na_icon_hover);
+      if (marker.icon !== self.new_markers[marker.resource_status]['active']) {
+        marker.setIcon(self.new_markers[marker.resource_status]['hover']);
       };
     });
     
     google.maps.event.addListener(marker, 'mouseout', function() {
       // _table_row.style.backgroundColor = _row_background_color;
-      if (marker.icon !== self.markers.na_icon_active) {
-        marker.setIcon(self.markers.na_icon);
+      if (marker.icon !== self.new_markers[marker.resource_status]['active']) {
+        marker.setIcon(self.new_markers[marker.resource_status]['icon']);
       };
     });
     
@@ -441,11 +497,11 @@ IONUX.Views.Map = Backbone.View.extend({
     if (this.active_marker) this.clear_active_marker();
     var active_resource_id = this.model.get('_id');
     this.active_marker = _.findWhere(this.markerClusterer.markers_, {resource_id: active_resource_id});
-    this.active_marker.setIcon(this.markers.na_icon_active);
+    this.active_marker.setIcon(this.new_markers[this.active_marker.resource_status].active);
   },
   
   clear_active_marker: function() {
-    this.active_marker.setIcon(this.markers.na_icon);
+    this.active_marker.setIcon(this.new_markers[this.active_marker.resource_status].icon);
   },
 
   clear_all_markers: function(){
@@ -818,7 +874,6 @@ IONUX.Views.DataProductFilter = Backbone.View.extend({
   initialize: function(){
     _.bindAll(this);
     this.group_list = this.options.group_list;
-    console.log('this.group_list', this.group_list);
   },
   
   render: function(){
