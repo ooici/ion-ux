@@ -213,19 +213,19 @@ IONUX.Views.Map = Backbone.View.extend({
         anchor: new google.maps.Point(30, 30),
         origin: new google.maps.Point(420, 180),
         size: new google.maps.Size(50, 50),
-        url: '/static/img/sprite2.png'
+        url: '/static/img/pepper_sprite.png'
       },
       hover: {
         anchor: new google.maps.Point(30, 30),
         origin: new google.maps.Point(480, 180),
         size: new google.maps.Size(50, 50),
-        url: '/static/img/sprite2.png'
+        url: '/static/img/pepper_sprite.png'
       },
       active: {
           anchor: new google.maps.Point(30, 30),
           origin: new google.maps.Point(540, 180),
           size: new google.maps.Size(50, 50),
-          url: '/static/img/sprite2.png'
+          url: '/static/img/pepper_sprite.png'
       }
     },
     
@@ -234,19 +234,19 @@ IONUX.Views.Map = Backbone.View.extend({
         anchor: new google.maps.Point(30, 30),
         origin: new google.maps.Point(420, 60),
         size: new google.maps.Size(50, 50),
-        url: '/static/img/sprite2.png'
+        url: '/static/img/pepper_sprite.png'
       },
       hover: {
         anchor: new google.maps.Point(30, 30),
         origin: new google.maps.Point(480, 60),
         size: new google.maps.Size(50, 50),
-        url: '/static/img/sprite2.png'
+        url: '/static/img/pepper_sprite.png'
       },
       active: {
           anchor: new google.maps.Point(30, 30),
           origin: new google.maps.Point(540, 60),
           size: new google.maps.Size(50, 50),
-          url: '/static/img/sprite2.png'
+          url: '/static/img/pepper_sprite.png'
       },
     },
 
@@ -255,19 +255,19 @@ IONUX.Views.Map = Backbone.View.extend({
           anchor: new google.maps.Point(30, 30),
           origin: new google.maps.Point(420, 120),
           size: new google.maps.Size(50, 50),
-          url: '/static/img/sprite2.png'
+          url: '/static/img/pepper_sprite.png'
       },
       hover: {
         anchor: new google.maps.Point(30, 30),
         origin: new google.maps.Point(480, 120),
         size: new google.maps.Size(50, 50),
-        url: '/static/img/sprite2.png'
+        url: '/static/img/pepper_sprite.png'
       },
       active: {
           anchor: new google.maps.Point(30, 30),
           origin: new google.maps.Point(540, 180),
           size: new google.maps.Size(50, 50),
-          url: '/static/img/sprite2.png'
+          url: '/static/img/pepper_sprite.png'
       },
     },
 
@@ -276,26 +276,26 @@ IONUX.Views.Map = Backbone.View.extend({
           anchor: new google.maps.Point(30, 30),
           origin: new google.maps.Point(420, 0),
           size: new google.maps.Size(50, 50),
-          url: '/static/img/sprite2.png'
+          url: '/static/img/pepper_sprite.png'
       },
       hover: {
         anchor: new google.maps.Point(30, 30),
         origin: new google.maps.Point(480, 0),
         size: new google.maps.Size(50, 50),
-        url: '/static/img/sprite2.png'
+        url: '/static/img/pepper_sprite.png'
       },
       active: {
           anchor: new google.maps.Point(30, 30),
           origin: new google.maps.Point(540, 0),
           size: new google.maps.Size(50, 50),
-          url: '/static/img/sprite2.png'
+          url: '/static/img/pepper_sprite.png'
       },
     }
   },
   
   initialize: function(){
     _.bindAll(this);
-    this.sprite_url = '/static/img/sprite2.png';
+    this.sprite_url = '/static/img/pepper_sprite.png';
     this.active_marker = null; // Track clicked icon
     this.sites_status_loaded = false;
     
@@ -389,7 +389,7 @@ IONUX.Views.Map = Backbone.View.extend({
         backgroundPosition: '-420px -420px',
         height: 50,
         width: 50,
-        url: '/static/img/sprite2.png',
+        url: '/static/img/pepper_sprite.png',
         textSize: '0',
         maxZoom: 15
       }]
