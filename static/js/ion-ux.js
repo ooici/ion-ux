@@ -42,6 +42,8 @@ IONUX = {
         // MAPS Sidebar (initially shown)
         // Observatory selector - observatories reset (triggers initial map markers)
         IONUX.Dashboard.Observatories.reset(resp.data.observatories);
+        IONUX.Dashboard.Observatories.trigger('reset');
+        
         new IONUX.Views.ObservatorySelector({collection: IONUX.Dashboard.Observatories, title: 'Site'}).render().el;
         new IONUX.Views.MapFilter().render().el;
         

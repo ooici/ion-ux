@@ -46,7 +46,7 @@ IONUX.Router = Backbone.Router.extend({
     });
     
     // TEMP: this triggers reset in Firefox.
-    IONUX.Dashboard.Observatories.trigger('reset');
+    // IONUX.Dashboard.Observatories.trigger('reset');
   },
   
   dashboard_map_resource: function(resource_id) {

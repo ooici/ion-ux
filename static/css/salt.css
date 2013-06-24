@@ -1842,11 +1842,11 @@ ul.nav {
 
 .error-trace {
   /* used in modal errors */
-  color: #999;
-  border-top: solid 2px #222;
+  color: #666;
+  border-top: solid 2px #cdcdcd;
   padding: 15px 0;
   margin: 20px 0;
-  background: #000;
+  background: #f4f4f4;
   font-size: 11px;
   font-family: Andale Mono, monospace;
   line-height: 18px;
