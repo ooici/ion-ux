@@ -39,14 +39,11 @@ IONUX.Router = Backbone.Router.extend({
       IONUX.Dashboard.MapResource = new IONUX.Models.MapResource();
       IONUX.Dashboard.MapDataResources = new IONUX.Collections.MapDataProducts([], {resource_id: null});
     };
- 
+
     IONUX.Dashboard.MapView = new IONUX.Views.Map({
       collection: IONUX.Dashboard.Observatories,
       model: IONUX.Dashboard.MapResource
     });
-    
-    // TEMP: this triggers reset in Firefox.
-    // IONUX.Dashboard.Observatories.trigger('reset');
   },
   
   dashboard_map_resource: function(resource_id) {

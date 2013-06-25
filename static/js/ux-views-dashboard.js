@@ -295,23 +295,29 @@ IONUX.Views.Map = Backbone.View.extend({
   
   initialize: function(){
     _.bindAll(this);
+    
     this.sprite_url = '/static/img/pepper_sprite.png';
     this.active_marker = null; // Track clicked icon
     this.sites_status_loaded = false;
     
     this.model.on('pan:map', this.pan_map);
     this.model.on('set:active', this.set_active_marker);
-    this.collection.on('reset', this.draw_markers);
-    this.collection.on('reset', this.get_sites_status);
+
+    // this.collection.on('reset', this.draw_markers);
+    // this.collection.on('reset', this.get_sites_status);
 
     this.draw_map();
+    this.draw_markers();
+    
+    // HACK! temporarily workaround to a timing issue in Chrome/Safari.
+    // this.get_sites_status();
+    window.setTimeout(this.get_sites_status, 1000);
+
   },
   
   get_sites_status: function() {
     var resource_ids = this.collection.pluck('_id');
-    console.log('get_sites_status', resource_ids);
-    
-    $('#map_canvas').append('<div id="loading-status" style="">Loading Status...</div>')
+    $('#map_canvas').append('<div id="loading-status" style="">Getting Status...</div>')
     
     var self = this;
     $.ajax({
@@ -406,7 +412,7 @@ IONUX.Views.Map = Backbone.View.extend({
       var rid = resource.get('_id');
       var rname = resource.get('name');
       self.create_marker(lat, lon, null, rname,"<P>Insert HTML here.</P>", null, rid);
-    });    
+    });
   },
   
   pan_map: function() {
