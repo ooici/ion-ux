@@ -12,15 +12,15 @@
         <link href='http://fonts.googleapis.com/css?family=Signika:300,400,600,700' rel='stylesheet' type='text/css'/>
         <link href='http://fonts.googleapis.com/css?family=Signika+Negative:300,400,600,700' rel='stylesheet' type='text/css' />
 
-        <!-- CSS themes will be a user preference (light and dark) -->
-        <link rel="stylesheet" href="/static/css/dark.css" type="text/css" />
-        <link rel="stylesheet" href="/static/css/dark-datatable.css" type="text/css" />
-        <link rel="stylesheet" href="/static/css/dark-geospatial.css" type="text/css" />
-        <link rel="stylesheet" href="/static/css/new-dashboard.css" type="text/css" />
-        <link rel="stylesheet/less" href="/static/css/images.less" />
 
-        <!-- Development styles -->
-        <link rel="stylesheet" href="/static/css/dark-integration.css" type="text/css" />
+        <link rel="stylesheet" href="/static/css/common.css" type="text/css" />
+
+        <link rel="stylesheet" class="salt" href="/static/css/salt.css" type="text/css" disabled="true" />
+        <link rel="stylesheet/less" class="salt" href="/static/css/salt_images.less" disabled="true" />
+
+        <link rel="stylesheet" class="pepper" href="/static/css/pepper.css" type="text/css" />
+        <link rel="stylesheet/less" class="pepper" href="/static/css/pepper_images.less" />
+
         
         {% block extra_css %}{% endblock %}
     </head>
@@ -89,7 +89,8 @@
             <p id="select-facility">Select a Facility</p>
           </div>
         </script>
-        <script type="text/template" id="dashboard-tmpl"><![CDATA[{% include 'partials/dashboard.html' %}]]></script>
+        
+        
         <script type="text/template" id="dashboard-content-tmpl"><![CDATA[{% include 'partials/dashboard_content.html' %}]]></script>
         <script type="text/template" id="dashboard-observatory-list-tmpl"><![CDATA[{% include 'partials/dashboard_observatory_list.html' %}]]></script>
         <script type="text/template" id="dashboard-org-list-tmpl"><![CDATA[{% include 'partials/dashboard_org_list.html' %}]]></script>

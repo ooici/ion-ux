@@ -397,10 +397,13 @@ def find_site_data_products(resource_id):
     site_data_products = ServiceApi.find_site_data_products(resource_id)
     return render_json_response(site_data_products)
     
-@app.route('/find_status/', methods=['GET', 'POST'])
-def find_status():
-    status = ServiceApi.find_status()
-    return render_json_response(status)
+@app.route('/get_sites_status/', methods=['GET', 'POST'])
+def get_sites_status():
+    # status = Servi1ceApi.find_status()
+    # resource_ids = request.args.get('data')
+    resource_ids = request.json['resource_ids']
+    sites_status = ServiceApi.get_sites_status(resource_ids)
+    return render_json_response(sites_status)
 
 @app.route('/map/<resource_id>/', methods=['GET'])
 @app.route('/map/data/<resource_id>', methods=['GET'])

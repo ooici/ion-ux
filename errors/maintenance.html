@@ -1,0 +1,213 @@
+<!-- NOTES:
+
+This error page was created using a screenshot of the normal OOI application page
+and html copy/pasted from an OOI error popup.
+
+To change the error text displayed, go to the bottom of this document and look for the text messages.
+
+To update the background image, save the new file in background.png (same folder as this html file).
+The current background image was a screenshot of the main OOI application start page with brightness and sharpness reduced.
+  
+-->
+<html><head>
+<style type="text/css">
+
+body {
+  margin: 0;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  color: #333333;
+  background-color: #000000;
+  background-image:url('background.png');
+  background-repeat:no-repeat;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 10px 0;
+  font-family: inherit;
+  font-weight: bold;
+  line-height: 20px;
+  color: inherit;
+  text-rendering: optimizelegibility;
+}
+
+.error-win {
+-webkit-background-clip: border-box;
+-webkit-background-origin: padding-box;
+-webkit-background-size: auto;
+-webkit-border-image: none;
+-webkit-box-shadow: rgba(0, 0, 0, 0.298039) 0px 3px 7px 0px;
+background-attachment: scroll;
+background-clip: border-box;
+background-color: rgb(30, 30, 30);
+background-image: none;
+background-origin: padding-box;
+background-size: auto;
+border-bottom-color: rgb(51, 51, 51);
+border-bottom-left-radius: 6px;
+border-bottom-right-radius: 6px;
+border-bottom-style: solid;
+border-bottom-width: 1px;
+border-left-color: rgb(51, 51, 51);
+border-left-style: solid;
+border-left-width: 1px;
+border-right-color: rgb(51, 51, 51);
+border-right-style: solid;
+border-right-width: 1px;
+border-top-color: rgb(51, 51, 51);
+border-top-left-radius: 6px;
+border-top-right-radius: 6px;
+border-top-style: solid;
+border-top-width: 1px;
+box-shadow: rgba(0, 0, 0, 0.298039) 0px 3px 7px 0px;
+color: rgb(204, 204, 204);
+display: block;
+font-size: 14px;
+height: 222px;
+left: 50%;
+line-height: 20px;
+margin-left: -280px;
+outline-color: rgb(204, 204, 204);
+outline-style: none;
+outline-width: 0px;
+position: fixed;
+top: 15%;
+width: 560px;
+z-index: 1050;
+}
+
+.error-header {
+-webkit-background-clip: border-box;
+-webkit-background-origin: padding-box;
+-webkit-background-size: auto;
+background-attachment: scroll;
+background-clip: border-box;
+background-color: rgb(30, 30, 30);
+background-image: none;
+background-origin: padding-box;
+background-size: auto;
+border-bottom-color: rgb(51, 51, 51);
+border-bottom-style: solid;
+border-bottom-width: 1px;
+border-left-color: rgb(51, 51, 51);
+border-right-color: rgb(51, 51, 51);
+border-top-color: rgb(51, 51, 51);
+color: rgb(204, 204, 204);
+display: block;
+font-size: 14px;
+height: 35px;
+line-height: 20px;
+padding-bottom: 9px;
+padding-left: 15px;
+padding-right: 15px;
+padding-top: 9px;
+width: 530px;
+}
+
+.error-body {
+-webkit-background-clip: border-box;
+-webkit-background-origin: padding-box;
+-webkit-background-size: auto;
+background-attachment: scroll;
+background-clip: border-box;
+background-color: rgb(30, 30, 30);
+background-image: none;
+background-origin: padding-box;
+background-size: auto;
+border-bottom-color: rgb(51, 51, 51);
+border-left-color: rgb(51, 51, 51);
+border-right-color: rgb(51, 51, 51);
+border-top-color: rgb(51, 51, 51);
+color: rgb(204, 204, 204);
+display: block;
+font-size: 14px;
+height: 46px;
+line-height: 20px;
+margin-bottom: 15px;
+margin-left: 0px;
+margin-right: 0px;
+margin-top: 15px;
+max-height: 400px;
+overflow-y: auto;
+padding-bottom: 15px;
+padding-left: 15px;
+padding-right: 15px;
+padding-top: 15px;
+position: relative;
+width: 530px;
+}
+
+.error-button {
+-webkit-background-clip: border-box;
+-webkit-background-origin: padding-box;
+-webkit-background-size: auto;
+-webkit-border-image: none;
+background-attachment: scroll;
+background-clip: border-box;
+background-color: rgb(51, 51, 51);
+background-image: none;
+background-origin: padding-box;
+background-size: auto;
+border-bottom-color: rgb(128, 128, 128);
+border-bottom-left-radius: 5px;
+border-bottom-right-radius: 5px;
+border-bottom-style: solid;
+border-bottom-width: 1px;
+border-left-color: rgb(128, 128, 128);
+border-left-style: solid;
+border-left-width: 1px;
+border-right-color: rgb(128, 128, 128);
+border-right-style: solid;
+border-right-width: 1px;
+border-top-color: rgb(128, 128, 128);
+border-top-left-radius: 5px;
+border-top-right-radius: 5px;
+border-top-style: solid;
+border-top-width: 1px;
+color: rgb(153, 153, 153);
+cursor: auto;
+display: inline;
+font-size: 11px;
+font-weight: normal;
+height: auto;
+letter-spacing: 2px;
+line-height: 20px;
+margin-bottom: 5px;
+margin-top: 10px;
+padding-bottom: 1px;
+padding-left: 15px;
+padding-right: 10px;
+padding-top: 2px;
+text-decoration: none;
+text-transform: uppercase;
+width: auto;
+}
+
+</style>
+</head><body>
+<div id="action-modal" class="error-win" aria-hiden="false">
+  <div class="error-header"> <h1>
+
+		System Temporarily Unavailable
+
+  </h1> </div>
+  <div class="modal-body">
+    <h4 style="margin-left:15px;">
+
+                Sorry, the OOI system is currently down for maintenance.
+                <br>
+                Please try again shortly.
+
+    </h4>
+    <p style="margin-top:15px;margin-left:15px;">
+      <a class="error-button" target="_blank" href="mailto:helpdesk@oceanobservatories.org">Email Helpdesk</a>
+    </p>
+  </div>
+</div>
+</body></html>

@@ -39,7 +39,7 @@ IONUX.Router = Backbone.Router.extend({
       IONUX.Dashboard.MapResource = new IONUX.Models.MapResource();
       IONUX.Dashboard.MapDataResources = new IONUX.Collections.MapDataProducts([], {resource_id: null});
     };
- 
+
     IONUX.Dashboard.MapView = new IONUX.Views.Map({
       collection: IONUX.Dashboard.Observatories,
       model: IONUX.Dashboard.MapResource
@@ -66,10 +66,12 @@ IONUX.Router = Backbone.Router.extend({
     var active_resource_attributes = IONUX.Dashboard.Observatories.findWhere({_id: resource_id})['attributes'];    
     IONUX.Dashboard.MapResource.set(active_resource_attributes);
     IONUX.Dashboard.MapResource.trigger('pan:map');
+    IONUX.Dashboard.MapResource.trigger('set:active');
     
     function check_map() {
       // Catch back button and redraw
       if (!$('#dynamic-container > #map-canvas').is(':empty')) {
+        console.log('empty')
         IONUX.Dashboard.MapView = new IONUX.Views.Map({
           collection: IONUX.Dashboard.Observatories,
           model: IONUX.Dashboard.MapResource
@@ -85,7 +87,7 @@ IONUX.Router = Backbone.Router.extend({
         success: function(resp) {
           var resource_types = _.map(resp.models, function(r) { return r.get('type_')});
           new IONUX.Views.MapDashboardTable({el: $('#dynamic-container #2163993'), collection: resp});
-          check_map();
+          // check_map();
         }
       });
     } else {
@@ -94,7 +96,7 @@ IONUX.Router = Backbone.Router.extend({
       IONUX.Dashboard.MapDataResources.fetch({
         success: function(resp){
           new IONUX.Views.MapDataProductTable({el: $('#dynamic-container #2163993'), collection: resp});
-          check_map();
+          // check_map();
         },
       });
     };
