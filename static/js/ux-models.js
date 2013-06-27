@@ -111,6 +111,7 @@ var make_iso_timestamps = function(resp) {
   _.each(resp, function(val, key) {
       if (key == 'ts_created' || key == 'ts_updated'){
         resp[key] = epoch_to_iso(val);
+        console.log(val);
       };      
       if (typeof val == 'object') {
         make_iso_timestamps(val);

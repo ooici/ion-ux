@@ -2174,9 +2174,9 @@ input.argument {
   cursor: pointer;
 }
 
-.filters-apply:active, .filters-reset:active {
+/*.filters-apply:active, .filters-reset:active {
   background : #333;
-}
+}*/
 
 .table-bordered {
   border: none;
