@@ -521,7 +521,6 @@ function render_page(resource_type, resource_id, model) {
     };
     
     $(el).find('table').last().dataTable().fnAdjustColumnSizing();
-    
   });
   
   var extent_geospatial_elmts = $('.'+resource_type+' .extent_geospatial_ooi');

@@ -1,11 +1,8 @@
-<h4><%= label %> (LIST)</h4>
-<% _.each(list_items, function(item) { %>
+<h4><%= label %></h4>
+<% if (_.isEmpty(list_items)) { %>
+  <span class="list-item no-data">No data</span>
+<% } else { %>
+  <% _.each(list_items, function(item) { %>
     <span class="list-item"><%= item %></span>
-<% }); %>
-
-<% if (typeof(integration_info) != 'undefined') { %>
-    <div class="integration_info">
-        <%= integration_info %>
-    </div>
+  <% }); %>
 <% }; %>
-

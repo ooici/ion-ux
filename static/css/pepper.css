@@ -2505,10 +2505,37 @@ input.textfield_geo{
 }
 
 .east {
-    height: 14px;
-    width: 50px;
-	position:inherit;
-	top: 31px;
-	left:95px;
-	z-index: 4;
+  height: 14px;
+  width: 50px;
+  position:inherit;
+  top: 31px;
+  left:95px;
+  z-index: 4;
 }
+
+.list_ooi h4 {
+  text-transform: uppercase;
+  font-size: 10px;
+  font-weight: 400;
+  color: #999;
+  letter-spacing: 1px;
+  color: #999;
+  margin-bottom: 0;
+}
+
+.list_ooi .list-item {
+  word-wrap: break-word;
+  margin: 5px 0;
+  color: #999;
+}
+
+.list_ooi .list-item.no-data {
+  margin-top: 5px;
+  background: #333;
+  color: #999;
+  padding: 3px 5px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+
