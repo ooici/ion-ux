@@ -1,4 +1,4 @@
-<td><%= notification.label %></td>
+<td><span data-toggle="tooltip" title="<%= notification.desc %>"><%= notification.label %></span></td>
 <td>
   <% if (_.has(notification, '_id')) { %>
     <button class="btn-blue btn-unsubscribe">Unsubscribe</button></td>

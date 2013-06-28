@@ -316,7 +316,7 @@ IONUX.Views.Map = Backbone.View.extend({
   
   get_sites_status: function() {
     var resource_ids = this.collection.pluck('_id');
-    $('#map_canvas').append('<div id="loading-status" style="">Getting Status...</div>')
+    $('#map_canvas').append('<div id="loading-status" style="">Loading Status...</div>')
     
     var self = this;
     $.ajax({

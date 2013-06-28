@@ -26,7 +26,7 @@ IONUX.Notifications = [
     desc: 'Agent operational state change'
   },
   {
-    label: 'Managed Resource operational state change', 
+    label: 'Device operational state change', 
     event_type: 'ResourceAgentResourceStateEvent',
     desc: 'The agent\'s managed resource state has changed'
   },
@@ -129,6 +129,7 @@ IONUX.Views.NotificationItem = Backbone.View.extend({
   render: function(){
     // console.log('NotificationItem', this.model.toJSON());
     this.$el.html(this.template({notification: this.model.toJSON()}));
+    this.$el.find('span:first').tooltip({placement: 'right'});
     return this;
   },
   subscribe: function(){
