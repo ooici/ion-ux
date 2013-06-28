@@ -2572,3 +2572,15 @@ input.textfield_geo{
   background: #e1e1e1;
   position: relative;
 }
+
+.list_ooi .list-item {
+  word-wrap: break-word;
+  font-size: 12px;
+  font-weight: 300;
+  margin: 5px 0;
+  color: #666;
+}
+
+.list_ooi .list-item.no-data {
+  color: #999;
+}

@@ -2525,17 +2525,13 @@ input.textfield_geo{
 
 .list_ooi .list-item {
   word-wrap: break-word;
+  font-size: 12px;
+  font-weight: 300;
   margin: 5px 0;
   color: #999;
 }
 
 .list_ooi .list-item.no-data {
-  margin-top: 5px;
-  background: #333;
-  color: #999;
-  padding: 3px 5px;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
+  color: #666;
 }
 

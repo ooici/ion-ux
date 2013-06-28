@@ -927,20 +927,11 @@ IONUX.Views.Image = Backbone.View.extend({
 IONUX.Views.List = Backbone.View.extend({
     template: _.template($('#list-tmpl').html()),
     render: function(){
-        var label = this.$el.data('label');
-        var data_path = this.$el.data('path');
-        var list_items = get_descendant_properties(this.options.data_model, data_path);
-        this.$el.html(this.template({list_items: list_items, label: label}));
-
-        // if (data_path && data_path.substring(0,7) != 'unknown') {
-        //     var list_items = get_descendant_properties(this.options.data_model, data_path);
-        //     this.$el.html(this.template({list_items: list_items, label: label}));
-        // } else {
-        //     var integration_info = this.$el.text();
-        //     integration_log(this.$el.attr('id'), this.$el.data('path'), integration_info);
-        //     this.$el.html(this.template({list_items: [], label: label, integration_info: integration_info}));
-        // };
-        return this;
+      var label = this.$el.data('label');
+      var data_path = this.$el.data('path');
+      var list_items = get_descendant_properties(this.options.data_model, data_path);
+      this.$el.html(this.template({list_items: list_items, label: label}));
+      return this;
     }
 });
 
