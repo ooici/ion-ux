@@ -1,0 +1,12 @@
+<% if (data) { %>
+  <div class"row-fluid">
+    <div class="span4 text-short-label">Upper Bounds:</div>
+    <div class="span8 text-short-value"><%= data.geospatial_vertical_max %></div>
+  </div>
+  <div style="clear:both;"></div>
+  <div class"row-fluid">
+    <div class="span4 text-short-label">Lower Bounds:</div>
+    <div class="span8 text-short-value"><%= data.geospatial_vertical_min %></div>
+  </div>
+  <div style="clear:both;"></div>
+<% } %>

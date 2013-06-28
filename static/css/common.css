@@ -2,6 +2,13 @@ html, body {
   height: 100%;
 }
 
+.extent_geospatial_ooi .text-short-label,
+.extent_geospatial_ooi .text-short-value,
+.extent_vertical_ooi .text-short-label,
+.extent_vertical_ooi .text-short-value {
+  min-height: 0;
+}
+
 /*
   =============================================================================
   DASHBOARD

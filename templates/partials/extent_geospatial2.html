@@ -1,0 +1,14 @@
+<% if (data) { %>
+  <div class"row-fluid">
+    <div class="span4 text-short-label">Longitude:</div>
+    <div class="span4 text-short-value"><%= data.geospatial_latitude_limit_north %></div>
+    <div class="span4 text-short-value">N</div>
+  </div>
+  <div style="clear:both;"></div>
+  <div class"row-fluid">
+    <div class="span4 text-short-label">Latitude:</div>
+    <div class="span4 text-short-value"><%= data.geospatial_longitude_limit_west %></div>
+    <div class="span4 text-short-value">W</div>
+  </div>
+  <div style="clear:both;"></div>
+<% } %>

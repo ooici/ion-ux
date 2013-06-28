@@ -528,20 +528,21 @@ function render_page(resource_type, resource_id, model) {
   _.each(extent_geospatial_elmts, function(el) {
     var data_path = $(el).data('path');
     var data = get_descendant_properties(window.MODEL_DATA, data_path);
-    if (data) new IONUX.Views.ExtentGeospatial({el: $(el), data: data}).render().el;
+    if (data) new IONUX.Views.ExtentGeospatial2({el: $(el), data: data}).render().el;
   });
 
   var extent_vertical_elmts = $('.'+resource_type+' .extent_vertical_ooi');
   _.each(extent_vertical_elmts, function(el){
     var data_path = $(el).data('path');
     var data = get_descendant_properties(window.MODEL_DATA, data_path);
-    if (data) new IONUX.Views.ExtentVertical({el: $(el), data: data}).render().el;
+    if (data) new IONUX.Views.ExtentVertical2({el: $(el), data: data}).render().el;
   });
-  
-  var extent_temporal_elmts = $('.'+resource_type+' .extent_temporal_ooi');
-  _.each(extent_temporal_elmts, function(el) {
-    new IONUX.Views.ExtentTemporal({el: $(el)}).render().el;
-  });
+
+  // Temporal extents do not appear in latest design spec - June 28, 2013; leaving for reference...
+  // var extent_temporal_elmts = $('.'+resource_type+' .extent_temporal_ooi');
+  // _.each(extent_temporal_elmts, function(el) {
+  //   new IONUX.Views.ExtentTemporal({el: $(el)}).render().el;
+  // });
   
   var checkbox_elmts = $('.'+resource_type+' .checkbox_ooi');
   _.each(checkbox_elmts, function(el) {

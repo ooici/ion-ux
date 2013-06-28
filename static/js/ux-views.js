@@ -707,6 +707,19 @@ IONUX.Views.ExtentGeospatial = Backbone.View.extend({
     }
 });
 
+
+// Simplified geospatial used in face pages
+IONUX.Views.ExtentGeospatial2 = Backbone.View.extend({
+  template: _.template($('#extent-geospatial2-tmpl').html()),
+  render: function() {
+    this.$el.html(this.template({data: this.options.data}));
+    return this;
+  }
+});
+
+
+
+
 IONUX.Views.ExtentVertical = Backbone.View.extend({
     template: _.template($('#extent-vertical-tmpl').html()),
     render: function(){
@@ -726,6 +739,16 @@ IONUX.Views.ExtentVertical = Backbone.View.extend({
         return this;
     }
 });
+
+// Simplified vertical used in face pages
+IONUX.Views.ExtentVertical2 = Backbone.View.extend({
+  template: _.template($('#extent-vertical2-tmpl').html()),
+  render: function(){
+    this.$el.html(this.template({data: this.options.data}));
+    return this;
+  }
+});
+
 
 IONUX.Views.ExtentTemporal = Backbone.View.extend({
     template: _.template($('#extent-temporal-tmpl').html()),
