@@ -365,18 +365,18 @@ IONUX.Models.UserRegistrationModel = IONUX.Models.EditableResource.extend({
       },
     },
 
-    'variables': {
-      type: 'Object',
-      title: false,
-      subSchema: {
-        notification_contact:   { type: 'Radio',    title: 'Notification Method', options: ['Email', 'SMS'] },
-        sms_email:              { type: 'Checkbox', title: "Use email->SMS" },
-        ooi_system_change:      { type: 'Checkbox', title: "OOI system change information" },
-        ooi_project_updates:    { type: 'Checkbox', title: "OOI project updates" },
-        ocean_leadership_news:  { type: 'Checkbox', title: "Ocean Leadership News" },
-        ux_improvement_program: { type: 'Checkbox', title: "Participate in OOI User Experience Improvement Program" },
-      }
-    },
+    // 'variables': {
+    //   type: 'Object',
+    //   title: false,
+    //   subSchema: {
+    //     notification_contact:   { type: 'Radio',    title: 'Notification Method', options: ['Email', 'SMS'] },
+    //     sms_email:              { type: 'Checkbox', title: "Use email->SMS" },
+    //     ooi_system_change:      { type: 'Checkbox', title: "OOI system change information" },
+    //     ooi_project_updates:    { type: 'Checkbox', title: "OOI project updates" },
+    //     ocean_leadership_news:  { type: 'Checkbox', title: "Ocean Leadership News" },
+    //     ux_improvement_program: { type: 'Checkbox', title: "Participate in OOI User Experience Improvement Program" },
+    //   }
+    // },
 
   },
 

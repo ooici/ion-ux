@@ -364,8 +364,9 @@ IONUX.Views.EditUserRegistration = IONUX.Views.EditResource.extend({
                                    data: data,
                                    fieldsets: [{legend:'Contact Information',
                                                 fields: ['contact']},
-                                               {legend:'Notification Preferences',
-                                                fields:['variables']}]}).render();
+                                               // {legend:'Notification Preferences',
+                                               //  fields:['variables']}
+                                                ]}).render();
 
     this.base_url = '';
   },

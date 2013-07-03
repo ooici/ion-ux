@@ -1958,7 +1958,14 @@ ul.nav {
 }
 
 #user-profile-overlay .control-label {
-    padding-top: 9px;
+  padding-top: 9px;
+  font-size:12px;
+  font-weight:300;
+  color:#666666;
+  padding-top:5px;
+  padding-bottom:5px;
+  padding-left:3px;
+  text-transform: uppercase;
 }
 
 #user-profile-overlay input {

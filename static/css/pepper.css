@@ -1898,12 +1898,23 @@ ul.nav {
   margin-top: 0px;
 }
 
+#user-profile-overlay .modal-body {
+
+}
+
 #user-profile-overlay .control-group {
   margin-bottom: 0px;
 }
 
 #user-profile-overlay .control-label {
-    padding-top: 9px;
+  padding-top: 9px;
+  font-size:10px;
+  font-weight:300;
+  letter-spacing:1px;
+  text-align:right; color:#999999;
+  text-shadow:-1px -1px 1px #000000; 
+/*  line-height:20px;*/
+  text-transform: uppercase;
 }
 
 #user-profile-overlay input {
@@ -1933,6 +1944,7 @@ ul.nav {
 }
 
 #user-profile-overlay legend {
+  display: none;
   margin-bottom: 0px;
   border-bottom-width: 0px;
 
@@ -2413,7 +2425,7 @@ table.table tr.odd td {
 */
 
 .form-container {
-  background: #f4f4f4;
+  background: transparent;
 }
 
 /*
@@ -2603,4 +2615,3 @@ input.textfield_geo{
 .list_ooi .list-item.no-data {
   color: #666;
 }
-
