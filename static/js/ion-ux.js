@@ -7,7 +7,10 @@ IONUX = {
   Views: {},
   Router: {},
   init: function(){
-
+    
+    // HACK - temporarily disable salt.css on init;
+    $('.salt').prop('disabled', true);
+    
     var router = new IONUX.Router();
     IONUX.ROUTER = router;
     IONUX.setup_ajax_error();
@@ -31,6 +34,7 @@ IONUX = {
         
         new IONUX.Views.DataAssetFilter().render().el;
         new IONUX.Views.DPFilterActions({el: '#map-filter-heading'});
+        new IONUX.Views.AssetFilterActions({el: '#map-filter-heading'});
 
         $.ajax({
             url: '/get_data_product_group_list/',

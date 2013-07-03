@@ -1,17 +1,9 @@
 <h4><%= label %></h4>
-
-
 <% if (data) { %>
   <div class="vertical-bounds">
     Vertical Positive: <span class="label"><div class="vertical-bounds-positive toggle_sealevel_result" style="width:20px;display:inline-block;position:relative;">&nbsp;</div><span>DOWN</span></span><br />
-    <input type="text" class="textfield_geo" name="vertical-lower-bound" value="<%= data.geospatial_vertical_min %>" disabled />
+    <input type="number" class="textfield_geo" name="vertical-lower-bound" value="<%= data.geospatial_vertical_min %>" disabled />
     to
-    <input type="text" class="textfield_geo" name="vertical-upper-bound" value="<%= data.geospatial_vertical_max %>" disabled />
+    <input type="number" class="textfield_geo" name="vertical-upper-bound" value="<%= data.geospatial_vertical_max %>" disabled />
   </div>
 <% } %>
-
-<% if (typeof(integration_info) != 'undefined') { %>
-    <div class="integration_info">
-        <%= integration_info %>
-    </div>
-<% }; %>

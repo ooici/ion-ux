@@ -349,6 +349,8 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
     mu_listener2 = google.maps.event.addListenerOnce(self.rectangle, 'mouseup', muphandler);
   },
   search_clicked: function(e) {
+    e.preventDefault();
+    
     var form_values = this.$('form').serializeArray();
     form_values.splice(0, 0, {name:'adv', value:1})   // insert advanced key on the front
 
@@ -356,7 +358,7 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
     var formObj = _.object(_.map(form_values, function(v) {
       return [v.name, v.value];
     }));
-
+    
     // normalize into "down" facing vertical if switched to up
     if (this.$('.vertical-bounds-positive').hasClass('toggle_sealevel_passive')) {
       if (formObj['vertical-lower-bound']) {
@@ -753,22 +755,16 @@ IONUX.Views.ExtentVertical2 = Backbone.View.extend({
 IONUX.Views.ExtentTemporal = Backbone.View.extend({
     template: _.template($('#extent-temporal-tmpl').html()),
     render: function(){
-
-        var label = this.$el.data('label');
-        if (!label) {
-            label = "Temporal Bounds"
-        }; 
-        var data_path = this.$el.data('path');
-        if (data_path && data_path.substring(0,7) != 'unknown') {
-            var temporal_from, temporal_to;
-            this.$el.html(this.template({label: label, temporal_from: temporal_from, temporal_to: temporal_from}));
         
-        // For integration effort only
-        } else {
-            var integration_info = this.$el.text();
-            this.$el.find('.content-wrapper').html(this.template({label: label, temporal_from: '', temporal_to: '', integration_info: integration_info}));
-            console.log('ID: ' + this.$el.attr('id') + ' -- DB-PATH: ' + this.$el.data('path') + ' -- ' + integration_info);
-        };
+        var label = this.$el.data('label');
+        if (!label) label = "Temporal Bounds";
+        
+        var data_path = this.$el.data('path');
+        var temporal_from, temporal_to;
+        
+        this.$el.html(this.template({label: label, temporal_from: temporal_from, temporal_to: temporal_from}));
+        this.$el.find('input').datepicker({autoclose:true});
+        
         return this;
     }
 });
