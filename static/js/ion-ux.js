@@ -34,7 +34,7 @@ IONUX = {
         
         new IONUX.Views.DataAssetFilter().render().el;
         new IONUX.Views.DPFilterActions({el: '#map-filter-heading'});
-        new IONUX.Views.AssetFilterActions({el: '#map-filter-heading'});
+        // new IONUX.Views.AssetFilterActions({el: '#map-filter-heading'});
 
         $.ajax({
             url: '/get_data_product_group_list/',

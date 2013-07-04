@@ -667,13 +667,9 @@ IONUX.Views.MapFilter = Backbone.View.extend({
   el: '#map-filter',
   filter_options: {
     short_asset_options: [
-      {label: 'Data Product', type: 'DataProduct'},
-      {label: 'Instrument', type: 'InstrumentDevice'},
-      {label: 'Platform', type: 'PlatformDevice'},
       {label: 'Station', type: 'StationSite'},
-      {label: 'Subsite', type: 'Subsite'},
-      {label: 'Site', type: 'Site'},
-      {label: 'Facility', type: 'Observatory'},
+      {label: 'Instrument', type: 'InstrumentSite'},
+      {label: 'Platform', type: 'PlatformSite'},
     ],
     long_asset_options: [
       {label: 'Station', type: 'PlatformSite'},
@@ -786,9 +782,11 @@ IONUX.Views.ListFilter = Backbone.View.extend({
   el: '#list-filter',
   filter_options: {
     short_list: [
-      {label: 'Station', type: 'StationSite'},
-      {label: 'Instrument', type: 'InstrumentSite'},
-      {label: 'Platform', type: 'PlatformSite'},
+      {label: 'Data Product', type: 'DataProduct'},
+      {label: 'Instrument', type: 'InstrumentDevice'},
+      {label: 'Platform', type: 'PlatformDevice'},
+      {label: 'Station', type: 'PlatformSite'},
+      {label: 'Site', type: 'Observatory'},
     ]
   },
   template: '\
@@ -965,44 +963,44 @@ IONUX.Views.DPFilterActions = IONUX.Views.ActionMenu.extend({
 });
 
 
-INTERACTIONS_OBJECT.asset_filter_interactions = ['Short List', 'Full List'];
-IONUX.Views.AssetFilterActions = IONUX.Views.ActionMenu.extend({
-  dropdown_button_tmpl: '<div class="asset-mode action-menu btn-group pull-right" style="display:none;">\
-  <a class="btn dropdown-toggle" data-toggle="dropdown"><span class="hamburger">&nbsp;</span></a>\
-  <ul class="dropdown-menu"><% _.each(dropdown_items, function(item) { %> <li><%= item %></li> <% }); %></ul>\
-  </div>',
-  
-  "events": _.extend({
-        "hover": "action_controls_onhover",
-    }, IONUX.Views.ActionMenu.prototype.events),
-
-    initialize: function() {
-        this.interaction_items = INTERACTIONS_OBJECT.asset_filter_interactions;
-        this.on("action__short_list", this.action__short_list);
-        this.on("action__full_list", this.action__full_list);
-        this.create_actionmenu();
-    },
-
-    action__short_list:function(target){
-      console.log('short_list');
-      
-      // _.each($('#dataproduct-filter input:not(:checked)'), function(el) {
-      //   var item = $(el).val();
-      //   IONUX.DataProductWhitelist.push(item);
-      //   $(el).prop('checked', true);
-      // });
-      // IONUX.Dashboard.MapDataResources.trigger('data:filter_render');
-    },
-    
-    action__full_list:function(target){
-      console.log('full_list');
-
-      // _.each($('#dataproduct-filter input:checked'), function(el) {
-      //   var item = $(el).val();
-      //   var item_idx = IONUX.DataProductWhitelist.indexOf(item);
-      //   IONUX.DataProductWhitelist.splice(item_idx, 1);
-      //   $(el).prop('checked', false);
-      // });
-      // IONUX.Dashboard.MapDataResources.trigger('data:filter_render');
-    }
-});
+// INTERACTIONS_OBJECT.asset_filter_interactions = ['Short List', 'Full List'];
+// IONUX.Views.AssetFilterActions = IONUX.Views.ActionMenu.extend({
+//   dropdown_button_tmpl: '<div class="asset-mode action-menu btn-group pull-right" style="display:none;">\
+//   <a class="btn dropdown-toggle" data-toggle="dropdown"><span class="hamburger">&nbsp;</span></a>\
+//   <ul class="dropdown-menu"><% _.each(dropdown_items, function(item) { %> <li><%= item %></li> <% }); %></ul>\
+//   </div>',
+//   
+//   "events": _.extend({
+//         "hover": "action_controls_onhover",
+//     }, IONUX.Views.ActionMenu.prototype.events),
+// 
+//     initialize: function() {
+//         this.interaction_items = INTERACTIONS_OBJECT.asset_filter_interactions;
+//         this.on("action__short_list", this.action__short_list);
+//         this.on("action__full_list", this.action__full_list);
+//         this.create_actionmenu();
+//     },
+// 
+//     action__short_list:function(target){
+//       console.log('short_list');
+//       
+//       // _.each($('#dataproduct-filter input:not(:checked)'), function(el) {
+//       //   var item = $(el).val();
+//       //   IONUX.DataProductWhitelist.push(item);
+//       //   $(el).prop('checked', true);
+//       // });
+//       // IONUX.Dashboard.MapDataResources.trigger('data:filter_render');
+//     },
+//     
+//     action__full_list:function(target){
+//       console.log('full_list');
+// 
+//       // _.each($('#dataproduct-filter input:checked'), function(el) {
+//       //   var item = $(el).val();
+//       //   var item_idx = IONUX.DataProductWhitelist.indexOf(item);
+//       //   IONUX.DataProductWhitelist.splice(item_idx, 1);
+//       //   $(el).prop('checked', false);
+//       // });
+//       // IONUX.Dashboard.MapDataResources.trigger('data:filter_render');
+//     }
+// });
