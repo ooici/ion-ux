@@ -325,12 +325,14 @@ IONUX.Views.Map = Backbone.View.extend({
       dataType: 'json',
       global: false,
       success: function(resp) {
-        $('#loading-status').remove();
         self.sites_status_loaded = true;
         self.sites_status = resp.data;
         self.clear_all_markers();
         self.draw_markers();
-      }
+      },
+      complete: function(){
+        $('#loading-status').remove();
+      },
     });
   },
     
