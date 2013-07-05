@@ -323,6 +323,7 @@ IONUX.Views.Map = Backbone.View.extend({
       url: '/get_sites_status/',
       data: JSON.stringify({resource_ids: resource_ids}),
       dataType: 'json',
+      global: false,
       success: function(resp) {
         $('#loading-status').remove();
         self.sites_status_loaded = true;
