@@ -238,7 +238,7 @@ IONUX.Views.RequestAccess = Backbone.View.extend({
 
     // sub out message/buttons if we don't have perms
     if (this.matching_orgs.length == 0) {
-      template_vars.body = "You must have the instrument operator role in the associated org to request access to this device.";
+      template_vars.body = "You must have the facility operator role in the associated org to request access to this device.";
       template_vars.buttons = cancel_button;
     }
 
