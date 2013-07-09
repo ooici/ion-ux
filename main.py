@@ -285,7 +285,7 @@ def release_access(resource_type, resource_id):
 def request_exclusive_access(resource_type, resource_id):
     expiration = int(request.form.get('expiration', None))
     curtime = int(round(time.time() * 1000))
-    full_expiration = curtime + (expiration * 60 * 60 * 1000) # in ms
+    full_expiration = str(curtime + (expiration * 60 * 60 * 1000)) # in ms
     actor_id = session.get('actor_id') if session.has_key('actor_id') else None
     org_id = request.form.get('org_id', None)
 
@@ -720,7 +720,6 @@ def logout():
 
 @app.route('/session/', methods=['GET'])
 def session_info():
-
     # get version info from service gateway
     remote_version = ServiceApi.get_version()
     ion_ux_version = get_versions()
