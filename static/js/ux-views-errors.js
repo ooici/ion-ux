@@ -14,9 +14,9 @@ IONUX.Views.Error = Backbone.View.extend({
     _.bindAll(this);
   },
   render: function(){
-    var   self = this,
-      headline = "Error";
-
+    var self = this,
+    headline = "Error";
+    
     _.each(this.options.error_objs, function(eo) {
         eo.is_html = eo.Message.indexOf("<") == 0;
         if (eo.is_html) {
@@ -29,7 +29,10 @@ IONUX.Views.Error = Backbone.View.extend({
     if (this.options.error_objs.length > 1) {
       headline = "Error (" + this.options.error_objs.length + " total)";
     }
-
+    
+    
+    
+    
     $(this.modal_template).html(this.template({headline: headline,
                                                error_objs: this.options.error_objs,
                                                open_modal: this.options.open_modal,
@@ -42,6 +45,14 @@ IONUX.Views.Error = Backbone.View.extend({
     
     // Ensure bindings, back and dashboard functions won't work without this.
     this.setElement('#action-modal'); 
+    
+    // Temp: remove cancel button if on edit page to avoid data-dismiss to a blank page;
+    // other edge cases may discovered, but until those are discovered, we'll avoid passing this setting
+    // directly into the _.template, e.g. {{ if (no_cancel_button ) { }}}...
+    var location = window.location.href.split('/');
+    if (location[location.length-1] == 'edit') {
+      this.$el.find('#cancel').remove();
+    };
     
     return this;
   },
