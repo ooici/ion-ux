@@ -360,6 +360,7 @@ IONUX.Views.RequestExclusiveAccess = Backbone.View.extend({
   },
   request_access: function(e){
     var expiration = parseInt(this.$('input[name="time"]').val());
+    
     if (expiration <= 0 || expiration > 12) {
       this.$('.control-group').addClass('error');
       this.$('.help-inline').append("Please enter a value between 0 and 12");
@@ -368,7 +369,7 @@ IONUX.Views.RequestExclusiveAccess = Backbone.View.extend({
       this.$('.control-group').removeClass('error');
       this.$('.help-inline').empty();
     }
-
+    
     var self = this;
     e.preventDefault();
     $.ajax({
@@ -378,8 +379,8 @@ IONUX.Views.RequestExclusiveAccess = Backbone.View.extend({
              org_id: this.options.org_id},
       success: function(resp) {
         self.modal.modal('hide');
-        $(_.template(IONUX.Templates.full_modal_template, {header_text:'Request Received',
-                                                           body: 'Your request has been received and will be reviewed by a manager.',
+        $(_.template(IONUX.Templates.full_modal_template, {header_text:'Request Granted',
+                                                           body: 'Your request has been granted. Please release exclusive access when you have completed your work.',
                                                            buttons: "<button class='btn-blue' data-dismiss='modal'>OK</button>"})).modal()
           .on('hide', function() {
             $('#action-modal').remove();
