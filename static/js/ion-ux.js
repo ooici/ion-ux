@@ -65,6 +65,9 @@ IONUX = {
         // nag popup!
         if (IONUX.SESSION_MODEL.get('is_logged_in') && !IONUX.SESSION_MODEL.get('is_registered'))
           router.user_profile();
+        
+        // Enable session polling for updated roles, possibly UI version changes.
+        // IONUX.SESSION_MODEL.start_polling();
       }
     });
     

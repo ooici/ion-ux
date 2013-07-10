@@ -31,11 +31,6 @@ IONUX.Notifications = [
     desc: 'The agent\'s managed resource state has changed'
   },
   {
-    label: 'Operator event on device', 
-    event_type: 'DeviceOperatorEvent',
-    desc: 'An operator has logged an event manually on a device.'
-  },
-  {
     label: 'Operator event on device',
     event_type: 'DeviceOperatorEvent',
     desc: 'An operator has logged an event manually on a device',
