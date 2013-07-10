@@ -35,8 +35,7 @@ def get_versions():
     return g.ion_ux_version
 
 def clean_session():
-    for key in session.keys():
-        session.pop(key, None)
+    session.clear()
 
 def render_app_template(current_url):
     tmpl = Template(LayoutApi.process_layout())
