@@ -107,7 +107,6 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
         
         // append resource-specific items here
         if (window.MODEL_DATA.resource_type == 'Org') {
-          
           // ENROLLMENT
           if (IONUX.is_logged_in()) {
             if (_.contains(IONUX.SESSION_MODEL.get('roles')[window.MODEL_DATA.resource.org_governance_name], 'ORG_MANAGER')) {
