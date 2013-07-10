@@ -34,6 +34,7 @@ IONUX = {
         
         new IONUX.Views.DataAssetFilter().render().el;
         new IONUX.Views.DPFilterActions({el: '#map-filter-heading'});
+        
         // new IONUX.Views.AssetFilterActions({el: '#map-filter-heading'});
 
         $.ajax({
@@ -59,7 +60,14 @@ IONUX = {
       success: function(resp) {
         new IONUX.Views.Topbar({model: IONUX.SESSION_MODEL}).render().el
         new IONUX.Views.Search().render().el;
-        new IONUX.Views.DashboardActions();
+        
+        // Check if on dashboard or facepage, render appropriate menu.
+        if (_.contains(window.location.href.split('/'), 'face')) {
+          new IONUX.Views.ViewActions();
+        } else {
+          new IONUX.Views.DashboardActions();
+        };
+
         new IONUX.Views.HelpMenu({model: IONUX.SESSION_MODEL}).render().el;
         
         // nag popup!
