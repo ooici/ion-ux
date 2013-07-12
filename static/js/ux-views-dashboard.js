@@ -631,8 +631,6 @@ IONUX.Views.DashboardTable = IONUX.Views.DataTable.extend({
 
 IONUX.Views.ResourceTable = IONUX.Views.DataTable.extend({
   initialize: function() {
-    console.log('ResourceTable');
-    
     _.bindAll(this);
     this.$el.show();
     this.filter_data();
