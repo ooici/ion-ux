@@ -34,6 +34,7 @@ IONUX = {
         
         new IONUX.Views.DataAssetFilter().render().el;
         new IONUX.Views.DPFilterActions({el: '#map-filter-heading'});
+        // new IONUX.Views.ListFilterActions({el: '#list-filter-heading'});
         
         // new IONUX.Views.AssetFilterActions({el: '#map-filter-heading'});
 
@@ -62,7 +63,8 @@ IONUX = {
         new IONUX.Views.Search().render().el;
         
         // Check if on dashboard or facepage, render appropriate menu.
-        if (_.contains(window.location.href.split('/'), 'face')) {
+        var href = window.location.href.split('/');
+        if (_.contains(href, 'face') || _.contains(href, 'command')) {
           new IONUX.Views.ViewActions();
         } else {
           new IONUX.Views.DashboardActions();

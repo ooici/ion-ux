@@ -1184,6 +1184,7 @@ ACTION MENU STYLING
 
 #search-production .btn,
 #map-filter-heading .btn,
+#list-filter-heading .btn,
 .block .btn, 
 .filter-header .btn {
   display: inline-block;
