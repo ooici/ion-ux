@@ -31,12 +31,10 @@ IONUX.CurrentFilter = 'dataproduct';
 IONUX.Views.DataAssetFilter = Backbone.View.extend({
   el: '#map-asset-data-menu',
   template: _.template('<span class="data-filter active" data-mode="dataproduct">Data</span><span class="asset-filter" data-mode="asset">Asset</span>'),
-  initialize: function() {
-    console.log('IONUX.Views.DataAssetFilter');
-  },
   events: {
     'click span': 'filter',
-  }, 
+  },
+  initialize: function() {},
   render: function(){
     this.$el.html(this.template);
     return this;
@@ -325,13 +323,16 @@ IONUX.Views.Map = Backbone.View.extend({
       url: '/get_sites_status/',
       data: JSON.stringify({resource_ids: resource_ids}),
       dataType: 'json',
+      global: false,
       success: function(resp) {
-        $('#loading-status').remove();
         self.sites_status_loaded = true;
         self.sites_status = resp.data;
         self.clear_all_markers();
         self.draw_markers();
-      }
+      },
+      complete: function(){
+        $('#loading-status').remove();
+      },
     });
   },
     
@@ -356,7 +357,7 @@ IONUX.Views.Map = Backbone.View.extend({
       
       // Catch single items and add some padding to avoid 
       // Google Maps 'Image Not Found' when panning to a tight boundary.
-      if (resources.length < 2) {
+      if (resources.length < 4) {
         north += 1.0;
         east += 1.0;
         south -= 1.0;
@@ -552,7 +553,8 @@ IONUX.Views.MapDashboardTable = IONUX.Views.DataTable.extend({
          };
        }, this);
     } else {
-      this.options.data = this.collection.toJSON();
+      this.options.data = [];
+      // this.options.data = this.collection.toJSON();
     };
   },
   
@@ -631,7 +633,6 @@ IONUX.Views.ResourceTable = IONUX.Views.DataTable.extend({
   initialize: function() {
     _.bindAll(this);
     this.$el.show();
-    this.whitelist = IONUX.ListWhitelist;
     this.filter_data();
     this.collection.on('data:filter_render', this.filter_and_render);
     IONUX.Views.DataTable.prototype.initialize.call(this);
@@ -639,14 +640,14 @@ IONUX.Views.ResourceTable = IONUX.Views.DataTable.extend({
   
   filter_data: function() {
     this.options.data = [];
-    if (!_.isEmpty(this.whitelist)) {
+    if (!_.isEmpty(IONUX.ListWhitelist)) {
        _.each(this.collection.models, function(resource) {
-         if (_.contains(this.whitelist, resource.get('type_'))) {
+         if (_.contains(IONUX.ListWhitelist, resource.get('type_'))) {
            this.options.data.push(resource.toJSON());
          };
        }, this);
     } else {
-      this.options.data = []; //this.collection.toJSON();
+      this.options.data = [];
     };
   },
   
@@ -779,32 +780,52 @@ IONUX.Collections.ListResources = Backbone.Collection.extend({
 - - - - - - - - - - - - - - - - - 
 */
 
-IONUX.ListWhitelist = ['DataProduct', 'InstrumentDevice', 'PlatformDevice', 'PlatformSite', 'StationSite', 'Observatory'];
+IONUX.ListWhitelist = ['DataProduct', 'InstrumentDevice', 'PlatformDevice', 'PlatformSite', 'Observatory'];
 IONUX.Views.ListFilter = Backbone.View.extend({
   el: '#list-filter',
-  filter_options: {
-    short_list: [
+  filter: {
+    short: [
       {label: 'Data Product', type: 'DataProduct'},
       {label: 'Instrument', type: 'InstrumentDevice'},
       {label: 'Platform', type: 'PlatformDevice'},
       {label: 'Station', type: 'PlatformSite'},
       {label: 'Site', type: 'Observatory'},
     ],
-    long_list: [
-      {label: 'Data Products', type: 'DataProduct'}
+    long: [
+      {label: 'Data Product', type: 'DataProduct'},
+      {label: 'Data Transform', type: 'DataTransform'},
+      {label: 'Data Process', type: 'DataProcess'},
+      {label: 'Instrument', type: 'InstrumentDevice'},
+      {label: 'Instrument Model', type: 'InstrumentModel'},
+      {label: 'Instrument Agent', type: 'InstrumentAgentInstance'},
+      {label: 'Instrument Agent Def', type: 'InstrumentAgent'},
+      {label: 'Platform', type: 'PlatformDevice'},
+      {label: 'Platform Model', type: 'PlatformModel'},
+      {label: 'Platform Agent', type: 'PlatformAgentInstance'},
+      {label: 'Platform Agent Def', type: 'PlatformAgent'},
+      {label: 'Station', type: 'PlatformSite'},
+      {label: 'Site', type: 'Observatory'},
+      {label: 'Role', type: 'UserRole'},
+      {label: 'Facility', type: 'Org'},
+      {label: 'Attachment', type: 'Attachment'},
     ]
   },
   template: '\
-    <h3>Resource Type</h3>\
+    <h3 id="list-filter-heading">Resource Type\
+    <div class="dataproduct-mode action-menu btn-group pull-right">\
+      <a class="btn dropdown-toggle" data-toggle="dropdown"><span class="hamburger">&nbsp;</span></a>\
+      <ul class="dropdown-menu"><li class="apply-list">Long List</li></ul>\
+    </div>\
+    </h3>\
     <div class="panelize">\
-      <div id="long-filter"></div>\
-      <div id="short-filter"></div>\
+      <div id="list-filter"></div>\
     </div>',
   item_template: _.template('<div class="filter-option resource-option">\
                              <%= label %> <div class="pull-right"><input type="checkbox" value="<%= type %>" <%= checked %> /></div>\
                              </div>'),
   events: {
-    'click .filter-option input': 'set_filter'
+    'click .filter-option input': 'set_filter',
+    'click .apply-list': 'apply_list'
   },
   
   initialize: function() {
@@ -813,18 +834,59 @@ IONUX.Views.ListFilter = Backbone.View.extend({
   
   render: function() {
     this.$el.html(this.template);
-    this.render_short_list();
+    var filter_elmt = this.$el.find('#list-filter');
+    _.each(this.filter.short, function(option) {
+      option['checked'] = _.contains(IONUX.ListWhitelist, option['type']) ? "checked" : "";
+      filter_elmt.append(this.item_template(option));
+    }, this);
     return this;
   },
   
-  render_short_list: function() {
-    var long_list = this.$el.find('#long-filter');
-    _.each(this.filter_options.short_list, function(option) {
-      option['checked'] = _.contains(IONUX.ListWhitelist, option['type']) ? "checked" : "";
-      long_list.append(this.item_template(option));
-    }, this);
+  apply_list: function(e) {
+    e.preventDefault();
+    
+    var check_whitelist = function(type) {
+      return _.contains(IONUX.ListWhitelist, type) ? 'checked' : '';
+    };
+    
+    var li_elmt = $(e.target);
+    var list = li_elmt.text();
+    
+    var filter_elmt = this.$el.find('#list-filter');
+    filter_elmt.empty();
+    
+    if (list == 'Long List') {
+    
+      _.each(this.filter.long, function(option) {
+        if (_.findWhere(this.filter.short, {type: option.type})) {
+          option['checked'] = check_whitelist(option.type);
+        } else {
+          option['checked'] = 'checked';
+          IONUX.ListWhitelist.push(option.type);
+        };
+         filter_elmt.append(this.item_template(option));
+      }, this);
+      
+      li_elmt.text('Short List');
+      this.trigger_data_filter();
+    } else {
+      
+      // Remove whitelisted items not in this.filter.short
+      IONUX.ListWhitelist = _.filter(IONUX.ListWhitelist, function(option) {
+        return _.findWhere(this.filter.short, {type: option});
+      }, this);
+      
+      _.each(this.filter.short, function(option) {
+        option['checked'] = check_whitelist(option.type);
+        filter_elmt.append(this.item_template(option));
+      }, this);
+      
+      li_elmt.text('Long List');
+      this.trigger_data_filter();
+    };
+    
   },
-  
+
   set_filter: function(e){
     console.log('set_filter');
     var filter_elmt = $(e.target);
@@ -834,9 +896,13 @@ IONUX.Views.ListFilter = Backbone.View.extend({
     } else {
       var index = IONUX.ListWhitelist.indexOf(type)
       IONUX.ListWhitelist.splice(index, 1);
-    }; 
-    IONUX.Dashboard.ListResources.trigger('data:filter_render');
-    console.log(IONUX.ListWhitelist);
+    };
+    
+    this.trigger_data_filter();
+  },
+  
+  trigger_data_filter: function() {
+    if (IONUX.Dashboard.ListResources) IONUX.Dashboard.ListResources.trigger('data:filter_render');
   },
 });
 
@@ -927,9 +993,7 @@ IONUX.Views.DataProductFilter = Backbone.View.extend({
 });
 
 
-
-
-INTERACTIONS_OBJECT.dp_filter_intereactions = ['Select All', 'Select None'];
+INTERACTIONS_OBJECT.dp_filter_interactions = ['Select All', 'Select None'];
 IONUX.Views.DPFilterActions = IONUX.Views.ActionMenu.extend({
   dropdown_button_tmpl: '<div class="dataproduct-mode action-menu btn-group pull-right">\
   <a class="btn dropdown-toggle" data-toggle="dropdown"><span class="hamburger">&nbsp;</span></a>\
@@ -941,7 +1005,7 @@ IONUX.Views.DPFilterActions = IONUX.Views.ActionMenu.extend({
     }, IONUX.Views.ActionMenu.prototype.events),
 
     initialize: function() {
-        this.interaction_items = INTERACTIONS_OBJECT.dp_filter_intereactions;
+        this.interaction_items = INTERACTIONS_OBJECT.dp_filter_interactions;
         this.on("action__select_all", this.action__select_all);
         this.on("action__select_none", this.action__select_none);
         this.create_actionmenu();

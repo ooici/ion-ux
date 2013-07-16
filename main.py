@@ -39,8 +39,7 @@ def get_versions():
     return g.ion_ux_version
 
 def clean_session():
-    for key in session.keys():
-        session.pop(key, None)
+    session.clear()
 
 def render_app_template(current_url):
     tmpl = Template(LayoutApi.process_layout())
@@ -199,9 +198,10 @@ def create_resource():
     resp = ServiceApi.create_resource(request.form.get('resource_type', None), request.form.get('org_id', None))
     return render_json_response(resp)
 
-@app.route('/<resource_type>/status/<resource_id>/subscribe/', methods=['GET'])
+# @app.route('/<resource_type>/status/<resource_id>/subscribe/', methods=['GET'])
+# @app.route('/<resource_type>/related/<resource_id>/subscribe/', methods=['GET'])
 @app.route('/<resource_type>/face/<resource_id>/subscribe/', methods=['GET'])
-@app.route('/<resource_type>/related/<resource_id>/subscribe/', methods=['GET'])
+@app.route('/<resource_type>/command/<resource_id>/subscribe/', methods=['GET'])
 @login_required
 def subscribe_to_resource(resource_type, resource_id):
     resource_name = request.args.get('resource_name')
@@ -209,9 +209,10 @@ def subscribe_to_resource(resource_type, resource_id):
     resp = ServiceApi.create_user_notification(resource_type, resource_id, event_type, session['user_id'], resource_name)
     return render_json_response(resp)
 
-@app.route('/<resource_type>/status/<resource_id>/unsubscribe/', methods=['GET'])
+# @app.route('/<resource_type>/status/<resource_id>/unsubscribe/', methods=['GET'])
+# @app.route('/<resource_type>/related/<resource_id>/unsubscribe/', methods=['GET'])
 @app.route('/<resource_type>/face/<resource_id>/unsubscribe/', methods=['GET'])
-@app.route('/<resource_type>/related/<resource_id>/unsubscribe/', methods=['GET'])
+@app.route('/<resource_type>/command/<resource_id>/unsubscribe/', methods=['GET'])
 @login_required
 def unsubscribe_to_resource(resource_type, resource_id):
     notification_id = request.args.get('notification_id')
@@ -219,18 +220,20 @@ def unsubscribe_to_resource(resource_type, resource_id):
     return render_json_response(resp)
 
 
-@app.route('/<resource_type>/status/<resource_id>/enroll/', methods=['POST'])
+# @app.route('/<resource_type>/status/<resource_id>/enroll/', methods=['POST'])
+# @app.route('/<resource_type>/related/<resource_id>/enroll/', methods=['POST'])
 @app.route('/<resource_type>/face/<resource_id>/enroll/', methods=['POST'])
-@app.route('/<resource_type>/related/<resource_id>/enroll/', methods=['POST'])
+@app.route('/<resource_type>/command/<resource_id>/enroll/', methods=['POST'])
 @login_required
 def enroll_request(resource_type, resource_id):
     actor_id = session.get('actor_id') if session.has_key('actor_id') else None
     resp = ServiceApi.enroll_request(resource_id, actor_id)
     return render_json_response(resp)
 
-@app.route('/<resource_type>/status/<resource_id>/request_role/', methods=['POST'])
+# @app.route('/<resource_type>/status/<resource_id>/request_role/', methods=['POST'])
+# @app.route('/<resource_type>/related/<resource_id>/request_role/', methods=['POST'])
 @app.route('/<resource_type>/face/<resource_id>/request_role/', methods=['POST'])
-@app.route('/<resource_type>/related/<resource_id>/request_role/', methods=['POST'])
+@app.route('/<resource_type>/command/<resource_id>/request_role/', methods=['POST'])
 @login_required
 def request_role(resource_type, resource_id):
     actor_id = session.get('actor_id') if session.has_key('actor_id') else None
@@ -239,9 +242,10 @@ def request_role(resource_type, resource_id):
     resp = ServiceApi.request_role(resource_id, actor_id, role_name)
     return render_json_response(resp)
 
-@app.route('/<resource_type>/status/<resource_id>/invite_user/', methods=['POST'])
+# @app.route('/<resource_type>/status/<resource_id>/invite_user/', methods=['POST'])
+# @app.route('/<resource_type>/related/<resource_id>/invite_user/', methods=['POST'])
 @app.route('/<resource_type>/face/<resource_id>/invite_user/', methods=['POST'])
-@app.route('/<resource_type>/related/<resource_id>/invite_user/', methods=['POST'])
+@app.route('/<resource_type>/command/<resource_id>/invite_user/', methods=['POST'])
 @login_required
 def invite_user(resource_type, resource_id):
     user_id = request.form.get('user_id', None)
@@ -249,9 +253,10 @@ def invite_user(resource_type, resource_id):
     resp = ServiceApi.invite_user(resource_id, user_id)
     return render_json_response(resp)
 
-@app.route('/<resource_type>/status/<resource_id>/offer_user_role/', methods=['POST'])
+# @app.route('/<resource_type>/status/<resource_id>/offer_user_role/', methods=['POST'])
+# @app.route('/<resource_type>/related/<resource_id>/offer_user_role/', methods=['POST'])
 @app.route('/<resource_type>/face/<resource_id>/offer_user_role/', methods=['POST'])
-@app.route('/<resource_type>/related/<resource_id>/offer_user_role/', methods=['POST'])
+@app.route('/<resource_type>/command/<resource_id>/offer_user_role/', methods=['POST'])
 @login_required
 def offer_user_role(resource_type, resource_id):
     user_id = request.form.get('user_id', None)
@@ -260,9 +265,10 @@ def offer_user_role(resource_type, resource_id):
     resp = ServiceApi.offer_user_role(resource_id, user_id, role_name)
     return render_json_response(resp)
 
-@app.route('/<resource_type>/status/<resource_id>/request_access/', methods=['POST'])
+# @app.route('/<resource_type>/status/<resource_id>/request_access/', methods=['POST'])
+# @app.route('/<resource_type>/related/<resource_id>/request_access/', methods=['POST'])
 @app.route('/<resource_type>/face/<resource_id>/request_access/', methods=['POST'])
-@app.route('/<resource_type>/related/<resource_id>/request_access/', methods=['POST'])
+@app.route('/<resource_type>/command/<resource_id>/request_access/', methods=['POST'])
 @login_required
 def request_access(resource_type, resource_id):
     org_id = request.form.get('org_id', None)
@@ -272,9 +278,10 @@ def request_access(resource_type, resource_id):
     resp = ServiceApi.request_access(resource_id, res_name, actor_id, org_id)
     return render_json_response(resp)
 
-@app.route('/<resource_type>/status/<resource_id>/release_access/', methods=['POST'])
+# @app.route('/<resource_type>/status/<resource_id>/release_access/', methods=['POST'])
+# @app.route('/<resource_type>/related/<resource_id>/release_access/', methods=['POST'])
 @app.route('/<resource_type>/face/<resource_id>/release_access/', methods=['POST'])
-@app.route('/<resource_type>/related/<resource_id>/release_access/', methods=['POST'])
+@app.route('/<resource_type>/command/<resource_id>/release_access/', methods=['POST'])
 @login_required
 def release_access(resource_type, resource_id):
     commitment_id = request.form.get('commitment_id', None)
@@ -282,14 +289,15 @@ def release_access(resource_type, resource_id):
     resp = ServiceApi.release_access(commitment_id)
     return render_json_response(resp)
 
-@app.route('/<resource_type>/status/<resource_id>/request_exclusive_access/', methods=['POST'])
+# @app.route('/<resource_type>/status/<resource_id>/request_exclusive_access/', methods=['POST'])
+# @app.route('/<resource_type>/related/<resource_id>/request_exclusive_access/', methods=['POST'])
 @app.route('/<resource_type>/face/<resource_id>/request_exclusive_access/', methods=['POST'])
-@app.route('/<resource_type>/related/<resource_id>/request_exclusive_access/', methods=['POST'])
+@app.route('/<resource_type>/command/<resource_id>/request_exclusive_access/', methods=['POST'])
 @login_required
 def request_exclusive_access(resource_type, resource_id):
     expiration = int(request.form.get('expiration', None))
     curtime = int(round(time.time() * 1000))
-    full_expiration = curtime + (expiration * 60 * 60 * 1000) # in ms
+    full_expiration = str(curtime + (expiration * 60 * 60 * 1000)) # in ms
     actor_id = session.get('actor_id') if session.has_key('actor_id') else None
     org_id = request.form.get('org_id', None)
 
@@ -307,18 +315,20 @@ def accept_reject_negotiation():
     resp = ServiceApi.accept_reject_negotiation(negotiation_id, verb, originator, reason)
     return render_json_response(resp)
 
-@app.route('/<resource_type>/status/<resource_id>/transition/', methods=['POST'])
+# @app.route('/<resource_type>/status/<resource_id>/transition/', methods=['POST'])
+# @app.route('/<resource_type>/related/<resource_id>/transition/', methods=['POST'])
 @app.route('/<resource_type>/face/<resource_id>/transition/', methods=['POST'])
-@app.route('/<resource_type>/related/<resource_id>/transition/', methods=['POST'])
+@app.route('/<resource_type>/command/<resource_id>/transition/', methods=['POST'])
 @login_required
 def change_lcstate(resource_type, resource_id):
     transition_event = request.form['transition_event'].lower()
     transition = ServiceApi.transition_lcstate(resource_id, transition_event)
     return render_json_response(transition)
 
-@app.route('/<resource_type>/status/<resource_id>/publish_event/', methods=['POST'])
+# @app.route('/<resource_type>/status/<resource_id>/publish_event/', methods=['POST'])
+# @app.route('/<resource_type>/related/<resource_id>/publish_event/', methods=['POST'])
 @app.route('/<resource_type>/face/<resource_id>/publish_event/', methods=['POST'])
-@app.route('/<resource_type>/related/<resource_id>/publish_event/', methods=['POST'])
+@app.route('/<resource_type>/command/<resource_id>/publish_event/', methods=['POST'])
 def publish_event(resource_type, resource_id):
     if resource_type == 'InstrumentDevice':
         event_type = 'DeviceOperatorEvent'
@@ -339,9 +349,9 @@ def publish_event(resource_type, resource_id):
 # FACE, STATUS, RELATED PAGES
 # -----------------------------------------------------------------------------
 
-@app.route('/<resource_type>/status/<resource_id>/', methods=['GET','PUT'])
+# @app.route('/<resource_type>/status/<resource_id>/', methods=['GET','PUT'])
+# @app.route('/<resource_type>/related/<resource_id>/', methods=['GET','PUT'])
 @app.route('/<resource_type>/face/<resource_id>/', methods=['GET','PUT'])
-@app.route('/<resource_type>/related/<resource_id>/', methods=['GET','PUT'])
 @app.route('/<resource_type>/command/<resource_id>/', methods=['GET','PUT'])
 def page(resource_type, resource_id):
     if request.is_xhr:
@@ -724,7 +734,6 @@ def logout():
 
 @app.route('/session/', methods=['GET'])
 def session_info():
-
     # get version info from service gateway
     remote_version = ServiceApi.get_version()
     ion_ux_version = get_versions()
@@ -747,7 +756,8 @@ def session_info():
     session_values = {'user_id': None, 'roles': None, 'is_registered': False, 'is_logged_in': False, 'ui_mode': UI_MODE, 'version': version }
 
     if session.has_key('user_id'):
-        session_values.update({'name': session['name'], 'user_id': session['user_id'], 'actor_id': session['actor_id'], 'roles': session['roles'], 'is_registered': session['is_registered'], 'is_logged_in': True})
+        roles = ServiceApi.get_roles_by_actor_id(session['actor_id'])
+        session_values.update({'name': session['name'], 'user_id': session['user_id'], 'actor_id': session['actor_id'], 'roles': roles, 'is_registered': session['is_registered'], 'is_logged_in': True})
     return jsonify(data=session_values)
 
 

@@ -7,7 +7,10 @@ IONUX = {
   Views: {},
   Router: {},
   init: function(){
-
+    
+    // HACK - temporarily disable salt.css on init;
+    $('.salt').prop('disabled', true);
+    
     var router = new IONUX.Router();
     IONUX.ROUTER = router;
     IONUX.setup_ajax_error();
@@ -31,6 +34,9 @@ IONUX = {
         
         new IONUX.Views.DataAssetFilter().render().el;
         new IONUX.Views.DPFilterActions({el: '#map-filter-heading'});
+        // new IONUX.Views.ListFilterActions({el: '#list-filter-heading'});
+        
+        // new IONUX.Views.AssetFilterActions({el: '#map-filter-heading'});
 
         $.ajax({
             url: '/get_data_product_group_list/',
@@ -55,12 +61,23 @@ IONUX = {
       success: function(resp) {
         new IONUX.Views.Topbar({model: IONUX.SESSION_MODEL}).render().el
         new IONUX.Views.Search().render().el;
-        new IONUX.Views.DashboardActions();
+        
+        // Check if on dashboard or facepage, render appropriate menu.
+        var href = window.location.href.split('/');
+        if (_.contains(href, 'face') || _.contains(href, 'command')) {
+          new IONUX.Views.ViewActions();
+        } else {
+          new IONUX.Views.DashboardActions();
+        };
+
         new IONUX.Views.HelpMenu({model: IONUX.SESSION_MODEL}).render().el;
         
         // nag popup!
         if (IONUX.SESSION_MODEL.get('is_logged_in') && !IONUX.SESSION_MODEL.get('is_registered'))
           router.user_profile();
+        
+        // Enable session polling for updated roles, possibly UI version changes.
+        IONUX.SESSION_MODEL.start_polling();
       }
     });
     

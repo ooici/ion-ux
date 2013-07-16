@@ -54,8 +54,12 @@ IONUX.Models.Session = Backbone.Model.extend({
         version: {},
         roles: [],
         ui_mode: 'PRODUCTION',
+        is_polling: false,
     },
     url: '/session/',
+    initialize: function() {
+      _.bindAll(this);
+    },
     parse: function(resp){
         return resp.data;
     },
@@ -67,7 +71,44 @@ IONUX.Models.Session = Backbone.Model.extend({
     },
     is_resource_owner: function(){
       return _.findWhere(MODEL_DATA.owners, {_id: this.get('user_id')}) ? true : false;
-    }
+    },
+    start_polling: function() {
+      if (this.get('is_logged_in')) {
+        this.set('is_polling', true);
+        setTimeout(this.poll, 3000);
+      };
+    },
+    poll: function() {
+      var self = this;
+      var existing_roles = _.clone(this.get('roles'));
+      if (this.get('is_polling')) {
+        this.fetch({
+          global: false,
+          success: function(resp) {
+            setTimeout(self.poll, 60000);
+            if (!_.isEqual(existing_roles, resp.get('roles'))) {
+              self.check_roles(existing_roles);
+            };
+          },
+          error: function(resp) {
+            self.set('is_polling', false);
+          }
+        });
+      };
+    },
+    check_roles: function(existing_roles) {
+      var roles = this.get('roles');
+      var new_roles = {};
+      _.each(roles, function(v,k) {
+        if (!_.has(existing_roles, k)) {
+          new_roles[k] = v;
+        } else {
+          var added_roles = _.difference(roles[k], existing_roles[k]);
+          if (added_roles.length) new_roles[k] = added_roles;
+        };
+      });
+      if (!_.isEmpty(new_roles)) new IONUX.Views.NewRoles({new_roles: new_roles}).render().el;
+    },
 });
 
 IONUX.Models.Resource = Backbone.Model.extend({
@@ -128,9 +169,6 @@ IONUX.Models.ResourceExtension = Backbone.Model.extend({
         return resp.data;
     }
 });
-
-
-
 
 
 IONUX.Models.Observatory = Backbone.Model.extend({
@@ -365,18 +403,18 @@ IONUX.Models.UserRegistrationModel = IONUX.Models.EditableResource.extend({
       },
     },
 
-    'variables': {
-      type: 'Object',
-      title: false,
-      subSchema: {
-        notification_contact:   { type: 'Radio',    title: 'Notification Method', options: ['Email', 'SMS'] },
-        sms_email:              { type: 'Checkbox', title: "Use email->SMS" },
-        ooi_system_change:      { type: 'Checkbox', title: "OOI system change information" },
-        ooi_project_updates:    { type: 'Checkbox', title: "OOI project updates" },
-        ocean_leadership_news:  { type: 'Checkbox', title: "Ocean Leadership News" },
-        ux_improvement_program: { type: 'Checkbox', title: "Participate in OOI User Experience Improvement Program" },
-      }
-    },
+    // 'variables': {
+    //   type: 'Object',
+    //   title: false,
+    //   subSchema: {
+    //     notification_contact:   { type: 'Radio',    title: 'Notification Method', options: ['Email', 'SMS'] },
+    //     sms_email:              { type: 'Checkbox', title: "Use email->SMS" },
+    //     ooi_system_change:      { type: 'Checkbox', title: "OOI system change information" },
+    //     ooi_project_updates:    { type: 'Checkbox', title: "OOI project updates" },
+    //     ocean_leadership_news:  { type: 'Checkbox', title: "Ocean Leadership News" },
+    //     ux_improvement_program: { type: 'Checkbox', title: "Participate in OOI User Experience Improvement Program" },
+    //   }
+    // },
 
   },
 

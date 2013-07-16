@@ -16,7 +16,7 @@ IONUX.Router = Backbone.Router.extend({
     'map/data/:resource_id': 'dashboard_map_data',
     'resources': 'dashboard_list',
     'resources/:resource_id': 'dashboard_list_resource',
-    "search/?:query": "search",
+    'search/?:query': 'search',
     ":resource_type/list/": "collection",
     ":resource_type/command/:resource_id/": "command",
     ":resource_type/:view_type/:resource_id/" : "page",
@@ -71,7 +71,6 @@ IONUX.Router = Backbone.Router.extend({
     function check_map() {
       // Catch back button and redraw
       if (!$('#dynamic-container > #map-canvas').is(':empty')) {
-        console.log('empty')
         IONUX.Dashboard.MapView = new IONUX.Views.Map({
           collection: IONUX.Dashboard.Observatories,
           model: IONUX.Dashboard.MapResource
@@ -179,7 +178,7 @@ IONUX.Router = Backbone.Router.extend({
     });
   },
   
-  search: function(query){
+  search: function(query) {
     $('#dashboard-container').hide();
     // Todo move into own view
     $('#dynamic-container').html('<div id="spinner"></div>').show();
@@ -208,7 +207,6 @@ IONUX.Router = Backbone.Router.extend({
         new IONUX.Views.DataTable({el: $(table_elmt), data: resp.data});
         $('.heading').html('<h1>Search Results</h1>').css('padding-bottom', '15px'); // Temp: css hack to make layout nice.
       });
-    new IONUX.Views.Footer({resource_id: null, resource_type: null}).render().el;
   },
 
   collection: function(resource_type){

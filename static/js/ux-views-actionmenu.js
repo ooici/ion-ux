@@ -104,23 +104,22 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
     initialize: function() {
         _.bindAll(this);
         this.interaction_items = INTERACTIONS_OBJECT.view_interactions.slice(0);  // ensure clone
-
+        
         // append resource-specific items here
         if (window.MODEL_DATA.resource_type == 'Org') {
-
           // ENROLLMENT
           if (IONUX.is_logged_in()) {
             if (_.contains(IONUX.SESSION_MODEL.get('roles')[window.MODEL_DATA.resource.org_governance_name], 'ORG_MANAGER')) {
               // INVITE USER
               this.interaction_items.push("Invite User");
               this.on("action__invite_user", this.action_org__invite_user);
-
+              
               // INVITE ROLE
               this.interaction_items.push("Offer User Role");
               this.on("action__offer_user_role", this.action_org__offer_user_role);
-
+              
             } else {
-              if (!_.some(window.MODEL_DATA.members, function(x) { return x._id == IONUX.SESSION_MODEL.get("user_id") })) {
+              if (! _.contains(IONUX.SESSION_MODEL.get('roles')[window.MODEL_DATA.resource.org_governance_name], 'ORG_MEMBER')) {
                 // REQUEST ENROLLMENT
                 this.interaction_items.push("Enroll");
                 this.on("action__enroll", this.action_org__enroll);

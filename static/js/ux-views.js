@@ -349,6 +349,8 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
     mu_listener2 = google.maps.event.addListenerOnce(self.rectangle, 'mouseup', muphandler);
   },
   search_clicked: function(e) {
+    e.preventDefault();
+    
     var form_values = this.$('form').serializeArray();
     form_values.splice(0, 0, {name:'adv', value:1})   // insert advanced key on the front
 
@@ -356,7 +358,7 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
     var formObj = _.object(_.map(form_values, function(v) {
       return [v.name, v.value];
     }));
-
+    
     // normalize into "down" facing vertical if switched to up
     if (this.$('.vertical-bounds-positive').hasClass('toggle_sealevel_passive')) {
       if (formObj['vertical-lower-bound']) {
@@ -753,22 +755,16 @@ IONUX.Views.ExtentVertical2 = Backbone.View.extend({
 IONUX.Views.ExtentTemporal = Backbone.View.extend({
     template: _.template($('#extent-temporal-tmpl').html()),
     render: function(){
-
-        var label = this.$el.data('label');
-        if (!label) {
-            label = "Temporal Bounds"
-        }; 
-        var data_path = this.$el.data('path');
-        if (data_path && data_path.substring(0,7) != 'unknown') {
-            var temporal_from, temporal_to;
-            this.$el.html(this.template({label: label, temporal_from: temporal_from, temporal_to: temporal_from}));
         
-        // For integration effort only
-        } else {
-            var integration_info = this.$el.text();
-            this.$el.find('.content-wrapper').html(this.template({label: label, temporal_from: '', temporal_to: '', integration_info: integration_info}));
-            console.log('ID: ' + this.$el.attr('id') + ' -- DB-PATH: ' + this.$el.data('path') + ' -- ' + integration_info);
-        };
+        var label = this.$el.data('label');
+        if (!label) label = "Temporal Bounds";
+        
+        var data_path = this.$el.data('path');
+        var temporal_from, temporal_to;
+        
+        this.$el.html(this.template({label: label, temporal_from: temporal_from, temporal_to: temporal_from}));
+        this.$el.find('input').datepicker({autoclose:true});
+        
         return this;
     }
 });
@@ -1444,90 +1440,3 @@ IONUX.Views.SuspendDataProductPersistence = Backbone.View.extend({
       });
   },
 });
-
-
-// LEFT FOR REFERENCE
-// IONUX.Views.UserRegistration = IONUX.Views.CreateNewView.extend({
-//   el: "#user-registration-container",
-//   // template: _.template($("#user-registration-tmpl").html()),
-//   initialize: function() {
-//     _.bindAll(this, "render");
-//     this.model.bind("change", this.render);
-//   },
-//   create_new: function(evt){
-//     evt.preventDefault();
-//     this.$el.find("input[type='submit']").attr("disabled", true).val("Saving...");
-//     
-//     var self = this;
-//     var contact = {}
-//     $.each(this.$el.find("input,textarea").not("input[type='submit'],input[type='cancel']"), function(i, e){
-//       var key = $(e).attr("name"), val = $(e).val();
-//       contact[key] = val;
-//     });
-//     self.model.set("contact", contact);
-//     
-//     self.model.save(null, {success:function(model, resp){
-//       self.$el.hide();
-//       var router = new Backbone.Router();
-//       router.navigate("");
-//     }});
-//   },
-//   render: function() {
-//    this.$el.html(this.template(this.model.toJSON())).show();
-//    $('#name').focus();
-//    return this; 
-//   }
-// });
-
-// IONUX.Views.UserRequestItemView = Backbone.View.extend({
-//   tagName: "tr",
-//   template: _.template($("#user-request-item-tmpl").html()),
-//   render: function(){
-//     var org_manager = _.any(IONUX.ROLES, function(role){return role === "ORG_MANAGER"});
-//     var org_member = _.any(IONUX.ROLES, function(role){return role === "ORG_MEMBER"});
-//     var tmpl_vars = _.extend(this.model.toJSON(), {'org_manager':org_manager, 'org_member':org_member});
-//     this.$el.attr('id', tmpl_vars._id).html(this.template(tmpl_vars));
-//     return this;
-//   }
-// });
-// 
-// IONUX.Views.UserRequestsView = Backbone.View.extend({
-//   el: "#user-requests-container", //XXX issue with being child of another 'el'
-//   //events: { },
-//   initialize: function(){
-//     _.bindAll(this, "render");
-//     this.collection.on("reset", this.render);
-//   },
-//   render: function(){
-//     var table_elem = $("#user-requests-container").find("table");
-//     var self = this;
-//     _.each(this.collection.models, function(user_request) {
-//         table_elem.append(new IONUX.Views.UserRequestItemView({model:user_request}).render().el);
-//     }, this);
-//     $("#user-requests-container").find(".loading").hide();
-//     table_elem.show()
-//     this.button_events();
-//     return this;
-//   },
-//   button_events:function(){
-//     $("#user-requests-container a").on("click", function(evt){
-//         evt.preventDefault();
-//         var target = $(evt.target);
-//         var request_id = $(evt.target).closest('tr').attr('id');
-//         var action = "user_requests/" + request_id + '/' + target.attr("href");
-//         var button_txt = target.text();
-//         target.text("Saving...");
-//         $.ajax({
-//           url :action,
-//           dataType: 'json',
-//           success: function(resp) {
-//             target.text(button_txt);
-//           },
-//           error: function(resp) {
-//             target.text(button_txt);
-//           }
-//         });
-//         return false;
-//     });
-//   }
-// });

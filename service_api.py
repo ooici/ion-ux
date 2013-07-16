@@ -964,7 +964,7 @@ class ServiceApi(object):
         name = user['name'] if user.has_key('name') else 'Unregistered'
         session['name'] = name
         session['user_id'] = user_id
-
+        
         session['roles'] = ServiceApi.get_roles_by_actor_id(actor_id)
         
     @staticmethod
