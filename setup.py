@@ -27,5 +27,6 @@ setup(name='ion-ux',
           'Jinja2>=2.7',
           'nose',
           'requests',
+          'fabric'
       ]
 )
