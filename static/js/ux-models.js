@@ -85,7 +85,7 @@ IONUX.Models.Session = Backbone.Model.extend({
         this.fetch({
           global: false,
           success: function(resp) {
-            setTimeout(self.poll, 30000);
+            setTimeout(self.poll, 60000);
             if (!_.isEqual(existing_roles, resp.get('roles'))) {
               self.check_roles(existing_roles);
             };
