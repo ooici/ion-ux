@@ -1,3 +1,38 @@
+IONUX.Views.NewRoles = Backbone.View.extend({
+  el: '#action-modal',
+  template: _.template($('#new-roles-tmpl').html()),
+  events: {
+    'click #btn-refresh': 'refresh'
+  },
+  initialize: function(){
+    _.bindAll(this);
+    this.get_name_from_governance(this.options.new_roles);
+  },
+  render: function(){
+    this.modal = $(IONUX.Templates.modal_template).html(this.template({roles: this.roles})).modal()
+      .on('hide', function(){
+        $('#action-modal').remove();
+      });
+    this.setElement('#action-modal');
+    return this;
+  },
+  get_name_from_governance: function(new_roles){
+    this.roles = {};
+    _.each(new_roles, function(v,k) {
+        var name = IONUX.Dashboard.Orgs.findWhere({org_governance_name: k}).get('name').toUpperCase();
+        this.roles[name] = v;
+    }, this);
+  },
+  refresh: function(e) {
+    e.preventDefault();
+    Backbone.history.fragment = null; // Clear history fragment to all
+    IONUX.ROUTER.navigate(window.location.pathname, {trigger: true});
+    this.modal.modal('hide');
+  }
+});
+
+
+
 IONUX.Views.Enroll = Backbone.View.extend({
   el: '#action-modal',
   template: _.template($('#enroll-request-tmpl').html()),

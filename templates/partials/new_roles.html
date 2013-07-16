@@ -1,0 +1,29 @@
+<div class="modal-header">
+  <h1>New Roles</h1>
+</div>
+<div class="modal-body">
+  <p>
+    You have been granted the following roles:
+  </p>
+  
+  <ul>
+    <% _.each(roles, function(roles, name){ %>
+      <li><strong><%= name %></strong></li>
+      <ul>
+        <% _.each(roles, function(role){ %>
+          <li><%= role %></li>
+        <% }); %>
+      </ul>
+    <% }); %>
+  </ul>
+  
+  <p>
+    Click "REFRESH" to apply your new roles to the current page, or, 
+    click "CLOSE" to for your new roles to be applied on the next page.
+  </p>
+</div>
+<div class="modal-footer">
+  <button class="btn-general" data-dismiss="modal">Close</button>
+  <button id="btn-refresh" class="btn-blue">Refresh</button>
+</div>
+
