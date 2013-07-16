@@ -1,4 +1,5 @@
 import os
+import logging
 
 ##
 # IMPORTANT: Don't edit this file. Copy this file into 'config.py' and change values as needed.
@@ -46,3 +47,13 @@ if 'PORTAL_ROOT' in os.environ:
     PORTAL_ROOT = os.environ['PORTAL_ROOT']
 else:
     PORTAL_ROOT = 'PATH_TO_ION_UX'
+
+
+# Logging level
+#  Options: logging.DEBUG, logging.INFO,  logging.WARNING, logging.ERROR, logging.CRITICAL
+#  Example: app.logger.warning('warning')
+#           app.logger.error('error')
+#           app.logger.info('Info')
+LOGGING_LEVEL = logging.DEBUG
+LOGGING_MAX_SIZE_MB = 20
+LOGGING_FILE_NAME = 'ion-ux.log'
