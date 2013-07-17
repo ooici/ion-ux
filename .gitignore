@@ -5,3 +5,4 @@ venv/*
 *.swp
 .project
 .pydevproject
+.DS_Store

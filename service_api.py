@@ -30,7 +30,7 @@ AGENT_REQUEST_TEMPLATE = {
 
 
 class ServiceApi(object):
-    
+
     @staticmethod
     def get_sites_status(resource_ids):
         params = {'parent_resource_ids': resource_ids, 'include_status': True}
@@ -591,12 +591,13 @@ class ServiceApi(object):
         return extension
 
     @staticmethod
-    def create_resource(resource_type, org_id):
+    def create_resource(resource_type, org_id, resource_name=None):
         prepare = ServiceApi.get_prepare(resource_type, None, None)
 
         create_op = prepare['create_request']
         resource = prepare['resource'].copy()
-        resource.update({'name':'New %s' % resource_type})
+        resource_name = resource_name or 'New %s' % resource_type
+        resource.update({'name': resource_name})
 
         resp = service_gateway_post(create_op['service_name'], create_op['service_operation'], params={create_op['request_parameters'].keys()[0]: resource})
         
@@ -989,7 +990,7 @@ class ServiceApi(object):
                 session['name'] = name
                 session['is_registered'] = is_registered
                 session['roles'] = ServiceApi.get_roles_by_actor_id(actor_id)
-                
+
                 return
 
         # if still here, search by ActorIdentity
@@ -1417,6 +1418,7 @@ def error_message(msg=None):
     error_msg = {'GatewayError': {'Message': 'An error occurred.'}}
     if msg is not None:
         error_msg['GatewayError']['Message'] = msg
+    error_msg['GatewayError']['Exception'] = ''
     return error_msg
 
 def pretty_console_log(label, content, data=None):

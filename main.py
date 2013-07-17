@@ -4,6 +4,9 @@ from functools import wraps
 import base64
 import hashlib
 import time
+import logging
+from logging.handlers import RotatingFileHandler
+from datetime import datetime
 
 from config import FLASK_HOST, FLASK_PORT, GATEWAY_HOST, GATEWAY_PORT, LOGGED_IN, PRODUCTION, SECRET_KEY, UI_MODE, PORTAL_ROOT
 from service_api import ServiceApi, error_message
@@ -12,6 +15,7 @@ from jinja2 import Template
 from urlparse import urlparse, parse_qs
 import re
 import os
+from config import *
 
 # Attachments
 from StringIO import StringIO
@@ -492,7 +496,7 @@ def taskable_command(resource_id, command, cap_type=None, session_type=None):
         command_response = ServiceApi.taskable_execute(resource_id, command)
     else:
         if command == 'get_capabilities':
-            print 'get_capabilities'
+            app.logger.debug('get_capabilities')
             command_response = ServiceApi.tasktable_get_capabilities(resource_id)
     return render_json_response(command_response)
 
@@ -819,4 +823,8 @@ def dev_image(resource_id=None):
 
     
 if __name__ == '__main__':
+    handler = RotatingFileHandler(LOGGING_FILE_NAME, maxBytes=LOGGING_MAX_SIZE_MB * 1048576, backupCount=1)
+    handler.setLevel(LOGGING_LEVEL)
+    app.logger.addHandler(handler)
+    app.logger.info(" Starting flask on %s GMT" % datetime.utcnow())
     app.run(debug=True, host=FLASK_HOST, port=FLASK_PORT)
