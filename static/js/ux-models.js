@@ -80,11 +80,15 @@ IONUX.Models.Session = Backbone.Model.extend({
     },
     poll: function() {
       var self = this;
+      var existing_roles = _.clone(this.get('roles'));
       if (this.get('is_polling')) {
         this.fetch({
+          global: false,
           success: function(resp) {
-            setTimeout(self.poll, 3000);
-            self.check_roles();
+            setTimeout(self.poll, 60000);
+            if (!_.isEqual(existing_roles, resp.get('roles'))) {
+              self.check_roles(existing_roles);
+            };
           },
           error: function(resp) {
             self.set('is_polling', false);
@@ -92,9 +96,18 @@ IONUX.Models.Session = Backbone.Model.extend({
         });
       };
     },
-    check_roles: function() {
-      console.log('check_roles', this.get('roles'));
-      
+    check_roles: function(existing_roles) {
+      var roles = this.get('roles');
+      var new_roles = {};
+      _.each(roles, function(v,k) {
+        if (!_.has(existing_roles, k)) {
+          new_roles[k] = v;
+        } else {
+          var added_roles = _.difference(roles[k], existing_roles[k]);
+          if (added_roles.length) new_roles[k] = added_roles;
+        };
+      });
+      if (!_.isEmpty(new_roles)) new IONUX.Views.NewRoles({new_roles: new_roles}).render().el;
     },
 });
 
@@ -156,9 +169,6 @@ IONUX.Models.ResourceExtension = Backbone.Model.extend({
         return resp.data;
     }
 });
-
-
-
 
 
 IONUX.Models.Observatory = Backbone.Model.extend({
