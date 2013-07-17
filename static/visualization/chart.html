@@ -81,12 +81,13 @@
     var container_server =  "http://" + window.location.host;
 
     // Realtime variables
-    var enable_realtime = true;
+    var enable_realtime = true; // Glabal switch to control realtime controls
     var rt_query, rt_query_token, rt_len_max;
     var realtime_sticky_view = false;
     var setExtremesMethodFlag = false;
 
     // Chart options
+    var curr_timezone = 0, curr_timezone_display=" UTC";
     var curr_chart_type = "line";
     var curr_y_axis_compare_type = undefined;
     //var supported_chart_type = ['AnnotatedTimeLine', 'Table', 'LineChart', 'AreaChart', 'ComboChart'];
@@ -150,17 +151,7 @@
         chart = table = null;
         initOverview();
 
-        //init the realtime component. Check to see if there was a lingering query_token from a previous session.
-        // Needs to be cleaned up. This happens in Chrome when the page reload does not fire the beforeunload event
-        if (enable_realtime) {
-            rt_query = null;
-            rt_len_max = 300;
-            if ("rt_query_token" in sessionStorage) {
-                rt_query_token = sessionStorage["rt_query_token"];
-                chartCleanup();
-            }
-            initRealtimeView();
-        }
+        rt_len_max = 300;
 
     }
 
@@ -297,7 +288,6 @@
                 // Create the UI at this point. Now that we have the data
                 initChartUi();
             }
-
         }
         // Otherwise its data that needs to replace what's currently in the chart
         else {
@@ -487,6 +477,9 @@
                         }
                     },
                     type: 'datetime',
+                    title: {
+                        text: 'Time (' + curr_timezone_display + ')'
+                    },
                     events : {
                         afterSetExtremes : onDateRangeChange
                     },
@@ -510,6 +503,11 @@
                     }]
                 },
 
+                tooltip: {
+                    xDateFormat: '%d-%b-%Y, %H:%M:%S' + curr_timezone_display,
+                    shared: true
+                },
+
                 plotOptions: {
                     series: {
                         compare: curr_y_axis_compare_type,
@@ -527,11 +525,6 @@
                         }
                     },
                     threshold: null
-                    /*                line: {
-                     compare: _y_axis_compare_type,
-                     connectNulls: true
-                     }
-                     */
                 },
                 exporting: {
                     width:  chart_x_res
@@ -623,7 +616,7 @@
 
         // Apply a date formatter to the first column to convert to UTC timezone..
         // Apparently google charts ignores time zone by default
-        var df = new google.visualization.DateFormat({timeZone:0});
+        var df = new google.visualization.DateFormat({formatType: 'long', timeZone:curr_timezone});
         df.format(_data, 0);
 
         table = new google.visualization.Table(document.getElementById('chart_div'));
@@ -767,6 +760,27 @@
 
     }
 
+    function toggleRealtimeView(chkbox) {
+        if (chkbox.checked) {
+            startRealtimeView();
+            // Also refresh overview at the same time otherwise we will have a gap of empty datapoints
+            initOverview();
+        }
+        else {
+            stopRealtimeView();
+        }
+    }
+
+    function startRealtimeView() {
+        rt_query = null;
+
+        if ("rt_query_token" in sessionStorage) {
+            rt_query_token = sessionStorage["rt_query_token"];
+            chartCleanup();
+        }
+        initRealtimeView();
+    }
+
     function stopRealtimeView() {
 
         // Stop the automatic query
@@ -830,7 +844,6 @@
         chartUiDiv.appendChild(clear_all_viz_params_button);
         //chartUiDiv.appendChild(document.createElement('br'));
 
-
         // Page reload button
         //chartUiDiv.appendChild(document.createElement('br'));
         var page_reload_button = document.createElement('input');
@@ -839,6 +852,18 @@
         page_reload_button.align = "right";
         page_reload_button.addEventListener("click", reloadChart);
         chartUiDiv.appendChild(page_reload_button);
+
+        // Realtime view check box. Draw only if enabled
+        if (enable_realtime) {
+            var rt_view_chkbox = document.createElement('input');
+            rt_view_chkbox.type = 'checkbox';
+            rt_view_chkbox.setAttribute("onClick", "toggleRealtimeView(this)")
+            var newlabel = document.createElement("Label");
+            newlabel.setAttribute("for",rt_view_chkbox);
+            newlabel.innerHTML = "Show Realtime Data";
+            chartUiDiv.appendChild(rt_view_chkbox);
+            chartUiDiv.appendChild(newlabel);
+        }
     }
 
 
@@ -884,7 +909,7 @@
 
     function chartCleanup() {
         // Kill the realtime queries
-        stopRealtimeView();
+        //stopRealtimeView();
 
         console.debug ("Terminating queues associated with token : " + rt_query_token);
         // terminate the realtime queues on the server side
