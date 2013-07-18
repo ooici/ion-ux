@@ -390,7 +390,7 @@ class ServiceApi(object):
 
     @staticmethod
     def create_user_notification(resource_type, resource_id, event_type, user_id, resource_name=None):
-        name = 'Notification for %s' % resource_name if resource_name else 'NotificationTest'
+        name = 'Notification Request for %s' % resource_name if resource_name else 'NotificationTest'
         description = '%s - %s - Notification Request' % (resource_type, event_type)
         notification = {
             "type_": "NotificationRequest", 

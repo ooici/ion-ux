@@ -105,80 +105,96 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
         _.bindAll(this);
         this.interaction_items = INTERACTIONS_OBJECT.view_interactions.slice(0);  // ensure clone
         
-        // append resource-specific items here
-        if (window.MODEL_DATA.resource_type == 'Org') {
-          // ENROLLMENT
-          if (IONUX.is_logged_in()) {
-            if (_.contains(IONUX.SESSION_MODEL.get('roles')[window.MODEL_DATA.resource.org_governance_name], 'ORG_MANAGER')) {
-              // INVITE USER
-              this.interaction_items.push("Invite User");
-              this.on("action__invite_user", this.action_org__invite_user);
+        
+        // Build menu if a user is not a guest
+        if (IONUX.is_logged_in()) {
+          // append resource-specific items here
+          if (window.MODEL_DATA.resource_type == 'Org') {
+            // ENROLLMENT
+            if (IONUX.is_logged_in()) {
+              if (_.contains(IONUX.SESSION_MODEL.get('roles')[window.MODEL_DATA.resource.org_governance_name], 'ORG_MANAGER')) {
+                // INVITE USER
+                this.interaction_items.push("Invite User");
+                this.on("action__invite_user", this.action_org__invite_user);
               
-              // INVITE ROLE
-              this.interaction_items.push("Offer User Role");
-              this.on("action__offer_user_role", this.action_org__offer_user_role);
+                // INVITE ROLE
+                this.interaction_items.push("Offer User Role");
+                this.on("action__offer_user_role", this.action_org__offer_user_role);
               
-            } else {
-              if (! _.contains(IONUX.SESSION_MODEL.get('roles')[window.MODEL_DATA.resource.org_governance_name], 'ORG_MEMBER')) {
-                // REQUEST ENROLLMENT
-                this.interaction_items.push("Enroll");
-                this.on("action__enroll", this.action_org__enroll);
               } else {
-                // REQUEST ROLE
-                this.interaction_items.push("Request Role");
-                this.on("action__request_role", this.action_org__request_role);
+                if (! _.contains(IONUX.SESSION_MODEL.get('roles')[window.MODEL_DATA.resource.org_governance_name], 'ORG_MEMBER')) {
+                  // REQUEST ENROLLMENT
+                  this.interaction_items.push("Enroll");
+                  this.on("action__enroll", this.action_org__enroll);
+                } else {
+                  // REQUEST ROLE
+                  this.interaction_items.push("Request Role");
+                  this.on("action__request_role", this.action_org__request_role);
+                }
               }
             }
-          }
-        } else if (_.contains(['PlatformDevice', 'InstrumentDevice', 'DataProduct'], window.MODEL_DATA.resource_type)) {
+          } else if (_.contains(['PlatformDevice', 'InstrumentDevice', 'DataProduct'], window.MODEL_DATA.resource_type)) {
 
-          // activate/suspend persistence are specific to dataproduct only
-          // @TODO who is allowed to make these calls?
-          if (IONUX.is_logged_in() && window.MODEL_DATA.resource_type == 'DataProduct') {
-            if (!window.MODEL_DATA.computed.is_persisted.value) {
-              this.interaction_items.push(INTERACTIONS_OBJECT.persistence_interactions[0]);
-              this.on("action__activate_persistence", this.action_data_product__activate_persistence);
-            } else {
-              this.interaction_items.push(INTERACTIONS_OBJECT.persistence_interactions[1]);
-              this.on("action__suspend_persistence", this.action_data_product__suspend_persistence);
+            // activate/suspend persistence are specific to dataproduct only
+            // @TODO who is allowed to make these calls?
+            if (IONUX.is_logged_in() && window.MODEL_DATA.resource_type == 'DataProduct') {
+              if (!window.MODEL_DATA.computed.is_persisted.value) {
+                this.interaction_items.push(INTERACTIONS_OBJECT.persistence_interactions[0]);
+                this.on("action__activate_persistence", this.action_data_product__activate_persistence);
+              } else {
+                this.interaction_items.push(INTERACTIONS_OBJECT.persistence_interactions[1]);
+                this.on("action__suspend_persistence", this.action_data_product__suspend_persistence);
+              }
             }
-          }
 
-          if (IONUX.is_logged_in() && !IONUX.is_owner()) {
-            // check commitments on current object for resource commitments for the current owner
-            var resource_commitments = _.filter(window.MODEL_DATA.commitments, function (c) { return c.commitment.type_ == "ResourceCommitment" && c.consumer == IONUX.SESSION_MODEL.get('actor_id'); });
+            if (IONUX.is_logged_in() && !IONUX.is_owner()) {
+              // check commitments on current object for resource commitments for the current owner
+              var resource_commitments = _.filter(window.MODEL_DATA.commitments, function (c) { return c.commitment.type_ == "ResourceCommitment" && c.consumer == IONUX.SESSION_MODEL.get('actor_id'); });
 
-            if (resource_commitments.length > 0) {
-              // we have access to this instrument, add item to release it
-              this.interaction_items.push("Release Resource");
-              // @TODO: assumption, only one commitment?
-              this.on("action__release_resource", _.partial(this.action__release_resource, resource_commitments[0]._id));
-
-              // exclusive access?
-              var exc = _.find(resource_commitments, function(c) { return c.commitment.exclusive; });
-              if (exc == null) {
-                this.interaction_items.push("Request Exclusive Access");
+              if (resource_commitments.length > 0) {
+                // we have access to this instrument, add item to release it
+                this.interaction_items.push("Release Resource");
                 // @TODO: assumption, only one commitment?
-                this.on("action__request_exclusive_access", _.partial(this.action__request_exclusive_access, resource_commitments[0].provider));
+                this.on("action__release_resource", _.partial(this.action__release_resource, resource_commitments[0]._id));
+
+                // exclusive access?
+                var exc = _.find(resource_commitments, function(c) { return c.commitment.exclusive; });
+                if (exc == null) {
+                  this.interaction_items.push("Request Exclusive Access");
+                  // @TODO: assumption, only one commitment?
+                  this.on("action__request_exclusive_access", _.partial(this.action__request_exclusive_access, resource_commitments[0].provider));
+
+                } else {
+                  this.interaction_items.push("Release Exclusive Access");
+                  this.on("action__release_exclusive_access", _.partial(this.action__release_exclusive_access, exc._id));
+                }
 
               } else {
-                this.interaction_items.push("Release Exclusive Access");
-                this.on("action__release_exclusive_access", _.partial(this.action__release_exclusive_access, exc._id));
+                this.interaction_items.push("Request Access");
+                this.on("action__request_access", this.action__request_access);
               }
-
-            } else {
-              this.interaction_items.push("Request Access");
-              this.on("action__request_access", this.action__request_access);
             }
           }
-        }
 
-        // remove COMMAND/DOWNLOAD unless certain types
-        if (!_.contains(['PlatformDevice', 'InstrumentDevice', 'TaskableResource'], window.MODEL_DATA.resource_type))
+          // remove COMMAND/DOWNLOAD unless certain types
+          if (!_.contains(['PlatformDevice', 'InstrumentDevice', 'TaskableResource'], window.MODEL_DATA.resource_type))
+            this.interaction_items.splice(this.interaction_items.indexOf('Command'), 1);
+        
+        // User is a guest and we should remove these options
+        } else {
           this.interaction_items.splice(this.interaction_items.indexOf('Command'), 1);
+          this.interaction_items.splice(this.interaction_items.indexOf('Subscribe'), 1);
+          this.interaction_items.splice(this.interaction_items.indexOf('Lifecycle'), 1);
+          this.interaction_items.splice(this.interaction_items.indexOf('Edit'), 1);
+          this.interaction_items.splice(this.interaction_items.indexOf('Report Issue'), 1);
+        };
+
 
         if (window.MODEL_DATA.resource_type != 'DataProduct')
           this.interaction_items.splice(this.interaction_items.indexOf('Download'), 1);
+
+
+
 
         this.create_view_actionmenu();
         this.on("action__subscribe", this.action__subscribe);

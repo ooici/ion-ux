@@ -72,10 +72,10 @@ IONUX.Models.Session = Backbone.Model.extend({
     is_resource_owner: function(){
       return _.findWhere(MODEL_DATA.owners, {_id: this.get('user_id')}) ? true : false;
     },
-    start_polling: function() {
+    set_polling: function() {
       if (this.get('is_logged_in')) {
         this.set('is_polling', true);
-        setTimeout(this.poll, 3000);
+        setTimeout(this.poll, 60000);
       };
     },
     poll: function() {
@@ -85,7 +85,7 @@ IONUX.Models.Session = Backbone.Model.extend({
         this.fetch({
           global: false,
           success: function(resp) {
-            setTimeout(self.poll, 60000);
+            self.set_polling();
             if (!_.isEqual(existing_roles, resp.get('roles'))) {
               self.check_roles(existing_roles);
             };

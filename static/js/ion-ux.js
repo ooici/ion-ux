@@ -77,7 +77,7 @@ IONUX = {
           router.user_profile();
         
         // Enable session polling for updated roles, possibly UI version changes.
-        IONUX.SESSION_MODEL.start_polling();
+        IONUX.SESSION_MODEL.set_polling();
       }
     });
     
