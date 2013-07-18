@@ -180,7 +180,7 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
           if (!_.contains(['PlatformDevice', 'InstrumentDevice', 'TaskableResource'], window.MODEL_DATA.resource_type))
             this.interaction_items.splice(this.interaction_items.indexOf('Command'), 1);
         
-        // User is a guest and we should remove these options
+        // User is a guest and we should remove all options but "Refresh Page"
         } else {
           this.interaction_items.splice(this.interaction_items.indexOf('Command'), 1);
           this.interaction_items.splice(this.interaction_items.indexOf('Subscribe'), 1);

@@ -59,7 +59,8 @@ IONUX = {
     IONUX.SESSION_MODEL = new IONUX.Models.Session();
     IONUX.SESSION_MODEL.fetch({
       success: function(resp) {
-        new IONUX.Views.Topbar({model: IONUX.SESSION_MODEL}).render().el
+        new IONUX.Views.Topbar({model: IONUX.SESSION_MODEL}).render().el;
+        new IONUX.Views.HelpMenu({model: IONUX.SESSION_MODEL}).render().el;
         new IONUX.Views.Search().render().el;
         
         // Check if on dashboard or facepage, render appropriate menu.
@@ -70,8 +71,6 @@ IONUX = {
           new IONUX.Views.DashboardActions();
         };
 
-        new IONUX.Views.HelpMenu({model: IONUX.SESSION_MODEL}).render().el;
-        
         // nag popup!
         if (IONUX.SESSION_MODEL.get('is_logged_in') && !IONUX.SESSION_MODEL.get('is_registered'))
           router.user_profile();
@@ -81,7 +80,9 @@ IONUX = {
       }
     });
     
+
     router.handle_navigation();
+
     return router;
   },
   setup_ajax_error: function(){
