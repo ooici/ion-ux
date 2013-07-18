@@ -253,8 +253,12 @@ class ServiceApi(object):
 
             if v == 'agent_config':
                 print v
-
-        req = service_gateway_post('resource_management', 'update_resource', params={'resource': resource_obj})
+        
+        if resource_type == 'UserInfo':
+            req = service_gateway_post('identity_management', 'update_user_info', params={'user_info': resource_obj})
+        else:
+            req = service_gateway_post('resource_management', 'update_resource', params={'resource': resource_obj})
+        
         reqs = [req]
 
         # handle associations
