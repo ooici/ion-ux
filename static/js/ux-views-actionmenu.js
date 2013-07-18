@@ -75,7 +75,12 @@ IONUX.Views.ActionMenu = Backbone.View.extend({
 IONUX.Views.DashboardActions = IONUX.Views.ActionMenu.extend({
     initialize: function() {
         _.bindAll(this);
-        this.interaction_items = INTERACTIONS_OBJECT.dashboard_interactions.slice(0); // ensure clone 
+        this.interaction_items = INTERACTIONS_OBJECT.dashboard_interactions.slice(0); // ensure clone
+        
+        // Remove 'Create Resource' option is user is not signed-in.
+        if (!IONUX.is_logged_in()) 
+          this.interaction_items.splice(this.interaction_items.indexOf('Create Resource'), 1);
+        
         this.create_view_actionmenu();
         this.on("action__create_resource", this.create_resource);
         this.on("action__light_theme", this.light_theme);
@@ -100,11 +105,9 @@ IONUX.Views.DashboardActions = IONUX.Views.ActionMenu.extend({
 });
 
 IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
-    // modal_template: '<div id="action-modal" class="modal hide fade modal-ooi">',
     initialize: function() {
         _.bindAll(this);
         this.interaction_items = INTERACTIONS_OBJECT.view_interactions.slice(0);  // ensure clone
-        
         
         // Build menu if a user is not a guest
         if (IONUX.is_logged_in()) {
