@@ -88,6 +88,7 @@
 
     // Chart options
     var curr_timezone = 0, curr_timezone_display=" UTC";
+    var max_supported_parameters_rt = 30;
     var curr_chart_type = "line";
     var curr_y_axis_compare_type = undefined;
     //var supported_chart_type = ['AnnotatedTimeLine', 'Table', 'LineChart', 'AreaChart', 'ComboChart'];
@@ -762,7 +763,7 @@
 
     function toggleRealtimeView(chkbox) {
         if (chkbox.checked) {
-            startRealtimeView();
+            startRealtimeView(chkbox);
             // Also refresh overview at the same time otherwise we will have a gap of empty datapoints
             initOverview();
         }
@@ -771,13 +772,21 @@
         }
     }
 
-    function startRealtimeView() {
+    function startRealtimeView(chkbox) {
         rt_query = null;
 
         if ("rt_query_token" in sessionStorage) {
             rt_query_token = sessionStorage["rt_query_token"];
             chartCleanup();
         }
+
+        // If there are more parameters thn the graph can handle, do not enable realtime view
+        if (Object.keys(display_names).length > max_supported_parameters_rt) {
+            alert("This data product has over " + max_supported_parameters_rt + " parameters. Realtime view is not supported. Will update chart with latest data.");
+            chkbox.checked = false;
+            return;
+        }
+
         initRealtimeView();
     }
 
