@@ -61,6 +61,8 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         this.$el.html(this.template());
         var header_data = this.header_data();
         var table_data = this.table_data(this.options.data);
+        this.sort_order();
+        
         var self = this;
         this.datatable = this.$el.find(".datatable-container table").dataTable({
             "sDom":"Rlfrtip",
@@ -79,11 +81,51 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
               });
             },
         });
-        if (this.options.data.length == 0){this.$el.find(".dataTables_scrollBody").css("overflow", "hidden")};
-
+        
+        if (this.sort_order) this.datatable.fnSort(this.sort_order);
+        if (this.options.data.length == 0) this.$el.find(".dataTables_scrollBody").css("overflow", "hidden");
+        
         return this;
     },
+    
+    sort_order: function() {
+      var table_id = this.$el.attr('id');
+      var table_metadata = this._get_table_metadata();
 
+      console.log('-----------------------------------');
+      console.log(table_id, this.$el.data('path'), table_metadata);
+      
+      var get_sort_order_idx = function(column_name) {
+        var sort_order_idx;
+        
+        _.every(table_metadata, function(val,idx) {
+          if (_.contains(val, column_name)) {
+            sort_order_idx = idx;
+            return false; // break _.every loop
+          } else {
+            return true; // continue _.every loop
+          };
+        });
+        
+        return sort_order_idx;
+      };
+      
+      switch(table_id){
+        // NOTE: some indexes require +1 because of hidden columns, i.e. resource_type.
+
+        case '2163011': // events table
+          this.sort_order = [[get_sort_order_idx('ts_created') + 1, 'desc']];
+          break;
+        case '2164477': // members table
+          var last_name_idx = get_sort_order_idx('Last') + 1;
+          var first_name_idx = get_sort_order_idx('First') + 1; // not currently used
+          this.sort_order = [[last_name_idx, 'asc']];
+          break;
+        default:
+          this.sort_order = [[get_sort_order_idx('name') + 1, 'asc']];
+      };
+    },
+    
     _get_table_metadata: function(){
         var table_metadata_id = "TABLE_"+this.$el.attr("id");
         var table_metadata = window[table_metadata_id];
