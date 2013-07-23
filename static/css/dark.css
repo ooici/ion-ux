@@ -1623,6 +1623,11 @@ h2 {
   background: #333;
 }
 
+th.sorting_asc {
+  background: red;
+  background-color: red;
+}
+
 .attr_block {
   background: #1e1e1e;
   color: #ccc;

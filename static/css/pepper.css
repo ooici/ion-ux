@@ -2255,6 +2255,35 @@ table.table thead tr th {
   font-weight:400; 
   color:#666; 
   letter-spacing:1px;
+  border-radius: none;
+}
+
+/* TABLE SORTING */
+
+span.sort-indicator {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-left: 3px;
+}
+
+span.sort-indicator:before {
+  content: '';
+  width: 16px;
+  height: 16px;
+  display: inline;
+  position: absolute;
+  top: 7px;
+  background-image: url(/static/img/pepper_sprite.png);
+}
+
+span.sort-indicator.asc:before {
+  background-position: -360px -1020px;
+}
+
+
+span.sort-indicator.desc:before {
+  background-position: -240px -1020px;
 }
 
 table.table tr.even td {

@@ -46,10 +46,39 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         "click .filters-apply":"filters_apply",
         "click .filters-reset":"filters_reset",
         "click table tbody tr":"table_row_click",
+        "click th": "apply_sort_indicator"
     },
 
     template: _.template($('#datatable-tmpl').html()),
-
+    
+    apply_sort_indicator: function(e) {
+      // This method inserts an icon template to apply styles
+      // styles defined in the UX graphic design spec (asc/desc arrows 
+      // at the end of column name). Will re-examine pure DataTables API/CSS 
+      // as time permits.
+      
+      var asc_tmpl = '<span class="sort-indicator asc">&nbsp;</span>';
+      var desc_tmpl = '<span class="sort-indicator desc">&nbsp;</span>';
+      
+      this.$el.find('.sort-indicator').remove();
+      
+      if (this.$el.find('.sorting_asc').length) {
+        var th_elmt = this.$el.find('.sorting_asc');
+      } else {
+        var th_elmt = this.$el.find('.sorting_desc');
+      };
+      
+      // Check the class datatable
+      if (th_elmt.hasClass('sorting_asc')) {
+        th_elmt.append(asc_tmpl);
+      } else {
+        th_elmt.append(desc_tmpl);
+      };
+      
+      // Re-adjust column widths
+      this.datatable.fnAdjustColumnSizing()
+    },
+    
     initialize: function() {
         this.render().el;
         var self = this;
@@ -84,6 +113,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         
         if (this.sort_order) this.datatable.fnSort(this.sort_order);
         if (this.options.data.length == 0) this.$el.find(".dataTables_scrollBody").css("overflow", "hidden");
+        this.apply_sort_indicator();
         
         return this;
     },
