@@ -53,9 +53,9 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
     
     apply_sort_indicator: function(e) {
       // This method inserts an icon template to apply styles
-      // styles defined in the UX graphic design spec (asc/desc arrows 
-      // at the end of column name). Will re-examine pure DataTables API/CSS 
-      // as time permits.
+      // defined in the UX graphic design spec (asc/desc arrows 
+      // at the end of column name). Will re-examine pure 
+      // DataTables API/CSS as time permits.
       
       var asc_tmpl = '<span class="sort-indicator asc">&nbsp;</span>';
       var desc_tmpl = '<span class="sort-indicator desc">&nbsp;</span>';
@@ -111,7 +111,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
             },
         });
         
-        if (this.sort_order) this.datatable.fnSort(this.sort_order);
+        if (this.sort_order_array) this.datatable.fnSort(this.sort_order_array);
         if (this.options.data.length == 0) this.$el.find(".dataTables_scrollBody").css("overflow", "hidden");
         this.apply_sort_indicator();
         
@@ -122,8 +122,8 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
       var table_id = this.$el.attr('id');
       var table_metadata = this._get_table_metadata();
 
-      console.log('-----------------------------------');
-      console.log(table_id, this.$el.data('path'), table_metadata);
+      // console.log('-----------------------------------');
+      // console.log(table_id, this.$el.data('path'), table_metadata);
       
       var get_sort_order_idx = function(column_name) {
         var sort_order_idx;
@@ -142,17 +142,22 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
       
       switch(table_id){
         // NOTE: some indexes require +1 because of hidden columns, i.e. resource_type.
-
-        case '2163011': // events table
-          this.sort_order = [[get_sort_order_idx('ts_created') + 1, 'desc']];
+        case '2163011': // events
+          this.sort_order_array = [[get_sort_order_idx('ts_created') + 1, 'desc']];
+          break;
+        case '2164033': // variables
+          this.sort_order_array = [[get_sort_order_idx('display_name') + 1, 'asc']];
+          break;
+        case '2164742': // connected devices
+          this.sort_order_array = [[get_sort_order_idx('Node') + 1, 'asc']];
           break;
         case '2164477': // members table
           var last_name_idx = get_sort_order_idx('Last') + 1;
           var first_name_idx = get_sort_order_idx('First') + 1; // not currently used
-          this.sort_order = [[last_name_idx, 'asc']];
+          this.sort_order_array = [[last_name_idx, 'asc']];
           break;
         default:
-          this.sort_order = [[get_sort_order_idx('name') + 1, 'asc']];
+          this.sort_order_array = [[get_sort_order_idx('name') + 1, 'asc']];
       };
     },
     
