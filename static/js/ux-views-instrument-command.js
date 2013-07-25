@@ -366,7 +366,8 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
       dataType: 'json',
       success: function(resp){
         var result_tmpl = '<p class="command-success">OK: '+command+' was successful.'
-        if (resp.data.result !== null) result_tmpl += '<br/>'+JSON.stringify(resp.data.result);
+        // if (resp.data.result !== null) result_tmpl += '<br/>'+JSON.stringify(resp.data.result);
+        if (resp.data.result !== null) result_tmpl += '<br/>'+resp.data.result;
         $(".command-output").append(result_tmpl);
         self.get_capabilities();
       },
@@ -394,12 +395,10 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
           window.cap = resp;
           
           if (!_.isEmpty(resp.data.agent_params)) {
-            var disabled = !_.findWhere(resp.data.original, {name: 'set_agent'}) ? true : false;
-            new IONUX.Views.AgentParams({
-              model: new IONUX.Models.AgentParams(resp.data.agent_params, {schema: resp.data.agent_schema}),
-              disabled: disabled
-            }).render().el;
-          };
+              // var disabled = !_.findWhere(resp.data.original, {name: 'set_agent'}) ? true : false;
+              new IONUX.Views.AgentParams({
+                model: new IONUX.Models.AgentParams(resp.data.agent_params, {schema: resp.data.agent_schema})}).render().el;
+            };
           
           if (!_.isEmpty(resp.data.resource_params)) {
             var disabled = !_.findWhere(resp.data.original, {name: 'set_resource'}) ? true : false;
