@@ -223,6 +223,7 @@
             dataType: 'json',
             success: handleDataQueryResponse,
             error: function(jqXHR, status, err_type) {
+                chart_spinner.stop();
                 console.debug("Error retrieving data for the data_product : " + jqXHR.responseText);
             }
         });
@@ -698,7 +699,7 @@
                     console.debug("Error retrieving data for realtime updates: " + jqXHR.responseText);
                 }
             });
-        }, 5000);
+        }, 8000);
 
     }
 
