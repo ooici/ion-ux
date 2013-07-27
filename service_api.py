@@ -30,6 +30,10 @@ AGENT_REQUEST_TEMPLATE = {
 
 
 class ServiceApi(object):
+    
+    @staticmethod
+    def pagination(service_name, service_operation, resource_key, resource_id):
+        return service_gateway_get(service_name, service_operation, params={resource_key: resource_id})
 
     @staticmethod
     def get_sites_status(resource_ids):

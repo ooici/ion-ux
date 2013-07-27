@@ -99,6 +99,17 @@ def login_required(f):
 @app.route('/')
 def index():
     return render_app_template(request.path)
+    
+@app.route('/paging/<service_name>/<service_operation>/', methods=['GET'])
+def paging(service_name, service_operation):
+    print '!!! paging'
+    print 'resource_key', request.args.get('resource_key')
+    print 'resource_id', request.args.get('resource_id')
+
+    resource_key = request.args.get('resource_key')
+    resource_id = request.args.get('resource_id')
+    req = ServiceApi.pagination(service_name, service_operation, resource_key, resource_id)
+    return jsonify({'result': req['value']})
 
 # -----------------------------------------------------------------------------
 # SEARCH & ATTACHMENTS
