@@ -109,7 +109,7 @@ def paging(service_name, service_operation):
     resource_key = request.args.get('resource_key')
     resource_id = request.args.get('resource_id')
     req = ServiceApi.pagination(service_name, service_operation, resource_key, resource_id)
-    return jsonify({'result': req['value']})
+    return jsonify({'data': req['value']})
 
 # -----------------------------------------------------------------------------
 # SEARCH & ATTACHMENTS

@@ -77,6 +77,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
     table_opts: function() {
       var header_data = this.header_data();
       var table_data = this.table_data(this.options.data);
+      var self = this;
       
       var options = {
           "sDom":"Rlfrtip",
@@ -98,6 +99,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
       var paging_request_key = this.get_paging_key();
       
       if (paging_request_key) {
+        console.log('paging_request_key');
         this.limit = table_data.length;
         var paging_opts = window.MODEL_DATA.computed[paging_request_key + '_request'];
         var paging_resource_params = _.pairs(paging_opts.request_parameters)[0];
@@ -110,16 +112,27 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         options['bPaginate'] = true;
         options['bServerSide'] = true;
         options['sAjaxSource'] = url;
-        // options['fnServerData'] = function(sSource, aoData, fnCallback, oSettings) {
-        //   
-        // };
+
+        options["fnServerData"] = function(sSource, aoData, fnCallback, oSettings) {
+          oSettings.jqXHR = $.ajax( {
+            dataType: 'json',
+            url: sSource,
+            data: aoData,
+            success: function(resp) {
+              console.log('!!!!! raw', resp);
+              var td = self.table_data(resp['data']);
+              console.log('!!!!! processed', td);
+              return self.table_data(resp['data']);
+            }
+          } );
+        };
         
         console.log('--------------------------------------');
         console.log(this.$el.data('path'), paging_opts, this.limit);
         console.log('url', url);
         console.log('paging_resource_params', paging_resource_params);
 
-        var self = this;
+        
         // $.ajax({
         //   dataType: 'json',
         //   url: url,
@@ -243,6 +256,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
     },
 
     table_data: function(data_objs){
+      console.log('table_data data_objs', data_objs);
         var data = [];
         var table_metadata = this._get_table_metadata();
         var data_keys = _.map(table_metadata, function(arr){return arr[2];});
