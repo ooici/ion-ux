@@ -20,7 +20,6 @@ IONUX.Views.AttributeGroupDynamic = Backbone.View.extend({
   render_attributes: function(data_obj){
     _.each(data_obj, function(v,k) {
       if (_.isObject(v)) {
-        this.$el.append('<h5>'+k+'</h5>');
         this.render_attributes(v);
       } else {
         this.render(k, v);

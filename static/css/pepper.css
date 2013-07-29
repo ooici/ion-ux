@@ -1795,22 +1795,28 @@ ul.nav {
 
 /* modals */
 
+.modal,
 .modal-ooi {
   background: #1E1E1E;
   border: solid 1px #333;
 }
 
+.modal .close,
 .modal-ooi .close {
   color: #444;
   opacity: 1;
   text-shadow: none;
 }
 
+.modal h1,
 .modal-ooi h1 {
   font-size:15px;
   line-height: 15px;
 }
 
+.modal .modal-header, 
+.modal .modal-body,
+.modal .modal-footer,
 .modal-ooi .modal-header, 
 .modal-ooi .modal-body,
 .modal-ooi .modal-footer {
@@ -1818,6 +1824,7 @@ ul.nav {
   border-color: #333;
 }
 
+.modal .modal-footer,
 .modal-ooi .modal-footer {
   box-shadow:none;
   -webkit-box-shadow:none;

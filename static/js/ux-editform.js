@@ -31,15 +31,18 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
 
     // in place transformations of data
     var parsed = _.object(_.map(data, function(v, k) {
-
+      
       // turn objects (dicts) that don't have a type_ field into a string
       if (_.isObject(v) && !_.isArray(v) && !v.hasOwnProperty('type_')) {
         return [k, JSON.stringify(v)];
       }
-      // turn lists of objects that don't have a type_ field into strings
-      else if (_.isArray(v) && _.every(v, function(vv) { return _.isObject(vv) && !vv.hasOwnProperty('type_') })) {
+      
+      // turn lists of objects that don't have a type_ field into strings, skipping 'variables'
+      else if (_.isArray(v) && _.every(v, function(vv) { return _.isObject(vv) && !vv.hasOwnProperty('type_') }) && k != 'variables') {
+        
         return [k, _.map(v, JSON.stringify)];
       }
+      
       return [k, v];
     }));
 
