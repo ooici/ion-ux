@@ -26,6 +26,8 @@ It is best to setup a virtualenv to install the dependencies (Flask, requests).
 First, copy the config template file and enter appropriate values for your local machine.
 
 	cp config.py.template config.py
+	
+Second, make sure to create a logging (ion-ux.log) in the root directory.
 
 For the most common scenario (i.e. running the UI on your development environment), the settings will look like this:
 
