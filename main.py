@@ -105,11 +105,13 @@ def paging(service_name, service_operation):
     print '!!! paging'
     print 'resource_key', request.args.get('resource_key')
     print 'resource_id', request.args.get('resource_id')
-
+    print '!!!', request.args.get('sEcho')
+    s_echo = request.args.get('sEcho')
+    print '--------------------------------------------'
     resource_key = request.args.get('resource_key')
     resource_id = request.args.get('resource_id')
     req = ServiceApi.pagination(service_name, service_operation, resource_key, resource_id)
-    return jsonify({'data': req['value']})
+    return jsonify({'aaData': req['value'], 'sEcho': s_echo, 'iTotalRecords':9999})
 
 # -----------------------------------------------------------------------------
 # SEARCH & ATTACHMENTS

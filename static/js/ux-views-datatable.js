@@ -91,6 +91,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
           "sScrollXInner": "100%",
           "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
             $('td', nRow).each(function() {
+              if (self.paging_request_key) console.log(this);
               $(this).attr('title', $(this).text()); // Add title to cells, better way to do this?
             });
           }
@@ -99,39 +100,57 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
       var paging_request_key = this.get_paging_key();
       
       if (paging_request_key) {
-        console.log('paging_request_key');
+        
+        console.log('--------------------------------------');
+        console.log('RECENT EVENTS');
+        console.log('original data', MODEL_DATA.computed.recent_events);
+        
         this.limit = table_data.length;
         var paging_opts = window.MODEL_DATA.computed[paging_request_key + '_request'];
         var paging_resource_params = _.pairs(paging_opts.request_parameters)[0];
-
+        
         var url = '/paging/';
         url += paging_opts.service_name + '/';
         url += paging_opts.service_operation + '/';
         url += '?resource_key=' + paging_resource_params[0] + '&resource_id=' + paging_resource_params[1];
         
         options['bPaginate'] = true;
-        options['bServerSide'] = true;
-        options['sAjaxSource'] = url;
 
+        // options['sPaginationType'] = 'two_button';
+        // options['sAjaxDataProp'] = 'data';
+        
+        options['bProcessing'] = true;
+        options['bServerSide'] = true;
+        options['sAjaxSource'] = url;        
         options["fnServerData"] = function(sSource, aoData, fnCallback, oSettings) {
-          oSettings.jqXHR = $.ajax( {
-            dataType: 'json',
-            url: sSource,
-            data: aoData,
-            success: function(resp) {
-              console.log('!!!!! raw', resp);
-              var td = self.table_data(resp['data']);
-              console.log('!!!!! processed', td);
-              return self.table_data(resp['data']);
-            }
-          } );
+          $.getJSON(sSource, aoData, function (json) { 
+              console.log('json', json);
+              console.log('oSettings', oSettings);
+              
+              var r = {'aaData': self.table_data(json.aaData)}
+              /* Do whatever additional processing you want on the callback, then tell DataTables */
+              // var td = self.table_data(json.data);
+              return fnCallback(r);
+              // return json.data;
+          });
+          // oSettings.jqXHR = $.ajax( {
+          //   dataType: 'json',
+          //   url: sSource,
+          //   data: aoData,
+          //   success: function(resp) {
+          //     console.log('aoData', aoData);
+          //     console.log('fetched data', resp);
+          //     var td = self.table_data(resp['data']);
+          //     console.log('preprocessed data', td);
+          //     // return self.table_data(td);
+          //     return fnCallback(td);
+          //   }
+          // } );
         };
         
-        console.log('--------------------------------------');
-        console.log(this.$el.data('path'), paging_opts, this.limit);
-        console.log('url', url);
-        console.log('paging_resource_params', paging_resource_params);
-
+        // console.log(this.$el.data('path'), paging_opts, this.limit);
+        // console.log('url', url);
+        // console.log('paging_resource_params', paging_resource_params);
         
         // $.ajax({
         //   dataType: 'json',
@@ -141,7 +160,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         //   },
         // });
         
-        console.log('--------------------------------------');
+
       };
       
       return options
@@ -256,7 +275,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
     },
 
     table_data: function(data_objs){
-      console.log('table_data data_objs', data_objs);
+      // console.log('table_data data_objs', data_objs);
         var data = [];
         var table_metadata = this._get_table_metadata();
         var data_keys = _.map(table_metadata, function(arr){return arr[2];});
