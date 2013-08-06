@@ -638,7 +638,7 @@ input#sidebar-search {
 }
 
 a.btn-black, a.btn-advanced-search  {
-  font-size:10px; font- weight:300; 
+  font-size:10px; font-weight:300;
   letter-spacing:1px; 
   color: #BCBEC0; 
   text-align:left; 
@@ -1108,7 +1108,7 @@ fieldset {
 
 #chart {
   border: none;
-  padding: none;
+  padding: 0;
 }
 
 table.google-visualization-table-table {
@@ -2262,7 +2262,7 @@ table.table thead tr th {
   font-weight:400; 
   color:#666; 
   letter-spacing:1px;
-  border-radius: none;
+  border-radius: 0;
 }
 
 /* TABLE SORTING */
@@ -2651,4 +2651,17 @@ input.textfield_geo{
 
 .list_ooi .list-item.no-data {
   color: #666;
+}
+
+
+h3 .toggle-all-menu {
+  width: 16px;
+  height: 16px;
+  margin-top: 4px;
+  background-image: url(/static/img/pepper_sprite.png);
+  background-position: -360px -360px;
+}
+
+h3 .toggle-all-menu:hover {
+  background-position: -300px -360px;
 }

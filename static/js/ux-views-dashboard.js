@@ -102,6 +102,32 @@ IONUX.Views.ResourceSelector = Backbone.View.extend({
 IONUX.Views.ObservatorySelector = IONUX.Views.ResourceSelector.extend({
   el: '#observatory-selector',
   template: _.template($('#dashboard-observatory-list-tmpl').html()),
+
+  events: {
+    'click .secondary-link': 'clickAction',
+    'click .primary-link': 'clickAction',
+    'click .map-ul': 'MapClickAction',
+     'click .toggle-all-menu': 'tAction'
+  },
+   MapClickAction: function(e){
+    e.preventDefault();
+    var target = $(e.target);
+    target.parent().next('ul').toggle()
+  },
+
+  clickAction: function(e){
+    e.preventDefault();
+    var target = $(e.target);
+    target.parent().parent().next('ul').toggle()
+  },
+
+   tAction: function(e){
+    e.preventDefault();
+    var target = $('.map-nested-ul')
+    console.log(target.attr('class'))
+    target.toggle();
+   },
+
   render: function(){
     this.$el.removeClass('placeholder');
     this.$el.html(this.template({resources: this.build_menu(), title: this.title}));
