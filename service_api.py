@@ -174,8 +174,8 @@ class ServiceApi(object):
                             'index': 'resources_index'})
 
         if temporal_bounds and all(temporal_bounds.itervalues()):
-            queries.append({'time_bounds': {'from': temporal_bounds['from'], 'to': temporal_bounds['to']},
-                            'field': 'nominal_datetime',
+            queries.append({'time': {'from': temporal_bounds['from'], 'to': temporal_bounds['to']},
+                            'field': 'ts_created',
                             'index': 'resources_index'})
 
         if search_criteria:
