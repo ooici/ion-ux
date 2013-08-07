@@ -321,6 +321,21 @@ ul.map-ul {
   background-position: -300px -360px;
 }
 
+.map-ul li a.secondary-link-selected {
+  width: 16px;
+  height: 16px;
+  margin-top: 4px;
+  background-image: url(/static/img/pepper_sprite.png);
+  background-position: -180px -360px;
+}
+
+.map-ul li a.secondary-link-selected:hover {
+  color: #034971;
+  background-color: #034971;
+  background-position: -240px -360px;
+}
+
+
 /* nested map navigation */
 
 ul.map-nested-ul {
@@ -2663,5 +2678,19 @@ h3 .toggle-all-menu {
 }
 
 h3 .toggle-all-menu:hover {
+  background-image: url(/static/img/pepper_sprite.png);
   background-position: -300px -360px;
+}
+
+h3 .toggle-all-menu-selected {
+  width: 16px;
+  height: 16px;
+  margin-top: 4px;
+  background-image: url(/static/img/pepper_sprite.png);
+  background-position: -180px -360px;
+}
+
+h3 .toggle-all-menu-selected:hover {
+  background-image: url(/static/img/pepper_sprite.png);
+  background-position: -240px -360px;
 }
