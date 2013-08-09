@@ -102,13 +102,53 @@ IONUX.Views.ResourceSelector = Backbone.View.extend({
 IONUX.Views.ObservatorySelector = IONUX.Views.ResourceSelector.extend({
   el: '#observatory-selector',
   template: _.template($('#dashboard-observatory-list-tmpl').html()),
+
+  events: {
+      'click .secondary-link': 'click_action',
+      'click .secondary-link-selected': 'click_action',
+      'click .toggle-all-menu': 'toggle_action',
+      'click .toggle-all-menu-selected': 'toggle_action'
+  },
+   click_action_map: function(e){
+       e.preventDefault();
+       var target = $(e.target);
+       target.parent().next('ul').toggle();
+  },
+
+  click_action: function(e){
+      e.preventDefault();
+      var target = $(e.target);
+      target.parent().parent().next('ul').toggle()
+      if (target.parent().parent().next('ul').is(":visible")) {
+          target.attr('class','secondary-link-selected  pull-right');
+      }
+      else {
+          target.attr('class','secondary-link pull-right');
+      }
+      console.log(target.parent().parent().next('ul').is(":visible"))
+  },
+
+   toggle_action: function(e){
+       e.preventDefault();
+       var map_target = $('.map-nested-ul');
+       map_target.toggle();
+       var target = $(e.target);
+       console.log(target.attr('class'));
+       if (target.attr('class') == 'toggle-all-menu pull-right'){
+           target.attr('class', 'toggle-all-menu-selected pull-right')
+       }
+       else {
+           target.attr('class', 'toggle-all-menu pull-right')
+       }
+   },
+
   render: function(){
     this.$el.removeClass('placeholder');
     this.$el.html(this.template({resources: this.build_menu(), title: this.title}));
     this.$el.find('#list').jScrollPane({autoReinitialise: true});
     return this;
   },
-  
+
   build_menu: function(){
     // Grab all spatial names, then uniques; separate for clarity.
     var spatial_area_names = _.map(this.collection.models, function(resource) {
@@ -116,7 +156,7 @@ IONUX.Views.ObservatorySelector = IONUX.Views.ResourceSelector.extend({
       if (san != '') return san;
     });
     var unique_spatial_area_names = _.uniq(spatial_area_names);
-    
+
     var resource_list = {};
     _.each(unique_spatial_area_names, function(san) {
       resource_list[san] = _.map(this.collection.where({spatial_area_name: san}), function(resource) { return resource.toJSON()});

@@ -1,4 +1,6 @@
-<h3><%= title %></h3>
+<h3><%= title %>
+  <span><a href="#" class="toggle-all-menu pull-right"></a></span>
+</h3>
 <div class="panelize">
   <div id="list">
     <% _.each(resources, function(nested_resources, san) { %>
@@ -6,7 +8,7 @@
         <li ><a class="primary-link" href="#"><%= san %></a><a href="#" class="secondary-link pull-right">&nbsp;</a></li>
       </ul>
       <!-- TODO: nest and style parent nodes appropriately. This is temporary. -->
-      <ul class="map-nested-ul">
+      <ul class="map-nested-ul" style="display:none">
           <% _.each(nested_resources, function(resource) { %>
             <li data-resource-id="<%= resource._id %>" class="">
               <a class="primary-link" href="/map/<%= resource._id %>">
