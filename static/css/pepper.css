@@ -2011,11 +2011,12 @@ ul.nav {
 #advanced-search-overlay {
   width: 960px;
   margin-left: -480px;
+  position: absolute;
 }
 
 #advanced-search-overlay .modal-body {
 /*  height: 600px; */
-  max-height: 400px;
+  max-height: 500px;
 }
 
 #advanced-search-overlay #adv_map {
