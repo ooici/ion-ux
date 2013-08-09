@@ -187,11 +187,11 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
     var sorted = _.sortBy(_.pairs(schema), function(s) {
       return s[0];
     });
-
+    
     _.each(sorted, function(a) {
       sorted_schema[a[0]] = a[1];
     });
-
+    
     // add on any associations
     if (this.prepare && !_.isEmpty(this.prepare.associations)) {
       _.each(this.prepare.associations, function(v, k) {
@@ -384,9 +384,11 @@ IONUX.Views.EditResource = Backbone.View.extend({
     // to dynmically create schema and retrieve resource values.
     this.model.unset('resource_id');
     this.model.unset('resource_type');
-
+    
+    
     this.model.save().done(function(){
       IONUX.ROUTER.navigate(self.base_url, {trigger:true});
+      window.scrollTo(0,0); // scroll to top
     });
   },
   cancel: function(){

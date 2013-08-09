@@ -198,8 +198,6 @@ def create_resource():
     resp = ServiceApi.create_resource(request.form.get('resource_type', None), request.form.get('org_id', None))
     return render_json_response(resp)
 
-# @app.route('/<resource_type>/status/<resource_id>/subscribe/', methods=['GET'])
-# @app.route('/<resource_type>/related/<resource_id>/subscribe/', methods=['GET'])
 @app.route('/<resource_type>/face/<resource_id>/subscribe/', methods=['GET'])
 @app.route('/<resource_type>/command/<resource_id>/subscribe/', methods=['GET'])
 @login_required
@@ -209,8 +207,6 @@ def subscribe_to_resource(resource_type, resource_id):
     resp = ServiceApi.create_user_notification(resource_type, resource_id, event_type, session['user_id'], resource_name)
     return render_json_response(resp)
 
-# @app.route('/<resource_type>/status/<resource_id>/unsubscribe/', methods=['GET'])
-# @app.route('/<resource_type>/related/<resource_id>/unsubscribe/', methods=['GET'])
 @app.route('/<resource_type>/face/<resource_id>/unsubscribe/', methods=['GET'])
 @app.route('/<resource_type>/command/<resource_id>/unsubscribe/', methods=['GET'])
 @login_required
@@ -219,9 +215,6 @@ def unsubscribe_to_resource(resource_type, resource_id):
     resp = ServiceApi.delete_user_subscription(notification_id)
     return render_json_response(resp)
 
-
-# @app.route('/<resource_type>/status/<resource_id>/enroll/', methods=['POST'])
-# @app.route('/<resource_type>/related/<resource_id>/enroll/', methods=['POST'])
 @app.route('/<resource_type>/face/<resource_id>/enroll/', methods=['POST'])
 @app.route('/<resource_type>/command/<resource_id>/enroll/', methods=['POST'])
 @login_required
@@ -230,8 +223,6 @@ def enroll_request(resource_type, resource_id):
     resp = ServiceApi.enroll_request(resource_id, actor_id)
     return render_json_response(resp)
 
-# @app.route('/<resource_type>/status/<resource_id>/request_role/', methods=['POST'])
-# @app.route('/<resource_type>/related/<resource_id>/request_role/', methods=['POST'])
 @app.route('/<resource_type>/face/<resource_id>/request_role/', methods=['POST'])
 @app.route('/<resource_type>/command/<resource_id>/request_role/', methods=['POST'])
 @login_required
@@ -242,8 +233,6 @@ def request_role(resource_type, resource_id):
     resp = ServiceApi.request_role(resource_id, actor_id, role_name)
     return render_json_response(resp)
 
-# @app.route('/<resource_type>/status/<resource_id>/invite_user/', methods=['POST'])
-# @app.route('/<resource_type>/related/<resource_id>/invite_user/', methods=['POST'])
 @app.route('/<resource_type>/face/<resource_id>/invite_user/', methods=['POST'])
 @app.route('/<resource_type>/command/<resource_id>/invite_user/', methods=['POST'])
 @login_required
@@ -253,8 +242,6 @@ def invite_user(resource_type, resource_id):
     resp = ServiceApi.invite_user(resource_id, user_id)
     return render_json_response(resp)
 
-# @app.route('/<resource_type>/status/<resource_id>/offer_user_role/', methods=['POST'])
-# @app.route('/<resource_type>/related/<resource_id>/offer_user_role/', methods=['POST'])
 @app.route('/<resource_type>/face/<resource_id>/offer_user_role/', methods=['POST'])
 @app.route('/<resource_type>/command/<resource_id>/offer_user_role/', methods=['POST'])
 @login_required
@@ -265,8 +252,6 @@ def offer_user_role(resource_type, resource_id):
     resp = ServiceApi.offer_user_role(resource_id, user_id, role_name)
     return render_json_response(resp)
 
-# @app.route('/<resource_type>/status/<resource_id>/request_access/', methods=['POST'])
-# @app.route('/<resource_type>/related/<resource_id>/request_access/', methods=['POST'])
 @app.route('/<resource_type>/face/<resource_id>/request_access/', methods=['POST'])
 @app.route('/<resource_type>/command/<resource_id>/request_access/', methods=['POST'])
 @login_required
@@ -278,8 +263,6 @@ def request_access(resource_type, resource_id):
     resp = ServiceApi.request_access(resource_id, res_name, actor_id, org_id)
     return render_json_response(resp)
 
-# @app.route('/<resource_type>/status/<resource_id>/release_access/', methods=['POST'])
-# @app.route('/<resource_type>/related/<resource_id>/release_access/', methods=['POST'])
 @app.route('/<resource_type>/face/<resource_id>/release_access/', methods=['POST'])
 @app.route('/<resource_type>/command/<resource_id>/release_access/', methods=['POST'])
 @login_required
@@ -289,8 +272,6 @@ def release_access(resource_type, resource_id):
     resp = ServiceApi.release_access(commitment_id)
     return render_json_response(resp)
 
-# @app.route('/<resource_type>/status/<resource_id>/request_exclusive_access/', methods=['POST'])
-# @app.route('/<resource_type>/related/<resource_id>/request_exclusive_access/', methods=['POST'])
 @app.route('/<resource_type>/face/<resource_id>/request_exclusive_access/', methods=['POST'])
 @app.route('/<resource_type>/command/<resource_id>/request_exclusive_access/', methods=['POST'])
 @login_required
@@ -315,8 +296,6 @@ def accept_reject_negotiation():
     resp = ServiceApi.accept_reject_negotiation(negotiation_id, verb, originator, reason)
     return render_json_response(resp)
 
-# @app.route('/<resource_type>/status/<resource_id>/transition/', methods=['POST'])
-# @app.route('/<resource_type>/related/<resource_id>/transition/', methods=['POST'])
 @app.route('/<resource_type>/face/<resource_id>/transition/', methods=['POST'])
 @app.route('/<resource_type>/command/<resource_id>/transition/', methods=['POST'])
 @login_required
@@ -325,8 +304,6 @@ def change_lcstate(resource_type, resource_id):
     transition = ServiceApi.transition_lcstate(resource_id, transition_event)
     return render_json_response(transition)
 
-# @app.route('/<resource_type>/status/<resource_id>/publish_event/', methods=['POST'])
-# @app.route('/<resource_type>/related/<resource_id>/publish_event/', methods=['POST'])
 @app.route('/<resource_type>/face/<resource_id>/publish_event/', methods=['POST'])
 @app.route('/<resource_type>/command/<resource_id>/publish_event/', methods=['POST'])
 def publish_event(resource_type, resource_id):
@@ -349,8 +326,6 @@ def publish_event(resource_type, resource_id):
 # FACE, STATUS, RELATED PAGES
 # -----------------------------------------------------------------------------
 
-# @app.route('/<resource_type>/status/<resource_id>/', methods=['GET','PUT'])
-# @app.route('/<resource_type>/related/<resource_id>/', methods=['GET','PUT'])
 @app.route('/<resource_type>/face/<resource_id>/', methods=['GET','PUT'])
 @app.route('/<resource_type>/command/<resource_id>/', methods=['GET','PUT'])
 def page(resource_type, resource_id):
