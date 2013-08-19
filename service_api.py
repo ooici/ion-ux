@@ -524,7 +524,7 @@ class ServiceApi(object):
                   'sub_type'    : sub_type,
                   'description' : description}
 
-        return service_gateway_post('user_notification', 'publish_event', params=pdict)
+        return service_gateway_post('user_notification', 'publish_issue_event', params=pdict)
 
     @staticmethod
     def ui_reset():
