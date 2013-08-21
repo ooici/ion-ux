@@ -158,6 +158,7 @@
 
     function initOverview() {
 
+        dataTable_overview = null
         data_series_overview = [];
 
         /// Get meta data for the data product id. It will be used to retrieve the correct data
@@ -208,7 +209,7 @@
         var num_of_actual_data_points = (dp_metadata['time_bounds'][1] - dp_metadata['time_bounds'][0]) * avg_data_rate;
         dataTable_overview_stride_factor = Math.ceil(num_of_actual_data_points / chart_x_res);
 
-        var dqp = setDataQueryParams("google_dt", dp_parameters, dp_metadata['time_bounds'][0], dp_metadata['time_bounds'][1], dataTable_overview_stride_factor);
+        var dqp = setDataQueryParams("highcharts_data", dp_parameters, dp_metadata['time_bounds'][0], dp_metadata['time_bounds'][1], dataTable_overview_stride_factor);
         fetchData(dqp);
     }
 
@@ -242,44 +243,32 @@
 
         // Check if null was returned
         if (response["data"]) {
-            var _dt = new google.visualization.DataTable(response["data"].replace(/\bNaN\b/g, "null"));
+            var _dt = jQuery.parseJSON(response["data"].replace(/\bNaN\b/g, "null"));
         }
         else {
             console.debug('No valid data available.');
+            stopRealtimeView();
             return;
         }
 
         // If an empty data table was returned, exit gracefully
-        if (_dt.getNumberOfRows() == 0) {
+        if (_dt.length == 0 || _dt[0].length == 0) {
             alert("No data was found in storage. Please try again in a bit");
+            stopRealtimeView();
             return;
         }
 
-        _dt.sort([{column:0}]);
+        // replace names with display names
+        use_display_names_in_data(_dt);
+        // This would be a good place to sort wrt timestamps if ever needed
+
 
         // If the overview series is empty, assume this is the response to the overview query
         if (data_series_overview.length == 0) {
-            dataTable_overview = _dt;
+            data_series_overview = _dt;
 
-            // Extract and store precision info from the datatable
-            for (var i=1; i < _dt.getNumberOfColumns(); i++) {
-                precision = parseInt(_dt.getColumnProperty(i,'precision'));
-                //console.debug("Precision of " + _dt.getColumnLabel(i) + " is " + precision);
-                if (typeof(precision) == 'number') {
-                    precisions[getNormalizedName(_dt.getColumnLabel(i))] = precision;
-                }
-            }
-
-            // Extract other views/formats from the datatable
-            //dataView_overview = new google.visualization.DataView(_dt);
-            data_series_overview = gdt_to_highcharts_data(_dt);
-
-            // Do one more check to see if any data is really avalable for charting
-            if (data_series_overview == null || data_series_overview.length == 0) {
-                document.getElementById('chart_div').innerHTML = "This data product does not have any chartable data.";
-                stopRealtimeView();
-                return;
-            }
+            // Remove series that were marked visible == false. probably string content
+            remove_extra_hc_data(_dt);
 
             // If no chart exists, create one
             if(chart) {
@@ -293,49 +282,81 @@
         }
         // Otherwise its data that needs to replace what's currently in the chart
         else {
-            data_series_hires = gdt_to_highcharts_data(_dt);
+            data_series_hires = _dt;
             drawChart(false, mergeAndSortHcData(data_series_overview, data_series_hires, data_series_rt));
         }
 
     }
 
 
-    function gdt_to_highcharts_data (_dt) {
-        var _hc_data = [];
-        var _hc_data_count = 0;
-        var precision;
-        for (var i=1; i < _dt.getNumberOfColumns(); i++) {
+    function highcharts_to_gdt (_hc_data) {
+        var gdt = new google.visualization.DataTable();
+        var var_type, i, j;
 
-            // Check to see if the series contains NaN. If yes, just ignore the entire series
-            if (isNaN(_dt.getValue(0,i))) continue;
-            // Also ignore any parameter that has the string "timestamp" in it or is the lat/lon.
-            // Also ignore anything that's a string
-            if (_dt.getColumnLabel(i).search("timestamp") >= 0) continue;
-            if (_dt.getColumnLabel(i) == 'lat' || _dt.getColumnLabel(i) == 'lon') continue;
-            if (_dt.getColumnType(i) == 'string') continue;
+        // Make sure the first column is the time stamp
+        gdt.addColumn("datetime", "Timestamp (" + curr_timezone_display + ")")
 
-            _hc_data[_hc_data_count] = {};
-            var _series = _hc_data[_hc_data_count];
-            var _data = [];
-
-            // Create the series data as an array of [timestamp, value]
-            for (var j=0; j<_dt.getNumberOfRows(); j++) {
-                _data[j] = [_dt.getValue(j,0).getTime(), _dt.getValue(j,i)];
+        // Create the columns first
+        for (i = 0; i<_hc_data.length; i++) {
+            // Assume type is number unless otherwise
+            if (_hc_data[i]["data"].length == 0 && _hc_data[i]["visible"] == false) {
+                var_type = "string";  // this is a guess
             }
 
-            _series["name"] = getNormalizedName(_dt.getColumnLabel(i));
-
-            // Check for precision information
-            if (_series["name"] in precisions) {
-                _series["tooltip"] = {valueDecimals:precisions[_series["name"]]};
+            if (_hc_data[i]["data"].length > 0) {
+                var_type = typeof(_hc_data[i]["data"][0][1]);
             }
 
-            _series["data"] = _data;
+            if (var_type != "string") {
+                var_type = "number";
+            }
 
-            ++_hc_data_count;
+            // At this point var_type is either a string or a number only
+            gdt.addColumn(var_type, _hc_data[i]["name"])
         }
 
-        return _hc_data;
+        // Now populate the rows
+        var temp_tuple = [];
+        for (var i = 0; i<_hc_data[0]["data"].length; i++) {
+            temp_tuple = [];
+
+            // Fill the time field from the timestamp of the first parameter. Not exactly robust.
+            temp_tuple.push(new Date(_hc_data[0]["data"][i][0]))
+
+            for (j = 0; j < _hc_data.length; j++) {
+                temp_tuple.push(_hc_data[j]["data"][i][1]);
+            }
+            gdt.addRow(temp_tuple);
+        }
+
+        return gdt;
+    }
+
+    // Array Remove - By John Resig (MIT Licensed)
+    Array.prototype.remove = function(from, to) {
+        var rest = this.slice((to || from) + 1 || this.length);
+        this.length = from < 0 ? this.length + from : from;
+        return this.push.apply(this, rest);
+    };
+
+    function remove_extra_hc_data(_hc_data) {
+        for (var i = 0; i<_hc_data.length; i++) {
+            if (_hc_data[i]['visible'] == false) {
+                _hc_data.remove(i);
+                --i;
+                continue;
+            }
+        }
+    }
+
+    function use_display_names_in_data(_hc_data) {
+        var name;
+        for (var i = 0; i<_hc_data.length; i++) {
+            name = _hc_data[i]["name"];
+            if ((name in display_names) && (display_names[name] != "")) {
+                _hc_data[i]["name"] = display_names[name];
+            }
+        }
     }
 
     // Typically used to merge overview, realtime and high-res in to one series before drawing. Assumption
@@ -343,7 +364,9 @@
     // since it not only makes copies of all the data series passed to it, it is called every time the chart
     // needs to be updated with new data.
     function mergeAndSortHcData(ov_data, hr_data, rt_data) {
+
         var _hc_data = ov_data.slice();
+        //var _hc_data = jQuery.extend(true, [], ov_data);
         var tempIdx = 0;
         var tempCount = 0;
 
@@ -409,6 +432,12 @@
 
         // Handle tables in a special way
         if (curr_chart_type == 'table') {
+
+            if (dataTable_overview == null) {
+                // Convert the hc data to gdt. This is a lazy behaviour
+                dataTable_overview = highcharts_to_gdt(_data);
+            }
+
             drawTable(dataTable_overview);
             return;
         }
@@ -680,14 +709,6 @@
         rt_query_token = jQuery.parseJSON(resp['data'])['rt_query_token'];
         console.debug ("Query Token : " + rt_query_token);
 
-        /*
-        rt_query = new google.visualization.Query(container_server + "/visualization/get_realtime_visualization_data/?query_token=" + rt_query_token,
-                {sendMethod:'scriptInjection'});
-
-        // Set up query to refresh every x seconds with a callback function.
-        rt_query.setRefreshInterval(5);
-        rt_query.send(handleRealtimeQueryResponse);
-        */
 
         // Make a query for realtime update and set it to repeat every X millisecs
         rt_query = setInterval(function(){
@@ -699,7 +720,7 @@
                     console.debug("Error retrieving data for realtime updates: " + jqXHR.responseText);
                 }
             });
-        }, 8000);
+        }, 10000);
 
     }
 
@@ -715,24 +736,28 @@
         }
         */
 
-        // Starter the spinner to tell user that real-time data is being updated
-        //var spin_target = document.getElementById('chart_div');
-        //chart_spinner.spin(spin_target);
 
         if (response["data"]) {
-            var rt_gdt = new google.visualization.DataTable(response["data"].replace(/\bNaN\b/g, "null"));
+            var rt_hc_data = jQuery.parseJSON(response["data"].replace(/\bNaN\b/g, "null"));
         }
         else {
             console.debug('No new data available yet ...');
             return;
         }
-        var rt_hc_data = gdt_to_highcharts_data(rt_gdt);
 
         // If the returned data series is empty .. do nothing
-        if (!rt_hc_data || !rt_hc_data[0]["data"] || rt_hc_data[0]["data"].length < 1) return;
+        if ( typeof rt_hc_data == "undefined" || rt_hc_data == null) return;
+        if (rt_hc_data[0]["data"].length < 1) return;
+
+        // replace names with display names
+        use_display_names_in_data(rt_hc_data);
+
+        // Remove series that were marked visible == false. probably string content
+        remove_extra_hc_data(rt_hc_data);
 
         // Collect all the real-time data in a separate series. Append new data
         if (data_series_rt.length > 0) {
+
             for (var i=0; i < data_series_rt.length; i++) {
                 data_series_rt[i]["data"].push.apply(data_series_rt[i]["data"],rt_hc_data[i]["data"]);
             }
@@ -748,7 +773,7 @@
         // refresh that resets the table and does not need to be done.
         if (!(curr_chart_type == "table")) {
             drawChart(false, mergeAndSortHcData(data_series_overview, data_series_hires, data_series_rt));
-            console.debug("Num of data points in the chart :" + data_series_overview[0]["data"].length);
+            console.debug("Num of data points in the chart :" + chart.series[0].data.length);
         }
 
         // if we have collected too much real-time data, flush and retrieve a low-res overview again
@@ -782,7 +807,7 @@
         }
 
         // If there are more parameters thn the graph can handle, do not enable realtime view
-        if (Object.keys(display_names).length > max_supported_parameters_rt) {
+        if (chart.series.length > max_supported_parameters_rt) {
             alert("This data product has over " + max_supported_parameters_rt + " parameters. Realtime view is not supported. Will update chart with latest data.");
             chkbox.checked = false;
             return;
@@ -918,13 +943,11 @@
     }
 
     function chartCleanup() {
-        // Kill the realtime queries
-        //stopRealtimeView();
 
-        console.debug ("Terminating queues associated with token : " + rt_query_token);
         // terminate the realtime queues on the server side
         if (rt_query_token && rt_query_token != null && rt_query_token != "null") {
 
+            console.debug ("Terminating queues associated with token : " + rt_query_token);
             jQuery.ajax ({
                 url: container_server + "/visualization/terminate_realtime_visualization_data/?query_token=" + rt_query_token,
                 dataType: 'json',
@@ -991,7 +1014,7 @@
             }
         }
 
-        var dqp = setDataQueryParams("google_dt", dp_parameters,
+        var dqp = setDataQueryParams("highcharts_data", dp_parameters,
                 Math.round(adjusted_start_date/1000),
                 Math.round(adjusted_end_date/1000),
                 curr_stride_factor);
