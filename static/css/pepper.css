@@ -321,6 +321,21 @@ ul.map-ul {
   background-position: -300px -360px;
 }
 
+.map-ul li a.secondary-link-selected {
+  width: 16px;
+  height: 16px;
+  margin-top: 4px;
+  background-image: url(/static/img/pepper_sprite.png);
+  background-position: -180px -360px;
+}
+
+.map-ul li a.secondary-link-selected:hover {
+  color: #034971;
+  background-color: #034971;
+  background-position: -240px -360px;
+}
+
+
 /* nested map navigation */
 
 ul.map-nested-ul {
@@ -638,7 +653,7 @@ input#sidebar-search {
 }
 
 a.btn-black, a.btn-advanced-search  {
-  font-size:10px; font- weight:300; 
+  font-size:10px; font-weight:300;
   letter-spacing:1px; 
   color: #BCBEC0; 
   text-align:left; 
@@ -1108,7 +1123,7 @@ fieldset {
 
 #chart {
   border: none;
-  padding: none;
+  padding: 0;
 }
 
 table.google-visualization-table-table {
@@ -1795,22 +1810,28 @@ ul.nav {
 
 /* modals */
 
+.modal,
 .modal-ooi {
   background: #1E1E1E;
   border: solid 1px #333;
 }
 
+.modal .close,
 .modal-ooi .close {
   color: #444;
   opacity: 1;
   text-shadow: none;
 }
 
+.modal h1,
 .modal-ooi h1 {
   font-size:15px;
   line-height: 15px;
 }
 
+.modal .modal-header, 
+.modal .modal-body,
+.modal .modal-footer,
 .modal-ooi .modal-header, 
 .modal-ooi .modal-body,
 .modal-ooi .modal-footer {
@@ -1818,6 +1839,7 @@ ul.nav {
   border-color: #333;
 }
 
+.modal .modal-footer,
 .modal-ooi .modal-footer {
   box-shadow:none;
   -webkit-box-shadow:none;
@@ -1989,11 +2011,12 @@ ul.nav {
 #advanced-search-overlay {
   width: 960px;
   margin-left: -480px;
+  position: absolute;
 }
 
 #advanced-search-overlay .modal-body {
 /*  height: 600px; */
-  max-height: 400px;
+  max-height: 500px;
 }
 
 #advanced-search-overlay #adv_map {
@@ -2255,7 +2278,7 @@ table.table thead tr th {
   font-weight:400; 
   color:#666; 
   letter-spacing:1px;
-  border-radius: none;
+  border-radius: 0;
 }
 
 /* TABLE SORTING */
@@ -2644,4 +2667,31 @@ input.textfield_geo{
 
 .list_ooi .list-item.no-data {
   color: #666;
+}
+
+
+h3 .toggle-all-menu {
+  width: 16px;
+  height: 16px;
+  margin-top: 4px;
+  background-image: url(/static/img/pepper_sprite.png);
+  background-position: -360px -360px;
+}
+
+h3 .toggle-all-menu:hover {
+  background-image: url(/static/img/pepper_sprite.png);
+  background-position: -300px -360px;
+}
+
+h3 .toggle-all-menu-selected {
+  width: 16px;
+  height: 16px;
+  margin-top: 4px;
+  background-image: url(/static/img/pepper_sprite.png);
+  background-position: -180px -360px;
+}
+
+h3 .toggle-all-menu-selected:hover {
+  background-image: url(/static/img/pepper_sprite.png);
+  background-position: -240px -360px;
 }

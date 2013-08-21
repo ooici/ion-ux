@@ -35,6 +35,7 @@ For the most common scenario (i.e. running the UI on your development environmen
 * GATEWAY_PORT = 5000
 * PORTAL_ROOT = 'working/path/to/ion-ux/'
 
+Next, make sure to create a log file (ion-ux.log) in the root directory.
 
 3. Run Local
 ------------

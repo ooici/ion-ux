@@ -69,13 +69,20 @@ IONUX.Views.PlatformCommandFacepage = Backbone.View.extend({
   },
   
   start_agent: function(evt) {
+    var start_btn = $(evt.target);
+    start_btn.prop('disabled', true);
+    start_btn.prop('value', 'Starting Platform Agent...');
     var self = this;
     $.ajax({
         url: 'start/'+self.model.get('agent_instance')['_id']+'/',
         success: function() {
-          $('.instrument-commands').show();
-          $('#start-instrument-agent-instance').hide();
-          $(' #stop-instrument-agent-instance').show();
+          // Result appended
+          $(".command-output").append('<p class="command-success">OK: PLATFORM AGENT STARTED.</p>');
+          
+          start_btn.prop('disabled', false);
+          start_btn.prop('value', 'Start Platform Agent');
+          start_btn.hide();
+          $('#stop-instrument-agent-instance, .instrument-commands, .get_capabilities').show();
           self.get_capabilities();
         },
         error: function() {
@@ -92,10 +99,10 @@ IONUX.Views.PlatformCommandFacepage = Backbone.View.extend({
         dataType: 'json',
         success: function(resp){
           console.log('get_capabilities', resp);
-            self.render_commands(resp.data.commands);
+          self.render_commands(resp.data.commands);
         },
         error: function(resp) {
-            console.log('Error: ', resp);
+          console.log('Error: ', resp);
         }
       });
       
@@ -114,13 +121,23 @@ IONUX.Views.PlatformCommandFacepage = Backbone.View.extend({
   },
   
   stop_agent: function(evt) {
+    var stop_btn = $(evt.target);
+    stop_btn.prop('disabled', true);
+    stop_btn.prop('value', 'Stopping Platform Agent...');
     var self = this;
     $.ajax({
       url: 'stop/'+self.model.get('agent_instance')['_id']+'/',
       success: function() {
-        $('#stop-instrument-agent-instance').hide();
+        // Result appended
+        $(".command-output").append('<p class="command-success">OK: PLATFORM AGENT STOPPED.</p>');
+        
+        stop_btn.prop('disabled', false);
+        stop_btn.prop('value', 'Stop Platform Agent');
+        stop_btn.hide();
+        
         $('#start-instrument-agent-instance').show();
-        $('.instrument-commands').hide();
+        $('#cmds tbody').empty();
+        $('.instrument-commands, .get_capabilities').hide();
       },
       error: function() {
         alert("An error occured.");

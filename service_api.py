@@ -174,8 +174,8 @@ class ServiceApi(object):
                             'index': 'resources_index'})
 
         if temporal_bounds and all(temporal_bounds.itervalues()):
-            queries.append({'time_bounds': {'from': temporal_bounds['from'], 'to': temporal_bounds['to']},
-                            'field': 'nominal_datetime',
+            queries.append({'time': {'from': temporal_bounds['from'], 'to': temporal_bounds['to']},
+                            'field': 'ts_created',
                             'index': 'resources_index'})
 
         if search_criteria:
@@ -650,6 +650,15 @@ class ServiceApi(object):
                 params['instrument_agent_id'] = resource_id
 
             prepare = service_gateway_get('instrument_management', 'prepare_instrument_agent_support', params=params)
+
+        elif resource_type == "UserInfo":
+            params = {}
+            if resource_id:
+                params['user_info_id'] = resource_id
+
+            prepare = service_gateway_get('identity_management', 'prepare_user_info_support', params=params)
+
+        
         else:
             # GENERIC VERSION
             params = {'resource_type':resource_type}
@@ -827,8 +836,9 @@ class ServiceApi(object):
                 if param['schema']:
                     agent_schema.update({ param['name']: _to_form_schema(param['schema']['type'], param['schema']['visibility'], param['schema']['display_name'])})
             if cap_type == 4:
-                resource_param_names.append(param['name'])
-                resource_schema.update({ param['name']: _to_form_schema(param['schema']['value']['type'], param['schema']['visibility'], None)})
+                if len(param['schema'].keys()):
+                    resource_param_names.append(param['name'])
+                    resource_schema.update({ param['name']: _to_form_schema(param['schema']['value']['type_'], param['schema']['visibility'], None)})
         
         if agent_param_names:
             agent_params = service_gateway_agent_request(instrument_device_id, 'get_agent', params={'params': agent_param_names})

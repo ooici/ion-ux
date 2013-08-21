@@ -20,7 +20,6 @@ IONUX.Views.AttributeGroupDynamic = Backbone.View.extend({
   render_attributes: function(data_obj){
     _.each(data_obj, function(v,k) {
       if (_.isObject(v)) {
-        this.$el.append('<h5>'+k+'</h5>');
         this.render_attributes(v);
       } else {
         this.render(k, v);
@@ -152,8 +151,10 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
 
     // set up search views
     new IONUX.Views.ExtentGeospatial({el:$('#adv-geospatial', this.$el), data: self.geodata}).render().el;
+
     new IONUX.Views.ExtentVertical({el:$('#adv-vertical', this.$el), data: self.geodata}).render().el;
-    new IONUX.Views.ExtentTemporal({el:$('#adv-temporal', this.$el), data: self.geodata}).render().el;
+    new IONUX.Views.AdvancedSearchExtentTemporal({el:$('#adv-temporal', this.$el), data: self.geodata}).render().el;
+    // new IONUX.Views.ExtentTemporal({el:$('#adv-temporal', this.$el), data: self.geodata}).render().el;
 
     // enable input in controls
     $('input', this.$el).removeAttr('disabled');
@@ -750,6 +751,28 @@ IONUX.Views.ExtentVertical2 = Backbone.View.extend({
     return this;
   }
 });
+
+
+IONUX.Views.AdvancedSearchExtentTemporal = Backbone.View.extend({
+    template: _.template($('#extent-temporal-tmpl').html()),
+    render: function(){
+        
+        var label = this.$el.data('label');
+        if (!label) label = "Temporal Bounds";
+        
+        var data_path = this.$el.data('path');
+        var temporal_from, temporal_to;
+        
+        this.$el.html(this.template({label: label, temporal_from: temporal_from, temporal_to: temporal_from}));
+        this.$el.find('input').datepicker({
+          autoclose:true,
+          format: 'yyyy-mm-dd'
+        });
+        
+        return this;
+    }
+});
+
 
 
 IONUX.Views.ExtentTemporal = Backbone.View.extend({

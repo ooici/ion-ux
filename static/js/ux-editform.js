@@ -28,23 +28,45 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
       this.prepare = data;
       data = data.resource;
     }
-
-    // in place transformations of data
-    var parsed = _.object(_.map(data, function(v, k) {
-
+    
+    // ----------------------------------------------
+    // Workaround to a hard-to-track down issue with the way
+    // underscore iterates some objects.
+    
+    var parsed = {};
+    for (var k in data) {
+      var v = data[k];
       // turn objects (dicts) that don't have a type_ field into a string
       if (_.isObject(v) && !_.isArray(v) && !v.hasOwnProperty('type_')) {
-        return [k, JSON.stringify(v)];
+        parsed[k] = JSON.stringify(v);
       }
-      // turn lists of objects that don't have a type_ field into strings
-      else if (_.isArray(v) && _.every(v, function(vv) { return _.isObject(vv) && !vv.hasOwnProperty('type_') })) {
-        return [k, _.map(v, JSON.stringify)];
+      // turn lists of objects that don't have a type_ field into strings, skipping 'variables'
+      else if (_.isArray(v) && _.every(v, function(vv) { return _.isObject(vv) && !vv.hasOwnProperty('type_') }) && k != 'variables') {
+        parsed[k] = _.map(v, JSON.stringify);
+      } else {
+        parsed[k] = v; 
       }
-      return [k, v];
-    }));
-
-    console.log(this.prepare);
+    };
     
+    // Original implementation left for reference
+    // in place transformations of data
+    // var parsed = _.object(_.map(data, function(v, k) {
+    //   console.log('k, v', k, v);
+    //   // turn objects (dicts) that don't have a type_ field into a string
+    //   if (_.isObject(v) && !_.isArray(v) && !v.hasOwnProperty('type_')) {
+    //     return [k, JSON.stringify(v)];
+    //   }
+    //   
+    //   // turn lists of objects that don't have a type_ field into strings, skipping 'variables'
+    //   else if (_.isArray(v) && _.every(v, function(vv) { return _.isObject(vv) && !vv.hasOwnProperty('type_') }) && k != 'variables') {
+    //     return [k, _.map(v, JSON.stringify)];
+    //   }
+    // 
+    //   return [k, v];
+    // }));
+
+    // ----------------------------------------------
+
     // add values for any existing associations
     if (this.prepare && !_.isEmpty(this.prepare.associations)) {
       _.each(this.prepare.associations, function(v, k) {
@@ -57,16 +79,15 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
             }
             return ar.s;
           });
-
+          
           if (!v.multiple_associations) {
             assocval = assocval[0];
           }
-
+          
           parsed[k] = assocval;
         }
       });
     }
-
     return parsed;
   },
 
@@ -77,26 +98,52 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
     var keys     = _.keys(this.prepare.associations);
     var resource = _.omit(attrs, keys);
     var assocs   = _.pick(attrs, keys);
-
+    
+    // ----------------------------------------------
+    // Workaround to a hard-to-track down issue with the way
+    // underscore iterates some objects.
+    
     // reverse in-place transformation of data (from parse stage)
-    resource = _.object(_.map(resource, function(v, k) {
-
-      // turn stringified single object back into json object
+    var resource_trans = {};
+    for (k in resource) {
+      var v = resource[k];
+      
       if (_.isString(v) && v.substring(0) == "{") {
         try {
-          return [k, JSON.parse(v)];
+          resource_trans[k] = JSON.parse(v);
         } catch(err) { } // silent continue and let old value fall through
       }
       // turn list of stringified objects back into objects
       else if (_.isArray(v) && _.every(v, function(vv) { return _.isString(vv) && vv.substring(0) == "{" })) {
         try {
-          return [k, _.map(v, JSON.parse)];
+          resource_trans[k] = _.map(v, JSON.parse);
         } catch(err) { } // silent continue and let old value fall through
+      } else {
+        resource_trans[k] = v;
       }
+    };
 
-      return [k, v];
-    }));
-
+    // Original implementation left for reference
+    // resource = _.object(_.map(resource, function(v, k) {
+    //   // turn stringified single object back into json object
+    //   if (_.isString(v) && v.substring(0) == "{") {
+    //     try {
+    //       return [k, JSON.parse(v)];
+    //     } catch(err) { } // silent continue and let old value fall through
+    //   }
+    //   // turn list of stringified objects back into objects
+    //   else if (_.isArray(v) && _.every(v, function(vv) { return _.isString(vv) && vv.substring(0) == "{" })) {
+    //     try {
+    //       return [k, _.map(v, JSON.parse)];
+    //     } catch(err) { } // silent continue and let old value fall through
+    //   }
+    // 
+    //   return [k, v];
+    // }));
+    
+    // ----------------------------------------------
+    
+    
     var self = this;
     var omit_keys = _.filter(keys, function(k) {
       var v = self.prepare.associations[k];
@@ -105,7 +152,7 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
 
     assocs = _.omit(assocs, omit_keys);
 
-    retval = {'resource':resource,
+    retval = {'resource':resource_trans,
               'assocs':assocs}
     //
     return retval;
@@ -140,11 +187,11 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
     var sorted = _.sortBy(_.pairs(schema), function(s) {
       return s[0];
     });
-
+    
     _.each(sorted, function(a) {
       sorted_schema[a[0]] = a[1];
     });
-
+    
     // add on any associations
     if (this.prepare && !_.isEmpty(this.prepare.associations)) {
       _.each(this.prepare.associations, function(v, k) {
@@ -337,9 +384,11 @@ IONUX.Views.EditResource = Backbone.View.extend({
     // to dynmically create schema and retrieve resource values.
     this.model.unset('resource_id');
     this.model.unset('resource_type');
-
+    
+    
     this.model.save().done(function(){
       IONUX.ROUTER.navigate(self.base_url, {trigger:true});
+      window.scrollTo(0,0); // scroll to top
     });
   },
   cancel: function(){

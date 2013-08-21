@@ -102,6 +102,9 @@ IONUX.Views.ResourceParams2 = Backbone.View.extend({
     var attrs = this.model.toJSON(); // Hack to force fn complete below. Better way?
 
     this.model.save(attrs, {
+      success: function(resp){
+        $(".command-output").append('<p class="command-success">OK: Resource Parameters were saved.</p>');
+      },
       complete: function(resp){
         btn.prop('disabled', false).text('Save');
         self.$el.find('input').prop('disabled', false);
@@ -212,6 +215,9 @@ IONUX.Views.AgentParams = Backbone.View.extend({
     var attrs = this.model.toJSON(); // Hack to force fn complete below. Better way?
     
     this.model.save(attrs, {
+      success: function(resp){
+        $(".command-output").append('<p class="command-success">OK: Agent Parameters were saved.</p>');
+      },
       complete: function(resp){
         btn.prop('disabled', false).text('Save');
         self.$el.find('input, textarea').prop('disabled', false);
@@ -314,6 +320,9 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
         type: 'POST',
         url: 'start/',
         success: function() {
+          // Result appended
+          $(".command-output").append('<p class="command-success">OK: INSTRUMENT AGENT STARTED.</p>');
+
           start_btn.prop('disabled', false);
           start_btn.prop('value', 'Start Instrument Agent');
           start_btn.hide();
@@ -332,6 +341,9 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
       type: 'POST',
       url: 'stop/',
       success: function() {
+        // Result appended
+        $(".command-output").append('<p class="command-success">OK: INSTRUMENT AGENT STOPPED.</p>');
+
         $('#stop, .get_capabilities').hide();
         stop_btn.prop('disabled', false);
         stop_btn.prop('value', 'Stop Instrument Agent');
@@ -395,7 +407,6 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
           window.cap = resp;
           
           if (!_.isEmpty(resp.data.agent_params)) {
-              // var disabled = !_.findWhere(resp.data.original, {name: 'set_agent'}) ? true : false;
               new IONUX.Views.AgentParams({
                 model: new IONUX.Models.AgentParams(resp.data.agent_params, {schema: resp.data.agent_schema})}).render().el;
             };
