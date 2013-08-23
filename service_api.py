@@ -839,6 +839,8 @@ class ServiceApi(object):
                 if len(param['schema'].keys()):
                     resource_param_names.append(param['name'])
                     resource_schema.update({ param['name']: _to_form_schema(param['schema']['value']['type'], param['schema']['visibility'], None)})
+                else:
+                    print 'MISSING RESOURCE SCHEMA: ', param
         
         if agent_param_names:
             agent_params = service_gateway_agent_request(instrument_device_id, 'get_agent', params={'params': agent_param_names})
