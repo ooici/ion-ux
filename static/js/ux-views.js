@@ -116,6 +116,7 @@ IONUX.Views.Search = Backbone.View.extend({
   },
   navigate_to_search_results: function() {
     var search_term = this.$el.find('#sidebar-search').val();
+    search_term = search_term.replace(/(type=|type =)/ig, 'type_=');
     IONUX.ROUTER.navigate('/search/?'+ encodeURI(search_term), {trigger:true});
   },
   advanced_search: function(e){
