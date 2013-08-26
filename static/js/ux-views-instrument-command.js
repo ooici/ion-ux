@@ -377,9 +377,11 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
       url: url,
       dataType: 'json',
       success: function(resp){
+        console.log('cmd resp', resp);
+        console.log('result', resp.data.result, typeof resp.data.result);
         var result_tmpl = '<p class="command-success">OK: '+command+' was successful.'
-        // if (resp.data.result !== null) result_tmpl += '<br/>'+JSON.stringify(resp.data.result);
-        if (resp.data.result !== null) result_tmpl += '<br/>'+resp.data.result;
+        if (resp.data.result !== null) result_tmpl += '<br/>'+JSON.stringify(resp.data.result);
+        // if (resp.data.result !== null) result_tmpl += '<br/>'+resp.data.result;
         $(".command-output").append(result_tmpl);
         self.get_capabilities();
       },
