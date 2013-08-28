@@ -377,7 +377,10 @@ IONUX.Views.EditResource = Backbone.View.extend({
     // HACK HACK to fix up embedded object spacing
     this.$('.bbf-object').parent().prev('label').css({float:'none'});
   },
-  submit_form: function(){
+  submit_form: function(e){
+    var target = $(e.target);
+    target.prop("disabled", true);
+    target.text(" Saving... ");
     var self = this;
     this.form.commit();
     // unset values used by IONUX.Models.EditResourceModel
@@ -389,6 +392,8 @@ IONUX.Views.EditResource = Backbone.View.extend({
     this.model.save().done(function(){
       IONUX.ROUTER.navigate(self.base_url, {trigger:true});
       window.scrollTo(0,0); // scroll to top
+      target.prop('disabled', false);
+      target.text("Save");
     });
   },
   cancel: function(){
