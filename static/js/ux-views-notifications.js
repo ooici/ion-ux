@@ -22,7 +22,7 @@ IONUX.Notifications = [
   },
   {
     label: 'Agent operational state change', 
-    event_type: 'Agent operational state change',
+    event_type: 'ResourceAgentStateEvent',
     desc: 'Agent operational state change'
   },
   {
@@ -59,7 +59,7 @@ IONUX.Notifications = [
   },
   {
     label: 'Status alert/change', 
-    event_type: 'DeviceStatusEvent',
+    event_type: 'DeviceStatusAlertEvent',
     desc: 'A status alert has been issued or status has recovered.'
   },
   {
