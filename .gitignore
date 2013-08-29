@@ -7,3 +7,4 @@ venv/*
 .pydevproject
 .DS_Store
 ion-ux.log
+.idea/*
