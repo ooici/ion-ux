@@ -245,7 +245,7 @@ class ServiceApi(object):
         # /static/js/ux-editform.js for current implementation.
 
         for k, v in resource_obj.iteritems():
-            if isinstance(v, unicode):
+            if isinstance(v, unicode) or isinstance(v, str):
                 if v.startswith('{'):
                     try:
                         resource_obj.update({k: json.loads(str(v))})
@@ -663,6 +663,13 @@ class ServiceApi(object):
                 params['instrument_agent_id'] = resource_id
 
             prepare = service_gateway_get('instrument_management', 'prepare_instrument_agent_support', params=params)
+
+        elif resource_type == "Deployment":
+            params = {}
+            if resource_id:
+                params['deployment_id'] = resource_id
+
+            prepare = service_gateway_get('observatory_management', 'prepare_deployment_support', params=params)
 
         elif resource_type == "UserInfo":
             params = {}
