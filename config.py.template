@@ -57,3 +57,6 @@ else:
 LOGGING_LEVEL = logging.DEBUG
 LOGGING_MAX_SIZE_MB = 20
 LOGGING_FILE_NAME = 'ion-ux.log'
+
+# Maximum number of search results
+MAX_SEARCH_RESULTS = 100
