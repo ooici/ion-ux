@@ -245,7 +245,7 @@ class ServiceApi(object):
         # /static/js/ux-editform.js for current implementation.
 
         for k, v in resource_obj.iteritems():
-            if isinstance(v, unicode):
+            if isinstance(v, unicode) or isinstance(v, str):
                 if v.startswith('{'):
                     try:
                         resource_obj.update({k: json.loads(str(v))})
