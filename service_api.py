@@ -771,16 +771,18 @@ class ServiceApi(object):
     @staticmethod
     def instrument_agent_start(instrument_device_id):
         instrument_agent_instance = service_gateway_get('instrument_management', 'find_instrument_agent_instance_by_instrument_device', params={'instrument_device_id': instrument_device_id})
+        # Todo: Handle condition where no agent is found gracefully. Next line will blow up otherwise
         instrument_agent_instance_id = instrument_agent_instance['_id']
-        agent_request = service_gateway_get('instrument_management', 'start_instrument_agent_instance', params={'instrument_agent_instance_id': str(instrument_agent_instance_id)})
+        agent_request = service_gateway_get('agent_management', 'start_agent_instance', params={'agent_instance_id': str(instrument_agent_instance_id)})
         return agent_request
 
     @staticmethod
     def instrument_agent_stop(instrument_device_id):
         instrument_agent_instance = service_gateway_get('instrument_management', 'find_instrument_agent_instance_by_instrument_device', params={'instrument_device_id': instrument_device_id})
+        # Todo: Handle condition where no agent is found gracefully. Next line will blow up otherwise
         instrument_agent_instance_id = instrument_agent_instance['_id']
         ServiceApi.reset_driver(instrument_device_id)
-        agent_request = service_gateway_get('instrument_management', 'stop_instrument_agent_instance', params={'instrument_agent_instance_id': str(instrument_agent_instance_id)})
+        agent_request = service_gateway_get('agent_management', 'stop_agent_instance', params={'agent_instance_id': str(instrument_agent_instance_id)})
         return agent_request
     
     # Used to ensure that driver is reset prior to an agent being stopped.
@@ -938,12 +940,12 @@ class ServiceApi(object):
 
     @staticmethod
     def platform_agent_start(platform_agent_instance_id):
-        agent_request = service_gateway_get('instrument_management', 'start_platform_agent_instance', params={'platform_agent_instance_id': platform_agent_instance_id})
+        agent_request = service_gateway_get('agent_management', 'start_agent_instance', params={'agent_instance_id': platform_agent_instance_id})
         return agent_request
 
     @staticmethod
     def platform_agent_stop(platform_agent_instance_id):
-        agent_request = service_gateway_get('instrument_management', 'stop_platform_agent_instance', params={'platform_agent_instance_id': platform_agent_instance_id})
+        agent_request = service_gateway_get('agent_management', 'stop_agent_instance', params={'agent_instance_id': platform_agent_instance_id})
 
         return agent_request
 
