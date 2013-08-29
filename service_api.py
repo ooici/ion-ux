@@ -138,7 +138,7 @@ class ServiceApi(object):
 
             query = " OR ".join(queries)
 
-        url = build_get_request(SERVICE_GATEWAY_BASE_URL, 'discovery', 'parse', params={'search_request':query, 'id_only':False})
+        url = build_get_request(SERVICE_GATEWAY_BASE_URL, 'discovery', 'parse', params={'search_request': query, 'id_only': False})
         resp = requests.get(url)
         search_json = json.loads(resp.content)
         if search_json['data'].has_key('GatewayResponse'):
@@ -156,27 +156,34 @@ class ServiceApi(object):
 
     @staticmethod
     def adv_search(geospatial_bounds, vertical_bounds, temporal_bounds, search_criteria):
-        post_data = { 'query': {},
-                      'and': [],
-                      'or': [] }
-
+        post_data = {'query': {},
+                     'and': [],
+                     'or': []}
         queries = []
+        max_search_limit = config.MAX_SEARCH_RESULTS if hasattr(config, 'MAX_SEARCH_RESULTS') else 100
 
         if geospatial_bounds and all(geospatial_bounds.itervalues()):
-            queries.append({'bottom_right': [float(geospatial_bounds['east']), float(geospatial_bounds['south'])],
-                                'top_left': [float(geospatial_bounds['west']), float(geospatial_bounds['north'])],
-                                   'field': 'geospatial_point_center',
-                                   'index': 'resources_index'})
+            queries.append({'bottom_right': [float(geospatial_bounds['east']),
+                                             float(geospatial_bounds['south'])],
+                            'top_left': [float(geospatial_bounds['west']),
+                                         float(geospatial_bounds['north'])],
+                            'field': 'geospatial_point_center',
+                            'index': 'resources_index',
+                            'limit': max_search_limit})
 
         if vertical_bounds and all(vertical_bounds.itervalues()):
-            queries.append({'vertical_bounds': {'from': float(vertical_bounds['lower']), 'to': float(vertical_bounds['upper'])},
+            queries.append({'vertical_bounds': {'from': float(vertical_bounds['lower']),
+                                                'to': float(vertical_bounds['upper'])},
                             'field': 'geospatial_bounds',
-                            'index': 'resources_index'})
+                            'index': 'resources_index',
+                            'limit': max_search_limit})
 
         if temporal_bounds and all(temporal_bounds.itervalues()):
-            queries.append({'time': {'from': temporal_bounds['from'], 'to': temporal_bounds['to']},
+            queries.append({'time': {'from': temporal_bounds['from'],
+                                     'to': temporal_bounds['to']},
                             'field': 'ts_created',
-                            'index': 'resources_index'})
+                            'index': 'resources_index',
+                            'limit': max_search_limit})
 
         if search_criteria:
             for item in search_criteria:
@@ -189,16 +196,22 @@ class ServiceApi(object):
 
                 if item[1].lower() == "contains":
                     q['match'] = v
+                    q['limit'] = max_search_limit
                 elif item[1].lower() == "starts with":
                     q['value'] = "{0}*".format(v)
+                    q['limit'] = max_search_limit
                 elif item[1].lower() == "ends with":
                     q['value'] = "*{0}".format(v)
+                    q['limit'] = max_search_limit
                 elif item[1].lower() == "like":
                     q['fuzzy'] = v
+                    q['limit'] = max_search_limit
                 elif item[1].lower() == "matches":
                     q['value'] = v
+                    q['limit'] = max_search_limit
                 else:
                     q['match'] = v       # anything we didn't get
+                    q['limit'] = max_search_limit
 
                 queries.append(q)
 
