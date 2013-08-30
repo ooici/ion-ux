@@ -268,14 +268,14 @@
             data_series_overview = _dt;
 
             // Remove series that were marked visible == false. probably string content
-            remove_extra_hc_data(_dt);
+            // remove_unchartable_hc_data(_dt);
 
             // If no chart exists, create one
             if(chart) {
                 drawChart(false, mergeAndSortHcData(data_series_overview, data_series_hires, data_series_rt));
             }
             else{
-                drawChart(true, data_series_overview);
+                drawChart(true, mergeAndSortHcData(data_series_overview, null, null));
                 // Create the UI at this point. Now that we have the data
                 initChartUi();
             }
@@ -339,7 +339,7 @@
         return this.push.apply(this, rest);
     };
 
-    function remove_extra_hc_data(_hc_data) {
+    function remove_unchartable_hc_data(_hc_data) {
         for (var i = 0; i<_hc_data.length; i++) {
             if (_hc_data[i]['visible'] == false) {
                 _hc_data.remove(i);
@@ -374,31 +374,35 @@
         for (var i = 0; i<_hc_data.length; i++) {
 
             // Merge overview and hi-res. Before concatenating make sure the arrays match.
-            tempIdx = -1;
-            for (var j = 0; j < hr_data.length; j++) {
-                tempCount = (i + j) % hr_data.length;
-                if(_hc_data[i]["name"] == hr_data[tempCount]["name"]) {
-                    tempIdx = tempCount;
-                    break;
+            if (hr_data != null) {
+                tempIdx = -1;
+                for (var j = 0; j < hr_data.length; j++) {
+                    tempCount = (i + j) % hr_data.length;
+                    if(_hc_data[i]["name"] == hr_data[tempCount]["name"]) {
+                        tempIdx = tempCount;
+                        break;
+                    }
                 }
-            }
 
-            if (tempIdx >= 0) {
-                _hc_data[i]["data"].push.apply(_hc_data[i]["data"], hr_data[tempIdx]["data"]);
+                if (tempIdx >= 0) {
+                    _hc_data[i]["data"].push.apply(_hc_data[i]["data"], hr_data[tempIdx]["data"]);
+                }
             }
 
             // Similarly merge real-time
-            tempIdx = -1;
-            for (var j = 0; j < rt_data.length; j++) {
-                tempCount = (i + j) % rt_data.length;
-                if(_hc_data[i]["name"] == rt_data[tempCount]["name"]) {
-                    tempIdx = tempCount;
-                    break;
+            if(rt_data != null) {
+                tempIdx = -1;
+                for (var j = 0; j < rt_data.length; j++) {
+                    tempCount = (i + j) % rt_data.length;
+                    if(_hc_data[i]["name"] == rt_data[tempCount]["name"]) {
+                        tempIdx = tempCount;
+                        break;
+                    }
                 }
-            }
 
-            if (tempIdx >= 0) {
-                _hc_data[i]["data"].push.apply(_hc_data[i]["data"], rt_data[tempIdx]["data"]);
+                if (tempIdx >= 0) {
+                    _hc_data[i]["data"].push.apply(_hc_data[i]["data"], rt_data[tempIdx]["data"]);
+                }
             }
         }
 
@@ -425,6 +429,8 @@
 
     // This function is supposed to take care of a few cases. It draws the chart for the first time (overview) and then
     // also handles when the high-res updates are merged with the overview.
+
+    // *** THIS FUNCTION WILL MODIFY THE ORIGINAL DATA. PASS ONLY COPIES ***
     function drawChart(_first_draw_flag, _data) {
 
         // Occasionally an empty data set slips in
@@ -441,6 +447,10 @@
             drawTable(dataTable_overview);
             return;
         }
+
+        // ** Big Assumption **: Since we are working on a copy of the data (returned by mergeAndSortHcData)
+        // its ok to modify it and strip all strings from it
+        remove_unchartable_hc_data(_data);
 
         // Create the chart if the call is being called for the first time
         if (_first_draw_flag) {
@@ -746,14 +756,14 @@
         }
 
         // If the returned data series is empty .. do nothing
-        if ( typeof rt_hc_data == "undefined" || rt_hc_data == null) return;
+        if ( typeof rt_hc_data == "undefined" || rt_hc_data == null || rt_hc_data.length == 0) return;
         if (rt_hc_data[0]["data"].length < 1) return;
 
         // replace names with display names
         use_display_names_in_data(rt_hc_data);
 
         // Remove series that were marked visible == false. probably string content
-        remove_extra_hc_data(rt_hc_data);
+        //remove_unchartable_hc_data(rt_hc_data);
 
         // Collect all the real-time data in a separate series. Append new data
         if (data_series_rt.length > 0) {
