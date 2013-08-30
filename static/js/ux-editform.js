@@ -92,6 +92,7 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
   },
 
   toJSON: function() {
+    
     var attrs = _.clone(this.attributes);
 
     // scrape out any associations
@@ -114,7 +115,7 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
         } catch(err) { } // silent continue and let old value fall through
       }
       // turn list of stringified objects back into objects
-      else if (_.isArray(v) && _.every(v, function(vv) { return _.isString(vv) && vv.substring(0) == "{" })) {
+      else if (_.isArray(v) && _.every(v, function(vv) { return _.isString(vv) && vv.charAt(0) == "{" })) {
         try {
           resource_trans[k] = _.map(v, JSON.parse);
         } catch(err) { } // silent continue and let old value fall through
@@ -122,7 +123,7 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
         resource_trans[k] = v;
       }
     };
-
+    
     // Original implementation left for reference
     // resource = _.object(_.map(resource, function(v, k) {
     //   // turn stringified single object back into json object
@@ -382,12 +383,13 @@ IONUX.Views.EditResource = Backbone.View.extend({
     target.prop("disabled", true);
     target.text(" Saving... ");
     var self = this;
+
     this.form.commit();
+
     // unset values used by IONUX.Models.EditResourceModel
     // to dynmically create schema and retrieve resource values.
     this.model.unset('resource_id');
     this.model.unset('resource_type');
-    
     
     this.model.save().done(function(){
       IONUX.ROUTER.navigate(self.base_url, {trigger:true});
