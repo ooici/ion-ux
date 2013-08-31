@@ -694,7 +694,7 @@
         data_series_rt = [];
         // In case the page was refreshed, check to see if a query token exists and call cleanup on it
         if (rt_query_token) {
-            chartCleanup();
+            stopRealtimeView();
         }
 
         // Init the realtime queues and pipeline on the container
@@ -728,6 +728,7 @@
                 success: handleRealtimeQueryResponse,  // Has to correspond with the server side response
                 error: function(jqXHR, status, err_type) {
                     console.debug("Error retrieving data for realtime updates: " + jqXHR.responseText);
+                    stopRealtimeView();
                 }
             });
         }, 10000);
@@ -813,7 +814,7 @@
 
         if ("rt_query_token" in sessionStorage) {
             rt_query_token = sessionStorage["rt_query_token"];
-            chartCleanup();
+            stopRealtimeView();
         }
 
         // If there are more parameters thn the graph can handle, do not enable realtime view
@@ -836,9 +837,22 @@
         chart_spinner.stop();
 
         // call terminate on the container side too
-        if (rt_query_token) {
-            chartCleanup();
+        // terminate the realtime queues on the server side
+        if (rt_query_token && rt_query_token != null && rt_query_token != "null") {
+
+            console.debug ("Terminating queues associated with token : " + rt_query_token);
+            jQuery.ajax ({
+                url: container_server + "/visualization/terminate_realtime_visualization_data/?query_token=" + rt_query_token,
+                dataType: 'json',
+                success: function(response) {
+                    console.debug("Real-time Termination acknowledged:" + response);
+                },
+                async: false
+            });
+
+            rt_query_token = sessionStorage["rt_query_token"] = null;
         }
+        console.debug ("Done");
     }
 
 
@@ -953,23 +967,7 @@
     }
 
     function chartCleanup() {
-
-        // terminate the realtime queues on the server side
-        if (rt_query_token && rt_query_token != null && rt_query_token != "null") {
-
-            console.debug ("Terminating queues associated with token : " + rt_query_token);
-            jQuery.ajax ({
-                url: container_server + "/visualization/terminate_realtime_visualization_data/?query_token=" + rt_query_token,
-                dataType: 'json',
-                success: function(response) {
-                    console.debug("Real-time Termination acknowledged:" + response);
-                },
-                async: false
-            });
-
-            rt_query_token = sessionStorage["rt_query_token"] = null;
-        }
-        console.debug ("Done");
+        stopRealtimeView();
     }
 
 
