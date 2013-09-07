@@ -10,6 +10,11 @@ IONUX.Views.AttributeGroupDynamic = Backbone.View.extend({
 
   initialize: function(){
     var data_path = this.$el.data('path');
+    
+    // hack until UI database updated
+    if (data_path == 'unknown_1725 Display Settings') {
+      data_path = 'resource.variables'
+    };
     var data_obj = get_descendant_properties(window.MODEL_DATA, data_path);
     this.render_attributes(data_obj);
   },
@@ -17,6 +22,7 @@ IONUX.Views.AttributeGroupDynamic = Backbone.View.extend({
   render: function(k,v) {
     this.$el.append(this.template({label:k,text_short:v}));
   },
+
   render_attributes: function(data_obj){
     _.each(data_obj, function(v,k) {
       if (_.isObject(v)) {
