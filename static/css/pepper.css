@@ -1076,6 +1076,11 @@ fieldset {
   margin-top: 20px;
 }
 
+/* backbone-form "List" textarea */
+li div.pull-left {
+  width: 100%;
+}
+
 .controls input, .controls textarea {
   padding: 5px;
   color: #ccc;

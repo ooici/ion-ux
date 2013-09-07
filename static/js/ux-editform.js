@@ -45,7 +45,17 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
         parsed[k] = _.map(v, JSON.stringify);
       } else {
         parsed[k] = v; 
-      }
+      };
+      
+      
+      // Change user variable booleans to strings for editing
+      if (k == 'variables') {
+        _.each(data[k], function(v, k) {
+          if (v['value'] === false) v['value'] = 'false';
+          if (v['value'] === true) v['value'] = 'true';
+        });
+      };
+      
     };
     
     // Original implementation left for reference
@@ -122,6 +132,15 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
       } else {
         resource_trans[k] = v;
       }
+      
+      if (k == 'variables') {
+        console.log('variables', resource);
+        _.each(resource[k], function(v, k) {
+          if (v['value'] == 'false') v['value'] = false;
+          if (v['value'] == 'true') v['value'] = true;
+        });
+      };
+      
     };
     
     // Original implementation left for reference
@@ -143,7 +162,6 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
     // }));
     
     // ----------------------------------------------
-    
     
     var self = this;
     var omit_keys = _.filter(keys, function(k) {
@@ -596,5 +614,3 @@ Backbone.Form.editors.IonObject = Backbone.Form.editors.List.IonObject.extend({
     }
   }
 });
-
-

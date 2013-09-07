@@ -310,7 +310,7 @@ class ServiceApi(object):
             for k,v in resource_assocs.iteritems():
                 curval = assocs[k]['associated_resources']
                 #print k, v, curval
-
+                
                 if assocs[k]['multiple_associations']:
                     # get a list of current assocs
                     cur_assocs = set(map(get_assocd_id, curval))
@@ -335,6 +335,7 @@ class ServiceApi(object):
 
                 else:
                     # single
+
                     if len(curval) == 1:
                         curid = get_assocd_id(curval[0])
 
@@ -813,7 +814,7 @@ class ServiceApi(object):
         def _to_form_schema(schema_type=None, schema_visibility=None, schema_display_name=None):
             if schema_type:
                 if schema_type in ['list', 'tuple']:
-                    item = {'type': 'List', 'listType': 'TextArea'}
+                    item = {'type': 'List', 'itemType': 'TextArea', 'editorClass': 'list-textarea'}
                 elif schema_type == 'bool':
                     item = {'type': 'Checkbox'}
                 elif schema_type in ['int', 'float']:
@@ -825,7 +826,6 @@ class ServiceApi(object):
                 # TEMP: catchall
                 else:
                     item = {'type': 'Text'}
-                    
                     
             else:
                 item = {'type': 'Text'}
