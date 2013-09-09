@@ -10,6 +10,7 @@ IONUX.Views.AttributeGroupDynamic = Backbone.View.extend({
 
   initialize: function(){
     var data_path = this.$el.data('path');
+    if (data_path.substring(0,12) == 'unknown_0594') data_path = 'resource.variables';
     var data_obj = get_descendant_properties(window.MODEL_DATA, data_path);
     this.render_attributes(data_obj);
   },
