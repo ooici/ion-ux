@@ -347,7 +347,7 @@ class ServiceApi(object):
                             if v:
                                 reqs.append(mod_assoc(assocs[k]['assign_request'], v))
                     else:
-                        assert len(curval) == 0, "curval is %s" % curval
+                        # assert len(curval) == 0, "curval is %s" % curval
 
                         if v:
                             # assoc
