@@ -3,8 +3,8 @@ IONUX.Views.PlatformCommandFacepage = Backbone.View.extend({
   template: _.template($("#platform-command-facepage-tmpl").html()),
   command_template: _.template($('#instrument-command-tmpl').html()),
   events: {
-    'click #start-instrument-agent-instance': 'start_agent',
-    'click #stop-instrument-agent-instance': 'stop_agent',
+    'click #start': 'start_agent',
+    'click #stop': 'stop_agent',
     // 'click .issue_command': 'issue_command',
     'click .get_capabilities': 'get_capabilities',
     'click .execute-command': 'execute_command',
@@ -18,16 +18,20 @@ IONUX.Views.PlatformCommandFacepage = Backbone.View.extend({
   },
 
   render: function(){
+    console.log('platform command render');
     this.$el.prepend(this.template(this.model.toJSON())).show();
-    var agent_process_id = this.model.get('agent_instance')['agent_process_id'];
-    if (agent_process_id) {
-        $("#start-instrument-agent-instance").hide();
-        $("#stop-instrument-agent-instance, .instrument-commands").show();
-        this.get_capabilities();
-    };
+    this.get_capabilities();
     
-    $('#start-instrument-agent-instance').attr('value', 'Start Platform Agent');
-    $('#stop-instrument-agent-instance').attr('value', 'Stop Platform Agent');
+    // var agent_process_id = this.model.get('agent_instance')['agent_process_id'];
+    // if (agent_process_id) {
+    //     $("#start-instrument-agent-instance").hide();
+    //     $("#stop-instrument-agent-instance, .instrument-commands").show();
+    //     this.get_capabilities();
+    // };
+    
+    // $('#start').attr('value', 'Start Platform Agent');
+    // $('#stop').attr('value', 'Stop Platform Agent');
+
     return this;
   },
   
@@ -97,12 +101,17 @@ IONUX.Views.PlatformCommandFacepage = Backbone.View.extend({
       $.ajax({
         url: 'get_capabilities?cap_type=abc123',
         dataType: 'json',
+        global: false,
         success: function(resp){
           console.log('get_capabilities', resp);
+          $('#stop, .get_capabilities').show();
+          $('#start').hide();
           self.render_commands(resp.data.commands);
         },
         error: function(resp) {
           console.log('Error: ', resp);
+          $('#start').show()
+          $('#stop').hide();
         }
       });
       
@@ -135,7 +144,7 @@ IONUX.Views.PlatformCommandFacepage = Backbone.View.extend({
         stop_btn.prop('value', 'Stop Platform Agent');
         stop_btn.hide();
         
-        $('#start-instrument-agent-instance').show();
+        $('#start').show();
         $('#cmds tbody').empty();
         $('.instrument-commands, .get_capabilities').hide();
       },
