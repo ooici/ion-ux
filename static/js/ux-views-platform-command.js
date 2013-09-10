@@ -11,30 +11,59 @@ IONUX.Views.PlatformCommandFacepage = Backbone.View.extend({
   },
 
   initialize: function(){
-    _.bindAll(this, "render", "start_agent" );
+    _.bindAll(this, "render", "start_agent", "get_platform_state" );
     this.model.bind("change", this.render);
     
     // console.log($('#start-instrument-agent-instance'));
   },
 
   render: function(){
-    console.log('platform command render');
     this.$el.prepend(this.template(this.model.toJSON())).show();
-    this.get_capabilities();
-    
-    // var agent_process_id = this.model.get('agent_instance')['agent_process_id'];
-    // if (agent_process_id) {
-    //     $("#start-instrument-agent-instance").hide();
-    //     $("#stop-instrument-agent-instance, .instrument-commands").show();
-    //     this.get_capabilities();
-    // };
-    
-    // $('#start').attr('value', 'Start Platform Agent');
-    // $('#stop').attr('value', 'Stop Platform Agent');
-
+    this.get_platform_state();
     return this;
   },
   
+  
+  get_platform_state: function() {
+    console.log('get_platform_state');
+
+    var self = this;
+    
+    $('#platform_status').show();
+    $('#start, #stop').hide();
+    
+    $.ajax({
+      url: 'get_platform_agent_state',
+      global: false,
+      dataType: 'json',
+      success: function(resp) {
+        console.log("get_platform_agent_state SUCCESS:", resp);
+        
+        $('#platform_status').show();
+        
+        if (resp.data == 'PLATFORM_AGENT_STATE_LAUNCHING') {
+          console.log('get_platform_agent_state LAUNCHING');
+          $('#platform_status').prop('value','Platform agent is launching...');
+          self.set_platform_polling();
+        } else { 
+          console.log('get_platform_agent_state NOT LAUNCHING');
+          $('#platform_status').prop('value','Getting platform agent status...');
+          self.get_capabilities();
+        };
+      },
+      error: function(resp) {
+        console.log("get_platform_agent_state ERROR:", JSON.parse(resp.responseText));
+        
+        $('#start').show()
+        $('#stop, #platform_status').hide();
+      }
+    });
+  },
+  
+  set_platform_polling: function() {
+    console.log('set_platform_polling');
+    setTimeout(this.get_platform_agent_state, 5000);
+  },
   
   execute_command: function(evt){
     evt.preventDefault();
@@ -77,6 +106,7 @@ IONUX.Views.PlatformCommandFacepage = Backbone.View.extend({
     start_btn.prop('disabled', true);
     start_btn.prop('value', 'Starting Platform Agent...');
     var self = this;
+
     $.ajax({
         url: 'start/'+self.model.get('agent_instance')['_id']+'/',
         success: function() {
@@ -86,8 +116,11 @@ IONUX.Views.PlatformCommandFacepage = Backbone.View.extend({
           start_btn.prop('disabled', false);
           start_btn.prop('value', 'Start Platform Agent');
           start_btn.hide();
-          $('#stop-instrument-agent-instance, .instrument-commands, .get_capabilities').show();
-          self.get_capabilities();
+          
+          // $('#platform_status, .get_capabilities').show();
+          // $('#stop, .instrument-commands, .get_capabilities').show();
+          
+          self.get_platform_state();
         },
         error: function() {
         }
@@ -105,12 +138,12 @@ IONUX.Views.PlatformCommandFacepage = Backbone.View.extend({
         success: function(resp){
           console.log('get_capabilities', resp);
           $('#stop, .get_capabilities').show();
-          $('#start').hide();
+          $('#start, #platform_status').hide();
           self.render_commands(resp.data.commands);
         },
         error: function(resp) {
           console.log('Error: ', resp);
-          $('#start').show()
+          $('#start').show();
           $('#stop').hide();
         }
       });

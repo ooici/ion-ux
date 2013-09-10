@@ -32,6 +32,14 @@ AGENT_REQUEST_TEMPLATE = {
 class ServiceApi(object):
 
     @staticmethod
+    def platform_agent_state(platform_device_id, agent_op):
+        # agent_op = command
+        # params = {"command": {"type_": "AgentCommand", "command": 'placeholder'}}'
+        params = None
+        agent_response = service_gateway_agent_request(platform_device_id, agent_op, params)
+        return agent_response
+
+    @staticmethod
     def get_sites_status(resource_ids):
         params = {'parent_resource_ids': resource_ids, 'include_status': True}
         req = service_gateway_post('observatory_management', 'get_sites_devices_status', raw_return=True, params=params)

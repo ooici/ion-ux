@@ -458,6 +458,8 @@ def instrument_command(device_type, instrument_device_id, agent_command, cap_typ
             command_response = ServiceApi.instrument_agent_get_capabilities(instrument_device_id)
         elif agent_command == 'get_resource':
             command_response = ServiceApi.get_resource(instrument_device_id)
+        elif agent_command == 'get_platform_agent_state':
+            command_response = ServiceApi.platform_agent_state(instrument_device_id, 'get_agent_state')
     return render_json_response(command_response)
 
 
