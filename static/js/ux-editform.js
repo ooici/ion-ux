@@ -366,7 +366,7 @@ IONUX.Views.EditResource = Backbone.View.extend({
     'click #save-resource': 'submit_form',
     'click #cancel-edit': 'cancel'
   },
-  initialize: function(){
+  initialize: function() {
     this.init_time = new Date().getTime();
     _.bindAll(this);
     this.form = new Backbone.Form({model: this.model}).render();
@@ -401,9 +401,20 @@ IONUX.Views.EditResource = Backbone.View.extend({
     target.prop("disabled", true);
     target.text(" Saving... ");
     var self = this;
-
+    
     this.form.commit();
-
+    
+    // This should possible go in the model, but leaving here for now.
+    if (this.model.get('type_') == 'UserInfo') {
+      var ui_theme = _.findWhere(this.model.get('variables'), {name: 'ui_theme_dark'});
+      if (ui_theme.value == 'true') {
+        IONUX.SESSION_MODEL.set('ui_theme_dark', true);
+      } else {
+        IONUX.SESSION_MODEL.set('ui_theme_dark', false);
+      };
+      IONUX.set_ui_theme();
+    };
+    
     // unset values used by IONUX.Models.EditResourceModel
     // to dynmically create schema and retrieve resource values.
     this.model.unset('resource_id');

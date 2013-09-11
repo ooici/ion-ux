@@ -598,7 +598,6 @@ def ui_navigation():
 
 @app.route('/signon/', methods=['GET'])
 def signon():
-
     def nav():
         if 'login_redir' in session:
             return redirect(session.pop('login_redir'))
@@ -606,6 +605,7 @@ def signon():
         return redirect('/')
 
     user_name = request.args.get('user')
+    
     if user_name:
         if not PRODUCTION:
             ServiceApi.signon_user_testmode(user_name)
@@ -734,7 +734,14 @@ def session_info():
 
     if session.has_key('user_id'):
         roles = ServiceApi.get_roles_by_actor_id(session['actor_id'])
-        session_values.update({'name': session['name'], 'user_id': session['user_id'], 'actor_id': session['actor_id'], 'roles': roles, 'is_registered': session['is_registered'], 'is_logged_in': True})
+        session_values.update({'name': session['name'],
+                               'user_id': session['user_id'],
+                               'actor_id': session['actor_id'],
+                               'roles': roles, 
+                               'is_registered': session['is_registered'],
+                               'is_logged_in': True,
+                               'ui_theme_dark': session['ui_theme_dark']})
+    
     return jsonify(data=session_values)
 
 

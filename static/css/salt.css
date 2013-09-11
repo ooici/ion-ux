@@ -276,8 +276,10 @@ ul.map-ul {
   font-size: 13px;
 }
 
-.map-ul > li:hover {
+.map-ul > li:hover,
+.map-ul > li:hover a {
   background: #034971;
+  color: #fff;
 }
 
 .map-ul > li:hover:before {

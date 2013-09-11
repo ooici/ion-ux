@@ -251,7 +251,14 @@ class ServiceApi(object):
         # backbone-forms (booleans and user-defined key-values, such as
         # custom_attributes). See ResourceTypeSchema() below, or 
         # /static/js/ux-editform.js for current implementation.
-
+        
+        
+        # reset session variable for IONUX.SESSION_MODEL on the client.
+        if resource_type == 'UserInfo':
+          for variable in resource_obj['variables']:
+            if variable['name'] == 'ui_theme_dark':
+              session['ui_theme_dark'] = variable['value']
+        
         for k, v in resource_obj.iteritems():
             if isinstance(v, unicode) or isinstance(v, str):
                 if v.startswith('{'):
@@ -1002,12 +1009,21 @@ class ServiceApi(object):
         session['is_registered'] = is_registered
         
         user = service_gateway_get('identity_management', 'find_user_info_by_id', params={'actor_id': actor_id})
+        
+        
         user_id = user['_id'] if user.has_key('_id') else None
         name = user['name'] if user.has_key('name') else 'Unregistered'
         session['name'] = name
         session['user_id'] = user_id
-        
         session['roles'] = ServiceApi.get_roles_by_actor_id(actor_id)
+        
+         # ui_theme_dark = [variable['value'] for variable in user['variables'] if variable['name'] == 'ui_theme_dark']
+        ui_theme_dark = False
+        for variable in user['variables']:
+          if variable['name'] == 'ui_theme_dark':
+            ui_theme_dark = variable['value']
+        
+        session['ui_theme_dark'] = ui_theme_dark
         
     @staticmethod
     def signon_user_testmode(user_name):
@@ -1020,18 +1036,27 @@ class ServiceApi(object):
                 session['valid_until'] = str(int(time.time()) * 100000)
                 
                 user = service_gateway_get('identity_management', 'find_user_info_by_id', params={'actor_id': actor_id})
+                
+                user_id = None
+                is_registered = False
+                ui_theme_dark = False
+                
+                name = user['name'] if user.has_key('name') else 'Unregistered'
+
                 if user.has_key('_id'):
                     user_id = user['_id']
                     is_registered = True
-                else:
-                    user_id = None
-                    is_registered = False
-                name = user['name'] if user.has_key('name') else 'Unregistered'
+                    
+                    # ui_theme_dark = [variable['value'] for variable in user['variables'] if variable['name'] == 'ui_theme_dark']
+                    for variable in user['variables']:
+                      if variable['name'] == 'ui_theme_dark':
+                        ui_theme_dark = variable['value']
                 
                 session['user_id'] = user_id
                 session['name'] = name
                 session['is_registered'] = is_registered
                 session['roles'] = ServiceApi.get_roles_by_actor_id(actor_id)
+                session['ui_theme_dark'] = ui_theme_dark
 
                 return
 
