@@ -55,6 +55,7 @@ IONUX.Models.Session = Backbone.Model.extend({
         roles: [],
         ui_mode: 'PRODUCTION',
         is_polling: false,
+        ui_theme_dark: false,
     },
     url: '/session/',
     initialize: function() {

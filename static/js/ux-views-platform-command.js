@@ -33,7 +33,7 @@ IONUX.Views.PlatformCommandFacepage = Backbone.View.extend({
     $('#start, #stop').hide();
     
     $.ajax({
-      url: 'get_platform_agent_state',
+      url: 'get_platform_agent_state/',
       global: false,
       dataType: 'json',
       success: function(resp) {
@@ -62,7 +62,7 @@ IONUX.Views.PlatformCommandFacepage = Backbone.View.extend({
   
   set_platform_polling: function() {
     console.log('set_platform_polling');
-    setTimeout(this.get_platform_agent_state, 5000);
+    setTimeout(this.get_platform_state, 5000);
   },
   
   execute_command: function(evt){
