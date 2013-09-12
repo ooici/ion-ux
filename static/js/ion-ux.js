@@ -122,6 +122,12 @@ IONUX = {
       new IONUX.Views.Error({error_objs:error_obj,open_modal:open_modal, force_logout:force_logout}).render().el;
     });
   },
+  // Returns Org names with create privileges. Otherwise, it returns empty list
+  createRoles: function(){
+    return _.filter(_.keys(IONUX.SESSION_MODEL.get('roles')), function(r){
+             return _.size(IONUX.SESSION_MODEL.get('roles')[r]) > 1;
+    });
+  },
   is_logged_in: function(){
     return IONUX.SESSION_MODEL.get('is_logged_in');
   },

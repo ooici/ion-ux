@@ -1237,7 +1237,7 @@ IONUX.Views.CreateResourceView = Backbone.View.extend({
   },
   render: function() {
     var orgs = _.filter(_.pluck(IONUX.Dashboard.Orgs.models, 'attributes'), function(o) {
-      return _.contains(_.keys(IONUX.SESSION_MODEL.get('roles')), o.org_governance_name);
+      return _.contains(IONUX.createRoles(), o.org_governance_name);
     });
 
     $('body').append(this.$el);
