@@ -48,74 +48,130 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         "click table tbody tr":"table_row_click",
         "click th": "apply_sort_indicator"
     },
-
+    
     template: _.template($('#datatable-tmpl').html()),
     
-    apply_sort_indicator: function(e) {
-      // This method inserts an icon template to apply styles
-      // defined in the UX graphic design spec (asc/desc arrows 
-      // at the end of column name). Will re-examine pure 
-      // DataTables API/CSS as time permits.
+    initialize: function() {
+      _.bindAll(this);
+      this.render().el;
       
-      var asc_tmpl = '<span class="sort-indicator asc">&nbsp;</span>';
-      var desc_tmpl = '<span class="sort-indicator desc">&nbsp;</span>';
-      
-      this.$el.find('.sort-indicator').remove();
-      
-      if (this.$el.find('.sorting_asc').length) {
-        var th_elmt = this.$el.find('.sorting_asc');
-      } else {
-        var th_elmt = this.$el.find('.sorting_desc');
-      };
-      
-      // Check the class datatable
-      if (th_elmt.hasClass('sorting_asc')) {
-        th_elmt.append(asc_tmpl);
-      } else {
-        th_elmt.append(desc_tmpl);
-      };
-      
-      // Re-adjust column widths
-      this.datatable.fnAdjustColumnSizing()
+      var self = this;
+      $(window).resize(function(){
+         self.datatable.fnAdjustColumnSizing();
+      });
     },
     
-    initialize: function() {
-        this.render().el;
-        var self = this;
-        $(window).resize(function(){
-           self.datatable.fnAdjustColumnSizing();
-        });
-    },
     render: function() {
         this.$el.html(this.template());
-        var header_data = this.header_data();
-        var table_data = this.table_data(this.options.data);
+        this.datatable = this.$el.find('.datatable-container table').dataTable(this.table_opts());
+        
+        // Todo: wrap this in a function
         this.sort_order();
-        
-        var self = this;
-        this.datatable = this.$el.find(".datatable-container table").dataTable({
-            "sDom":"Rlfrtip",
-            "aaData":table_data,
-            "aoColumns":header_data,
-            "bInfo":false,
-            'bPaginate':false,
-            "sScrollY": "300px",
-            "sScrollYInner": "110%",
-            "bScrollCollapse": true,
-            "sScrollXInner": "100%",
-            // Add title to cells, better way to do this?
-            "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-              $('td', nRow).each(function() {
-                $(this).attr('title', $(this).text());
-              });
-            },
-        });
-        
         if (this.sort_order_array) this.datatable.fnSort(this.sort_order_array);
-        if (this.options.data.length == 0) this.$el.find(".dataTables_scrollBody").css("overflow", "hidden");
         this.apply_sort_indicator();
         
+        if (this.options.data.length == 0) this.$el.find(".dataTables_scrollBody").css("overflow", "hidden");
         return this;
+    },
+    
+    table_opts: function() {
+      var header_data = this.header_data();
+      var table_data = this.table_data(this.options.data);
+      var self = this;
+      
+      var options = {
+          "sDom":"Rlfrtip",
+          "aaData":table_data,
+          "aoColumns":header_data,
+          "bInfo":false,
+          'bPaginate':false,
+          "sScrollY": "300px",
+          "sScrollYInner": "110%",
+          "bScrollCollapse": true,
+          "sScrollXInner": "100%",
+          "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
+            $('td', nRow).each(function() {
+              if (self.paging_request_key) console.log(this);
+              $(this).attr('title', $(this).text()); // Add title to cells, better way to do this?
+            });
+          }
+      };
+      
+      var paging_request_key = this.get_paging_key();
+      
+      if (paging_request_key) {
+        
+        console.log('--------------------------------------');
+        console.log('RECENT EVENTS');
+        console.log('original data', MODEL_DATA.computed.recent_events);
+        
+        this.limit = table_data.length;
+        var paging_opts = window.MODEL_DATA.computed[paging_request_key + '_request'];
+        var paging_resource_params = _.pairs(paging_opts.request_parameters)[0];
+        
+        var url = '/paging/';
+        url += paging_opts.service_name + '/';
+        url += paging_opts.service_operation + '/';
+        url += '?resource_key=' + paging_resource_params[0] + '&resource_id=' + paging_resource_params[1];
+        
+        options['bPaginate'] = true;
+
+        // options['sPaginationType'] = 'two_button';
+        // options['sAjaxDataProp'] = 'data';
+        
+        options['bProcessing'] = true;
+        options['bServerSide'] = true;
+        options['sAjaxSource'] = url;        
+        options["fnServerData"] = function(sSource, aoData, fnCallback, oSettings) {
+          $.getJSON(sSource, aoData, function (json) { 
+              console.log('json', json);
+              console.log('oSettings', oSettings);
+              
+              var r = {'aaData': self.table_data(json.aaData)}
+              /* Do whatever additional processing you want on the callback, then tell DataTables */
+              // var td = self.table_data(json.data);
+              return fnCallback(r);
+              // return json.data;
+          });
+          // oSettings.jqXHR = $.ajax( {
+          //   dataType: 'json',
+          //   url: sSource,
+          //   data: aoData,
+          //   success: function(resp) {
+          //     console.log('aoData', aoData);
+          //     console.log('fetched data', resp);
+          //     var td = self.table_data(resp['data']);
+          //     console.log('preprocessed data', td);
+          //     // return self.table_data(td);
+          //     return fnCallback(td);
+          //   }
+          // } );
+        };
+        
+        // console.log(this.$el.data('path'), paging_opts, this.limit);
+        // console.log('url', url);
+        // console.log('paging_resource_params', paging_resource_params);
+        
+        // $.ajax({
+        //   dataType: 'json',
+        //   url: url,
+        //   success: function(resp){
+        //     console.log('resp', resp);
+        //   },
+        // });
+        
+
+      };
+      
+      return options
+    },
+    
+    get_paging_key: function() {
+      // For now we're just checking for recent_events_request but 
+      // in the future this will need to be defined in the UI database.
+      var data_path = this.$el.data('path').split('.');
+      if (_.contains(data_path, 'recent_events')) return 'recent_events';
+      return null;
     },
     
     sort_order: function() {
@@ -161,6 +217,34 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
       };
     },
     
+    apply_sort_indicator: function(e) {
+      // This method inserts an icon template to apply styles
+      // defined in the UX graphic design spec (asc/desc arrows 
+      // at the end of column name). Will re-examine pure 
+      // DataTables API/CSS as time permits.
+      
+      var asc_tmpl = '<span class="sort-indicator asc">&nbsp;</span>';
+      var desc_tmpl = '<span class="sort-indicator desc">&nbsp;</span>';
+      
+      this.$el.find('.sort-indicator').remove();
+      
+      if (this.$el.find('.sorting_asc').length) {
+        var th_elmt = this.$el.find('.sorting_asc');
+      } else {
+        var th_elmt = this.$el.find('.sorting_desc');
+      };
+      
+      // Check the class datatable
+      if (th_elmt.hasClass('sorting_asc')) {
+        th_elmt.append(asc_tmpl);
+      } else {
+        th_elmt.append(desc_tmpl);
+      };
+      
+      // Re-adjust column widths
+      this.datatable.fnAdjustColumnSizing()
+    },
+    
     _get_table_metadata: function(){
         var table_metadata_id = "TABLE_"+this.$el.attr("id");
         var table_metadata = window[table_metadata_id];
@@ -191,6 +275,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
     },
 
     table_data: function(data_objs){
+      // console.log('table_data data_objs', data_objs);
         var data = [];
         var table_metadata = this._get_table_metadata();
         var data_keys = _.map(table_metadata, function(arr){return arr[2];});
