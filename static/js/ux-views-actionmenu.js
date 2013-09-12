@@ -78,7 +78,7 @@ IONUX.Views.DashboardActions = IONUX.Views.ActionMenu.extend({
         this.interaction_items = INTERACTIONS_OBJECT.dashboard_interactions.slice(0); // ensure clone
         
         // Remove 'Create Resource' option is user is not signed-in.
-        if (!IONUX.is_logged_in()) 
+        if (!IONUX.is_logged_in() || _.isEmpty(IONUX.createRoles()))
           this.interaction_items.splice(this.interaction_items.indexOf('Create Resource'), 1);
         
         this.create_view_actionmenu();
