@@ -154,7 +154,7 @@ IONUX = {
       radius: 10,
       corners: 1,
       rotate: 0,
-      color: '#999',
+      color: '#ddd',
       speed: 1,
       trail: 60,
       shadow: false,
