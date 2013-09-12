@@ -276,8 +276,10 @@ ul.map-ul {
   font-size: 13px;
 }
 
-.map-ul > li:hover {
+.map-ul > li:hover,
+.map-ul > li:hover a {
   background: #034971;
+  color: #fff;
 }
 
 .map-ul > li:hover:before {
@@ -640,7 +642,8 @@ input#sidebar-search {
 }
 
 a.btn-black, a.btn-advanced-search  {
-  font-size:10px; font- weight:300; 
+  font-size:10px;
+  font-weight:300;
   letter-spacing:1px; 
   color: #333; 
   text-align:left; 
@@ -1113,7 +1116,6 @@ fieldset {
 
 #chart-placeholder {
   text-align: center;
-  padding: auto;
 }
 
 .checkbox-input label {
@@ -1126,7 +1128,6 @@ fieldset {
 
 #chart {
   border: none;
-  padding: none;
 }
 
 table.google-visualization-table-table {
@@ -2119,7 +2120,7 @@ ul.nav {
 */
 
 #2163993 {
-  background: cdcdcd;
+  background: #cdcdcd;
 }
 
 .table_ooi td {
@@ -2662,4 +2663,8 @@ input.textfield_geo{
 
 .list_ooi .list-item.no-data {
   color: #999;
+}
+
+.command-output {
+  word-wrap: break-word;
 }

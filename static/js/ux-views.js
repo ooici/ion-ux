@@ -10,17 +10,19 @@ IONUX.Views.AttributeGroupDynamic = Backbone.View.extend({
 
   initialize: function(){
     var data_path = this.$el.data('path');
-    
-    // hack until UI database updated
-    if (data_path == 'unknown_1725 Display Settings') {
-      data_path = 'resource.variables'
-    };
+
+    // temp hack until UI database updated.
+    if (data_path.substring(0,12) == 'unknown_0594') data_path = 'resource.variables';
+
     var data_obj = get_descendant_properties(window.MODEL_DATA, data_path);
     this.render_attributes(data_obj);
   },
 
   render: function(k,v) {
     this.$el.append(this.template({label:k,text_short:v}));
+    
+    // temp hack until UI database updated.
+    $('#2164145 h3:contains("Notification")').text('Variables');
   },
 
   render_attributes: function(data_obj){
@@ -1236,7 +1238,7 @@ IONUX.Views.CreateResourceView = Backbone.View.extend({
   },
   render: function() {
     var orgs = _.filter(_.pluck(IONUX.Dashboard.Orgs.models, 'attributes'), function(o) {
-      return _.contains(_.keys(IONUX.SESSION_MODEL.get('roles')), o.org_governance_name);
+      return _.contains(IONUX.createRoles(), o.org_governance_name);
     });
 
     $('body').append(this.$el);

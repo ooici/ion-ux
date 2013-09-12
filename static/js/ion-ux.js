@@ -9,7 +9,7 @@ IONUX = {
   init: function(){
     
     // HACK - temporarily disable salt.css on init;
-    $('.salt').prop('disabled', true);
+    // $('.salt').prop('disabled', true);
     
     var router = new IONUX.Router();
     IONUX.ROUTER = router;
@@ -59,6 +59,14 @@ IONUX = {
     IONUX.SESSION_MODEL = new IONUX.Models.Session();
     IONUX.SESSION_MODEL.fetch({
       success: function(resp) {
+        
+        
+        // if (IONUX.SESSION_MODEL.get('ui_theme_dark') == true) {
+        //   console.log('set dark theme');
+        // } else {
+        //   console.log('set light theme');
+        // };
+        
         new IONUX.Views.Topbar({model: IONUX.SESSION_MODEL}).render().el;
         new IONUX.Views.HelpMenu({model: IONUX.SESSION_MODEL}).render().el;
         new IONUX.Views.Search().render().el;
@@ -77,6 +85,10 @@ IONUX = {
         
         // Enable session polling for updated roles, possibly UI version changes.
         IONUX.SESSION_MODEL.set_polling();
+        
+        // set theme;
+        IONUX.set_ui_theme();
+        
       }
     });
     
@@ -110,6 +122,12 @@ IONUX = {
       new IONUX.Views.Error({error_objs:error_obj,open_modal:open_modal, force_logout:force_logout}).render().el;
     });
   },
+  // Returns Org names with create privileges. Otherwise, it returns empty list
+  createRoles: function(){
+    return _.filter(_.keys(IONUX.SESSION_MODEL.get('roles')), function(r){
+             return _.size(IONUX.SESSION_MODEL.get('roles')[r]) > 1;
+    });
+  },
   is_logged_in: function(){
     return IONUX.SESSION_MODEL.get('is_logged_in');
   },
@@ -118,6 +136,18 @@ IONUX = {
     var owner_match = _.findWhere(MODEL_DATA.owners, {_id: user_id}) ? true : false;
     return owner_match;
   },
+  set_ui_theme: function() {
+    var ui_theme = IONUX.SESSION_MODEL.get('ui_theme_dark');
+
+    if (ui_theme) {
+      $('.salt').prop('disabled', true);
+      $('.pepper').prop('disabled', false);
+    } else {
+      $('.pepper').prop('disabled', true);
+      $('.salt').prop('disabled', false);
+    };
+  },
+  
   Spinner: {
     large: {
       lines: 13, 
@@ -126,7 +156,7 @@ IONUX = {
       radius: 10,
       corners: 1,
       rotate: 0,
-      color: '#999',
+      color: '#ddd',
       speed: 1,
       trail: 60,
       shadow: false,

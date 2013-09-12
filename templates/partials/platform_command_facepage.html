@@ -8,8 +8,9 @@
           <div class="row-fluid">
             <div class="span6">
               <div class="agent-start-stop">
-                <input type="submit" id="start-instrument-agent-instance" value="Start Instrument Agent" class="btn-blue"/>
-                <input type="submit" id="stop-instrument-agent-instance" value="Stop Instrument Agent" class="btn-blue" style="display:none;"/>
+                <input type="submit" id="platform_status" value="Getting platform status..." disabled=true class="btn-blue" style="display:none;"/>
+                <input type="submit" id="start" value="Start Platform Agent" class="btn-blue" style="display:none;"/>
+                <input type="submit" id="stop" value="Stop Platform Agent" class="btn-blue" style="display:none;"/>
               </div>
             </div>
             <div class="span6">
@@ -34,10 +35,10 @@
         </div> <!--.span8 -->
 
         <div class="span4">
-        	<div class="attr_block">
-                <h3>Command Results</h3>
-        		<div class="command-output"> </div>
-        	</div>
+          <div class="attr_block">
+            <h3>Command Results</h3>
+            <div class="command-output"> </div>
+          </div>
         </div>
     </div> <!-- row-fluid -->
 </div> <!-- tab-contents -->

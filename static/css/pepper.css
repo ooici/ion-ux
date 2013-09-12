@@ -1115,7 +1115,6 @@ li div.pull-left {
 
 #chart-placeholder {
   text-align: center;
-  padding: auto;
 }
 
 .checkbox-input label {
@@ -2699,4 +2698,8 @@ h3 .toggle-all-menu-selected {
 h3 .toggle-all-menu-selected:hover {
   background-image: url(/static/img/pepper_sprite.png);
   background-position: -240px -360px;
+}
+
+.command-output {
+  word-wrap: break-word;
 }

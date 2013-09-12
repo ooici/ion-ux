@@ -458,6 +458,8 @@ def instrument_command(device_type, instrument_device_id, agent_command, cap_typ
             command_response = ServiceApi.instrument_agent_get_capabilities(instrument_device_id)
         elif agent_command == 'get_resource':
             command_response = ServiceApi.get_resource(instrument_device_id)
+        elif agent_command == 'get_platform_agent_state':
+            command_response = ServiceApi.platform_agent_state(instrument_device_id, 'get_agent_state')
     return render_json_response(command_response)
 
 
@@ -596,7 +598,6 @@ def ui_navigation():
 
 @app.route('/signon/', methods=['GET'])
 def signon():
-
     def nav():
         if 'login_redir' in session:
             return redirect(session.pop('login_redir'))
@@ -604,6 +605,7 @@ def signon():
         return redirect('/')
 
     user_name = request.args.get('user')
+    
     if user_name:
         if not PRODUCTION:
             ServiceApi.signon_user_testmode(user_name)
@@ -732,7 +734,14 @@ def session_info():
 
     if session.has_key('user_id'):
         roles = ServiceApi.get_roles_by_actor_id(session['actor_id'])
-        session_values.update({'name': session['name'], 'user_id': session['user_id'], 'actor_id': session['actor_id'], 'roles': roles, 'is_registered': session['is_registered'], 'is_logged_in': True})
+        session_values.update({'name': session['name'],
+                               'user_id': session['user_id'],
+                               'actor_id': session['actor_id'],
+                               'roles': roles, 
+                               'is_registered': session['is_registered'],
+                               'is_logged_in': True,
+                               'ui_theme_dark': session['ui_theme_dark']})
+    
     return jsonify(data=session_values)
 
 
