@@ -132,17 +132,13 @@ IONUX = {
   },
   set_ui_theme: function() {
     var ui_theme = IONUX.SESSION_MODEL.get('ui_theme_dark');
-    
-    console.log('set_ui_theme', ui_theme);
-    
+
     if (ui_theme) {
       $('.salt').prop('disabled', true);
       $('.pepper').prop('disabled', false);
-      console.log('DARK!!!!');
     } else {
       $('.pepper').prop('disabled', true);
       $('.salt').prop('disabled', false);
-      console.log('LIGHT!!!!');
     };
   },
   
