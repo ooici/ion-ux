@@ -474,6 +474,7 @@ IONUX.Views.Map = Backbone.View.extend({
   },
   
   create_marker: function(_lat, _lon, _icon, _hover_text, _info_content, _table_row, resource_id) {
+    
     if (!_lat || !_lon) return null;
     
     latLng = new google.maps.LatLng(_lat, _lon);
@@ -501,12 +502,12 @@ IONUX.Views.Map = Backbone.View.extend({
     } else {
       var resource_status = 'na';
     };
-        
+    
     var marker = new google.maps.Marker({
       map: this.map,
       position: latLng,
       icon: this.new_markers[resource_status].icon,
-      title: _hover_text,
+      title: _hover_text + ' - LAT: ' + _lat + ', LON: ' + _lon,
       resource_id: resource_id,
       resource_status: resource_status
     });
