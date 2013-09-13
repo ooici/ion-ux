@@ -100,8 +100,6 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
       var paging_request_key = this.get_paging_key();
       
       if (paging_request_key) {
-        
-        console.log('--------------------------------------');
         console.log('RECENT EVENTS');
         console.log('original data', MODEL_DATA.computed.recent_events);
         
@@ -124,43 +122,11 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         options['sAjaxSource'] = url;        
         options["fnServerData"] = function(sSource, aoData, fnCallback, oSettings) {
           $.getJSON(sSource, aoData, function (json) { 
-              console.log('json', json);
-              console.log('oSettings', oSettings);
-              
               var r = {'aaData': self.table_data(json.aaData)}
               /* Do whatever additional processing you want on the callback, then tell DataTables */
-              // var td = self.table_data(json.data);
               return fnCallback(r);
-              // return json.data;
           });
-          // oSettings.jqXHR = $.ajax( {
-          //   dataType: 'json',
-          //   url: sSource,
-          //   data: aoData,
-          //   success: function(resp) {
-          //     console.log('aoData', aoData);
-          //     console.log('fetched data', resp);
-          //     var td = self.table_data(resp['data']);
-          //     console.log('preprocessed data', td);
-          //     // return self.table_data(td);
-          //     return fnCallback(td);
-          //   }
-          // } );
         };
-        
-        // console.log(this.$el.data('path'), paging_opts, this.limit);
-        // console.log('url', url);
-        // console.log('paging_resource_params', paging_resource_params);
-        
-        // $.ajax({
-        //   dataType: 'json',
-        //   url: url,
-        //   success: function(resp){
-        //     console.log('resp', resp);
-        //   },
-        // });
-        
-
       };
       
       return options
