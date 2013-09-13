@@ -283,10 +283,8 @@ class ServiceApi(object):
           for variable in resource_obj['variables']:
             if variable['name'] == 'ui_theme_dark':
               session['ui_theme_dark'] = variable['value']
-          req = service_gateway_post('identity_management', 'update_user_info', params={'user_info': resource_obj})
-        else:
-          req = service_gateway_post('resource_management', 'update_resource', params={'resource': resource_obj})
         
+        req = service_gateway_post('resource_management', 'update_resource', params={'resource': resource_obj})
         reqs = [req]
 
         # handle associations
