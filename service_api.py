@@ -254,10 +254,7 @@ class ServiceApi(object):
         
         
         # reset session variable for IONUX.SESSION_MODEL on the client.
-        if resource_type == 'UserInfo':
-          for variable in resource_obj['variables']:
-            if variable['name'] == 'ui_theme_dark':
-              session['ui_theme_dark'] = variable['value']
+
         
         for k, v in resource_obj.iteritems():
             if isinstance(v, unicode) or isinstance(v, str):
@@ -281,7 +278,12 @@ class ServiceApi(object):
 
             if v == 'agent_config':
                 print v
-
+        
+        if resource_type == 'UserInfo':
+          for variable in resource_obj['variables']:
+            if variable['name'] == 'ui_theme_dark':
+              session['ui_theme_dark'] = variable['value']
+        
         req = service_gateway_post('resource_management', 'update_resource', params={'resource': resource_obj})
         reqs = [req]
 

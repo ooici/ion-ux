@@ -24,6 +24,7 @@ IONUX.Views.AttributeGroupDynamic = Backbone.View.extend({
     // temp hack until UI database updated.
     $('#2164145 h3:contains("Notification")').text('Variables');
   },
+
   render_attributes: function(data_obj){
     _.each(data_obj, function(v,k) {
       if (_.isObject(v)) {

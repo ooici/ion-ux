@@ -15,7 +15,7 @@ INTERACTIONS_OBJECT = {};
 INTERACTIONS_OBJECT.block_interactions = ['More Info'];
 INTERACTIONS_OBJECT.group_interactions = ['More Info', /*'Submenu', 'Edit'*/];
 INTERACTIONS_OBJECT.view_interactions = ['Subscribe', 'Lifecycle', 'Edit', /*'Submenu',*/ 'Command', 'Download', 'Report Issue', 'Refresh Page'];
-INTERACTIONS_OBJECT.dashboard_interactions = ['Create Resource', 'Light Theme'];
+INTERACTIONS_OBJECT.dashboard_interactions = ['Create Resource'];
 INTERACTIONS_OBJECT.event_interactions = ['Add Event'];
 INTERACTIONS_OBJECT.attachment_interactions = ['Upload Attachment'];
 INTERACTIONS_OBJECT.deployment_interactions = ['Activate as Primary Deployment', 'Deactivate as Primary Deployment'];
@@ -81,27 +81,16 @@ IONUX.Views.DashboardActions = IONUX.Views.ActionMenu.extend({
         if (!IONUX.is_logged_in() || _.isEmpty(IONUX.createRoles()))
           this.interaction_items.splice(this.interaction_items.indexOf('Create Resource'), 1);
         
+        if (!IONUX.is_logged_in()) this.interaction_items.push('No Options Available');
+      
+        
         this.create_view_actionmenu();
         this.on("action__create_resource", this.create_resource);
-        this.on("action__light_theme", this.light_theme);
-        this.on("action__dark_theme", this.dark_theme);
     },
         
     create_resource: function(){
       new IONUX.Views.CreateResourceView().render();
-    },
-    
-    light_theme: function(target){;
-      target.text('Dark Theme');
-      $('.pepper').prop('disabled', true);
-      $('.salt').prop('disabled', false);
-    },
-    
-    dark_theme: function(target) {
-      target.text('Light Theme');
-      $('.salt').prop('disabled', true);
-      $('.pepper').prop('disabled', false);
-    },
+    }
 });
 
 IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
