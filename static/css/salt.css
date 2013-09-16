@@ -1,3 +1,7 @@
+.chart_ooi {
+  background: #f4f4f4;
+}
+
 /* Override bootstrap-datepick */
 
 .datepicker.dropdown-menu {
@@ -1108,7 +1112,7 @@ fieldset {
   font-size: 9px;
   font-weight: 600;
   line-height: 18px;
-  color: #CCC;
+  color: #333;
   text-transform: uppercase;
 }
 
