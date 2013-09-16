@@ -10,7 +10,7 @@
     <script type="text/javascript" src="js/spin.js" ></script>
 
     <link rel="stylesheet" media="all" type="text/css" href="http://code.jquery.com/ui/1.10.0/themes/smoothness/jquery-ui.css" />
-    <link rel="stylesheet" media="all" type="text/css" href="/static/css/dark.css" />
+    <!-- <link rel="stylesheet" media="all" type="text/css" href="/static/css/dark.css" /> -->
 
     <!-- High charts / High stocks -->
     <script src="js/highstock/js/highstock.js"></script>
@@ -88,7 +88,7 @@
 
     // Chart options
     var curr_timezone = 0, curr_timezone_display=" UTC";
-    var max_supported_parameters_rt = 30;
+    var max_supported_parameters_rt = 50;
     var curr_chart_type = "line";
     var curr_y_axis_compare_type = undefined;
     //var supported_chart_type = ['AnnotatedTimeLine', 'Table', 'LineChart', 'AreaChart', 'ComboChart'];
@@ -96,6 +96,12 @@
     var overview_reqId = 9;
     var chart_spinner;
 
+    var chartBkgColor;
+    var chartLabelColor;
+    var chartLabelInactiveColor;
+    var chartLabelHoverColor;
+    var chartSeriesColor;
+    /*
     chartBkgColor = "#231F20";
     chartLabelColor = "#FFFFFF";
     chartLabelInactiveColor = "#999999";
@@ -120,6 +126,7 @@
         "#74588b",
         "#c3538b"
     ];
+    */
 
     // Google library specific loads for all the supported chart types
     google.load("visualization", "1", {packages: ['table']});
@@ -147,6 +154,41 @@
         data_series_hires = [];
         data_series_rt = [];
         initSpinner();
+
+        // init theme colors
+        if (parent.IONUX.SESSION_MODEL.get('ui_theme_dark')) {
+            chartBkgColor = "#231F20";
+            chartLabelColor = "#FFFFFF";
+            chartLabelInactiveColor = "#999999";
+            chartLabelHoverColor = "#888822"
+            chartSeriesColor = ["#1f75fe",
+                "#f9fa47",
+                "#fd524b",
+                "#fca767",
+                "#8bce6d",
+                "#71dab9",
+                "#1792bb",
+                "#926eae",
+                "#fe62ac",
+                "#185fc7",
+                "#cbc440",
+                "#ce4138",
+                "#c98554",
+                "#6da659",
+                "#56b094",
+                "#0b7895",
+                "#4c72a3",
+                "#74588b",
+                "#c3538b"
+            ];
+        }
+        else {
+            // Assume its the salt theme. Set all variables to null to let the chart default to its basic theme
+            chartBkgColor = "#f4f4f4";
+            chartLabelColor = "#000000";
+            chartLabelInactiveColor = "#999999";
+            chartLabelHoverColor = chartSeriesColor = null;
+        }
 
         // Init the overview chart
         chart = table = null;
@@ -784,7 +826,7 @@
         // refresh that resets the table and does not need to be done.
         if (!(curr_chart_type == "table")) {
             drawChart(false, mergeAndSortHcData(data_series_overview, data_series_hires, data_series_rt));
-            console.debug("Num of data points in the chart :" + chart.series[0].data.length);
+            //console.debug("Num of data points in the chart :" + chart.series[0].data.length);
         }
 
         // if we have collected too much real-time data, flush and retrieve a low-res overview again
