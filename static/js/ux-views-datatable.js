@@ -135,8 +135,8 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
     get_paging_key: function() {
       // For now we're just checking for recent_events_request but 
       // in the future this will need to be defined in the UI database.
-      var data_path = this.$el.data('path').split('.');
-      if (_.contains(data_path, 'recent_events')) return 'recent_events';
+      var data_path = this.$el.data('path');
+      if (data_path !== undefined && data_path.indexOf("recent_events") != -1) return 'recent_events';
       return null;
     },
     
