@@ -11,6 +11,10 @@
 
     <link rel="stylesheet" media="all" type="text/css" href="http://code.jquery.com/ui/1.10.0/themes/smoothness/jquery-ui.css" />
     <!-- <link rel="stylesheet" media="all" type="text/css" href="/static/css/dark.css" /> -->
+    
+    <link href='http://fonts.googleapis.com/css?family=Signika:300,400,600,700' rel='stylesheet' type='text/css'/>
+    <link href='http://fonts.googleapis.com/css?family=Signika+Negative:300,400,600,700' rel='stylesheet' type='text/css' />
+    
 
     <!-- High charts / High stocks -->
     <script src="js/highstock/js/highstock.js"></script>
@@ -51,6 +55,8 @@
       #chart_ui_div {
         color: #333;
         background-color: #f4f4f4;
+        font-family: Signika;
+        font-size: 11px;
       }
       
       
@@ -189,6 +195,8 @@
         data_series_hires = [];
         data_series_rt = [];
         initSpinner();
+        
+        console.log("parent.IONUX.SESSION_MODEL.get('ui_theme_dark')", parent.IONUX.SESSION_MODEL.get('ui_theme_dark'));
 
         // init theme colors
         if (parent.IONUX.SESSION_MODEL.get('ui_theme_dark')) {
