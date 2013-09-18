@@ -2405,9 +2405,11 @@ table.table tr.odd td {
   
 }
 
-.dataTables_paginate a.paginate_disabled_previous, a.paginate_disabled_next {
-  cursor:default;
+a.paginate_disabled_previous, a.paginate_disabled_next {
   text-decoration:none;
+  background: #bebebe;
+  cursor: not-allowed;
+  text-shadow: none;
 }
 
 .table-bordered tr th {}

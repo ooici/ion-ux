@@ -2363,10 +2363,10 @@ table.table tr.odd td {
   padding: 15px;
 }
 
+
+
 .dataTables_paginate a {
   cursor:pointer;
-/*  margin:2px 4px 2px 0px;
-  color:#ccc;*/
 
   font-size: 10px;
   font-weight: 300; 
@@ -2399,9 +2399,10 @@ table.table tr.odd td {
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4d4d4d', endColorstr='#272727',GradientType=0 ); /* IE6-8 */
 }
 
-.dataTables_paginate a.paginate_disabled_previous, a.paginate_disabled_next {
-  cursor:default;
+a.paginate_disabled_previous, a.paginate_disabled_next {
   text-decoration:none;
+  background: #222;
+  cursor: not-allowed;
 }
 
 .table-bordered tr th {}
