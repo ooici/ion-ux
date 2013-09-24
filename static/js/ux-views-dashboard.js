@@ -107,8 +107,14 @@ IONUX.Views.ObservatorySelector = IONUX.Views.ResourceSelector.extend({
       'click .secondary-link': 'click_action',
       'click .secondary-link-selected': 'click_action',
       'click .toggle-all-menu': 'toggle_action',
-      'click .toggle-all-menu-selected': 'toggle_action'
+      'click .toggle-all-menu-selected': 'toggle_action',
+      'click .primary-link': 'trigger_pan_map'
   },
+  
+  trigger_pan_map: function(e) {
+    IONUX.Dashboard.MapResource.trigger('pan:map');
+  },
+  
    click_action_map: function(e){
        e.preventDefault();
        var target = $(e.target);
@@ -455,6 +461,8 @@ IONUX.Views.Map = Backbone.View.extend({
   },
   
   pan_map: function() {
+    console.log('pan_map');
+    
     try {
       var san = this.model.get('spatial_area_name');
       if (san) {
@@ -467,6 +475,7 @@ IONUX.Views.Map = Backbone.View.extend({
       var ne = new google.maps.LatLng(n, e);
       var sw = new google.maps.LatLng(s, w);
       var bounds = new google.maps.LatLngBounds(sw, ne)
+      
       this.map.fitBounds(bounds);
     } catch(err) {
       console.log('pan_map error:', err);
