@@ -337,12 +337,29 @@ IONUX.Views.Map = Backbone.View.extend({
     }
   },
   
+  events: {
+    'click': 'render_map_bounds'
+  },
+  
+  render_map_bounds: function(e){
+    var raw_bounds = this.map.getBounds();
+
+    // var bounds_tmpl2 = 'Latitude NE: <%= northeast %> Longitude SW: <%= southwest %>';
+    // var northeast = raw_bounds.getNorthEast()['nb'];
+    // var southwest = raw_bounds.getSouthWest()['nb'];
+    
+    var bounds_tmpl = 'LAT: <%= ea.b %> <%= ea.d %> LON: <%= ia.b %> <%= ia.d %>';
+    this.map_bounds_elmt.html(_.template(bounds_tmpl, raw_bounds))
+  },
+  
   initialize: function(){
     _.bindAll(this);
     
     this.sprite_url = '/static/img/pepper_sprite.png';
     this.active_marker = null; // Track clicked icon
     this.sites_status_loaded = false;
+    
+    this.map_bounds_elmt = $('#map_bounds');
     
     this.model.on('pan:map', this.pan_map);
     this.model.on('set:active', this.set_active_marker);
@@ -425,6 +442,7 @@ IONUX.Views.Map = Backbone.View.extend({
   draw_map: function(map_options, container_server) {
     console.log('draw_map');
     $('#map_canvas').empty().show();
+    
     this.map = new google.maps.Map(document.getElementById('map_canvas'), {
       center: new google.maps.LatLng(39.8106460, -98.5569760),
       zoom: 3,
@@ -433,6 +451,13 @@ IONUX.Views.Map = Backbone.View.extend({
       zoomControl: true,
       zoomControlOptions: {style: google.maps.ZoomControlStyle.SMALL, position: google.maps.ControlPosition.TOP_RIGHT}
     });
+    
+    // register event to get and render map bounds
+    var self = this;
+    google.maps.event.addListener(this.map, "bounds_changed", function() {
+       self.render_map_bounds();
+    });
+    
     this.markerClusterer = new MarkerClusterer(this.map, null, {
       maxZoom: 10,
       gridSize: 10, 
