@@ -342,14 +342,20 @@ IONUX.Views.Map = Backbone.View.extend({
   },
   
   render_map_bounds: function(e){
-    var raw_bounds = this.map.getBounds();
-
-    // var bounds_tmpl2 = 'Latitude NE: <%= northeast %> Longitude SW: <%= southwest %>';
-    // var northeast = raw_bounds.getNorthEast()['nb'];
-    // var southwest = raw_bounds.getSouthWest()['nb'];
+    var bounds = this.map.getBounds();
+    bounds['center'] = this.map.getCenter();
     
-    var bounds_tmpl = 'LAT: <%= ea.b %> <%= ea.d %> LON: <%= ia.b %> <%= ia.d %>';
-    this.map_bounds_elmt.html(_.template(bounds_tmpl, raw_bounds))
+    var bounds_tmpl = '<div class="row">\
+                        <div class="span6">\
+                          &nbsp;\
+                          <strong>LAT:</strong> <%= ea.b.toFixed(6) %> / <%= ea.d.toFixed(6) %>&nbsp;&nbsp;\
+                          <strong>LON:</strong> <%= ia.b.toFixed(6) %> / <%= ia.d.toFixed(6) %>\
+                        </div>\
+                        <div class="span6" style="text-align:right">\
+                          <strong>MAP CENTER:</strong> <%= center.nb.toFixed(6) %> / <%= center.ob.toFixed(6) %>\
+                        </div>';
+    
+    this.map_bounds_elmt.html(_.template(bounds_tmpl, bounds))
   },
   
   initialize: function(){
