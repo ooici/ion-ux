@@ -34,9 +34,6 @@ IONUX = {
         
         new IONUX.Views.DataAssetFilter().render().el;
         new IONUX.Views.DPFilterActions({el: '#map-filter-heading'});
-        // new IONUX.Views.ListFilterActions({el: '#list-filter-heading'});
-        
-        // new IONUX.Views.AssetFilterActions({el: '#map-filter-heading'});
 
         $.ajax({
             url: '/get_data_product_group_list/',
@@ -51,22 +48,12 @@ IONUX = {
         // API calls being made to draw the dashboard;
         $('.wrapper').show();
         Backbone.history.start({pushState:true, hashChange: false});
-        // router.handle_navigation();
-        // return router;
       },
     });
     
     IONUX.SESSION_MODEL = new IONUX.Models.Session();
     IONUX.SESSION_MODEL.fetch({
       success: function(resp) {
-        
-        
-        // if (IONUX.SESSION_MODEL.get('ui_theme_dark') == true) {
-        //   console.log('set dark theme');
-        // } else {
-        //   console.log('set light theme');
-        // };
-        
         new IONUX.Views.Topbar({model: IONUX.SESSION_MODEL}).render().el;
         new IONUX.Views.HelpMenu({model: IONUX.SESSION_MODEL}).render().el;
         new IONUX.Views.Search().render().el;
