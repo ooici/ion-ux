@@ -2167,6 +2167,11 @@ ul.nav {
   margin:0;
 }
 
+.dataTables_info {
+  padding: 5px 15px;
+  font-size: 11px;
+}
+
 .table_ooi .table {
   /* override Bootstrap's default margin-bottom to eliminated unwanted margin/scrolling in DataTables. */
   margin-bottom: 0;
@@ -2380,7 +2385,7 @@ table.table tr.odd td {
 }
 
 .paging_two_button {
-  padding: 15px;
+  padding: 5px 15px 15px;
 }
 
 .dataTables_length {
