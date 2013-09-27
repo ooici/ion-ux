@@ -1075,10 +1075,21 @@ select#new-commands {
   width: 200px;
 }
 
+#form-container {
+  background-color: #f4f4f4;
+}
+
+
 .edit-resource-btns {
+  background: #f4f4f4;
   margin: 10px 0;
   padding: 10px 0;
-  border-top: solid 1px #333;
+  border-top: solid 1px #fff;
+  margin-top: 0;
+}
+
+.edit-resource-btns button {
+  margin-left: 15px;
 }
 
 label:before {
