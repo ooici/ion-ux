@@ -118,7 +118,6 @@ h2 {
 }
 
 #dynamic-container {
-/*  background: #000;*/
   width: 83.85%;
   margin-left: 0;
 }
@@ -829,6 +828,7 @@ a.btn-black:hover, a.btn-advanced-search:hover {
   padding: 32px 0 10px 15px;
   overflow: visible;
   color: #000;
+  height: 30px;
 }
 
 .heading h1, h2 {
