@@ -518,6 +518,10 @@
     // *** THIS FUNCTION WILL MODIFY THE ORIGINAL DATA. PASS ONLY COPIES ***
     function drawChart(_first_draw_flag, _data) {
 
+        var plotMarkerOptions = null;
+        var plotLineWidth = null;
+        var normalizedChartType = curr_chart_type;
+
         // Occasionally an empty data set slips in
         if (_data == null || _data.length == 0 ) return;
 
@@ -531,6 +535,29 @@
 
             drawTable(dataTable_overview);
             return;
+        }
+
+        // Override the options for scatter plot with our own. Default has bugs
+        if (curr_chart_type == 'scatter') {
+            normalizedChartType = 'line';
+            plotMarkerOptions = {
+                enabled : true,
+                radius : 3
+            };
+
+            plotLineWidth = 0;
+        }
+        else {
+            plotMarkerOptions = {
+                enabled: false,
+                        states: {
+                    hover: {
+                        enabled: true
+                    }
+                }
+            };
+
+            plotLineWidth = 2;
         }
 
         // ** Big Assumption **: Since we are working on a copy of the data (returned by mergeAndSortHcData)
@@ -547,7 +574,7 @@
             chart = new Highcharts.StockChart({
                 chart : {
                     renderTo : 'chart_div',
-                    type: curr_chart_type,
+                    type: normalizedChartType,
                     backgroundColor: chartBkgColor,
                     borderColor: "black",
                     zoomType: "x"
@@ -630,8 +657,8 @@
                 },
 
                 tooltip: {
-                    xDateFormat: '%d-%b-%Y, %H:%M:%S' + curr_timezone_display,
-                    shared: true
+                    shared: true,
+                    xDateFormat: '%d-%b-%Y, %H:%M:%S' + curr_timezone_display
                 },
 
                 plotOptions: {
@@ -648,7 +675,9 @@
                         },
                         dataGrouping: {
                             enabled: true
-                        }
+                        },
+                        marker: plotMarkerOptions,
+                        lineWidth : plotLineWidth
                     },
                     threshold: null
                 },
