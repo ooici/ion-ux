@@ -66,10 +66,6 @@ IONUX.Router = Backbone.Router.extend({
     var active_resource_attributes = IONUX.Dashboard.Observatories.findWhere({_id: resource_id})['attributes'];    
     IONUX.Dashboard.MapResource.set(active_resource_attributes);
 
-    // Left for reference, now happens in ux-views-dashboard.js
-    // IONUX.Views.ObservatorySelector.navigateMap()
-    // IONUX.Dashboard.MapResource.trigger('pan:map');
-
     IONUX.Dashboard.MapResource.trigger('set:active');
     
     function check_map() {

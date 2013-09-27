@@ -914,6 +914,9 @@ IONUX.Views.TextShort = Backbone.View.extend({
           if (link_id && link_type) {
             this.link_url = '/'+link_type+'/face/'+link_id+'/';
           };
+
+        } else if (_.contains(path_array, 'url')) {
+          this.link_url = get_descendant_properties(window.MODEL_DATA, this.data_path);
         };
       };
     },

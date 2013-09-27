@@ -875,9 +875,13 @@ class ServiceApi(object):
                 if param['schema']:
                     agent_schema.update({ param['name']: _to_form_schema(param['schema']['type'], param['schema']['visibility'], param['schema']['display_name'])})
             if cap_type == 4:
-                if len(param['schema'].keys()):
-                    resource_param_names.append(param['name'])
-                    resource_schema.update({ param['name']: _to_form_schema(param['schema']['value']['type'], param['schema']['visibility'], None)})
+                # check for schema
+                if 'schema' in param:
+                    try:
+                        resource_param_names.append(param['name'])
+                        resource_schema.update({ param['name']: _to_form_schema(param['schema']['value']['type'], param['schema']['visibility'], None)})
+                    except Exception, e:
+                        print 'REQUIRED SCHEMA NOT COMPLETE: ', param, e
                 else:
                     print 'MISSING RESOURCE SCHEMA: ', param
         
