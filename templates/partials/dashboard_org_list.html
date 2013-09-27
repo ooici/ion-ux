@@ -3,8 +3,8 @@
   <ul class="resource-ul">
     <% _.each(resources, function(resource) { %>
       <li class="resource-link" data-resource-id="<%= resource._id %>">
-        <a class="primary-link" href="/resources/<%= resource._id %>"><%= resource.name %></a>
-        <a class="secondary-link pull-right" style="width:16px;height:16px;" href="/<%= resource.type_ %>/face/<%= resource._id%>/">&nbsp;</a>
+        <a title="View list of resources" class="primary-link" href="/resources/<%= resource._id %>"><%= resource.name %></a>
+        <a title="View facility page" class="secondary-link pull-right" style="width:16px;height:16px;" href="/<%= resource.type_ %>/face/<%= resource._id%>/">&nbsp;</a>
       </li>
     <% }) %>
   </div>

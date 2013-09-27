@@ -333,6 +333,14 @@ ul.map-ul {
   background-position: -300px -360px;
 }
 
+
+.map-ul li a.secondary-link-selected {
+  width: 16px;
+  height: 16px;
+  margin-top: 4px;
+  background-image: url(/static/img/salt_sprite.png);
+  background-position: -180px -360px;
+}
 /* nested map navigation */
 
 ul.map-nested-ul {
