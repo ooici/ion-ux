@@ -39,7 +39,10 @@ IONUX.Router = Backbone.Router.extend({
       IONUX.Dashboard.MapResource = new IONUX.Models.MapResource();
       IONUX.Dashboard.MapDataResources = new IONUX.Collections.MapDataProducts([], {resource_id: null});
     };
-
+    
+    // render empty table.
+    new IONUX.Views.MapDataProductTable({el: $('#dynamic-container #2163993'), collection: IONUX.Dashboard.MapDataResources});
+    
     IONUX.Dashboard.MapView = new IONUX.Views.Map({
       collection: IONUX.Dashboard.Observatories,
       model: IONUX.Dashboard.MapResource
