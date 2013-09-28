@@ -97,7 +97,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
             "sDom":"Rlfrtip",
             "aaData":table_data,
             "aoColumns":header_data,
-            "bInfo":false,
+            "bInfo":true,
             'bPaginate':true,
             'sPaginationType': 'two_button',
             "sScrollY": "300px",

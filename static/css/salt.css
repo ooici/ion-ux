@@ -118,7 +118,6 @@ h2 {
 }
 
 #dynamic-container {
-/*  background: #000;*/
   width: 83.85%;
   margin-left: 0;
 }
@@ -333,6 +332,14 @@ ul.map-ul {
   background-position: -300px -360px;
 }
 
+
+.map-ul li a.secondary-link-selected {
+  width: 16px;
+  height: 16px;
+  margin-top: 4px;
+  background-image: url(/static/img/salt_sprite.png);
+  background-position: -180px -360px;
+}
 /* nested map navigation */
 
 ul.map-nested-ul {
@@ -821,6 +828,7 @@ a.btn-black:hover, a.btn-advanced-search:hover {
   padding: 32px 0 10px 15px;
   overflow: visible;
   color: #000;
+  height: 30px;
 }
 
 .heading h1, h2 {
@@ -2159,6 +2167,11 @@ ul.nav {
   margin:0;
 }
 
+.dataTables_info {
+  padding: 5px 15px;
+  font-size: 11px;
+}
+
 .table_ooi .table {
   /* override Bootstrap's default margin-bottom to eliminated unwanted margin/scrolling in DataTables. */
   margin-bottom: 0;
@@ -2372,7 +2385,7 @@ table.table tr.odd td {
 }
 
 .paging_two_button {
-  padding: 15px;
+  padding: 5px 15px 15px;
 }
 
 .dataTables_length {
