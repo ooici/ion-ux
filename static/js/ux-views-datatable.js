@@ -432,7 +432,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
     table_row_click: function(evt){
         evt.preventDefault();
         var target = $(evt.target);
-        var row_index = target.parent().index();
+        var row_index =  target.parent().index() + this.datatable.fnSettings()._iDisplayStart;
         var data_index = this.datatable.fnSettings().aiDisplay[row_index];
         var table_row_data = this.datatable.fnGetData(data_index);
         var row_info_list = table_row_data[0].split("::");
