@@ -186,7 +186,7 @@ def ux_test():
 def ion_stage():
     global host
     global gateway_host;
-    host = 'ooin.oceanobservatories.org'
+    host = 'ooin-mi.oceanobservatories.org'
     gateway_host = 'sg.s.oceanobservatories.org'
 
 def ion_beta():
