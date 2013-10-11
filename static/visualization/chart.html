@@ -338,7 +338,7 @@
 
         // If an empty data table was returned, exit gracefully
         if (_dt.length == 0 || _dt[0].length == 0) {
-            alert("No data was found in storage. Please try again in a bit");
+            document.getElementById('chart_div').innerHTML = "No data was found in storage. Please try again in a bit";
             stopRealtimeView();
             return;
         }
@@ -353,7 +353,13 @@
             data_series_overview = _dt;
 
             // Remove series that were marked visible == false. probably string content
-            // remove_unchartable_hc_data(_dt);
+            remove_unchartable_hc_data(data_series_overview);
+            // Check to see if there is ay valid plot-table data
+            if (data_series_overview == null || data_series_overview.length == 0 ) {
+                document.getElementById('chart_div').innerHTML = "No Valid Data Available.";
+                stopRealtimeView();
+                return;
+            }
 
             // If no chart exists, create one
             if(chart) {
