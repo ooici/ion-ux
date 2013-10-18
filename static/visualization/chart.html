@@ -641,8 +641,8 @@
                     },
                     events : {
                         afterSetExtremes : onDateRangeChange
-                    },
-                    minRange: 60 * 1000 // one minute,
+                    }
+                    //minRange: 60 * 1000 // one minute,
 
                 },
 
@@ -664,7 +664,12 @@
 
                 tooltip: {
                     shared: true,
-                    xDateFormat: '%d-%b-%Y, %H:%M:%S' + curr_timezone_display
+                    /*formatter: function() {
+                        var d = new Date(this.x);
+                        return d.getDay() + ", " + d.getDate() + ", " + d.getHours() + ":" + d.getMinutes() +':'+ d.getSeconds()
+                                +'.' + d.getMilliseconds();
+                    }*/
+                    xDateFormat: '%d-%b-%Y, %H:%M:%S.%L' + curr_timezone_display
                 },
 
                 plotOptions: {
