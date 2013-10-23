@@ -1025,9 +1025,11 @@ class ServiceApi(object):
         
          # ui_theme_dark = [variable['value'] for variable in user['variables'] if variable['name'] == 'ui_theme_dark']
         ui_theme_dark = False
-        for variable in user['variables']:
-          if variable['name'] == 'ui_theme_dark':
-            ui_theme_dark = variable['value']
+
+        if session['is_registered'] is True:
+            for variable in user['variables']:
+                if variable['name'] == 'ui_theme_dark':
+                    ui_theme_dark = variable['value']
         
         session['ui_theme_dark'] = ui_theme_dark
         
