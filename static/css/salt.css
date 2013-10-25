@@ -858,6 +858,7 @@ a.btn-black:hover, a.btn-advanced-search:hover {
   top: -10px;
   padding-left: 70px;
   display: inline-block;
+  white-space: nowrap;
 }
 
 .heading-left .text_short_ooi:before {
