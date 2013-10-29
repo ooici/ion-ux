@@ -1,5 +1,5 @@
-import requests, json, time, pprint, re
-from flask import session, jsonify, abort, current_app
+import requests, json, time, re
+from flask import session, jsonify, abort, current_app as app
 from config import GATEWAY_HOST, GATEWAY_PORT
 from copy import deepcopy
 from instrument_command import BLACKLIST
@@ -43,11 +43,9 @@ class ServiceApi(object):
     def get_sites_status(resource_ids):
         params = {'parent_resource_ids': resource_ids, 'include_status': True}
         req = service_gateway_post('observatory_management', 'get_sites_devices_status', raw_return=True, params=params)
-        print '@@@@@', req
         return req
         # return service_gateway_get('observatory_management', 'get_sites_devices_status', raw_return=True, params=params)
-    
-    
+
     @staticmethod
     def visualization(operation_name, visualization_parameters):
         return service_gateway_get('visualization', operation_name, raw_return=True, params=visualization_parameters)
@@ -154,6 +152,7 @@ class ServiceApi(object):
 
         return search_json['data']
 
+        """
         search_url = "http://%s:%d/ion-service/discovery/parse?search_request=SEARCH'_all'LIKE'%s'FROM'resources_index'LIMIT100" % (GATEWAY_HOST, GATEWAY_PORT, search_query)
         search_results = requests.get(search_url)
         search_json = json.loads(search_results.content)
@@ -161,6 +160,7 @@ class ServiceApi(object):
             return search_json['data']['GatewayResponse']
         else:
             return search_json['data']
+        """
 
     @staticmethod
     def adv_search(geospatial_bounds, vertical_bounds, temporal_bounds, search_criteria):
@@ -255,7 +255,6 @@ class ServiceApi(object):
         
         # reset session variable for IONUX.SESSION_MODEL on the client.
 
-        
         for k, v in resource_obj.iteritems():
             if isinstance(v, unicode) or isinstance(v, str):
                 if v.startswith('{'):
@@ -274,11 +273,6 @@ class ServiceApi(object):
             elif v == 'false':
                 resource_obj.update({k: False})
 
-            #print 'update_resource: ', k, type(resource_obj[k]), resource_obj[k]
-
-            if v == 'agent_config':
-                print v
-        
         if resource_type == 'UserInfo':
           for variable in resource_obj['variables']:
             if variable['name'] == 'ui_theme_dark':
@@ -326,8 +320,7 @@ class ServiceApi(object):
 
             for k,v in resource_assocs.iteritems():
                 curval = assocs[k]['associated_resources']
-                #print k, v, curval
-                
+
                 if assocs[k]['multiple_associations']:
                     # get a list of current assocs
                     cur_assocs = set(map(get_assocd_id, curval))
@@ -881,10 +874,10 @@ class ServiceApi(object):
                         resource_param_names.append(param['name'])
                         resource_schema.update({ param['name']: _to_form_schema(param['schema']['value']['type'], param['schema']['visibility'], None)})
                     except Exception, e:
-                        print 'REQUIRED SCHEMA NOT COMPLETE: ', param, e
+                        app.logger.error("REQUIRED SCHEMA NOT COMPLETE: %s %s " % (param, e))
                 else:
-                    print 'MISSING RESOURCE SCHEMA: ', param
-        
+                    app.logger.error("MISSING RESOURCE SCHEMA: %s " % param)
+
         if agent_param_names:
             agent_params = service_gateway_agent_request(instrument_device_id, 'get_agent', params={'params': agent_param_names})
         
@@ -943,12 +936,9 @@ class ServiceApi(object):
         new_params = {}
         for k,v in params.iteritems():
             if k in BLACKLIST or not v:
-                print 'Blacklisted:', k, v
                 continue
             if isinstance(v, unicode) and '.' in v:
-                print 'Before float:', k, v, type(v)
                 new_params.update({k: float(v.strip())})
-                print 'After float', k, params[k], type(float(v.strip()))
             else:
                 new_params.update({k: v})
         
@@ -1389,15 +1379,46 @@ def build_get_request(base, service_name, operation_name=None, params=None):
 
     url = "/".join(urlarr)
     param_string = _build_param_str(params)
-    
     url += param_string
-    pretty_console_log('SERVICE GATEWAY GET URL', url)
 
     return url
 
+
+def warn_slow_response(time_sec, msg):
+    try:
+        time_sec = float(time_sec)
+    except ValueError:
+        app.logger.error("warn_slow_response received none float number")
+        return
+
+    too_long = config.MAX_WARN_TIME_SEC if hasattr(config, 'MAX_WARN_TIME_SEC') else 10
+    if time_sec > too_long:
+        app.logger.warn("<<< WARNING SERVICE GATEWAY SLOW RESPONSE >>> Time: %.2f sec Msg: %s" % (time_sec, msg))
+
+
+def warn_on_large_content(content_length_byte, msg):
+    try:
+        content_length_byte = float(content_length_byte)
+    except ValueError:
+        app.logger.error("warn_on_large_content: received none float number")
+        return
+
+    too_big = config.MAX_CONTENT_LENGTH_BYTE if hasattr(config, 'MAX_CONTENT_LENGTH_BYTE') else 524500
+    if int(content_length_byte) > too_big:
+         app.logger.warn("<<< WARNING SERVICE GATEWAY CONTENT SIZE >>> Content size: %.4f MB  Msg: %s" % ((float(content_length_byte)/1024000), msg))
+
+
 def service_gateway_get(service_name, operation_name, params=None, raw_return=None, base=SERVICE_GATEWAY_BASE_URL):
+    app.logger.debug("Service gateway GET request: \n[url]: %s \n[service name]: %s \n[operation name]: %s \n[param]: %s " %(base, service_name, operation_name, params))
+    start_time = time.time()
+
     service_gateway_request = requests.get(build_get_request(base, service_name, operation_name, params))
-    pretty_console_log('SERVICE GATEWAY GET RESPONSE', service_gateway_request.content)
+
+    total_time = time.time() - start_time
+    warn_slow_response(total_time, "Service gateway GET request took too long url: %s" % service_gateway_request.url)
+    response_size = service_gateway_request.headers.get("content-length")
+    app.logger.debug("Service gateway GET response: \n[url]: %s \n[response time]: %s \n[Content size]: %s \n[content]: %s" %(service_gateway_request.url, total_time, response_size, service_gateway_request.content))
+    warn_on_large_content(response_size, "Service GET request received large data url: %s" % service_gateway_request.url)
     return render_service_gateway_response(service_gateway_request, raw_return=raw_return)
 
 def render_service_gateway_response(service_gateway_resp, raw_return=None):
@@ -1441,15 +1462,22 @@ def build_post_request(service_name, operation_name, params=None, web_requester_
         post_data['serviceRequest']['requester'] = session['actor_id']
         post_data['serviceRequest']['expiry'] = session['valid_until']
     data={'payload': json.dumps(post_data)}
-    pretty_console_log('SERVICE GATEWAY POST URL/DATA', url, data)
     return url, data
 
 def service_gateway_post(service_name, operation_name, params=None, raw_return=None, web_requester_id=None, base=SERVICE_GATEWAY_BASE_URL):
     url, data = build_post_request(service_name, operation_name, params, web_requester_id=web_requester_id, base=base)
+    app.logger.debug("Service gateway POST request: \n[url]: %s \n[service name]: %s \n[operation name]: %s [web_requester_id] %s \n[param]: %s " %
+                     (url, service_name, operation_name, web_requester_id,params))
+    start_time = time.time()
+
     service_gateway_request = requests.post(url, data)
-    pretty_console_log('SERVICE GATEWAY POST RESPONSE', service_gateway_request.content)
+
+    total_time = time.time() - start_time
+    warn_slow_response(total_time, "Service gateway POST request took too long url: %s" % service_gateway_request.url)
+    response_size = service_gateway_request.headers.get("content-length")
+    app.logger.debug("Service gateway POST response: \n[url]: %s \n[response time]: %s \n[Content length]: %s \n[content]: %s" %(service_gateway_request.url, total_time, response_size, service_gateway_request.content))
+    warn_on_large_content(response_size, "Service GET request received large data url: %s" % service_gateway_request.url)
     return render_service_gateway_response(service_gateway_request, raw_return=raw_return)
-    return None
 
 def build_agent_request(agent_id, operation_name, params=None):
     url = '%s/%s/%s' % (AGENT_GATEWAY_BASE_URL, agent_id, operation_name)
@@ -1466,18 +1494,23 @@ def build_agent_request(agent_id, operation_name, params=None):
     if session.has_key('actor_id'):
         post_data['agentRequest']['requester'] = session['actor_id']
         post_data['agentRequest']['expiry'] = session['valid_until']
-
     data={'payload': json.dumps(post_data)}
-
-    pretty_console_log('SERVICE GATEWAY AGENT REQUEST POST URL/DATA', url, data)
-    print 'SERVICE AGENT REQUEST POST DATA: ', data
 
     return url, data
 
 def service_gateway_agent_request(agent_id, operation_name, params=None):
     url, data = build_agent_request(agent_id, operation_name, params)
+    app.logger.debug("Service gateway agent POST request: \n[url]: %s \n[operation name]: %s \n[param]: %s " %
+                     (url, operation_name, params))
+    start_time = time.time()
+
     resp = requests.post(url, data)
-    pretty_console_log('SERVICE GATEWAY AGENT REQUEST POST RESPONSE', resp.content)
+
+    total_time = time.time() - start_time
+    warn_slow_response(total_time, "Service gateway POST request took too long url: %s" % resp.url)
+    response_size = resp.headers.get("content-length")
+    app.logger.debug("Service gateway POST response: \n[url]: %s \n[response time]: %s \n[Content length]: %s \n[content]: %s" %(resp.url, total_time, response_size, resp.content))
+    warn_on_large_content(response_size, "Service GET request received large data url: %s" % resp.url)
     return render_service_gateway_response(resp, raw_return=True)
 
     # if resp.status_code == 200:
@@ -1496,5 +1529,3 @@ def error_message(msg=None):
     error_msg['GatewayError']['Exception'] = ''
     return error_msg
 
-def pretty_console_log(label, content, data=None):
-    print '\n Service Gateway: ', '%s : %s : %s' % (label, content, data), '\n\n'
