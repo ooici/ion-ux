@@ -16,6 +16,7 @@ from urlparse import urlparse, parse_qs
 import re
 import os
 from config import *
+from logging import Formatter
 
 # Attachments
 from StringIO import StringIO
@@ -25,6 +26,8 @@ from mimetypes import guess_extension
 app = Flask(__name__)
 app.secret_key = SECRET_KEY
 app.debug = True
+app.logger.setLevel(LOGGING_LEVEL)
+
 
 def get_versions():
     if not hasattr(g, "ion_ux_version"):
@@ -807,8 +810,5 @@ def dev_image(resource_id=None):
 
     
 if __name__ == '__main__':
-    handler = RotatingFileHandler(LOGGING_FILE_NAME, maxBytes=LOGGING_MAX_SIZE_MB * 1048576, backupCount=1)
-    handler.setLevel(LOGGING_LEVEL)
-    app.logger.addHandler(handler)
-    app.logger.info(" Starting flask on %s GMT" % datetime.utcnow())
+    app.logger.info("Starting flask on %s GMT" % datetime.utcnow())
     app.run(debug=True, host=FLASK_HOST, port=FLASK_PORT)
