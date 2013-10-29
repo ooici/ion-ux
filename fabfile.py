@@ -194,6 +194,7 @@ def ion_stage():
     global host, gateway_host
     host = 'ooin-mi.oceanobservatories.org'
     gateway_host = 'sg.s.oceanobservatories.org'
+    logging_level = 'logging.WARNING'
 
 
 def ion_beta():
