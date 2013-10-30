@@ -54,9 +54,16 @@ else:
 #  Example: app.logger.warning('warning')
 #           app.logger.error('error')
 #           app.logger.info('Info')
-LOGGING_LEVEL = logging.DEBUG
-LOGGING_MAX_SIZE_MB = 20
+#LOGGING_LEVEL = logging.DEBUG
+LOGGING_LEVEL = LOGGING_LEVEL_VALUE
+LOGGING_MAX_SIZE_MB = 550
 LOGGING_FILE_NAME = 'ion-ux.log'
 
 # Maximum number of search results
 MAX_SEARCH_RESULTS = 100
+
+# Max warning time in sec for slow response
+MAX_WARN_TIME_SEC = 4
+
+# Max warning content length in byte
+MAX_CONTENT_LENGTH_BYTE = 524500   # Half MB

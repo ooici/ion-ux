@@ -94,7 +94,7 @@ class LayoutApi(object):
                 
                 # LABEL OVERRIDES
                 if gr_element.has_key('olabel'):
-                    print 'group label override:', group['label'], '->', gr_element['olabel'], group_elid 
+                    #print 'group label override:', group['label'], '->', gr_element['olabel'], group_elid
                     group_label = gr_element['olabel']
                 else:
                     group_label = group['label']
@@ -146,7 +146,7 @@ class LayoutApi(object):
                     
                     # LABEL OVERRIDES
                     if bl_element.has_key('olabel'):
-                        print 'block label override:', block['label'], '->', bl_element['olabel'], block_elid
+                        #print 'block label override:', block['label'], '->', bl_element['olabel'], block_elid
                         block_label = bl_element['olabel']
                     else:
                         block_label = block['label']
@@ -207,7 +207,7 @@ class LayoutApi(object):
                         
                         # LABEL OVERRIDES
                         if at_element.has_key('olabel'):
-                            print 'attribute label override:', attribute['label'], '->', at_element['olabel'], attribute_elid
+                            #print 'attribute label override:', attribute['label'], '->', at_element['olabel'], attribute_elid
                             attribute_label = at_element['olabel']
                         else:
                             attribute_label = attribute['label']
@@ -254,7 +254,7 @@ class LayoutApi(object):
 
                                 # LABEL OVERRIDE
                                 if embedded_attribute.has_key('olabel'):
-                                    print 'sub-attribute label override:', embedded_object['label'], '->', embedded_attribute['olabel'], attribute_elid
+                                    #print 'sub-attribute label override:', embedded_object['label'], '->', embedded_attribute['olabel'], attribute_elid
                                     embedded_object_label = embedded_attribute['olabel']
                                 else:
                                     embedded_object_label = embedded_object['label']
