@@ -124,7 +124,7 @@
     // Realtime variables
     var enable_realtime = true; // Glabal switch to control realtime controls
     var rt_query, rt_query_token, rt_len_max;
-    var realtime_sticky_view = false;
+    var realtime_sticky_view = true;
     var setExtremesMethodFlag = false;
 
     // Chart options
@@ -585,6 +585,9 @@
                     borderColor: "black",
                     zoomType: "x"
                 },
+                credits: {
+                    enabled: false
+                },
                 /*
                  title : {
                  text : 'Overview Chart'
@@ -624,7 +627,8 @@
                         color : chartLabelInactiveColor
                     },
                     itemHoverStyle : {
-                        color : chartLabelHoverColor
+                        color : chartLabelHoverColor,
+                        staggerLines: 2
                     }
 
                 },
@@ -652,14 +656,18 @@
                             return (this.value >= 0 ? '+' : '') + this.value + (curr_y_axis_compare_type == "percent" ? '%' : '');
                         },
                         style : {
-                            color : chartLabelColor
+                            color : chartLabelColor,
+                            fontWeight: 'bold'
                         }
                     },
                     plotLines: [{
                         value: 0,
                         width: 2,
                         color: 'silver'
-                    }]
+                    }],
+                    showFirstLabel: true,
+                    showLastLabel: true,
+                    offset: 40
                 },
 
                 tooltip: {
