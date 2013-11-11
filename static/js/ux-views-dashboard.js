@@ -110,8 +110,9 @@ IONUX.Views.ObservatorySelector = IONUX.Views.ResourceSelector.extend({
       'click .toggle-all-menu-selected': 'toggle_action',
       'click .primary-link': 'trigger_pan_map'
   },
-  
+
   trigger_pan_map: function(e) {
+   IONUX.Dashboard.MapResource.tmp = e.toElement.innerHTML;
     IONUX.Dashboard.MapResource.trigger('pan:map');
   },
   
@@ -495,7 +496,7 @@ IONUX.Views.Map = Backbone.View.extend({
   
   pan_map: function() {
     console.log('pan_map');
-    
+
     try {
       var san = this.model.get('spatial_area_name');
       if (san) {
@@ -503,13 +504,32 @@ IONUX.Views.Map = Backbone.View.extend({
         var e = this.spatial_area_names[san]['east'];
         var s = this.spatial_area_names[san]['south'];
         var w = this.spatial_area_names[san]['west'];
-      };
+      }else{
+          san = IONUX.Dashboard.MapResource.tmp;
+          this.model.set('spatial_area_name',san);
+          this.group_spatial_area_names();
+          var n = this.spatial_area_names[san]['north'];
+          var e = this.spatial_area_names[san]['east'];
+          var s = this.spatial_area_names[san]['south'];
+          var w = this.spatial_area_names[san]['west'];
+      }
       
       var ne = new google.maps.LatLng(n, e);
       var sw = new google.maps.LatLng(s, w);
       var bounds = new google.maps.LatLngBounds(sw, ne)
-      
-      this.map.fitBounds(bounds);
+
+      //checks for issue
+      if (n && e){
+        this.map.fitBounds(bounds);
+      }
+      else{
+      //logs range error
+        console.log('pan_map error:', 'invalid range');
+
+      }
+
+      //dont do range bound if error
+      //this.map.fitBounds(bounds);
     } catch(err) {
       console.log('pan_map error:', err);
     }
