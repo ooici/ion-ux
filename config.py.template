@@ -46,9 +46,7 @@ UI_MODE = 'PRODUCTION'
 if 'PORTAL_ROOT' in os.environ:
     PORTAL_ROOT = os.environ['PORTAL_ROOT']
 else:
-    # Default to pwd
-    PORTAL_ROOT = os.getcwd()
-    #PORTAL_ROOT = 'PATH_TO_ION_UX'
+    PORTAL_ROOT = 'PATH_TO_ION_UX'
 
 
 # Logging level
