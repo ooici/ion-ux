@@ -139,7 +139,7 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
               }
             }
 
-            if (IONUX.is_logged_in() && !IONUX.is_owner()) {
+            if (IONUX.is_logged_in() && !IONUX.is_owner() && window.MODEL_DATA.resource_type != 'DataProduct') {
               // check commitments on current object for resource commitments for the current owner
               var resource_commitments = _.filter(window.MODEL_DATA.commitments, function (c) { return c.commitment.type_ == "ResourceCommitment" && c.consumer == IONUX.SESSION_MODEL.get('actor_id'); });
 
