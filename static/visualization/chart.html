@@ -347,7 +347,6 @@
         use_display_names_in_data(_dt);
         // This would be a good place to sort wrt timestamps if ever needed
 
-
         // If the overview series is empty, assume this is the response to the overview query
         if (data_series_overview.length == 0) {
             data_series_overview = _dt;
@@ -645,9 +644,10 @@
                     },
                     events : {
                         afterSetExtremes : onDateRangeChange
-                    }
+                    },
+                    min: dp_metadata['time_bounds'][0] * 1000,
+                    max: dp_metadata['time_bounds'][1] * 1000
                     //minRange: 60 * 1000 // one minute,
-
                 },
 
                 yAxis: {
@@ -779,7 +779,9 @@
         }
 
         // update series visibility
-        updateSeriesVisibility();
+        if(curr_chart_type != 'scatter') {
+            updateSeriesVisibility();
+        }
 
     }
 
@@ -1161,7 +1163,6 @@
                 curr_stride_factor);
         fetchData(dqp);
 
-        // NO CACHING SCHEME  *************************
 
     }
 
