@@ -44,6 +44,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         "click .filter-remove":"remove_filter_item",
         "click .show-hide-filters":"show_hide_filters",
         "click .filters-apply":"filters_apply",
+        "keypress .filter-item input[type=text]":"filters_enter",
         "click .filters-reset":"filters_reset",
         "click table tbody tr":"table_row_click",
         "click th": "apply_sort_indicator"
@@ -419,6 +420,11 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
             var filter_val = $(filter_item).find("input").val();
             self.datatable.fnFilter(filter_val, selected_index);
         });
+    },
+
+    filters_enter: function(evt){
+        if (evt.keyCode != 13) return;
+        this.filters_apply(evt);
     },
 
     filters_reset: function(evt){
