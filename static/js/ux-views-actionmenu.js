@@ -21,7 +21,7 @@ INTERACTIONS_OBJECT.attachment_interactions = ['Upload Attachment'];
 INTERACTIONS_OBJECT.deployment_interactions = ['Activate as Primary Deployment', 'Deactivate as Primary Deployment'];
 INTERACTIONS_OBJECT.negotiation_interactions = {owner: ['View Requests'], nonmember: ['Enroll']};
 INTERACTIONS_OBJECT.persistence_interactions = ['Activate Persistence', 'Suspend Persistence'];
-
+INTERACTIONS_OBJECT.no_options = ['No Options Available']
 
 IONUX.Views.ActionMenu = Backbone.View.extend({
     modal_template: '<div id="action-modal" class="modal hide fade modal-ooi">',
@@ -81,7 +81,7 @@ IONUX.Views.DashboardActions = IONUX.Views.ActionMenu.extend({
         if (!IONUX.is_logged_in() || _.isEmpty(IONUX.createRoles()))
           this.interaction_items.splice(this.interaction_items.indexOf('Create Resource'), 1);
         
-        if (!IONUX.is_logged_in()) this.interaction_items.push('No Options Available');
+        if (!IONUX.is_logged_in()) this.interaction_items.push(INTERACTIONS_OBJECT.no_options);
       
         
         this.create_view_actionmenu();
@@ -400,8 +400,13 @@ IONUX.Views.EventActions = IONUX.Views.ActionMenu.extend({
     }, IONUX.Views.ActionMenu.prototype.events),
 
     initialize: function() {
-        this.interaction_items = INTERACTIONS_OBJECT.event_interactions;
-        this.on("action__add_event", this.add_event);
+        if (IONUX.is_logged_in()){
+            this.interaction_items = INTERACTIONS_OBJECT.event_interactions;
+            this.on("action__add_event", this.add_event);
+        }
+        else {
+            this.interaction_items = INTERACTIONS_OBJECT.no_options;
+        }
         this.create_actionmenu();
     },
     
@@ -420,9 +425,15 @@ IONUX.Views.DeploymentActions = IONUX.Views.ActionMenu.extend({
     }, IONUX.Views.ActionMenu.prototype.events),
 
     initialize: function() {
-        this.interaction_items = INTERACTIONS_OBJECT.deployment_interactions;
-        this.on("action__activate_as_primary_deployment", this.action__activate_as_primary_deployment);
-        this.on("action__deactivate_as_primary_deployment", this.action__deactivate_as_primary_deployment);
+        if (IONUX.is_logged_in()){
+            this.interaction_items = INTERACTIONS_OBJECT.deployment_interactions;
+            this.on("action__activate_as_primary_deployment", this.action__activate_as_primary_deployment);
+            this.on("action__deactivate_as_primary_deployment", this.action__deactivate_as_primary_deployment);
+        }
+        else{
+            this.interaction_items = INTERACTIONS_OBJECT.no_options;
+        }
+
         this.create_actionmenu();
     },
     
@@ -443,8 +454,13 @@ IONUX.Views.AttachmentActions = IONUX.Views.ActionMenu.extend({
     }, IONUX.Views.ActionMenu.prototype.events),
 
     initialize: function() {
-        this.interaction_items = INTERACTIONS_OBJECT.attachment_interactions;
-        this.on("action__upload_attachment", this.upload_attachment);
+        if (IONUX.is_logged_in()) {
+            this.interaction_items = INTERACTIONS_OBJECT.attachment_interactions;
+            this.on("action__upload_attachment", this.upload_attachment);
+        }
+        else {
+            this.interaction_items = INTERACTIONS_OBJECT.no_options;
+        }
         this.create_actionmenu();
     },
     
