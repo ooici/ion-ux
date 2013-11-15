@@ -254,6 +254,12 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
   update_geo_inputs: function(bounds) {
 
     var n, s, e, w = null;
+    
+    // Set up some default values
+    n = 89.999;
+    s = -89.999;
+    e = 179.999;
+    w = -179.999;
 
     if (bounds != null) {
       n = bounds.getNorthEast().lat();
