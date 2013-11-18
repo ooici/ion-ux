@@ -892,13 +892,15 @@ IONUX.Views.ListFilter = Backbone.View.extend({
       {label: 'Role', type: 'UserRole'},
       {label: 'Facility', type: 'Org'},
       {label: 'Attachment', type: 'Attachment'},
+      {label: 'External Dataset Agent', type: 'ExternalDatasetAgent'},
+      {label: 'External Dataset Agent Instance',type:'ExternalDatasetAgentInstance'},
     ]
   },
   template: '\
     <h3 id="list-filter-heading">Resource Type\
     <div class="dataproduct-mode action-menu btn-group pull-right">\
       <a class="btn dropdown-toggle" data-toggle="dropdown"><span class="hamburger">&nbsp;</span></a>\
-      <ul class="dropdown-menu"><li class="apply-list">Long List</li></ul>\
+      <ul class="dropdown-menu"><li class="apply-list">Long List</li><li class="act_list_all">Select All</li><li class="act_list_none">Select None</li></ul>\
     </div>\
     </h3>\
     <div class="panelize">\
@@ -909,13 +911,37 @@ IONUX.Views.ListFilter = Backbone.View.extend({
                              </div>'),
   events: {
     'click .filter-option input': 'set_filter',
-    'click .apply-list': 'apply_list'
+    'click .apply-list': 'apply_list',
+    'click .act_list_none': 'act_select_none',
+    'click .act_list_all': 'act_select_all'
   },
   
   initialize: function() {
     _.bindAll(this);
   },
-  
+
+   act_select_all:function(target){
+    console.log('set_filter');
+      _.each($('#list-filter input:not(:checked)'), function(el) {
+        var item = $(el).val();
+        IONUX.ListWhitelist.push(item);
+        $(el).prop('checked', true);
+      });
+    this.trigger_data_filter();
+    },
+
+   act_select_none:function(target){
+    console.log('set_filter');
+      _.each($('#list-filter input:checked'), function(el) {
+        var item = $(el).val();
+        var item_idx = IONUX.ListWhitelist.indexOf(item);
+        IONUX.ListWhitelist.splice(item_idx, 1);
+        $(el).prop('checked', false);
+      });
+    this.trigger_data_filter();
+    },
+
+
   render: function() {
     this.$el.html(this.template);
     var filter_elmt = this.$el.find('#list-filter');
