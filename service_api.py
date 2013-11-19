@@ -110,7 +110,7 @@ class ServiceApi(object):
         if not query:
             rrid = re.compile('^[a-z0-9]{32}$')
             if rrid.match(search_query):
-                query = "SEARCH '_id' MATCH '%s' FROM 'resources_index' LIMIT 100" % search_query
+                query = "SEARCH '_id' MATCH '%s' FROM 'data_products_index' LIMIT 100" % search_query
 
         # if not a raw query or resource id
         if not query:
@@ -119,7 +119,7 @@ class ServiceApi(object):
             rors = re.compile(' or (?=(?:(?:[^"]*"){2})*[^"]*$)', flags=re.IGNORECASE)
             exprs = rors.split(search_query)
 
-            search_template = "SEARCH '%s' %s '%s' FROM 'resources_index' LIMIT 100"
+            search_template = "SEARCH '%s' %s '%s' FROM 'data_products_index' LIMIT 100"
             queries = []
             for expr in exprs:
                 val   = expr
@@ -153,7 +153,7 @@ class ServiceApi(object):
         return search_json['data']
 
         """
-        search_url = "http://%s:%d/ion-service/discovery/parse?search_request=SEARCH'_all'LIKE'%s'FROM'resources_index'LIMIT100" % (GATEWAY_HOST, GATEWAY_PORT, search_query)
+        search_url = "http://%s:%d/ion-service/discovery/parse?search_request=SEARCH'_all'LIKE'%s'FROM'data_products_index'LIMIT100" % (GATEWAY_HOST, GATEWAY_PORT, search_query)
         search_results = requests.get(search_url)
         search_json = json.loads(search_results.content)
         if search_json['data'].has_key('GatewayResponse'):
@@ -176,21 +176,21 @@ class ServiceApi(object):
                             'top_left': [float(geospatial_bounds['west']),
                                          float(geospatial_bounds['north'])],
                             'field': 'geospatial_point_center',
-                            'index': 'resources_index',
+                            'index': 'data_products_index',
                             'limit': max_search_limit})
 
         if vertical_bounds and all(vertical_bounds.itervalues()):
             queries.append({'vertical_bounds': {'from': float(vertical_bounds['lower']),
                                                 'to': float(vertical_bounds['upper'])},
                             'field': 'geospatial_bounds',
-                            'index': 'resources_index',
+                            'index': 'data_products_index',
                             'limit': max_search_limit})
 
         if temporal_bounds and all(temporal_bounds.itervalues()):
             queries.append({'time': {'from': temporal_bounds['from'],
                                      'to': temporal_bounds['to']},
                             'field': 'ts_created',
-                            'index': 'resources_index',
+                            'index': 'data_products_index',
                             'limit': max_search_limit})
 
         if search_criteria:
@@ -199,7 +199,7 @@ class ServiceApi(object):
                 if not item[2]:
                     continue
 
-                q = {'index': 'resources_index', 'field': str(item[0])}
+                q = {'index': 'data_products_index', 'field': str(item[0])}
                 v = str(item[2])
 
                 if item[1].lower() == "contains":
