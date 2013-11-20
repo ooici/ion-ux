@@ -677,6 +677,20 @@ class ServiceApi(object):
 
             prepare = service_gateway_get('instrument_management', 'prepare_instrument_agent_support', params=params)
 
+        elif resource_type == "ExternalDatasetAgent":
+            params = {}
+            if resource_id:
+                params['external_dataset_agent_id'] = resource_id
+
+            prepare = service_gateway_get('data_acquisition_management', 'prepare_external_dataset_agent_support', params=params)
+
+        elif resource_type == "ExternalDatasetAgentInstance":
+            params = {}
+            if resource_id:
+                params['external_dataset_agent_instance_id'] = resource_id
+
+            prepare = service_gateway_get('data_acquisition_management', 'prepare_external_dataset_agent_instance_support', params=params)
+
         elif resource_type == "Deployment":
             params = {}
             if resource_id:
