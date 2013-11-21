@@ -323,7 +323,7 @@ ul.map-ul {
   height: 16px;
   margin-top: 4px;
   background-image: url(/static/img/salt_sprite.png);
-  background-position: -360px -360px;
+  background-position: -180px -360px;
 }
 
 .map-ul li a.secondary-link:hover {
@@ -338,7 +338,7 @@ ul.map-ul {
   height: 16px;
   margin-top: 4px;
   background-image: url(/static/img/salt_sprite.png);
-  background-position: -180px -360px;
+  background-position: -360px -360px;
 }
 /* nested map navigation */
 
