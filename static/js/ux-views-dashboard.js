@@ -112,9 +112,9 @@ IONUX.Views.ObservatorySelector = IONUX.Views.ResourceSelector.extend({
   },
 
   trigger_pan_map: function(e) {
-   IONUX.Dashboard.MapResource.tmp = e.toElement.innerHTML.toString().trim();
+   IONUX.Dashboard.MapResource.tmp = e.target.innerHTML.toString().trim();
    //get selected id
-   var res = e.toElement.pathname.split("/",3);
+   var res = e.target.pathname.split("/",3);
    IONUX.Dashboard.MapResource.tmpId = res[2];
    IONUX.Dashboard.MapResource.trigger('pan:map');
   },
