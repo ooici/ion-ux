@@ -225,7 +225,7 @@ class ServiceApi(object):
 
         # transform queries into the expected query object
         if len(queries) == 0:
-            abort(500)
+            abort(400)
 
         post_data['query'] = queries[0]
         post_data['and'] = queries[1:]
