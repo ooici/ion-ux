@@ -112,8 +112,11 @@ IONUX.Views.ObservatorySelector = IONUX.Views.ResourceSelector.extend({
   },
 
   trigger_pan_map: function(e) {
-   IONUX.Dashboard.MapResource.tmp = e.toElement.innerHTML;
-    IONUX.Dashboard.MapResource.trigger('pan:map');
+   IONUX.Dashboard.MapResource.tmp = e.toElement.innerHTML.toString().trim();
+   //get selected id
+   var res = e.toElement.pathname.split("/",3);
+   IONUX.Dashboard.MapResource.tmpId = res[2];
+   IONUX.Dashboard.MapResource.trigger('pan:map');
   },
   
    click_action_map: function(e){
@@ -492,47 +495,84 @@ IONUX.Views.Map = Backbone.View.extend({
       var rname = resource.get('name');
       self.create_marker(lat, lon, null, rname,"<P>Insert HTML here.</P>", null, rid);
     });
+    //stops zoom out to max level
+     this.pan_map();
   },
   
-  pan_map: function() {
-    console.log('pan_map');
 
-    try {
+  pan_map: function() {
+    
+      var sanNames = _.uniq(this.collection.pluck('spatial_area_name'));
+      //get san
       var san = this.model.get('spatial_area_name');
+      //get tmp san
+      var san_tmp = IONUX.Dashboard.MapResource.tmp;
+      //check if site or pin selected
+      var idx = sanNames.indexOf(san_tmp);
+      var isSite = false;
+      if (idx>=0){
+        isSite = true;
+      }
+      //if not site find the spatial area
+       if (!isSite){
+        if (san_tmp){
+        var tmpPin = san_tmp;
+        //get the resource id from the selected model
+        var resources = this.collection.where({'_id': IONUX.Dashboard.MapResource.tmpId});
+         if (resources.length==1){
+            san_tmp = resources[0].get('spatial_area_name');
+         }else if(resources.length>1){
+            console.log("too many resources");
+         }
+       }
+      }
+
+      //first check to see if spatial area name selected is valid
+      var loc = this.spatial_area_names[san_tmp]
+      if (loc){
+          //if so thats the one we are interested in
+          san = san_tmp;
+          this.model.set('spatial_area_name',san);
+          this.group_spatial_area_names();
+      }else{
+          //try using the set spatial area name
+          loc = this.spatial_area_names[san]
+          if (!loc){
+            this.model.set('spatial_area_name',san);
+            this.group_spatial_area_names();
+          }
+      }
+
+      var bounds
       if (san) {
         var n = this.spatial_area_names[san]['north'];
         var e = this.spatial_area_names[san]['east'];
         var s = this.spatial_area_names[san]['south'];
         var w = this.spatial_area_names[san]['west'];
-      }else{
-          san = IONUX.Dashboard.MapResource.tmp;
-          this.model.set('spatial_area_name',san);
-          this.group_spatial_area_names();
-          var n = this.spatial_area_names[san]['north'];
-          var e = this.spatial_area_names[san]['east'];
-          var s = this.spatial_area_names[san]['south'];
-          var w = this.spatial_area_names[san]['west'];
-      }
-      
-      var ne = new google.maps.LatLng(n, e);
-      var sw = new google.maps.LatLng(s, w);
-      var bounds = new google.maps.LatLngBounds(sw, ne)
+        
+        var ne = new google.maps.LatLng(n, e);
+        var sw = new google.maps.LatLng(s, w);
+        bounds = new google.maps.LatLngBounds(sw, ne)
 
-      //checks for issue
-      if (n && e){
-        this.map.fitBounds(bounds);
       }
-      else{
+
+      //checks for BB already at location
+      if (bounds){
+        var curBounds = this.map.getBounds();
+        if(curBounds.fa){
+          if ((curBounds.fa.b == bounds.fa.b) && (curBounds.fa.d == bounds.fa.d) && (curBounds.ga.d == bounds.ga.d) && (curBounds.ga.b == bounds.ga.b)){
+            console.log("bounds ok");
+          }else{
+            this.map.fitBounds(bounds);
+            console.log('pan_map');
+          }
+        }else{
+          this.map.fitBounds(bounds);
+        }
+      }else{
       //logs range error
         console.log('pan_map error:', 'invalid range');
-
       }
-
-      //dont do range bound if error
-      //this.map.fitBounds(bounds);
-    } catch(err) {
-      console.log('pan_map error:', err);
-    }
   },
   
   create_marker: function(_lat, _lon, _icon, _hover_text, _info_content, _table_row, resource_id) {
@@ -901,19 +941,19 @@ IONUX.Views.ListFilter = Backbone.View.extend({
       {label: 'Deployment', type: 'Deployment'},
       {label: 'Instrument', type: 'InstrumentDevice'},
       {label: 'Instrument Model', type: 'InstrumentModel'},
-      {label: 'Instrument Agent', type: 'InstrumentAgentInstance'},
-      {label: 'Instrument Agent Def', type: 'InstrumentAgent'},
+      {label: 'Instrument Agent Instance', type: 'InstrumentAgentInstance'},
+      {label: 'Instrument Agent', type: 'InstrumentAgent'},
       {label: 'Platform', type: 'PlatformDevice'},
       {label: 'Platform Model', type: 'PlatformModel'},
-      {label: 'Platform Agent', type: 'PlatformAgentInstance'},
-      {label: 'Platform Agent Def', type: 'PlatformAgent'},
+      {label: 'Platform Agent Instance', type: 'PlatformAgentInstance'},
+      {label: 'Platform Agent', type: 'PlatformAgent'},
       {label: 'Station', type: 'PlatformSite'},
       {label: 'Site', type: 'Observatory'},
       {label: 'Role', type: 'UserRole'},
       {label: 'Facility', type: 'Org'},
       {label: 'Attachment', type: 'Attachment'},
-      {label: 'External Dataset Agent', type: 'ExternalDatasetAgent'},
       {label: 'External Dataset Agent Instance',type:'ExternalDatasetAgentInstance'},
+      {label: 'External Dataset Agent', type: 'ExternalDatasetAgent'},
     ]
   },
   template: '\
