@@ -169,6 +169,7 @@ class ServiceApi(object):
                      'or': []}
         queries = []
         max_search_limit = config.MAX_SEARCH_RESULTS if hasattr(config, 'MAX_SEARCH_RESULTS') else 100
+        post_data['limit'] = max_search_limit
 
         if geospatial_bounds and all(geospatial_bounds.itervalues()):
             queries.append({'bottom_right': [float(geospatial_bounds['east']),
@@ -176,22 +177,19 @@ class ServiceApi(object):
                             'top_left': [float(geospatial_bounds['west']),
                                          float(geospatial_bounds['north'])],
                             'field': 'geospatial_point_center',
-                            'index': 'data_products_index',
-                            'limit': max_search_limit})
+                            'index': 'data_products_index'})
 
         if vertical_bounds and all(vertical_bounds.itervalues()):
             queries.append({'vertical_bounds': {'from': float(vertical_bounds['lower']),
                                                 'to': float(vertical_bounds['upper'])},
                             'field': 'geospatial_bounds',
-                            'index': 'data_products_index',
-                            'limit': max_search_limit})
+                            'index': 'data_products_index'})
 
         if temporal_bounds and all(temporal_bounds.itervalues()):
             queries.append({'time': {'from': temporal_bounds['from'],
                                      'to': temporal_bounds['to']},
                             'field': 'ts_created',
-                            'index': 'data_products_index',
-                            'limit': max_search_limit})
+                            'index': 'data_products_index'})
 
         if search_criteria:
             for item in search_criteria:
@@ -204,22 +202,16 @@ class ServiceApi(object):
 
                 if item[1].lower() == "contains":
                     q['match'] = v
-                    q['limit'] = max_search_limit
                 elif item[1].lower() == "starts with":
                     q['value'] = "{0}*".format(v)
-                    q['limit'] = max_search_limit
                 elif item[1].lower() == "ends with":
                     q['value'] = "*{0}".format(v)
-                    q['limit'] = max_search_limit
                 elif item[1].lower() == "like":
                     q['fuzzy'] = v
-                    q['limit'] = max_search_limit
                 elif item[1].lower() == "matches":
                     q['value'] = v
-                    q['limit'] = max_search_limit
                 else:
                     q['match'] = v       # anything we didn't get
-                    q['limit'] = max_search_limit
 
                 queries.append(q)
 
