@@ -254,12 +254,6 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
   update_geo_inputs: function(bounds) {
 
     var n, s, e, w = null;
-    
-    // Set up some default values
-    n = 89.999;
-    s = -89.999;
-    e = 179.999;
-    w = -179.999;
 
     if (bounds != null) {
       n = bounds.getNorthEast().lat();
@@ -393,6 +387,55 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
     form_values = _.map(_.pairs(formObj), function(v) { 
       return {name:v[0], value:v[1]};
     });
+
+    //Error checking advanced search input params
+    function check_Vals() {
+
+      var bValid = true;
+      var errorString = '';
+
+      //Check geospatial bounds (all or none)
+      var all = form_values[1].value !== '' && form_values[2].value !== '' &&
+        + form_values[3].value !== '' && form_values[4].value !== '';
+
+      var none = form_values[1].value == '' && form_values[2].value == '' &&
+        + form_values[3].value == '' && form_values[4].value == '';
+
+      if (!(all || none)){
+        errorString += 'Error in GEOSPATIAL BOUNDS:\nPartially filled form\n';
+        bValid = false;
+      }
+
+      //Check vertical bounds (all or none)
+      var all_or_none = (form_values[5].value !== '' && form_values[6].value !== '') ||
+        + (form_values[5].value == '' && form_values[6].value == '');
+
+      if (!all_or_none){
+        errorString += 'Error in VERTICAL BOUNDS:\nPartially filled form\n';
+        bValid = false;
+      }
+
+      //Check temporal bounds (all or none)
+      all_or_none = (form_values[7].value !== '' && form_values[8].value !== '') ||
+        + (form_values[7].value == '' && form_values[8].value == '');
+
+      if (!all_or_none){
+        errorString += 'Error in TEMPORAL BOUNDS:\nPartially filled form\n';
+        bValid = false;
+      }
+
+      if (!bValid){
+        self.alert(errorString)
+      }
+
+      return bValid;
+    }
+
+    //Check input values
+    var bValid = check_Vals();
+    if (!bValid){
+      return;
+    }
 
     var search_term = $.param(form_values); 
 
