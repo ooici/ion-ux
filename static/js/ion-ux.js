@@ -61,7 +61,12 @@ IONUX = {
         // Check if on dashboard or facepage, render appropriate menu.
         var href = window.location.href.split('/');
         if (_.contains(href, 'face') || _.contains(href, 'command')) {
-          new IONUX.Views.ViewActions();
+          /*
+            The following line is commented out because it appears that
+            ViewActions() should only be initted by the render_page()
+            call from ux-router.js instead of here.
+          */
+          // new IONUX.Views.ViewActions();
         } else {
           new IONUX.Views.DashboardActions();
         };
