@@ -564,10 +564,21 @@ IONUX.Views.Map = Backbone.View.extend({
             console.log("bounds ok");
           }else{
             this.map.fitBounds(bounds);
+            // Redraw the markers because it may have gotten confused (missing cluster markers).
+            if (this.markerClusterer) {
+              this.markerClusterer.setMap(null);
+              this.markerClusterer.setMap(this.map);
+            }
             console.log('pan_map');
           }
         }else{
           this.map.fitBounds(bounds);
+          // The following may not be necessary, but I thought it would be safe to match what was done above.
+          // Redraw the markers becuase it may have gotten confused (missing cluster markers).
+          if (this.markerClusterer) {
+            this.markerClusterer.setMap(null);
+            this.markerClusterer.setMap(this.map);
+          }
         }
       }else{
       //logs range error
