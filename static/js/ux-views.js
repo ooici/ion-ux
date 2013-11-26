@@ -181,6 +181,18 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
           new google.maps.LatLng(sinput.val(), winput.val()),
           new google.maps.LatLng(ninput.val(), einput.val())
         );
+
+        if (!self.rectangle) {
+          // make a rectangle if a user hasn't drawn one
+          self.rectangle = new google.maps.Rectangle();
+          self.rectangle.setOptions(self.rectangle_options);
+          // create a listener on the rectangle to catch modifications / dragging
+          google.maps.event.addListener(self.rectangle, 'bounds_changed', function(e) {
+            self.update_geo_inputs(self.rectangle.getBounds());
+          });
+          self.rectangle.setMap(self.map);
+        }
+
         self.rectangle.setBounds(bounds);
       });
 
@@ -188,7 +200,6 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
       center: new google.maps.LatLng(0, 0),
       zoom: 1,
       mapTypeId: google.maps.MapTypeId.ROADMAP,
-      draggable: false,
       zoomControlOptions: {
         style: google.maps.ZoomControlStyle.SMALL
       },
@@ -202,48 +213,52 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
         self.add_filter_item();
 
         self.map = new google.maps.Map($('#adv_map', self.$el)[0], map_options);
-        self.rectangle = new google.maps.Rectangle();
 
-        var close_symbol = { path         : "M24.778,21.419L19.276,15.917L24.777,10.415L21.949,7.585L16.447,13.087L10.945,7.585L8.117,10.415L13.618,15.917L8.116,21.419L10.946,24.248L16.447,18.746L21.948,24.248Z",
-                             fillColor    : "white",
-                             fillOpacity  : 0.9,
-                             scale        : 0.8,
-                             strokeColor  : "black",
-                             strokeWeight : 1,
-                             anchor       : new google.maps.Point(-3, 25) }
+        self.rectangle_options =  {
+          fillColor     : '#c4e5fc',
+          fillOpacity   : 0.5,
+          strokeWeight  : 1,
+          strokeColor   : '#0cc1ff',
+          strokeOpacity : 0.8,
+          draggable     : true,
+          editable      : true
+        };
 
-        self.close_marker = new google.maps.Marker({ icon    : close_symbol,
-                                                     map     : self.map,
-                                                     visible : false });
+        self.drawingManager = new google.maps.drawing.DrawingManager({
+          drawingControl: true,
+          drawingControlOptions: {
+            position: google.maps.ControlPosition.TOP_CENTER,
+            drawingModes: [
+              google.maps.drawing.OverlayType.RECTANGLE
+            ]
+          },
+          rectangleOptions: self.rectangle_options
+        });
+        self.drawingManager.setMap(self.map);
 
-        var rect_options = { fillColor     : '#c4e5fc',
-                             fillOpacity   : 0.5,
-                             strokeWeight  : 1,
-                             strokeColor   : '#0cc1ff',
-                             strokeOpacity : 0.8,
-                             editable      : false,
-                             draggable     : true,
-                             map           : self.map,
-                             visible       : false }
+        google.maps.event.addListener(self.drawingManager, 'overlaycomplete', function(e) {
+          // Switch back to non-drawing mode after drawing a shape.
+          self.drawingManager.setDrawingMode(null);
 
-        self.rectangle.setOptions(rect_options);
+          // Yuck.  Need to keep a reference to the active shape in case we need to delete it later.
+          self.rectangle = e.overlay;
+          // And we have to create a listener on the rectangle to catch modifications / dragging.
+          google.maps.event.addListener(self.rectangle, 'bounds_changed', function() {
+            self.update_geo_inputs(self.rectangle.getBounds());
+          });
 
-        self.reset_drag_rect();
-
-        // update geo inputs to reflect rectangle when visible and moving
-        google.maps.event.addListener(self.rectangle, 'bounds_changed', function() {
-          if (!self.rectangle.getVisible())
-            return;
-
-          var curbounds = self.rectangle.getBounds();
-          self.close_marker.setPosition(curbounds.getNorthEast());
-          self.update_geo_inputs(curbounds);
+          // update geo inputs to reflect rectangle
+          self.update_geo_inputs(e.overlay.getBounds());
         });
 
-        // click on close marker to remove the rect and reset geo inputs
-        google.maps.event.addListener(self.close_marker, 'click', function(e) {
-          self.reset_drag_rect();
+        google.maps.event.addListener(self.drawingManager, 'drawingmode_changed', function(e) {
+          // Clear out the rectangle if necessary.
+          if (self.rectangle) {
+            self.rectangle.setMap(null);
+            delete self.rectangle;
+          }
         });
+
       })
       .on('hidden', function() {
         self.$el.remove();
@@ -256,107 +271,16 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
     var n, s, e, w = null;
 
     if (bounds != null) {
-      n = bounds.getNorthEast().lat();
-      s = bounds.getSouthWest().lat();
-      e = bounds.getNorthEast().lng();
-      w = bounds.getSouthWest().lng();
+      n = Math.round(bounds.getNorthEast().lat() * 10000) / 10000;
+      s = Math.round(bounds.getSouthWest().lat() * 10000) / 10000;
+      e = Math.round(bounds.getNorthEast().lng() * 10000) / 10000;
+      w = Math.round(bounds.getSouthWest().lng() * 10000) / 10000;
     }
 
     $('input[name="north"]', this.$el).val(n);
     $('input[name="south"]', this.$el).val(s);
     $('input[name="east"]',  this.$el).val(e);
     $('input[name="west"]',  this.$el).val(w);
-  },
-  reset_drag_rect: function() {
-
-    var self = this;
-
-    // hide rect
-    self.rectangle.setVisible(false);
-
-    // hide marker
-    self.close_marker.setVisible(false);
-
-    // make rect uneditable
-    self.rectangle.setOptions({editable:false});
-
-    // set map undraggable
-    self.map.setOptions({draggable: false});
-
-    // clear out geo inputs
-    self.update_geo_inputs(null);
-
-    // mouse move handler - repositions rect under mouse cursor
-    self.mm_listener = google.maps.event.addListener(self.map, 'mousemove', function(e) {
-
-      var bounds = null;
-
-      // are we invisible, or are we clicking + dragging?
-      if (self.rectangle.getVisible()) {
-        // determine sw/ne based on lat/long of this and mousedown event
-
-        if (e.latLng.lat() <= self.start_point.lat() && e.latLng.lng() <= self.start_point.lng()) {
-          var sw = e.latLng; // SW
-          var ne = self.start_point; // NE
-        }
-        else if (e.latLng.lat() <= self.start_point.lat() && e.latLng.lng() >= self.start_point.lng()) {
-          var sw = new google.maps.LatLng(e.latLng.jb, self.start_point.lng());  // e.latLng; // SE
-          var ne = new google.maps.LatLng(self.start_point.lat(), e.latLng.kb);  // self.start_point // NW
-        }
-        else if (e.latLng.lat() >= self.start_point.lat() && e.latLng.lng() >= self.start_point.lng()) {
-          var sw = self.start_point; // SW
-          var ne = e.latLng; // NE
-        }
-        else if (e.latLng.lat() >= self.start_point.lat() && e.latLng.lng() <= self.start_point.lng()) {
-          var sw = new google.maps.LatLng(self.start_point.lat(), e.latLng.kb); // e.latLng; // NW
-          var ne = new google.maps.LatLng(e.latLng.jb, self.start_point.lng()); // self.start_point; // SE
-        }
-
-        bounds = new google.maps.LatLngBounds(sw, ne); 
-
-      } else {
-        // move the invisible rectangle underneath the pointer
-        bounds = new google.maps.LatLngBounds(e.latLng, e.latLng);
-      }
-
-      self.rectangle.setBounds(bounds);
-    });
-
-    google.maps.event.addListenerOnce(self.map, 'mousedown', function(e) {
-      self.rectangle.setVisible(true);
-
-      self.start_point = new google.maps.LatLng(e.latLng.jb, e.latLng.kb);
-    });
-
-    var mu_listener1, mu_listener2 = null;
-
-    var muphandler = function(e) {
-      // remove initial rect point setter
-      if (self.mm_listener != null) {
-        //google.maps.event.removeListener(self.mm_listener);
-        self.mm_listener.remove();
-        self.mm_listener = null;
-      }
-
-      // reset start_point
-      self.start_point = null;
-
-      // make map draggable
-      self.map.setOptions({draggable:true});
-
-      // make rect editable
-      self.rectangle.setOptions({editable:true});
-
-      // make delete marker visible
-      self.close_marker.setVisible(true);
-
-      // remove all mouseup handlers
-      mu_listener1.remove();
-      mu_listener2.remove();
-    };
-
-    mu_listener1 = google.maps.event.addListenerOnce(self.map, 'mouseup', muphandler);
-    mu_listener2 = google.maps.event.addListenerOnce(self.rectangle, 'mouseup', muphandler);
   },
   search_clicked: function(e) {
     e.preventDefault();
@@ -755,7 +679,7 @@ IONUX.Views.ExtentGeospatial = Backbone.View.extend({
     render: function(){
         var label = this.$el.data('label');
         if (!label) {
-            label = "Geospatial Bounds"
+            label = "Geospatial Bounds (decimal degrees)"
         };
         
         var data_path = this.$el.data('path');
@@ -787,7 +711,7 @@ IONUX.Views.ExtentVertical = Backbone.View.extend({
     template: _.template($('#extent-vertical-tmpl').html()),
     render: function(){
         var label = this.$el.data('label');
-        if (!label) label = "Vertical Bounds";
+        if (!label) label = "Vertical Bounds (meters)";
             
         var data_path = this.$el.data('path');
         if (data_path && data_path.substring(0,7) != 'unknown') {
