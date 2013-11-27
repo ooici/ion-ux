@@ -8,7 +8,9 @@ IONUX.Views.Error = Backbone.View.extend({
     'click #back': 'back',
     'click #dashboard': 'dashboard',
     'click #relogin': 'relogin',
-    'click #cancel_relogin': 'cancel_relogin'
+    'click #cancel_relogin': 'cancel_relogin',
+    'click #cancel': 'cancel',
+    'click #ok': 'ok'
   },
   initialize: function(){
     _.bindAll(this);
@@ -72,7 +74,15 @@ IONUX.Views.Error = Backbone.View.extend({
   cancel_relogin: function() {
     window.location.reload();
     return;
-  }
+  },
+  cancel: function(){
+    window.history.back();
+    return;
+  },
+  ok: function(){
+    window.history.back();
+    return;
+  },
 });
 
 IONUX.Views.InlineError = Backbone.View.extend({
