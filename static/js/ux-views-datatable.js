@@ -418,6 +418,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
             var columns = self.get_filter_columns();
             var selected_index = _.indexOf(columns, selected_val)+1; // '+1' because of the hidden metadata table;
             var filter_val = $(filter_item).find("input").val();
+            self.datatable.fnFilterClear();
             self.datatable.fnFilter(filter_val, selected_index);
         });
     },
