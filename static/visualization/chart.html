@@ -256,6 +256,7 @@
             success: dp_metadata_cb,
             error: function(jqXHR, status, err_type) {
                 console.debug("Error retrieving metadata for the data_product : " + jqXHR.responseText);
+                document.getElementById('chart_div').innerHTML = "Error retrieving metadata for the data product.";
             }
         });
 
@@ -276,6 +277,14 @@
             console.debug("Error: Did not receive metadata for the dataproduct");
             stopRealtimeView();
             return;
+        }
+
+        // If the metadata indicates that the product had a processing_level of 'raw', no need to proceed
+        if(dp_metadata['processing_level_code'].toLowerCase() == "raw" ||
+                dp_metadata['processing_level_code'].toLowerCase() == "n/a") {
+                document.getElementById('chart_div').innerHTML = "This data product can not be visualized.";
+                stopRealtimeView();
+                return;
         }
 
         // Check to see if valid metadata was returned
@@ -309,6 +318,7 @@
             dataType: 'json',
             success: handleDataQueryResponse,
             error: function(jqXHR, status, err_type) {
+                document.getElementById('chart_div').innerHTML = "Error retrieving data for plotting.";
                 chart_spinner.stop();
                 console.debug("Error retrieving data for the data_product : " + jqXHR.responseText);
             }
@@ -332,7 +342,7 @@
             var _dt = jQuery.parseJSON(response["data"].replace(/\bNaN\b/g, "null"));
         }
         else {
-            console.debug('No valid data available.');
+            document.getElementById('chart_div').innerHTML = "No Valid Data Available.";
             stopRealtimeView();
             return;
         }
@@ -361,13 +371,6 @@
                 return;
             }
 
-            // Edge case. Add a null data point for the end date specified by coverage. This
-            // will ensure that the x-axis of the chart is drawn to correct limits.
-            tempData = [dp_metadata['time_bounds'][1]*1000, null];
-            for (i = 0; i<data_series_overview.length; i++) {
-                data_series_overview[i]["data"].push(tempData);
-            }
-
             // If no chart exists, create one. If one exist, redraw and reset the view
             if(chart) {
                 drawChart(true, mergeAndSortHcData(data_series_overview, data_series_hires, data_series_rt));
@@ -376,6 +379,16 @@
                 drawChart(true, mergeAndSortHcData(data_series_overview, null, null));
                 // Create the UI at this point. Now that we have the data
                 initChartUi();
+            }
+
+            // Edge case for the end of the data when the last point in the low-res data does
+            // not correspond to the actual data limits (limitation of stride). In this case we do
+            // a special fetch to fill in the last bit with hi-res data
+            var last_overview_ts = data_series_overview[0]["data"][data_series_overview[0]["data"].length - 1][0] / 1000;
+            if (last_overview_ts < dp_metadata['time_bounds'][1] ) {
+                var dqp = setDataQueryParams("highcharts_data", dp_parameters,
+                        last_overview_ts, dp_metadata['time_bounds'][1], 1);
+                fetchData(dqp);
             }
         }
         // Otherwise its data that needs to replace what's currently in the chart
@@ -413,11 +426,9 @@
             gdt.addColumn(var_type, _hc_data[i]["name"])
         }
 
-        // Now populate the rows. **Edge case. We introduced a null data point to force drawing of the chart x-axis to correct
-        // limits. This does not make sense for the table view. So remove that last null point. We can
-        // assume this as all data being plotted is sorted according to time.
+        // Now populate the rows.
         var temp_tuple = [];
-        for (var i = 0; i<_hc_data[0]["data"].length - 1; i++) {
+        for (var i = 0; i<_hc_data[0]["data"].length; i++) {
             temp_tuple = [];
 
             // Fill the time field from the timestamp of the first parameter. Not exactly robust.
@@ -622,12 +633,9 @@
                     align: 'right',
                     backgroundColor: chartBkgColor,
                     borderColor: chartBkgColor,
-                    //borderWidth: 2,
-                    //borderRadius: 1,
                     layout: 'vertical',
                     verticalAlign: 'top',
                     y: 50,
-                    //shadow: true
 
                     itemStyle : {
                         color : chartLabelColor
@@ -636,8 +644,7 @@
                         color : chartLabelInactiveColor
                     },
                     itemHoverStyle : {
-                        color : chartLabelHoverColor,
-                        staggerLines: 2
+                        color : chartLabelHoverColor
                     }
 
                 },
@@ -645,6 +652,7 @@
                 xAxis: {
                     labels: {
                         style : {
+                            staggerLines: 2,
                             color : chartLabelColor
                         }
                     },
@@ -659,8 +667,8 @@
                     endOnTick: false,
                     showLastLabe: false,
                     min: dp_metadata['time_bounds'][0] * 1000,
-                    max: dp_metadata['time_bounds'][1] * 1000
-                    //minRange: 60 * 1000 // one minute,
+                    max: dp_metadata['time_bounds'][1] * 1000,
+                    minRange: 5  // 5 points at max
                 },
 
                 yAxis: {
@@ -852,6 +860,7 @@
             success: initRealtimeViewCb,  // Has to correspond with the server side response
             error: function(jqXHR, status, err_type) {
                 console.debug("Error retrieving token for realtime queue: " + jqXHR.responseText);
+                alert("Could not start real-time view. Are you logged in ?");
             }
         });
 
@@ -887,14 +896,6 @@
 
         // If there was no data, do nothing
         if (!response) return;
-
-        /*
-        if (response.isError()) {
-            console.debug('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
-            return;
-        }
-        */
-
 
         if (response["data"]) {
             var rt_hc_data = jQuery.parseJSON(response["data"].replace(/\bNaN\b/g, "null"));
@@ -1064,6 +1065,7 @@
         if (enable_realtime) {
             var rt_view_chkbox = document.createElement('input');
             rt_view_chkbox.type = 'checkbox';
+            rt_view_chkbox.id = "rt_view_chkbox";
             rt_view_chkbox.setAttribute("onClick", "toggleRealtimeView(this)")
             var newlabel = document.createElement("Label");
             newlabel.setAttribute("for",rt_view_chkbox);
