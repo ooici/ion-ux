@@ -118,6 +118,7 @@
     var curr_parameter_visibility = {};
     var precisions = {};
     var display_names = {};
+    var display_names_reverse = new Object();
 
     var container_server =  "http://" + window.location.host;
 
@@ -131,9 +132,11 @@
     var curr_timezone = 0, curr_timezone_display=" UTC";
     var max_supported_parameters_rt = 50;
     var curr_chart_type = "line";
+     var curr_output_type = ".htmlTable";
     var curr_y_axis_compare_type = undefined;
     //var supported_chart_type = ['AnnotatedTimeLine', 'Table', 'LineChart', 'AreaChart', 'ComboChart'];
     var supported_chart_type = ['line', 'area', 'spline', 'scatter', 'table'];
+    var supported_output_type = ['.htmlTable', '.csv', '.nc', '.png'];
     var overview_reqId = 9;
     var chart_spinner;
 
@@ -461,11 +464,15 @@
     }
 
     function use_display_names_in_data(_hc_data) {
+
+         var a = new Object();
+
         var name;
         for (var i = 0; i<_hc_data.length; i++) {
             name = _hc_data[i]["name"];
             if ((name in display_names) && (display_names[name] != "")) {
                 _hc_data[i]["name"] = display_names[name];
+                display_names_reverse[display_names[name]] = name;
             }
         }
     }
@@ -1052,6 +1059,28 @@
         chartUiDiv.appendChild(clear_all_viz_params_button);
         //chartUiDiv.appendChild(document.createElement('br'));
 
+
+
+        // Create a select box for choosing the chart type
+        chartUiDiv.appendChild(document.createTextNode('   Output Type: '));
+        output_type_select = document.createElement('select');
+        output_type_select.setAttribute("id", "output_type_select");
+        output_type_select.setAttribute("onChange", "onOutputTypeChange(this)");
+
+        var selectFlag = true;
+        for (var i=0; i<supported_output_type.length; i++) {
+            output_type_select.options[i] = new Option(supported_output_type[i], supported_output_type[i], selectFlag, false);
+            selectFlag = false; // just need it true for the first entry
+        }
+        chartUiDiv.appendChild(output_type_select);
+
+
+        var generate_erddap_link = document.createElement('input');
+        generate_erddap_link.type = 'button';
+        generate_erddap_link.value = "Download";
+        generate_erddap_link.addEventListener("click", generateLink);
+        chartUiDiv.appendChild(generate_erddap_link);
+
         // Page reload button
         //chartUiDiv.appendChild(document.createElement('br'));
         var page_reload_button = document.createElement('input');
@@ -1075,6 +1104,54 @@
         }
     }
 
+    function generateLink() {
+        var urlIdx = parent.MODEL_DATA.computed.data_url.value.lastIndexOf("/");
+        var erddapString = parent.MODEL_DATA.computed.data_url.value.substring(0,urlIdx+1);
+
+        var fieldList = [];
+        fieldList.push("?");
+        fieldList.push("time");
+
+        console.log('generate url');
+        console.log(curr_parameter_visibility);
+
+         var field;
+        // check visibility flags for all the series
+        for (var i = 0; i < chart.series.length - 1; i++) {
+             field = [chart.series[i]["name"]];             
+            // if the entry is visible add it to the list
+            if (curr_parameter_visibility[field]){
+                //console.log("true");
+                console.log(field[0])
+                var fieldName = field[0];
+                console.log(display_names_reverse[fieldName]);
+                //grab actual data name
+                fieldList.push(display_names_reverse[fieldName]);
+
+            }
+        }
+        //add time bounds
+        //fieldList.push("&");
+        //fieldList.push("time");
+        //fieldList.push(">=");
+        //curr_parameter_visibility, dp_metadata
+        var id = parent.MODEL_DATA._id;
+        var queryString = erddapString+id+curr_output_type;
+        for (var i = 0; i < fieldList.length ; i++) {
+            queryString = queryString+fieldList[i];
+            if (i>0 && i<fieldList.length-1){
+               queryString=queryString+",";
+            }
+        }
+        queryString =queryString + "&orderBy(%22time%22)";
+        console.log(queryString);
+        window.open(queryString);
+    }
+
+     function onOutputTypeChange (selectedOption ) {
+        console.log("update to the putput type");
+        curr_output_type = selectedOption.value;        
+    }
 
     function showAllVizParams() {
         for (var i=0; i < chart.series.length - 1; i++) {
