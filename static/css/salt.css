@@ -372,6 +372,11 @@ td.filter-option {
   background-position: -60px -596px;
 }
 
+.lcstate-option:before {
+  background-image: url(/static/img/salt_sprite.png);
+  background-position: -60px -836px;
+}
+
 
 
 /* map navigation */
