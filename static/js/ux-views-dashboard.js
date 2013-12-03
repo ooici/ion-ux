@@ -824,14 +824,14 @@ IONUX.Views.MapFilter = Backbone.View.extend({
   el: '#map-filter',
   filter_options: {
     short_asset_options: [
-      {label: 'Station', type: 'StationSite'},
-      {label: 'Instrument', type: 'InstrumentSite'},
-      {label: 'Platform', type: 'PlatformSite'},
+      {label: 'Station', type: 'PlatformSite', sprite: 'station-option'},
+      {label: 'Instrument', type: 'InstrumentSite', sprite: 'site-option'},
+      {label: 'Platform', type: 'PlatformDevice', sprite: 'platformdevice-option'},
     ],
     long_asset_options: [
-      {label: 'Station', type: 'PlatformSite'},
-      {label: 'Instrument', type: 'InstrumentSite'},
-      {label: 'Platform', type: 'PlatformDevice'},
+      {label: 'Station', type: 'PlatformSite', sprite: 'station-option'},
+      {label: 'Instrument', type: 'InstrumentSite', sprite: 'site-option'},
+      {label: 'Platform', type: 'PlatformDevice', sprite: 'platformdevice-option'},
     ],
     data_options: [
       {label: 'Data Products', type: 'DataProduct'}
@@ -871,7 +871,7 @@ IONUX.Views.MapFilter = Backbone.View.extend({
   render_filter_options: function(options){
     // Should not be in separate templates? 
     // Waiting for definitive filter behavior before consolidating.
-    var item_tmpl = '<div class="filter-option resource-option"><%= label %> <div class="pull-right"><input type="checkbox" value="<%= type %>" checked /></div></div>';
+    var item_tmpl = '<div class="filter-option <%= sprite %>"><%= label %> <div class="pull-right"><input type="checkbox" value="<%= type %>" checked /></div></div>';
     var lcstate_tmpl = '<div class="filter-option lcstate-option"><%= label %> <div class="pull-right"><input type="checkbox" value="<%= lcstate %>" checked /></div></div>';
 
     var assets_elmt = this.$el.find('#asset-filter');
@@ -939,32 +939,32 @@ IONUX.Views.ListFilter = Backbone.View.extend({
   el: '#list-filter',
   filter: {
     short: [
-      {label: 'Data Product', type: 'DataProduct'},
-      {label: 'Instrument', type: 'InstrumentDevice'},
-      {label: 'Platform', type: 'PlatformDevice'},
-      {label: 'Station', type: 'PlatformSite'},
-      {label: 'Site', type: 'Observatory'},
+      {label: 'Data Product', type: 'DataProduct', sprite: 'dataproduct-option'},
+      {label: 'Instrument', type: 'InstrumentDevice', sprite: 'instrumentdevice-option'},
+      {label: 'Platform', type: 'PlatformDevice', sprite: 'platformdevice-option'},
+      {label: 'Station', type: 'PlatformSite', sprite: 'station-option'},
+      {label: 'Site', type: 'Observatory', sprite: 'site-option'},
     ],
     long: [
-      {label: 'Data Product', type: 'DataProduct'},
-      {label: 'Data Transform', type: 'DataTransform'},
-      {label: 'Data Process', type: 'DataProcess'},
-      {label: 'Deployment', type: 'Deployment'},
-      {label: 'Instrument', type: 'InstrumentDevice'},
-      {label: 'Instrument Model', type: 'InstrumentModel'},
-      {label: 'Instrument Agent Instance', type: 'InstrumentAgentInstance'},
-      {label: 'Instrument Agent', type: 'InstrumentAgent'},
-      {label: 'Platform', type: 'PlatformDevice'},
-      {label: 'Platform Model', type: 'PlatformModel'},
-      {label: 'Platform Agent Instance', type: 'PlatformAgentInstance'},
-      {label: 'Platform Agent', type: 'PlatformAgent'},
-      {label: 'Station', type: 'PlatformSite'},
-      {label: 'Site', type: 'Observatory'},
-      {label: 'Role', type: 'UserRole'},
-      {label: 'Facility', type: 'Org'},
-      {label: 'Attachment', type: 'Attachment'},
-      {label: 'External Dataset Agent Instance',type:'ExternalDatasetAgentInstance'},
-      {label: 'External Dataset Agent', type: 'ExternalDatasetAgent'},
+      {label: 'Data Product', type: 'DataProduct', sprite: 'dataproduct-option'},
+      {label: 'Data Transform', type: 'DataTransform', sprite: 'datatransform-option'},
+      {label: 'Data Process', type: 'DataProcess', sprite: 'dataprocess-option'},
+      {label: 'Deployment', type: 'Deployment', sprite: 'deployment-option'},
+      {label: 'Instrument', type: 'InstrumentDevice', sprite: 'instrumentdevice-option'},
+      {label: 'Instrument Model', type: 'InstrumentModel', sprite: 'instrumentmodel-option'},
+      {label: 'Instrument Agent Instance', type: 'InstrumentAgentInstance', sprite: 'instrumentagentdef-option'},
+      {label: 'Instrument Agent', type: 'InstrumentAgent', sprite: 'instrumentagent-option'},
+      {label: 'Platform', type: 'PlatformDevice', sprite: 'platformdevice-option'},
+      {label: 'Platform Model', type: 'PlatformModel', sprite: 'platformmodel-option'},
+      {label: 'Platform Agent Instance', type: 'PlatformAgentInstance', sprite: 'platformagent-option'},
+      {label: 'Platform Agent', type: 'PlatformAgent', sprite: 'platformagentdef-option'},
+      {label: 'Station', type: 'PlatformSite', sprite: 'station-option'},
+      {label: 'Site', type: 'Observatory', sprite: 'site-option'},
+      {label: 'Role', type: 'UserRole', sprite: 'role-option'},
+      {label: 'Facility', type: 'Org', sprite: 'facility-option'},
+      {label: 'Attachment', type: 'Attachment', sprite: 'attachment-option'},
+      {label: 'External Dataset Agent Instance',type:'ExternalDatasetAgentInstance', sprite: 'externaldataagentinstance-option'},
+      {label: 'External Dataset Agent', type: 'ExternalDatasetAgent', sprite: 'externaldataagent-option'},
     ]
   },
   template: '\
@@ -977,7 +977,7 @@ IONUX.Views.ListFilter = Backbone.View.extend({
     <div class="panelize">\
       <div id="list-filter"></div>\
     </div>',
-  item_template: _.template('<div class="filter-option resource-option">\
+  item_template: _.template('<div class="filter-option <%= sprite %>">\
                              <%= label %> <div class="pull-right"><input type="checkbox" value="<%= type %>" <%= checked %> /></div>\
                              </div>'),
   events: {
