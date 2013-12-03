@@ -257,50 +257,118 @@ td.filter-option {
   padding-right: 5px;
 }
 
-.dataproduct-option:before {
+.facility-option:before {
   background-image: url(/static/img/salt_sprite.png);
-  background-position: -60px -178px;
+  background-position: -120px -716px;
 }
 
-.instrument-option:before {
+.region-option:before {
   background-image: url(/static/img/salt_sprite.png);
-  background-position: -60px -420px;
-}
-
-.platform-option:before {
-  background-image: url(/static/img/salt_sprite.png);
-  background-position: -60px -540px;
-}
-
-.station-option:before {
-  background-image: url(/static/img/salt_sprite.png);
-  background-position: -60px -540px;
+  background-position: -60px -476px;
 }
 
 .site-option:before {
   background-image: url(/static/img/salt_sprite.png);
-  background-position: -60px -720px;
+  background-position: -60px -716px;
 }
 
-.resource-option:before {
+.deployment-option:before {
   background-image: url(/static/img/salt_sprite.png);
-  background-position: -60px -596px;
+  background-position: -60px -296px;
 }
 
-.lcstate-option:before {
+.station-option:before {
+  background-image: url(/static/img/salt_sprite.png);
+  background-position: 0px -716px;
+}
+
+.platformportal-option:before {
+  background-image: url(/static/img/salt_sprite.png);
+  background-position: -120px -536px;
+}
+
+.platformdevice-option:before {
+  background-image: url(/static/img/salt_sprite.png);
+  background-position: -120px -956px;
+}
+
+.platformmodel-option:before {
+  background-image: url(/static/img/salt_sprite.png);
+  background-position: -60px -536px;
+}
+
+.platformagent-option:before {
+  background-image: url(/static/img/salt_sprite.png);
+  background-position: -120px -656px;
+}
+
+.platformagentdef-option:before {
+  background-image: url(/static/img/salt_sprite.png);
+  background-position: -120px -596px;
+}
+
+.instrumentportal-option:before {
+  background-image: url(/static/img/salt_sprite.png);
+  background-position: -120px -356px;
+}
+
+.instrumentdevice-option:before {
+  background-image: url(/static/img/salt_sprite.png);
+  background-position: -60px -956px;
+}
+
+.instrumentmodel-option:before {
+  background-image: url(/static/img/salt_sprite.png);
+  background-position: -60px -416px;
+}
+
+.instrumentagent-option:before {
+  background-image: url(/static/img/salt_sprite.png);
+  background-position: -120px -416px;
+}
+
+.instrumentagentdef-option:before {
+  background-image: url(/static/img/salt_sprite.png);
+  background-position: -120px -476px;
+}
+
+.dataproduct-option:before {
+  background-image: url(/static/img/salt_sprite.png);
+  background-position: -60px -176px;
+}
+
+.dataprocess-option:before {
+  background-image: url(/static/img/salt_sprite.png);
+  background-position: -60px -116px;
+}
+
+.datatransform-option:before {
   background-image: url(/static/img/salt_sprite.png);
   background-position: -60px -836px;
 }
 
-.deployment-option:before {
-  background-image: url(/static/img/css_sprite_pepper.png);
-  background-position: -60px -300px;
+.attachment-option:before {
+  background-image: url(/static/img/salt_sprite.png);
+  background-position: -60px -56px;
 }
 
-.org-option:before {
+.role-option:before {
   background-image: url(/static/img/salt_sprite.png);
-  background-position: -60px -480px;
+  background-position: -120px -776px;
 }
+
+.externaldataagent-option:before {
+  background-image: url(/static/img/salt_sprite.png);
+  background-position: -60px -1016px;
+}
+
+.externaldataagentinstance-option:before {
+  background-image: url(/static/img/salt_sprite.png);
+  background-position: -120px -1016px;
+}
+
+
+
 
 /* map navigation */
 
