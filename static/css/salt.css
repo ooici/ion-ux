@@ -367,6 +367,10 @@ td.filter-option {
   background-position: -120px -1016px;
 }
 
+.resource-option:before {
+  background-image: url(/static/img/salt_sprite.png);
+  background-position: -60px -596px;
+}
 
 
 
