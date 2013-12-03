@@ -135,6 +135,7 @@ IONUX.Views.ObservatorySelector = IONUX.Views.ResourceSelector.extend({
       else {
           target.attr('class','secondary-link pull-right');
       }
+
       console.log(target.parent().parent().next('ul').is(":visible"))
   },
 
@@ -370,7 +371,6 @@ IONUX.Views.Map = Backbone.View.extend({
     this.sprite_url = '/static/img/pepper_sprite.png';
     this.active_marker = null; // Track clicked icon
     this.sites_status_loaded = false;
-    
     this.map_bounds_elmt = $('#map_bounds');
     
     this.model.on('pan:map', this.pan_map);
@@ -387,6 +387,32 @@ IONUX.Views.Map = Backbone.View.extend({
     window.setTimeout(this.get_sites_status, 1000);
   },
   
+  getPlatformSites: function(obs){
+    var PlatformSitesId = [];
+    var PlatformSitesList = {};
+    var PlatformSite;
+    for (var observatory in obs){
+      //_.each(obs, function(observatory) {
+          PlatSite = (obs[observatory].site_resources);
+          ObsSite = (obs[observatory]['site_resources'][observatory]);
+        for (var p in PlatSite) {
+          id = p.toString();
+          //console.log(id);
+          var type =PlatSite[id]['type_'];
+          if (type == "PlatformSite"){
+            console.log("site");
+            PlatformSitesId.push(id);
+            PlatSite[id].status =obs[observatory]['site_aggregate_status'][id]
+            PlatSite[id].parentId = ObsSite['_id'];
+            PlatSite[id].spatial_area_name = ObsSite['spatial_area_name'];
+            PlatformSitesList[id] = PlatSite[id];
+          }
+        }
+      //});
+    }
+      return PlatformSitesList;
+  },
+
   get_sites_status: function() {
     var resource_ids = this.collection.pluck('_id');
     $('#map_canvas').append('<div id="loading-status" style="">Loading Status...</div>')
@@ -401,7 +427,12 @@ IONUX.Views.Map = Backbone.View.extend({
       global: false,
       success: function(resp) {
         self.sites_status_loaded = true;
+        //gets the observatories
         self.sites_status = resp.data;
+        //get the platform sites
+        self.platformSitesList = self.getPlatformSites(self.sites_status);
+        
+        //draw stuff
         self.clear_all_markers();
         self.draw_markers();
       },
@@ -488,13 +519,24 @@ IONUX.Views.Map = Backbone.View.extend({
     console.log('draw_markers');
     this.group_spatial_area_names();
     var self = this;
+    //get the observatories
     _.each(this.collection.models, function(resource) {
       var lat = resource.get('geospatial_point_center')['lat'];
       var lon = resource.get('geospatial_point_center')['lon'];
       var rid = resource.get('_id');
       var rname = resource.get('name');
-      self.create_marker(lat, lon, null, rname,"<P>Insert HTML here.</P>", null, rid);
+      self.create_marker(lat, lon, null, rname,"<P>Insert HTML here.</P>", null, rid,false);
     });
+
+    //get the platform sites
+   _.each(this.platformSitesList, function(resource) {
+        var lat = resource['geospatial_point_center']['lat'];
+        var lon = resource['geospatial_point_center']['lon'];
+        var rid = resource['_id'];
+        var rname = resource['name'];
+        self.create_marker(lat, lon, null, rname,"<P>Insert HTML here.</P>", null, rid,true);
+      });
+
     //stops zoom out to max level
      this.pan_map();
   },
@@ -586,7 +628,23 @@ IONUX.Views.Map = Backbone.View.extend({
       }
   },
   
-  create_marker: function(_lat, _lon, _icon, _hover_text, _info_content, _table_row, resource_id) {
+   get_status_code: function(resource_id){
+    var status_code;
+    //try and get it from the obs data
+    var station = this.sites_status[resource_id];
+    
+    if (station){
+      status_code = station['site_aggregate_status'][resource_id];
+       
+    }else{
+       this.platformSitesList[resource_id]['status'];
+    }
+    return status_code;
+  },
+
+
+
+  create_marker: function(_lat, _lon, _icon, _hover_text, _info_content, _table_row, resource_id,isPs) {
     
     if (!_lat || !_lon) return null;
     
@@ -594,7 +652,9 @@ IONUX.Views.Map = Backbone.View.extend({
     
     if (this.sites_status_loaded) {
       try {
-        var status_code = this.sites_status[resource_id]['site_aggregate_status'][resource_id];
+        var status_code = this.get_status_code(resource_id);
+        
+
         switch(status_code) {
           case 2:
             var resource_status = 'ok';
@@ -616,14 +676,28 @@ IONUX.Views.Map = Backbone.View.extend({
       var resource_status = 'na';
     };
     
-    var marker = new google.maps.Marker({
-      map: this.map,
-      position: latLng,
-      icon: this.new_markers[resource_status].icon,
-      title: _hover_text + ' - LAT: ' + _lat + ', LON: ' + _lon,
-      resource_id: resource_id,
-      resource_status: resource_status
-    });
+    var marker;
+    if(isPs){
+       marker = new google.maps.Marker({
+        map: this.map,
+        position: latLng,
+        icon: this.new_markers[resource_status].icon,
+        title: 'Platform Site\n'+_hover_text + '\nLAT: ' + _lat + '\nLON: ' + _lon,
+        resource_id: resource_id,
+        resource_status: resource_status,
+        type: 'PlatformSite'
+      });
+    }else{
+       marker = new google.maps.Marker({
+        map: this.map,
+        position: latLng,
+        icon: this.new_markers[resource_status].icon,
+        title: _hover_text + '\nLAT: ' + _lat + '\nLON: ' + _lon,
+        resource_id: resource_id,
+        resource_status: resource_status,
+        type: 'Observatory'
+      });
+    }
     
     // var iw = new google.maps.InfoWindow({content: _info_content});
     var _map = this.map;
@@ -631,7 +705,12 @@ IONUX.Views.Map = Backbone.View.extend({
     var self = this;
     google.maps.event.addListener(marker, 'click', function(_map) {
       if (typeof marker.resource_id != 'undefined') {
+        if (marker.type =="Observatory"){
         IONUX.ROUTER.navigate('/map/'+marker.resource_id, {trigger:true});
+        }
+        else{
+         
+        }
       };
     });
 
@@ -677,7 +756,7 @@ IONUX.Views.Map = Backbone.View.extend({
       // row = asset_table.insertRow(-1);
       // cell = row.insertCell(-1);
       // cell.innerHTML = _text
-      this.create_marker(_lat, _lon, null, _text,"<P>Insert HTML here.</P>", null);
+      this.create_marker(_lat, _lon, null, _text,"<P>Insert HTML here.</P>", null,false);
 
       _lat = _lat + _offset;
       _lon = _lon + _offset;
