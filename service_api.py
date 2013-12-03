@@ -4,6 +4,7 @@ from config import GATEWAY_HOST, GATEWAY_PORT
 from copy import deepcopy
 from instrument_command import BLACKLIST
 from werkzeug.contrib.cache import SimpleCache
+from werkzeug.exceptions import HTTPException
 # import re
 import config
 
@@ -114,12 +115,18 @@ class ServiceApi(object):
 
         # if not a raw query or resource id
         if not query:
-            # split into ors
+            if ' or ' in search_query.lower() and ' and ' in search_query.lower():
+                abort(400,description="Search may not include both AND & OR operators.")
+            # split into ands|ors
             # from http://stackoverflow.com/a/1180180/84732
-            rors = re.compile(' or (?=(?:(?:[^"]*"){2})*[^"]*$)', flags=re.IGNORECASE)
+            if ' or ' in search_query.lower():
+                condition = 'or'
+            else:
+                condition = 'and'
+            rors = re.compile(' %s (?=(?:(?:[^"]*"){2})*[^"]*$)' % (condition), flags=re.IGNORECASE)
             exprs = rors.split(search_query)
 
-            search_template = "SEARCH '%s' %s '%s' FROM 'data_products_index' LIMIT 100"
+            search_template = "SEARCH '%s' %s '%s' FROM 'data_products_index'"
             queries = []
             for expr in exprs:
                 val   = expr
@@ -142,7 +149,7 @@ class ServiceApi(object):
 
                 queries.append(search_template % (field, verb, val))
 
-            query = " OR ".join(queries)
+            query = " %s " % (condition.upper()).join(queries) + " LIMIT 100"
 
         url = build_get_request(SERVICE_GATEWAY_BASE_URL, 'discovery', 'parse', params={'search_request': query, 'id_only': False})
         resp = requests.get(url)
@@ -217,7 +224,7 @@ class ServiceApi(object):
 
         # transform queries into the expected query object
         if len(queries) == 0:
-            abort(400)
+            abort(400,description="Advanced search requires at least one search parameter, all fields blank.")
 
         post_data['query'] = queries[0]
         post_data['and'] = queries[1:]
