@@ -41,7 +41,8 @@ class ServiceApi(object):
 
     @staticmethod
     def get_sites_status(resource_ids):
-        params = {'parent_resource_ids': resource_ids, 'include_status': True}
+        # params = {'parent_resource_ids': resource_ids, 'include_status': True}
+        params = {'parent_resource_ids': resource_ids, 'include_status': True, 'include_sites': True}
         req = service_gateway_post('observatory_management', 'get_sites_devices_status', raw_return=True, params=params)
         return req
         # return service_gateway_get('observatory_management', 'get_sites_devices_status', raw_return=True, params=params)
