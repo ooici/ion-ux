@@ -824,14 +824,14 @@ IONUX.Views.MapFilter = Backbone.View.extend({
   el: '#map-filter',
   filter_options: {
     short_asset_options: [
-      {label: 'Station', type: 'StationSite'},
-      {label: 'Instrument', type: 'InstrumentSite'},
-      {label: 'Platform', type: 'PlatformSite'},
+      {label: 'Station', type: 'PlatformSite', sprite: 'station-option'},
+      {label: 'Instrument', type: 'InstrumentSite', sprite: 'site-option'},
+      {label: 'Platform', type: 'PlatformDevice', sprite: 'platformdevice-option'},
     ],
     long_asset_options: [
-      {label: 'Station', type: 'PlatformSite'},
-      {label: 'Instrument', type: 'InstrumentSite'},
-      {label: 'Platform', type: 'PlatformDevice'},
+      {label: 'Station', type: 'PlatformSite', sprite: 'station-option'},
+      {label: 'Instrument', type: 'InstrumentSite', sprite: 'site-option'},
+      {label: 'Platform', type: 'PlatformDevice', sprite: 'platformdevice-option'},
     ],
     data_options: [
       {label: 'Data Products', type: 'DataProduct'}
@@ -871,7 +871,7 @@ IONUX.Views.MapFilter = Backbone.View.extend({
   render_filter_options: function(options){
     // Should not be in separate templates? 
     // Waiting for definitive filter behavior before consolidating.
-    var item_tmpl = '<div class="filter-option resource-option"><%= label %> <div class="pull-right"><input type="checkbox" value="<%= type %>" checked /></div></div>';
+    var item_tmpl = '<div class="filter-option <%= sprite %>"><%= label %> <div class="pull-right"><input type="checkbox" value="<%= type %>" checked /></div></div>';
     var lcstate_tmpl = '<div class="filter-option lcstate-option"><%= label %> <div class="pull-right"><input type="checkbox" value="<%= lcstate %>" checked /></div></div>';
 
     var assets_elmt = this.$el.find('#asset-filter');
