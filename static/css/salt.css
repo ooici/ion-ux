@@ -262,6 +262,25 @@ td.filter-option {
   background-position: -60px -178px;
 }
 
+.instrument-option:before {
+  background-image: url(/static/img/salt_sprite.png);
+  background-position: -60px -420px;
+}
+
+.platform-option:before {
+  background-image: url(/static/img/salt_sprite.png);
+  background-position: -60px -540px;
+}
+
+.station-option:before {
+  background-image: url(/static/img/salt_sprite.png);
+  background-position: -60px -540px;
+}
+
+.site-option:before {
+  background-image: url(/static/img/salt_sprite.png);
+  background-position: -60px -720px;
+}
 
 .resource-option:before {
   background-image: url(/static/img/salt_sprite.png);
@@ -271,6 +290,16 @@ td.filter-option {
 .lcstate-option:before {
   background-image: url(/static/img/salt_sprite.png);
   background-position: -60px -836px;
+}
+
+.deployment-option:before {
+  background-image: url(/static/img/css_sprite_pepper.png);
+  background-position: -60px -300px;
+}
+
+.org-option:before {
+  background-image: url(/static/img/salt_sprite.png);
+  background-position: -60px -480px;
 }
 
 /* map navigation */
