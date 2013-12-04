@@ -269,13 +269,22 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         var resource_type = obj.aData[obj.iDataColumn];
         switch(resource_type){
             case "InstrumentDevice":
-                var type_css = 'instrument_mini';
+                var type_css = 'instrumentdev_mini';
                 break;
             case "PlatformDevice":
                 var type_css = 'platform_mini';
                 break;
+            case "InstrumentModel":
+                var type_css = 'instrument_mini';
+                break;
+            case "InstrumentAgent":
+                var type_css = 'instrumentagent_mini';
+                break;
+            case "InstrumentAgentInstance":
+                var type_css = 'instrumentagentinstance_mini';
+                break;
             case "Org":
-                var type_css = 'observatory_mini';
+                var type_css = 'org_mini';
                 break;
             case "DataProduct":
                 var type_css = 'data_product_mini';
@@ -287,13 +296,25 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
                 var type_css = 'site_mini';
                 break;
             case "Observatory":
-                var type_css = 'site_mini';
+                var type_css = 'observatory_mini';
                 break;
             case "Subsite":
                 var type_css = 'site_mini';
                 break;
             case "PlatformSite":
-                var type_css = 'site_mini';
+                var type_css = 'station_mini';
+                break;
+            case "PlatformModel":
+                var type_css = 'platformmodel_mini';
+                break;
+            case "PlatformAgent":
+                var type_css = 'platformagent_mini';
+                break;
+            case "PlatformAgentInstance":
+                var type_css = 'platformagentinstance_mini';
+                break;
+            case "UserRole":
+                var type_css = 'userrole_mini';
                 break;
             case "InstrumentSite":
                 var type_css = 'site_mini';
@@ -309,6 +330,12 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
                 break;
             case "Deployment":
                 var type_css = 'deployment_mini';
+                break;
+            case "ExternalDatasetAgent":
+                var type_css = 'externaldatasetagent_mini';
+                break;
+            case "ExternalDatasetAgentInstance":
+                var type_css = 'externaldatasetagentinstance_mini';
                 break;
             default:
                 var type_css = 'resource_mini';
