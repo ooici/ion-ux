@@ -808,10 +808,12 @@ IONUX.Views.Map = Backbone.View.extend({
   },
   
   set_active_marker: function(){
-    if (this.active_marker) this.clear_active_marker();
-    var active_resource_id = this.model.get('_id');
-    this.active_marker = _.findWhere(this.markerClusterer.markers_, {resource_id: active_resource_id});
-    this.active_marker.setIcon(this.new_markers[this.active_marker.resource_status].active);
+    if (this.active_marker){
+      this.clear_active_marker();
+      var active_resource_id = this.model.get('_id');
+      this.active_marker = _.findWhere(this.markerClusterer.markers_, {resource_id: active_resource_id});
+      this.active_marker.setIcon(this.new_markers[this.active_marker.resource_status].active);
+    }
   },
   
   clear_active_marker: function() {
