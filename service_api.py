@@ -72,7 +72,8 @@ class ServiceApi(object):
                                                  'find_site_data_products',
                                                  raw_return=True,
                                                  params={'parent_resource_id': resource_id,
-                                                         'include_data_products': True
+                                                         'include_data_products': True,
+                                                         'include_devices': True
                                                         })
         return site_data_products
 
