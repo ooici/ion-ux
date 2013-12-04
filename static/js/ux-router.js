@@ -88,6 +88,15 @@ dashboard_map_resource: function(resource_id) {
 
     }
 
+    if (!active_resource_attributes){
+      try{
+        active_resource_attributes = IONUX.Dashboard.Observatories.findWhere({_id: resource_id})['attributes']; 
+        type = 'Observatory';  
+      }catch(err){
+
+      }
+    }
+
     IONUX.Dashboard.MapResource.set(active_resource_attributes);
 
     IONUX.Dashboard.MapResource.trigger('set:active');
