@@ -67,19 +67,22 @@ IONUX.Router = Backbone.Router.extend({
     new Spinner(IONUX.Spinner.large).spin(document.getElementById('spinner'));
 
     var active_resource_attributes;
-    
+    var type;
     try{
-    active_resource_attributes = IONUX.Dashboard.PlatformSites.findWhere({_id: resource_id})['attributes'];    
+      active_resource_attributes = IONUX.Dashboard.PlatformSites.findWhere({_id: resource_id})['attributes']; 
+      type = 'PlatformSite';  
     }catch(err){
 
     }
     
-    try{
-    active_resource_attributes = IONUX.Dashboard.Observatories.findWhere({_id: resource_id})['attributes'];    
-    }catch(err){
+    if (!active_resource_attributes){
+      try{
+        active_resource_attributes = IONUX.Dashboard.Observatories.findWhere({_id: resource_id})['attributes'];    
+        type = 'Observatory';
+      }catch(err){
 
+      }
     }
-
 
     IONUX.Dashboard.MapResource.set(active_resource_attributes);
 

@@ -397,6 +397,7 @@ IONUX.Views.Map = Backbone.View.extend({
     var PlatformSitesId = [];
     var PlatformSitesList = {};
     var PlatformSite;
+    var nonstationsite =0;
     for (var observatory in obs){
         PlatSite = (obs[observatory].site_resources);
         ObsSite = (obs[observatory]['site_resources'][observatory]);
@@ -404,13 +405,18 @@ IONUX.Views.Map = Backbone.View.extend({
         for (var p in PlatSite) {
           id = p.toString();
           var type =PlatSite[id]['type_'];
+          var alt_type =PlatSite[id]['alt_resource_type'];
           if (type == "PlatformSite"){
-            PlatformSitesId.push(id);
-            PlatSite[id].status =obs[observatory]['site_aggregate_status'][id]
-            PlatSite[id].parentId = ObsSite['_id'];
-            PlatSite[id].spatial_area_name = ObsSite['spatial_area_name'];
-            PlatformSitesList[id] = PlatSite[id];
-            numberOfPlatforms++;
+            if (alt_type == "StationSite"){
+              PlatformSitesId.push(id);
+              PlatSite[id].status =obs[observatory]['site_aggregate_status'][id]
+              PlatSite[id].parentId = ObsSite['_id'];
+              PlatSite[id].spatial_area_name = ObsSite['spatial_area_name'];
+              PlatformSitesList[id] = PlatSite[id];
+              numberOfPlatforms++;
+            }else{
+              nonstationsite++;
+            }
           }
         }
         if (numberOfPlatforms==0){
@@ -544,7 +550,8 @@ IONUX.Views.Map = Backbone.View.extend({
         var lon = resource['geospatial_point_center']['lon'];
         var rid = resource['_id'];
         var rname = resource['name'];
-        self.create_marker(lat, lon, null, rname,"<P>Insert HTML here.</P>", null, rid,true);
+        var type = resource['type_'];
+        self.create_marker(lat, lon, null, rname,"<P>Insert HTML here.</P>", null, rid,type);
       });
 
     //stops zoom out to max level
@@ -653,7 +660,7 @@ IONUX.Views.Map = Backbone.View.extend({
 
 
 
-  create_marker: function(_lat, _lon, _icon, _hover_text, _info_content, _table_row, resource_id,isPs) {
+  create_marker: function(_lat, _lon, _icon, _hover_text, _info_content, _table_row, resource_id,resource_type) {
     
     if (!_lat || !_lon) return null;
     
@@ -683,28 +690,16 @@ IONUX.Views.Map = Backbone.View.extend({
       var resource_status = 'na';
     };
     
-    var marker;
-    if(isPs){
-       marker = new google.maps.Marker({
+    var marker = new google.maps.Marker({
         map: this.map,
         position: latLng,
         icon: this.new_markers[resource_status].icon,
-        title: 'Platform Site\n'+_hover_text + '\nLAT: ' + _lat + '\nLON: ' + _lon,
+        title: resource_type+'\n'+_hover_text + '\nLAT: ' + _lat + '\nLON: ' + _lon,
         resource_id: resource_id,
         resource_status: resource_status,
-        type: 'PlatformSite'
+        type: resource_status
       });
-    }else{
-       marker = new google.maps.Marker({
-        map: this.map,
-        position: latLng,
-        icon: this.new_markers[resource_status].icon,
-        title: _hover_text + '\nLAT: ' + _lat + '\nLON: ' + _lon,
-        resource_id: resource_id,
-        resource_status: resource_status,
-        type: 'Observatory'
-      });
-    }
+    
     
     // var iw = new google.maps.InfoWindow({content: _info_content});
     var _map = this.map;
@@ -763,7 +758,7 @@ IONUX.Views.Map = Backbone.View.extend({
       // row = asset_table.insertRow(-1);
       // cell = row.insertCell(-1);
       // cell.innerHTML = _text
-      this.create_marker(_lat, _lon, null, _text,"<P>Insert HTML here.</P>", null,false);
+      this.create_marker(_lat, _lon, null, _text,"<P>Insert HTML here.</P>", null,'PlatformSite');
 
       _lat = _lat + _offset;
       _lon = _lon + _offset;
