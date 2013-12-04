@@ -150,10 +150,16 @@ var epoch_to_iso = function(epoch_time){
 };
 
 var make_iso_timestamps = function(resp) {
+  if(resp != null && 'type_' in resp) {
+    if('ts_created' in resp) {
+      resp['ts_created'] = epoch_to_iso(resp['ts_created']);
+    }
+    if('ts_updated' in resp) {
+      resp['ts_updated'] = epoch_to_iso(resp['ts_updated']);
+    }
+  }
+
   _.each(resp, function(val, key) {
-      if (key == 'ts_created' || key == 'ts_updated'){
-        resp[key] = epoch_to_iso(val);
-      };      
       if (typeof val == 'object') {
         make_iso_timestamps(val);
       };
