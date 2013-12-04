@@ -176,6 +176,7 @@ IONUX.Router = Backbone.Router.extend({
         $('#dynamic-container').show();
         $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS[view_type]).html());
         $('.span9 li,.span3 li').hide();
+        $('.heading').hide();
         new IONUX.Views.EditResource({model: resp});
       }
     });
