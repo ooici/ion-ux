@@ -524,7 +524,7 @@ IONUX.Views.Map = Backbone.View.extend({
       ,suppressInfoWindows : true
       ,map                 : this.map
     });
-    
+
     // register event to get and render map bounds
     var self = this;
     google.maps.event.addListener(this.map, "bounds_changed", function(e) {
@@ -741,29 +741,28 @@ IONUX.Views.Map = Backbone.View.extend({
     
     latLng = new google.maps.LatLng(_lat, _lon);
     
+    var resource_status = 'na';
     if (this.sites_status_loaded) {
       try {
         var status_code = this.get_status_code(resource_id);
         switch(status_code) {
           case 2:
-            var resource_status = 'ok';
+            resource_status = 'ok';
             break;
           case 3:
-            var resource_status = 'warning';
+            resource_status = 'warning';
             break;
           case 4:
-            var resource_status = 'critical';
+            resource_status = 'critical';
             break
           default:
-            var resource_status = 'na';
+            resource_status = 'na';
         }
       } catch(err) {
         console.log('create_marker status error:', err);
-        var resource_status = 'na';
+        resource_status = 'na';
       };
-    } else {
-      var resource_status = 'na';
-    };
+    }
     
     var marker = new google.maps.Marker({
         map: this.map,
