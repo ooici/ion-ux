@@ -265,19 +265,19 @@ IONUX.Views.Map = Backbone.View.extend({
   new_markers: {
     na: {
       icon: {
-        anchor: new google.maps.Point(30, 30),
+        anchor: new google.maps.Point(20, 45),
         origin: new google.maps.Point(420, 180),
         size: new google.maps.Size(50, 50),
         url: '/static/img/pepper_sprite.png'
       },
       hover: {
-        anchor: new google.maps.Point(30, 30),
+        anchor: new google.maps.Point(20, 45),
         origin: new google.maps.Point(480, 180),
         size: new google.maps.Size(50, 50),
         url: '/static/img/pepper_sprite.png'
       },
       active: {
-          anchor: new google.maps.Point(30, 30),
+          anchor: new google.maps.Point(20, 45),
           origin: new google.maps.Point(540, 180),
           size: new google.maps.Size(50, 50),
           url: '/static/img/pepper_sprite.png'
@@ -286,19 +286,19 @@ IONUX.Views.Map = Backbone.View.extend({
     
     critical: {
       icon: {
-        anchor: new google.maps.Point(30, 30),
+        anchor: new google.maps.Point(20, 45),
         origin: new google.maps.Point(420, 60),
         size: new google.maps.Size(50, 50),
         url: '/static/img/pepper_sprite.png'
       },
       hover: {
-        anchor: new google.maps.Point(30, 30),
+        anchor: new google.maps.Point(20, 45),
         origin: new google.maps.Point(480, 60),
         size: new google.maps.Size(50, 50),
         url: '/static/img/pepper_sprite.png'
       },
       active: {
-          anchor: new google.maps.Point(30, 30),
+          anchor: new google.maps.Point(20, 45),
           origin: new google.maps.Point(540, 60),
           size: new google.maps.Size(50, 50),
           url: '/static/img/pepper_sprite.png'
@@ -307,19 +307,19 @@ IONUX.Views.Map = Backbone.View.extend({
 
     warning: {
       icon: {
-          anchor: new google.maps.Point(30, 30),
+          anchor: new google.maps.Point(20, 45),
           origin: new google.maps.Point(420, 120),
           size: new google.maps.Size(50, 50),
           url: '/static/img/pepper_sprite.png'
       },
       hover: {
-        anchor: new google.maps.Point(30, 30),
+        anchor: new google.maps.Point(20, 45),
         origin: new google.maps.Point(480, 120),
         size: new google.maps.Size(50, 50),
         url: '/static/img/pepper_sprite.png'
       },
       active: {
-          anchor: new google.maps.Point(30, 30),
+          anchor: new google.maps.Point(20, 45),
           origin: new google.maps.Point(540, 180),
           size: new google.maps.Size(50, 50),
           url: '/static/img/pepper_sprite.png'
@@ -328,19 +328,19 @@ IONUX.Views.Map = Backbone.View.extend({
 
     ok: {
       icon: {
-          anchor: new google.maps.Point(30, 30),
+          anchor: new google.maps.Point(20, 45),
           origin: new google.maps.Point(420, 0),
           size: new google.maps.Size(50, 50),
           url: '/static/img/pepper_sprite.png'
       },
       hover: {
-        anchor: new google.maps.Point(30, 30),
+        anchor: new google.maps.Point(20, 45),
         origin: new google.maps.Point(480, 0),
         size: new google.maps.Size(50, 50),
         url: '/static/img/pepper_sprite.png'
       },
       active: {
-          anchor: new google.maps.Point(30, 30),
+          anchor: new google.maps.Point(20, 45),
           origin: new google.maps.Point(540, 0),
           size: new google.maps.Size(50, 50),
           url: '/static/img/pepper_sprite.png'
@@ -384,6 +384,8 @@ IONUX.Views.Map = Backbone.View.extend({
 
     // this.collection.on('reset', this.draw_markers);
     // this.collection.on('reset', this.get_sites_status);
+
+    this.observatoryBboxes = [];
 
     this.draw_map();
     this.draw_markers();
@@ -448,6 +450,7 @@ IONUX.Views.Map = Backbone.View.extend({
         
         //draw stuff
         self.clear_all_markers();
+        self.clear_all_bboxes();
         self.draw_markers();
       },
       complete: function(){
@@ -534,13 +537,47 @@ IONUX.Views.Map = Backbone.View.extend({
     this.group_spatial_area_names();
     var self = this;
     //get the observatories
-    
+    self.observatoryBboxes = [];
     _.each(this.collection.models, function(resource) {
       var lat = resource.get('geospatial_point_center')['lat'];
       var lon = resource.get('geospatial_point_center')['lon'];
       var rid = resource.get('_id');
       var rname = resource.get('name');
       //self.create_marker(lat, lon, null, rname,"<P>Insert HTML here.</P>", null, rid,false);
+
+      // Fudge any point bboxes into real bboxes.  Google doesn't have any real geographic
+      // functions, so assume the world is flat!
+      var bbox  = [
+         resource.get('constraint_list')[0]['geospatial_longitude_limit_west']
+        ,resource.get('constraint_list')[0]['geospatial_latitude_limit_south']
+        ,resource.get('constraint_list')[0]['geospatial_longitude_limit_east']
+        ,resource.get('constraint_list')[0]['geospatial_latitude_limit_north']
+      ];
+      var area  = (bbox[2] - bbox[0]) * (bbox[3] - bbox[1]);
+      var fudge = 1 / 110400 * (1000 + area * 5000); // 1 DD = 110400 m
+      var path  = [
+        new google.maps.LatLng(
+           bbox[1] - fudge
+          ,bbox[0] - fudge
+        )
+        ,new google.maps.LatLng(
+           bbox[1] - fudge
+          ,bbox[2] + fudge
+        )
+        ,new google.maps.LatLng(
+           bbox[3] + fudge
+          ,bbox[2] + fudge
+        )
+        ,new google.maps.LatLng(
+           bbox[3] + fudge
+          ,bbox[0] - fudge
+        )
+        ,new google.maps.LatLng(
+           bbox[1] - fudge
+          ,bbox[0] - fudge
+        )
+      ];
+      self.create_bbox(path,rname);
     });
     
     
@@ -658,7 +695,27 @@ IONUX.Views.Map = Backbone.View.extend({
     return status_code;
   },
 
+  create_bbox : function(_path,_hover_text) {
+    var poly = new google.maps.Polyline({
+       strokeColor   : '#FFE4B5'
+      ,strokeOpacity : 0.8
+      ,strokeWeight  : 2
+      ,path          : _path
+      ,title         : _hover_text
+      ,map           : this.map
+    });
 
+/*
+    // Title's don't create tooltips
+    google.maps.event.addListener(poly,'mouseover',function() {
+      console.log(_hover_text);
+    });
+    google.maps.event.addListener(poly,'mouseout',function() {
+    });
+*/
+
+    this.observatoryBboxes.push(poly);
+  },
 
   create_marker: function(_lat, _lon, _icon, _hover_text, _info_content, _table_row, resource_id,resource_type) {
     
@@ -747,6 +804,13 @@ IONUX.Views.Map = Backbone.View.extend({
   clear_all_markers: function(){
     this.markerClusterer.clearMarkers();
   },
+
+  clear_all_bboxes: function() {
+    for (var i = 0; i < this.observatoryBboxes.length; i++) {
+      this.observatoryBboxes[i].setMap(null);
+    }
+  },
+
   test_markers: function() {
     var row, cell;
     var _lat = 32.7;
