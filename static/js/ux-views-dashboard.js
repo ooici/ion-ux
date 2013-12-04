@@ -452,7 +452,6 @@ IONUX.Views.Map = Backbone.View.extend({
         self.sites_status = resp.data;
         //get the platform sites
         self.platformSitesList = self.getPlatformSites(self.sites_status);
-        
         //draw stuff
         self.clear_all_markers();
         self.clear_all_bboxes();
@@ -515,6 +514,15 @@ IONUX.Views.Map = Backbone.View.extend({
       disableDefaultUI: true,
       zoomControl: true,
       zoomControlOptions: {style: google.maps.ZoomControlStyle.SMALL, position: google.maps.ControlPosition.TOP_RIGHT}
+    });
+    
+        // add the cable kml
+    new google.maps.KmlLayer({
+       url                 : 'http://ion-alpha.oceanobservatories.org/static/data/rsn_cable_layouts_v1.5.3.kml'
+      ,preserveViewport    : true
+      ,clickable           : false
+      ,suppressInfoWindows : true
+      ,map                 : this.map
     });
     
     // register event to get and render map bounds
