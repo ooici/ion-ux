@@ -943,7 +943,7 @@ IONUX.Views.ListFilter = Backbone.View.extend({
       {label: 'Instrument', type: 'InstrumentDevice', sprite: 'instrumentdevice-option'},
       {label: 'Platform', type: 'PlatformDevice', sprite: 'platformdevice-option'},
       {label: 'Station', type: 'PlatformSite', sprite: 'station-option'},
-      {label: 'Site', type: 'Observatory', sprite: 'site-option'},
+      {label: 'Site', type: 'Observatory', sprite: 'observatory-option'},
     ],
     long: [
       {label: 'Data Product', type: 'DataProduct', sprite: 'dataproduct-option'},
@@ -959,7 +959,7 @@ IONUX.Views.ListFilter = Backbone.View.extend({
       {label: 'Platform Agent Instance', type: 'PlatformAgentInstance', sprite: 'platformagent-option'},
       {label: 'Platform Agent', type: 'PlatformAgent', sprite: 'platformagentdef-option'},
       {label: 'Station', type: 'PlatformSite', sprite: 'station-option'},
-      {label: 'Site', type: 'Observatory', sprite: 'site-option'},
+      {label: 'Site', type: 'Observatory', sprite: 'observatory-option'},
       {label: 'Role', type: 'UserRole', sprite: 'role-option'},
       {label: 'Facility', type: 'Org', sprite: 'facility-option'},
       {label: 'Attachment', type: 'Attachment', sprite: 'attachment-option'},
