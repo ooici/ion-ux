@@ -981,7 +981,7 @@ a.btn-black:hover, a.btn-advanced-search:hover {
   display:block;
   position: absolute;
   background-image: url(/static/img/salt_sprite.png);
-  background-position: -540px -540px; /*Default/unspecified icon*/
+  background-position: -420px -840px; /*Default/unspecified icon*/
 }
 
 .Org .heading-left .text_short_ooi:before {

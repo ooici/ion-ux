@@ -564,6 +564,11 @@ function render_page(resource_type, resource_id, model) {
   } else if (resource_type == "UserInfo" && IONUX.SESSION_MODEL.get('user_id') == resource_id) {
     IONUX.SESSION_MODEL.fetch();
   }
+
+  if (resource_type == "InformationResource") {
+      // Add a div element for the resource type for generic resources so that proper theming can be applied
+      $('.heading').children('.InformationResource').wrapInner('<div class="' + window.MODEL_DATA.resource.type_ + '"></div>');
+  }
   
   _.each($('.v02 .'+resource_type), function(el){
     $(el).find('.content-wrapper:first').css('height', '200px');
