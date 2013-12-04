@@ -592,7 +592,9 @@ def reset_ui():
 def ui_navigation():
     observatories = ServiceApi.find_by_resource_type('Observatory')
     orgs = ServiceApi.find_by_resource_type('Org')
-    return jsonify(data={'orgs': orgs, 'observatories': observatories})
+    platformSites = ServiceApi.find_by_resource_type('PlatformSite')
+    return jsonify(data={'orgs': orgs, 'observatories': observatories, 'platformSites': platformSites})
+    #return jsonify(data={'orgs': orgs, 'observatories': observatories})
 
 
 # -----------------------------------------------------------------------------

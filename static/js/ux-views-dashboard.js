@@ -83,6 +83,12 @@ IONUX.Collections.Observatories = Backbone.Collection.extend({
   }
 });
 
+IONUX.Collections.PlatformSites = Backbone.Collection.extend({
+  url: '/PlatformSite/list/',
+  parse: function(resp) {
+    return resp.data;
+  }
+});
 
 IONUX.Views.ResourceSelector = Backbone.View.extend({
   initialize: function(){
@@ -392,23 +398,25 @@ IONUX.Views.Map = Backbone.View.extend({
     var PlatformSitesList = {};
     var PlatformSite;
     for (var observatory in obs){
-      //_.each(obs, function(observatory) {
-          PlatSite = (obs[observatory].site_resources);
-          ObsSite = (obs[observatory]['site_resources'][observatory]);
+        PlatSite = (obs[observatory].site_resources);
+        ObsSite = (obs[observatory]['site_resources'][observatory]);
+        var numberOfPlatforms = 0;
         for (var p in PlatSite) {
           id = p.toString();
-          //console.log(id);
           var type =PlatSite[id]['type_'];
           if (type == "PlatformSite"){
-            console.log("site");
             PlatformSitesId.push(id);
             PlatSite[id].status =obs[observatory]['site_aggregate_status'][id]
             PlatSite[id].parentId = ObsSite['_id'];
             PlatSite[id].spatial_area_name = ObsSite['spatial_area_name'];
             PlatformSitesList[id] = PlatSite[id];
+            numberOfPlatforms++;
           }
         }
-      //});
+        if (numberOfPlatforms==0){
+          //console.log(ObsSite.name);
+          PlatformSitesList[ObsSite['_id']] = ObsSite;
+        }
     }
       return PlatformSitesList;
   },
@@ -520,14 +528,16 @@ IONUX.Views.Map = Backbone.View.extend({
     this.group_spatial_area_names();
     var self = this;
     //get the observatories
+    
     _.each(this.collection.models, function(resource) {
       var lat = resource.get('geospatial_point_center')['lat'];
       var lon = resource.get('geospatial_point_center')['lon'];
       var rid = resource.get('_id');
       var rname = resource.get('name');
-      self.create_marker(lat, lon, null, rname,"<P>Insert HTML here.</P>", null, rid,false);
+      //self.create_marker(lat, lon, null, rname,"<P>Insert HTML here.</P>", null, rid,false);
     });
-
+    
+    
     //get the platform sites
    _.each(this.platformSitesList, function(resource) {
         var lat = resource['geospatial_point_center']['lat'];
@@ -595,7 +605,6 @@ IONUX.Views.Map = Backbone.View.extend({
         var ne = new google.maps.LatLng(n, e);
         var sw = new google.maps.LatLng(s, w);
         bounds = new google.maps.LatLngBounds(sw, ne)
-
       }
 
       //checks for BB already at location
@@ -653,8 +662,6 @@ IONUX.Views.Map = Backbone.View.extend({
     if (this.sites_status_loaded) {
       try {
         var status_code = this.get_status_code(resource_id);
-        
-
         switch(status_code) {
           case 2:
             var resource_status = 'ok';
@@ -706,10 +713,10 @@ IONUX.Views.Map = Backbone.View.extend({
     google.maps.event.addListener(marker, 'click', function(_map) {
       if (typeof marker.resource_id != 'undefined') {
         if (marker.type =="Observatory"){
-        IONUX.ROUTER.navigate('/map/'+marker.resource_id, {trigger:true});
+          IONUX.ROUTER.navigate('/map/'+marker.resource_id, {trigger:true});
         }
-        else{
-         
+        else{//(marker.type =="PlatformSite"){
+          IONUX.ROUTER.navigate('/map/'+marker.resource_id, {trigger:true}); 
         }
       };
     });
