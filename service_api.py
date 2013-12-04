@@ -200,12 +200,16 @@ class ServiceApi(object):
 
         if search_criteria:
             for item in search_criteria:
-                # if no value, it's probably just the first one left blank
-                if not item[2]:
-                    continue
 
                 q = {'index': 'data_products_index', 'field': str(item[0])}
-                v = str(item[2])
+
+                #Remove non alphanumeric characters but keep spaces
+                delchars = ''.join(c for c in map(chr, range(256)) if not c.isalnum() and not c.isspace())
+                v = (str(item[2]).strip()).translate(None, delchars)
+
+                # if no value, it's probably just the first one left blank
+                if not v:
+                    continue
 
                 if item[1].lower() == "contains":
                     q['match'] = v
@@ -224,7 +228,7 @@ class ServiceApi(object):
 
         # transform queries into the expected query object
         if len(queries) == 0:
-            abort(400,description="Advanced search requires at least one search parameter, all fields blank.")
+            abort(400, description="Advanced search requires at least one search parameter, all fields blank.")
 
         post_data['query'] = queries[0]
         post_data['and'] = queries[1:]
