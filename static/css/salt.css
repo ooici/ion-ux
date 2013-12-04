@@ -359,17 +359,22 @@ td.filter-option {
 
 .externaldataagent-option:before {
   background-image: url(/static/img/salt_sprite.png);
-  background-position: -60px -1016px;
+  background-position: -120px -1016px;
 }
 
 .externaldataagentinstance-option:before {
   background-image: url(/static/img/salt_sprite.png);
-  background-position: -120px -1016px;
+  background-position: 0px -236px;
 }
 
 .resource-option:before {
   background-image: url(/static/img/salt_sprite.png);
   background-position: -60px -596px;
+}
+
+.observatory-option:before {
+  background-image: url(/static/img/salt_sprite.png);
+  background-position: -60px -476px;
 }
 
 .lcstate-option:before {
@@ -991,13 +996,18 @@ a.btn-black:hover, a.btn-advanced-search:hover {
   background-position: -480px -660px;
 }
 
+.InstrumentSite .heading-left .text_short_ooi:before {
+  background-position: -420px -660px;
+}
+
+
 .InstrumentModel .heading-left .text_short_ooi:before,
 .DeviceModel .heading-left .text_short_ooi:before {
   background-position: -540px -660px;
 }
 
 .PlatformDevice .heading-left .text_short_ooi:before {
-  background-position: -480px -600px;
+  background-position: -600px -540px;
 }
 
 .StationSite .heading-left .text_short_ooi:before {
@@ -1006,6 +1016,14 @@ a.btn-black:hover, a.btn-advanced-search:hover {
 
 .Observatory .heading-left .text_short_ooi:before {
   background-position: -420px -900px;
+}
+
+.InformationResource .heading-left .text_short_ooi:before {
+  background-position: -420px -840px;
+}
+
+.UserRole .heading-left .text_short_ooi:before {
+  background-position: -540px -480px;
 }
 
 .heading-right {
