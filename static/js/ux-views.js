@@ -308,9 +308,9 @@ IONUX.Views.AdvancedSearch = Backbone.View.extend({
       }
     }
 
-    form_values = _.map(_.pairs(formObj), function(v) { 
-      return {name:v[0], value:v[1]};
-    });
+    //form_values = _.map(_.pairs(formObj), function(v) {
+    //  return {name:v[0], value:v[1]};
+    //});
 
     //Error checking advanced search input params
     function check_Vals() {
