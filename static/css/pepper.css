@@ -1198,6 +1198,16 @@ label {
 
 fieldset {
   margin-top: 20px;
+  width: 600px;
+  border: 1px solid #dcdcdc;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: right;
+}
+
+.form-horizontal fieldset {
+  background: #f5f5f5;
+  margin-top: 0px;
 }
 
 /* backbone-form "List" textarea */
@@ -1208,16 +1218,88 @@ li div.pull-left {
 .controls input, .controls textarea {
   padding: 5px;
   color: #ccc;
-  height: 25px;
+  height: 15px;
   background: #333;
   border: solid 1px #666;
   box-shadow: none;
   -webkit-box-shadow: none;
+  font-family: Signika Negative;
+  font-size: 13px;
 }
 
 .controls textarea {
   height: 150px;
-  width: 90%;
+  //width: 90%;
+}
+.controls select {
+  width: 420px;
+}
+
+input {
+    font-size: 120%;
+    color: #5a5854;
+    background-color: #f2f2f2;
+    border: 1px solid #bdbdbd;
+    border-radius: 5px;
+    padding: 5px 5px 5px 30px;
+}
+
+.controls input[type=text], .controls textarea, .controls input[type=number] {
+    width: 400px;
+}
+.pull-left input[type=text] {
+  width: 300px;
+}
+
+.controls input[type=checkbox] {
+  float: left;
+}
+
+label {
+    float: left;
+    color: #686868;
+}
+
+.edit-group label, .edit-group select {
+  font-family: Signika Negative;
+  font-weight: 300;
+  font-size: 13px;
+}
+
+.edit-group label {
+  padding-top: 5px;
+  line-height: 11px;
+}
+
+#form-container {
+  background: #a5a5a5;
+}
+
+.edit-group {
+    padding-bottom: 2px;
+    margin-bottom: 0px !important;
+}
+
+.modal-body {
+  padding: 0px;
+  margin: 0px;
+}
+
+.modal-body fieldset {
+  margin-top: 2px;
+  border: 1px solid #dcdcdc;
+  border-radius: 10px;
+  padding: 2px;
+  text-align: right;
+}
+
+.modal {
+  width: 620px;
+}
+
+.bbf-list-modal {
+  text-align: left;
+  padding-left: 60px;
 }
 
 .table-heading {

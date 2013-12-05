@@ -28,7 +28,7 @@
     ',
 
     field: '\
-      <div class="control-group field-{{key}}">\
+      <div class="control-group edit-group field-{{key}}">\
         <label class="control-label" for="{{id}}">{{title}}</label>\
         <div class="controls">\
           {{editor}}\
@@ -39,8 +39,8 @@
     ',
 
     nestedField: '\
-      <div class="field-{{key}} control-group">\
-        <div title="{{title}}" class="control-group">\
+      <div class="field-{{key}} control-group edit-group">\
+        <div title="{{title}}" class="control-group edit-group">\
           <label class="control-label" for="{{id}}">{{title}}</label>\
           <div class="controls">\
             {{editor}}\
