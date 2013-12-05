@@ -617,10 +617,38 @@ function render_page(resource_type, resource_id, model) {
     IONUX.SESSION_MODEL.fetch();
   }
 
-  if (resource_type == "InformationResource") {
-      // Add a div element for the resource type for generic resources so that proper theming can be applied
-      $('.heading').children('.InformationResource').wrapInner('<div class="' + window.MODEL_DATA.resource.type_ + '"></div>');
+  /* Luke's hacks to make the face pages more JS customizable, hooyah JQuery */
+  switch(resource_type) {
+      case "InformationResource":
+        // Add a div element for the resource type for generic resources so that proper theming can be applied
+        $('.heading .InformationResource').wrapInner('<div class="' + window.MODEL_DATA.resource.type_ + '"></div>');
+        break;
+      case "DeviceModel":
+        // Adds specific model info to the element
+        $('.heading .DeviceModel').wrapInner('<div class="' + window.MODEL_DATA.resource.type_ + '"></div>');
+        break;
+      case "UserInfo":
+        // For some reason the first and last name are split in the header, one is a left and the other a right header element, this removes
+        // all fo that and fills in just the full name
+        $('.heading .UserInfo .heading-left').empty();
+        $('.heading .UserInfo .heading-left').append('<div class="level-zero text_short_ooi"><span>' + window.MODEL_DATA.resource.name + '</span></div>');
+        $('.heading .UserInfo .heading-right').empty();
+        break;
+      case "StationSite":
+        // PlatformSite face page's title has a span element for "Name:", it's redundent, we know it's the name and the other pages don't have the element
+        $('.heading .StationSite .heading-left .text-short-label').remove();
+        $('.heading .StationSite').wrapInner('<div class="' + window.MODEL_DATA.resource.type_ + '"></div>');
+        break;
+      case "InstrumentSite":
+        // The heading contains the word Portal:, unnecessary
+        $('.heading .InstrumentSite .heading-left .text-short-label').remove();
+        break;
+      case "AgentInstance":
+        $('.heading .AgentInstance').wrapInner('<div class="' + window.MODEL_DATA.resource.type_ + '"></div>');
+        break;
+          
   }
+    
   
   _.each($('.v02 .'+resource_type), function(el){
     $(el).find('.content-wrapper:first').css('height', '200px');

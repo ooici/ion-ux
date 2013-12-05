@@ -296,13 +296,13 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
                 var type_css = 'site_mini';
                 break;
             case "Observatory":
-                var type_css = 'observatory_mini';
+                var type_css = 'site_mini';
                 break;
             case "Subsite":
                 var type_css = 'site_mini';
                 break;
             case "PlatformSite":
-                var type_css = 'station_mini';
+                var type_css = 'platformportal_mini';
                 break;
             case "PlatformModel":
                 var type_css = 'platformmodel_mini';
@@ -317,7 +317,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
                 var type_css = 'userrole_mini';
                 break;
             case "InstrumentSite":
-                var type_css = 'site_mini';
+                var type_css = 'instrumentportal_mini';
                 break;
             case "Attachment":
                 var type_css = 'attachment_mini';
