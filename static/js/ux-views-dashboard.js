@@ -439,8 +439,8 @@ IONUX.Views.Map = Backbone.View.extend({
               PlatSite[id].spatial_area_name = ObsSite['spatial_area_name'];
               PlatformSitesList[id] = PlatSite[id];
               numberOfPlatforms++;
-              platforms.push(PlatSite[id].name);
-              platforms2ids[PlatSite[id].name] = id;
+              platforms.push(PlatSite[id].local_name);
+              platforms2ids[PlatSite[id].local_name] = id;
             }else{
               nonstationsite++;
             }
@@ -871,11 +871,14 @@ IONUX.Views.Map = Backbone.View.extend({
     this.markerClusterer.addMarker(marker);
   },
   
-  set_active_marker: function(){
+ set_active_marker: function(){
+    //clear it if it is there already
     if (this.active_marker){
-      this.clear_active_marker();
-      var active_resource_id = this.model.get('_id');
-      this.active_marker = _.findWhere(this.markerClusterer.markers_, {resource_id: active_resource_id});
+      this.clear_active_marker()
+    }
+    var active_resource_id = this.model.get('_id');
+    this.active_marker = _.findWhere(this.markerClusterer.markers_, {resource_id: active_resource_id});
+    if (this.active_marker){
       this.active_marker.setIcon(this.new_markers[this.active_marker.resource_status].active);
     }
   },
