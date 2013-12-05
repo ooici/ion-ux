@@ -83,6 +83,12 @@ IONUX.Collections.Observatories = Backbone.Collection.extend({
   }
 });
 
+IONUX.Collections.PlatformSites = Backbone.Collection.extend({
+  url: '/PlatformSite/list/',
+  parse: function(resp) {
+    return resp.data;
+  }
+});
 
 IONUX.Views.ResourceSelector = Backbone.View.extend({
   initialize: function(){
@@ -105,7 +111,9 @@ IONUX.Views.ObservatorySelector = IONUX.Views.ResourceSelector.extend({
 
   events: {
       'click .secondary-link': 'click_action',
+      'click .secondary-nested-link': 'click_action_nested',
       'click .secondary-link-selected': 'click_action',
+      'click .secondary-nested-link-selected': 'click_action_nested',
       'click .toggle-all-menu': 'toggle_action',
       'click .toggle-all-menu-selected': 'toggle_action',
       'click .primary-link': 'trigger_pan_map'
@@ -135,7 +143,22 @@ IONUX.Views.ObservatorySelector = IONUX.Views.ResourceSelector.extend({
       else {
           target.attr('class','secondary-link pull-right');
       }
+
       console.log(target.parent().parent().next('ul').is(":visible"))
+  },
+
+  click_action_nested: function(e){
+      e.preventDefault();
+      var target = $(e.target);
+      target.parent().next('ul').toggle()
+      if (target.parent().next('ul').is(":visible")) {
+          target.attr('class','secondary-nested-link-selected  pull-right');
+      }
+      else {
+          target.attr('class','secondary-nested-link pull-right');
+      }
+
+      console.log(target.parent().next('ul').is(":visible"))
   },
 
    toggle_action: function(e){
@@ -258,19 +281,19 @@ IONUX.Views.Map = Backbone.View.extend({
   new_markers: {
     na: {
       icon: {
-        anchor: new google.maps.Point(30, 30),
+        anchor: new google.maps.Point(20, 45),
         origin: new google.maps.Point(420, 180),
         size: new google.maps.Size(50, 50),
         url: '/static/img/pepper_sprite.png'
       },
       hover: {
-        anchor: new google.maps.Point(30, 30),
+        anchor: new google.maps.Point(20, 45),
         origin: new google.maps.Point(480, 180),
         size: new google.maps.Size(50, 50),
         url: '/static/img/pepper_sprite.png'
       },
       active: {
-          anchor: new google.maps.Point(30, 30),
+          anchor: new google.maps.Point(20, 45),
           origin: new google.maps.Point(540, 180),
           size: new google.maps.Size(50, 50),
           url: '/static/img/pepper_sprite.png'
@@ -279,19 +302,19 @@ IONUX.Views.Map = Backbone.View.extend({
     
     critical: {
       icon: {
-        anchor: new google.maps.Point(30, 30),
+        anchor: new google.maps.Point(20, 45),
         origin: new google.maps.Point(420, 60),
         size: new google.maps.Size(50, 50),
         url: '/static/img/pepper_sprite.png'
       },
       hover: {
-        anchor: new google.maps.Point(30, 30),
+        anchor: new google.maps.Point(20, 45),
         origin: new google.maps.Point(480, 60),
         size: new google.maps.Size(50, 50),
         url: '/static/img/pepper_sprite.png'
       },
       active: {
-          anchor: new google.maps.Point(30, 30),
+          anchor: new google.maps.Point(20, 45),
           origin: new google.maps.Point(540, 60),
           size: new google.maps.Size(50, 50),
           url: '/static/img/pepper_sprite.png'
@@ -300,19 +323,19 @@ IONUX.Views.Map = Backbone.View.extend({
 
     warning: {
       icon: {
-          anchor: new google.maps.Point(30, 30),
+          anchor: new google.maps.Point(20, 45),
           origin: new google.maps.Point(420, 120),
           size: new google.maps.Size(50, 50),
           url: '/static/img/pepper_sprite.png'
       },
       hover: {
-        anchor: new google.maps.Point(30, 30),
+        anchor: new google.maps.Point(20, 45),
         origin: new google.maps.Point(480, 120),
         size: new google.maps.Size(50, 50),
         url: '/static/img/pepper_sprite.png'
       },
       active: {
-          anchor: new google.maps.Point(30, 30),
+          anchor: new google.maps.Point(20, 45),
           origin: new google.maps.Point(540, 180),
           size: new google.maps.Size(50, 50),
           url: '/static/img/pepper_sprite.png'
@@ -321,19 +344,19 @@ IONUX.Views.Map = Backbone.View.extend({
 
     ok: {
       icon: {
-          anchor: new google.maps.Point(30, 30),
+          anchor: new google.maps.Point(20, 45),
           origin: new google.maps.Point(420, 0),
           size: new google.maps.Size(50, 50),
           url: '/static/img/pepper_sprite.png'
       },
       hover: {
-        anchor: new google.maps.Point(30, 30),
+        anchor: new google.maps.Point(20, 45),
         origin: new google.maps.Point(480, 0),
         size: new google.maps.Size(50, 50),
         url: '/static/img/pepper_sprite.png'
       },
       active: {
-          anchor: new google.maps.Point(30, 30),
+          anchor: new google.maps.Point(20, 45),
           origin: new google.maps.Point(540, 0),
           size: new google.maps.Size(50, 50),
           url: '/static/img/pepper_sprite.png'
@@ -346,22 +369,27 @@ IONUX.Views.Map = Backbone.View.extend({
   },
   
   render_map_bounds: function(e){
-    var bounds = this.map.getBounds();
-    bounds['center'] = this.map.getCenter();
-    bounds['ne'] = bounds.getNorthEast();
-    bounds['sw'] = bounds.getSouthWest();
-    
-    var bounds_tmpl = '<div class="row">\
-                        <div class="span6">\
-                          &nbsp;\
-                          <strong>Lat:</strong> <%= ne.lat().toFixed(6) %> / <%= sw.lat().toFixed(6) %>&nbsp;&nbsp;\
-                          <strong>Lon:</strong> <%= ne.lng().toFixed(6) %> / <%= sw.lng().toFixed(6) %>\
-                        </div>\
-                        <div class="span6" style="text-align:right">\
-                          <strong>Center:</strong> <%= center.lat().toFixed(6) %> / <%= center.lng().toFixed(6) %>\
-                        </div>';
-    
-    this.map_bounds_elmt.html(_.template(bounds_tmpl, bounds))
+     var bounds = this.map.getBounds();
+      
+    if (e && e.latLng){
+      bounds['center'] = e.latLng;
+    }else{
+      bounds['center'] = this.map.getCenter();
+    }  
+      bounds['ne'] = bounds.getNorthEast();
+      bounds['sw'] = bounds.getSouthWest();
+      
+      var bounds_tmpl = '<div class="row">\
+                          <div class="span6">\
+                            &nbsp;\
+                            <strong>Lat:</strong> <%= ne.lat().toFixed(4) %> / <%= sw.lat().toFixed(4) %>&nbsp;&nbsp;\
+                            <strong>Lon:</strong> <%= ne.lng().toFixed(4) %> / <%= sw.lng().toFixed(4) %>\
+                          </div>\
+                          <div class="span6" style="text-align:right">\
+                            <strong>Center:</strong> <%= center.lat().toFixed(4) %> / <%= center.lng().toFixed(4) %>\
+                          </div>';
+      
+      this.map_bounds_elmt.html(_.template(bounds_tmpl, bounds))
   },
   
   initialize: function(){
@@ -370,7 +398,6 @@ IONUX.Views.Map = Backbone.View.extend({
     this.sprite_url = '/static/img/pepper_sprite.png';
     this.active_marker = null; // Track clicked icon
     this.sites_status_loaded = false;
-    
     this.map_bounds_elmt = $('#map_bounds');
     
     this.model.on('pan:map', this.pan_map);
@@ -378,6 +405,8 @@ IONUX.Views.Map = Backbone.View.extend({
 
     // this.collection.on('reset', this.draw_markers);
     // this.collection.on('reset', this.get_sites_status);
+
+    this.observatoryBboxes = [];
 
     this.draw_map();
     this.draw_markers();
@@ -387,6 +416,84 @@ IONUX.Views.Map = Backbone.View.extend({
     window.setTimeout(this.get_sites_status, 1000);
   },
   
+  getPlatformSites: function(obs){
+    var PlatformSitesId = [];
+    var PlatformSitesList = {};
+    var PlatformSite;
+    var nonstationsite =0;
+    for (var observatory in obs){
+        PlatSite = (obs[observatory].site_resources);
+        ObsSite = (obs[observatory]['site_resources'][observatory]);
+        var numberOfPlatforms = 0;
+        var platforms     = [];
+        var platforms2ids = {};
+        for (var p in PlatSite) {
+          id = p.toString();
+          var type =PlatSite[id]['type_'];
+          var alt_type =PlatSite[id]['alt_resource_type'];
+          if (type == "PlatformSite"){
+            if (alt_type == "StationSite"){
+              PlatformSitesId.push(id);
+              PlatSite[id].status =obs[observatory]['site_aggregate_status'][id]
+              PlatSite[id].parentId = ObsSite['_id'];
+              PlatSite[id].spatial_area_name = ObsSite['spatial_area_name'];
+              PlatformSitesList[id] = PlatSite[id];
+              numberOfPlatforms++;
+              platforms.push(PlatSite[id].name);
+              platforms2ids[PlatSite[id].name] = id;
+            }else{
+              nonstationsite++;
+            }
+          }
+        }
+        if (numberOfPlatforms==0){
+          //console.log(ObsSite.name);
+          PlatformSitesList[ObsSite['_id']] = ObsSite;
+        }
+
+        // insert platforms into TOC (natural sort them first)
+        platforms.sort(
+          // thank you, http://my.opera.com/GreyWyvern/blog/show.dml/1671288
+          function (a, b) {
+            function chunkify(t) {
+              var tz = [], x = 0, y = -1, n = 0, i, j;
+              while (i = (j = t.charAt(x++)).charCodeAt(0)) {
+                var m = (i == 46 || (i >=48 && i <= 57));
+                if (m !== n) {
+                  tz[++y] = "";
+                  n = m;
+                }
+                tz[y] += j;
+              }
+              return tz;
+            }
+            var aa = chunkify(a);
+            var bb = chunkify(b);
+            for (x = 0; aa[x] && bb[x]; x++) {
+              if (aa[x] !== bb[x]) {
+                var c = Number(aa[x]), d = Number(bb[x]);
+                if (c == aa[x] && d == bb[x]) {
+                  return c - d;
+                } else return (aa[x] > bb[x]) ? 1 : -1;
+              }
+            }
+            return aa.length - bb.length;
+          }
+        );
+        if (platforms.length > 0) {
+          $('<a href="#" class="secondary-nested-link pull-right">&nbsp;</a>').insertAfter('#observatory-selector [href="/map/' + ObsSite._id + '"]');
+          var ul = [];
+          ul.push('<ul class="map-nested-ul" style="display:none;" observatory="' + ObsSite._id + '">');
+          for (var i = 0; i < platforms.length; i++) {
+            ul.push('<li class="really-nested"><a class="primary-link nested-primary-link" href="/map/' + platforms2ids[platforms[i]] + '">' + platforms[i] + '</a></li>');
+          }
+          ul.push('</ul>'); 
+          $(ul.join('')).insertAfter('#observatory-selector [data-resource-id="' + ObsSite._id + '"]');
+        }
+    }
+    return PlatformSitesList;
+  },
+
   get_sites_status: function() {
     var resource_ids = this.collection.pluck('_id');
     $('#map_canvas').append('<div id="loading-status" style="">Loading Status...</div>')
@@ -401,8 +508,17 @@ IONUX.Views.Map = Backbone.View.extend({
       global: false,
       success: function(resp) {
         self.sites_status_loaded = true;
+        //gets the observatories
         self.sites_status = resp.data;
+        // clear out platforms from TOC
+        $('#observatory-selector').contents().find('.secondary-nested-link.pull-right').remove();
+        $('#observatory-selector').contents().find('.secondary-nested-link-selected.pull-right').remove();
+        $('#observatory-selector').contents().find('.really-nested').parent().remove();
+        //get the platform sites
+        self.platformSitesList = self.getPlatformSites(self.sites_status);
+        //draw stuff
         self.clear_all_markers();
+        self.clear_all_bboxes();
         self.draw_markers();
       },
       complete: function(){
@@ -464,10 +580,24 @@ IONUX.Views.Map = Backbone.View.extend({
       zoomControlOptions: {style: google.maps.ZoomControlStyle.SMALL, position: google.maps.ControlPosition.TOP_RIGHT}
     });
     
+        // add the cable kml
+    new google.maps.KmlLayer({
+       url                 : 'http://ion-alpha.oceanobservatories.org/static/data/rsn_cable_layouts_v1.5.3.kml'
+      ,preserveViewport    : true
+      ,clickable           : false
+      ,suppressInfoWindows : true
+      ,map                 : this.map
+    });
+
     // register event to get and render map bounds
     var self = this;
-    google.maps.event.addListener(this.map, "bounds_changed", function() {
-       self.render_map_bounds();
+    google.maps.event.addListener(this.map, "bounds_changed", function(e) {
+       self.render_map_bounds(e);
+    });
+    
+
+    google.maps.event.addListener(this.map, "mousemove", function(e) {
+        self.render_map_bounds(e);
     });
     
     this.markerClusterer = new MarkerClusterer(this.map, null, {
@@ -488,13 +618,61 @@ IONUX.Views.Map = Backbone.View.extend({
     console.log('draw_markers');
     this.group_spatial_area_names();
     var self = this;
+    //get the observatories
+    self.observatoryBboxes = [];
     _.each(this.collection.models, function(resource) {
       var lat = resource.get('geospatial_point_center')['lat'];
       var lon = resource.get('geospatial_point_center')['lon'];
       var rid = resource.get('_id');
       var rname = resource.get('name');
-      self.create_marker(lat, lon, null, rname,"<P>Insert HTML here.</P>", null, rid);
+      //self.create_marker(lat, lon, null, rname,"<P>Insert HTML here.</P>", null, rid,false);
+
+      // Fudge any point bboxes into real bboxes.  Google doesn't have any real geographic
+      // functions, so assume the world is flat!
+      var bbox  = [
+         resource.get('constraint_list')[0]['geospatial_longitude_limit_west']
+        ,resource.get('constraint_list')[0]['geospatial_latitude_limit_south']
+        ,resource.get('constraint_list')[0]['geospatial_longitude_limit_east']
+        ,resource.get('constraint_list')[0]['geospatial_latitude_limit_north']
+      ];
+      var area  = (bbox[2] - bbox[0]) * (bbox[3] - bbox[1]);
+      var fudge = 1 / 110400 * (1000 + area * 5000); // 1 DD = 110400 m
+      var path  = [
+        new google.maps.LatLng(
+           bbox[1] - fudge
+          ,bbox[0] - fudge
+        )
+        ,new google.maps.LatLng(
+           bbox[1] - fudge
+          ,bbox[2] + fudge
+        )
+        ,new google.maps.LatLng(
+           bbox[3] + fudge
+          ,bbox[2] + fudge
+        )
+        ,new google.maps.LatLng(
+           bbox[3] + fudge
+          ,bbox[0] - fudge
+        )
+        ,new google.maps.LatLng(
+           bbox[1] - fudge
+          ,bbox[0] - fudge
+        )
+      ];
+      self.create_bbox(path,rname);
     });
+    
+    
+    //get the platform sites
+   _.each(this.platformSitesList, function(resource) {
+        var lat = resource['geospatial_point_center']['lat'];
+        var lon = resource['geospatial_point_center']['lon'];
+        var rid = resource['_id'];
+        var rname = resource['name'];
+        var type = resource['type_'];
+        self.create_marker(lat, lon, null, rname,"<P>Insert HTML here.</P>", null, rid,type);
+      });
+
     //stops zoom out to max level
      this.pan_map();
   },
@@ -553,7 +731,6 @@ IONUX.Views.Map = Backbone.View.extend({
         var ne = new google.maps.LatLng(n, e);
         var sw = new google.maps.LatLng(s, w);
         bounds = new google.maps.LatLngBounds(sw, ne)
-
       }
 
       //checks for BB already at location
@@ -586,44 +763,81 @@ IONUX.Views.Map = Backbone.View.extend({
       }
   },
   
-  create_marker: function(_lat, _lon, _icon, _hover_text, _info_content, _table_row, resource_id) {
+   get_status_code: function(resource_id){
+    var status_code;
+    //try and get it from the obs data
+    var station = this.sites_status[resource_id];
+    
+    if (station){
+      status_code = station['site_aggregate_status'][resource_id];
+       
+    }else{
+       this.platformSitesList[resource_id]['status'];
+    }
+    return status_code;
+  },
+
+  create_bbox : function(_path,_hover_text) {
+    var poly = new google.maps.Polyline({
+       strokeColor   : '#FFE4B5'
+      ,strokeOpacity : 0.8
+      ,strokeWeight  : 2
+      ,path          : _path
+      ,title         : _hover_text
+      ,map           : this.map
+    });
+
+/*
+    // Title's don't create tooltips
+    google.maps.event.addListener(poly,'mouseover',function() {
+      console.log(_hover_text);
+    });
+    google.maps.event.addListener(poly,'mouseout',function() {
+    });
+*/
+
+    this.observatoryBboxes.push(poly);
+  },
+
+  create_marker: function(_lat, _lon, _icon, _hover_text, _info_content, _table_row, resource_id,resource_type) {
     
     if (!_lat || !_lon) return null;
     
     latLng = new google.maps.LatLng(_lat, _lon);
     
+    var resource_status = 'na';
     if (this.sites_status_loaded) {
       try {
-        var status_code = this.sites_status[resource_id]['site_aggregate_status'][resource_id];
+        var status_code = this.get_status_code(resource_id);
         switch(status_code) {
           case 2:
-            var resource_status = 'ok';
+            resource_status = 'ok';
             break;
           case 3:
-            var resource_status = 'warning';
+            resource_status = 'warning';
             break;
           case 4:
-            var resource_status = 'critical';
+            resource_status = 'critical';
             break
           default:
-            var resource_status = 'na';
+            resource_status = 'na';
         }
       } catch(err) {
         console.log('create_marker status error:', err);
-        var resource_status = 'na';
+        resource_status = 'na';
       };
-    } else {
-      var resource_status = 'na';
-    };
+    }
     
     var marker = new google.maps.Marker({
-      map: this.map,
-      position: latLng,
-      icon: this.new_markers[resource_status].icon,
-      title: _hover_text + ' - LAT: ' + _lat + ', LON: ' + _lon,
-      resource_id: resource_id,
-      resource_status: resource_status
-    });
+        map: this.map,
+        position: latLng,
+        icon: this.new_markers[resource_status].icon,
+        title: resource_type+'\n'+_hover_text + '\nLAT: ' + _lat + '\nLON: ' + _lon,
+        resource_id: resource_id,
+        resource_status: resource_status,
+        type: resource_status
+      });
+    
     
     // var iw = new google.maps.InfoWindow({content: _info_content});
     var _map = this.map;
@@ -631,7 +845,12 @@ IONUX.Views.Map = Backbone.View.extend({
     var self = this;
     google.maps.event.addListener(marker, 'click', function(_map) {
       if (typeof marker.resource_id != 'undefined') {
-        IONUX.ROUTER.navigate('/map/'+marker.resource_id, {trigger:true});
+        if (marker.type =="Observatory"){
+          IONUX.ROUTER.navigate('/map/'+marker.resource_id, {trigger:true});
+        }
+        else{//(marker.type =="PlatformSite"){
+          IONUX.ROUTER.navigate('/map/'+marker.resource_id, {trigger:true}); 
+        }
       };
     });
 
@@ -653,10 +872,12 @@ IONUX.Views.Map = Backbone.View.extend({
   },
   
   set_active_marker: function(){
-    if (this.active_marker) this.clear_active_marker();
-    var active_resource_id = this.model.get('_id');
-    this.active_marker = _.findWhere(this.markerClusterer.markers_, {resource_id: active_resource_id});
-    this.active_marker.setIcon(this.new_markers[this.active_marker.resource_status].active);
+    if (this.active_marker){
+      this.clear_active_marker();
+      var active_resource_id = this.model.get('_id');
+      this.active_marker = _.findWhere(this.markerClusterer.markers_, {resource_id: active_resource_id});
+      this.active_marker.setIcon(this.new_markers[this.active_marker.resource_status].active);
+    }
   },
   
   clear_active_marker: function() {
@@ -666,6 +887,13 @@ IONUX.Views.Map = Backbone.View.extend({
   clear_all_markers: function(){
     this.markerClusterer.clearMarkers();
   },
+
+  clear_all_bboxes: function() {
+    for (var i = 0; i < this.observatoryBboxes.length; i++) {
+      this.observatoryBboxes[i].setMap(null);
+    }
+  },
+
   test_markers: function() {
     var row, cell;
     var _lat = 32.7;
@@ -677,7 +905,7 @@ IONUX.Views.Map = Backbone.View.extend({
       // row = asset_table.insertRow(-1);
       // cell = row.insertCell(-1);
       // cell.innerHTML = _text
-      this.create_marker(_lat, _lon, null, _text,"<P>Insert HTML here.</P>", null);
+      this.create_marker(_lat, _lon, null, _text,"<P>Insert HTML here.</P>", null,'PlatformSite');
 
       _lat = _lat + _offset;
       _lon = _lon + _offset;

@@ -24,6 +24,7 @@ IONUX = {
         
         // MAPS Sidebar (initially shown)
         IONUX.Dashboard.Observatories = new IONUX.Collections.Observatories(resp.data.observatories)
+        IONUX.Dashboard.PlatformSites = new IONUX.Collections.PlatformSites(resp.data.platformSites)
         new IONUX.Views.ObservatorySelector({collection: IONUX.Dashboard.Observatories, title: 'Site'}).render().el;
         new IONUX.Views.MapFilter().render().el;
         
