@@ -1056,13 +1056,13 @@ IONUX.Views.MapFilter = Backbone.View.extend({
   filter_options: {
     short_asset_options: [
       {label: 'Station', type: 'PlatformSite', sprite: 'station-option'},
-      {label: 'Instrument', type: 'InstrumentSite', sprite: 'site-option'},
-      {label: 'Platform', type: 'PlatformDevice', sprite: 'platformdevice-option'},
+      {label: 'Instrument', type: 'InstrumentSite', sprite: 'instrumentportal-option'},
+      {label: 'Platform', type: 'PlatformDevice', sprite: 'platformportal-option'},
     ],
     long_asset_options: [
       {label: 'Station', type: 'PlatformSite', sprite: 'station-option'},
-      {label: 'Instrument', type: 'InstrumentSite', sprite: 'site-option'},
-      {label: 'Platform', type: 'PlatformDevice', sprite: 'platformdevice-option'},
+      {label: 'Instrument', type: 'InstrumentSite', sprite: 'instrumentmodel-option'},
+      {label: 'Platform', type: 'PlatformDevice', sprite: 'platformportal-option'},
     ],
     data_options: [
       {label: 'Data Products', type: 'DataProduct'}
@@ -1173,8 +1173,8 @@ IONUX.Views.ListFilter = Backbone.View.extend({
       {label: 'Data Product', type: 'DataProduct', sprite: 'dataproduct-option'},
       {label: 'Instrument', type: 'InstrumentDevice', sprite: 'instrumentdevice-option'},
       {label: 'Platform', type: 'PlatformDevice', sprite: 'platformdevice-option'},
-      {label: 'Station', type: 'PlatformSite', sprite: 'station-option'},
-      {label: 'Site', type: 'Observatory', sprite: 'observatory-option'},
+      {label: 'Station', type: 'PlatformSite', sprite: 'platformportal-option'},
+      {label: 'Site', type: 'Observatory', sprite: 'site-option'},
     ],
     long: [
       {label: 'Data Product', type: 'DataProduct', sprite: 'dataproduct-option'},
@@ -1189,8 +1189,8 @@ IONUX.Views.ListFilter = Backbone.View.extend({
       {label: 'Platform Model', type: 'PlatformModel', sprite: 'platformmodel-option'},
       {label: 'Platform Agent Instance', type: 'PlatformAgentInstance', sprite: 'platformagent-option'},
       {label: 'Platform Agent', type: 'PlatformAgent', sprite: 'platformagentdef-option'},
-      {label: 'Station', type: 'PlatformSite', sprite: 'station-option'},
-      {label: 'Site', type: 'Observatory', sprite: 'observatory-option'},
+      {label: 'Station', type: 'PlatformSite', sprite: 'platformportal-option'},
+      {label: 'Site', type: 'Observatory', sprite: 'site-option'},
       {label: 'Role', type: 'UserRole', sprite: 'role-option'},
       {label: 'Facility', type: 'Org', sprite: 'facility-option'},
       {label: 'Attachment', type: 'Attachment', sprite: 'attachment-option'},

@@ -272,6 +272,16 @@ td.filter-option {
   background-position: -60px -716px;
 }
 
+.instrumentportal-option:before {
+  background-image: url(/static/img/salt_sprite.png);
+  background-position: -60px -416px;
+}
+
+.platformportal-option:before {
+  background-image: url(/static/img/salt_sprite.png);
+  background-position: -60px -536px;
+}
+
 .deployment-option:before {
   background-image: url(/static/img/salt_sprite.png);
   background-position: -60px -296px;
@@ -282,11 +292,6 @@ td.filter-option {
   background-position: 0px -716px;
 }
 
-.platformportal-option:before {
-  background-image: url(/static/img/salt_sprite.png);
-  background-position: -120px -536px;
-}
-
 .platformdevice-option:before {
   background-image: url(/static/img/salt_sprite.png);
   background-position: -120px -956px;
@@ -294,22 +299,17 @@ td.filter-option {
 
 .platformmodel-option:before {
   background-image: url(/static/img/salt_sprite.png);
-  background-position: -60px -536px;
+  background-position: -120px -536px;
 }
 
 .platformagent-option:before {
   background-image: url(/static/img/salt_sprite.png);
-  background-position: -120px -656px;
+  background-position: -120px -596px;
 }
 
 .platformagentdef-option:before {
   background-image: url(/static/img/salt_sprite.png);
-  background-position: -120px -596px;
-}
-
-.instrumentportal-option:before {
-  background-image: url(/static/img/salt_sprite.png);
-  background-position: -120px -356px;
+  background-position: -120px -656px;
 }
 
 .instrumentdevice-option:before {
@@ -319,17 +319,17 @@ td.filter-option {
 
 .instrumentmodel-option:before {
   background-image: url(/static/img/salt_sprite.png);
-  background-position: -60px -416px;
+  background-position: -120px -356px;
 }
 
 .instrumentagent-option:before {
   background-image: url(/static/img/salt_sprite.png);
-  background-position: -120px -416px;
+  background-position: -120px -476px;
 }
 
 .instrumentagentdef-option:before {
   background-image: url(/static/img/salt_sprite.png);
-  background-position: -120px -476px;
+  background-position: -120px -416px;
 }
 
 .dataproduct-option:before {
@@ -491,6 +491,13 @@ ul.map-nested-ul {
   background-position: -60px -716px;
 }
 
+.map-nested-ul .really-nested:before,
+.map-nested-ul .really-nested:hover:before,
+.map-nested-ul .really-nested.active:hover:before,
+.map-nested-ul .active:before {
+  background-position: -60px -540px;
+}
+
 .really-nested:before {
   left: 51px !important;
 }
@@ -520,8 +527,6 @@ ul.map-nested-ul {
   left: 31px;
   display:block;
   position: absolute;
-  background-image: url(/static/img/salt_sprite.png);
-  background-position: -90px -716px;
 }
 
 .map-nested-ul li a.primary-link {
@@ -1028,11 +1033,13 @@ a.btn-black:hover, a.btn-advanced-search:hover {
 }
 
 .InstrumentSite .heading-left .text_short_ooi:before {
-  background-position: -420px -660px;
+  background-position: -540px -660px;
 }
 
+.DeviceModel .InstrumentModel .heading-left .text_short_ooi:before {
+  background-position: -420px -960px;
+}
 
-.InstrumentModel .heading-left .text_short_ooi:before,
 .DeviceModel .heading-left .text_short_ooi:before {
   background-position: -540px -660px;
 }
@@ -1041,12 +1048,20 @@ a.btn-black:hover, a.btn-advanced-search:hover {
   background-position: -600px -540px;
 }
 
+.PlatformModel .heading-left .text_short_ooi:before {
+  background-position: -480px -960px;
+}
+
+.StationSite .PlatformSite .heading-left .text_short_ooi:before {
+  background-position: -420px -600px;
+}
+
 .StationSite .heading-left .text_short_ooi:before {
   background-position: -540px -840px;
 }
 
 .Observatory .heading-left .text_short_ooi:before {
-  background-position: -420px -900px;
+  background-position: -420px -660px;
 }
 
 .InformationResource .heading-left .text_short_ooi:before {
@@ -1054,7 +1069,27 @@ a.btn-black:hover, a.btn-advanced-search:hover {
 }
 
 .UserRole .heading-left .text_short_ooi:before {
+  background-position: -540px -780px;
+}
+
+.UserInfo .heading-left .text_short_ooi:before {
   background-position: -540px -480px;
+}
+
+.InformationResource .ExternalDatasetAgent .text_short_ooi:before {
+  background-position: -540px -900px;
+}
+
+.AgentInstance .ExternalDatasetAgentInstance .text_short_ooi:before {
+  background-position: -480px -780px;
+}
+
+.InformationResource .InstrumentAgent .text_short_ooi:before {
+  background-position: -540px -600px;
+}
+
+.InstrumentAgentInstance .text_short_ooi:before {
+  background-position: -600px -480px;
 }
 
 .heading-right {
