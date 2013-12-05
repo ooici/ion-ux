@@ -485,7 +485,7 @@ IONUX.Views.Map = Backbone.View.extend({
           var ul = [];
           ul.push('<ul class="map-nested-ul" style="display:none;" observatory="' + ObsSite._id + '">');
           for (var i = 0; i < platforms.length; i++) {
-            ul.push('<li class="really-nested"><a class="primary-link nested-primary-link" href="/map/' + platforms2ids[platforms[i]] + '">' + platforms[i] + '</a></li>');
+            ul.push('<li data-resource-id="' + platforms2ids[platforms[i]] + '"class="really-nested"><a class="primary-link nested-primary-link" href="/map/' + platforms2ids[platforms[i]] + '">' + platforms[i] + '</a></li>');
           }
           ul.push('</ul>'); 
           $(ul.join('')).insertAfter('#observatory-selector [data-resource-id="' + ObsSite._id + '"]');
