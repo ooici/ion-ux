@@ -49,14 +49,27 @@ IONUX.Router = Backbone.Router.extend({
     });
   },
   
-  dashboard_map_resource: function(resource_id) {
+dashboard_map_resource: function(resource_id) {
     this._remove_dashboard_menu();
     new IONUX.Views.DashboardActions();
     $('#left .resources-view').hide();
     $('#left .map-view').show();
     $('.map-nested-ul').find('.active').removeClass('active');
-    $('#list').find("[data-resource-id='"+resource_id+"']").addClass('active');
-    
+
+    var target = $('#list').find("[data-resource-id='"+resource_id+"']");
+    target.addClass('active');
+  
+    var obs = target.parent().prev();
+    //if its not visible
+    if (!target.parent().prev().next('ul').is(":visible")){
+      //toggle it
+      target.parent().toggle();
+      //switch the logo
+      var k= target.parent().prev().find("[class='secondary-link pull-right']");
+      k.attr('class','secondary-link-selected  pull-right');
+    }
+
+
     // Catch back button
     if ($('#dynamic-container > #map_canvas').length < 1) {
       $('#dynamic-container').html($('#dashboard-map-tmpl').html()).show();
@@ -66,7 +79,24 @@ IONUX.Router = Backbone.Router.extend({
     table_elmt.off().empty().show().append('<div id="spinner"></div>');
     new Spinner(IONUX.Spinner.large).spin(document.getElementById('spinner'));
 
-    var active_resource_attributes = IONUX.Dashboard.Observatories.findWhere({_id: resource_id})['attributes'];    
+    var active_resource_attributes;
+    var type;
+    try{
+      active_resource_attributes = IONUX.Dashboard.PlatformSites.findWhere({_id: resource_id})['attributes']; 
+      type = 'PlatformSite';  
+    }catch(err){
+
+    }
+
+    if (!active_resource_attributes){
+      try{
+        active_resource_attributes = IONUX.Dashboard.Observatories.findWhere({_id: resource_id})['attributes']; 
+        type = 'Observatory';  
+      }catch(err){
+
+      }
+    }
+
     IONUX.Dashboard.MapResource.set(active_resource_attributes);
 
     IONUX.Dashboard.MapResource.trigger('set:active');
@@ -75,7 +105,7 @@ IONUX.Router = Backbone.Router.extend({
       // Catch back button and redraw
       if (!$('#dynamic-container > #map-canvas').is(':empty')) {
         IONUX.Dashboard.MapView = new IONUX.Views.Map({
-          collection: IONUX.Dashboard.Observatories,
+          collection: IONUX.Dashboard.PlatformSites,
           model: IONUX.Dashboard.MapResource
         });
       };
