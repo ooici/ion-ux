@@ -64,19 +64,32 @@ dashboard_map_resource: function(resource_id) {
     $('#left .map-view').show();
     $('.map-nested-ul').find('.active').removeClass('active');
 
+    var platformtarget = $('#list').find(".really-nested[data-resource-id='"+resource_id+"']");
     var target = $('#list').find("[data-resource-id='"+resource_id+"']");
     target.addClass('active');
   
-    var obs = target.parent().prev();
-    //if its not visible
-    if (!target.parent().prev().next('ul').is(":visible")){
-      //toggle it
-      target.parent().toggle();
-      //switch the logo
-      var k= target.parent().prev().find("[class='secondary-link pull-right']");
-      k.attr('class','secondary-link-selected  pull-right');
+    //if platform site expand the obs section
+    if (platformtarget.length>0){
+      if (!target.parent().prev().next('ul').is(":visible")){
+          //toggle it
+          target.parent().toggle();
+          //switch the logo
+          var k= target.parent().prev().find("[class='secondary-nested-link pull-right']");
+          k.attr('class','secondary-nested-link-selected  pull-right');
+        }
+      target = platformtarget.parent();  
     }
 
+    if (target.length>0){
+      //if obs was selected and not visible
+      if (!target.parent().prev().next('ul').is(":visible")){
+        //toggle it
+        target.parent().toggle();
+        //switch the logo
+        var k= target.parent().prev().find("[class='secondary-link pull-right']");
+        k.attr('class','secondary-link-selected  pull-right');
+      }
+    }
 
     // Catch back button
     if ($('#dynamic-container > #map_canvas').length < 1) {
