@@ -306,12 +306,12 @@ td.filter-option {
 
 .platformagent-option:before {
   background-image: url(/static/img/pepper_sprite.png);
-  background-position: -120px -656px;
+  background-position: -120px -596px;
 }
 
 .platformagentdef-option:before {
   background-image: url(/static/img/pepper_sprite.png);
-  background-position: -120px -596px;
+  background-position: -120px -656px;
 }
 
 .instrumentportal-option:before {
@@ -331,12 +331,12 @@ td.filter-option {
 
 .instrumentagent-option:before {
   background-image: url(/static/img/pepper_sprite.png);
-  background-position: -120px -416px;
+  background-position: -120px -476px;
 }
 
 .instrumentagentdef-option:before {
   background-image: url(/static/img/pepper_sprite.png);
-  background-position: -120px -476px;
+  background-position: -120px -416px;
 }
 
 .dataproduct-option:before {
@@ -1034,7 +1034,7 @@ a.btn-black:hover, a.btn-advanced-search:hover {
 }
 
 .InstrumentSite .heading-left .text_short_ooi:before {
-  background-position: -420px -960px;
+  background-position: -540px -660px;
 }
 
 .DeviceModel .InstrumentModel .heading-left .text_short_ooi:before {
@@ -1051,6 +1051,10 @@ a.btn-black:hover, a.btn-advanced-search:hover {
 
 .PlatformModel .heading-left .text_short_ooi:before {
   background-position: -480px -960px;
+}
+
+.StationSite .PlatformSite .heading-left .text_short_ooi:before {
+  background-position: -420px -600px;
 }
 
 .StationSite .heading-left .text_short_ooi:before {
@@ -1071,6 +1075,22 @@ a.btn-black:hover, a.btn-advanced-search:hover {
 
 .UserInfo .heading-left .text_short_ooi:before {
   background-position: -540px -480px;
+}
+
+.InformationResource .ExternalDatasetAgent .text_short_ooi:before {
+  background-position: -540px -900px;
+}
+
+.AgentInstance .ExternalDatasetAgentInstance .text_short_ooi:before {
+  background-position: -480px -780px;
+}
+
+.InformationResource .InstrumentAgent .text_short_ooi:before {
+  background-position: -540px -600px;
+}
+
+.InstrumentAgentInstance .text_short_ooi:before {
+  background-position: -600px -480px;
 }
 
 .heading-right {

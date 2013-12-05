@@ -637,11 +637,16 @@ function render_page(resource_type, resource_id, model) {
       case "StationSite":
         // PlatformSite face page's title has a span element for "Name:", it's redundent, we know it's the name and the other pages don't have the element
         $('.heading .StationSite .heading-left .text-short-label').remove();
+        $('.heading .StationSite').wrapInner('<div class="' + window.MODEL_DATA.resource.type_ + '"></div>');
         break;
       case "InstrumentSite":
         // The heading contains the word Portal:, unnecessary
         $('.heading .InstrumentSite .heading-left .text-short-label').remove();
         break;
+      case "AgentInstance":
+        $('.heading .AgentInstance').wrapInner('<div class="' + window.MODEL_DATA.resource.type_ + '"></div>');
+        break;
+          
   }
     
   
