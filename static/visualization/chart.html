@@ -353,8 +353,12 @@
 
         // If an empty data table was returned, exit gracefully
         if (_dt.length == 0 || _dt[0].length == 0) {
-            document.getElementById('chart_div').innerHTML = "No data was found in storage. Please try again in a bit";
-            stopRealtimeView();
+            if(data_series_overview.length == 0){
+                document.getElementById('chart_div').innerHTML = "No data was found in storage. Please try again in a bit";
+                stopRealtimeView();
+            }
+
+            console.debug("Data query returned an empty set.");
             return;
         }
 
