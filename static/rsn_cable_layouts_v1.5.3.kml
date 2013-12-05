@@ -1,0 +1,2289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document>
+  <name>RSN v1.5.3 1°-2°-Inst Layout</name>
+  <open>1</open>
+  <LookAt>
+    <longitude>-127.1144515971164</longitude>
+    <latitude>44.60965938109916</latitude>
+    <altitude>0</altitude>
+    <heading>0.04026346923572651</heading>
+    <tilt>0</tilt>
+    <range>465740.8292413172</range>
+    <gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+  </LookAt>
+  <StyleMap>
+    <Pair>
+      <key>normal</key>
+      <styleUrl>#style9</styleUrl>
+    </Pair>
+    <Pair>
+      <key>highlight</key>
+      <styleUrl>#style12</styleUrl>
+    </Pair>
+  </StyleMap>
+  <Style id="failed31">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <StyleMap id="failed12">
+    <Pair>
+      <key>normal</key>
+      <styleUrl>#failed34</styleUrl>
+    </Pair>
+    <Pair>
+      <key>highlight</key>
+      <styleUrl>#failed20</styleUrl>
+    </Pair>
+  </StyleMap>
+  <Style id="failed315">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <StyleMap id="failed19">
+    <Pair>
+      <key>normal</key>
+      <styleUrl>#failed320</styleUrl>
+    </Pair>
+    <Pair>
+      <key>highlight</key>
+      <styleUrl>#failed215</styleUrl>
+    </Pair>
+  </StyleMap>
+  <Style id="failed310">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <Style id="failed34">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <Style id="failed218">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <Style id="failed210">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <StyleMap id="failed40">
+    <Pair>
+      <key>normal</key>
+      <styleUrl>#failed00</styleUrl>
+    </Pair>
+    <Pair>
+      <key>highlight</key>
+      <styleUrl>#failed10</styleUrl>
+    </Pair>
+  </StyleMap>
+  <Style id="failed32">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <StyleMap id="m_ylw-pushpin">
+    <Pair>
+      <key>normal</key>
+      <styleUrl>#s_ylw-pushpin2</styleUrl>
+    </Pair>
+    <Pair>
+      <key>highlight</key>
+      <styleUrl>#s_ylw-pushpin_hl</styleUrl>
+    </Pair>
+  </StyleMap>
+  <Style id="failed222">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <StyleMap id="failed17">
+    <Pair>
+      <key>normal</key>
+      <styleUrl>#failed39</styleUrl>
+    </Pair>
+    <Pair>
+      <key>highlight</key>
+      <styleUrl>#failed218</styleUrl>
+    </Pair>
+  </StyleMap>
+  <Style id="failed314">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <Style id="failed33">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <Style id="failed29">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <StyleMap id="failed4">
+    <Pair>
+      <key>normal</key>
+      <styleUrl>#failed311</styleUrl>
+    </Pair>
+    <Pair>
+      <key>highlight</key>
+      <styleUrl>#failed216</styleUrl>
+    </Pair>
+  </StyleMap>
+  <Style id="failed27">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <StyleMap id="failed44">
+    <Pair>
+      <key>normal</key>
+      <styleUrl>#failed36</styleUrl>
+    </Pair>
+    <Pair>
+      <key>highlight</key>
+      <styleUrl>#failed222</styleUrl>
+    </Pair>
+  </StyleMap>
+  <Style id="failed39">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <StyleMap id="failed43">
+    <Pair>
+      <key>normal</key>
+      <styleUrl>#failed321</styleUrl>
+    </Pair>
+    <Pair>
+      <key>highlight</key>
+      <styleUrl>#failed210</styleUrl>
+    </Pair>
+  </StyleMap>
+  <Style id="sh_ylw-pushpin">
+    <IconStyle>
+      <scale>1.3</scale>
+      <Icon>
+        <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+      </Icon>
+      <hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+    </IconStyle>
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <StyleMap id="failed42">
+    <Pair>
+      <key>normal</key>
+      <styleUrl>#failed317</styleUrl>
+    </Pair>
+    <Pair>
+      <key>highlight</key>
+      <styleUrl>#failed213</styleUrl>
+    </Pair>
+  </StyleMap>
+  <Style id="failed24">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <StyleMap id="failed16">
+    <Pair>
+      <key>normal</key>
+      <styleUrl>#failed32</styleUrl>
+    </Pair>
+    <Pair>
+      <key>highlight</key>
+      <styleUrl>#failed29</styleUrl>
+    </Pair>
+  </StyleMap>
+  <Style id="failed318">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <Style id="failed312">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <StyleMap id="failed">
+    <Pair>
+      <key>normal</key>
+      <styleUrl>#failed35</styleUrl>
+    </Pair>
+    <Pair>
+      <key>highlight</key>
+      <styleUrl>#failed211</styleUrl>
+    </Pair>
+  </StyleMap>
+  <Style id="failed30">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <Style id="failed214">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <Style id="failed35">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <StyleMap id="failed15">
+    <Pair>
+      <key>normal</key>
+      <styleUrl>#failed314</styleUrl>
+    </Pair>
+    <Pair>
+      <key>highlight</key>
+      <styleUrl>#failed219</styleUrl>
+    </Pair>
+  </StyleMap>
+  <StyleMap id="failed18">
+    <Pair>
+      <key>normal</key>
+      <styleUrl>#failed30</styleUrl>
+    </Pair>
+    <Pair>
+      <key>highlight</key>
+      <styleUrl>#failed220</styleUrl>
+    </Pair>
+  </StyleMap>
+  <Style id="failed212">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <StyleMap id="failed2">
+    <Pair>
+      <key>normal</key>
+      <styleUrl>#failed313</styleUrl>
+    </Pair>
+    <Pair>
+      <key>highlight</key>
+      <styleUrl>#failed217</styleUrl>
+    </Pair>
+  </StyleMap>
+  <Style id="failed316">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <Style id="failed211">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <Style id="failed22">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <StyleMap id="failed14">
+    <Pair>
+      <key>normal</key>
+      <styleUrl>#failed31</styleUrl>
+    </Pair>
+    <Pair>
+      <key>highlight</key>
+      <styleUrl>#failed23</styleUrl>
+    </Pair>
+  </StyleMap>
+  <StyleMap id="failed13">
+    <Pair>
+      <key>normal</key>
+      <styleUrl>#failed312</styleUrl>
+    </Pair>
+    <Pair>
+      <key>highlight</key>
+      <styleUrl>#failed24</styleUrl>
+    </Pair>
+  </StyleMap>
+  <StyleMap id="failed1">
+    <Pair>
+      <key>normal</key>
+      <styleUrl>#failed33</styleUrl>
+    </Pair>
+    <Pair>
+      <key>highlight</key>
+      <styleUrl>#failed212</styleUrl>
+    </Pair>
+  </StyleMap>
+  <Style id="s_ylw-pushpin_hl">
+    <IconStyle>
+      <scale>1.3</scale>
+      <Icon>
+        <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+      </Icon>
+      <hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+    </IconStyle>
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <Style id="failed20">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <StyleMap id="failed0">
+    <Pair>
+      <key>normal</key>
+      <styleUrl>#failed318</styleUrl>
+    </Pair>
+    <Pair>
+      <key>highlight</key>
+      <styleUrl>#failed221</styleUrl>
+    </Pair>
+  </StyleMap>
+  <Style id="failed36">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <Style id="failed26">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <StyleMap id="msn_ylw-pushpin">
+    <Pair>
+      <key>normal</key>
+      <styleUrl>#sn_ylw-pushpin</styleUrl>
+    </Pair>
+    <Pair>
+      <key>highlight</key>
+      <styleUrl>#sh_ylw-pushpin</styleUrl>
+    </Pair>
+  </StyleMap>
+  <Style id="failed319">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <StyleMap id="failed11">
+    <Pair>
+      <key>normal</key>
+      <styleUrl>#failed316</styleUrl>
+    </Pair>
+    <Pair>
+      <key>highlight</key>
+      <styleUrl>#failed26</styleUrl>
+    </Pair>
+  </StyleMap>
+  <Style id="failed313">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <StyleMap id="failed41">
+    <Pair>
+      <key>normal</key>
+      <styleUrl>#failed310</styleUrl>
+    </Pair>
+    <Pair>
+      <key>highlight</key>
+      <styleUrl>#failed22</styleUrl>
+    </Pair>
+  </StyleMap>
+  <Style id="failed23">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <Style id="failed217">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <Style id="failed219">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <Style id="failed21">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <Style id="failed215">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <Style id="failed213">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <Style id="failed3">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <StyleMap id="failed8">
+    <Pair>
+      <key>normal</key>
+      <styleUrl>#failed38</styleUrl>
+    </Pair>
+    <Pair>
+      <key>highlight</key>
+      <styleUrl>#failed25</styleUrl>
+    </Pair>
+  </StyleMap>
+  <Style id="s_ylw-pushpin2">
+    <IconStyle>
+      <scale>1.1</scale>
+      <Icon>
+        <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+      </Icon>
+      <hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+    </IconStyle>
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <Style id="failed25">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <Style id="failed317">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <StyleMap id="failed5">
+    <Pair>
+      <key>normal</key>
+      <styleUrl>#failed37</styleUrl>
+    </Pair>
+    <Pair>
+      <key>highlight</key>
+      <styleUrl>#failed214</styleUrl>
+    </Pair>
+  </StyleMap>
+  <StyleMap id="failed6">
+    <Pair>
+      <key>normal</key>
+      <styleUrl>#failed319</styleUrl>
+    </Pair>
+    <Pair>
+      <key>highlight</key>
+      <styleUrl>#failed27</styleUrl>
+    </Pair>
+  </StyleMap>
+  <Style id="failed221">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <Style id="failed28">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <Style id="failed37">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <Style id="failed220">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <Style id="failed321">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <Style id="failed10">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <StyleMap id="failed9">
+    <Pair>
+      <key>normal</key>
+      <styleUrl>#failed3</styleUrl>
+    </Pair>
+    <Pair>
+      <key>highlight</key>
+      <styleUrl>#failed28</styleUrl>
+    </Pair>
+  </StyleMap>
+  <Style id="failed38">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <Style id="failed320">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <Style id="failed216">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <StyleMap id="failed7">
+    <Pair>
+      <key>normal</key>
+      <styleUrl>#failed315</styleUrl>
+    </Pair>
+    <Pair>
+      <key>highlight</key>
+      <styleUrl>#failed21</styleUrl>
+    </Pair>
+  </StyleMap>
+  <Style id="sn_ylw-pushpin">
+    <IconStyle>
+      <scale>1.1</scale>
+      <Icon>
+        <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+      </Icon>
+      <hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+    </IconStyle>
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <Style id="failed00">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <Style id="failed311">
+    <LineStyle>
+      <color>ffffe4b5</color>
+      <width>2</width>
+    </LineStyle>
+  </Style>
+  <Folder>
+    <name>Planned Cable Layouts v1.5.3</name>
+    <open>1</open>
+    <description>These are pre-deployment cable routes for secondary infrastructure. Based on layout v1.5.3</description>
+    <Folder>
+      <name>Slope_Base_Layout_v1.5.3</name>
+      <Placemark>
+        <name>RS01W5: PN1A-MJ01A</name>
+        <description><![CDATA[<html>
+<b>Connection:</b> July 2013<br>
+<b>Type:</b> Medium Powered Electro-Optical<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 477 m<br>
+<b>Average Depth:</b> 2,909 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <styleUrl>#msn_ylw-pushpin</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -125.398242,44.509568,-2908 -125.404256,44.509715,-2910 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Medium Powered Electro-Optical<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 1,611 m<br>
+<b>Average Depth:</b> 2,903 m<br>
+<b>Number of control points:</b> 3<br>
+</html>]]></description>
+        <styleUrl>#m_ylw-pushpin</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -125.389888,44.515115,-2905 -125.384948,44.51799,-2926 -125.380092,44.527318,-2902 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 1,246 m<br>
+<b>Average Depth:</b> 2,903 m<br>
+<b>Number of control points:</b> 3<br>
+</html>]]></description>
+        <styleUrl>#m_ylw-pushpin</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -125.389762,44.515037,-2905 -125.383901,44.517224,-2923 -125.380164,44.523149,-2902 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Dashed Line<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 3,185 m<br>
+<b>Average Depth:</b> 2,903 m<br>
+<b>Number of control points:</b> 3<br>
+</html>]]></description>
+        <styleUrl>#m_ylw-pushpin</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -125.389497,44.518228,-2905 -125.389401,44.532555,-2929 -125.389304,44.546883,-2900 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> High Power Electro-optical<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 904 m<br>
+<b>Average Depth:</b> 2,906 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <styleUrl>#m_ylw-pushpin</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -125.398242,44.509568,-2908 -125.389888,44.515115,-2905 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 10 m<br>
+<b>Average Depth:</b> 2,910 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <styleUrl>#m_ylw-pushpin</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -125.404256,44.509715,-2910 -125.40436,44.509661,-2910 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 27 m<br>
+<b>Average Depth:</b> 2,910 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <styleUrl>#m_ylw-pushpin</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -125.404256,44.509715,-2910 -125.404598,44.509729,-2910 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 13 m<br>
+<b>Average Depth:</b> 2,905 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <styleUrl>#m_ylw-pushpin</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -125.389888,44.515115,-2905 -125.389762,44.515037,-2905 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 10 m<br>
+<b>Average Depth:</b> 2,905 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <styleUrl>#m_ylw-pushpin</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -125.389762,44.515037,-2905 -125.389633,44.51502,-2905 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 10 m<br>
+<b>Average Depth:</b> 2,905 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <styleUrl>#m_ylw-pushpin</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -125.389762,44.515037,-2905 -125.38966,44.514984,-2905 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 10 m<br>
+<b>Average Depth:</b> 2,910 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <styleUrl>#m_ylw-pushpin</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -125.404256,44.509715,-2910 -125.404382,44.509694,-2910 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Mooring Electro-Optical Mechanical<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 1,940 m<br>
+<b>Average Depth:</b> 2,904 m<br>
+<b>Number of control points:</b> 3<br>
+</html>]]></description>
+        <styleUrl>#m_ylw-pushpin</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -125.389888,44.515115,-2905 -125.389465,44.518229,-2926 -125.389373,44.532553,-2904 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Mechanical<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 1,593 m<br>
+<b>Average Depth:</b> 2,902 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <styleUrl>#m_ylw-pushpin</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -125.389373,44.532553,-2904 -125.389304,44.546883,-2900 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 8 m<br>
+<b>Average Depth:</b> 2,905 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <styleUrl>#m_ylw-pushpin</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -125.389762,44.515037,-2905 -125.389826,44.514971,-2905 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 8 m<br>
+<b>Average Depth:</b> 2,905 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <styleUrl>#m_ylw-pushpin</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -125.389762,44.515037,-2905 -125.389739,44.514965,-2905 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 10 m<br>
+<b>Average Depth:</b> 2,905 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <styleUrl>#m_ylw-pushpin</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -125.389762,44.515037,-2905 -125.389877,44.515,-2905 
+          </coordinates>
+        </LineString>
+      </Placemark>
+    </Folder>
+    <Folder>
+      <name>Hydrate_Ridge_Layout_v1.5.3</name>
+      <Placemark>
+        <name>Seep to avoid</name>
+        <description><![CDATA[<html>
+<b>Name:</b> Seep to avoid<br>
+<b>Type:</b> PlaceName<br>
+<b>Location:</b> 44.569154  -125.147283<br>
+<b>Start Date:</b> <br>
+<b>Cost:</b> $0<br>
+<b>Power:</b> 0.00kW (0.00kW)<br>
+<b>Data:</b> 0.00Mb (0.00Mb)<br>
+</html>]]></description>
+        <Style>
+          <IconStyle>
+            <scale>0.5</scale>
+            <Icon>
+            </Icon>
+          </IconStyle>
+        </Style>
+        <Point>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>-125.147283,44.569154,-776</coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Bubble Plume</name>
+        <description><![CDATA[<html>
+<b>Name:</b> Bubble Plume<br>
+<b>Type:</b> PlaceName<br>
+<b>Location:</b> 44.569996  -125.146685<br>
+<b>Start Date:</b> <br>
+<b>Cost:</b> $0<br>
+<b>Power:</b> 0.00kW (0.00kW)<br>
+<b>Data:</b> 0.00Mb (0.00Mb)<br>
+</html>]]></description>
+        <Style>
+          <IconStyle>
+            <scale>0.5</scale>
+            <Icon>
+            </Icon>
+          </IconStyle>
+        </Style>
+        <Point>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>-125.146685,44.569996,-775</coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>SUM1W2: LJ01B-OBSSP3</name>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 337 m<br>
+<b>Average Depth:</b> 783 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <styleUrl>#7</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -125.148064,44.569092,-778 -125.144566,44.567357,-789 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>SUM1W3: LJ01B-OBSSP1</name>
+        <description><![CDATA[<html>
+<b>Connection:</b> 2014<br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 542 m<br>
+<b>Average Depth:</b> 797 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <styleUrl>#1</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -125.148064,44.569092,-778 -125.152433,44.572852,-817 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>SUM1W6: LJ01B-OBSSP2</name>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 546 m<br>
+<b>Average Depth:</b> 781 m<br>
+<b>Number of control points:</b> 3<br>
+</html>]]></description>
+        <styleUrl>#0</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -125.148064,44.569092,-778 -125.147868,44.570375,-778 -125.144251,44.572927,-788.0000000000001 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 25 m<br>
+<b>Average Depth:</b> 778 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <Style>
+          <LineStyle>
+            <color>ffffe4b5</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -125.148064,44.569092,-778 -125.147885,44.569286,-778 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>RS01W8: LV01B-MJ01B</name>
+        <description><![CDATA[<html>
+<b>Connection:</b> 2014<br>
+<b>Type:</b> Medium Powered Electro-Optical<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 180 m<br>
+<b>Average Depth:</b> 777 m<br>
+<b>Number of control points:</b> 5<br>
+</html>]]></description>
+        <styleUrl>#4</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -125.148161,44.569033,-778.9999999999999 -125.14707,44.569202,-776 -125.146667,44.569372,-777 -125.146609,44.569603,-777 -125.146715,44.569848,-776 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 14 m<br>
+<b>Average Depth:</b> 775 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <Style>
+          <LineStyle>
+            <color>ffffe4b5</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -125.146715,44.569848,-776 -125.146674,44.569972,-775 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 11 m<br>
+<b>Average Depth:</b> 775 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <Style>
+          <LineStyle>
+            <color>ffffe4b5</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -125.146715,44.569848,-776 -125.146667,44.569941,-775 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 10 m<br>
+<b>Average Depth:</b> 775 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <Style>
+          <LineStyle>
+            <color>ffffe4b5</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -125.146715,44.569848,-776 -125.146792,44.569923,-775 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 6 m<br>
+<b>Average Depth:</b> 778 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <Style>
+          <LineStyle>
+            <color>ffffe4b5</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -125.148064,44.569092,-778 -125.148145,44.569098,-778 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 7 m<br>
+<b>Average Depth:</b> 778 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <Style>
+          <LineStyle>
+            <color>ffffe4b5</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -125.148064,44.569092,-778 -125.147973,44.569097,-778 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> High Power Electro-optical<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 9.78 km<br>
+<b>Average Depth:</b> 1,026 m<br>
+<b>Number of control points:</b> 4<br>
+</html>]]></description>
+        <Style>
+          <LineStyle>
+            <color>ffffe4b5</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -125.148328,44.481442,-1248 -125.15332,44.5337,-1003 -125.1508,44.560495,-813 -125.148161,44.569033,-778.9999999999999 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 10 m<br>
+<b>Average Depth:</b> 778 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <Style>
+          <LineStyle>
+            <color>ffffe4b5</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -125.148161,44.569033,-778.9999999999999 -125.148064,44.569092,-778 
+          </coordinates>
+        </LineString>
+      </Placemark>
+    </Folder>
+    <Folder>
+      <name>600m-Offshore_Layout _v1.5.3</name>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Dashed Line<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 1,005 m<br>
+<b>Average Depth:</b> 578 m<br>
+<b>Number of control points:</b> 3<br>
+</html>]]></description>
+        <Style>
+          <LineStyle>
+            <color>ffffe4b5</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -124.9553,44.3692,-596 -124.956548,44.373655,-581 -124.957777,44.378073,-575 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>RS01W9: PN1C-LV01C</name>
+        <description><![CDATA[<html>
+<b>Connection:</b> July 2013<br>
+<b>Type:</b> High Power Electro-optical<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 908 m<br>
+<b>Average Depth:</b> 601 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <styleUrl>#3</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -124.962073,44.36324,-624 -124.9541,44.3691,-594 -124.9600314947688,44.36476176242249,-594 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Medium Powered Electro-Optical<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 178 m<br>
+<b>Average Depth:</b> 584 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <Style>
+          <LineStyle>
+            <color>ffffe4b5</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -124.9541,44.3691,-594 -124.9533,44.3676,-597 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>1W118: LV01C-BEP</name>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 46 m<br>
+<b>Average Depth:</b> 582 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <styleUrl>#6</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -124.9541,44.3691,-594 -124.9537,44.3694,-592 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Mooring Electro-Optical Mechanical<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 598 m<br>
+<b>Average Depth:</b> 580 m<br>
+<b>Number of control points:</b> 3<br>
+</html>]]></description>
+        <Style>
+          <LineStyle>
+            <color>ffffe4b5</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -124.9541,44.3691,-594 -124.955283,44.369207,-585 -124.95655,44.373643,-578 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Mechanical<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 502 m<br>
+<b>Average Depth:</b> 576 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <Style>
+          <LineStyle>
+            <color>ffffe4b5</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -124.95655,44.373643,-578 -124.957777,44.378073,-575 
+          </coordinates>
+        </LineString>
+      </Placemark>
+    </Folder>
+    <Folder>
+      <name>80m-Shelf_Layout_v1.5.3</name>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 40 m<br>
+<b>Average Depth:</b> 81 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <Style>
+          <LineStyle>
+            <color>ffffe4b5</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -124.3056,44.6373,-81 -124.3059,44.637,-81 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 41 m<br>
+<b>Average Depth:</b> 81 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <Style>
+          <LineStyle>
+            <color>ffffe4b5</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -124.3056,44.6373,-81 -124.3051,44.6372,-81 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> High Power Electro-optical<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 17.02 km<br>
+<b>Average Depth:</b> 98 m<br>
+<b>Number of control points:</b> 16<br>
+</html>]]></description>
+        <Style>
+          <LineStyle>
+            <color>ffffe4b5</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -124.457012,44.691385,-115 -124.456062,44.693048,-115 -124.454067,44.69378,-115 -124.401427,44.706052,-104 -124.391582,44.708402,-104 -124.382292,44.709637,-104 -124.374782,44.709162,-103 -124.367678,44.707895,-102 -124.361818,44.705662,-101 -124.358532,44.704247,-100 -124.350275,44.700693,-98.00000000000001 -124.345935,44.69829,-96 -124.342753,44.695097,-95 -124.309838,44.644097,-83 -124.30621,44.638545,-81 -124.3056,44.6373,-81 
+          </coordinates>
+        </LineString>
+      </Placemark>
+    </Folder>
+    <Folder>
+      <name>Axial_Base_Layout_v1.5.3</name>
+      <Placemark>
+        <name>RS03W4: PN3A-LV03A</name>
+        <description><![CDATA[<html>
+<b>Connection:</b> 2014<br>
+<b>Type:</b> High Power Electro-optical<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 934 m<br>
+<b>Average Depth:</b> 2,607 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <styleUrl>#5</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -129.74355,45.82058000000001,-2609 -129.753857,45.816219,-2606 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>AXVMW4: LV03A-DeepProfiler</name>
+        <description><![CDATA[<html>
+<b>Connection:</b> 2014<br>
+<b>Type:</b> Medium Powered Electro-Optical<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 1,730 m<br>
+<b>Average Depth:</b> 2,608 m<br>
+<b>Number of control points:</b> 4<br>
+</html>]]></description>
+        <styleUrl>#</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -129.753857,45.816219,-2606 -129.7589,45.818077,-2611 -129.758559,45.824339,-2610 -129.760478,45.829493,-2602 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>RS03W3: PN3A-MJ03A</name>
+        <description><![CDATA[<html>
+<b>Connection:</b> Aug 2013<br>
+<b>Type:</b> Medium Powered Electro-Optical<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 506 m<br>
+<b>Average Depth:</b> 2,608 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <styleUrl>#2</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -129.74355,45.82058000000001,-2609 -129.737034,45.820205,-2608 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Mooring Electro-Optical Mechanical<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 1,874 m<br>
+<b>Average Depth:</b> 2,606 m<br>
+<b>Number of control points:</b> 3<br>
+</html>]]></description>
+        <Style>
+          <LineStyle>
+            <color>ffffe4b5</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -129.753857,45.816219,-2606 -129.754915,45.819087,-2604 -129.752104,45.832843,-2609 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 11 m<br>
+<b>Average Depth:</b> 2,605 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <Style>
+          <LineStyle>
+            <color>ffffe4b5</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -129.753946,45.81615200000001,-2606 -129.753992,45.816054,-2605 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 1,191 m<br>
+<b>Average Depth:</b> 2,606 m<br>
+<b>Number of control points:</b> 3<br>
+</html>]]></description>
+        <Style>
+          <LineStyle>
+            <color>ffffe4b5</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -129.753946,45.81615200000001,-2606 -129.760338,45.817792,-2611 -129.760501,45.82375799999999,-2600 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 10 m<br>
+<b>Average Depth:</b> 2,606 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <Style>
+          <LineStyle>
+            <color>ffffe4b5</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -129.753857,45.816219,-2606 -129.753946,45.81615200000001,-2606 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 28 m<br>
+<b>Average Depth:</b> 2,607 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <Style>
+          <LineStyle>
+            <color>ffffe4b5</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -129.737034,45.820205,-2608 -129.736671,45.82020700000001,-2607 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 10 m<br>
+<b>Average Depth:</b> 2,608 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <Style>
+          <LineStyle>
+            <color>ffffe4b5</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -129.737034,45.820205,-2608 -129.736932,45.820148,-2608 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 11 m<br>
+<b>Average Depth:</b> 2,608 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <Style>
+          <LineStyle>
+            <color>ffffe4b5</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -129.737034,45.820205,-2608 -129.73691,45.820262,-2608 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 10 m<br>
+<b>Average Depth:</b> 2,605 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <Style>
+          <LineStyle>
+            <color>ffffe4b5</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -129.753946,45.81615200000001,-2606 -129.753886,45.81606900000001,-2606 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Mechanical<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 1,541 m<br>
+<b>Average Depth:</b> 2,606 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <Style>
+          <LineStyle>
+            <color>ffffe4b5</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -129.752104,45.832843,-2609 -129.749253,45.846569,-2604 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Dashed Line<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 3,090 m<br>
+<b>Average Depth:</b> 2,606 m<br>
+<b>Number of control points:</b> 3<br>
+</html>]]></description>
+        <Style>
+          <LineStyle>
+            <color>ffffe4b5</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -129.75498,45.819063,-2604 -129.752116,45.83281600000001,-2604 -129.749253,45.846569,-2604 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 10 m<br>
+<b>Average Depth:</b> 2,605 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <Style>
+          <LineStyle>
+            <color>ffffe4b5</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -129.753946,45.81615200000001,-2606 -129.753835,45.81610199999999,-2606 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 10 m<br>
+<b>Average Depth:</b> 2,605 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <Style>
+          <LineStyle>
+            <color>ffffe4b5</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -129.753946,45.81615200000001,-2606 -129.753808,45.816139,-2606 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 9 m<br>
+<b>Average Depth:</b> 2,605 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <Style>
+          <LineStyle>
+            <color>ffffe4b5</color>
+            <width>2</width>
+          </LineStyle>
+        </Style>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -129.753946,45.81615200000001,-2606 -129.754044,45.81609400000001,-2605 
+          </coordinates>
+        </LineString>
+      </Placemark>
+    </Folder>
+    <Folder>
+      <name>Axial_Layout_v1.5.3</name>
+      <LookAt>
+        <longitude>-129.9941678023959</longitude>
+        <latitude>45.93730838629367</latitude>
+        <altitude>0</altitude>
+        <heading>-2.006924033996275</heading>
+        <tilt>0</tilt>
+        <range>5704.804561498306</range>
+        <gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+      </LookAt>
+      <Placemark>
+        <name>RS03W7: PN3B-MJ03B</name>
+        <description><![CDATA[<html>
+<b>Connection:</b> Aug 2013<br>
+<b>Type:</b> Medium Powered Electro-Optical<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 3,928 m<br>
+<b>Average Depth:</b> 1,525 m<br>
+<b>Number of control points:</b> 15<br>
+</html>]]></description>
+        <styleUrl>#failed11</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -129.969737,45.941273,-1526 -129.975302,45.943508,-1516 -129.97685,45.943999,-1512 -129.978283,45.943799,-1512 -129.984224,45.94271999999999,-1514 -129.987257,45.940978,-1520 -129.991532,45.939368,-1524 -129.995178,45.938659,-1528 -129.999329,45.939612,-1532 -130.005108,45.938627,-1532 -130.00763,45.936453,-1534 -130.011888,45.935293,-1540 -130.013629,45.93471200000001,-1541 -130.014129,45.93426,-1540 -130.01385,45.93371,-1540 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>RS03W5: PN3B-CAMHDStabPlate</name>
+        <description><![CDATA[<html>
+<b>Connection:</b> Aug 2013<br>
+<b>Type:</b> Medium Powered Electro-Optical<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 3,784 m<br>
+<b>Average Depth:</b> 1,525 m<br>
+<b>Number of control points:</b> 16<br>
+</html>]]></description>
+        <styleUrl>#failed17</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -129.969737,45.941273,-1526 -129.972632,45.941903,-1525 -129.976922,45.94347000000001,-1512 -129.97843,45.94324999999999,-1512 -129.983868,45.942243,-1513 -129.986746,45.940623,-1520 -129.991223,45.93893099999999,-1522 -129.995165,45.938214,-1528 -129.999395,45.93915899999999,-1532 -130.004651,45.93823700000001,-1532 -130.007243,45.936108,-1532 -130.011579,45.93489,-1540 -130.012298,45.934697,-1540 -130.012901,45.934472,-1540 -130.013356,45.934257,-1540 -130.013596,45.93397299999999,-1540 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>RS03W10: PN3B-MJ03E</name>
+        <description><![CDATA[<html>
+<b>Connection:</b> August 2013<br>
+<b>Type:</b> Medium Powered Electro-Optical<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 510 m<br>
+<b>Average Depth:</b> 1,521 m<br>
+<b>Number of control points:</b> 5<br>
+</html>]]></description>
+        <styleUrl>#failed40</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -129.969737,45.941273,-1526 -129.97277,45.941512,-1524 -129.973429,45.94156100000001,-1521 -129.973822,45.94133300000001,-1522 -129.974575,45.939765,-1516 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>RS03W9: PN3B-MJ03F</name>
+        <description><![CDATA[<html>
+<b>Connection:</b> August 2013<br>
+<b>Type:</b> Medium Powered Electro-Optical<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 4,224 m<br>
+<b>Average Depth:</b> 1,525 m<br>
+<b>Number of control points:</b> 15<br>
+</html>]]></description>
+        <styleUrl>#failed9</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -129.969737,45.941273,-1526 -129.971944,45.942702,-1526 -129.974837,45.943738,-1518 -129.976805,45.94446200000001,-1512 -129.979693,45.944081,-1513 -129.984517,45.943158,-1516 -129.987623,45.941381,-1520 -129.991821,45.939838,-1525 -129.995159,45.939215,-1529 -129.999285,45.940106,-1532 -130.001975,45.943451,-1532 -130.003142,45.944994,-1532 -130.004995,45.946423,-1530 -130.005695,45.948484,-1530 -130.008874,45.95345799999999,-1531 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>RS03W6: PN3B-MJ03C</name>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Medium Powered Electro-Optical<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 2,094 m<br>
+<b>Average Depth:</b> 1,524 m<br>
+<b>Number of control points:</b> 13<br>
+</html>]]></description>
+        <styleUrl>#failed41</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -129.969737,45.941273,-1526 -129.968672,45.937405,-1524 -129.968815,45.93427499999999,-1525 -129.971036,45.931404,-1523 -129.972729,45.929723,-1526 -129.974738,45.927829,-1524 -129.976133,45.927118,-1526 -129.977,45.92678899999999,-1526 -129.977596,45.926978,-1527 -129.978193,45.926765,-1525 -129.978171,45.926255,-1524 -129.978722,45.926078,-1519 -129.97923,45.92609700000001,-1517 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>RS03W8: PN3B-MJ03D</name>
+        <description><![CDATA[<html>
+<b>Connection:</b> Aug 2013<br>
+<b>Type:</b> Medium Powered Electro-Optical<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 2,059 m<br>
+<b>Average Depth:</b> 1,526 m<br>
+<b>Number of control points:</b> 8<br>
+</html>]]></description>
+        <styleUrl>#failed12</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -129.969737,45.941273,-1526 -129.968569,45.940173,-1525 -129.967891,45.937373,-1527 -129.968073,45.93404,-1529 -129.970349,45.931199,-1527 -129.972074,45.92947599999999,-1526 -129.974216,45.927414,-1525 -129.978,45.925803,-1525 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>ASHSW8: CAMHDStabPlate-CAMHD</name>
+        <description><![CDATA[<html>
+<b>Connection:</b> <br>
+<b>Type:</b> Medium Powered Electro-Optical<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 37 m<br>
+<b>Average Depth:</b> 1,539 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <styleUrl>#failed6</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -130.013596,45.93397299999999,-1540 -130.013648,45.93363799999999,-1540 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>ASHSW2: MJ03B-OBSSP1</name>
+        <description><![CDATA[<html>
+<b>Connection:</b> 2013<br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 85 m<br>
+<b>Average Depth:</b> 1,539 m<br>
+<b>Number of control points:</b> 3<br>
+</html>]]></description>
+        <styleUrl>#failed0</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -130.01385,45.93371,-1540 -130.014169,45.93332800000001,-1539 -130.013977,45.93303100000001,-1540 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>ASHSW5: MJ03B-OBSSP2</name>
+        <description><![CDATA[<html>
+<b>Connection:</b> Aug 2013<br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 1,202 m<br>
+<b>Average Depth:</b> 1,535 m<br>
+<b>Number of control points:</b> 4<br>
+</html>]]></description>
+        <styleUrl>#failed7</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -130.01385,45.93371,0 -130.013785,45.933478,0 -130.01253,45.93339100000001,0 -129.998591,45.93365399999999,0 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>ECALW7: MJ03E-OBSSP3</name>
+        <description><![CDATA[<html>
+<b>Connection:</b> Aug 2013<br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 1,183 m<br>
+<b>Average Depth:</b> 1,514 m<br>
+<b>Number of control points:</b> 8<br>
+</html>]]></description>
+        <styleUrl>#failed18</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -129.974575,45.939765,-1516 -129.974958,45.941218,-1516 -129.975,45.942317,-1514 -129.975189,45.943159,-1516 -129.975768,45.944003,-1515 -129.976107,45.94488500000001,-1517 -129.978553,45.94900799999999,-1515 -129.979595,45.94954899999999,-1512 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>ECALW3: MJ03E-OBSSP4</name>
+        <description><![CDATA[<html>
+<b>Connection:</b> Aug 2013<br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 533 m<br>
+<b>Average Depth:</b> 1,514 m<br>
+<b>Number of control points:</b> 4<br>
+</html>]]></description>
+        <styleUrl>#failed14</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -129.974575,45.939765,-1516 -129.976553,45.938413,-1513 -129.977832,45.93715700000001,-1514 -129.978697,45.935971,-1515 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>INT2W2: MJ03D-OBSSP5</name>
+        <description><![CDATA[<html>
+<b>Connection:</b> Aug 2013 <br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 22 m<br>
+<b>Average Depth:</b> 1,525 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <styleUrl>#failed11</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -129.978,45.925803,-1525 -129.977974,45.925604,-1526 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>INT2W3: MJ03D-BOTPT3</name>
+        <description><![CDATA[<html>
+<b>Connection:</b> Aug 2013<br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 28 m<br>
+<b>Average Depth:</b> 1,526 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <styleUrl>#failed11</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -129.978,45.925803,-1525 -129.977637,45.92582000000001,-1528 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>ECALW4- MJ03E-BOTPT2</name>
+        <description><![CDATA[<html>
+<b>Connection:</b> Aug 2013 <br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 29 m<br>
+<b>Average Depth:</b> 1,514 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <styleUrl>#failed1</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -129.974575,45.939765,-1516 -129.974818,45.939974,-1514 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>ECALW2: MJ03E-OBSBB2</name>
+        <description><![CDATA[<html>
+<b>Connection:</b> Aug 2013<br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 35 m<br>
+<b>Average Depth:</b> 1,514 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <styleUrl>#failed13</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -129.974575,45.939765,-1516 -129.974854,45.939511,-1514 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>INT1W1: MJ03C-THRPH</name>
+        <description><![CDATA[<html>
+<b>Connection:</b> Aug 2013<br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 36 m<br>
+<b>Average Depth:</b> 1,515 m<br>
+<b>Number of control points:</b> 4<br>
+</html>]]></description>
+        <styleUrl>#failed43</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -129.97923,45.92609700000001,-1517 -129.979191,45.926319,-1518 -129.979171,45.926404,-1514 -129.979197,45.926404,-1519 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>INT1W2: MJ03C-THSPH</name>
+        <description><![CDATA[<html>
+<b>Connection:</b> 2014<br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 44 m<br>
+<b>Average Depth:</b> 1,517 m<br>
+<b>Number of control points:</b> 4<br>
+</html>]]></description>
+        <styleUrl>#failed</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -129.97923,45.92609700000001,-1517 -129.979151,45.92635000000001,-1518 -129.979023,45.92641900000001,-1518 -129.979001,45.9264,-1519 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>INT1W4: MJ03C-CAMDS</name>
+        <description><![CDATA[<html>
+<b>Connection:</b> Aug 2013 <br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 24 m<br>
+<b>Average Depth:</b> 1,518 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <styleUrl>#failed2</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -129.97923,45.92609700000001,-1517 -129.978957,45.926203,-1520 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>INT1W8: MJ03C-RASPPS</name>
+        <description><![CDATA[<html>
+<b>Connection:</b> Aug 2013<br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 22 m<br>
+<b>Average Depth:</b> 1,518 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <styleUrl>#failed5</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -129.97923,45.92609700000001,-1517 -129.978992,45.926213,-1520 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>INT1W3: MJ03C-MASSP</name>
+        <description><![CDATA[<html>
+<b>Connection:</b> Aug 2013<br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 22 m<br>
+<b>Average Depth:</b> 1,518 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <styleUrl>#failed44</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -129.97923,45.92609700000001,-1517 -129.978983,45.92621,-1520 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>INT2W2: MJ03D-VEL3D</name>
+        <description><![CDATA[<html>
+<b>Connection:</b> Aug 2013<br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 11 m<br>
+<b>Average Depth:</b> 1,525 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <styleUrl>#failed15</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -129.978,45.925803,-1525 -129.977932,45.925716,-1526 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>ASHSW11: MJ03B-TMPSF</name>
+        <description><![CDATA[<html>
+<b>Connection:</b> Aug 2013<br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 20 m<br>
+<b>Average Depth:</b> 1,539 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <styleUrl>#failed42</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -130.01385,45.93371,-1540 -130.013648,45.93359700000001,-1540 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>CCALW4: MJ03F-BOTPT1</name>
+        <description><![CDATA[<html>
+<b>Connection:</b> Aug 2013 <br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 45 m<br>
+<b>Average Depth:</b> 1,529 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <styleUrl>#failed8</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -130.008874,45.95345799999999,-1531 -130.008476,45.95316,-1529 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>CCALW2: MJ03F-OBSBB1</name>
+        <description><![CDATA[<html>
+<b>Connection:</b> Aug 2013<br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 48 m<br>
+<b>Average Depth:</b> 1,530 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <styleUrl>#failed16</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -130.008874,45.95345799999999,-1531 -130.008299,45.95362900000001,-1529 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>ASHSW6: MJ03B-ACOMM</name>
+        <description><![CDATA[<html>
+<b>Connection:</b> 2014<br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 10 m<br>
+<b>Average Depth:</b> 1,539 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <styleUrl>#failed19</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -130.01385,45.93371,-1540 -130.013956,45.933764,-1540 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>ECALW9: MJ03E-ACOMM</name>
+        <description><![CDATA[<html>
+<b>Connection:</b> 2014<br>
+<b>Type:</b> Electrical Extension<br>
+<b>Start Date:</b> <br>
+<b>Length:</b> 9 m<br>
+<b>Average Depth:</b> 1,515 m<br>
+<b>Number of control points:</b> 2<br>
+</html>]]></description>
+        <styleUrl>#failed4</styleUrl>
+        <LineString>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -129.974575,45.939765,-1516 -129.974454,45.939735,-1516 
+          </coordinates>
+        </LineString>
+      </Placemark>
+    </Folder>
+  </Folder>
+  <Folder>
+    <name>RSN Primary Cable Layout</name>
+    <open>1</open>
+    <Document>
+      <name>Final_Official All Segments path.kml</name>
+      <open>1</open>
+      <StyleMap id="msn_ylw-pushpin1">
+        <Pair>
+          <key>normal</key>
+          <styleUrl>#sn_ylw-pushpin2</styleUrl>
+        </Pair>
+        <Pair>
+          <key>highlight</key>
+          <styleUrl>#sh_ylw-pushpin1</styleUrl>
+        </Pair>
+      </StyleMap>
+      <Style id="sn_ylw-pushpin2">
+        <IconStyle>
+          <scale>1.1</scale>
+          <Icon>
+            <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+          </Icon>
+          <hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+        </IconStyle>
+        <LineStyle>
+          <color>ffffe4b5</color>
+          <width>2</width>
+        </LineStyle>
+      </Style>
+      <Style id="sh_ylw-pushpin1">
+        <IconStyle>
+          <scale>1.3</scale>
+          <Icon>
+            <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+          </Icon>
+          <hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+        </IconStyle>
+        <LineStyle>
+          <color>ffffe4b5</color>
+          <width>2</width>
+        </LineStyle>
+      </Style>
+      <Placemark>
+        <name>Final_Official Southern Cable path</name>
+        <styleUrl>#msn_ylw-pushpin1</styleUrl>
+        <LineString>
+          <tessellate>1</tessellate>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -123.96715,45.20229999999999,0 -123.97835,45.199757,0 -123.985483,45.198083,0 -123.986116,45.197909,0 -123.98934,45.19701999999999,0 -124.020173,45.189525,0 -124.029637,45.188458,0 -124.052522,45.187732,0 -124.079977,45.18712499999999,0 -124.1271,45.18204300000001,0 -124.130367,45.181828,0 -124.161678,45.17977299999999,0 -124.162071,45.17974799999999,0 -124.266095,45.17292199999999,0 -124.267513,45.17292,0 -124.29015,45.172883,0 -124.32841,45.171987,0 -124.3415,45.170973,0 -124.353777,45.170085,0 -124.365307,45.16906000000001,0 -124.375508,45.16795499999999,0 -124.37876,45.167678,0 -124.383005,45.167328,0 -124.444705,45.16188700000001,0 -124.4702,45.156647,0 -124.531085,45.14789799999999,0 -124.571152,45.147978,0 -124.583348,45.148002,0 -124.6319,45.15597,0 -124.65387,45.16332,0 -124.671967,45.170278,0 -124.693703,45.18040799999999,0 -124.706823,45.18620500000001,0 -124.724468,45.19084,0 -124.735405,45.19248699999999,0 -124.74538,45.193572,0 -124.764015,45.19242,0 -124.782215,45.187645,0 -124.79828,45.180753,0 -124.81448,45.170353,0 -124.832632,45.15574,0 -124.861012,45.140052,0 -124.88216,45.132842,0 -124.904553,45.12968000000001,0 -124.929812,45.130622,0 -124.947635,45.134252,0 -124.96648,45.138718,0 -125.000717,45.147617,0 -125.039878,45.150883,0 -125.040808,45.150925,0 -125.04995,45.150832,0 -125.064755,45.150677,0 -125.08128,45.15050300000001,0 -125.09293,45.150182,0 -125.098307,45.149857,0 -125.11577,45.148713,0 -125.12665,45.147987,0 -125.24349,45.14018,0 -125.260802,45.138837,0 -125.26618,45.13795,0 -125.283278,45.133498,0 -125.32397,45.121715,0 -125.364252,45.110332,0 -125.380937,45.10561500000001,0 -125.409743,45.09864300000001,0 -125.421315,45.094523,0 -125.427872,45.091428,0 -125.439142,45.084553,0 -125.449393,45.076955,0 -125.479223,45.05410299999999,0 -125.512313,45.03116,0 -125.523715,45.021835,0 -125.53,45.015638,0 -125.539092,45.00454800000001,0 -125.550107,44.987265,0 -125.574168,44.94644,0 -125.59239,44.916832,0 -125.59972,44.901703,0 -125.60245,44.89483,0 -125.610328,44.8697,0 -125.627678,44.806692,0 -125.633057,44.790223,0 -125.638618,44.770788,0 -125.640237,44.758992,0 -125.640402,44.751473,0 -125.639322,44.738175,0 -125.626603,44.6699,0 -125.622467,44.646127,0 -125.618693,44.633883,0 -125.61436,44.624395,0 -125.607212,44.612565,0 -125.591803,44.591938,0 -125.576612,44.572773,0 -125.553347,44.542165,0 -125.544697,44.533213,0 -125.536077,44.526147,0 -125.523598,44.51805,0 -125.51865,44.515268,0 -125.518246,44.515069,0 -125.513495,44.512728,0 -125.494137,44.503188,0 -125.4486,44.481687,0 -125.441172,44.478065,0 -125.43692,44.476602,0 -125.433858,44.47642,0 -125.430058,44.477005,0 -125.426805,44.478505,0 -125.423932,44.480575,0 -125.420965,44.482387,0 -125.418312,44.4843,0 -125.413643,44.488652,0 -125.398817,44.508768,0 -125.398242,44.509568,0 -125.398242,44.509568,0 -125.398685,44.508727,0 -125.41054,44.486743,0 -125.412195,44.477383,0 -125.412482,44.472535,0 -125.412277,44.46973,0 -125.411335,44.467968,0 -125.409728,44.466283,0 -125.40738,44.464867,0 -125.402313,44.463243,0 -125.388875,44.459153,0 -125.343898,44.444282,0 -125.338893,44.442802,0 -125.333678,44.442203,0 -125.3243,44.442422,0 -125.321447,44.442531,0 -125.320762,44.442557,0 -125.314459,44.442998,0 -125.289389,44.444753,0 -125.275997,44.44569,0 -125.264333,44.446388,0 -125.239261,44.447889,0 -125.233665,44.448224,0 -125.233558,44.44823,0 -125.218468,44.449392,0 -125.214417,44.45009,0 -125.197008,44.453877,0 -125.196131,44.454094,0 -125.18599,44.45661,0 -125.170788,44.460348,0 -125.169346,44.460705,0 -125.16916,44.460752,0 -125.165702,44.461735,0 -125.162627,44.46262,0 -125.161713,44.463075,0 -125.160028,44.46448,0 -125.157212,44.466928,0 -125.155007,44.469393,0 -125.152658,44.472765,0 -125.150967,44.475715,0 -125.149632,44.478365,0 -125.148704,44.480591,0 -125.148673,44.480665,0 -125.148328,44.481442,0 -125.148328,44.481442,0 -125.148332,44.481393,0 -125.148524,44.480556,0 -125.148767,44.479502,0 -125.149357,44.476325,0 -125.149937,44.472885,0 -125.150453,44.46879,0 -125.150475,44.465275,0 -125.150213,44.462757,0 -125.150043,44.461683,0 -125.149782,44.460775,0 -125.149355,44.459998,0 -125.148768,44.459203,0 -125.14558,44.455335,0 -125.142002,44.450868,0 -125.138732,44.446608,0 -125.13537,44.442315,0 -125.132878,44.43921,0 -125.129467,44.435118,0 -125.126748,44.43206,0 -125.124203,44.429412,0 -125.121825,44.426933,0 -125.119525,44.424704,0 -125.118938,44.424135,0 -125.118292,44.423372,0 -125.098828,44.403388,0 -125.088405,44.395163,0 -125.071988,44.384577,0 -125.04338,44.370875,0 -125.019988,44.362528,0 -124.996157,44.358432,0 -124.9959,44.358392,0 -124.975325,44.355237,0 -124.973853,44.355016,0 -124.973512,44.354965,0 -124.972198,44.354782,0 -124.968817,44.354302,0 -124.967418,44.35441,0 -124.966563,44.354627,0 -124.965805,44.35498,0 -124.96444,44.355913,0 -124.962958,44.357492,0 -124.962425,44.359022,0 -124.962195,44.360228,0 -124.962043,44.36144,0 -124.96205,44.362342,0 -124.962073,44.36324,0 -124.962073,44.36324,0 -124.96198,44.363168,0 -124.961968,44.363137,0 -124.961972,44.363098,0 -124.961992,44.363013,0 -124.961792,44.362386,0 -124.961492,44.361327,0 -124.960773,44.359387,0 -124.960123,44.358057,0 -124.959567,44.357467,0 -124.958317,44.356463,0 -124.957633,44.356035,0 -124.956512,44.355548,0 -124.955885,44.355383,0 -124.954955,44.355347,0 -124.953568,44.35545,0 -124.952878,44.3556,0 -124.944455,44.357996,0 -124.941798,44.358752,0 -124.93814,44.359768,0 -124.937098,44.359937,0 -124.936228,44.360025,0 -124.927435,44.361657,0 -124.906155,44.369217,0 -124.887708,44.379208,0 -124.870645,44.38582,0 -124.84226,44.402173,0 -124.788232,44.43219,0 -124.779072,44.438672,0 -124.77336,44.445747,0 -124.769447,44.455275,0 -124.76571,44.469695,0 -124.759157,44.485622,0 -124.757733,44.498502,0 -124.755523,44.519063,0 -124.751117,44.528438,0 -124.744582,44.537322,0 -124.734622,44.545178,0 -124.730038,44.547763,0 -124.723437,44.550603,0 -124.707168,44.555983,0 -124.69073,44.563397,0 -124.656243,44.583713,0 -124.650102,44.587435,0 -124.640525,44.594928,0 -124.633382,44.603403,0 -124.631521,44.606437,0 -124.628835,44.613035,0 -124.623888,44.625588,0 -124.620207,44.639753,0 -124.614935,44.672605,0 -124.6085,44.721177,0 -124.608602,44.73392,0 -124.606993,44.742712,0 -124.603757,44.750143,0 -124.598905,44.757218,0 -124.589258,44.765553,0 -124.576173,44.772168,0 -124.566488,44.775117,0 -124.556585,44.776643,0 -124.546067,44.776892,0 -124.532372,44.774652,0 -124.520612,44.770468,0 -124.509737,44.763757,0 -124.498678,44.753742,0 -124.491062,44.744662,0 -124.461447,44.698645,0 -124.459682,44.695883,0 -124.459522,44.695638,0 -124.459422,44.695477,0 -124.458705,44.694235,0 -124.458455,44.693798,0 -124.45807,44.693153,0 -124.457865,44.692797,0 -124.457515,44.692206,0 -124.457012,44.691385,0 
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>Final_Official Northern Cable path</name>
+        <styleUrl>#msn_ylw-pushpin1</styleUrl>
+        <LineString>
+          <tessellate>1</tessellate>
+          <gx:altitudeMode>clampToSeaFloor</gx:altitudeMode>
+          <coordinates>
+            -123.96715,45.20229999999999,0 -123.978472,45.20057199999999,0 -123.986033,45.199417,0 -123.98627,45.19937500000001,0 -123.990073,45.198697,0 -124.010113,45.195385,0 -124.027862,45.192752,0 -124.029107,45.192673,0 -124.029107,45.192673,0 -124.029448,45.19269100000001,0 -124.036672,45.193055,0 -124.047807,45.19515,0 -124.057223,45.195692,0 -124.065677,45.196178,0 -124.099163,45.19717700000001,0 -124.128925,45.19571,0 -124.189947,45.192705,0 -124.220432,45.194673,0 -124.253948,45.202502,0 -124.272712,45.207515,0 -124.282253,45.210065,0 -124.301483,45.214302,0 -124.331402,45.21899,0 -124.352733,45.221438,0 -124.408548,45.233443,0 -124.452295,45.239952,0 -124.568088,45.264328,0 -124.613012,45.273782,0 -124.635288,45.27931299999999,0 -124.655062,45.280533,0 -124.675283,45.277998,0 -124.694083,45.27185500000001,0 -124.718342,45.261015,0 -124.731567,45.25365499999999,0 -124.749883,45.242937,0 -124.750632,45.24254799999999,0 -124.751019,45.242411,0 -124.773797,45.234305,0 -124.798027,45.22972500000001,0 -124.825532,45.22661800000001,0 -124.854995,45.226443,0 -124.880652,45.230295,0 -124.889492,45.23225,0 -124.90308,45.236617,0 -124.919833,45.242725,0 -124.923512,45.24465000000001,0 -124.923536,45.244666,0 -124.940889,45.25587699999999,0 -124.941128,45.256032,0 -124.957305,45.266397,0 -124.971954,45.273275,0 -124.972295,45.273435,0 -124.993602,45.283117,0 -124.996413,45.284032,0 -125.0085,45.287963,0 -125.030913,45.29668299999999,0 -125.037875,45.29818299999999,0 -125.038616,45.298252,0 -125.039435,45.298328,0 -125.040865,45.298422,0 -125.076387,45.29921,0 -125.076387,45.29921,0 -125.091283,45.299605,0 -125.101812,45.29881500000001,0 -125.104907,45.29837499999999,0 -125.119342,45.295382,0 -125.154227,45.28571,0 -125.16541,45.28375800000001,0 -125.183485,45.282307,0 -125.218285,45.280557,0 -125.227697,45.28067300000001,0 -125.254662,45.28256799999999,0 -125.277877,45.28458999999999,0 -125.298037,45.286347,0 -125.317832,45.28787300000001,0 -125.327152,45.289325,0 -125.347795,45.294028,0 -125.406598,45.308888,0 -125.495142,45.331257,0 -125.495142,45.331257,0 -125.504917,45.33444799999999,0 -125.511627,45.33702699999999,0 -125.53298,45.346847,0 -125.599495,45.38065,0 -125.608813,45.38496,0 -125.624048,45.392005,0 -125.666807,45.40944699999999,0 -125.692755,45.418888,0 -125.70156,45.42179300000001,0 -125.728062,45.42962,0 -125.94169,45.483358,0 -126.292842,45.57085,0 -126.396063,45.596542,0 -126.864967,45.71315299999999,0 -126.949563,45.734505,0 -127.045927,45.757777,0 -127.117588,45.775588,0 -127.129805,45.77909499999999,0 -127.152377,45.78557299999999,0 -127.153116,45.785713,0 -127.159958,45.787003,0 -127.161533,45.78722,0 -127.163005,45.787517,0 -127.224938,45.8012,0 -127.2319,45.802415,0 -127.240157,45.803428,0 -127.247303,45.80373,0 -127.252717,45.80279000000001,0 -127.259375,45.80059,0 -127.2648,45.797922,0 -127.268963,45.792832,0 -127.272257,45.786198,0 -127.275888,45.77772800000001,0 -127.277222,45.773602,0 -127.278388,45.756468,0 -127.278438,45.755555,0 -127.278438,45.755555,0 -127.2784,45.756396,0 -127.276692,45.79395,0 -127.275487,45.8002,0 -127.273298,45.80458,0 -127.25668,45.824996,0 -127.256513,45.8252,0 -127.247875,45.836029,0 -127.241702,45.843767,0 -127.247875,45.836029,0 -127.256513,45.8252,0 -127.25668,45.824996,0 -127.273298,45.80458,0 -127.275487,45.8002,0 -127.276692,45.79395,0 -127.2784,45.756396,0 -127.278438,45.755555,0 -127.278438,45.755555,0 -127.278429,45.75643399999999,0 -127.278428,45.756465,0 -127.278232,45.77345,0 -127.281478,45.787592,0 -127.282405,45.791388,0 -127.284508,45.795198,0 -127.284607,45.795313,0 -127.288887,45.798833,0 -127.292712,45.800898,0 -127.300722,45.803933,0 -127.301823,45.804217,0 -127.307942,45.804857,0 -127.320182,45.804785,0 -127.332897,45.804692,0 -127.365875,45.804427,0 -127.366412,45.80442099999999,0 -127.442383,45.803682,0 -128.06896,45.796378,0 -128.12301,45.79575,0 -128.228732,45.794522,0 -128.362647,45.793,0 -128.40637,45.79245,0 -128.603613,45.789967,0 -128.651235,45.78862000000001,0 -128.668503,45.789262,0 -128.672528,45.789657,0 -128.677768,45.79017,0 -128.706308,45.794925,0 -128.83311,45.822862,0 -128.874293,45.831933,0 -128.93938,45.84595000000001,0 -129.19342,45.900805,0 -129.285008,45.920568,0 -129.331278,45.93137500000001,0 -129.350393,45.934575,0 -129.361972,45.935642,0 -129.381492,45.93599199999999,0 -129.414407,45.93427,0 -129.467828,45.93105300000001,0 -129.4835,45.928935,0 -129.49002,45.927648,0 -129.508728,45.922637,0 -129.605005,45.8894,0 -129.612847,45.88690099999999,0 -129.613293,45.88675799999999,0 -129.624247,45.882996,0 -129.624423,45.882935,0 -129.643902,45.875803,0 -129.652668,45.873088,0 -129.653129,45.87295099999999,0 -129.662372,45.87018999999999,0 -129.673672,45.868132,0 -129.68624,45.866828,0 -129.719093,45.863542,0 -129.727915,45.859765,0 -129.73356,45.85479300000001,0 -129.737542,45.848595,0 -129.740998,45.83834,0 -129.743422,45.821483,0 -129.74355,45.82058000000001,0 -129.74355,45.82058000000001,0 -129.74349,45.82147000000001,0 -129.742312,45.83947500000001,0 -129.74326,45.84849,0 -129.745802,45.855868,0 -129.747977,45.85944,0 -129.750787,45.862437,0 -129.755227,45.86505799999999,0 -129.778932,45.870293,0 -129.801738,45.874562,0 -129.807562,45.876173,0 -129.829078,45.883043,0 -129.838163,45.88616500000001,0 -129.902963,45.912712,0 -129.936892,45.928478,0 -129.954055,45.936048,0 -129.959817,45.938142,0 -129.968661,45.940773,0 -129.96868,45.94077800000001,0 -129.969737,45.941273,0 
+          </coordinates>
+        </LineString>
+      </Placemark>
+    </Document>
+  </Folder>
+</Document>
+</kml>
