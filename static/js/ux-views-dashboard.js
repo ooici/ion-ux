@@ -111,7 +111,9 @@ IONUX.Views.ObservatorySelector = IONUX.Views.ResourceSelector.extend({
 
   events: {
       'click .secondary-link': 'click_action',
+      'click .secondary-nested-link': 'click_action_nested',
       'click .secondary-link-selected': 'click_action',
+      'click .secondary-nested-link-selected': 'click_action_nested',
       'click .toggle-all-menu': 'toggle_action',
       'click .toggle-all-menu-selected': 'toggle_action',
       'click .primary-link': 'trigger_pan_map'
@@ -143,6 +145,20 @@ IONUX.Views.ObservatorySelector = IONUX.Views.ResourceSelector.extend({
       }
 
       console.log(target.parent().parent().next('ul').is(":visible"))
+  },
+
+  click_action_nested: function(e){
+      e.preventDefault();
+      var target = $(e.target);
+      target.parent().next('ul').toggle()
+      if (target.parent().next('ul').is(":visible")) {
+          target.attr('class','secondary-nested-link-selected  pull-right');
+      }
+      else {
+          target.attr('class','secondary-nested-link pull-right');
+      }
+
+      console.log(target.parent().next('ul').is(":visible"))
   },
 
    toggle_action: function(e){
@@ -409,6 +425,8 @@ IONUX.Views.Map = Backbone.View.extend({
         PlatSite = (obs[observatory].site_resources);
         ObsSite = (obs[observatory]['site_resources'][observatory]);
         var numberOfPlatforms = 0;
+        var platforms     = [];
+        var platforms2ids = {};
         for (var p in PlatSite) {
           id = p.toString();
           var type =PlatSite[id]['type_'];
@@ -421,6 +439,8 @@ IONUX.Views.Map = Backbone.View.extend({
               PlatSite[id].spatial_area_name = ObsSite['spatial_area_name'];
               PlatformSitesList[id] = PlatSite[id];
               numberOfPlatforms++;
+              platforms.push(PlatSite[id].name);
+              platforms2ids[PlatSite[id].name] = id;
             }else{
               nonstationsite++;
             }
@@ -430,8 +450,48 @@ IONUX.Views.Map = Backbone.View.extend({
           //console.log(ObsSite.name);
           PlatformSitesList[ObsSite['_id']] = ObsSite;
         }
+
+        // insert platforms into TOC (natural sort them first)
+        platforms.sort(
+          // thank you, http://my.opera.com/GreyWyvern/blog/show.dml/1671288
+          function (a, b) {
+            function chunkify(t) {
+              var tz = [], x = 0, y = -1, n = 0, i, j;
+              while (i = (j = t.charAt(x++)).charCodeAt(0)) {
+                var m = (i == 46 || (i >=48 && i <= 57));
+                if (m !== n) {
+                  tz[++y] = "";
+                  n = m;
+                }
+                tz[y] += j;
+              }
+              return tz;
+            }
+            var aa = chunkify(a);
+            var bb = chunkify(b);
+            for (x = 0; aa[x] && bb[x]; x++) {
+              if (aa[x] !== bb[x]) {
+                var c = Number(aa[x]), d = Number(bb[x]);
+                if (c == aa[x] && d == bb[x]) {
+                  return c - d;
+                } else return (aa[x] > bb[x]) ? 1 : -1;
+              }
+            }
+            return aa.length - bb.length;
+          }
+        );
+        if (platforms.length > 0) {
+          $('<a href="#" class="secondary-nested-link pull-right">&nbsp;</a>').insertAfter('#observatory-selector [href="/map/' + ObsSite._id + '"]');
+          var ul = [];
+          ul.push('<ul class="map-nested-ul" style="display:none;" observatory="' + ObsSite._id + '">');
+          for (var i = 0; i < platforms.length; i++) {
+            ul.push('<li class="really-nested"><a class="primary-link nested-primary-link" href="/map/' + platforms2ids[platforms[i]] + '">' + platforms[i] + '</a></li>');
+          }
+          ul.push('</ul>'); 
+          $(ul.join('')).insertAfter('#observatory-selector [data-resource-id="' + ObsSite._id + '"]');
+        }
     }
-      return PlatformSitesList;
+    return PlatformSitesList;
   },
 
   get_sites_status: function() {
@@ -450,6 +510,10 @@ IONUX.Views.Map = Backbone.View.extend({
         self.sites_status_loaded = true;
         //gets the observatories
         self.sites_status = resp.data;
+        // clear out platforms from TOC
+        $('#observatory-selector').contents().find('.secondary-nested-link.pull-right').remove();
+        $('#observatory-selector').contents().find('.secondary-nested-link-selected.pull-right').remove();
+        $('#observatory-selector').contents().find('.really-nested').parent().remove();
         //get the platform sites
         self.platformSitesList = self.getPlatformSites(self.sites_status);
         //draw stuff
