@@ -272,6 +272,16 @@ td.filter-option {
   background-position: -60px -716px;
 }
 
+.instrumentportal-option:before {
+  background-image: url(/static/img/salt_sprite.png);
+  background-position: -60px -420px;
+}
+
+.platformportal-option:before {
+  background-image: url(/static/img/salt_sprite.png);
+  background-position: -60px -540px;
+}
+
 .deployment-option:before {
   background-image: url(/static/img/salt_sprite.png);
   background-position: -60px -296px;
@@ -294,7 +304,7 @@ td.filter-option {
 
 .platformmodel-option:before {
   background-image: url(/static/img/salt_sprite.png);
-  background-position: -60px -536px;
+  background-position: -120px -536px;
 }
 
 .platformagent-option:before {
@@ -319,7 +329,7 @@ td.filter-option {
 
 .instrumentmodel-option:before {
   background-image: url(/static/img/salt_sprite.png);
-  background-position: -60px -416px;
+  background-position: -120px -356px;
 }
 
 .instrumentagent-option:before {
@@ -489,6 +499,10 @@ ul.map-nested-ul {
   position: absolute;
   background-image: url(/static/img/salt_sprite.png);
   background-position: -60px -716px;
+}
+
+.map-nested-ul .really-nested:before,.map-nested-ul .really-nested:hover:before {
+  background-position: -60px -540px;
 }
 
 .really-nested:before {
@@ -1028,11 +1042,13 @@ a.btn-black:hover, a.btn-advanced-search:hover {
 }
 
 .InstrumentSite .heading-left .text_short_ooi:before {
-  background-position: -420px -660px;
+  background-position: -420px -960px;
 }
 
+.DeviceModel .InstrumentModel .heading-left .text_short_ooi:before {
+  background-position: -420px -960px;
+}
 
-.InstrumentModel .heading-left .text_short_ooi:before,
 .DeviceModel .heading-left .text_short_ooi:before {
   background-position: -540px -660px;
 }
@@ -1041,12 +1057,16 @@ a.btn-black:hover, a.btn-advanced-search:hover {
   background-position: -600px -540px;
 }
 
+.PlatformModel .heading-left .text_short_ooi:before {
+  background-position: -480px -960px;
+}
+
 .StationSite .heading-left .text_short_ooi:before {
   background-position: -540px -840px;
 }
 
 .Observatory .heading-left .text_short_ooi:before {
-  background-position: -420px -900px;
+  background-position: -420px -660px;
 }
 
 .InformationResource .heading-left .text_short_ooi:before {
@@ -1054,6 +1074,10 @@ a.btn-black:hover, a.btn-advanced-search:hover {
 }
 
 .UserRole .heading-left .text_short_ooi:before {
+  background-position: -540px -780px;
+}
+
+.UserInfo .heading-left .text_short_ooi:before {
   background-position: -540px -480px;
 }
 
