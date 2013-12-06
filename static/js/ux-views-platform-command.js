@@ -140,7 +140,29 @@ IONUX.Views.PlatformCommandFacepage = Backbone.View.extend({
           $('#stop, .get_capabilities').show();
           $('#start, #platform_status').hide();
           self.render_commands(resp.data.commands);
-        },
+
+          /*
+           * Take the agent_params in the JSON response
+           * and build a new AgentParams view just like in the instrument command
+           */
+          if (!_.isEmpty(resp.data.agent_params)) {
+            new IONUX.Views.AgentParams({
+              model: new IONUX.Models.AgentParams(resp.data.agent_params, {schema: resp.data.agent_schema})
+            }).render().el;
+          }
+          
+          /*
+           * So far I can't get the resource_params
+           */
+          if (!_.isEmpty(resp.data.resource_params)) {
+            var disabled = !_.findWhere(resp.data.original, {name: 'set_resource'}) ? true : false;
+            new IONUX.Views.ResourceParams2({
+              model: new IONUX.Models.ResourceParams2(resp.data.resource_params, {schema: resp.data.resource_schema}),
+              disabled: disabled
+            }).render().el;
+          }
+
+        }, /* success */
         error: function(resp) {
           console.log('Error: ', resp);
           $('#start').show();
