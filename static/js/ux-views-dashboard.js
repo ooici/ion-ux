@@ -399,7 +399,8 @@ IONUX.Views.Map = Backbone.View.extend({
     this.active_marker = null; // Track clicked icon
     this.sites_status_loaded = false;
     this.map_bounds_elmt = $('#map_bounds');
-    this.resource_mapping = new IONUX.Views.ListFilter().filter.long;
+    // Need to investigate why this clobbers other elements
+    //this.resource_mapping = new IONUX.Views.ListFilter().filter.long;
     this.model.on('pan:map', this.pan_map);
     this.model.on('set:active', this.set_active_marker);
 
