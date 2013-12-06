@@ -1330,7 +1330,7 @@ li div.pull-left {
   //width: 90%;
 }
 .controls select {
-  width: 420px;
+  width: 88%;
 }
 
 input {
@@ -1343,14 +1343,20 @@ input {
 }
 
 .controls input[type=text], .controls textarea, .controls input[type=number] {
-    width: 400px;
+    width: 84%;
 }
 .pull-left input[type=text] {
-  width: 300px;
+  width: 250%;
+}
+
+li > .pull-left textarea {
+    width: 200%;
+    margin-left: 23%;
 }
 
 .controls input[type=checkbox] {
   float: left;
+  margin-left: 11%;
 }
 
 label {
@@ -1367,10 +1373,6 @@ label {
 .edit-group label {
   padding-top: 5px;
   line-height: 11px;
-}
-
-#form-container {
-  background: #a5a5a5;
 }
 
 .edit-group {
