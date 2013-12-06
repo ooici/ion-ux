@@ -580,9 +580,9 @@ IONUX.Views.Map = Backbone.View.extend({
       zoomControlOptions: {style: google.maps.ZoomControlStyle.SMALL, position: google.maps.ControlPosition.TOP_RIGHT}
     });
     
-        // add the cable kml
+    // add the cable kml
     new google.maps.KmlLayer({
-       url                 : 'http://ion-alpha.oceanobservatories.org/static/data/rsn_cable_layouts_v1.5.3.kml'
+       url                 : 'http://ion-alpha.oceanobservatories.org/static/rsn_cable_layouts_v1.5.3.kml'
       ,preserveViewport    : true
       ,clickable           : false
       ,suppressInfoWindows : true
@@ -778,25 +778,37 @@ IONUX.Views.Map = Backbone.View.extend({
   },
 
   create_bbox : function(_path,_hover_text) {
+    // create a visible poly and an invisible one which is for the infoWindow
     var poly = new google.maps.Polyline({
        strokeColor   : '#FFE4B5'
       ,strokeOpacity : 0.8
       ,strokeWeight  : 2
       ,path          : _path
-      ,title         : _hover_text
+      ,map           : this.map
+    });
+    this.observatoryBboxes.push(poly);
+
+    var invisiblePoly = new google.maps.Polyline({
+       strokeColor   : '#FFE4B5'
+      ,strokeOpacity : 0
+      ,strokeWeight  : 10
+      ,path          : _path
+      ,infoWindow    : new google.maps.InfoWindow({
+         content     : 'Site: ' + _hover_text
+        ,pixelOffset : new google.maps.Size(0,-5) // w/o an offset, the mousout gets fired and we get flashing!
+      })
       ,map           : this.map
     });
 
-/*
-    // Title's don't create tooltips
-    google.maps.event.addListener(poly,'mouseover',function() {
-      console.log(_hover_text);
+    // use infoWindow for tooltips so that markers and polys match (polys don't use the alt-title approach)
+    google.maps.event.addListener(invisiblePoly,'mouseover',function(e) {
+      this.infoWindow.setPosition(e.latLng);
+      this.infoWindow.open(this.map);
     });
-    google.maps.event.addListener(poly,'mouseout',function() {
+    google.maps.event.addListener(invisiblePoly,'mouseout',function() {
+      this.infoWindow.close();
     });
-*/
-
-    this.observatoryBboxes.push(poly);
+    this.observatoryBboxes.push(invisiblePoly);
   },
 
   create_marker: function(_lat, _lon, _icon, _hover_text, _info_content, _table_row, resource_id,resource_type) {
@@ -832,12 +844,22 @@ IONUX.Views.Map = Backbone.View.extend({
         map: this.map,
         position: latLng,
         icon: this.new_markers[resource_status].icon,
-        title: resource_type+'\n'+_hover_text + '\nLAT: ' + _lat + '\nLON: ' + _lon,
         resource_id: resource_id,
         resource_status: resource_status,
-        type: resource_status
+        type: resource_status,
+        infoWindow: new google.maps.InfoWindow({
+           content     : resource_type+': '+_hover_text + '<br>LAT: ' + _lat + '<br>LON: ' + _lon
+          ,pixelOffset : new google.maps.Size(-6,3)
+        })
       });
-    
+   
+    // use infoWindow for tooltips so that markers and polys match (polys don't use the alt-title approach)
+    google.maps.event.addListener(marker,'mouseover',function(e) {
+      this.infoWindow.open(this.map,this);
+    });
+    google.maps.event.addListener(marker,'mouseout',function() {
+      this.infoWindow.close();
+    });
     
     // var iw = new google.maps.InfoWindow({content: _info_content});
     var _map = this.map;
