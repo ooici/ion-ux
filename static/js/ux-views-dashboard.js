@@ -399,7 +399,7 @@ IONUX.Views.Map = Backbone.View.extend({
     this.active_marker = null; // Track clicked icon
     this.sites_status_loaded = false;
     this.map_bounds_elmt = $('#map_bounds');
-    
+    this.resource_mapping = new IONUX.Views.ListFilter().filter.long;
     this.model.on('pan:map', this.pan_map);
     this.model.on('set:active', this.set_active_marker);
 
@@ -811,6 +811,19 @@ IONUX.Views.Map = Backbone.View.extend({
     this.observatoryBboxes.push(invisiblePoly);
   },
 
+
+  get_resource_type_label_name: function(resource_type){
+    //this.resource_mapping
+    var label;
+     _.each(this.resource_mapping, function(option) {
+        if (resource_type==option.type){
+          label=option.label;
+          return false;
+        }
+      },this);
+     return label;
+  },
+
   create_marker: function(_lat, _lon, _icon, _hover_text, _info_content, _table_row, resource_id,resource_type) {
     
     if (!_lat || !_lon) return null;
@@ -848,7 +861,7 @@ IONUX.Views.Map = Backbone.View.extend({
         resource_status: resource_status,
         type: resource_status,
         infoWindow: new google.maps.InfoWindow({
-           content     : resource_type+': '+_hover_text + '<br>LAT: ' + _lat + '<br>LON: ' + _lon
+           content     : this.get_resource_type_label_name(resource_type)+': '+_hover_text + '<br>LAT: ' + _lat + '<br>LON: ' + _lon
           ,pixelOffset : new google.maps.Size(-6,3)
         })
       });
