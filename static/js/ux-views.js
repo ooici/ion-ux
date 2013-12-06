@@ -111,7 +111,10 @@ IONUX.Views.Search = Backbone.View.extend({
     'click .btn-advanced-search': 'advanced_search'
   },
   render: function(){
-    this.$el.html(this.template);
+    /* Use prepend so that it doesn't erase any unloaded DOM elements
+     * set by the AJAX callback
+     */
+    this.$el.prepend(this.template);
     return this;
   },
   search_on_click: function(e){
