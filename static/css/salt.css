@@ -1287,7 +1287,6 @@ select#new-commands {
   background-color: #f4f4f4;
 }
 
-
 .edit-resource-btns {
   background: #f4f4f4;
   margin: 10px 0;
@@ -1311,7 +1310,7 @@ label {
 
 fieldset {
   margin-top: 20px;
-  width: 600px;
+  width: 80%;
   border: 1px solid #dcdcdc;
   border-radius: 10px;
   padding: 20px;
@@ -1341,7 +1340,7 @@ fieldset {
   //width: 90%;
 }
 .controls select {
-  width: 420px;
+  width: 88%;
 }
 
 input {
@@ -1354,14 +1353,20 @@ input {
 }
 
 .controls input[type=text], .controls textarea, .controls input[type=number] {
-    width: 400px;
+    width: 84%;
 }
 .pull-left input[type=text] {
-  width: 300px;
+  width: 250%;
+}
+
+li > .pull-left textarea {
+  width: 200%;
+  margin-left: 23%
 }
 
 .controls input[type=checkbox] {
   float: left;
+  margin-left: 11%;
 }
 
 label {
@@ -1378,10 +1383,6 @@ label {
 .edit-group label {
   padding-top: 5px;
   line-height: 11px;
-}
-
-#form-container {
-  background: #a5a5a5;
 }
 
 .edit-group {
