@@ -579,6 +579,8 @@ IONUX.Views.Map = Backbone.View.extend({
       zoomControl: true,
       zoomControlOptions: {style: google.maps.ZoomControlStyle.SMALL, position: google.maps.ControlPosition.TOP_RIGHT}
     });
+
+    this.map.maxZoomService = new google.maps.MaxZoomService();
     
     // add the cable kml
     new google.maps.KmlLayer({
@@ -595,6 +597,25 @@ IONUX.Views.Map = Backbone.View.extend({
        self.render_map_bounds(e);
     });
     
+    // Ideally we would put this check on bounds_changed, but that fires so frequently.
+    // This will hopefully take care of most cases.  If not, we can think about looking
+    // for a 'big-bounds-changed' type of event.
+    google.maps.event.addListener(this.map, "zoom_changed", function(e) {
+       self.map.maxZoomService.getMaxZoomAtLatLng(self.map.getCenter(),function(r) {
+         if (r.status == google.maps.MaxZoomStatus.OK) {
+           var z = self.map.getZoom();
+           var t = self.map.getMapTypeId();
+           // move from sat to road if out of zoom
+           if (t.toLowerCase() == 'satellite' && z > r.zoom) {
+             self.map.setMapTypeId('roadmap');
+           }
+           // or move back to sat if OK
+           else if (t.toLowerCase() == 'roadmap' && z <= r.zoom) {
+             self.map.setMapTypeId('satellite');
+           }
+         }
+       });
+    });
 
     google.maps.event.addListener(this.map, "mousemove", function(e) {
         self.render_map_bounds(e);
