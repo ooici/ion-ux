@@ -580,9 +580,9 @@ IONUX.Views.Map = Backbone.View.extend({
       zoomControlOptions: {style: google.maps.ZoomControlStyle.SMALL, position: google.maps.ControlPosition.TOP_RIGHT}
     });
     
-        // add the cable kml
+    // add the cable kml
     new google.maps.KmlLayer({
-       url                 : 'http://ion-alpha.oceanobservatories.org/static/data/rsn_cable_layouts_v1.5.3.kml'
+       url                 : 'http://ion-alpha.oceanobservatories.org/static/rsn_cable_layouts_v1.5.3.kml'
       ,preserveViewport    : true
       ,clickable           : false
       ,suppressInfoWindows : true
