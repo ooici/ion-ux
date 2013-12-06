@@ -412,7 +412,7 @@ ul.map-ul {
 .map-ul > li:hover:before {
   background: #607B8B;
   background-image: url(/static/img/pepper_sprite.png);
-  background-position: -30px -716px;
+  background-position: -90px -476px;
 }
 
 .map-ul > li:before {
@@ -423,7 +423,7 @@ ul.map-ul {
   display:inline-block;
   position: absolute;
   background-image: url(/static/img/pepper_sprite.png);
-  background-position: 0 -716px;
+  background-position: -60px -476px;
 }
 
 .map-ul ul {
@@ -508,10 +508,13 @@ ul.map-nested-ul {
 }
 
 .map-nested-ul .really-nested:before,
-.map-nested-ul .really-nested:hover:before,
+.map-nested-ul .really-nested:hover:before {
+  background-position: -60px -536px;
+}
+
 .map-nested-ul .really-nested.active:hover:before,
 .map-nested-ul .active:before {
-  background-position: -60px -540px;
+  background-position: -90px -536px;
 }
 
 .really-nested:before {
