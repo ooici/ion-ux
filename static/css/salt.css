@@ -402,12 +402,12 @@ ul.map-ul {
 
 .map-ul > li:hover,
 .map-ul > li:hover a {
-  background: #034971;
+  background: #607B8B;
   color: #fff;
 }
 
 .map-ul > li:hover:before {
-  background: #034971;
+  background: #607B8B;
   background-image: url(/static/img/salt_sprite.png);
   background-position: -30px -716px;
 }
@@ -442,8 +442,8 @@ ul.map-ul {
 }
 
 .map-ul li a.secondary-link:hover {
-  color: #034971;
-  background-color: #034971;
+  color: #607B8B;
+  background-color: #607B8B;
   background-position: -180px -360px;
 }
 
@@ -472,7 +472,7 @@ ul.map-nested-ul {
 }
 
 .map-nested-ul > li:hover {
-  background: #034971;
+  background: #607B8B;
 }
 
 .map-nested-ul > li:hover .primary-link, 
@@ -481,7 +481,7 @@ ul.map-nested-ul {
 }
 
 .map-nested-ul > li:hover:before {
-  background: #034971;
+  background: #607B8B;
   background-image: url(/static/img/salt_sprite.png);
   background-position: -90px -716px;
 }
@@ -557,8 +557,8 @@ ul.map-nested-ul {
 }
 
 .map-nested-ul li a.secondary-nested-link:hover {
-  color: #034971;
-  background-color: #034971;
+  color: #607B8B;
+  background-color: #607B8B;
   background-position: -180px -360px;
 }
 
@@ -585,7 +585,7 @@ ul.resource-ul {
 }
 
 .resource-ul li:hover {
-  background: #034971;
+  background: #607B8B;
 }
 
 .resource-ul li:hover a {
@@ -593,7 +593,7 @@ ul.resource-ul {
 }
 
 .resource-ul li:hover:before {
-  background: #034971;
+  background: #607B8B;
   background-image: url(/static/img/salt_sprite.png);
   background-position: -150px -716px;
 }
@@ -628,11 +628,11 @@ ul.resource-ul {
 }
 
 .resource-ul li:hover {
-  background: #034971;
+  background: #607B8B;
 }
 
 .resource-ul li:hover:before {
-  background: #034971;
+  background: #607B8B;
   background-image: url(/static/img/salt_sprite.png);
   background-position: -150px -716px;
 }
@@ -667,8 +667,8 @@ ul.resource-ul {
 }
 
 .secondary-link:hover {
-  color: #034971;
-  background-color: #034971;
+  color: #607B8B;
+  background-color: #607B8B;
   background-position: -120px -900px;
 }
 
