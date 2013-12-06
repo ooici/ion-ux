@@ -193,7 +193,7 @@ h2 {
 
 #dataproduct-filter {
   height: 275px;
-  width: 100%;
+  width: 100% !important;
   outline: 0;
 }
 
@@ -202,7 +202,6 @@ h2 {
 }
 
 #map-data-filter #lcstate-filter .filter-option {
-  margin-right: 8px;
 }
 
 .data-filter-option:before {
@@ -212,6 +211,10 @@ h2 {
   left: 11px;
   display:inline-block;
   position: absolute;
+}
+
+.filter-option input[type=checkbox] {
+  margin:-4px 0 0 8px;
 }
 
 .data-filter-option {

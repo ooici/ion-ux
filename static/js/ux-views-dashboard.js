@@ -1383,15 +1383,21 @@ IONUX.Views.DataProductFilter = Backbone.View.extend({
   render: function(){
     this.$el.html(this.template);
     this.render_filter_options();
-    this.$el.find('#dataproduct-filter').jScrollPane({autoReinitialise: true});
+    /*
+      Since we are not updating w/ get_sites_status all the time, I believe I can comment out
+      the next line since there is no need to refresh after initial load.  If, however, data
+      needs to get updated underneath, this line needs to become active again.  Commenting it
+      out avoids the panel having to repaint itself.
+    */
+    // this.$el.find('#dataproduct-filter').jScrollPane({autoReinitialise: true});
     return this;
   },
   
   render_filter_options: function(options){
     // Should not be in separate templates? 
     // Waiting for definitive filter behavior before consolidating.
-    var item_tmpl = '<div class="filter-option dataproduct-option" title="<%= type %>"><span style="display:inline-block;width:150px;text-overflow:ellipsis;white-space: nowrap;overflow: hidden;"><%= type %></span> <div class="pull-right"><input type="checkbox" value="<%= type %>" checked /></div></div>';
-    var lcstate_tmpl = '<div class="filter-option lcstate-option"><%= label %> <div class="pull-right"><input type="checkbox" value="<%= lcstate %>" checked /></div></div>';
+    var item_tmpl = '<div class="filter-option dataproduct-option"><div class="pull-right"><input type="checkbox" value="<%= type %>" checked /></div><span style="padding-right:27px"><%= type %></span></div>';
+    var lcstate_tmpl = '<div class="filter-option lcstate-option"><div class="pull-right"><input type="checkbox" value="<%= lcstate %>" checked /></div><span style="padding-right:27px"><%= label %></span></div>';
 
     var dp_elmt = this.$el.find('#dataproduct-filter');
     _.each(this.group_list, function(option) {
