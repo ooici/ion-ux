@@ -62,12 +62,27 @@ class Deploy:
         run('mkdir %s/cilogon-wsgi/temp/lookup' % self.remote_deploy_dir, shell=False)
         run('chmod -R 777 %s/cilogon-wsgi/temp' % self.remote_deploy_dir, shell=False)
 
+    def compile_assets(self):
+        '''
+        Compiles static assets for production
+        '''
+        flask_root = join(self.remote_deploy_dir, self.remote_relative_flask_dir)
+        salt_less = join(flask_root, 'static/css/salt_images.less')
+        pepper_less = join(flask_root, 'static/css/pepper_images.less')
+        salt_css = join(flask_root, 'static/css/salt_images.css')
+        pepper_css = join(flask_root, 'static/css/pepper_images.css')
+        run('lessc %s > %s' % (salt_less, salt_css))
+        run('lessc %s > %s' % (pepper_less, pepper_css))
+
+
+
     def config_flask(self):
         # Create config.py file from template
         config_file = join(self.local_dir, 'config.py')
         local('rm -f ' + config_file)
         o = open(config_file, 'w')
         flask_cfg = open(join(self.local_dir, 'config.py.template')).read()
+        flask_cfg = re.sub('PRODUCTION = False', 'PRODUCTION = True', flask_cfg)
         flask_cfg = re.sub('FLASK_HOST_VALUE', self.web_host, flask_cfg)
         flask_cfg = re.sub('FLASK_PORT_VALUE', str(self.web_port), flask_cfg)
         flask_cfg = re.sub('SECRET_KEY_VALUE', self.secret_key, flask_cfg)
@@ -136,6 +151,7 @@ class Deploy:
         self.deploy_cilogon()
         self.config_flask()
         self.deploy_ui()
+        self.compile_assets()
         self.restart_apache()
 
     def restart_apache(self):

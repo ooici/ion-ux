@@ -12,7 +12,7 @@ from jinja2.environment import Environment
 
 from dummy_data_layout import LAYOUT_SCHEMA
 from service_api import service_gateway_get
-from config import PORTAL_ROOT, UI_MODE
+from config import PORTAL_ROOT, UI_MODE, PRODUCTION
 
 from random import randint
 
@@ -39,7 +39,7 @@ class LayoutApi(object):
         # Load template and find 'body' for template appendation
         env = Environment()
         env.loader = FileSystemLoader(PORTAL_ROOT+'/templates')
-        tmpl_unparsed = env.get_template('ion_ux.html').render()
+        tmpl_unparsed = env.get_template('ion_ux.html').render(production=PRODUCTION)
         tmpl = ET.fromstring(tmpl_unparsed.encode('utf-8'))
         body_elmt = tmpl.find('body')
 

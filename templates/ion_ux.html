@@ -9,18 +9,23 @@
         <!-- <link rel="stylesheet" href="/static/css/jquery-ui-1.8.6.custom.css" type="text/css" /> -->
         <link rel="stylesheet" href="/static/css/jscrollpane.css" type="text/css" />
         <link rel="stylesheet" href="/static/css/bootstrap-datepicker.css" type="text/css" />
-        <link rel="stylesheet/less" href="/static/bootstrap/less/bootstrap.less" type="text/css" />
+        <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css" type="text/css" />
         <link href='http://fonts.googleapis.com/css?family=Signika:300,400,600,700' rel='stylesheet' type='text/css'/>
         <link href='http://fonts.googleapis.com/css?family=Signika+Negative:300,400,600,700' rel='stylesheet' type='text/css' />
 
 
         <link rel="stylesheet" href="/static/css/common.css" type="text/css" />
 
-        <link rel="stylesheet" class="pepper" href="/static/css/pepper.css" type="text/css" disabled="true" />
-        <link rel="stylesheet/less" class="pepper" href="/static/css/pepper_images.less" disabled="true" />
+        {% if production %}
+            <link rel="stylesheet" class="pepper" href="/static/css/pepper_images.css" disabled="true" />
+            <link rel="stylesheet" class="salt" href="/static/css/salt_images.css" />
+        {% else %}
+            <link rel="stylesheet/less" class="pepper" href="/static/css/pepper_images.less" disabled="true" />
+            <link rel="stylesheet/less" class="salt" href="/static/css/salt_images.less" />
+        {% endif %}
 
+        <link rel="stylesheet" class="pepper" href="/static/css/pepper.css" type="text/css" disabled="true" />
         <link rel="stylesheet" class="salt" href="/static/css/salt.css" type="text/css"/>
-        <link rel="stylesheet/less" class="salt" href="/static/css/salt_images.less" />
         
         {% block extra_css %}{% endblock %}
     </head>
