@@ -401,6 +401,8 @@ ul.map-ul {
   padding-left: 0;
   line-height: 20px;
   font-size: 13px;
+  padding-left: 2em;
+  text-indent: -2.2em;
 }
 
 .map-ul > li:hover {
@@ -418,7 +420,7 @@ ul.map-ul {
   width: 16px;
   height: 20px;
   left: 11px;
-  display:block;
+  display:inline-block;
   position: absolute;
   background-image: url(/static/img/pepper_sprite.png);
   background-position: 0 -716px;
@@ -438,6 +440,8 @@ ul.map-ul {
   margin-top: 4px;
   background-image: url(/static/img/pepper_sprite.png);
   background-position: -360px -360px;
+  display: block;
+  margin-right: 0px;
 }
 
 .map-ul li a.secondary-link:hover {
@@ -470,9 +474,11 @@ ul.map-nested-ul {
 }
 
 .map-nested-ul > li {
-  padding-left: 0;
+  padding-left: 18px;
   line-height: 20px;
   font-size: 13px;
+  margin-left: 2em;
+  text-indent: -2.2em;
 }
 
 .map-nested-ul > li:hover {
@@ -494,8 +500,8 @@ ul.map-nested-ul {
   content: '';
   width: 16px;
   height: 20px;
-  left: 31px;
-  display:block;
+  left: 26px;
+  display:inline-block;
   position: absolute;
   background-image: url(/static/img/pepper_sprite.png);
   background-position: -60px -716px;
@@ -509,7 +515,11 @@ ul.map-nested-ul {
 }
 
 .really-nested:before {
-  left: 51px !important;
+  left: 45px !important;
+}
+
+.really-nested {
+  margin-left: 45px !important;
 }
 
 .map-nested-ul > li.active, .map-nested-ul > li.active:hover:before {
@@ -534,18 +544,9 @@ ul.map-nested-ul {
   content: '';
   width: 16px;
   height: 20px;
-  left: 31px;
+  left: 26px;
   display:block;
   position: absolute;
-}
-
-.map-nested-ul li a.primary-link {
-  padding-left: 50px;
-}
-
-.map-nested-ul li a.nested-primary-link {
-  padding-left: 70px;
-  font-style: italic;
 }
 
 .map-nested-ul li a.primary-link:hover {
@@ -558,6 +559,8 @@ ul.map-nested-ul {
   margin-top: 4px;
   background-image: url(/static/img/pepper_sprite.png);
   background-position: -180px -360px;
+  display: block;
+  margin-right: 0px;
 }
 
 .map-nested-ul li a.secondary-nested-link {
