@@ -5,7 +5,7 @@
   <div id="list">
     <% _.each(resources, function(nested_resources, san) { %>
       <ul class="map-ul">
-        <li ><a class="primary-link" href="#"><%= san %></a><a href="#" class="secondary-link pull-right">&nbsp;</a></li>
+        <li ><a href="#" class="secondary-link pull-right"></a><a class="primary-link" href="#"><%= san %></a></li>
       </ul>
       <!-- TODO: nest and style parent nodes appropriately. This is temporary. -->
       <ul class="map-nested-ul" style="display:none">

@@ -481,7 +481,7 @@ IONUX.Views.Map = Backbone.View.extend({
           }
         );
         if (platforms.length > 0) {
-          $('<a href="#" class="secondary-nested-link pull-right">&nbsp;</a>').insertAfter('#observatory-selector [href="/map/' + ObsSite._id + '"]');
+          $('<a href="#" class="secondary-nested-link pull-right"></a>').insertBefore('#observatory-selector [href="/map/' + ObsSite._id + '"]');
           var ul = [];
           ul.push('<ul class="map-nested-ul" style="display:none;" observatory="' + ObsSite._id + '">');
           for (var i = 0; i < platforms.length; i++) {
@@ -580,9 +580,9 @@ IONUX.Views.Map = Backbone.View.extend({
       zoomControlOptions: {style: google.maps.ZoomControlStyle.SMALL, position: google.maps.ControlPosition.TOP_RIGHT}
     });
     
-        // add the cable kml
+    // add the cable kml
     new google.maps.KmlLayer({
-       url                 : 'http://ion-alpha.oceanobservatories.org/static/data/rsn_cable_layouts_v1.5.3.kml'
+       url                 : 'http://ion-alpha.oceanobservatories.org/static/rsn_cable_layouts_v1.5.3.kml'
       ,preserveViewport    : true
       ,clickable           : false
       ,suppressInfoWindows : true
