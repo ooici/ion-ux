@@ -807,6 +807,11 @@ IONUX.Views.Map = Backbone.View.extend({
       ,path          : _path
       ,map           : this.map
     });
+    google.maps.event.addListener(poly,'mouseout',function() {
+      this.setOptions({
+        strokeWeight : 2
+      });
+    });
     this.observatoryBboxes.push(poly);
 
     var invisiblePoly = new google.maps.Polyline({
@@ -815,19 +820,29 @@ IONUX.Views.Map = Backbone.View.extend({
       ,strokeWeight  : 10
       ,path          : _path
       ,infoWindow    : new google.maps.InfoWindow({
-         content     : 'Site: ' + _hover_text
-        ,pixelOffset : new google.maps.Size(0,-5) // w/o an offset, the mousout gets fired and we get flashing!
+         content        : 'Site: ' + _hover_text
+        ,pixelOffset    : new google.maps.Size(0,-5) // w/o an offset, the mousout gets fired and we get flashing!
+        ,disableAutoPan : true
       })
       ,map           : this.map
+      ,visiblePoly   : poly
     });
 
     // use infoWindow for tooltips so that markers and polys match (polys don't use the alt-title approach)
     google.maps.event.addListener(invisiblePoly,'mouseover',function(e) {
       this.infoWindow.setPosition(e.latLng);
       this.infoWindow.open(this.map);
+      this.visiblePoly.setOptions({
+         strokeWeight : 3
+        ,strokeColor  : '#FFFFFF'
+      });
     });
     google.maps.event.addListener(invisiblePoly,'mouseout',function() {
       this.infoWindow.close();
+      this.visiblePoly.setOptions({
+         strokeColor  : '#FFE4B5'
+        ,strokeWeight : 2
+      });
     });
     this.observatoryBboxes.push(invisiblePoly);
   },
@@ -882,8 +897,9 @@ IONUX.Views.Map = Backbone.View.extend({
         resource_status: resource_status,
         type: resource_status,
         infoWindow: new google.maps.InfoWindow({
-           content     : this.get_resource_type_label_name(resource_type)+': '+_hover_text + '<br>LAT: ' + _lat + '<br>LON: ' + _lon
-          ,pixelOffset : new google.maps.Size(-6,3)
+           content        : this.get_resource_type_label_name(resource_type)+': '+_hover_text + '<br>LAT: ' + _lat + '<br>LON: ' + _lon
+          ,pixelOffset    : new google.maps.Size(-6,3)
+          ,disableAutoPan : true
         })
       });
    
