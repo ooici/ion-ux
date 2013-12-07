@@ -284,8 +284,7 @@
 
         // If the metadata indicates that the product had a processing_level of 'raw', no need to proceed
         if('processing_level_code' in dp_metadata &&
-                (dp_metadata['processing_level_code'].toLowerCase() == "raw" ||
-                dp_metadata['processing_level_code'].toLowerCase() == "n/a")) {
+                dp_metadata['processing_level_code'].toLowerCase() == "raw") {
             document.getElementById('chart_div').innerHTML = "This data product can not be visualized.";
             stopRealtimeView();
             return;
