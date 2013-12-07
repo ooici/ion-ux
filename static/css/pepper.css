@@ -603,6 +603,8 @@ ul.resource-ul {
   padding-left: 0;
   line-height: 20px;
   font-size: 13px;
+  padding-left: 2em;
+  text-indent: -2.2em;
 }
 
 .resource-ul li:hover {
@@ -620,11 +622,15 @@ ul.resource-ul {
   width: 16px;
   height: 20px;
   left: 11px;
-  display:block;
+  display:block-inline;
   position: absolute;
   background-color: #333;
   background-image: url(/static/img/pepper_sprite.png);
   background-position: -120px -716px;
+}
+
+.resource-ul li a.primary-link {
+  padding-left: 30px;
 }
 
 .resource-ul li.active, .resource-ul li.active:before {

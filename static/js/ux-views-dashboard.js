@@ -1175,8 +1175,9 @@ IONUX.Views.MapFilter = Backbone.View.extend({
   render_filter_options: function(options){
     // Should not be in separate templates? 
     // Waiting for definitive filter behavior before consolidating.
-    var item_tmpl = '<div class="filter-option <%= sprite %>"><%= label %> <div class="pull-right"><input type="checkbox" value="<%= type %>" checked /></div></div>';
-    var lcstate_tmpl = '<div class="filter-option lcstate-option"><%= label %> <div class="pull-right"><input type="checkbox" value="<%= lcstate %>" checked /></div></div>';
+    // ASSET filter
+    var item_tmpl = '<div class="filter-option <%= sprite %>"><div class="pull-right"><input type="checkbox" value="<%= type %>" checked /></div><span style="padding-right:27px"><%= label %></span></div>';
+    var lcstate_tmpl = '<div class="filter-option lcstate-option"><div class="pull-right"><input type="checkbox" value="<%= lcstate %>" checked /></div><span style="padding-right:27px"><%= label %></span></div>';
 
     var assets_elmt = this.$el.find('#asset-filter');
     _.each(this.filter_options.short_asset_options, function(option) {
@@ -1282,7 +1283,8 @@ IONUX.Views.ListFilter = Backbone.View.extend({
       <div id="list-filter"></div>\
     </div>',
   item_template: _.template('<div class="filter-option <%= sprite %>">\
-                             <%= label %> <div class="pull-right"><input type="checkbox" value="<%= type %>" <%= checked %> /></div>\
+                             <div class="pull-right"><input type="checkbox" value="<%= type %>" <%= checked %> /></div>\
+                             <span style="padding-right:27px"><%= label %></span>\
                              </div>'),
   events: {
     'click .filter-option input': 'set_filter',
@@ -1434,19 +1436,14 @@ IONUX.Views.DataProductFilter = Backbone.View.extend({
   render: function(){
     this.$el.html(this.template);
     this.render_filter_options();
-    /*
-      Since we are not updating w/ get_sites_status all the time, I believe I can comment out
-      the next line since there is no need to refresh after initial load.  If, however, data
-      needs to get updated underneath, this line needs to become active again.  Commenting it
-      out avoids the panel having to repaint itself.
-    */
-    // this.$el.find('#dataproduct-filter').jScrollPane({autoReinitialise: true});
+    this.$el.find('#dataproduct-filter').jScrollPane({autoReinitialise: true});
     return this;
   },
   
   render_filter_options: function(options){
     // Should not be in separate templates? 
     // Waiting for definitive filter behavior before consolidating.
+    // DATA filter
     var item_tmpl = '<div class="filter-option dataproduct-option"><div class="pull-right"><input type="checkbox" value="<%= type %>" checked /></div><span style="padding-right:27px"><%= type %></span></div>';
     var lcstate_tmpl = '<div class="filter-option lcstate-option"><div class="pull-right"><input type="checkbox" value="<%= lcstate %>" checked /></div><span style="padding-right:27px"><%= label %></span></div>';
 
