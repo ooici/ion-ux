@@ -121,6 +121,11 @@ IONUX.Views.ObservatorySelector = IONUX.Views.ResourceSelector.extend({
 
   trigger_pan_map: function(e) {
    IONUX.Dashboard.MapResource.tmp = e.target.innerHTML.toString().trim();
+   if (e.target.className =="primary-link nested-primary-link"){
+      IONUX.Dashboard.MapResource.resource_level = 3;
+   }else{
+      IONUX.Dashboard.MapResource.resource_level = 0;
+   }
    //get selected id
    var res = e.target.pathname.split("/",3);
    IONUX.Dashboard.MapResource.tmpId = res[2];
@@ -717,58 +722,74 @@ IONUX.Views.Map = Backbone.View.extend({
   
 
   pan_map: function() {
-    
-      var sanNames = _.uniq(this.collection.pluck('spatial_area_name'));
-      //get san
-      var san = this.model.get('spatial_area_name');
-      //get tmp san
-      var san_tmp = IONUX.Dashboard.MapResource.tmp;
-      //check if site or pin selected
-      var idx = sanNames.indexOf(san_tmp);
-      var isSite = false;
-      if (idx>=0){
-        isSite = true;
-      }
-      //if not site find the spatial area
-       if (!isSite){
-        if (san_tmp){
-        var tmpPin = san_tmp;
-        //get the resource id from the selected model
-        var resources = this.collection.where({'_id': IONUX.Dashboard.MapResource.tmpId});
-         if (resources.length==1){
-            san_tmp = resources[0].get('spatial_area_name');
-         }else if(resources.length>1){
-            console.log("too many resources");
-         }
-       }
-      }
+    //set the bounds var
+    var bounds;
+    var resetZoom;
 
-      //first check to see if spatial area name selected is valid
-      var loc = this.spatial_area_names[san_tmp]
-      if (loc){
-          //if so thats the one we are interested in
-          san = san_tmp;
-          this.model.set('spatial_area_name',san);
-          this.group_spatial_area_names();
-      }else{
-          //try using the set spatial area name
-          loc = this.spatial_area_names[san]
-          if (!loc){
+      if(IONUX.Dashboard.MapResource.resource_level==3){
+        //zoom to pin
+        var k =this.platformSitesList[IONUX.Dashboard.MapResource.tmpId];
+        lat  = k.geospatial_point_center.lat;
+        lon  = k.geospatial_point_center.lon;
+        center = new google.maps.LatLng(lat, lon);
+        this.map.setCenter(center);
+        this.map.setZoom(10);
+        this.markerClusterer.setMap(null);
+        this.markerClusterer.setMap(this.map);
+        return;
+      } else{
+        //zoom to SAN
+        var sanNames = _.uniq(this.collection.pluck('spatial_area_name'));
+        //get san
+        var san = this.model.get('spatial_area_name');
+        //get tmp san
+        var san_tmp = IONUX.Dashboard.MapResource.tmp;
+        //check if site or pin selected
+        var idx = sanNames.indexOf(san_tmp);
+        var isSite = false;
+        if (idx>=0){
+          isSite = true;
+        }
+        //if not site find the spatial area
+         if (!isSite){
+          if (san_tmp){
+          var tmpPin = san_tmp;
+          //get the resource id from the selected model
+          var resources = this.collection.where({'_id': IONUX.Dashboard.MapResource.tmpId});
+           if (resources.length==1){
+              san_tmp = resources[0].get('spatial_area_name');
+           }else if(resources.length>1){
+              console.log("too many resources");
+           }
+         }
+        }
+
+        //first check to see if spatial area name selected is valid
+        var loc = this.spatial_area_names[san_tmp]
+        if (loc){
+            //if so thats the one we are interested in
+            san = san_tmp;
             this.model.set('spatial_area_name',san);
             this.group_spatial_area_names();
-          }
-      }
+        }else{
+            //try using the set spatial area name
+            loc = this.spatial_area_names[san]
+            if (!loc){
+              this.model.set('spatial_area_name',san);
+              this.group_spatial_area_names();
+            }
+        }
 
-      var bounds
-      if (san) {
-        var n = this.spatial_area_names[san]['north'];
-        var e = this.spatial_area_names[san]['east'];
-        var s = this.spatial_area_names[san]['south'];
-        var w = this.spatial_area_names[san]['west'];
-        
-        var ne = new google.maps.LatLng(n, e);
-        var sw = new google.maps.LatLng(s, w);
-        bounds = new google.maps.LatLngBounds(sw, ne)
+        if (san) {
+          var n = this.spatial_area_names[san]['north'];
+          var e = this.spatial_area_names[san]['east'];
+          var s = this.spatial_area_names[san]['south'];
+          var w = this.spatial_area_names[san]['west'];
+          
+          var ne = new google.maps.LatLng(n, e);
+          var sw = new google.maps.LatLng(s, w);
+          bounds = new google.maps.LatLngBounds(sw, ne)
+        }
       }
 
       //checks for BB already at location
