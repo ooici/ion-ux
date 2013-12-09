@@ -1293,8 +1293,8 @@ IONUX.Views.ListFilter = Backbone.View.extend({
     ],
     long: [
       {label: 'Data Product', type: 'DataProduct', sprite: 'dataproduct-option'},
-      {label: 'Data Transform', type: 'DataTransform', sprite: 'datatransform-option'},
       {label: 'Data Process', type: 'DataProcess', sprite: 'dataprocess-option'},
+      {label: 'Data Process Definition', type: 'DataTransform', sprite: 'datatransform-option'},
       {label: 'Deployment', type: 'Deployment', sprite: 'deployment-option'},
       {label: 'Instrument', type: 'InstrumentDevice', sprite: 'instrumentdevice-option'},
       {label: 'Instrument Model', type: 'InstrumentModel', sprite: 'instrumentmodel-option'},
