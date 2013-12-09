@@ -1144,14 +1144,18 @@ IONUX.Views.MapFilter = Backbone.View.extend({
   el: '#map-filter',
   filter_options: {
     short_asset_options: [
-      {label: 'Station', type: 'PlatformSite', sprite: 'station-option'},
-      {label: 'Instrument', type: 'InstrumentSite', sprite: 'instrumentportal-option'},
-      {label: 'Platform', type: 'PlatformDevice', sprite: 'platformportal-option'},
+      {label: 'Station', type: 'PlatformStationSite', sprite: 'station-option'},
+      {label: 'Instrument Portal', type: 'InstrumentSite', sprite: 'instrumentportal-option'},
+      {label: 'Platform Portal', type: 'PlatformComponentSite', sprite: 'platformportal-option'},
+      {label: 'Platform', type: 'PlatformSite', sprite: 'platformportal-option'},
+      {label: 'Instrument', type: 'InstrumentDevice', sprite: 'instrumentportal-option'},
     ],
     long_asset_options: [
-      {label: 'Station', type: 'PlatformSite', sprite: 'station-option'},
-      {label: 'Instrument', type: 'InstrumentSite', sprite: 'instrumentmodel-option'},
-      {label: 'Platform', type: 'PlatformDevice', sprite: 'platformportal-option'},
+      {label: 'Station', type: 'PlatformStationSite', sprite: 'station-option'},
+      {label: 'Instrument Portal', type: 'InstrumentSite', sprite: 'instrumentportal-option'},
+      {label: 'Platform Portal', type: 'PlatformComponentSite', sprite: 'platformportal-option'},
+      {label: 'Platform', type: 'PlatformSite', sprite: 'platformportal-option'},
+      {label: 'Instrument', type: 'InstrumentDevice', sprite: 'instrumentportal-option'},
     ],
     data_options: [
       {label: 'Data Products', type: 'DataProduct'}
