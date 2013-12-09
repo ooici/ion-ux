@@ -82,7 +82,7 @@ class Deploy:
         local('rm -f ' + config_file)
         o = open(config_file, 'w')
         flask_cfg = open(join(self.local_dir, 'config.py.template')).read()
-        flask_cfg = re.sub('PRODUCTION = False', 'PRODUCTION = True', flask_cfg)
+        flask_cfg = re.sub('STATIC_ASSETS = False', 'STATIC_ASSETS = True', flask_cfg)
         flask_cfg = re.sub('FLASK_HOST_VALUE', self.web_host, flask_cfg)
         flask_cfg = re.sub('FLASK_PORT_VALUE', str(self.web_port), flask_cfg)
         flask_cfg = re.sub('SECRET_KEY_VALUE', self.secret_key, flask_cfg)
