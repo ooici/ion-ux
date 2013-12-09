@@ -26,7 +26,7 @@ IONUX.Router = Backbone.Router.extend({
   },
   
   dashboard_map: function(){
-    this._remove_dashboard_menu();
+    //this._remove_dashboard_menu();
     $('.map-nested-ul').find('.active').removeClass('active');
     
     $('#left .resources-view').hide();
