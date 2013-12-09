@@ -114,7 +114,11 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         });
         
         if (this.sort_order_array) this.datatable.fnSort(this.sort_order_array);
-        if (this.options.data.length == 0) this.$el.find(".dataTables_scrollBody").css("overflow", "hidden");
+
+        // Comment out next line because we always want the vertical scrollbar to NOT appear.
+        // if (this.options.data.length == 0) this.$el.find(".dataTables_scrollBody").css("overflow", "hidden");
+        this.$el.find(".dataTables_scrollBody").css("overflow", "hidden");
+
         this.apply_sort_indicator();
         
         return this;

@@ -591,6 +591,12 @@ IONUX.Views.Map = Backbone.View.extend({
       zoomControlOptions: {style: google.maps.ZoomControlStyle.SMALL, position: google.maps.ControlPosition.TOP_RIGHT}
     });
 
+    // This is a hack until something can be done more elegantly in the CSS!
+    $(window).resize(function() {
+      $('#map_canvas').height(0.67 * ($(window).height() - 200)); // Leave enough room for the banner.
+    });
+    $(window).trigger('resize');
+
     this.map.maxZoomService = new google.maps.MaxZoomService();
     
     // add the cable kml
