@@ -354,7 +354,7 @@ td.filter-option {
 
 .datatransform-option:before {
   background-image: url(/static/img/pepper_sprite.png);
-  background-position: -60px -836px;
+  background-position: -120px -236px;
 }
 
 .attachment-option:before {
@@ -512,12 +512,12 @@ ul.map-nested-ul {
 
 .map-nested-ul .really-nested:before,
 .map-nested-ul .really-nested:hover:before {
-  background-position: -60px -536px;
+  background-position: 0px -716px;
 }
 
 .map-nested-ul .really-nested.active:hover:before,
 .map-nested-ul .active:before {
-  background-position: -90px -536px;
+  background-position: -30px -716px;
 }
 
 .really-nested:before {
