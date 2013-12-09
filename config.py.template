@@ -31,6 +31,7 @@ GATEWAY_PORT = GATEWAY_PORT_VALUE
 LOGGED_IN = True
 PRODUCTION = False
 CACHED_LAYOUT = True
+STATIC_ASSETS = False
 
 # whether to use the cache for:
 # - schema retrieval
