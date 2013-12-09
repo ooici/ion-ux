@@ -454,7 +454,17 @@ IONUX.Views.AttachmentActions = IONUX.Views.ActionMenu.extend({
     }, IONUX.Views.ActionMenu.prototype.events),
 
     initialize: function() {
-        if (IONUX.is_logged_in()) {
+        // devices etc have a list of orgs they are a part of
+        // the user has a list of orgs/roles they have
+        // need to find where they intersect (as INSTRUMENT_OPERATOR, DATA_OPERATOR, OBSERVATORY_OPERATOR, ORG_MANAGER, ION_MANAGER)
+        var roles = IONUX.SESSION_MODEL.get('roles');
+        var user_orgs = _.map(_.filter(_.pairs(roles), function(r)
+            { return _.contains(r[1], "INSTRUMENT_OPERATOR") || _.contains(r[1], "ORG_MANAGER") || _.contains(r[1], "ION_MANAGER") || _.contains(r[1], "DATA_OPERATOR") || _.contains(r[1], "OBSERVATORY_OPERATOR")} ),
+            function(v) { return v[0] })
+        this.matching_orgs = _.filter(window.MODEL_DATA.orgs, function(o) { return _.contains(user_orgs, o.org_governance_name); });
+
+        //if (IONUX.is_logged_in()) {
+        if (this.matching_orgs.length > 0) {
             this.interaction_items = INTERACTIONS_OBJECT.attachment_interactions;
             this.on("action__upload_attachment", this.upload_attachment);
         }
