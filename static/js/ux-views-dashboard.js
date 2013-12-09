@@ -402,8 +402,7 @@ IONUX.Views.Map = Backbone.View.extend({
     this.active_marker = null; // Track clicked icon
     this.sites_status_loaded = false;
     this.map_bounds_elmt = $('#map_bounds');
-    // Need to investigate why this clobbers other elements
-    //this.resource_mapping = new IONUX.Views.ListFilter().filter.long;
+    this.data_types();
     this.model.on('pan:map', this.pan_map);
     this.model.on('set:active', this.set_active_marker);
 
@@ -420,6 +419,14 @@ IONUX.Views.Map = Backbone.View.extend({
     window.setTimeout(this.get_sites_status, 1000);
   },
   
+    data_types: function(){
+    this.resource_mapping = [
+      {label: 'Platform', type: 'PlatformDevice', sprite: 'platformdevice-option'},
+      {label: 'Station', type: 'PlatformSite', sprite: 'platformportal-option'},
+      {label: 'Site', type: 'Observatory', sprite: 'site-option'},
+    ];
+  },
+
   getPlatformSites: function(obs){
     var PlatformSitesId = [];
     var PlatformSitesList = {};
