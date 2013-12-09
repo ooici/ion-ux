@@ -612,8 +612,9 @@ def signon():
     user_name = request.args.get('user')
     
     if user_name:
-        if not PRODUCTION:
-            ServiceApi.signon_user_testmode(user_name)
+        # This is a backdoor, probably shouldn't be here on production...
+        #if not PRODUCTION:
+        ServiceApi.signon_user_testmode(user_name)
         return nav()
 
     # carriage returns were removed on the cilogon portal side,
