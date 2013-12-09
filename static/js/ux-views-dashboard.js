@@ -1277,7 +1277,7 @@ IONUX.Views.ListFilter = Backbone.View.extend({
   },
   template: '\
     <h3 id="list-filter-heading">Resource Type\
-    <div class="dataproduct-mode action-menu btn-group pull-right">\
+    <div class="dataproduct-mode-sel action-menu btn-group pull-right">\
       <a class="btn dropdown-toggle" data-toggle="dropdown"><span class="hamburger">&nbsp;</span></a>\
       <ul class="dropdown-menu"><li class="apply-list">Long List</li><li class="act_list_all">Select All</li><li class="act_list_none">Select None</li></ul>\
     </div>\
@@ -1486,7 +1486,7 @@ IONUX.Views.DataProductFilter = Backbone.View.extend({
 
 INTERACTIONS_OBJECT.dp_filter_interactions = ['Select All', 'Select None'];
 IONUX.Views.DPFilterActions = IONUX.Views.ActionMenu.extend({
-  dropdown_button_tmpl: '<div class="dataproduct-mode action-menu btn-group pull-right">\
+  dropdown_button_tmpl: '<div class="dataproduct-mode-sel action-menu btn-group pull-right">\
   <a class="btn dropdown-toggle" data-toggle="dropdown"><span class="hamburger">&nbsp;</span></a>\
   <ul class="dropdown-menu"><% _.each(dropdown_items, function(item) { %> <li><%= item %></li> <% }); %></ul>\
   </div>',
@@ -1503,21 +1503,40 @@ IONUX.Views.DPFilterActions = IONUX.Views.ActionMenu.extend({
     },
 
     action__select_all:function(target){
-      _.each($('#dataproduct-filter input:not(:checked)'), function(el) {
+    if (IONUX.CurrentFilter=="asset"){
+       _.each($('#asset-filter input:not(:checked)'), function(el) {
         var item = $(el).val();
-        IONUX.DataProductWhitelist.push(item);
+        IONUX.MapWhitelist.push(item);
         $(el).prop('checked', true);
       });
+      IONUX.Dashboard.MapResources.trigger('data:filter_render');
+    }else{
+        _.each($('#dataproduct-filter input:not(:checked)'), function(el) {
+          var item = $(el).val();
+          IONUX.DataProductWhitelist.push(item);
+          $(el).prop('checked', true);
+        });
       IONUX.Dashboard.MapDataResources.trigger('data:filter_render');
+      }
     },
     
     action__select_none:function(target){
-      _.each($('#dataproduct-filter input:checked'), function(el) {
-        var item = $(el).val();
-        var item_idx = IONUX.DataProductWhitelist.indexOf(item);
-        IONUX.DataProductWhitelist.splice(item_idx, 1);
-        $(el).prop('checked', false);
-      });
-      IONUX.Dashboard.MapDataResources.trigger('data:filter_render');
-    }
+      if (IONUX.CurrentFilter=="asset"){
+          _.each($('#asset-filter input:checked'), function(el) {
+            var item = $(el).val();
+            var index = IONUX.MapWhitelist.indexOf(item)
+            IONUX.MapWhitelist.splice(index, 1);
+            $(el).prop('checked', false);
+          });
+          IONUX.Dashboard.MapResources.trigger('data:filter_render');
+      }else{
+        _.each($('#dataproduct-filter input:checked'), function(el) {
+          var item = $(el).val();
+          var item_idx = IONUX.DataProductWhitelist.indexOf(item);
+          IONUX.DataProductWhitelist.splice(item_idx, 1);
+          $(el).prop('checked', false);
+        });
+        IONUX.Dashboard.MapDataResources.trigger('data:filter_render');
+     }
+    },
 });
