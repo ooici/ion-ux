@@ -419,9 +419,9 @@ function get_descendant_properties(obj, desc) {
 };
 
 // Create <a href> from text
-function replace_url_with_html_links(text) {
+function replace_url_with_html_links(text,name) {
   var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-  return text.replace(exp,"<a class='external' target='_blank' href='$1'>$1</a>"); 
+  return text.replace(exp,"<a class='external' target='_blank' href='$1'>" + name + "</a>"); 
 };
 
 // Filter method for open negotiations shown in a data table
@@ -622,8 +622,8 @@ function render_page(resource_type, resource_id, model) {
     chart_elmt.html('<iframe width="100%" height="100%" id="chart" src="/static/visualization/chart.html"></iframe>')
     
     // Todo: manually setting the ERDAP download link
-    var data_url_text = $('#2164346').text();
-    $('#2164346').html(replace_url_with_html_links(data_url_text));
+    var data_url_html = $('#2164346').html();
+    $('#2164346').html(replace_url_with_html_links(data_url_html,model.data.resource.ooi_product_name));
     
     // Todo: find the cause of double content-wrapping on these two items
     $('#2163118 .content-wrapper:last').remove();
