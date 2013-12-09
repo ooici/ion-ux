@@ -153,6 +153,21 @@ dashboard_map_resource: function(resource_id) {
         },
       });
     };
+
+     
+    if (!IONUX.Dashboard.MapView){
+      IONUX.Dashboard.MapView = new IONUX.Views.Map({
+        collection: IONUX.Dashboard.Observatories,
+        model: IONUX.Dashboard.MapResource
+      });
+    }else{
+      IONUX.Dashboard.MapView.active_marker = null; // Track clicked icon
+      IONUX.Dashboard.MapView.map_bounds_elmt = $('#map_bounds');
+      IONUX.Dashboard.MapView.draw_map();
+      IONUX.Dashboard.MapView.draw_markers();
+    }
+
+    
   },
   
   dashboard_map_data: function(resource_id) {
