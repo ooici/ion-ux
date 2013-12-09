@@ -599,6 +599,7 @@ IONUX.Views.Map = Backbone.View.extend({
     // This is a hack until something can be done more elegantly in the CSS!
     $(window).resize(function() {
       $('#map_canvas').height(0.67 * ($(window).height() - 200)); // Leave enough room for the banner.
+      this.map.event.trigger(map,'resize'); // Make sure the map knows we resized!
     });
     $(window).trigger('resize');
 
