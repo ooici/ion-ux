@@ -402,7 +402,6 @@ IONUX.Views.Map = Backbone.View.extend({
   
   initialize: function(){
     _.bindAll(this);
-    
     this.sprite_url = '/static/img/pepper_sprite.png';
     this.active_marker = null; // Track clicked icon
     this.sites_status_loaded = false;
@@ -594,7 +593,7 @@ IONUX.Views.Map = Backbone.View.extend({
   draw_map: function(map_options, container_server) {
     console.log('draw_map');
     $('#map_canvas').empty().show();
-    
+
     this.map = new google.maps.Map(document.getElementById('map_canvas'), {
       center: new google.maps.LatLng(39.8106460, -98.5569760),
       zoom: 3,
@@ -1422,16 +1421,12 @@ IONUX.Views.ListFilter = Backbone.View.extend({
   },
 
   set_filter: function(e){
+     IONUX.ListWhitelist =[];
+      _.each($('#list-filter input:checked'), function(el) {
+        var item = $(el).val();
+        IONUX.ListWhitelist.push(item);
+      });
     console.log('set_filter');
-    var filter_elmt = $(e.target);
-    var type = filter_elmt.val();
-    if (filter_elmt.is(':checked')) {
-      IONUX.ListWhitelist.push(type);
-    } else {
-      var index = IONUX.ListWhitelist.indexOf(type)
-      IONUX.ListWhitelist.splice(index, 1);
-    };
-    
     this.trigger_data_filter();
   },
   
