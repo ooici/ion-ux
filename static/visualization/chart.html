@@ -138,7 +138,7 @@
     var supported_chart_type = ['line', 'area', 'spline', 'scatter', 'table'];
     var supported_output_type = ['.htmlTable', '.csv', '.nc', '.png'];
     var overview_reqId = 9;
-    var chart_spinner;
+    var chart_spinner, spin_target;
 
     var chartBkgColor;
     var chartLabelColor;
@@ -198,6 +198,7 @@
         data_series_hires = [];
         data_series_rt = [];
         initSpinner();
+        spin_target = document.getElementById('chart_div');
 
         console.log("parent.IONUX.SESSION_MODEL.get('ui_theme_dark')", parent.IONUX.SESSION_MODEL.get('ui_theme_dark'));
 
@@ -328,7 +329,6 @@
         });
 
         // Starter the spinner to tell user that more data is coming
-        var spin_target = document.getElementById('chart_div');
         chart_spinner.spin(spin_target);
 
     }
@@ -768,7 +768,20 @@
                         text: 'All'
                     }],
                     inputEnabled: true, // it supports only days
-                    selected : 5 // all
+                    selected : 5, // all
+
+                    buttonTheme: { // styles for the buttons
+
+                        states: {
+                            hover: {
+                            },
+                            select: {
+                                style: {
+                                    color: 'white'
+                                }
+                            }
+                        }
+                    }
                 },
 
                 series : _data
@@ -1158,25 +1171,50 @@
     }
 
     function showAllVizParams() {
-        for (var i=0; i < chart.series.length - 1; i++) {
-            chart.series[i].show();
-        }
+        // Show spinner
+        chart_spinner.spin(spin_target);
+
+        // Use settimeout to give the spinner a chance to show
+        setTimeout(function(){
+            for (var i=0; i < chart.series.length - 1; i++) {
+                chart.series[i].show();
+            }
+            chart_spinner.stop();
+        }, 100);
     }
 
     function hideAllVizParams() {
-        for (var i=0; i < chart.series.length - 1; i++) {
-            chart.series[i].hide();
-        }
+        // Show spinner
+        chart_spinner.spin(spin_target);
+
+        // Use settimeout to give the spinner a chance to show
+        setTimeout(function(){
+            for (var i=0; i < chart.series.length - 1; i++) {
+                chart.series[i].hide();
+            }
+            chart_spinner.stop();
+        }, 100);
     }
 
     function onChartTypeChange (selectedOption ) {
+
+        // Show spinner
+        chart_spinner.spin(spin_target);
+
         curr_chart_type = selectedOption.value;
 
-        // Re-draw chart with new options.
-        drawChart(true, mergeAndSortHcData(data_series_overview, data_series_hires, data_series_rt));
+        // Re-draw chart with new options. Use setTimeout to give the spinner a chance to show
+        setTimeout(function(){
+            drawChart(true, mergeAndSortHcData(data_series_overview, data_series_hires, data_series_rt));
+            chart_spinner.stop();
+        }, 100);
     }
 
     function onYaxisCompareTypeChange(selectedOption) {
+
+        // Show spinner
+        chart_spinner.spin(spin_target);
+
         curr_y_axis_compare_type = selectedOption.value;
 
         // Does not pass undefined as an object but a string .. wtf
@@ -1189,8 +1227,10 @@
         }
 
         // Re-draw chart with new options
-        drawChart(true, mergeAndSortHcData(data_series_overview, data_series_hires, data_series_rt));
-
+        setTimeout(function(){
+            drawChart(true, mergeAndSortHcData(data_series_overview, data_series_hires, data_series_rt));
+            chart_spinner.stop();
+        }, 100);
     }
 
     function reloadChart() {
