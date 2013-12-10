@@ -200,6 +200,18 @@ h2 {
   outline: 0;
 }
 
+#dataproduct-filter .even,
+#lcstate-filter .even,
+#asset-filter .even {
+  background-color: #F4F4F4;
+}
+
+#dataproduct-filter .odd,
+#lcstate-filter .odd,
+#asset-filter .odd {
+  background-color: #EAEAEA;
+}
+
 #dataproduct-filter .filter-option {
   margin-right: 0;
 }
