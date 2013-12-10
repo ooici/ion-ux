@@ -464,7 +464,7 @@ IONUX.Views.AttachmentActions = IONUX.Views.ActionMenu.extend({
         this.matching_orgs = _.filter(window.MODEL_DATA.orgs, function(o) { return _.contains(user_orgs, o.org_governance_name); });
 
         //if (IONUX.is_logged_in()) {
-        if (this.matching_orgs.length > 0) {
+        if (this.matching_orgs.length > 0 || window.MODEL_DATA.resource_type === "UserInfo") {
             this.interaction_items = INTERACTIONS_OBJECT.attachment_interactions;
             this.on("action__upload_attachment", this.upload_attachment);
         }
