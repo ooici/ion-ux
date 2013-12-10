@@ -1168,18 +1168,18 @@ IONUX.Views.MapFilter = Backbone.View.extend({
   el: '#map-filter',
   filter_options: {
     short_asset_options: [
-      {label: 'Station', type: 'PlatformStationSite', sprite: 'station-option'},
+      {label: 'Station', type: 'StationSite', sprite: 'station-option'},
       {label: 'Instrument Portal', type: 'InstrumentSite', sprite: 'instrumentportal-option'},
       {label: 'Platform Portal', type: 'PlatformComponentSite', sprite: 'platformportal-option'},
-      {label: 'Platform', type: 'PlatformSite', sprite: 'platformportal-option'},
-      {label: 'Instrument', type: 'InstrumentDevice', sprite: 'instrumentportal-option'},
+      {label: 'Platform', type: 'PlatformDevice', sprite: 'platformdevice-option'},
+      {label: 'Instrument', type: 'InstrumentDevice', sprite: 'instrumentdevice-option'},
     ],
     long_asset_options: [
-      {label: 'Station', type: 'PlatformStationSite', sprite: 'station-option'},
+      {label: 'Station', type: 'StationSite', sprite: 'station-option'},
       {label: 'Instrument Portal', type: 'InstrumentSite', sprite: 'instrumentportal-option'},
       {label: 'Platform Portal', type: 'PlatformComponentSite', sprite: 'platformportal-option'},
-      {label: 'Platform', type: 'PlatformSite', sprite: 'platformportal-option'},
-      {label: 'Instrument', type: 'InstrumentDevice', sprite: 'instrumentportal-option'},
+      {label: 'Platform', type: 'PlatformDevice', sprite: 'platformdevice-option'},
+      {label: 'Instrument', type: 'InstrumentDevice', sprite: 'instrumentdevice-option'},
     ],
     data_options: [
       {label: 'Data Products', type: 'DataProduct'}
@@ -1311,7 +1311,7 @@ IONUX.Views.ListFilter = Backbone.View.extend({
       {label: 'Platform Model', type: 'PlatformModel', sprite: 'platformmodel-option'},
       {label: 'Platform Agent Instance', type: 'PlatformAgentInstance', sprite: 'platformagent-option'},
       {label: 'Platform Agent', type: 'PlatformAgent', sprite: 'platformagentdef-option'},
-      {label: 'Station', type: 'PlatformSite', sprite: 'platformportal-option'},
+      {label: 'Station', type: 'PlatformSite', sprite: 'station-option'},
       {label: 'Site', type: 'Observatory', sprite: 'site-option'},
       {label: 'Role', type: 'UserRole', sprite: 'role-option'},
       {label: 'Facility', type: 'Org', sprite: 'facility-option'},
