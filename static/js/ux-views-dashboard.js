@@ -416,6 +416,14 @@ IONUX.Views.Map = Backbone.View.extend({
 
     this.observatoryBboxes = [];
 
+
+    // This is a hack until something can be done more elegantly in the CSS!
+    if (!window.resize) {
+      window.resize = $(window).resize(function() {
+        $('#map_canvas').height(0.67 * ($(window).height() - 200)); // Leave enough room for the banner.
+      });
+    }
+
     this.draw_map();
     this.draw_markers();
     
@@ -595,12 +603,6 @@ IONUX.Views.Map = Backbone.View.extend({
       zoomControl: true,
       zoomControlOptions: {style: google.maps.ZoomControlStyle.SMALL, position: google.maps.ControlPosition.TOP_RIGHT}
     });
-
-    // This is a hack until something can be done more elegantly in the CSS!
-    $(window).resize(function() {
-      $('#map_canvas').height(0.67 * ($(window).height() - 200)); // Leave enough room for the banner.
-    });
-    $(window).trigger('resize');
 
     this.map.maxZoomService = new google.maps.MaxZoomService();
     
