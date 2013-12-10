@@ -627,7 +627,10 @@ function render_page(resource_type, resource_id, model) {
     
     // Todo: manually setting the ERDAP download link
     var data_url_html = $('#2164346').html();
-    $('#2164346').html(replace_url_with_html_links(data_url_html,model.data.resource.ooi_product_name));
+    $('#2164346').html(replace_url_with_html_links(
+       data_url_html
+      ,model.data.resource.ooi_product_name != '' ? model.data.resource.ooi_product_name : model.data.resource.name
+    ));
     
     // Todo: find the cause of double content-wrapping on these two items
     $('#2163118 .content-wrapper:last').remove();
