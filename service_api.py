@@ -59,7 +59,7 @@ class ServiceApi(object):
     
     @staticmethod
     def find_related_sites(resource_id):
-        related_sites = service_gateway_get('observatory_management', 'find_related_sites', params={'parent_resource_id': resource_id, 'include_parents': True})
+        related_sites = service_gateway_get('observatory_management', 'find_related_sites', params={'parent_resource_id': resource_id, 'include_parents': True, 'include_devices': True})
         return related_sites
 
     @staticmethod
