@@ -58,6 +58,7 @@ IONUX.Router = Backbone.Router.extend({
   },
   
 dashboard_map_resource: function(resource_id) {
+  //as the pins are always the level 3!
     this._remove_dashboard_menu();
     new IONUX.Views.DashboardActions();
     $('#left .resources-view').hide();
@@ -67,9 +68,11 @@ dashboard_map_resource: function(resource_id) {
     var platformtarget = $('#list').find(".really-nested[data-resource-id='"+resource_id+"']");
     var target = $('#list').find("[data-resource-id='"+resource_id+"']");
     target.addClass('active');
+    IONUX.Dashboard.MapResource.tmpId = resource_id;
   
     //if platform site expand the obs section
     if (platformtarget.length>0){
+      IONUX.Dashboard.MapResource.resource_level =3;
       if (!target.parent().prev().next('ul').is(":visible")){
           //toggle it
           target.parent().toggle();
@@ -78,6 +81,8 @@ dashboard_map_resource: function(resource_id) {
           k.attr('class','secondary-nested-link-selected  pull-right');
         }
       target = platformtarget.parent();  
+    }else{
+      IONUX.Dashboard.MapResource.resource_level =0;
     }
 
     if (target.length>0){
@@ -117,10 +122,6 @@ dashboard_map_resource: function(resource_id) {
 
       }
     }
-
-    IONUX.Dashboard.MapResource.set(active_resource_attributes);
-
-    IONUX.Dashboard.MapResource.trigger('set:active');
     
     function check_map() {
       // Catch back button and redraw
@@ -167,6 +168,9 @@ dashboard_map_resource: function(resource_id) {
       IONUX.Dashboard.MapView.draw_markers();
     }
 
+
+    IONUX.Dashboard.MapResource.set(active_resource_attributes);
+    IONUX.Dashboard.MapResource.trigger('set:active');
     
   },
   
