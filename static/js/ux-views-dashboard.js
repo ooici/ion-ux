@@ -1168,16 +1168,16 @@ IONUX.Views.MapFilter = Backbone.View.extend({
   el: '#map-filter',
   filter_options: {
     short_asset_options: [
-      {label: 'Station', type: 'PlatformSite', sprite: 'station-option'},
+      {label: 'Station', type: 'StationSite', sprite: 'station-option'},
       {label: 'Instrument Portal', type: 'InstrumentSite', sprite: 'instrumentportal-option'},
-      {label: 'Platform Portal', type: 'PlatformSite', sprite: 'platformportal-option'},
+      {label: 'Platform Portal', type: 'PlatformComponentSite', sprite: 'platformportal-option'},
       {label: 'Platform', type: 'PlatformDevice', sprite: 'platformdevice-option'},
       {label: 'Instrument', type: 'InstrumentDevice', sprite: 'instrumentdevice-option'},
     ],
     long_asset_options: [
-      {label: 'Station', type: 'PlatformSite', sprite: 'station-option'},
+      {label: 'Station', type: 'StationSite', sprite: 'station-option'},
       {label: 'Instrument Portal', type: 'InstrumentSite', sprite: 'instrumentportal-option'},
-      {label: 'Platform Portal', type: 'PlatformSite', sprite: 'platformportal-option'},
+      {label: 'Platform Portal', type: 'PlatformComponentSite', sprite: 'platformportal-option'},
       {label: 'Platform', type: 'PlatformDevice', sprite: 'platformdevice-option'},
       {label: 'Instrument', type: 'InstrumentDevice', sprite: 'instrumentdevice-option'},
     ],
