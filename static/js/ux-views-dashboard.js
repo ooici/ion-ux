@@ -735,7 +735,7 @@ IONUX.Views.Map = Backbone.View.extend({
         lon  = k.geospatial_point_center.lon;
         center = new google.maps.LatLng(lat, lon);
         this.map.setCenter(center);
-        this.map.setZoom(10);
+        this.map.setZoom(11);
         this.markerClusterer.setMap(null);
         this.markerClusterer.setMap(this.map);
         return;
