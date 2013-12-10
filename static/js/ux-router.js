@@ -639,6 +639,11 @@ function render_page(resource_type, resource_id, model) {
     IONUX.SESSION_MODEL.fetch();
   }
 
+  if (resource_type == 'AgentInstance') {
+    // Hack to swap the Settings panel width.  :(
+    $('#2164806').toggleClass('span3').toggleClass('span5');
+  }
+
   /* Luke's hacks to make the face pages more JS customizable, hooyah JQuery */
   switch(resource_type) {
       case "InformationResource":
