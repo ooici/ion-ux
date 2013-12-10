@@ -603,6 +603,8 @@ IONUX.Views.Map = Backbone.View.extend({
       zoomControlOptions: {style: google.maps.ZoomControlStyle.SMALL, position: google.maps.ControlPosition.TOP_RIGHT}
     });
 
+    $(window).trigger('resize');
+
     this.map.maxZoomService = new google.maps.MaxZoomService();
     
     // add the cable kml
