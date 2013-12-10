@@ -1219,18 +1219,22 @@ IONUX.Views.MapFilter = Backbone.View.extend({
     // Should not be in separate templates? 
     // Waiting for definitive filter behavior before consolidating.
     // ASSET filter
-    var item_tmpl = '<div class="filter-option <%= sprite %>"><div class="pull-right"><input type="checkbox" value="<%= type %>" checked /></div><span style="padding-right:27px"><%= label %></span></div>';
-    var lcstate_tmpl = '<div class="filter-option lcstate-option"><div class="pull-right"><input type="checkbox" value="<%= lcstate %>" checked /></div><span style="padding-right:27px"><%= label %></span></div>';
+    var item_tmpl = '<div class="filter-option <%= sprite %> <%= oddEven %>"><div class="pull-right"><input type="checkbox" value="<%= type %>" checked /></div><span style="padding-right:27px"><%= label %></span></div>';
+    var lcstate_tmpl = '<div class="filter-option lcstate-option <%= oddEven %>"><div class="pull-right"><input type="checkbox" value="<%= lcstate %>" checked /></div><span style="padding-right:27px"><%= label %></span></div>';
 
+    var c = 1;
     var assets_elmt = this.$el.find('#asset-filter');
     _.each(this.filter_options.short_asset_options, function(option) {
       IONUX.MapWhitelist.push(option['type']);
+      option.oddEven = c++ % 2 == 0 ? 'even' : 'odd';
       assets_elmt.append(_.template(item_tmpl, option));
     });
-    
+   
+    c = 1; 
     var lcstate_elmt = this.$el.find('#lcstate-filter');
     _.each(this.filter_options.lcstate_options, function(option) {
       IONUX.MapWhitelist.push(option['lcstate']);
+      option.oddEven = c++ % 2 == 0 ? 'even' : 'odd';
       lcstate_elmt.append(_.template(lcstate_tmpl, option));
     });
   },
@@ -1487,18 +1491,20 @@ IONUX.Views.DataProductFilter = Backbone.View.extend({
     // Should not be in separate templates? 
     // Waiting for definitive filter behavior before consolidating.
     // DATA filter
-    var item_tmpl = '<div class="filter-option dataproduct-option"><div class="pull-right"><input type="checkbox" value="<%= type %>" checked /></div><span style="padding-right:27px"><%= type %></span></div>';
-    var lcstate_tmpl = '<div class="filter-option lcstate-option"><div class="pull-right"><input type="checkbox" value="<%= lcstate %>" checked /></div><span style="padding-right:27px"><%= label %></span></div>';
+    var item_tmpl = '<div class="filter-option dataproduct-option <%= oddEven %>"><div class="pull-right"><input type="checkbox" value="<%= type %>" checked /></div><span style="padding-right:27px"><%= type %></span></div>';
+    var lcstate_tmpl = '<div class="filter-option lcstate-option <%= oddEven %>"><div class="pull-right"><input type="checkbox" value="<%= lcstate %>" checked /></div><span style="padding-right:27px"><%= label %></span></div>';
 
     var dp_elmt = this.$el.find('#dataproduct-filter');
+    var c = 1;
     _.each(this.group_list, function(option) {
       IONUX.DataProductWhitelist.push(option);
-      dp_elmt.append(_.template(item_tmpl, {type: option}));
+      dp_elmt.append(_.template(item_tmpl, {type: option,oddEven : (c++ % 2 == 0 ? 'even' : 'odd')}));
     });
     
     var lcstate_elmt = this.$el.find('#lcstate-filter');
     _.each(this.filter_options.lcstate_options, function(option) {
       IONUX.DataProductWhitelist.push(option['lcstate']);
+      option.oddEven = c++ % 2 == 0 ? 'even' : 'odd';
       lcstate_elmt.append(_.template(lcstate_tmpl, option));
     });
   },
