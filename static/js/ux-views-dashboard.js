@@ -834,7 +834,7 @@ IONUX.Views.Map = Backbone.View.extend({
       status_code = station['site_aggregate_status'][resource_id];
        
     }else{
-       this.platformSitesList[resource_id]['status'];
+      status_code = this.platformSitesList[resource_id]['status'];
     }
     return status_code;
   },
