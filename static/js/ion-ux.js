@@ -54,6 +54,7 @@ IONUX = {
     
     IONUX.SESSION_MODEL = new IONUX.Models.Session();
     IONUX.SESSION_MODEL.fetch({
+      async: false, // Don't allow anything to fire until this is done!  Without this, links straight to facepages weren't initting right.
       success: function(resp) {
         new IONUX.Views.Topbar({model: IONUX.SESSION_MODEL}).render().el;
         new IONUX.Views.HelpMenu({model: IONUX.SESSION_MODEL}).render().el;
