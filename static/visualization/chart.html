@@ -1147,10 +1147,7 @@
 
             }
         }
-        //add time bounds
-        //fieldList.push("&");
-        //fieldList.push("time");
-        //fieldList.push(">=");
+
         //curr_parameter_visibility, dp_metadata
         var id = parent.MODEL_DATA._id;
         var queryString = erddapString+id+curr_output_type;
@@ -1160,6 +1157,23 @@
                queryString=queryString+",";
             }
         }
+
+        //add time bounds
+        var xDataMin = chart_visible_start_date;
+        var xDataMax = chart_visible_end_date;
+        var isoStartDate = (new Date(xDataMin)).toISOString();
+        var isoEndDate = (new Date(xDataMax)).toISOString();
+        
+        queryString+=("&");
+        queryString+=("time");
+        queryString+=(">=");
+        queryString+=(isoStartDate);
+
+        queryString+=("&");
+        queryString+=("time");
+        queryString+=("<=");
+        queryString+=(isoEndDate);
+
         queryString =queryString + "&orderBy(%22time%22)";
         console.log(queryString);
         window.open(queryString);
