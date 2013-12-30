@@ -469,11 +469,21 @@
 
     function use_display_names_in_data(_hc_data) {
 
-         var a = new Object();
+        var a = new Object();
 
         var name;
         for (var i = 0; i<_hc_data.length; i++) {
             name = _hc_data[i]["name"];
+            /*
+            //check for array instance
+            if (name.indexOf("[") != -1){
+              //if its present just add the actual name
+              idx = name.indexOf("[");
+              name = name.substring(0,idx);
+            } 
+            */           
+
+
             if ((name in display_names) && (display_names[name] != "")) {
                 _hc_data[i]["name"] = display_names[name];
                 display_names_reverse[display_names[name]] = name;
@@ -1141,10 +1151,25 @@
                 //console.log("true");
                 console.log(field[0])
                 var fieldName = field[0];
-                console.log(display_names_reverse[fieldName]);
-                //grab actual data name
-                fieldList.push(display_names_reverse[fieldName]);
-
+                //checks for data array
+                if (fieldName.indexOf("[") != -1){
+                  //if its present as an array just add the actual name
+                  idx = fieldName.indexOf("[");
+                  fieldName = fieldName.substring(0,idx);
+                  //check to make sure it exists in the display names
+                  info = display_names[fieldName];
+                    if (info){
+                    //is it already there
+                        if (fieldList.indexOf(fieldName) == -1){
+                            fieldList.push(fieldName);
+                        }
+                    }
+                }else{
+                    //grab actual data name as normal
+                    if (display_names_reverse[fieldName] != "undefined"){
+                        fieldList.push(display_names_reverse[fieldName]);
+                    } 
+                }
             }
         }
         //add time bounds
