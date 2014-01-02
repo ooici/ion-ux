@@ -149,8 +149,17 @@ def attachment(attachment_id):
     attachment = StringIO(attachment_response.content)
     attachment_ext = guess_extension(attachment_response.headers.get('content-type'))
     attachment_name = request.args.get('name') if request.args.get('name') else 'OOI_%s' % attachment_id
-    attachment_filename = '%s%s' % (attachment_name, attachment_ext)
-
+    
+    #check ext not invalid
+    if attachment_ext is not None:
+        if (attachment_filename.endswith(attachment_ext)):
+            attachment_filename = '%s' % (attachment_name)
+        else: 
+            attachment_filename = '%s%s' % (attachment_name, attachment_ext)
+    else:   
+        attachment_filename = '%s' % (attachment_name)
+    
+    #return string 
     return send_file(attachment, attachment_filename=attachment_filename, as_attachment=True)
 
 @app.route('/attachment/', methods=['POST'])
