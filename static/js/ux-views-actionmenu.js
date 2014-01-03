@@ -69,6 +69,22 @@ IONUX.Views.ActionMenu = Backbone.View.extend({
         var action_name = $(evt.target).text();
         var action_event = "action__" + action_name.replace(/ /g, "_").toLowerCase();
         this.trigger(action_event, $(evt.target));
+    },
+
+    // look through all roles for a potential match
+    has_permission: function(roles,model,target_roles) {
+      // allow a resource.org_governance_name to trump anything else
+      if (model.resource.org_governance_name != null) {
+        return !_.isEmpty(_.intersection(roles[model.resource.org_governance_name],target_roles));
+      }
+      else {
+        // loop through all orgs in case a user has permission to do something in one but not the other
+        var hits = 0;
+        _.each(model.orgs,function(o) {
+          hits += !_.isEmpty(_.intersection(roles[o.org_governance_name],target_roles)) ? 1 : 0;
+        });
+        return hits > 0;
+      }
     }
 });
 
@@ -104,7 +120,11 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
           if (window.MODEL_DATA.resource_type == 'Org') {
             // ENROLLMENT
             if (IONUX.is_logged_in()) {
-              if (_.contains(IONUX.SESSION_MODEL.get('roles')[window.MODEL_DATA.resource.org_governance_name], 'ORG_MANAGER')) {
+              if (this.has_permission(
+                 IONUX.SESSION_MODEL.get('roles')
+                ,window.MODEL_DATA
+                ,['ORG_MANAGER']
+              )) {
                 // INVITE USER
                 this.interaction_items.push("Invite User");
                 this.on("action__invite_user", this.action_org__invite_user);
@@ -114,11 +134,15 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
                 this.on("action__offer_user_role", this.action_org__offer_user_role);
               
               } else {
-                if (! _.contains(IONUX.SESSION_MODEL.get('roles')[window.MODEL_DATA.resource.org_governance_name], 'ORG_MEMBER')) {
+                if (!this.has_permission(
+                   IONUX.SESSION_MODEL.get('roles')
+                  ,window.MODEL_DATA
+                  ,['ORG_MEMBER']
+                )) {
                   // REQUEST ENROLLMENT
                   this.interaction_items.push("Enroll");
                   this.on("action__enroll", this.action_org__enroll);
-                } else if (_.contains(IONUX.SESSION_MODEL.get('roles')[window.MODEL_DATA.resource.org_governance_name], 'INSTRUMENT_OPERATOR')) {
+                } else {
                   // REQUEST ROLE
                   this.interaction_items.push("Request Role");
                   this.on("action__request_role", this.action_org__request_role);
@@ -131,10 +155,11 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
             if (
               IONUX.is_logged_in()
               && window.MODEL_DATA.resource_type == 'DataProduct'
-              && (!_.isEmpty(_.intersection(
-                IONUX.SESSION_MODEL.get('roles')[window.MODEL_DATA.resource.org_governance_name],
-                ['INSTRUMENT_OPERATOR','OBSERVATORY_OPERATOR','ORG_MANAGER','ION_MANAGER']
-              )))
+              && this.has_permission(
+                 IONUX.SESSION_MODEL.get('roles')
+                ,window.MODEL_DATA
+                ,['INSTRUMENT_OPERATOR','OBSERVATORY_OPERATOR','ORG_MANAGER','ION_MANAGER']
+              )
             ){
               if (!window.MODEL_DATA.computed.is_persisted.value) {
                 this.interaction_items.push(INTERACTIONS_OBJECT.persistence_interactions[0]);
@@ -149,7 +174,11 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
               IONUX.is_logged_in() 
               && !IONUX.is_owner() 
               && window.MODEL_DATA.resource_type != 'DataProduct'
-              && _.contains(IONUX.SESSION_MODEL.get('roles')[window.MODEL_DATA.resource.org_governance_name], 'INSTRUMENT_OPERATOR')
+              && this.has_permission(
+                 IONUX.SESSION_MODEL.get('roles')
+                ,window.MODEL_DATA
+                ,['INSTRUMENT_OPERATOR']
+              )
             ) {
               // check commitments on current object for resource commitments for the current owner
               var resource_commitments = _.filter(window.MODEL_DATA.commitments, function (c) { return c.commitment.type_ == "ResourceCommitment" && c.consumer == IONUX.SESSION_MODEL.get('actor_id'); });
@@ -182,30 +211,34 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
           // remove COMMAND/DOWNLOAD unless certain types
           if (
             !_.contains(['PlatformDevice', 'InstrumentDevice', 'TaskableResource'], window.MODEL_DATA.resource_type)
-            || _.isEmpty(_.intersection(
-              IONUX.SESSION_MODEL.get('roles')[window.MODEL_DATA.resource.org_governance_name],
-              ['INSTRUMENT_OPERATOR','DATA_OPERATOR','OBSERVATORY_OPERATOR','ORG_MANAGER','ION_MANAGER']
-            ))
+            || !this.has_permission(
+               IONUX.SESSION_MODEL.get('roles')
+              ,window.MODEL_DATA
+              ,['INSTRUMENT_OPERATOR','DATA_OPERATOR','OBSERVATORY_OPERATOR','ORG_MANAGER','ION_MANAGER']
+            )
           ) {
             this.interaction_items.splice(this.interaction_items.indexOf('Command'), 1);
           }
 
-          if (_.isEmpty(_.intersection(
-            IONUX.SESSION_MODEL.get('roles')[window.MODEL_DATA.resource.org_governance_name],
-            ['INSTRUMENT_OPERATOR','DATA_OPERATOR','OBSERVATORY_OPERATOR','ORG_MANAGER','ION_MANAGER']
-          ))) {
+          if (!this.has_permission(
+             IONUX.SESSION_MODEL.get('roles')
+            ,window.MODEL_DATA
+            ,['INSTRUMENT_OPERATOR','DATA_OPERATOR','OBSERVATORY_OPERATOR','ORG_MANAGER','ION_MANAGER']
+          )) {
             this.interaction_items.splice(this.interaction_items.indexOf('Lifecycle'), 1);
           }
 
-          if (_.isEmpty(_.intersection(
-            IONUX.SESSION_MODEL.get('roles')[window.MODEL_DATA.resource.org_governance_name],
-            ['INSTRUMENT_OPERATOR','DATA_OPERATOR','OBSERVATORY_OPERATOR','ORG_MANAGER','ION_MANAGER']
-          ))
-            && window.MODEL_DATA.resource_type != 'UserInfo'
+          if (
+            window.MODEL_DATA.resource_type != 'UserInfo'
+            && !this.has_permission(
+               IONUX.SESSION_MODEL.get('roles')
+              ,window.MODEL_DATA
+              ,['INSTRUMENT_OPERATOR','DATA_OPERATOR','OBSERVATORY_OPERATOR','ORG_MANAGER','ION_MANAGER']
+            )
           ) {
             this.interaction_items.splice(this.interaction_items.indexOf('Edit'), 1);
           }
-        
+
         // User is a guest and we should remove all options but "Refresh Page"
         } else {
           this.interaction_items.splice(this.interaction_items.indexOf('Command'), 1);
@@ -436,10 +469,11 @@ IONUX.Views.EventActions = IONUX.Views.ActionMenu.extend({
     initialize: function() {
         if (
             IONUX.is_logged_in()
-            && (!_.isEmpty(_.intersection(
-                IONUX.SESSION_MODEL.get('roles')[window.MODEL_DATA.resource.org_governance_name],
-                ['INSTRUMENT_OPERATOR','DATA_OPERATOR','OBSERVATORY_OPERATOR','ORG_MANAGER','ION_MANAGER']
-            )))
+            && this.has_permission(
+               IONUX.SESSION_MODEL.get('roles')
+              ,window.MODEL_DATA
+              ,['INSTRUMENT_OPERATOR','DATA_OPERATOR','OBSERVATORY_OPERATOR','ORG_MANAGER','ION_MANAGER']
+            )
         ){
             this.interaction_items = INTERACTIONS_OBJECT.event_interactions;
             this.on("action__add_event", this.add_event);
@@ -466,10 +500,11 @@ IONUX.Views.DeploymentActions = IONUX.Views.ActionMenu.extend({
     initialize: function() {
         if (
             IONUX.is_logged_in()
-            && (!_.isEmpty(_.intersection(
-                IONUX.SESSION_MODEL.get('roles')[window.MODEL_DATA.resource.org_governance_name],
-                ['OBSERVATORY_OPERATOR','ORG_MANAGER','ION_MANAGER']
-            )))
+            && this.has_permission(
+               IONUX.SESSION_MODEL.get('roles')
+              ,window.MODEL_DATA
+              ,['OBSERVATORY_OPERATOR','ORG_MANAGER','ION_MANAGER']
+            )
         ){
             this.interaction_items = INTERACTIONS_OBJECT.deployment_interactions;
             this.on("action__activate_as_primary_deployment", this.action__activate_as_primary_deployment);
@@ -501,10 +536,11 @@ IONUX.Views.AttachmentActions = IONUX.Views.ActionMenu.extend({
     initialize: function() {
         if (
             IONUX.is_logged_in()
-            && (!_.isEmpty(_.intersection(
-                IONUX.SESSION_MODEL.get('roles')[window.MODEL_DATA.resource.org_governance_name],
-                ['INSTRUMENT_OPERATOR','DATA_OPERATOR','OBSERVATORY_OPERATOR','ORG_MANAGER','ION_MANAGER']
-            )))
+            && this.has_permission(
+               IONUX.SESSION_MODEL.get('roles')
+              ,window.MODEL_DATA
+              ,['INSTRUMENT_OPERATOR','DATA_OPERATOR','OBSERVATORY_OPERATOR','ORG_MANAGER','ION_MANAGER']
+            )
         ){
             this.interaction_items = INTERACTIONS_OBJECT.attachment_interactions;
             this.on("action__upload_attachment", this.upload_attachment);
