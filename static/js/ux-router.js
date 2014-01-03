@@ -619,59 +619,30 @@ function render_page(resource_type, resource_id, model) {
     new IONUX.Views.Checkbox({el: $(el), data_model: window.MODEL_DATA}).render().el;
   });
   
-  if (resource_type == 'DataProduct') {
-    var chart_elmt = $('.'+resource_type+' .chart_ooi').first();
-    chart_elmt.css({height: '350px', width: '100%'});
-    // new IONUX.Views.Chart({resource_id: resource_id, el: chart_elmt}).render().el;
-    chart_elmt.html('<iframe width="100%" height="100%" id="chart" src="/static/visualization/chart.html"></iframe>')
-    
-    // Todo: manually setting the ERDAP download link
-    var data_url_html = $('#2164346').html();
-    $('#2164346').html(replace_url_with_html_links(
-       data_url_html
-      ,model.data.resource.ooi_product_name != '' ? model.data.resource.ooi_product_name : model.data.resource.name
-    ));
-    
-    // Todo: find the cause of double content-wrapping on these two items
-    $('#2163118 .content-wrapper:last').remove();
-    $('#2164400 .content-wrapper:last').remove();
-  } else if (resource_type == "UserInfo" && IONUX.SESSION_MODEL.get('user_id') == resource_id) {
-    IONUX.SESSION_MODEL.fetch();
-  }
 
-  if (resource_type == 'AgentInstance') {
-    // Hack to swap the Settings panel width.  :(
-    $('#2164806').toggleClass('span3').toggleClass('span5');
-  }
 
   /* Luke's hacks to make the face pages more JS customizable, hooyah JQuery */
   switch(resource_type) {
       case "InformationResource":
-        // Add a div element for the resource type for generic resources so that proper theming can be applied
-        $('.heading .InformationResource').wrapInner('<div class="' + window.MODEL_DATA.resource.type_ + '"></div>');
+        var render = new InformationResourceRender();
         break;
       case "DeviceModel":
-        // Adds specific model info to the element
-        $('.heading .DeviceModel').wrapInner('<div class="' + window.MODEL_DATA.resource.type_ + '"></div>');
+        var render = new DeviceModelRender();
         break;
       case "UserInfo":
-        // For some reason the first and last name are split in the header, one is a left and the other a right header element, this removes
-        // all fo that and fills in just the full name
-        $('.heading .UserInfo .heading-left').empty();
-        $('.heading .UserInfo .heading-left').append('<div class="level-zero text_short_ooi"><span>' + window.MODEL_DATA.resource.name + '</span></div>');
-        $('.heading .UserInfo .heading-right').empty();
+        var render = new UserInfoRender(resource_id);
         break;
       case "StationSite":
-        // PlatformSite face page's title has a span element for "Name:", it's redundent, we know it's the name and the other pages don't have the element
-        $('.heading .StationSite .heading-left .text-short-label').remove();
-        $('.heading .StationSite').wrapInner('<div class="' + window.MODEL_DATA.resource.type_ + '"></div>');
+        var render = new StationSiteRender();
         break;
       case "InstrumentSite":
-        // The heading contains the word Portal:, unnecessary
-        $('.heading .InstrumentSite .heading-left .text-short-label').remove();
+        var render = new InstrumentSiteRender();
         break;
       case "AgentInstance":
-        $('.heading .AgentInstance').wrapInner('<div class="' + window.MODEL_DATA.resource.type_ + '"></div>');
+        var render = new AgentInstanceRender();
+        break;
+      case "DataProduct":
+        var render = new DataProductRender();
         break;
           
   }
