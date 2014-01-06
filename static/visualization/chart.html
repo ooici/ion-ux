@@ -1132,8 +1132,8 @@
     }
 
     function generateLink() {
-        var urlIdx = parent.MODEL_DATA.computed.data_url.value.lastIndexOf("/");
-        var erddapString = parent.MODEL_DATA.computed.data_url.value.substring(0,urlIdx+1);
+        var data_url = parent.MODEL_DATA.computed.data_url.value;
+        var erddapString = data_url.substring(0, data_url.lastIndexOf(".html"));
 
         var fieldList = [];
         fieldList.push("?");
@@ -1174,8 +1174,7 @@
         }
 
         //curr_parameter_visibility, dp_metadata
-        var id = parent.MODEL_DATA._id;
-        var queryString = erddapString+id+curr_output_type;
+        var queryString = erddapString+curr_output_type;
         for (var i = 0; i < fieldList.length ; i++) {
             queryString = queryString+fieldList[i];
             if (i>0 && i<fieldList.length-1){
