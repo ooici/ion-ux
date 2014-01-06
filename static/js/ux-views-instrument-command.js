@@ -314,7 +314,7 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
   start_agent: function(evt){
     var start_btn = $(evt.target);
     start_btn.prop('disabled', true);
-    start_btn.prop('value', 'Starting Instrument Agent...');
+    start_btn.prop('value', 'Starting Agent...');
     var self = this;
     $.ajax({
         type: 'POST',
@@ -324,7 +324,7 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
           $(".command-output").append('<p class="command-success">OK: INSTRUMENT AGENT STARTED.</p>');
 
           start_btn.prop('disabled', false);
-          start_btn.prop('value', 'Start Instrument Agent');
+          start_btn.prop('value', 'Start Agent');
           start_btn.hide();
           self.get_capabilities();
         }
@@ -335,7 +335,7 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
   stop_agent: function(evt){
     var stop_btn = $(evt.target);
     stop_btn.prop('disabled', true);
-    stop_btn.prop('value', 'Stopping Instrument Agent...');
+    stop_btn.prop('value', 'Stopping Agent...');
     var self = this;
     $.ajax({
       type: 'POST',
@@ -346,7 +346,7 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
 
         $('#stop, .get_capabilities').hide();
         stop_btn.prop('disabled', false);
-        stop_btn.prop('value', 'Stop Instrument Agent');
+        stop_btn.prop('value', 'Stop Agent');
         $('#start').show();
         $('#agent-form, #resource-form2, #cmds tbody').empty();
       }

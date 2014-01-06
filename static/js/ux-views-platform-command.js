@@ -43,7 +43,7 @@ IONUX.Views.PlatformCommandFacepage = Backbone.View.extend({
         
         if (resp.data == 'PLATFORM_AGENT_STATE_LAUNCHING') {
           console.log('get_platform_agent_state LAUNCHING');
-          $('#platform_status').prop('value','Platform agent is launching...');
+          $('#platform_status').prop('value','Agent is launching...');
           self.set_platform_polling();
         } else { 
           console.log('get_platform_agent_state NOT LAUNCHING');
@@ -104,7 +104,7 @@ IONUX.Views.PlatformCommandFacepage = Backbone.View.extend({
   start_agent: function(evt) {
     var start_btn = $(evt.target);
     start_btn.prop('disabled', true);
-    start_btn.prop('value', 'Starting Platform Agent...');
+    start_btn.prop('value', 'Starting Agent...');
     var self = this;
 
     $.ajax({
@@ -114,7 +114,7 @@ IONUX.Views.PlatformCommandFacepage = Backbone.View.extend({
           $(".command-output").append('<p class="command-success">OK: PLATFORM AGENT STARTED.</p>');
           
           start_btn.prop('disabled', false);
-          start_btn.prop('value', 'Start Platform Agent');
+          start_btn.prop('value', 'Start Agent');
           start_btn.hide();
           
           // $('#platform_status, .get_capabilities').show();
@@ -187,7 +187,7 @@ IONUX.Views.PlatformCommandFacepage = Backbone.View.extend({
   stop_agent: function(evt) {
     var stop_btn = $(evt.target);
     stop_btn.prop('disabled', true);
-    stop_btn.prop('value', 'Stopping Platform Agent...');
+    stop_btn.prop('value', 'Stopping Agent...');
     var self = this;
     $.ajax({
       url: 'stop/'+self.model.get('agent_instance')['_id']+'/',
@@ -196,7 +196,7 @@ IONUX.Views.PlatformCommandFacepage = Backbone.View.extend({
         $(".command-output").append('<p class="command-success">OK: PLATFORM AGENT STOPPED.</p>');
         
         stop_btn.prop('disabled', false);
-        stop_btn.prop('value', 'Stop Platform Agent');
+        stop_btn.prop('value', 'Stop Agent');
         stop_btn.hide();
         
         $('#start').show();
