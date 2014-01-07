@@ -19,8 +19,17 @@ IONUX.Views.NewRoles = Backbone.View.extend({
   get_name_from_governance: function(new_roles){
     this.roles = {};
     _.each(new_roles, function(v,k) {
-        var name = IONUX.Dashboard.Orgs.findWhere({org_governance_name: k}).get('name').toUpperCase();
-        this.roles[name] = v;
+        var org     = IONUX.Dashboard.Orgs.findWhere({org_governance_name: k});
+        var name    = org.get('name').toUpperCase(); 
+        var orgName = org.get('org_governance_name').toUpperCase();
+        // Display the nice name instead of the internal one.
+        // E.g. display 'Facility Operator' instead of 'INSTRUMENT_OPERATOR'.
+        this.roles[name] = _.pluck(
+          _.filter(window.MODEL_DATA.roles,function(r) {
+            return _.contains(v,r.governance_name) && r.org_governance_name == orgName
+          })
+          ,'name'
+        );
     }, this);
   },
   refresh: function(e) {
