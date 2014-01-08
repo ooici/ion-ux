@@ -863,7 +863,7 @@ IONUX.Views.Map = Backbone.View.extend({
       ,infoWindow    : new google.maps.InfoWindow({
          content        : 'Site: ' + _hover_text
         ,pixelOffset    : new google.maps.Size(0,-5) // w/o an offset, the mousout gets fired and we get flashing!
-        ,disableAutoPan : true
+        // ,disableAutoPan : true
       })
       ,map           : this.map
       ,visiblePoly   : poly
@@ -940,7 +940,7 @@ IONUX.Views.Map = Backbone.View.extend({
         infoWindow: new google.maps.InfoWindow({
            content        : this.get_resource_type_label_name(resource_type)+': '+_hover_text + '<br>LAT: ' + _lat + '<br>LON: ' + _lon
           ,pixelOffset    : new google.maps.Size(-6,3)
-          ,disableAutoPan : true
+          // ,disableAutoPan : true
         })
       });
    
