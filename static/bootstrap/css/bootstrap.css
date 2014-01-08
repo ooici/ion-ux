@@ -1164,8 +1164,13 @@ input[type="checkbox"] {
   width: auto;
 }
 
-select,
-input[type="file"] {
+/*
+input[type="file"]
+  This was originally included w/ the select styling, but it was causing bad
+  things to happen w/ the Browse button.  So let the defaults do their thing.
+  This block could / should eventually be merged w/ the next select block.
+*/
+select {
   height: 30px;
   /* In IE7, the height of the select element cannot be changed by height, only font-size */
 

@@ -1331,7 +1331,7 @@ fieldset {
 .controls input, .controls textarea {
   padding: 5px;
   color: #000;
-  height: 15px;
+  min-height: 15px;
   background: #fff;
   border: solid 1px #999;
   box-shadow: none;
