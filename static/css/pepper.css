@@ -1318,7 +1318,7 @@ li div.pull-left {
 .controls input, .controls textarea {
   padding: 5px;
   color: #ccc;
-  height: 15px;
+  min-height: 15px;
   background: #333;
   border: solid 1px #666;
   box-shadow: none;
