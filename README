@@ -1,7 +1,7 @@
 ION-UX Setup
 ============
 
-Getting ION-UX up and running is straightforward once you have a Capability Container running. In a nutshell, there are three steps with an optional fourth step:
+Getting ION-UX up and running is straightforward once you have a Capability Container running. In a nutshell, there are three steps with an optional fourth step and a NOTES section to catch everything else:
 
 1.) Create virtualenv and install dependencies
 2.) Configure FLASK, GATEWAY and PORTAL_ROOT settings
@@ -101,3 +101,8 @@ Now you run the fab script, which will prompt you for necessary information to c
         > fab ion_alpha deploy
         > fab ion_beta deploy
         > fab ion_stage deploy
+
+NOTES
+----------------
+
+* We use a custom version of bootstrap.  So far, manual modifications have been made to static/bootstrap/css/bootstrap.css and static/bootstrap/less/bootstrap.min.css.
