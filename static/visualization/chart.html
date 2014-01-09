@@ -1119,6 +1119,8 @@
 
         // Realtime view check box. Draw only if enabled
         if (enable_realtime) {
+            var rt_div = document.createElement('div');
+            rt_div.style.display = 'inline-block';
             var rt_view_chkbox = document.createElement('input');
             rt_view_chkbox.type = 'checkbox';
             rt_view_chkbox.id = "rt_view_chkbox";
@@ -1126,8 +1128,9 @@
             var newlabel = document.createElement("Label");
             newlabel.setAttribute("for",rt_view_chkbox);
             newlabel.innerHTML = "Show Realtime Data";
-            chartUiDiv.appendChild(rt_view_chkbox);
-            chartUiDiv.appendChild(newlabel);
+            rt_div.appendChild(rt_view_chkbox);
+            rt_div.appendChild(newlabel);
+            chartUiDiv.appendChild(rt_div);
         }
     }
 
@@ -1390,7 +1393,7 @@
   </head>
 
   <div class='chart-google' style="position:relative;">
-      <div id="chart_div" style="width:100%;height:300px;"></div>
+      <div id="chart_div" style="height:300px;"></div>
       <!-- <form> -->
       <div id="chart_ui_div" style=""></div>
       <!-- </form> -->
