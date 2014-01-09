@@ -92,7 +92,53 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         var header_data = this.header_data();
         var table_data = this.table_data(this.options.data);
         this.sort_order();
-        
+
+        // Thank you, http://datatables.net/forums/discussion/comment/23749 !       
+        var addRows = function(obj, numberColumns, targetRows) {
+          var tableRows = obj.find('tbody tr'), // data rows objects currently in the DOM
+          numberNeeded = targetRows - tableRows.length, // how many blank rows are needed to fill up to targetRows
+          lastRow = tableRows.last(), // cache the last data row
+          lastRowCells = lastRow.children('td'), // how many visible columns are there?
+          cellString,
+          highlightColumn,
+          rowClass;
+ 
+          // The first row to be added actually ends up being the last row of the table.
+          // Check to see if it should be odd or even. Expand logic if more than even/odd needed.
+          if (targetRows%2) {
+            rowClass= "odd";
+          } else {
+            rowClass = "even"; //
+          }
+ 
+          // We only sort on 1 column, so let's find it based on its classname
+          lastRowCells.each(function(index) {
+            if ($(this).hasClass('sorting_1')) {
+              highlightColumn = index;
+            }
+          });
+ 
+          /* Iterate through the number of blank rows needed, building a string that will
+           * be used for the HTML of each row. Another iterator inside creates the desired
+           * number of columns, adding the sorting class to the appropriate TD.
+           */
+          for (i=0;i<numberNeeded;i++) {
+            cellString = "";
+            for (j=0;j<numberColumns;j++) {
+              if (j === highlightColumn) {
+                cellString += '<td class="sorting_1">&nbsp;</td>';
+              } else {
+                cellString += '<td>&nbsp;</td>';
+              }
+            }
+ 
+            // Add the TR and its contents to the DOM, then toggle the even/odd class
+            // variable in preparation for the next.
+            lastRow.after('<tr class="'+rowClass+'">'+cellString+'</tr>');
+            rowClass = (rowClass === "even") ? "odd" : "even";
+          }
+        };
+ 
         var self = this;
         this.datatable = this.$el.find(".datatable-container table").dataTable({
             "sDom":"Rlfrtip",
@@ -101,7 +147,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
             "bInfo":true,
             'bPaginate':true,
             'sPaginationType': 'two_button',
-            "sScrollY": "300px",
+            'iDisplayLength' : 10, // 10 is the default
             "sScrollYInner": "110%",
             "bScrollCollapse": true,
             "sScrollXInner": "100%",
@@ -111,6 +157,12 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
                 $(this).attr('title', $(this).text());
               });
             },
+            "fnDrawCallback": function(oSettings) {
+              if (self.options.pad_table_with_enpty_rows) {
+                var numcolumns = this.oApi._fnVisbleColumns(oSettings);
+                addRows(this, numcolumns, oSettings._iDisplayLength);
+              }
+            }
         });
         
         if (this.sort_order_array) this.datatable.fnSort(this.sort_order_array);
