@@ -225,7 +225,7 @@ dashboard_map_resource: function(resource_id) {
     IONUX.Dashboard.ListResources.fetch({
       reset:true,
       success: function(resp){
-        new IONUX.Views.ResourceTable({el: $('#2163993'), collection: resp, list_table: true});
+        new IONUX.Views.ResourceTable({el: $('#2163993'), collection: resp, list_table: true, pad_table_with_enpty_rows: true});
       },
     });
   },
