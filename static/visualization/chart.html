@@ -993,6 +993,7 @@
     }
 
     function startRealtimeView(chkbox) {
+        chart_spinner.spin(spin_target);
         rt_query = null;
 
         if ("rt_query_token" in sessionStorage) {
