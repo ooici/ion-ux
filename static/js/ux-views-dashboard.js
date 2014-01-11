@@ -648,7 +648,7 @@ IONUX.Views.Map = Backbone.View.extend({
     
     this.markerClusterer = new MarkerClusterer(this.map, null, {
       maxZoom: 10,
-      gridSize: 10, 
+      gridSize: 30, 
       styles: [{
         backgroundPosition: '-420px -420px',
         height: 50,
