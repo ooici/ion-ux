@@ -629,11 +629,7 @@
                 credits: {
                     enabled: false
                 },
-                /*
-                 title : {
-                 text : 'Overview Chart'
-                 },
-                 */
+
                 color: chartSeriesColor,
 
                 navigator : {
@@ -671,13 +667,15 @@
                 },
 
                 xAxis: {
+                    ordinal: false,
+                    //type: 'datetime',
                     labels: {
                         style : {
                             staggerLines: 2,
                             color : chartLabelColor
                         }
                     },
-                    type: 'datetime',
+
                     title: {
                         text: 'Time (' + curr_timezone_display + ')'
                     },
@@ -686,10 +684,10 @@
                     },
                     startOnTick: false,
                     endOnTick: false,
-                    showLastLabe: false,
                     min: dp_metadata['time_bounds'][0] * 1000,
                     max: dp_metadata['time_bounds'][1] * 1000,
                     minRange: 5  // 5 points at max
+
                 },
 
                 yAxis: {
@@ -714,11 +712,6 @@
 
                 tooltip: {
                     shared: true,
-                    /*formatter: function() {
-                        var d = new Date(this.x);
-                        return d.getDay() + ", " + d.getDate() + ", " + d.getHours() + ":" + d.getMinutes() +':'+ d.getSeconds()
-                                +'.' + d.getMilliseconds();
-                    }*/
                     xDateFormat: '%d-%b-%Y, %H:%M:%S.%L' + curr_timezone_display
                 },
 
@@ -742,6 +735,7 @@
                     },
                     threshold: null
                 },
+
                 exporting: {
                     width:  chart_x_res
                 },
