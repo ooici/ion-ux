@@ -282,8 +282,14 @@ IONUX.Collections.MapDataProducts = Backbone.Collection.extend({
 
 IONUX.Views.Map = Backbone.View.extend({
   el: '#map_canvas',
-  
-  new_markers: {
+
+  // From worst to best ('na' considered the catch-all).
+  icons_rank: [
+    'critical','warning','ok','na'
+  ],
+ 
+  // The cluster icons are a handily fixed 240 pixels further down the sprite from the following.
+  single_icons: {
     na: {
       icon: {
         anchor: new google.maps.Point(20, 45),
@@ -341,7 +347,7 @@ IONUX.Views.Map = Backbone.View.extend({
       },
       active: {
           anchor: new google.maps.Point(20, 45),
-          origin: new google.maps.Point(540, 180),
+          origin: new google.maps.Point(540, 120),
           size: new google.maps.Size(50, 50),
           url: '/static/img/pepper_sprite.png'
       },
@@ -415,7 +421,6 @@ IONUX.Views.Map = Backbone.View.extend({
 
     this.observatoryBboxes = [];
 
-
     // This is a hack until something can be done more elegantly in the CSS!
     if (!window.resize) {
       window.resize = $(window).resize(function() {
@@ -425,7 +430,7 @@ IONUX.Views.Map = Backbone.View.extend({
 
     this.draw_map();
     this.draw_markers();
-    
+
     // HACK! temporarily workaround to a timing issue in Chrome/Safari.
     // this.get_sites_status();
     window.setTimeout(this.get_sites_status, 1000);
@@ -619,6 +624,7 @@ IONUX.Views.Map = Backbone.View.extend({
     // register event to get and render map bounds
     var self = this;
     google.maps.event.addListener(this.map, "bounds_changed", function(e) {
+       self.hide_info_window({rank : 0}); // always hide the infoWindow
        self.render_map_bounds(e);
     });
     
@@ -645,18 +651,64 @@ IONUX.Views.Map = Backbone.View.extend({
     google.maps.event.addListener(this.map, "mousemove", function(e) {
         self.render_map_bounds(e);
     });
-    
+
+    // Create the cluster styles array based on the single_icons structure, and iterate
+    // through them using the heirarchy.  Clusters can only be normal or hover (no select).
+    var styles = [];
+    var self = this;
+    _.each(self.icons_rank,function(site) {
+      _.each(['icon','hover'],function(mouse) {
+        styles.push({
+           backgroundPosition : 
+             '-' + self.single_icons[site][mouse].origin.x + 'px'
+             + ' ' + '-' + (self.single_icons[site][mouse].origin.y * 1 + 240) + 'px'
+          ,width              : self.single_icons[site][mouse].size.width
+          ,height             : self.single_icons[site][mouse].size.height
+          ,url                : self.single_icons[site][mouse].url
+          ,textSize           : '0'
+          ,maxZoom            : 15
+          ,rank               : site + ' ' + mouse // for debugging
+        });
+      });
+    });
+
     this.markerClusterer = new MarkerClusterer(this.map, null, {
-      maxZoom: 10,
-      gridSize: 30, 
-      styles: [{
-        backgroundPosition: '-420px -420px',
-        height: 50,
-        width: 50,
-        url: '/static/img/pepper_sprite.png',
-        textSize: '0',
-        maxZoom: 15
-      }]
+       maxZoom    : 10
+      ,gridSize   : 30 
+      ,styles     : styles
+      ,calculator : function(markers,numStyles) {
+        // Pull out the lowest rank from the marker set.  The 'index' is off by one in the cluster world.
+        // Return the vanilla icon, i.e. not the hover one.
+        return {
+          text  : 0
+         ,index : (_.pluck(markers,'rank').sort(function(a,b){return a - b})[0] + 1) * 2 - 1
+         ,title : ''
+       };
+      }
+    });
+
+    var self = this;
+    google.maps.event.addListener(this.markerClusterer, 'mouseover', function(c) {
+      c.clusterIcon_.useStyle({index : c.clusterIcon_.sums_.index * 1 + 1});
+      c.clusterIcon_.show();
+      var content = [];
+      _.each(_.countBy(_.pluck(c.markers_,'resource_type_label_name')),function(v,k) {
+        content.push(k + 's: ' + v);
+      });
+      
+      var infoWindow = {
+         content     : 'Zoom-in or click on the icon to view:<br>' + content.sort().join('<br>')
+        ,pixelOffset : new google.maps.Size(-5,-20)
+        ,rank        : 1
+        ,position    : c.center_
+      };
+      self.show_info_window(infoWindow);
+    });
+
+    google.maps.event.addListener(this.markerClusterer, 'mouseout', function(c) {
+      c.clusterIcon_.useStyle({index : c.clusterIcon_.sums_.index * 1 - 1});
+      c.clusterIcon_.show();
+      self.hide_info_window({rank : 1});
     });
   },
   
@@ -860,26 +912,27 @@ IONUX.Views.Map = Backbone.View.extend({
       ,strokeOpacity : 0
       ,strokeWeight  : 10
       ,path          : _path
-      ,infoWindow    : new google.maps.InfoWindow({
+      ,infoWindow    : {
          content        : 'Site: ' + _hover_text
         ,pixelOffset    : new google.maps.Size(0,-5) // w/o an offset, the mousout gets fired and we get flashing!
-        // ,disableAutoPan : true
-      })
+        ,rank           : 3
+      }
       ,map           : this.map
       ,visiblePoly   : poly
     });
 
     // use infoWindow for tooltips so that markers and polys match (polys don't use the alt-title approach)
+    var self = this;
     google.maps.event.addListener(invisiblePoly,'mouseover',function(e) {
-      this.infoWindow.setPosition(e.latLng);
-      this.infoWindow.open(this.map);
+      this.infoWindow.position = e.latLng;
+      self.show_info_window(this.infoWindow);
       this.visiblePoly.setOptions({
          strokeWeight : 3
         ,strokeColor  : '#FFFFFF'
       });
     });
     google.maps.event.addListener(invisiblePoly,'mouseout',function() {
-      this.infoWindow.close();
+      self.hide_info_window(this.infoWindow);
       this.visiblePoly.setOptions({
          strokeColor  : '#FFE4B5'
         ,strokeWeight : 2
@@ -929,30 +982,34 @@ IONUX.Views.Map = Backbone.View.extend({
         resource_status = 'na';
       };
     }
-    
+
+    var resource_type_label_name = this.get_resource_type_label_name(resource_type);
     var marker = new google.maps.Marker({
         map: this.map,
         position: latLng,
-        icon: this.new_markers[resource_status].icon,
+        icon: this.single_icons[resource_status].icon,
         resource_id: resource_id,
         resource_status: resource_status,
+        resource_type_label_name: resource_type_label_name,
+        rank: _.indexOf(this.icons_rank,resource_status),
         type: resource_status,
-        infoWindow: new google.maps.InfoWindow({
-           content        : this.get_resource_type_label_name(resource_type)+': '+_hover_text + '<br>LAT: ' + _lat + '<br>LON: ' + _lon
-          ,pixelOffset    : new google.maps.Size(-6,3)
-          // ,disableAutoPan : true
-        })
+        infoWindow: {
+           content     : resource_type_label_name + ': ' +_hover_text + '<br>LAT: ' + _lat + '<br>LON: ' + _lon
+          ,pixelOffset : new google.maps.Size(-2,-40)
+          ,rank        : 2
+        }
       });
    
     // use infoWindow for tooltips so that markers and polys match (polys don't use the alt-title approach)
+    var self = this;
     google.maps.event.addListener(marker,'mouseover',function(e) {
-      this.infoWindow.open(this.map,this);
+      this.infoWindow.position = e.latLng;
+      self.show_info_window(this.infoWindow);
     });
     google.maps.event.addListener(marker,'mouseout',function() {
-      this.infoWindow.close();
+      self.hide_info_window(this.infoWindow);
     });
     
-    // var iw = new google.maps.InfoWindow({content: _info_content});
     var _map = this.map;
     
     var self = this;
@@ -969,15 +1026,15 @@ IONUX.Views.Map = Backbone.View.extend({
 
     google.maps.event.addListener(marker, 'mouseover', function() {
       // _table_row.style.backgroundColor = _row_highlight_color;
-      if (marker.icon !== self.new_markers[marker.resource_status]['active']) {
-        marker.setIcon(self.new_markers[marker.resource_status]['hover']);
+      if (marker.icon !== self.single_icons[marker.resource_status]['active']) {
+        marker.setIcon(self.single_icons[marker.resource_status]['hover']);
       };
     });
     
     google.maps.event.addListener(marker, 'mouseout', function() {
       // _table_row.style.backgroundColor = _row_background_color;
-      if (marker.icon !== self.new_markers[marker.resource_status]['active']) {
-        marker.setIcon(self.new_markers[marker.resource_status]['icon']);
+      if (marker.icon !== self.single_icons[marker.resource_status]['active']) {
+        marker.setIcon(self.single_icons[marker.resource_status]['icon']);
       };
     });
     
@@ -992,12 +1049,12 @@ IONUX.Views.Map = Backbone.View.extend({
     var active_resource_id = this.model.get('_id');
     this.active_marker = _.findWhere(this.markerClusterer.markers_, {resource_id: active_resource_id});
     if (this.active_marker){
-      this.active_marker.setIcon(this.new_markers[this.active_marker.resource_status].active);
+      this.active_marker.setIcon(this.single_icons[this.active_marker.resource_status].active);
     }
   },
   
   clear_active_marker: function() {
-    this.active_marker.setIcon(this.new_markers[this.active_marker.resource_status].icon);
+    this.active_marker.setIcon(this.single_icons[this.active_marker.resource_status].icon);
   },
 
   clear_all_markers: function(){
@@ -1025,6 +1082,30 @@ IONUX.Views.Map = Backbone.View.extend({
 
       _lat = _lat + _offset;
       _lon = _lon + _offset;
+    }
+  },
+
+  show_info_window: function(info) {
+    // Only show 1 infoWindow at a time, and don't let any lesser-ranked windows bleed through.
+    // Currently, the obs outlines have the lowest rank (highest #).
+    if (this.infoWindow && this.infoWindow.rank >= info.rank) {
+      this.hide_info_window(info);
+    }
+    if (!this.infoWindow) {
+      this.infoWindow = new google.maps.InfoWindow({
+         content     : info.content
+        ,pixelOffset : info.pixelOffset
+        ,position    : info.position
+      });
+      this.infoWindow.open(this.map);
+      this.infoWindow.rank = info.rank;
+    }
+  },
+
+  hide_info_window: function(info) {
+    if (this.infoWindow && this.infoWindow.rank >= info.rank) {
+      this.infoWindow.close();
+      delete this.infoWindow;
     }
   },
 });
