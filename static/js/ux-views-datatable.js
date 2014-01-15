@@ -496,13 +496,23 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
     filters_apply: function(evt){
         var filter_items = this.$el.find(".filter-items");
         var self = this;
+        // Create regular expressions for each field.  Datatables doesn't natively support
+        // filtering on a single field more than once.  Each constraint is AND-ed!
+        var filters = {};
         filter_items.find(".filter-item").each(function(i, filter_item){
             var selected_val = $(filter_item).find("select.column option:selected").text();
             var columns = self.get_filter_columns();
             var selected_index = _.indexOf(columns, selected_val)+1; // '+1' because of the hidden metadata table;
-            var filter_val = $(filter_item).find("input").val();
-            self.datatable.fnFilterClear();
-            self.datatable.fnFilter(filter_val, selected_index);
+            var filter_val = $(filter_item).find("input").val(); 
+            if (!filters[String(selected_index)]) {
+              filters[String(selected_index)] = [];
+            }
+            filters[String(selected_index)].push('(?=.*' + filter_val + ')');
+        });
+        // Clear out any previous filter and perform this one.
+        self.datatable.fnFilterClear();
+        _.each(filters,function(v,k) {
+          self.datatable.fnFilter(v.join(''),k,true,true);
         });
     },
 
