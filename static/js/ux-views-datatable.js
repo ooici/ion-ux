@@ -35,6 +35,7 @@ TEST_TABLE_DATA = [
 
 
 /* The below will be View instance attrs: */
+/* Make sure that handlers exist for each of these down in filters_apply! */
 OPERATORS = ['CONTAINS', 'NEWER THAN', 'OLDER THAN', 'GREATER THAN', 'LESS THAN'];
 
 IONUX.Views.DataTable = IONUX.Views.Base.extend({
@@ -162,6 +163,11 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
                 var numcolumns = this.oApi._fnVisbleColumns(oSettings);
                 addRows(this, numcolumns, oSettings._iDisplayLength);
               }
+            },
+            "fnInitComplete": function() {
+              // Make sure to undo any custom filtering when initted.  This caught me when
+              // checking on/off vals on the resource long list filter.
+              this.dataTableExt.afnFiltering = [];
             }
         });
         
@@ -500,20 +506,49 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         // filtering on a single field more than once.  Each constraint is AND-ed!
         var filters = {};
         filter_items.find(".filter-item").each(function(i, filter_item){
-            var selected_val = $(filter_item).find("select.column option:selected").text();
-            var columns = self.get_filter_columns();
-            var selected_index = _.indexOf(columns, selected_val)+1; // '+1' because of the hidden metadata table;
-            var filter_val = $(filter_item).find("input").val(); 
-            if (!filters[String(selected_index)]) {
-              filters[String(selected_index)] = [];
+            var columns            = self.get_filter_columns();
+            var col_selected_val   = $(filter_item).find("select.column option:selected").text();
+            var col_selected_index = _.indexOf(columns, col_selected_val)+1; // '+1' because of the hidden metadata table;
+            var op_selected_val    = $(filter_item).find("select.operator option:selected").text();
+            var filter_val         = $(filter_item).find("input").val(); 
+            if (!filters[String(col_selected_index)]) {
+              filters[String(col_selected_index)] = {};
             }
-            filters[String(selected_index)].push('(?=.*' + filter_val + ')');
+            if (!filters[String(col_selected_index)][op_selected_val]) {
+              filters[String(col_selected_index)][op_selected_val] = [];
+            }
+            filters[String(col_selected_index)][op_selected_val].push(filter_val);
         });
-        // Clear out any previous filter and perform this one.
+        // Clear out any previous filter and perform this custom one.
         self.datatable.fnFilterClear();
-        _.each(filters,function(v,k) {
-          self.datatable.fnFilter(v.join(''),k,true,true);
-        });
+        self.datatable.dataTableExt.afnFiltering = [function(o,data,idx) {
+          var isOk = true;
+          _.each(filters,function(filter,colIdx) {
+            // colIdx is 0-based when accessing the real data array. 
+            // Everything will be treated as a string.  Good luck w/ datetime comparisons!
+            _.each(filter,function(vals,operator) {
+              // CONTAINS could be done by a single regex for speed and glam,
+              // but I don't want to fuss w/ un-regexing user input.
+              if (operator == 'CONTAINS') {
+                _.each(vals,function(v) {
+                  isOk = isOk && new RegExp(v,'i').test(data[colIdx - 1]);
+                });
+              }
+              else if (/NEWER|GREATER/.test(operator)) {
+                _.each(vals,function(v) {
+                  isOk = isOk && data[colIdx - 1] >= v;
+                });
+              }
+              else if (/OLDER|LESS/.test(operator)) {
+                _.each(vals,function(v) {
+                  isOk = isOk && data[colIdx - 1] <= v;
+                });
+              }
+            });
+          });
+          return isOk;
+        }];
+        self.datatable.fnDraw();
     },
 
     filters_enter: function(evt){
@@ -526,6 +561,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         filter_items.find("input").each(function(i, e){
             $(e).val("");
         });
+        this.datatable.dataTableExt.afnFiltering = [];
         this.datatable.fnFilterClear();
     },
 
