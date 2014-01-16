@@ -2270,6 +2270,10 @@ ul.nav {
   text-align: left;
 }
 
+#version-overlay .modal-body {
+  padding-left: 150px;
+}
+
 /* User Profile modal has different form requirements */
 #user-profile-overlay fieldset {
   margin-top: 0px;
