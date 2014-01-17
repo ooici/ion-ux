@@ -1,4 +1,7 @@
-<span class="h4-label"><%= label %>:</span> <input type="checkbox" name="" <%= checked  %> disabled />
+<div class="row-fluid">
+  <div class="span4 text-short-label"><%= label %>:&nbsp;</div>
+  <div class="span8 text-short-value"><input type="checkbox" name="" <%= checked  %> disabled /></div>
+</div>
 
 <% if (typeof(integration_info) != 'undefined') { %>
     <div class="integration_info">
