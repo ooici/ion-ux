@@ -2055,6 +2055,10 @@ a.btn-navigation-plain {
   letter-spacing: 0px;
 }
 
+.text-short-value input {
+  margin-top: -3px;
+}
+
 .tab-pane .row-fluid {
   padding: 0;
 }
