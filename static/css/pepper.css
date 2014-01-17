@@ -2037,6 +2037,7 @@ a.btn-navigation-plain {
   color:#999;
   letter-spacing: 0px;
   color:#999;
+  word-wrap: break-word;
 }
 
 .tab-pane .row-fluid {
