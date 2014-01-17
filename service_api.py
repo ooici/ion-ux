@@ -161,16 +161,6 @@ class ServiceApi(object):
 
         return search_json['data']
 
-        """
-        search_url = "http://%s:%d/ion-service/discovery/parse?search_request=SEARCH'_all'LIKE'%s'FROM'data_products_index'LIMIT100" % (GATEWAY_HOST, GATEWAY_PORT, search_query)
-        search_results = requests.get(search_url)
-        search_json = json.loads(search_results.content)
-        if search_json['data'].has_key('GatewayResponse'):
-            return search_json['data']['GatewayResponse']
-        else:
-            return search_json['data']
-        """
-
     @staticmethod
     def adv_search(geospatial_bounds, vertical_bounds, temporal_bounds, search_criteria):
         post_data = {'query': {},
@@ -197,7 +187,7 @@ class ServiceApi(object):
         if temporal_bounds and all(temporal_bounds.itervalues()):
             queries.append({'time': {'from': temporal_bounds['from'],
                                      'to': temporal_bounds['to']},
-                            'field': 'ts_created',
+                            'field': 'temporal_range',
                             'index': 'data_products_index'})
 
         if search_criteria:
