@@ -2029,6 +2029,7 @@ a.btn-navigation-plain {
   font-weight:300;
   color:#666;
   letter-spacing:1px;
+  word-wrap: break-word;
 }
 
 .v01 .text-short-value, .v02 .text-short-value {
