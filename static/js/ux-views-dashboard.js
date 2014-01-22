@@ -1221,7 +1221,11 @@ IONUX.Views.ResourceTable = IONUX.Views.DataTable.extend({
     this.options.data = [];
     if (!_.isEmpty(IONUX.ListWhitelist)) {
        _.each(this.collection.models, function(resource) {
-         if (_.contains(IONUX.ListWhitelist, resource.get('type_'))) {
+         var type_ = resource.get('type_');
+         if (type_ == 'PlatformSite' && resource.has('alt_resource_type')) {
+           type_ = resource.get('alt_resource_type');
+         }
+         if (_.contains(IONUX.ListWhitelist, type_)) {
            this.options.data.push(resource.toJSON());
          };
        }, this);
@@ -1376,7 +1380,7 @@ IONUX.Views.ListFilter = Backbone.View.extend({
       {label: 'Data Product', type: 'DataProduct', sprite: 'dataproduct-option'},
       {label: 'Instrument', type: 'InstrumentDevice', sprite: 'instrumentdevice-option'},
       {label: 'Platform', type: 'PlatformDevice', sprite: 'platformdevice-option'},
-      {label: 'Station', type: 'PlatformSite', sprite: 'station-option'},
+      {label: 'Station', type: 'StationSite', sprite: 'station-option'},
       {label: 'Site', type: 'Observatory', sprite: 'site-option'},
     ],
     long: [
@@ -1399,7 +1403,7 @@ IONUX.Views.ListFilter = Backbone.View.extend({
       {label: 'Platform', type: 'PlatformDevice', sprite: 'platformdevice-option'},
       {label: 'Role', type: 'UserRole', sprite: 'role-option'},
       {label: 'Site', type: 'Observatory', sprite: 'site-option'},
-      {label: 'Station', type: 'PlatformSite', sprite: 'station-option'},
+      {label: 'Station', type: 'StationSite', sprite: 'station-option'},
     ]
   },
   template: '\
