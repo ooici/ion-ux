@@ -53,10 +53,20 @@ class ServiceApi(object):
         return service_gateway_get('visualization', operation_name, raw_return=True, params=visualization_parameters)
 
     @staticmethod
-    def find_related_objects(resource_id):
-        related_objects = service_gateway_get('resource_registry', 'find_objects', params={'subject': resource_id, 'predicate': 'hasResource'})
-        return related_objects
-    
+    def find_related_objects_has_resource(resource_id):
+        related_objects_has_resource = service_gateway_get('resource_registry', 'find_objects', params={'subject': resource_id, 'predicate': 'hasResource'})
+        return related_objects_has_resource
+
+    @staticmethod
+    def find_related_objects_has_attachment(resource_id):
+        related_objects_has_attachment = service_gateway_get('resource_registry', 'find_objects', params={'subject': resource_id, 'predicate': 'hasAttachment'})
+        return related_objects_has_attachment
+
+    @staticmethod
+    def find_related_objects_has_role(resource_id):
+        related_objects_has_role = service_gateway_get('resource_registry', 'find_objects', params={'subject': resource_id, 'predicate': 'hasRole'})
+        return related_objects_has_role
+
     @staticmethod
     def find_related_sites(resource_id):
         related_sites = service_gateway_get('observatory_management', 'find_related_sites', params={'parent_resource_id': resource_id, 'include_parents': True, 'include_devices': True})

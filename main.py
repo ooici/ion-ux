@@ -383,10 +383,20 @@ def related_sites(resource_id):
     related_sites = ServiceApi.find_related_sites(resource_id)
     return render_json_response(related_sites)
 
-@app.route('/related_objects/<resource_id>/', methods=['GET'])
-def related_objects(resource_id):
-    related_objects = ServiceApi.find_related_objects(resource_id)
-    return render_json_response(related_objects)
+@app.route('/related_objects_has_resource/<resource_id>/', methods=['GET'])
+def related_objects_has_resource(resource_id):
+    related_objects_has_resource = ServiceApi.find_related_objects_has_resource(resource_id)
+    return render_json_response(related_objects_has_resource)
+
+@app.route('/related_objects_has_attachment/<resource_id>/', methods=['GET'])
+def related_objects_has_attachment(resource_id):
+    related_objects_has_attachment = ServiceApi.find_related_objects_has_attachment(resource_id)
+    return render_json_response(related_objects_has_attachment)
+
+@app.route('/related_objects_has_role/<resource_id>/', methods=['GET'])
+def related_objects_has_role(resource_id):
+    related_objects_has_role = ServiceApi.find_related_objects_has_role(resource_id)
+    return render_json_response(related_objects_has_role)
 
 @app.route('/get_data_product_group_list/', methods=['GET'])
 def get_data_product_group_list():
