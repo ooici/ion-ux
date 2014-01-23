@@ -267,6 +267,10 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
             // alt_resource_type for PlatformSite only
             } else if (data_obj['type_'] == 'PlatformSite' && data_obj.hasOwnProperty('alt_resource_type')) {
                 var resource_type = data_obj['alt_resource_type'];
+                // override for StationSite's to get the icon to work
+                if (resource_type == 'StationSite') {
+                    data_obj['type_'] = resource_type;
+                }
             } else {
                var resource_type = data_obj['type_'];
             };
@@ -356,6 +360,9 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
                 break;
             case "Site":
                 var type_css = 'site_mini';
+                break;
+            case "StationSite":
+                var type_css = 'station_mini';
                 break;
             case "Observatory":
                 var type_css = 'site_mini';
