@@ -264,10 +264,9 @@ dashboard_map_resource: function(resource_id) {
       })
     ).done(function() {
       new IONUX.Views.ResourceTable({
-         el                        : $('#2163993')
-        ,collection                : r.listResources.add(r.listRoles.toJSON(),{silent : true}).add(r.listAttachments.toJSON(),{silent : true})
-        ,list_table                : true
-        ,pad_table_with_enpty_rows : true
+         el         : $('#2163993')
+        ,collection : r.listResources.add(r.listRoles.toJSON(),{silent : true}).add(r.listAttachments.toJSON(),{silent : true})
+        ,list_table : true
       });
     });
   },

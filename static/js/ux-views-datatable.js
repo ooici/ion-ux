@@ -159,7 +159,7 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
               });
             },
             "fnDrawCallback": function(oSettings) {
-              if (self.options.pad_table_with_enpty_rows) {
+              if (oSettings.fnRecordsTotal() >= 10) {
                 var numcolumns = this.oApi._fnVisbleColumns(oSettings);
                 addRows(this, numcolumns, oSettings._iDisplayLength);
               }
