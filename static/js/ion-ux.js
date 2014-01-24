@@ -23,13 +23,13 @@ IONUX = {
         new IONUX.Views.ViewControls().render().el;
         
         // MAPS Sidebar (initially shown)
-        IONUX.Dashboard.Observatories = new IONUX.Collections.Observatories(resp.data.observatories)
+        IONUX.Dashboard.Observatories = new IONUX.Collections.Observatories(_.sortBy(resp.data.observatories,function(o){return o.spatial_area_name + (o.local_name ? o.local_name : '') + o.name}))
         IONUX.Dashboard.PlatformSites = new IONUX.Collections.PlatformSites(resp.data.platformSites)
         new IONUX.Views.ObservatorySelector({collection: IONUX.Dashboard.Observatories, title: 'Site'}).render().el;
         new IONUX.Views.MapFilter().render().el;
         
         // RESOURCES Sidebar (initially hidden)
-        IONUX.Dashboard.Orgs = new IONUX.Collections.Orgs(resp.data.orgs);
+        IONUX.Dashboard.Orgs = new IONUX.Collections.Orgs(_.sortBy(resp.data.orgs,function(o){return o.name}));
         new IONUX.Views.OrgSelector({collection: IONUX.Dashboard.Orgs, title: 'Facility'}).render().el;
         new IONUX.Views.ListFilter().render().el;
         
