@@ -239,6 +239,17 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
             this.interaction_items.splice(this.interaction_items.indexOf('Edit'), 1);
           }
 
+          if (
+            window.MODEL_DATA.resource_type != 'UserInfo'
+            && !this.has_permission(
+               IONUX.SESSION_MODEL.get('roles')
+              ,window.MODEL_DATA
+              ,['ORG_MEMBER','INSTRUMENT_OPERATOR','DATA_OPERATOR','OBSERVATORY_OPERATOR','ORG_MANAGER','ION_MANAGER']
+            )
+          ) {
+            this.interaction_items.splice(this.interaction_items.indexOf('Subscribe'), 1);
+          }
+
         // User is a guest and we should remove all options but "Refresh Page"
         } else {
           this.interaction_items.splice(this.interaction_items.indexOf('Command'), 1);
