@@ -1355,7 +1355,7 @@ IONUX.Collections.ListResources = Backbone.Collection.extend({
     this.resource_id = options.resource_id;
   },
   url: function() {
-   return '/related_objects/'+this.resource_id+'/';
+   return '/related_objects_has_resource/'+this.resource_id+'/';
   },
   parse: function(resp) {
     var related_objects = [];
@@ -1365,6 +1365,35 @@ IONUX.Collections.ListResources = Backbone.Collection.extend({
   }
 });
 
+IONUX.Collections.ListRoles = Backbone.Collection.extend({
+  initialize: function(models, options){
+    this.resource_id = options.resource_id;
+  },
+  url: function() {
+   return '/related_objects_has_role/'+this.resource_id+'/';
+  },
+  parse: function(resp) {
+    var related_objects = [];
+    _.each(resp.data, function(obj){related_objects.push(obj)});
+    make_iso_timestamps(related_objects);
+    return related_objects;
+  }
+});
+
+IONUX.Collections.ListAttachments = Backbone.Collection.extend({
+  initialize: function(models, options){
+    this.resource_id = options.resource_id;
+  },
+  url: function() {
+   return '/related_objects_has_attachment/'+this.resource_id+'/';
+  },
+  parse: function(resp) {
+    var related_objects = [];
+    _.each(resp.data, function(obj){related_objects.push(obj)});
+    make_iso_timestamps(related_objects);
+    return related_objects;
+  }
+});
 
 /* 
 - - - - - - - - - - - - - - - - - 

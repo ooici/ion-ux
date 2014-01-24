@@ -216,17 +216,59 @@ dashboard_map_resource: function(resource_id) {
     $('#2163993:visible').off().empty().append('<div id="spinner"></div>').show();
     new Spinner(IONUX.Spinner.large).spin(document.getElementById('spinner'));
 
+    /*
+      Unforunately, a single service does not exist to pull back all resources that are at least one of:
+      hasResource, hasRole, hasAttachment.  So we need to set up each one individually and then wait for
+      them all to finish before combining the results and then creating the table.
+    */
+   
+    // Set up the collections. 
     if (IONUX.Dashboard.ListResources === undefined) {
       IONUX.Dashboard.ListResources = new IONUX.Collections.ListResources(null, {resource_id: resource_id});
     };
-    
     IONUX.Dashboard.ListResources.resource_id = resource_id;
     IONUX.Dashboard.ListResources.set([]);
-    IONUX.Dashboard.ListResources.fetch({
-      reset:true,
-      success: function(resp){
-        new IONUX.Views.ResourceTable({el: $('#2163993'), collection: resp, list_table: true, pad_table_with_enpty_rows: true});
-      },
+
+    if (IONUX.Dashboard.ListRoles === undefined) {
+      IONUX.Dashboard.ListRoles = new IONUX.Collections.ListRoles(null, {resource_id: resource_id});
+    };
+    IONUX.Dashboard.ListRoles.resource_id = resource_id;
+    IONUX.Dashboard.ListRoles.set([]);
+
+    if (IONUX.Dashboard.ListAttachments === undefined) {
+      IONUX.Dashboard.ListAttachments = new IONUX.Collections.ListAttachments(null, {resource_id: resource_id});
+    };
+    IONUX.Dashboard.ListAttachments.resource_id = resource_id;
+    IONUX.Dashboard.ListAttachments.set([]);
+
+    // Store the responses and merge when everything is done.
+    var r = {};
+    $.when(
+      IONUX.Dashboard.ListResources.fetch({
+         reset   : true
+        ,success : function(resp) {
+          r.listResources = resp;
+        }
+      })
+      ,IONUX.Dashboard.ListRoles.fetch({
+         reset   : true
+        ,success : function(resp) {
+          r.listRoles = resp;
+        }
+      })
+      ,IONUX.Dashboard.ListAttachments.fetch({
+         reset   : true
+        ,success : function(resp) {
+          r.listAttachments = resp;
+        }
+      })
+    ).done(function() {
+      new IONUX.Views.ResourceTable({
+         el                        : $('#2163993')
+        ,collection                : r.listResources.add(r.listRoles.toJSON(),{silent : true}).add(r.listAttachments.toJSON(),{silent : true})
+        ,list_table                : true
+        ,pad_table_with_enpty_rows : true
+      });
     });
   },
 
