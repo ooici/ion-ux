@@ -8,7 +8,7 @@ from os.path import join
 from random import choice
 import string
 
-__author__ = 'Seman S.'
+__author__ = 'seman'
 __license__ = 'Apache 2.0'
 
 class Deploy:
@@ -27,15 +27,11 @@ class Deploy:
         o.close()
 
         # Create Cilogon config file from template
-        ready_url = 'https://' + self.web_host + '/login/ready'
-        failure_url = 'https://' + self.web_host + '/login/failure'
-        success_url = 'https://' + self.web_host + '/login/success'
-        local('rm -f ' + join(self.local_dir,'cilogon-wsgi/cilogon/cfg.rdf'))
-        o = open(join(self.local_dir,'cilogon-wsgi/cilogon/cfg.rdf'), 'w')
-        cfgrdf_cfg = open(join(self.local_dir,'cilogon-wsgi/cilogon/cfg.rdf.template')).read()
-        cfgrdf_cfg = re.sub('READY', ready_url, cfgrdf_cfg)
-        cfgrdf_cfg = re.sub('FAILURE', failure_url, cfgrdf_cfg)
-        o.write( re.sub('SUCCESS', success_url, cfgrdf_cfg) )
+        local('rm -f ' + join(self.local_dir,'cilogon-wsgi/cilogon/oa4mp-clients.xml'))
+        o = open(join(self.local_dir,'cilogon-wsgi/cilogon/oa4mp-clients.xml'), 'w')
+        cfgrdf_cfg = open(join(self.local_dir,'cilogon-wsgi/cilogon/oa4mp-clients.xml.template')).read()
+        cfgrdf_cfg = re.sub('HOST_NAME_VALUE', self.web_host, cfgrdf_cfg)
+        o.write(cfgrdf_cfg)
         o.close()
         # Remove tar file
         with settings(warn_only=True):
@@ -51,7 +47,7 @@ class Deploy:
         with settings(warn_only=True):
             run('mkdir %s' % self.remote_extract_dir)
         with settings(warn_only=True):
-            run('rm -rf %s' % self.remote_deploy_dir, shell=False)
+            run('sudo rm -rf %s' % self.remote_deploy_dir, shell=False)
         with settings(warn_only=True):
             run('mkdir %s' % self.remote_deploy_dir, shell=False)
 
