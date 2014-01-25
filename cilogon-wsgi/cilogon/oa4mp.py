@@ -218,10 +218,13 @@ class FileStore(object):
                 self.cfg = cfg
 
         def get(self, id):
-            targetFile=open(self.idToFile(id), 'r')
-            asset = pickle.load(targetFile)
-            targetFile.close()
-            return asset
+            try:
+                targetFile=open(self.idToFile(id), 'r')
+                asset = pickle.load(targetFile)
+                targetFile.close()
+                return asset
+            except:
+                return None # Probably need to improve this later?
 
         def put(self, id, asset):
             targetFile=open(self.idToFile(id), 'wr')
@@ -326,5 +329,3 @@ class Config(object):
             x = config.getElementsByTagName(tag)[0]
             rc = x.attributes[attributeName]
             return str(rc.firstChild.nodeValue)
-
-
