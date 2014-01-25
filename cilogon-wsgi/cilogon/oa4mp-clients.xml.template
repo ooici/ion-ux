@@ -1,0 +1,18 @@
+<config>
+   <client name="python-cilogon2" debug="true">
+    	<id>myproxy:oa4mp,2012:/client/54749b10bfbe4cfacf4ba7023d5dcf1d</id>
+    	<serviceUri>https://cilogon.org/oauth</serviceUri>
+    	<authorizeUri>https://cilogon.org/delegate</authorizeUri>
+    	<callbackUri>https://HOST_NAME_VALUE/login/ready</callbackUri>
+    	<lifetime>864000</lifetime>
+        <publicKeyFile>/opt/oa4mp/keys/oauth-pubkey.pem</publicKeyFile>
+	<privateKeyFile>/opt/oa4mp/keys/oauth-privkey.pem</privateKeyFile>
+    	<fileStore path="/www/ux/cilogon-wsgi/temp">
+        	<assetStore/>
+    	</fileStore>
+    	<skin>OOI</skin> 
+    	<certReqConfig>/www/ux/cilogon-wsgi/cilogon/cert-request.cfg</certReqConfig>
+    	<enableAssetCleanup>true</enableAssetCleanup>
+    	<maxAssetLifetime>865000</maxAssetLifetime> <!-- greater than the lifetime -->
+   </client>
+</config>
