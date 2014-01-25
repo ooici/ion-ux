@@ -47,6 +47,7 @@ def failure(environ, start_response):
     Called in case of failures and also given as a redirect from the server if the user, say, cancels and
     operation.
     """
+    logit(environ, "In failure call")
     redirecturl = flask_url_base + '/?cancel'
     headers = [('Content-Type', 'text/html'), ('Location', redirecturl)]
     start_response('302 FOUND', headers)
@@ -95,28 +96,40 @@ def _callback(environ, start_response):
     cfg = config.read()
     logit(environ, "skin=" + cfg["skin"])
     id = None
+    fileStore = FileStore(cfg)
+
     if environ.has_key('HTTP_COOKIE'):
         for cookie in map(strip, re.split(';', environ['HTTP_COOKIE'])):
-            try:
-                (key, value ) = re.split('=', cookie)
-                if key == CERT_REQUEST_ID:
-                    id = value
-                    # jump out once you find the first one. If they have cruft in their browser
-                    # such as from repeated failed earlier attempts, we can't figure which is the right one
-                    break
+             try:
+                 (key, value ) = re.split('=', cookie)
+                 if key == CERT_REQUEST_ID:
+                     id = value
+                     if fileStore.get(id) != None:
+                         # jump out once you find the first one that works.
+                         # If they have cruft in their browser
+                         # such as from repeated failed earlier attempts,
+                         # we can't figure which is the right one
+                         break
+                     else:
+                         logit(environ,'No asset found for id=' + id + ', skipping it.')
 
-            except ValueError, e:
-                logging.exception('Benign error parsing cookie=' + cookie + '. Skipping...')
+             except ValueError, e:
+                 logging.exception('Benign error parsing cookie=' + cookie + '. Skipping...')
 
     # In this case, no cookie was found to identify that a request was made.
     if id is None:
-        start_response('404 NOT FOUND', [('Content-Type', 'text/html')])
-        body = '<html><body><h2>Error, no session cookie found</h2></body></html>'
-        return body
+        logit(environ, 'No id found at all.')
+        return failure(environ, start_response)
+
     logit(environ, "in callback for id=" + id)
 
     oa4mp = OA4MPService()
-    username, cert = oa4mp.getCert(id, cfg, token, v)
+    try:
+        username, cert = oa4mp.getCert(id, cfg, token, v)
+    except:
+        logit(environ, 'Could not find the cert from the id')
+        return failure(environ,start_response)
+
     action = environ['oa4mp.config.path']
 
     cert = base64.b64encode(cert)
@@ -141,13 +154,21 @@ def startRequest(environ, start_response):
     oa4mp = OA4MPService()
     configFile = environ['oa4mp.config.file']
     configName = environ['oa4mp.config.name']
-
-    config = Config(configFile, configName)
-    cfg = config.read()
+    try:
+       config = Config(configFile, configName)
+       cfg = config.read()
+    except:
+        logit(environ, 'Error reading configuration')
+        return failure(environ, start_response)
     # print >> environ['wsgi.errors'], "service uri = " + cfg['serviceUri']
     id = 'oa4mp-' + hashlib.sha1(str(random.random()) + str(random.random())).hexdigest()
     logit(environ, "created id = " + id)
-    key, redirectUri = oa4mp.requestCert(id, cfg)
+    try:
+        key, redirectUri = oa4mp.requestCert(id, cfg)
+    except:
+        logit(environ,'Error in request Cert for id=' + id)
+        return failure(environ,start_response)
+
     headers = [('Content-Type', 'text/html'),
        ('Set-Cookie', CERT_REQUEST_ID + '=' + id + ";"),# cookie -- don't set path since API for reading doesn't support it!!!
        ('Location', redirectUri)]# Location header + 302 status code = redirect
@@ -179,15 +200,13 @@ def success(environ, start_response):
 urls = [
     (r"startRequest", startRequest),
     (r"success", success),
-    (r"failed", failure),
+    (r"failure", failure),
     (r"index", index),
     (r"ready", callback),
     ##(r"^$", index),
     (r"^$", startRequest),
 
 ]
-
-
 
 
 def application(environ, start_response):
