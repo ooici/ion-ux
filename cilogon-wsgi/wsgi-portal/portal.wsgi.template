@@ -200,7 +200,7 @@ def success(environ, start_response):
 urls = [
     (r"startRequest", startRequest),
     (r"success", success),
-    (r"failure", failure),
+    (r"failed", failure),
     (r"index", index),
     (r"ready", callback),
     ##(r"^$", index),
