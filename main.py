@@ -103,6 +103,10 @@ def login_required(f):
 def index():
     return render_app_template(request.path)
 
+@app.route('/failed')
+def failed_login():
+     return redirect(url_for('index', cl="cf"))
+
 # -----------------------------------------------------------------------------
 # SEARCH & ATTACHMENTS
 # -----------------------------------------------------------------------------
