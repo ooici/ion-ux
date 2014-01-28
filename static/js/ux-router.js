@@ -398,6 +398,10 @@ dashboard_map_resource: function(resource_id) {
     new IONUX.Views.CreateAccountView().render();
   },
 
+  signin_from_expired_session: function() {
+    new IONUX.Views.SigninFromExpiredSessionView().render();
+  },
+
     // KEPT FOR REFERENCE
     // user_profile: function() {
     //     this._reset();

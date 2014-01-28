@@ -1050,7 +1050,8 @@ class ServiceApi(object):
                 uid = user_identity['_id']
                 actor_id = service_gateway_get('resource_registry', 'find_subjects', params={'predicate': 'hasInfo', 'object': uid, 'id_only': True})[0]
                 session['actor_id'] = actor_id
-                session['valid_until'] = str(int(time.time()) * 100000)
+                # set valid_until to 12h from now to match real certificate
+                session['valid_until'] = str((int(time.time()) + 12 * 3600) * 100000)
                 
                 user = service_gateway_get('identity_management', 'find_user_info_by_id', params={'actor_id': actor_id})
                 
@@ -1083,7 +1084,8 @@ class ServiceApi(object):
             if user_name == actor_identity['name']:
                 actor_id = actor_identity['_id']
                 session['actor_id'] = actor_id
-                session['valid_until'] = str(int(time.time()) * 100000)
+                # set valid_until to 12h from now to match real certificate
+                session['valid_until'] = str((int(time.time()) + 12 * 3600) * 100000)
 
                 user = service_gateway_get('identity_management', 'find_user_info_by_id', params={'actor_id': actor_id})
                 if user.has_key('_id'):
