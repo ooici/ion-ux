@@ -1141,7 +1141,6 @@ IONUX.Views.AttachmentZoomView = Backbone.View.extend({
       }
     }
 
-    _.contains(IONUX.SESSION_MODEL.get('roles')[window.MODEL_DATA.resource.org_governance_name], 'ORG_MANAGER')
     if (IONUX.is_owner()) {
       cbfunc.call(this);
       return;
