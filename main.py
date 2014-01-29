@@ -153,7 +153,8 @@ def attachment(attachment_id):
     attachment = StringIO(attachment_response.content)
     attachment_ext = guess_extension(attachment_response.headers.get('content-type'))
     attachment_name = request.args.get('name') if request.args.get('name') else 'OOI_%s' % attachment_id
-    
+   
+    attachment_filename = '' 
     #check ext not invalid
     if attachment_ext is not None:
         if (attachment_filename.endswith(attachment_ext)):
