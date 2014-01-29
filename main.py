@@ -769,6 +769,7 @@ def session_info():
                                'roles': roles, 
                                'is_registered': session['is_registered'],
                                'is_logged_in': True,
+                               'valid_until': session['valid_until'],
                                'ui_theme_dark': session['ui_theme_dark']})
     
     return jsonify(data=session_values)

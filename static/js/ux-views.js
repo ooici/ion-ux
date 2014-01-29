@@ -1212,6 +1212,31 @@ IONUX.Views.CreateAccountView = Backbone.View.extend({
   }
 });
 
+IONUX.Views.SigninFromExpiredSessionView = Backbone.View.extend({
+  tagName: "div",
+  template: _.template($("#signin-from-expired-session-modal-tmpl").html()),
+  events: {
+    'click #signin': 'signin_clicked'
+  },
+  render: function() {
+    $('body').append(this.$el);
+    var modal_html = this.template();
+    this.$el.append(modal_html);
+
+    var self = this;
+
+    $('#signin-from-expired-session-overlay').modal()
+      .on('hidden', function() {
+        self.$el.remove();
+      });
+
+    return false;
+  },
+  signin_clicked: function() {
+    window.location.href = "https://" + window.location.host + "/login";
+  }
+});
+
 IONUX.Views.CreateResourceView = Backbone.View.extend({
   tagName: "div",
   template: _.template($("#create-resource-modal-tmpl").html()),
