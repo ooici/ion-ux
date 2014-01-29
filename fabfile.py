@@ -185,7 +185,7 @@ class Deploy:
 host = None
 gateway_host = 'sg.a.oceanobservatories.org'
 gateway_port = None
-logging_level = 'logging.DEBUG'
+logging_level = 'logging.WARNING'
 my_proxy_client_id = 'myproxy:oa4mp,2012:/client/f2d048062c7414ac20259ace3c44145'
 
 
@@ -208,18 +208,16 @@ def ux_test():
 
 
 def ion_stage():
-    global host, gateway_host, logging_level, my_proxy_client_id
+    global host, gateway_host, my_proxy_client_id
     host = 'ooin-mi.oceanobservatories.org'
     gateway_host = 'sg.s.oceanobservatories.org'
-    logging_level = 'logging.WARNING'
     my_proxy_client_id = 'myproxy:oa4mp,2012:/client/20771d54e9abf375edd24d79e753a5a2'
 
 
 def ion_beta():
-    global host, gateway_host, logging_level, my_proxy_client_id
+    global host, gateway_host, my_proxy_client_id
     gateway_host = 'sg.b.oceanobservatories.org'
     host = 'ion-beta.oceanobservatories.org'
-    logging_level = 'logging.WARNING'
     my_proxy_client_id = 'myproxy:oa4mp,2012:/client/a3159d9392c9b61e9bf11e7762add6d'
 
 
