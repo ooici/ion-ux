@@ -75,7 +75,7 @@ IONUX.Models.Session = Backbone.Model.extend({
       return _.findWhere(MODEL_DATA.owners, {_id: this.get('user_id')}) ? true : false;
     },
     is_valid: function(){
-      return new Date(this.get('valid_until') / 100) >= new Date()
+      return new Date(this.get('valid_until')) >= new Date()
     },
     set_polling: function() {
       if (this.get('is_logged_in')) {

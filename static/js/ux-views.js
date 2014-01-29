@@ -1216,7 +1216,7 @@ IONUX.Views.SigninFromExpiredSessionView = Backbone.View.extend({
   tagName: "div",
   template: _.template($("#signin-from-expired-session-modal-tmpl").html()),
   events: {
-    'click #signin': 'signin_clicked'
+    'click #signin-from-expired-session': 'signin_clicked'
   },
   render: function() {
     $('body').append(this.$el);
