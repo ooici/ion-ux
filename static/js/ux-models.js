@@ -55,7 +55,8 @@ IONUX.Models.Session = Backbone.Model.extend({
         roles: [],
         ui_mode: 'PRODUCTION',
         is_polling: false,
-        ui_theme_dark: false
+        ui_theme_dark: false,
+        valid_until: null
     },
     url: '/session/',
     initialize: function() {
@@ -73,6 +74,9 @@ IONUX.Models.Session = Backbone.Model.extend({
     is_resource_owner: function(){
       return _.findWhere(MODEL_DATA.owners, {_id: this.get('user_id')}) ? true : false;
     },
+    is_valid: function(){
+      return new Date(this.get('valid_until') / 100) >= new Date()
+    },
     set_polling: function() {
       if (this.get('is_logged_in')) {
         this.set('is_polling', true);
@@ -80,6 +84,12 @@ IONUX.Models.Session = Backbone.Model.extend({
       };
     },
     poll: function() {
+      // If their session has expired (i.e. their certificate's is_valid date has passed),
+      // let the user know and give the option to login.  Do not continue to poll the session.
+      if (this.is_logged_in() && !this.is_valid()) {
+        IONUX.ROUTER.signin_from_expired_session();
+        return;
+      }
       var self = this;
       var existing_roles = _.clone(this.get('roles'));
       if (this.get('is_polling')) {
