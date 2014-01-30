@@ -415,21 +415,25 @@ IONUX.Views.EditResource = Backbone.View.extend({
       IONUX.set_ui_theme();
     };
 
-    // assign defaults if necessary
-    if (!IONUX.SESSION_MODEL.get('notifications_disabled')) {
-      IONUX.SESSION_MODEL.set('notifications_disabled',false);
-    }
-    if (!IONUX.SESSION_MODEL.get('notifications_daily_digest')) {
-      IONUX.SESSION_MODEL.set('notifications_daily_digest',false);
-    }
-    if (!IONUX.SESSION_MODEL.get('ui_theme_dark')) {
-      IONUX.SESSION_MODEL.set('ui_theme_dark',false);
-    }
-    
     // unset values used by IONUX.Models.EditResourceModel
     // to dynmically create schema and retrieve resource values.
     this.model.unset('resource_id');
     this.model.unset('resource_type');
+
+    // set some defaults variables if necessary
+    var v = this.model.get('variables');
+    if (!_.findWhere(v,{name : 'notifications_disabled'})) {
+      v.push({name : 'notifications_disabled',value : 'false'});
+    }
+    if (!_.findWhere(v,{name : 'notifications_daily_digest'})) {
+      v.push({name : 'notifications_daily_digest',value : 'false'});
+    }
+    if (!_.findWhere(v,{name : 'ui_theme_dark'})) {
+      v.push({name : 'ui_theme_dark',value : 'false'});
+    }
+    if (v) {
+      this.model.set('variables',v);
+    }
     
     this.model.save().done(function(){
       IONUX.ROUTER.navigate(self.base_url, {trigger:true});
