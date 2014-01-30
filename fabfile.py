@@ -31,6 +31,7 @@ class Deploy:
         o = open(join(self.local_dir,'cilogon-wsgi/cilogon/oa4mp-clients.xml'), 'w')
         cfgrdf_cfg = open(join(self.local_dir,'cilogon-wsgi/cilogon/oa4mp-clients.xml.template')).read()
         cfgrdf_cfg = re.sub('HOST_NAME_VALUE', self.web_host, cfgrdf_cfg)
+        cfgrdf_cfg = re.sub('MY_PROXY_CLIENT_ID', self.my_proxy_client_id, cfgrdf_cfg)
         o.write(cfgrdf_cfg)
         o.close()
         # Remove tar file
@@ -122,7 +123,7 @@ class Deploy:
 
     def deploy(self, ssh_user, web_host, web_port=3000, remote_extract_dir='/tmp/ux', remote_deploy_dir='/www/ux',
                remote_relative_flask_dir='flask', gateway_host='sg.a.oceanobservatories.org', gateway_port=5000,
-               secret_key=None, logging_level='logging.DEBUG'):
+               secret_key=None, logging_level='logging.DEBUG', my_proxy_client_id=None):
         self.web_host = web_host
         self.web_port = web_port
         self.remote_extract_dir = remote_extract_dir
@@ -133,6 +134,7 @@ class Deploy:
         self.ssh_user = ssh_user
         self.secret_key = secret_key or self.generate_random_string()
         self.logging_level = logging_level
+        self.my_proxy_client_id = my_proxy_client_id
 
         self.local_dir = "."
         self.clone_dir = join(self.local_dir, 'tmp_clone')
@@ -183,18 +185,21 @@ class Deploy:
 host = None
 gateway_host = 'sg.a.oceanobservatories.org'
 gateway_port = None
-logging_level = 'logging.DEBUG'
+logging_level = 'logging.WARNING'
+my_proxy_client_id = 'myproxy:oa4mp,2012:/client/f2d048062c7414ac20259ace3c44145'
 
 
 def ion_dev():
-    global host, gateway_host
+    global host, gateway_host, my_proxy_client_id
     host = 'ion-dev.oceanobservatories.org'
     gateway_host = 'sg.dev.oceanobservatories.org'
+    my_proxy_client_id = 'myproxy:oa4mp,2012:/client/54749b10bfbe4cfacf4ba7023d5dcf1d'
 
 
 def ion_alpha():
-    global host
+    global host, my_proxy_client_id
     host = 'ion-alpha.oceanobservatories.org'
+    my_proxy_client_id = 'myproxy:oa4mp,2012:/client/f2d048062c7414ac20259ace3c44145'
 
 
 def ux_test():
@@ -203,17 +208,17 @@ def ux_test():
 
 
 def ion_stage():
-    global host, gateway_host
+    global host, gateway_host, my_proxy_client_id
     host = 'ooin-mi.oceanobservatories.org'
     gateway_host = 'sg.s.oceanobservatories.org'
-    logging_level = 'logging.WARNING'
+    my_proxy_client_id = 'myproxy:oa4mp,2012:/client/20771d54e9abf375edd24d79e753a5a2'
 
 
 def ion_beta():
-    global host, gateway_host, logging_level
+    global host, gateway_host, my_proxy_client_id
     gateway_host = 'sg.b.oceanobservatories.org'
     host = 'ion-beta.oceanobservatories.org'
-    logging_level = 'logging.WARNING'
+    my_proxy_client_id = 'myproxy:oa4mp,2012:/client/a3159d9392c9b61e9bf11e7762add6d'
 
 
 def gateway_sg():
@@ -222,7 +227,7 @@ def gateway_sg():
 
 
 def deploy():
-    global host, gateway_host, gateway_port, logging_level
+    global host, gateway_host, gateway_port, logging_level, my_proxy_client_id
     web_host = host or prompt('Web application hostname: ', default='ux-test.oceanobservatories.org')
     ssh_user = prompt('Username for remote host: ', default='ux')
     gateway_host = prompt('Service Gateway Service hostname: ', default=gateway_host)
@@ -230,4 +235,4 @@ def deploy():
     deploy = Deploy()
 
     deploy.deploy(ssh_user=ssh_user, web_host=web_host, gateway_host=gateway_host, gateway_port=gateway_port,
-                  logging_level=logging_level)
+                  logging_level=logging_level, my_proxy_client_id=my_proxy_client_id)
