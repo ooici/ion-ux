@@ -1093,7 +1093,7 @@ IONUX.Views.Map = Backbone.View.extend({
     }
     if (!this.infoWindow) {
       this.infoWindow = new google.maps.InfoWindow({
-         content     : info.content
+         content     : '<div style="line-height:1.35;overflow:hidden;white-space:nowrap;">' + info.content + '</div>'
         ,pixelOffset : info.pixelOffset
         ,position    : info.position
       });
