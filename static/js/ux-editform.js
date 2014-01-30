@@ -407,13 +407,24 @@ IONUX.Views.EditResource = Backbone.View.extend({
     // This should possible go in the model, but leaving here for now.
     if (this.model.get('type_') == 'UserInfo') {
       var ui_theme = _.findWhere(this.model.get('variables'), {name: 'ui_theme_dark'});
-      if (ui_theme.value == 'true') {
+      if (ui_theme && ui_theme.value == 'true') {
         IONUX.SESSION_MODEL.set('ui_theme_dark', true);
       } else {
         IONUX.SESSION_MODEL.set('ui_theme_dark', false);
       };
       IONUX.set_ui_theme();
     };
+
+    // assign defaults if necessary
+    if (!IONUX.SESSION_MODEL.get('notifications_disabled')) {
+      IONUX.SESSION_MODEL.set('notifications_disabled',false);
+    }
+    if (!IONUX.SESSION_MODEL.get('notifications_daily_digest')) {
+      IONUX.SESSION_MODEL.set('notifications_daily_digest',false);
+    }
+    if (!IONUX.SESSION_MODEL.get('ui_theme_dark')) {
+      IONUX.SESSION_MODEL.set('ui_theme_dark',false);
+    }
     
     // unset values used by IONUX.Models.EditResourceModel
     // to dynmically create schema and retrieve resource values.
