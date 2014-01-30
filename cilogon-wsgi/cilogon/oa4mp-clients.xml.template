@@ -1,6 +1,6 @@
 <config>
    <client name="python-cilogon2" debug="true">
-    	<id>myproxy:oa4mp,2012:/client/54749b10bfbe4cfacf4ba7023d5dcf1d</id>
+    	<id>MY_PROXY_CLIENT_ID</id>
     	<serviceUri>https://cilogon.org/oauth</serviceUri>
     	<authorizeUri>https://cilogon.org/delegate</authorizeUri>
     	<callbackUri>https://HOST_NAME_VALUE/login/ready</callbackUri>
