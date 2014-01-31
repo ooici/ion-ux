@@ -413,6 +413,21 @@ IONUX.Views.EditResource = Backbone.View.extend({
         IONUX.SESSION_MODEL.set('ui_theme_dark', false);
       };
       IONUX.set_ui_theme();
+
+      // set some defaults variables if necessary
+      var v = this.model.get('variables') ? this.model.get('variables') : [];
+      if (!_.findWhere(v,{name : 'notifications_disabled'})) {
+        v.push({name : 'notifications_disabled',value : 'false'});
+      }
+      if (!_.findWhere(v,{name : 'notifications_daily_digest'})) {
+        v.push({name : 'notifications_daily_digest',value : 'false'});
+      }
+      if (!_.findWhere(v,{name : 'ui_theme_dark'})) {
+        v.push({name : 'ui_theme_dark',value : 'false'});
+      }
+      if (v) {
+        this.model.set('variables',v);
+      }
     };
 
     // unset values used by IONUX.Models.EditResourceModel
@@ -420,21 +435,6 @@ IONUX.Views.EditResource = Backbone.View.extend({
     this.model.unset('resource_id');
     this.model.unset('resource_type');
 
-    // set some defaults variables if necessary
-    var v = this.model.get('variables');
-    if (!_.findWhere(v,{name : 'notifications_disabled'})) {
-      v.push({name : 'notifications_disabled',value : 'false'});
-    }
-    if (!_.findWhere(v,{name : 'notifications_daily_digest'})) {
-      v.push({name : 'notifications_daily_digest',value : 'false'});
-    }
-    if (!_.findWhere(v,{name : 'ui_theme_dark'})) {
-      v.push({name : 'ui_theme_dark',value : 'false'});
-    }
-    if (v) {
-      this.model.set('variables',v);
-    }
-    
     this.model.save().done(function(){
       IONUX.ROUTER.navigate(self.base_url, {trigger:true});
       window.scrollTo(0,0); // scroll to top
