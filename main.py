@@ -151,20 +151,12 @@ def attachment(attachment_id):
     url = 'http://%s:%d/ion-service/attachment/%s' % (GATEWAY_HOST, GATEWAY_PORT, attachment_id)
     attachment_response = requests.get(url)
     attachment = StringIO(attachment_response.content)
-    attachment_ext = guess_extension(attachment_response.headers.get('content-type'))
-    attachment_name = request.args.get('name') if request.args.get('name') else 'OOI_%s' % attachment_id
-   
-    attachment_filename = '' 
-    #check ext not invalid
-    if attachment_ext is not None:
-        if (attachment_filename.endswith(attachment_ext)):
-            attachment_filename = '%s' % (attachment_name)
-        else: 
-            attachment_filename = '%s%s' % (attachment_name, attachment_ext)
-    else:   
-        attachment_filename = '%s' % (attachment_name)
-    
-    #return string 
+    attachment_filename = request.args.get('name') if request.args.get('name') else 'OOI_%s' % attachment_id
+    # Add an extension (if known) to the attachment_id since no name came accross the wire.
+    if not request.args.get('name'):
+      attachment_ext = guess_extension(attachment_response.headers.get('content-type'))
+      if attachment_ext is not None:
+        attachment_filename += '%s' % attachment_ext
     return send_file(attachment, attachment_filename=attachment_filename, as_attachment=True)
 
 @app.route('/attachment/', methods=['POST'])
