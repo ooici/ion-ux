@@ -220,6 +220,11 @@ def ion_beta():
     host = 'ion-beta.oceanobservatories.org'
     my_proxy_client_id = 'myproxy:oa4mp,2012:/client/a3159d9392c9b61e9bf11e7762add6d'
 
+def ooinet():
+    global host, gateway_host, my_proxy_client_id
+    gateway_host = 'sg.b.oceanobservatories.org'
+    host = 'ooinet.oceanobservatories.org'
+    my_proxy_client_id = 'myproxy:oa4mp,2012:/client/426c72ebf0404e4978f7082b43a5b156'
 
 def gateway_sg():
     global gateway_host
