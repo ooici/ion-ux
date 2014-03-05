@@ -99,6 +99,7 @@ Now you run the fab script, which will prompt you for necessary information to c
 
         > fab ion_dev deploy
         > fab ion_alpha deploy
+        > fab r3_alpha deploy
         > fab ion_beta deploy
         > fab ion_stage deploy
 	> fab ooinet deploy
