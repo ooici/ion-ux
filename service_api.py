@@ -54,18 +54,26 @@ class ServiceApi(object):
 
     @staticmethod
     def find_related_objects_has_resource(resource_id):
-        related_objects_has_resource = service_gateway_get('resource_registry', 'find_objects', params={'subject': resource_id, 'predicate': 'hasResource'})
-        return related_objects_has_resource
+        related_objects = service_gateway_get('resource_management', 'get_org_resource_attributes', params={'org_id': resource_id})
+        if related_objects:
+            for obj in related_objects:
+                if u"type__" in obj:
+                    obj[u"type_"] = obj.pop(u"type__")
+                if "type__" in obj:
+                    obj["type_"] = obj.pop("type__")
+        return related_objects
 
     @staticmethod
     def find_related_objects_has_attachment(resource_id):
-        related_objects_has_attachment = service_gateway_get('resource_registry', 'find_objects', params={'subject': resource_id, 'predicate': 'hasAttachment'})
-        return related_objects_has_attachment
+        #related_objects_has_attachment = service_gateway_get('resource_registry', 'find_objects', params={'subject': resource_id, 'predicate': 'hasAttachment'})
+        #return related_objects_has_attachment
+        return []
 
     @staticmethod
     def find_related_objects_has_role(resource_id):
-        related_objects_has_role = service_gateway_get('resource_registry', 'find_objects', params={'subject': resource_id, 'predicate': 'hasRole'})
-        return related_objects_has_role
+        #related_objects_has_role = service_gateway_get('resource_registry', 'find_objects', params={'subject': resource_id, 'predicate': 'hasRole'})
+        #return related_objects_has_role
+        return []
 
     @staticmethod
     def find_related_sites(resource_id):
