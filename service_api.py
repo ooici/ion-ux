@@ -65,14 +65,10 @@ class ServiceApi(object):
 
     @staticmethod
     def find_related_objects_has_attachment(resource_id):
-        #related_objects_has_attachment = service_gateway_get('resource_registry', 'find_objects', params={'subject': resource_id, 'predicate': 'hasAttachment'})
-        #return related_objects_has_attachment
         return []
 
     @staticmethod
     def find_related_objects_has_role(resource_id):
-        #related_objects_has_role = service_gateway_get('resource_registry', 'find_objects', params={'subject': resource_id, 'predicate': 'hasRole'})
-        #return related_objects_has_role
         return []
 
     @staticmethod
