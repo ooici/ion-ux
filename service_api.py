@@ -64,14 +64,6 @@ class ServiceApi(object):
         return related_objects
 
     @staticmethod
-    def find_related_objects_has_attachment(resource_id):
-        return []
-
-    @staticmethod
-    def find_related_objects_has_role(resource_id):
-        return []
-
-    @staticmethod
     def find_related_sites(resource_id):
         related_sites = service_gateway_get('observatory_management', 'find_related_sites', params={'parent_resource_id': resource_id, 'include_parents': True, 'include_devices': True})
         return related_sites
