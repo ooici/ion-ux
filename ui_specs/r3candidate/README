@@ -1,0 +1,15 @@
+This is a temporary dir to stash the FMP files needed to deploy r3 UI changes.
+They should eventually make their way into production.
+
+The master ciux specifications*.fp7 file is not included.  At least for now.
+
+See https://confluence.oceanobservatories.org/display/CIDev/OOINet+UX+Release+Process
+for deployment details.
+
+In case a developer wants to include these changes before they are officially deployed,
+the preload command will look something like this for alpha data (swap out the full 
+ui_path to match your own):
+
+  bin/pycc -x ion.processes.bootstrap.ion_loader.IONLoader \
+    cfg=res/preload/r2_ioc/config/ooi_alpha.yml \
+    path=master ui_path='/home/ooi/code/ion-ux/ui_specs/r3candidate'
