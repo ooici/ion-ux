@@ -2497,6 +2497,10 @@ ul.nav {
   text-transform: uppercase;
 }
 
+#temporal-field-ctrl {
+  margin: 8px 0 0 5px;
+}
+
 input.argument {
   height: 18px;
   border-top:#7D7D7D 1px solid;

@@ -168,7 +168,7 @@ class ServiceApi(object):
         return search_json['data']
 
     @staticmethod
-    def adv_search(geospatial_bounds, vertical_bounds, temporal_bounds, search_criteria):
+    def adv_search(geospatial_bounds, vertical_bounds, temporal_bounds, temporal_field, search_criteria):
         post_data = {'query': {},
                      'and': [],
                      'or': []}
@@ -190,10 +190,10 @@ class ServiceApi(object):
                             'field': 'geospatial_bounds',
                             'index': 'data_products_index'})
 
-        if temporal_bounds and all(temporal_bounds.itervalues()):
+        if temporal_bounds and all(temporal_bounds.itervalues()) and temporal_field:
             queries.append({'time': {'from': temporal_bounds['from'],
                                      'to': temporal_bounds['to']},
-                            'field': 'temporal_range',
+                            'field': temporal_field,
                             'index': 'data_products_index'})
 
         if search_criteria:
