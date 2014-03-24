@@ -378,6 +378,12 @@ def extension(resource_type, resource_id):
     extension = ServiceApi.get_extension(resource_type, resource_id, user_id)
     return render_json_response(extension)
 
+@app.route('/get_recent_events/<resource_id>/', methods=['GET'])
+def get_recent_events(resource_id):
+    user_id = session['user_id'] if session.has_key('user_id') else None
+    events = ServiceApi.get_recent_events(resource_id, user_id)
+    return render_json_response(events)
+
 @app.route('/related_sites/<resource_id>/', methods=['GET'])
 def related_sites(resource_id):
     related_sites = ServiceApi.find_related_sites(resource_id)
