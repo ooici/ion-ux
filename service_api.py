@@ -69,6 +69,10 @@ class ServiceApi(object):
         return related_sites
 
     @staticmethod
+    def get_recent_events(resource_id, user_id):
+        return service_gateway_get('user_notification', 'get_recent_events', raw_return = True, params = {'resource_id': resource_id, 'user_id': user_id})
+
+    @staticmethod
     def get_data_product_group_list():
         dp_group_list = service_gateway_get('data_product_management', 'get_data_product_group_list', raw_return=True, params={})
         return dp_group_list
@@ -574,42 +578,42 @@ class ServiceApi(object):
     @staticmethod
     def get_extension(resource_type, resource_id, user_id):
         if resource_type == 'InstrumentDevice':
-            extension = service_gateway_get('instrument_management', 'get_instrument_device_extension', params= {'instrument_device_id': resource_id, 'user_id': user_id})
+            extension = service_gateway_get('instrument_management', 'get_instrument_device_extension', params= {'instrument_device_id': resource_id, 'user_id': user_id,'ext_exclude': "['recent_events']"})
         elif resource_type in ('InstrumentModel', 'SensorModel', 'PlatformModel'):
-            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'DeviceModelExtension', 'user_id': user_id})
+            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'DeviceModelExtension', 'user_id': user_id,'ext_exclude': "['recent_events']"})
         elif resource_type == 'PlatformDevice':
-            extension = service_gateway_get('instrument_management', 'get_platform_device_extension', params= {'platform_device_id': resource_id, 'user_id': user_id})
+            extension = service_gateway_get('instrument_management', 'get_platform_device_extension', params= {'platform_device_id': resource_id, 'user_id': user_id,'ext_exclude': "['recent_events']"})
         elif resource_type == 'DataProduct':
-            extension = service_gateway_get('data_product_management', 'get_data_product_extension', params= {'data_product_id': resource_id, 'user_id': user_id})
+            extension = service_gateway_get('data_product_management', 'get_data_product_extension', params= {'data_product_id': resource_id, 'user_id': user_id,'ext_exclude': "['recent_events']"})
         elif resource_type == 'UserInfo':
-            extension = service_gateway_get('identity_management', 'get_user_info_extension', params= {'user_info_id': resource_id, 'user_id': user_id})
+            extension = service_gateway_get('identity_management', 'get_user_info_extension', params= {'user_info_id': resource_id, 'user_id': user_id,'ext_exclude': "['recent_events']"})
         elif resource_type == 'DataProcessDefinition':
-            extension = service_gateway_get('data_process_management', 'get_data_process_definition_extension', params= {'data_process_definition_id': resource_id, 'user_id': user_id})
+            extension = service_gateway_get('data_process_management', 'get_data_process_definition_extension', params= {'data_process_definition_id': resource_id, 'user_id': user_id,'ext_exclude': "['recent_events']"})
         elif resource_type == 'Org':
-            extension = service_gateway_get('observatory_management', 'get_marine_facility_extension', params= {'org_id': resource_id, 'user_id': user_id})
+            extension = service_gateway_get('observatory_management', 'get_marine_facility_extension', params= {'org_id': resource_id, 'user_id': user_id,'ext_exclude': "['recent_events']"})
         elif resource_type == 'Observatory':
-            extension = service_gateway_get('observatory_management', 'get_observatory_site_extension', params= {'site_id': resource_id, 'user_id': user_id})
+            extension = service_gateway_get('observatory_management', 'get_observatory_site_extension', params= {'site_id': resource_id, 'user_id': user_id,'ext_exclude': "['recent_events']"})
         elif resource_type == 'PlatformComponentSite':
-            extension = service_gateway_get('observatory_management', 'get_platform_component_site_extension', params= {'site_id': resource_id, 'user_id': user_id})
+            extension = service_gateway_get('observatory_management', 'get_platform_component_site_extension', params= {'site_id': resource_id, 'user_id': user_id,'ext_exclude': "['recent_events']"})
         elif resource_type == 'PlatformAssemblySite':
-            extension = service_gateway_get('observatory_management', 'get_platform_assembly_site_extension', params= {'site_id': resource_id, 'user_id': user_id})
+            extension = service_gateway_get('observatory_management', 'get_platform_assembly_site_extension', params= {'site_id': resource_id, 'user_id': user_id,'ext_exclude': "['recent_events']"})
         elif resource_type == 'StationSite':
-            extension = service_gateway_get('observatory_management', 'get_platform_station_site_extension', params= {'site_id': resource_id, 'user_id': user_id})
+            extension = service_gateway_get('observatory_management', 'get_platform_station_site_extension', params= {'site_id': resource_id, 'user_id': user_id,'ext_exclude': "['recent_events']"})
         elif resource_type == 'InstrumentSite':
-            extension = service_gateway_get('observatory_management', 'get_instrument_site_extension', params= {'site_id': resource_id, 'user_id': user_id})
+            extension = service_gateway_get('observatory_management', 'get_instrument_site_extension', params= {'site_id': resource_id, 'user_id': user_id,'ext_exclude': "['recent_events']"})
         elif resource_type == 'Deployment':
-            extension = service_gateway_get('observatory_management', 'get_deployment_extension', params= {'deployment_id': resource_id, 'user_id': user_id})
+            extension = service_gateway_get('observatory_management', 'get_deployment_extension', params= {'deployment_id': resource_id, 'user_id': user_id,'ext_exclude': "['recent_events']"})
         elif resource_type == 'NotificationRequest':
-            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'NotificationRequestExtension', 'user_id': user_id})
+            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'NotificationRequestExtension', 'user_id': user_id,'ext_exclude': "['recent_events']"})
         elif resource_type == 'DataProcess':
-            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'DataProcessExtension', 'user_id': user_id})
+            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'DataProcessExtension', 'user_id': user_id,'ext_exclude': "['recent_events']"})
         elif resource_type in ('UserRole'):
-            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'ExtendedInformationResource', 'user_id': user_id})
+            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'ExtendedInformationResource', 'user_id': user_id,'ext_exclude': "['recent_events']"})
         else:
-            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'ExtendedInformationResource', 'user_id': user_id})
+            extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'ExtendedInformationResource', 'user_id': user_id,'ext_exclude': "['recent_events']"})
             # brute force - if not an InformationResource, it might be taskable
             if "GatewayError" in extension:
-                extension = service_gateway_get('resource_registry', 'get_resource_extension', params = {'resource_id': resource_id, 'resource_extension': 'ExtendedTaskableResource', 'user_id': user_id})
+                extension = service_gateway_get('resource_registry', 'get_resource_extension', params = {'resource_id': resource_id, 'resource_extension': 'ExtendedTaskableResource', 'user_id': user_id,'ext_exclude': "['recent_events']"})
 
         #else:
         #    extension = error_message(msg="Resource extension for %s is not available." % resource_type)
