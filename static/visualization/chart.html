@@ -791,6 +791,12 @@
                 series : _data
             });
 
+            // Set the start and end date global variables based on the data
+            //chart_visible_start_date = dp_metadata['time_bounds'][0] * 1000;
+            //chart_visible_end_date = dp_metadata['time_bounds'][1] * 1000;
+            chart_visible_start_date = chart.xAxis[0].getExtremes().dataMin;
+            chart_visible_end_date = chart.xAxis[0].getExtremes().dataMax;
+
         }
         // If it was not a first draw, it was the higher res data
         else {
