@@ -749,9 +749,9 @@ IONUX.Views.AdvancedSearchExtentTemporal = Backbone.View.extend({
         if (!label) label = "Temporal Bounds";
         
         var data_path = this.$el.data('path');
-        var temporal_from, temporal_to;
+        var temporal_from, temporal_to, temporal_field;
         
-        this.$el.html(this.template({label: label, temporal_from: temporal_from, temporal_to: temporal_from}));
+        this.$el.html(this.template({label: label, temporal_from: temporal_from, temporal_to: temporal_from, temporal_field: temporal_field}));
         this.$el.find('input').datepicker({
           autoclose:true,
           format: 'yyyy-mm-dd'
