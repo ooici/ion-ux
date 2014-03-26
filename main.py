@@ -133,6 +133,8 @@ def search(query=None):
             temporal_bounds   = {'from': adv_query_chunks.get('temporal-from-ctrl', [''])[0],
                                    'to': adv_query_chunks.get('temporal-to-ctrl', [''])[0]}
 
+            temporal_field    = adv_query_chunks.get('temporal-field-ctrl', [''])[0];
+
             search_criteria   = zip(adv_query_chunks.get('filter_var', []),
                                     adv_query_chunks.get('filter_operator', []),
                                     adv_query_chunks.get('filter_arg', []))
@@ -140,6 +142,7 @@ def search(query=None):
             search_results    = ServiceApi.adv_search(geospatial_bounds,
                                                       vertical_bounds,
                                                       temporal_bounds,
+                                                      temporal_field,
                                                       search_criteria)
 
         return render_json_response(search_results)
