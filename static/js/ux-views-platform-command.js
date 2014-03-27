@@ -52,9 +52,14 @@ IONUX.Views.PlatformCommandFacepage = Backbone.View.extend({
         };
       },
       error: function(resp) {
-        console.log("get_platform_agent_state ERROR:", JSON.parse(resp.responseText));
-        
-        $('#start').show()
+        var err = JSON.parse(resp.responseText);
+        console.log("get_platform_agent_state ERROR:", err);
+        if (err && err.data && err.data.GatewayError && err.data.GatewayError.Message && /No agent process/.test(err.data.GatewayError.Message)) {
+          new IONUX.Views.NoConfiguredAgentInstance().render();
+        }
+        else {
+          $('#start').show()
+        }
         $('#stop, #platform_status').hide();
       }
     });

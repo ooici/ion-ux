@@ -1236,6 +1236,30 @@ IONUX.Views.SigninFromExpiredSessionView = Backbone.View.extend({
   }
 });
 
+IONUX.Views.NoConfiguredAgentInstance = Backbone.View.extend({
+  tagName: "div",
+  template: _.template($("#no-configured-agent-instance-modal-tmpl").html()),
+  events: {
+    'click #no-configured-agent-instance': 'ok_clicked'
+  },
+  render: function() {
+    $('body').append(this.$el);
+    var modal_html = this.template();
+    this.$el.append(modal_html);
+
+    var self = this;
+    this.modal = $('#no-configured-agent-instance-overlay').modal()
+      .on('hidden', function() {
+        self.$el.remove();
+      });
+    return this;
+  },
+  ok_clicked : function() {
+    var self = this;
+    self.modal.modal('hide');
+  }
+});
+
 IONUX.Views.CreateResourceView = Backbone.View.extend({
   tagName: "div",
   template: _.template($("#create-resource-modal-tmpl").html()),
