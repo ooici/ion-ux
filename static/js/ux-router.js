@@ -324,7 +324,7 @@ dashboard_map_resource: function(resource_id) {
         self._remove_dashboard_menu();
         render_page(resource_type, resource_id, model);
         // Pull back recent events as a 2nd request.
-        fetch_events(resource_type, resource_id);
+        fetch_events(window.MODEL_DATA['resource_type'], resource_id);
       });
   },
   
@@ -350,7 +350,7 @@ dashboard_map_resource: function(resource_id) {
         new CommandView({model: resource_extension, el: '.v02'}).render().el;
         render_page(resource_type, resource_id, model);
         // Pull back recent events as a 2nd request.
-        fetch_events(resource_type, resource_id);
+        fetch_events(window.MODEL_DATA['resource_type'], resource_id);
       });
   },
 
@@ -705,7 +705,7 @@ function render_page(resource_type, resource_id, model) {
   console.log('render_page elapsed: ', new Date().getTime() - start_render);
 };
 
-function fetch_events (resource_type, resource_id) {
+function fetch_events(resource_type, resource_id) {
   // Pull back recent events as an async request (allows rest of page to load independantly).
   // It is assumed that the Events div already exists.
   var events_extension = new IONUX.Models.ResourceEvents({resource_id: resource_id});
