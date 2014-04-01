@@ -99,6 +99,7 @@ Now you run the fab script, which will prompt you for necessary information to c
 
         > fab ion_dev deploy
         > fab ion_alpha deploy
+        > fab r3_alpha deploy
         > fab ion_beta deploy
         > fab ion_stage deploy
 	> fab ooinet deploy
@@ -107,3 +108,6 @@ NOTES
 ----------------
 
 * We use a custom version of bootstrap.  So far, manual modifications have been made to static/bootstrap/css/bootstrap.css and static/bootstrap/less/bootstrap.min.css.
+
+* test comment
+

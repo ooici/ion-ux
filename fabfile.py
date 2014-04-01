@@ -201,6 +201,12 @@ def ion_alpha():
     host = 'ion-alpha.oceanobservatories.org'
     my_proxy_client_id = 'myproxy:oa4mp,2012:/client/f2d048062c7414ac20259ace3c44145'
 
+def r3_alpha():
+    global host, gateway_host, my_proxy_client_id
+    host = 'r3-alpha.oceanobservatories.org'
+    gateway_host = 'sg.a3.oceanobservatories.org'
+    my_proxy_client_id = 'myproxy:oa4mp,2012:/client/650abeac1a08cdc1ea3013bd155fede5'
+
 
 def ux_test():
     print 'Deprecated...Please use "fab ion-alpha deploy"'
@@ -209,7 +215,7 @@ def ux_test():
 
 def ion_stage():
     global host, gateway_host, my_proxy_client_id
-    host = 'ooin-mi.oceanobservatories.org'
+    host = 'ion-stage.oceanobservatories.org'
     gateway_host = 'sg.s.oceanobservatories.org'
     my_proxy_client_id = 'myproxy:oa4mp,2012:/client/20771d54e9abf375edd24d79e753a5a2'
 
