@@ -394,6 +394,12 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
   },
   
   get_capabilities: function(evt) {
+      // Change the button to indicate activity while fetching caps if we got here via a click.
+      if (evt) {
+          var but = $(evt.target);
+          but.prop('disabled', true);
+          but.html('Getting Caps...');
+      }
       $('#cmds tbody, #agent-params tbody, #resource-params tbody').empty();
       var self = this;
       $.ajax({
@@ -401,7 +407,11 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
         dataType: 'json',
         global: false,
         success: function(resp){
-          $('.get_capabilities').show();
+          // Return the button to normal.
+          var but = $('.get_capabilities');
+          but.prop('disabled', false);
+          but.html('Get Capabilities');
+          but.show();
           $('#stop').show();
           self.render_commands(resp.data.commands);
           
@@ -422,6 +432,11 @@ IONUX.Views.InstrumentCommandFacepage = Backbone.View.extend({
           };
         },
         error: function(resp){
+          // Return the button to normal.
+          var but = $('.get_capabilities');
+          but.prop('disabled', false);
+          but.html('Get Capabilities');
+
           // Per recommendation, checking for Not Found to determine if an agent is running. 
           // Mostly dulplicated from global $.ajaxError in static/js/ion-ux.js
           
