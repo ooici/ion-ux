@@ -749,9 +749,9 @@ IONUX.Views.AdvancedSearchExtentTemporal = Backbone.View.extend({
         if (!label) label = "Temporal Bounds";
         
         var data_path = this.$el.data('path');
-        var temporal_from, temporal_to;
+        var temporal_from, temporal_to, temporal_field;
         
-        this.$el.html(this.template({label: label, temporal_from: temporal_from, temporal_to: temporal_from}));
+        this.$el.html(this.template({label: label, temporal_from: temporal_from, temporal_to: temporal_from, temporal_field: temporal_field}));
         this.$el.find('input').datepicker({
           autoclose:true,
           format: 'yyyy-mm-dd'
@@ -1233,6 +1233,30 @@ IONUX.Views.SigninFromExpiredSessionView = Backbone.View.extend({
   },
   signin_clicked: function() {
     window.location.href = "https://" + window.location.host + "/login";
+  }
+});
+
+IONUX.Views.NoConfiguredAgentInstance = Backbone.View.extend({
+  tagName: "div",
+  template: _.template($("#no-configured-agent-instance-modal-tmpl").html()),
+  events: {
+    'click #no-configured-agent-instance': 'ok_clicked'
+  },
+  render: function() {
+    $('body').append(this.$el);
+    var modal_html = this.template();
+    this.$el.append(modal_html);
+
+    var self = this;
+    this.modal = $('#no-configured-agent-instance-overlay').modal()
+      .on('hidden', function() {
+        self.$el.remove();
+      });
+    return this;
+  },
+  ok_clicked : function() {
+    var self = this;
+    self.modal.modal('hide');
   }
 });
 

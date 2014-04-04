@@ -229,45 +229,11 @@ dashboard_map_resource: function(resource_id) {
     IONUX.Dashboard.ListResources.resource_id = resource_id;
     IONUX.Dashboard.ListResources.set([]);
 
-    if (IONUX.Dashboard.ListRoles === undefined) {
-      IONUX.Dashboard.ListRoles = new IONUX.Collections.ListRoles(null, {resource_id: resource_id});
-    };
-    IONUX.Dashboard.ListRoles.resource_id = resource_id;
-    IONUX.Dashboard.ListRoles.set([]);
-
-    if (IONUX.Dashboard.ListAttachments === undefined) {
-      IONUX.Dashboard.ListAttachments = new IONUX.Collections.ListAttachments(null, {resource_id: resource_id});
-    };
-    IONUX.Dashboard.ListAttachments.resource_id = resource_id;
-    IONUX.Dashboard.ListAttachments.set([]);
-
-    // Store the responses and merge when everything is done.
-    var r = {};
-    $.when(
-      IONUX.Dashboard.ListResources.fetch({
-         reset   : true
-        ,success : function(resp) {
-          r.listResources = resp;
-        }
-      })
-      ,IONUX.Dashboard.ListRoles.fetch({
-         reset   : true
-        ,success : function(resp) {
-          r.listRoles = resp;
-        }
-      })
-      ,IONUX.Dashboard.ListAttachments.fetch({
-         reset   : true
-        ,success : function(resp) {
-          r.listAttachments = resp;
-        }
-      })
-    ).done(function() {
-      new IONUX.Views.ResourceTable({
-         el         : $('#2163993')
-        ,collection : r.listResources.add(r.listRoles.toJSON(),{silent : true}).add(r.listAttachments.toJSON(),{silent : true})
-        ,list_table : true
-      });
+    IONUX.Dashboard.ListResources.fetch({
+      reset:true,
+      success: function(resp){
+        new IONUX.Views.ResourceTable({el: $('#2163993'), collection: resp, list_table: true, pad_table_with_enpty_rows: true});
+      }
     });
   },
 
@@ -357,6 +323,8 @@ dashboard_map_resource: function(resource_id) {
         $('.span9 li,.span3 li').hide();
         self._remove_dashboard_menu();
         render_page(resource_type, resource_id, model);
+        // Pull back recent events as a 2nd request.
+        fetch_events(window.MODEL_DATA['resource_type'], resource_id);
       });
   },
   
@@ -381,6 +349,8 @@ dashboard_map_resource: function(resource_id) {
         $('.span9 li,.span3 li').hide();
         new CommandView({model: resource_extension, el: '.v02'}).render().el;
         render_page(resource_type, resource_id, model);
+        // Pull back recent events as a 2nd request.
+        fetch_events(window.MODEL_DATA['resource_type'], resource_id);
       });
   },
 
@@ -597,6 +567,15 @@ function render_page(resource_type, resource_id, model) {
 
   var table_elmts = $('.'+resource_type+' .table_ooi');
   _.each(table_elmts, function(el) {
+    if ($(el).data('label') == 'Events') {
+      // Create a placeholder while events loads as async request.
+      $(el).html(_.template($('#datatable-tmpl').html()));
+      $(el).find(".datatable-container table").dataTable({
+         aaData    : [['Loading recent events...']]
+        ,aoColumns : [{'sTitle' : 'Status'}]
+      });
+      return;
+    }
     var data_path = $(el).data('path');
     var raw_table_data = get_descendant_properties(window.MODEL_DATA, data_path);
     if (!_.isEmpty(raw_table_data)) {
@@ -609,7 +588,7 @@ function render_page(resource_type, resource_id, model) {
           _.extend(opts, {popup_view: IONUX.Views.AttachmentZoomView,
                           popup_label: "View",
                           popup_filter_method: function() { return true; }});
-        } 
+        }
         var table = new IONUX.Views.DataTable(opts);
     } else {
         var table = new IONUX.Views.DataTable({el: $(el), data: []});
@@ -627,9 +606,6 @@ function render_page(resource_type, resource_id, model) {
     switch(label){
       case 'Attachments':
         new IONUX.Views.AttachmentActions({el:$(el).find('.filter-header')});
-        break;
-      case 'Events':
-        new IONUX.Views.EventActions({el:$(el).find('.filter-header')});
         break;
       case 'Deployments':
         new IONUX.Views.DeploymentActions({el:$(el).find('.filter-header')});
@@ -710,7 +686,8 @@ function render_page(resource_type, resource_id, model) {
   $('a[data-toggle="tab"]').on('shown', function (e){
     var table = $($(e.target).attr('href')).find('.'+resource_type+' .table_ooi');
     // Big performance hit with the line below. Need to optimize.
-    if (table.length) $(table).find('table').last().dataTable().fnAdjustColumnSizing();
+    // Filter out events until the async request is done.  It will come back and fix this.
+    if (table.length && $(table).data('label') != 'Events') $(table).find('table').last().dataTable().fnAdjustColumnSizing();
   });  
 
   $('.span9 ul, .span3 ul, .span12 ul').find('li.' + resource_type + ':first').find('a').click(); 
@@ -727,3 +704,35 @@ function render_page(resource_type, resource_id, model) {
 
   console.log('render_page elapsed: ', new Date().getTime() - start_render);
 };
+
+function fetch_events(resource_type, resource_id) {
+  // Pull back recent events as an async request (allows rest of page to load independantly).
+  // It is assumed that the Events div already exists.
+  var events_extension = new IONUX.Models.ResourceEvents({resource_id: resource_id});
+  events_extension.fetch().success(function(events_model,events_resp) {
+    // Looping through the table elements is a bit overkill since we're only after the events table,
+    // but keep it looking the same as the loop in render_page which is where the meat occurs.
+    var table_elmts = $('.'+ resource_type +' .table_ooi');
+
+    _.each(table_elmts, function(el) {
+      var data_path = $(el).data('path');
+      if (data_path == 'computed.recent_events.value' && window.MODEL_DATA && window.MODEL_DATA.computed) {
+        // Shove the recent events into the beach ball.
+        window.MODEL_DATA.computed.recent_events = events_model.data;
+        var raw_table_data = get_descendant_properties(window.MODEL_DATA, data_path);
+        var opts = {el: $(el), data: raw_table_data};
+
+        // Create the table as we would a normal one.  This includes adding the data-toggle tab listener.
+        var table = new IONUX.Views.DataTable(opts);
+        new IONUX.Views.EventActions({el:$(el).find('.filter-header')});
+
+        // Add the tab listener.
+        $('a[data-toggle="tab"]').on('shown', function (e){
+          var table = $($(e.target).attr('href')).find('.'+resource_type+' .table_ooi');
+          // Big performance hit with the line below. Need to optimize.
+          if (table.length) $(table).find('table').last().dataTable().fnAdjustColumnSizing();
+        });
+      }
+    });
+  });
+}
