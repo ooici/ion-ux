@@ -1,9 +1,16 @@
 <h4><%= label %></h4>
-<div class="temporal-from control-group" title="Constrain search Last-Modified time from">
+<div class="temporal-from control-group" title="Constrain search time from">
     <label class="control-label" for="temporal-from-ctrl">From:</label>
     <input type="text" name="temporal-from-ctrl" class="textfield_geo" value="<%= temporal_from %>" disabled /> <i class="icon-calendar icon-white"></i>
 </div>
-<div class="temporal-to" title="Constrain search Last-Modified time to">
+<div class="temporal-to" title="Constrain search time to">
     <label class="control-label" for="temporal-to-ctrl">To:</label>
     <input type="text" name="temporal-to-ctrl" class="textfield_geo" value="<%= temporal_to %>" disabled /> <i class="icon-calendar icon-white"></i>
+<div class="temporal-type" title="Constrain search time type">
+    <label class="control-label" for="temporal-field-ctrl">Type:</label>
+    <select name="temporal-field-ctrl" id="temporal-field-ctrl" class="operator">
+        <option value="temporal_range">temporal range</option>
+        <option value="ts_created">time created</option>
+        <option value="ts_updated">time updated</option>
+    </select>
 </div>

@@ -10,7 +10,7 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
     this.resource_id = options.resource_id;
     // this.black_list = options.black_list || [];
     this.black_list = ['_id', '_rev', 'ts_created', 'ts_updated', 'lcstate', /*'type_',*/ 'alt_ids', 
-                       'addl', 'availability', 'message_controllable', 'monitorable'];
+                       'addl', 'availability', 'message_controllable', 'monitorable', 'persisted_version','alt_resource_type'];
     this.nest_depth_factor = options.nest_depth_factor || 50;
     Backbone.Form.helpers.keyToTitle = this.key_to_title;
     Backbone.Form.editors.List.Modal.ModalAdapter = Backbone.BootstrapModal;

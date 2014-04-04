@@ -133,6 +133,8 @@ def search(query=None):
             temporal_bounds   = {'from': adv_query_chunks.get('temporal-from-ctrl', [''])[0],
                                    'to': adv_query_chunks.get('temporal-to-ctrl', [''])[0]}
 
+            temporal_field    = adv_query_chunks.get('temporal-field-ctrl', [''])[0];
+
             search_criteria   = zip(adv_query_chunks.get('filter_var', []),
                                     adv_query_chunks.get('filter_operator', []),
                                     adv_query_chunks.get('filter_arg', []))
@@ -140,6 +142,7 @@ def search(query=None):
             search_results    = ServiceApi.adv_search(geospatial_bounds,
                                                       vertical_bounds,
                                                       temporal_bounds,
+                                                      temporal_field,
                                                       search_criteria)
 
         return render_json_response(search_results)
@@ -375,6 +378,12 @@ def extension(resource_type, resource_id):
     extension = ServiceApi.get_extension(resource_type, resource_id, user_id)
     return render_json_response(extension)
 
+@app.route('/get_recent_events/<resource_id>/', methods=['GET'])
+def get_recent_events(resource_id):
+    user_id = session['user_id'] if session.has_key('user_id') else None
+    events = ServiceApi.get_recent_events(resource_id, user_id)
+    return render_json_response(events)
+
 @app.route('/related_sites/<resource_id>/', methods=['GET'])
 def related_sites(resource_id):
     related_sites = ServiceApi.find_related_sites(resource_id)
@@ -385,16 +394,6 @@ def related_objects_has_resource(resource_id):
     related_objects_has_resource = ServiceApi.find_related_objects_has_resource(resource_id)
     return render_json_response(related_objects_has_resource)
 
-@app.route('/related_objects_has_attachment/<resource_id>/', methods=['GET'])
-def related_objects_has_attachment(resource_id):
-    related_objects_has_attachment = ServiceApi.find_related_objects_has_attachment(resource_id)
-    return render_json_response(related_objects_has_attachment)
-
-@app.route('/related_objects_has_role/<resource_id>/', methods=['GET'])
-def related_objects_has_role(resource_id):
-    related_objects_has_role = ServiceApi.find_related_objects_has_role(resource_id)
-    return render_json_response(related_objects_has_role)
-
 @app.route('/get_data_product_group_list/', methods=['GET'])
 def get_data_product_group_list():
     dp_group_list = ServiceApi.get_data_product_group_list()
@@ -404,7 +403,18 @@ def get_data_product_group_list():
 def find_site_data_products(resource_id):
     site_data_products = ServiceApi.find_site_data_products(resource_id)
     return render_json_response(site_data_products)
-    
+
+
+@app.route('/get_data_product_updates/', methods=['POST'])
+def get_data_product_updates():
+    data_product_id_list= request.form.get('data_product_id_list', None)
+    data_product_id_list = data_product_id_list.split(',')
+    since_timestamp = request.form.get('since_timestamp', None)
+
+    data_product_info = ServiceApi.get_data_product_updates(data_product_id_list,  since_timestamp)
+    return render_json_response(data_product_info)
+
+
 @app.route('/get_sites_status/', methods=['GET', 'POST'])
 def get_sites_status():
     # status = Servi1ceApi.find_status()

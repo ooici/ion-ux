@@ -187,6 +187,15 @@ IONUX.Models.ResourceExtension = Backbone.Model.extend({
     }
 });
 
+IONUX.Models.ResourceEvents = Backbone.Model.extend({
+    url: function(){
+        return '/get_recent_events/'+this.get('resource_id')+'/';
+    },
+    parse: function(resp){
+        make_iso_timestamps(resp);
+        return resp.data;
+    }
+});
 
 IONUX.Models.Observatory = Backbone.Model.extend({
   url: "/observatories/",
