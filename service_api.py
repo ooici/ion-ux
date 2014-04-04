@@ -89,6 +89,16 @@ class ServiceApi(object):
         return site_data_products
 
     @staticmethod
+    def get_data_product_updates(data_product_ids, since_timestamp):
+        data_products_status = service_gateway_get('data_product_management',
+                                                 'get_data_product_updates',
+                                                 raw_return=True,
+                                                 params={'data_product_id_list': data_product_ids,
+                                                         'since_timestamp': since_timestamp
+                                                        })
+        return data_products_status
+
+    @staticmethod
     def activate_primary(deployment_id):
         activate = service_gateway_post('observatory_management', 'activate_deployment', params={'deployment_id': deployment_id})
         return activate
