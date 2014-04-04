@@ -403,7 +403,18 @@ def get_data_product_group_list():
 def find_site_data_products(resource_id):
     site_data_products = ServiceApi.find_site_data_products(resource_id)
     return render_json_response(site_data_products)
-    
+
+
+@app.route('/get_data_product_updates/', methods=['POST'])
+def get_data_product_updates():
+    data_product_id_list= request.form.get('data_product_id_list', None)
+    data_product_id_list = data_product_id_list.split(',')
+    since_timestamp = request.form.get('since_timestamp', None)
+
+    data_product_info = ServiceApi.get_data_product_updates(data_product_id_list,  since_timestamp)
+    return render_json_response(data_product_info)
+
+
 @app.route('/get_sites_status/', methods=['GET', 'POST'])
 def get_sites_status():
     # status = Servi1ceApi.find_status()
