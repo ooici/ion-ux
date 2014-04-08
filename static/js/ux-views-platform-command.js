@@ -134,6 +134,12 @@ IONUX.Views.PlatformCommandFacepage = Backbone.View.extend({
   },
   
   get_capabilities: function(evt) {
+      // Change the button to indicate activity while fetching caps if we got here via a click.
+      if (evt) {
+          var but = $(evt.target);
+          but.prop('disabled', true);
+          but.html('Getting Caps...');
+      }
       $('#cmds tbody, #agent-params tbody, #resource-params tbody').empty();
       var self = this;
       $.ajax({
@@ -142,6 +148,10 @@ IONUX.Views.PlatformCommandFacepage = Backbone.View.extend({
         global: false,
         success: function(resp){
           console.log('get_capabilities', resp);
+          // Return the button to normal.
+          var but = $('.get_capabilities');
+          but.prop('disabled', false);
+          but.html('Get Capabilities');
           $('#stop, .get_capabilities').show();
           $('#start, #platform_status').hide();
           self.render_commands(resp.data.commands);
@@ -170,6 +180,10 @@ IONUX.Views.PlatformCommandFacepage = Backbone.View.extend({
         }, /* success */
         error: function(resp) {
           console.log('Error: ', resp);
+          // Return the button to normal.
+          var but = $('.get_capabilities');
+          but.prop('disabled', false);
+          but.html('Get Capabilities');
           $('#start').show();
           $('#stop').hide();
         }
