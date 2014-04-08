@@ -18,6 +18,9 @@ IONUX.Views.PlatformCommandFacepage = Backbone.View.extend({
   },
 
   render: function(){
+    if (this.model.get('agent_instance') == null) {
+      new IONUX.Views.NoConfiguredAgentInstance().render();
+    }
     this.$el.prepend(this.template(this.model.toJSON())).show();
     this.get_platform_state();
     return this;
@@ -52,14 +55,8 @@ IONUX.Views.PlatformCommandFacepage = Backbone.View.extend({
         };
       },
       error: function(resp) {
-        var err = JSON.parse(resp.responseText);
-        console.log("get_platform_agent_state ERROR:", err);
-        if (err && err.data && err.data.GatewayError && err.data.GatewayError.Message && /No agent process/.test(err.data.GatewayError.Message)) {
-          new IONUX.Views.NoConfiguredAgentInstance().render();
-        }
-        else {
-          $('#start').show()
-        }
+        console.log("get_platform_agent_state ERROR:", JSON.parse(resp.responseText));
+        $('#start').show()
         $('#stop, #platform_status').hide();
       }
     });
