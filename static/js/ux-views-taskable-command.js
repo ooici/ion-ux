@@ -68,12 +68,21 @@ IONUX.Views.TaskableResourceCommandFacepage = Backbone.View.extend({
   },
   
   get_capabilities: function(evt) {
+      // Change the button to indicate activity while fetching caps if we got here via a click.
+      if (evt) {
+          var but = $(evt.target);
+          but.prop('disabled', true);
+          but.html('Getting Caps...');
+      }
       $('#cmds tbody, #agent-params tbody, #resource-params tbody').empty();
       var self = this;
       $.ajax({
         url: 'get_capabilities?cap_type=abc123',
         dataType: 'json',
         success: function(resp){
+          var but = $('.get_capabilities');
+          but.prop('disabled', false);
+          but.html('Get Capabilities');
           self.render_commands(resp.data.commands);
           new IONUX.Views.TaskableResourceParams({model: new IONUX.Models.ResourceParams(resp.data.resource_params)}).render().el;
           // Catch 'GatewayError' caused by unsupported/invalid state.
@@ -82,6 +91,12 @@ IONUX.Views.TaskableResourceCommandFacepage = Backbone.View.extend({
           // } else {
           //   $('#resource-form').empty();
           // };
+        },
+        error: function(resp){
+          // Return the button to normal.
+          var but = $('.get_capabilities');
+          but.prop('disabled', false);
+          but.html('Get Capabilities');
         }
       });
   },
