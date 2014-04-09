@@ -10,7 +10,8 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
     this.resource_id = options.resource_id;
     // this.black_list = options.black_list || [];
     this.black_list = ['_id', '_rev', 'ts_created', 'ts_updated', 'lcstate', /*'type_',*/ 'alt_ids', 
-                       'addl', 'availability', 'message_controllable', 'monitorable', 'persisted_version','alt_resource_type'];
+                       'addl', 'availability', 'message_controllable', 'monitorable', 'alt_resource_type'];
+    this.gray_list = ['persisted_version'];
     this.nest_depth_factor = options.nest_depth_factor || 50;
     Backbone.Form.helpers.keyToTitle = this.key_to_title;
     Backbone.Form.editors.List.Modal.ModalAdapter = Backbone.BootstrapModal;
@@ -264,6 +265,11 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
         sorted_schema[k] = item_schema;
       });
     }
+
+    // Make anything on the gray_list uneditable.
+    _.each(_.intersection(this.gray_list,_.keys(sorted_schema)),function(k) {
+      sorted_schema[k].editorAttrs = {'disabled':'disabled'};
+    });
 
     return sorted_schema;
   },
