@@ -56,7 +56,9 @@ IONUX.Views.PlatformCommandFacepage = Backbone.View.extend({
       },
       error: function(resp) {
         console.log("get_platform_agent_state ERROR:", JSON.parse(resp.responseText));
-        $('#start').show()
+        if (self.model.get('agent_instance') !== null) {
+          $('#start').show()
+        }
         $('#stop, #platform_status').hide();
       }
     });
