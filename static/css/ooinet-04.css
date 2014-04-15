@@ -1,0 +1,123 @@
+/*
+ooinet-04.css
+by Peter Rosti
+last edited 04-14 04-09 03-06 03-05 2014-03-03
+
+This layout uses calc() to set height and width values
+Note: calc must have spaces in the formula, to accomodate IE bug,
+like this: calc(100% - 100px), instead of like this: calc(100%-100px)
+DIVS in their native state stretch in WIDTH but not in HEIGHT, so heights have to be handled very specifically for calculated
+heights to work at all.
+height:100% on both HTML and BODY are REQUIRED because percentages cascade from ancestor to descendant. Even leaving it off html
+and just putting it on body only will cause the height calculations contained within the body to fail.
+*/
+
+html, body {
+  height:100%;
+}
+
+body {
+  position:relative;
+  margin:0px;
+  padding:0px;
+}
+
+#header {
+  position:fixed;
+  top:0px;
+  left:0px;
+  margin:0px;
+  padding:0px;
+  width:100%;
+  height:72px;
+  z-index:0;
+  ovderflow:hidden;
+  'outline:1px solid #000; /* temp */
+}
+
+#main-subheader {
+  position:fixed;
+  top:72px;
+  left:218px;
+  margin:0px;
+  padding:0px;
+  width:calc(100% - 218px);
+  height:44px;
+  z-index:0;
+  'outline:1px solid #000; /* temp */
+}
+
+#main {
+  position:absolute;
+  top:116px;
+  left:218px;
+  padding:0px;
+  margin:0px;
+  height:calc(100% - 116px);
+  width:calc(100% - 218px);
+  z-index:0;
+  overflow:auto; /* Note: for a contained iframe at 100% height and width, must set overflow:hidden
+  otherwise there will be 2 vertical scroll bars (might be a browser bug). */
+  'outline:1px solid #000; /* temp */
+}
+
+#dynamic-container {  /* same as main */
+  position:absolute;
+  top:116px;
+  left:218px;
+  padding:0px;
+  margin:0px;
+  height:calc(100% - 116px);
+  width:calc(100% - 218px);
+  z-index:0;
+  overflow:auto; /* Note: for a contained iframe at 100% height and width, must set overflow:hidden
+  otherwise there will be 2 vertical scroll bars (might be a browser bug). */
+  'outline:1px solid #000; /* temp */
+}
+
+#left {
+  position:absolute;
+  top:116px;
+  left:0px;
+  height:calc(100% - 116px);
+  width:218px;
+  overflow:auto;
+  z-index:0;
+  outline:1px solid #000; /* temp */
+}
+
+#left-subheader {
+  position:fixed;
+  top:72px;
+  left:0px;
+  margin:0px;
+  padding:0px;
+  width:218px;
+  height:44px;
+  z-index:0;
+  'outline:1px solid #000; /* temp */
+}
+
+upper-main {
+  position:absolute;
+  top:0px;
+  left:0px;
+  margin:0px;
+  padding:0px;
+  width:100%;
+  height:50%;
+  z-index:4;
+  overflow:auto;
+}
+
+lower-main {
+  position:absolute;
+  top:50%;
+  left:0px;
+  margin:0px;
+  padding:0px;
+  width:100%;
+  height:50%;
+  z-index:4;
+  overflow:auto;
+}
