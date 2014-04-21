@@ -97,8 +97,7 @@ IONUX.Views.DashboardActions = IONUX.Views.ActionMenu.extend({
         if (!IONUX.is_logged_in() || _.isEmpty(IONUX.createRoles()))
           this.interaction_items.splice(this.interaction_items.indexOf('Create Resource'), 1);
         
-        if (!IONUX.is_logged_in()) this.interaction_items.push(INTERACTIONS_OBJECT.no_options);
-      
+        if (!IONUX.is_logged_in() || this.interaction_items.length == 0) this.interaction_items.push(INTERACTIONS_OBJECT.no_options);
         
         this.create_view_actionmenu();
         this.on("action__create_resource", this.create_resource);
