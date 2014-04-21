@@ -133,7 +133,7 @@ class ServiceApi(object):
         if not query:
             rrid = re.compile('^[a-z0-9]{32}$')
             if rrid.match(search_query):
-                query = "SEARCH '_id' MATCH '%s' FROM 'data_products_index' LIMIT 100" % search_query
+                query = "SEARCH '_id' MATCH '%s' FROM 'resources_index' LIMIT 100" % search_query
 
         # if not a raw query or resource id
         if not query:
