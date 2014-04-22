@@ -413,7 +413,7 @@ IONUX.Views.GroupActions = IONUX.Views.ActionMenu.extend({
     }, IONUX.Views.ActionMenu.prototype.events),
 
     initialize: function() {
-        this.interaction_items = INTERACTIONS_OBJECT.group_interactions;
+        this.interaction_items = (this.$el).find("[data-level=2]").length > 0 ? INTERACTIONS_OBJECT.group_interactions : INTERACTIONS_OBJECT.no_options;
         this.on("action__more_info", this.action__more_info);
         this.on("action__submenu_toggle", this.action__submenu_toggle);
         this.on("action__edit", this.action__edit);
@@ -442,7 +442,7 @@ IONUX.Views.BlockActions = IONUX.Views.ActionMenu.extend({
     }, IONUX.Views.ActionMenu.prototype.events),
 
     initialize: function() {
-        this.interaction_items = INTERACTIONS_OBJECT.block_interactions;
+        this.interaction_items = (this.$el).find("[data-level=2]").length > 0 ? INTERACTIONS_OBJECT.block_interactions : INTERACTIONS_OBJECT.no_options;
         this.on("action__more_info", this.action__more_info);
         this.on("action__less_info", this.action__less_info);
         this.on("action__detailed_view", this.action__detailed_view);
