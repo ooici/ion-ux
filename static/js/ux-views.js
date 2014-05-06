@@ -1129,6 +1129,10 @@ IONUX.Views.AttachmentZoomView = Backbone.View.extend({
     return this.cdreq;
   },
   can_delete: function(cbfunc) {
+    if (!IONUX.SESSION_MODEL.get('is_logged_in')) {
+      return false;
+    }
+
     // DELETE IF: user is owner of resource, user is an org manager, or if they are the owner of the attachment (requires ajax call)
     // you pass in a callback and if they are allowed to delete, your callback is run (this set to this current view object)
 
