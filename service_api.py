@@ -403,8 +403,9 @@ class ServiceApi(object):
         return req
 
     @staticmethod
-    def declare_asset_tracking_resources(content):
-        return {'response' : 'great job!'}
+    def declare_asset_tracking_resources(file_descriptor):
+        content = file_descriptor.read()
+        return service_gateway_post('observatory_management', 'declare_resources', params={'content_type' : file_descriptor.mimetype, 'content' : content})
 
     @staticmethod
     def delete_resource_attachment(attachment_id):
