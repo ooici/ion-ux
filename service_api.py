@@ -403,20 +403,8 @@ class ServiceApi(object):
         return req
 
     @staticmethod
-    def upload_asset_tracking(filename, content_type, content):
-        # form our own data
-        post_data = {'file_name'    : filename,
-                     'content_type' : content_type}
-
-        # use build_post_request to get url
-        url, req = build_post_request('asset_tracking_upload', None, params=post_data)
-  
-        post_files = { 'file': (filename, content) }
-
-        # make our own post
-        req = requests.post(url, req, files=post_files)
-
-        return {'response' : filename}
+    def declare_asset_tracking_resources(content):
+        return {'response' : 'great job!'}
 
     @staticmethod
     def delete_resource_attachment(attachment_id):

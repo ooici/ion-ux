@@ -1082,7 +1082,7 @@ IONUX.Views.UploadAssetTrackingView = Backbone.View.extend({
   tagName: "div",
   template: _.template($("#upload-asset-tracking-tmpl").html()),
   events: {
-    "click #add-attachment-ok": "ok_clicked"
+    "click #add-resource_declaration-ok": "ok_clicked"
   },
   up_trigger: null,
   render: function() {
@@ -1093,15 +1093,15 @@ IONUX.Views.UploadAssetTrackingView = Backbone.View.extend({
     var self = this;
 
     // jquery upload initialization
-    $('#attachment').fileupload({
-      url: "/asset_tracking_upload/",
+    $('#resource_declaration').fileupload({
+      url: "/asset_tracking_resource_declaration/",
       dataType: 'json',
       add: function(e, data) {
         self.up_trigger = data;
       },
       replaceFileInput: false,
       done: function(e, data) {
-        alert(data.result.response);
+        alert(data.result.data.response);
         $('.progress', '#upload-asset-tracking-overlay').addClass('progress-success');
         $('#upload-asset-tracking-overlay').modal('hide');
 
@@ -1115,7 +1115,7 @@ IONUX.Views.UploadAssetTrackingView = Backbone.View.extend({
       always: function(e, data) {
         $('input', '#upload-asset-tracking-overlay').attr('disabled', false);
 
-        var atel = $('#attachment');
+        var atel = $('#resource_declaration');
         atel.css('display', 'inherit');
         atel.next().css('display', 'inherit'); // should be help-inline span
 
@@ -1141,7 +1141,7 @@ IONUX.Views.UploadAssetTrackingView = Backbone.View.extend({
       alert("Please select a file to upload");
     else {
       $('input', '#upload-asset-tracking-overlay').attr('disabled', true);
-      var atel = $('#attachment');
+      var atel = $('#resource_declaration');
       atel.css('display', 'none');
       atel.next().css('display', 'none'); // should be help-inline span
 
