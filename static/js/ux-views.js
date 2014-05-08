@@ -1078,6 +1078,83 @@ IONUX.Views.ResourceAddAttachmentView = Backbone.View.extend({
 
 });
 
+IONUX.Views.UploadAssetTrackingView = Backbone.View.extend({
+  tagName: "div",
+  template: _.template($("#upload-asset-tracking-tmpl").html()),
+  events: {
+    "click #add-attachment-ok": "ok_clicked"
+  },
+  up_trigger: null,
+  render: function() {
+    $('body').append(this.$el);
+    var modal_html = this.template();
+    this.$el.append(modal_html);
+
+    var self = this;
+
+    // jquery upload initialization
+    $('#attachment').fileupload({
+      url: "/asset_tracking_upload/",
+      dataType: 'json',
+      add: function(e, data) {
+        self.up_trigger = data;
+      },
+      replaceFileInput: false,
+      done: function(e, data) {
+        alert(data.result.response);
+        $('.progress', '#upload-asset-tracking-overlay').addClass('progress-success');
+        $('#upload-asset-tracking-overlay').modal('hide');
+
+        Backbone.history.fragment = null; // Clear history fragment to allow for page "refresh".
+        IONUX.ROUTER.navigate(window.location.pathname, {trigger: true});
+      },
+      fail: function(e, data) {
+        console.log(data);
+        alert("Failed to upload: " + data.response);
+      },
+      always: function(e, data) {
+        $('input', '#upload-asset-tracking-overlay').attr('disabled', false);
+
+        var atel = $('#attachment');
+        atel.css('display', 'inherit');
+        atel.next().css('display', 'inherit'); // should be help-inline span
+
+        $('img.spinner', '#upload-asset-tracking-overlay').css('display', 'none');
+
+        $('.progress', atel.parent()).css('display', 'none');
+      },
+      progressall: function(e, data) {
+        var progress = parseInt(data.loaded / data.total * 100, 10);
+        $('.bar', '#upload-asset-tracking-overlay .progress').css('width', progress + '%');
+      },
+    });
+
+    $('#upload-asset-tracking-overlay').modal()
+    .on('hidden', function() {
+      self.$el.remove();
+    });
+
+    return false;
+  },
+  ok_clicked: function() {
+    if (this.up_trigger == null)
+      alert("Please select a file to upload");
+    else {
+      $('input', '#upload-asset-tracking-overlay').attr('disabled', true);
+      var atel = $('#attachment');
+      atel.css('display', 'none');
+      atel.next().css('display', 'none'); // should be help-inline span
+
+      $('.progress', atel.parent()).css('display', 'block');
+
+      $('img.spinner', '#upload-asset-tracking-overlay').css('display', 'inline-block');
+
+      this.up_trigger.submit();
+    }
+  },
+
+});
+
 IONUX.Views.AttachmentZoomView = Backbone.View.extend({
   template: _.template($("#attachment-zoom-tmpl").html()),
   events: {
@@ -1129,10 +1206,6 @@ IONUX.Views.AttachmentZoomView = Backbone.View.extend({
     return this.cdreq;
   },
   can_delete: function(cbfunc) {
-    if (!IONUX.SESSION_MODEL.get('is_logged_in')) {
-      return false;
-    }
-
     // DELETE IF: user is owner of resource, user is an org manager, or if they are the owner of the attachment (requires ajax call)
     // you pass in a callback and if they are allowed to delete, your callback is run (this set to this current view object)
 

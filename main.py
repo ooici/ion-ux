@@ -162,6 +162,14 @@ def attachment(attachment_id):
         attachment_filename += '%s' % attachment_ext
     return send_file(attachment, attachment_filename=attachment_filename, as_attachment=True)
 
+@app.route('/asset_tracking_upload/', methods=['POST'])
+def asset_tracking_upload():
+    fd = request.files['attachment']
+    retval = ServiceApi.upload_asset_tracking(fd.filename,
+                                              fd.mimetype,
+                                              fd)
+    return jsonify(retval)
+
 @app.route('/attachment/', methods=['POST'])
 def attachment_create():
     fd = request.files['attachment']
