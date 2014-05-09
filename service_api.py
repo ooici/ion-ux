@@ -1,4 +1,4 @@
-import requests, json, time, re
+import requests, json, time, re, binascii
 from flask import session, jsonify, abort, current_app as app
 from config import GATEWAY_HOST, GATEWAY_PORT
 from copy import deepcopy
@@ -407,7 +407,9 @@ class ServiceApi(object):
         content = file_descriptor.read()
         return service_gateway_post('observatory_management',
                                     'declare_asset_tracking_resources',
-                                    params={'content_type' : file_descriptor.mimetype, 'content' : content})
+                                    params={'content_type'     : file_descriptor.mimetype,
+                                            'content'          : binascii.b2a_hex(content),
+                                            'content_encoding' : 'hex'})
 
     @staticmethod
     def delete_resource_attachment(attachment_id):
