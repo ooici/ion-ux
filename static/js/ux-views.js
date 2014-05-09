@@ -1111,6 +1111,9 @@ IONUX.Views.UploadAssetTrackingView = Backbone.View.extend({
       fail: function(e, data) {
         console.log(data);
         alert("Failed to upload: " + data.errorThrown);
+
+        Backbone.history.fragment = null; // Clear history fragment to allow for page "refresh".
+        IONUX.ROUTER.navigate(window.location.pathname, {trigger: true});
       },
       always: function(e, data) {
         $('input', '#upload-asset-tracking-overlay').attr('disabled', false);
