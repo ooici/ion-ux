@@ -408,8 +408,7 @@ class ServiceApi(object):
         return service_gateway_post('observatory_management',
                                     'declare_asset_tracking_resources',
                                     params={'content_type'     : file_descriptor.mimetype,
-                                            'content'          : binascii.b2a_hex(content),
-                                            'content_encoding' : 'hex'})
+                                            'content'          : binascii.b2a_hex(content)})
 
     @staticmethod
     def delete_resource_attachment(attachment_id):

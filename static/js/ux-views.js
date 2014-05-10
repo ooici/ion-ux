@@ -1101,16 +1101,32 @@ IONUX.Views.UploadAssetTrackingView = Backbone.View.extend({
       },
       replaceFileInput: false,
       done: function(e, data) {
-        alert(data.result.data.response);
+        $('#add-resource_declaration-ok').hide();
+        $('#add-resource_declaration-cancel').html('Close');
+        var html = [];
+        _.map(data.result.data.res_modified,function(v,k) {
+          if (v.length > 0) {
+            html.push(k + ' : ' + v.length + ' record(s) modified');
+          }
+        });
+        _.map(data.result.data.res_removed,function(v,k) {
+          if (v.length > 0) {
+            html.push(k + ' : ' + v.length + ' record(s) removed');
+          }
+        });
+        $('#status').html(html.join("\n"));
+        console.dir(data);
         $('.progress', '#upload-asset-tracking-overlay').addClass('progress-success');
-        $('#upload-asset-tracking-overlay').modal('hide');
+        // $('#upload-asset-tracking-overlay').modal('hide');
 
         Backbone.history.fragment = null; // Clear history fragment to allow for page "refresh".
         IONUX.ROUTER.navigate(window.location.pathname, {trigger: true});
       },
       fail: function(e, data) {
-        console.log(data);
-        alert("Failed to upload: " + data.errorThrown);
+        $('#add-resource_declaration-ok').hide();
+        $('#add-resource_declaration-cancel').html('Close');
+        $('#status').html(data.errorThrown);
+        console.dir(data);
 
         Backbone.history.fragment = null; // Clear history fragment to allow for page "refresh".
         IONUX.ROUTER.navigate(window.location.pathname, {trigger: true});
@@ -1119,8 +1135,8 @@ IONUX.Views.UploadAssetTrackingView = Backbone.View.extend({
         $('input', '#upload-asset-tracking-overlay').attr('disabled', false);
 
         var atel = $('#resource_declaration');
-        atel.css('display', 'inherit');
-        atel.next().css('display', 'inherit'); // should be help-inline span
+        atel.css('display', 'inline');
+        atel.next().css('display', 'inline');
 
         $('img.spinner', '#upload-asset-tracking-overlay').css('display', 'none');
 
