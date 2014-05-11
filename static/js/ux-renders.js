@@ -156,7 +156,33 @@ InformationResourceRender.prototype.header = function() {
   $('.heading .InformationResource').wrapInner('<div class="' + window.MODEL_DATA.resource.type_ + '"></div>');
 }
 
+/*
+ * Asset Render
+ */
+function AssetRender() {
+  var l = [];
+  _.map(window.MODEL_DATA.asset_specification.attribute_specifications,function(v,k) {
+    l.push(
+      '<div class="level-zero text_short_ooi">' + '<div class="row-fluid">' +
+        '<div class="span4 text-short-label">' + k + '</div>' +
+        (!_.isUndefined(window.MODEL_DATA.resource.asset_attrs[k]) ? '<div class="span8 text-short-value">' + window.MODEL_DATA.resource.asset_attrs[k]['value'] + '</div>' : '') +
+      '</div>' + '</div>'
+    );
+  });
 
-
-
-
+  // Put this as the 1st panel, i.e. prepend to the 1st panel already on the page.
+  $('.v02,.span9').prepend(
+    '<div class="group">' +
+      '<ul class="nav nav-tabs"><li class="Resource active" style="display: list-item;"><a data-toggle="tab" href="#216312648">Attributes</a></li></ul>' +
+      '<div class="tab-content">' +
+        '<div class="tab-pane row-fluid active">' +
+          '<div class="Asset block" style="margin-left:0px;">' +
+            '<div class="content-wrapper">' +
+              l.join('') +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>'
+  );
+};

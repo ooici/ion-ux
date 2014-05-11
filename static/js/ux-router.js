@@ -490,7 +490,9 @@ function render_page(resource_type, resource_id, model) {
   
   var start_render = new Date().getTime();
   window.MODEL_DATA = model.data;
-  
+ 
+  // Assets weren't introduced the old FileMakerPro way, so treat them specially later.
+  var orig_resource_type = resource_type; 
   resource_type = get_renderable_resource_type(resource_type);
 
   window.MODEL_DATA['resource_type'] = resource_type;
@@ -665,7 +667,11 @@ function render_page(resource_type, resource_id, model) {
       case "DataProduct":
         var render = new DataProductRender();
         break;
-          
+  }
+
+  // Deal w/ an Asset if necessary
+  if (orig_resource_type == 'Asset') {
+    var render = new AssetRender();
   }
     
   
