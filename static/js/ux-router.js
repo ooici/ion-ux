@@ -491,7 +491,8 @@ function render_page(resource_type, resource_id, model) {
   var start_render = new Date().getTime();
   window.MODEL_DATA = model.data;
  
-  // Assets weren't introduced the old FileMakerPro way, so treat them specially later.
+  // Assets weren't introduced the old FileMakerPro way (hence, they aren't 'renderable').
+  // So treat them specially later.
   var orig_resource_type = resource_type; 
   resource_type = get_renderable_resource_type(resource_type);
 
@@ -673,7 +674,6 @@ function render_page(resource_type, resource_id, model) {
   if (orig_resource_type == 'Asset') {
     var render = new AssetRender();
   }
-    
   
   _.each($('.v02 .'+resource_type), function(el){
     $(el).find('.content-wrapper:first').css('height', '200px');
