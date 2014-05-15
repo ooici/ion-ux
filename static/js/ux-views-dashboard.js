@@ -1371,11 +1371,12 @@ IONUX.Collections.ListResources = Backbone.Collection.extend({
 - - - - - - - - - - - - - - - - - 
 */
 
-IONUX.ListWhitelist = ['DataProduct', 'InstrumentDevice', 'PlatformDevice', 'StationSite', 'Observatory'];
+IONUX.ListWhitelist = ['Asset','DataProduct', 'InstrumentDevice', 'PlatformDevice', 'StationSite', 'Observatory'];
 IONUX.Views.ListFilter = Backbone.View.extend({
   el: '#list-filter',
   filter: {
     short: [
+      {label: 'Asset', type: 'Asset', sprite: 'resource-option'},
       {label: 'Data Product', type: 'DataProduct', sprite: 'dataproduct-option'},
       {label: 'Instrument', type: 'InstrumentDevice', sprite: 'instrumentdevice-option'},
       {label: 'Platform', type: 'PlatformDevice', sprite: 'platformdevice-option'},
