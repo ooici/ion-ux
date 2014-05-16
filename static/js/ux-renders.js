@@ -176,10 +176,11 @@ function AssetRender(read_write) {
     var field = read_write == 'write' ? 
       '<input name="' + k + '" type="text"' + (v['editable'] != 'TRUE' ? ' disabled="disabled"' : '') + ' value="' + value + '">' :
       '<div class="span8 text-short-value">' + value + '</div>';
-    if (v['visibility'] == 'TRUE') {
+    // this needs to be 'TRUE'
+    if (v['visibility'] == '1') {
       rows[v['group_label']][v['rank'] * 1000] = 
         '<div class="level-zero text_short_ooi">' + '<div class="row-fluid">' +
-          '<div class="span4 text-short-label">' + k + '</div>' + field +
+          '<div class="span4 text-short-label">' + v['attr_label'] + '</div>' + field +
         '</div>' + '</div>';
     }
   });
