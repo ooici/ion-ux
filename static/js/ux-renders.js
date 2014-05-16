@@ -174,13 +174,13 @@ function AssetRender(read_write) {
       v['default_value'];
     // input vs. div
     var field = read_write == 'write' ? 
-      '<input name="' + k + '" type="text"' + (v['editable'] != 'TRUE' ? ' disabled="disabled"' : '') + ' value="' + value + '">' :
+      '<input class="span8" name="' + k + '" type="text"' + (v['editable'] != 'TRUE' ? ' disabled="disabled"' : '') + ' value="' + value + '">' :
       '<div class="span8 text-short-value">' + value + '</div>';
-    // this needs to be 'TRUE'
-    if (v['visibility'] == '1') {
+    if (v['visibility'] == 'TRUE') {
       rows[v['group_label']][v['rank'] * 1000] = 
         '<div class="level-zero text_short_ooi">' + '<div class="row-fluid">' +
-          '<div class="span4 text-short-label">' + v['attr_label'] + '</div>' + field +
+          '<div class="span4 text-short-label"><a class="void" href="javascript:void(0)" title="' + v['description'] + '">' + v['attr_label'] + '</a></div>' + 
+          field +
         '</div>' + '</div>';
     }
   });
@@ -241,4 +241,8 @@ function AssetRender(read_write) {
       IONUX.ROUTER.navigate(window.location.pathname.replace(/edit$/,''),{trigger:true})
     });
   }
+
+  // I'm not sure if this is the right way to do this, but I'm a hacker.  So be it.
+  // I only want the href for the title, so nuke all click activity.
+  $('.void').click(function(e){e.stopImmediatePropagation()})
 };
