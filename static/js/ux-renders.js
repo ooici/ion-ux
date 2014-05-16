@@ -210,7 +210,7 @@ function AssetRender(read_write) {
   var html = 
     '<div id="asset_attrs_group" class="group">' +
       '<ul class="nav nav-tabs">' + 
-        '<li class="Resource active" style="display: list-item;"><a data-toggle="tab" href="#">Attributes</a></li>' +
+        '<li class="Resource active" style="display: list-item;"><a data-toggle="tab" href="#0">Attributes</a></li>' +
       '</ul>' +
       '<div class="tab-content">' +
         '<div class="tab-pane row-fluid active">' +
