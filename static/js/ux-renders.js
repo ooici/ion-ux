@@ -159,7 +159,7 @@ InformationResourceRender.prototype.header = function() {
 /*
  * Asset Render
  */
-function AssetRender() {
+function AssetRender(read_write) {
   // Will need to get these group_labels from somewhere else.
   var group_labels = ['Identification','Specification','Procurement','Location','Status'];
 
@@ -173,8 +173,9 @@ function AssetRender() {
       window.MODEL_DATA.resource.asset_attrs[k]['value'] :
       v['default_value'];
     // input vs. div
-    var field = '<input name="' + k + '" type="text"' + (v['editable'] != 'TRUE' ? ' disabled="disabled"' : '') + ' value="' + value + '">';
-    field = '<div class="span8 text-short-value">' + value + '</div>';
+    var field = read_write == 'write' ? 
+      '<input name="' + k + '" type="text"' + (v['editable'] != 'TRUE' ? ' disabled="disabled"' : '') + ' value="' + value + '">' :
+      '<div class="span8 text-short-value">' + value + '</div>';
     if (v['visibility'] == 'TRUE') {
       rows[v['group_label']][v['rank'] * 1000] = 
         '<div class="level-zero text_short_ooi">' + '<div class="row-fluid">' +
@@ -184,8 +185,17 @@ function AssetRender() {
   });
 
   var l = [];
+  if (read_write == 'write') {
+    l.push(
+      '<div class="' + 'edit' + ' block" style="margin-left:0px;">' + '<h3>' + 'Edit' + '</h3><div class="content-wrapper">' +
+        '<div class="level-zero text_short_ooi">' + '<div class="row-fluid">' +
+          '<button id="save-asset" class="span2 btn-blue btn-save">Save</button>' +
+          '<button id="cancel-asset" class="span2 btn-general btn-cancel">Cancel</button>' +
+        '</div></div>' +
+      '</div></div>'
+    );
+  }
   _.each(group_labels,function(o){
-    // l.push('<div class="level-zero text_short_ooi">' + '<div class="row-fluid">' + o + '</div>' + '</div>');
     l.push('<div class="' + o + ' block" style="margin-left:0px;">' + '<h3>' + o + '</h3><div class="content-wrapper">');
     _.each(rows[o].sort(),function(j){
       l.push(j);
@@ -195,15 +205,39 @@ function AssetRender() {
 
   console.dir(rows);
 
-  // Put this as the 1st panel, i.e. prepend to the 1st panel already on the page.
-  $('.v02,.span9').prepend(
-    '<div class="group">' +
-      '<ul class="nav nav-tabs"><li class="Resource active" style="display: list-item;"><a data-toggle="tab" href="#216312648">Attributes</a></li></ul>' +
+  // Put this as the 1st panel, i.e. prepend to the 1st panel already on the page (or replace one if already exists).
+  var html = 
+    '<div id="asset_attrs_group" class="group">' +
+      '<ul class="nav nav-tabs">' + 
+        '<li class="Resource active" style="display: list-item;"><a data-toggle="tab" href="#">Attributes</a></li>' +
+      '</ul>' +
       '<div class="tab-content">' +
         '<div class="tab-pane row-fluid active">' +
           l.join('') +
         '</div>' +
       '</div>' +
-    '</div>'
-  );
+    '</div>';
+
+  if ($('#asset_attrs_group').length > 0) {
+    $('#asset_attrs_group').html(html);
+  }
+  else {
+    $('.v02,.span9').prepend(html);
+  }
+
+  if (read_write == 'write') {
+    $('#save-asset').click(function(){
+      j = JSON.parse(window.editResourceModel.get('asset_attrs'))
+      _.each(window.MODEL_DATA.resource.asset_attrs,function(v,k){
+        j[k]['value'] = $('#asset_attrs_group input[name="' + k + '"]').val();
+      });
+      window.editResourceModel.set('asset_attrs',JSON.stringify(j))
+      window.editResourceModel.save()
+      IONUX.ROUTER.navigate(window.location.pathname.replace(/edit$/,''),{trigger:true})
+    });
+    $('#cancel-asset').click(function(){
+      delete window.editResourceModel;
+      IONUX.ROUTER.navigate(window.location.pathname.replace(/edit$/,''),{trigger:true})
+    });
+  }
 };

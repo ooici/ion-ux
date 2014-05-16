@@ -238,27 +238,42 @@ dashboard_map_resource: function(resource_id) {
   },
 
   edit: function(resource_type, view_type, resource_id) {
-    // Todo move into own view
-    $('#dynamic-container > .row-fluid').html('<div id="spinner"></div>').show();
-    new Spinner(IONUX.Spinner.large).spin(document.getElementById('spinner'));
-    
     var m = new IONUX.Models.EditResourceModel({
       resource_type: resource_type,
       resource_id: resource_id
     });
+
+    // Asset editing is unique.  Since we're not going to a separate /edit page, simply launch a writable renderer.
+    if (resource_type != 'Asset') {
+      // Todo move into own view
+      $('#dynamic-container > .row-fluid').html('<div id="spinner"></div>').show();
+      new Spinner(IONUX.Spinner.large).spin(document.getElementById('spinner'));
+      delete window.editResourceModel;
+    }
+    else {
+      window.editResourceModel = m;
+    }
     
     m.fetch({
       success: function(resp) {
-        $('#dashboard-container').hide();
-        $('#dynamic-container').show();
-        $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS[view_type]).html());
-        $('.span9 li,.span3 li').hide();
-        $('.heading').hide();
-        new IONUX.Views.EditResource({model: resp});
+        if (resource_type != 'Asset') {
+          $('#dashboard-container').hide();
+          $('#dynamic-container').show();
+          $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS[view_type]).html());
+          $('.span9 li,.span3 li').hide();
+          $('.heading').hide();
+          new IONUX.Views.EditResource({model: resp});
+        }
+        else {
+          window.editResourceModel.unset('resource_id');
+          window.editResourceModel.unset('resource_type');
+          window.editResourceModel.resource_type = 'Asset'
+          new AssetRender('write');
+        }
       }
     });
   },
-  
+ 
   search: function(query) {
     $('#dashboard-container').hide();
     // Todo move into own view
@@ -672,7 +687,7 @@ function render_page(resource_type, resource_id, model) {
 
   // Deal w/ an Asset if necessary
   if (orig_resource_type == 'Asset') {
-    var render = new AssetRender();
+    var render = new AssetRender('read');
   }
   
   _.each($('.v02 .'+resource_type), function(el){

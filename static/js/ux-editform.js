@@ -10,7 +10,7 @@ IONUX.Models.EditResourceModel = Backbone.Model.extend({
     this.resource_id = options.resource_id;
     // this.black_list = options.black_list || [];
     this.black_list = ['_id', '_rev', 'ts_created', 'ts_updated', 'lcstate', /*'type_',*/ 'alt_ids', 
-                       'addl', 'availability', 'message_controllable', 'monitorable', 'alt_resource_type'];
+                       'addl', 'availability', 'message_controllable', 'monitorable', 'alt_resource_type','asset_attrs'];
     this.gray_list = ['persisted_version','type_version'];
     this.nest_depth_factor = options.nest_depth_factor || 50;
     Backbone.Form.helpers.keyToTitle = this.key_to_title;
