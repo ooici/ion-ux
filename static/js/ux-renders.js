@@ -160,15 +160,40 @@ InformationResourceRender.prototype.header = function() {
  * Asset Render
  */
 function AssetRender() {
-  var l = [];
-  _.map(window.MODEL_DATA.asset_specification.attribute_specifications,function(v,k) {
-    l.push(
-      '<div class="level-zero text_short_ooi">' + '<div class="row-fluid">' +
-        '<div class="span4 text-short-label">' + k + '</div>' +
-        (!_.isUndefined(window.MODEL_DATA.resource.asset_attrs[k]) ? '<div class="span8 text-short-value">' + window.MODEL_DATA.resource.asset_attrs[k]['value'] + '</div>' : '') +
-      '</div>' + '</div>'
-    );
+  // Will need to get these group_labels from somewhere else.
+  var group_labels = ['Identification','Specification','Procurement','Location','Status'];
+
+  // Create a structure that will work for the viz.
+  var rows = {};
+  _.each(group_labels,function(o){
+    rows[o] = [];
   });
+  _.map(window.MODEL_DATA.asset_specification.attribute_specifications,function(v,k) {
+    var value = (!_.isUndefined(window.MODEL_DATA.resource.asset_attrs[k]) && !_.isEmpty(window.MODEL_DATA.resource.asset_attrs[k]['value'])) ?
+      window.MODEL_DATA.resource.asset_attrs[k]['value'] :
+      v['default_value'];
+    // input vs. div
+    var field = '<input name="' + k + '" type="text"' + (v['editable'] != 'TRUE' ? ' disabled="disabled"' : '') + ' value="' + value + '">';
+    field = '<div class="span8 text-short-value">' + value + '</div>';
+    if (v['visibility'] == 'TRUE') {
+      rows[v['group_label']][v['rank'] * 1000] = 
+        '<div class="level-zero text_short_ooi">' + '<div class="row-fluid">' +
+          '<div class="span4 text-short-label">' + k + '</div>' + field +
+        '</div>' + '</div>';
+    }
+  });
+
+  var l = [];
+  _.each(group_labels,function(o){
+    // l.push('<div class="level-zero text_short_ooi">' + '<div class="row-fluid">' + o + '</div>' + '</div>');
+    l.push('<div class="' + o + ' block" style="margin-left:0px;">' + '<h3>' + o + '</h3><div class="content-wrapper">');
+    _.each(rows[o].sort(),function(j){
+      l.push(j);
+    });
+    l.push('</div></div>');
+  });
+
+  console.dir(rows);
 
   // Put this as the 1st panel, i.e. prepend to the 1st panel already on the page.
   $('.v02,.span9').prepend(
@@ -176,11 +201,7 @@ function AssetRender() {
       '<ul class="nav nav-tabs"><li class="Resource active" style="display: list-item;"><a data-toggle="tab" href="#216312648">Attributes</a></li></ul>' +
       '<div class="tab-content">' +
         '<div class="tab-pane row-fluid active">' +
-          '<div class="Asset block" style="margin-left:0px;">' +
-            '<div class="content-wrapper">' +
-              l.join('') +
-            '</div>' +
-          '</div>' +
+          l.join('') +
         '</div>' +
       '</div>' +
     '</div>'
