@@ -238,13 +238,19 @@ dashboard_map_resource: function(resource_id) {
   },
 
   edit: function(resource_type, view_type, resource_id) {
+    var resource_extension = new IONUX.Models.ResourceExtension({resource_type: resource_type, resource_id: resource_id});
+    resource_extension.fetch({async : false})
+      .success(function(model, resp) {
+        console.dir(resp);
+      })
+
     var m = new IONUX.Models.EditResourceModel({
       resource_type: resource_type,
       resource_id: resource_id
     });
 
     // Asset editing is unique.  Since we're not going to a separate /edit page, simply launch a writable renderer.
-    if (resource_type != 'Asset') {
+    if (resource_type != 'Asset' || !window.MODEL_DATA) {
       // Todo move into own view
       $('#dynamic-container > .row-fluid').html('<div id="spinner"></div>').show();
       new Spinner(IONUX.Spinner.large).spin(document.getElementById('spinner'));
@@ -256,7 +262,7 @@ dashboard_map_resource: function(resource_id) {
     
     m.fetch({
       success: function(resp) {
-        if (resource_type != 'Asset') {
+        if (resource_type != 'Asset' || !window.MODEL_DATA) {
           $('#dashboard-container').hide();
           $('#dynamic-container').show();
           $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS[view_type]).html());
@@ -267,7 +273,7 @@ dashboard_map_resource: function(resource_id) {
         else {
           window.editResourceModel.unset('resource_id');
           window.editResourceModel.unset('resource_type');
-          window.editResourceModel.resource_type = 'Asset'
+          window.editResourceModel.resource_type = 'Asset';
           new AssetRender('write');
         }
       }

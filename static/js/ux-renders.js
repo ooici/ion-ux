@@ -229,7 +229,11 @@ function AssetRender(read_write) {
   if (read_write == 'write') {
     $('#save-asset').click(function(){
       j = JSON.parse(window.editResourceModel.get('asset_attrs'))
-      _.each(window.MODEL_DATA.resource.asset_attrs,function(v,k){
+      _.each(window.MODEL_DATA.asset_specification.attribute_specifications,function(v,k){
+        // If we just created an Asset through the UI, 'j' will be empty.  So build it as we go.
+        if (!j[k]) {
+          j[k] = {name : k,type_ : 'Attribute'};
+        }
         j[k]['value'] = $('#asset_attrs_group input[name="' + k + '"]').val();
       });
       window.editResourceModel.set('asset_attrs',JSON.stringify(j))

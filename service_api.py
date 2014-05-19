@@ -650,6 +650,15 @@ class ServiceApi(object):
         resource_name = resource_name or 'New %s' % resource_type
         resource.update({'name': resource_name})
 
+        # CHANGEME
+        create_op['service_name'] = 'observatory_management'
+        create_op['resource_identifier'] = 'asset_id';
+        create_op['type_'] = 'AssetServiceRequest';
+        create_op['resource_type'] = 'Asset';
+        create_op['request_parameters'] = {'asset' : '$(asset)'}
+        create_op['service_operation'] = 'create_asset';
+        app.logger.debug(create_op)
+
         resp = service_gateway_post(create_op['service_name'], create_op['service_operation'], params={create_op['request_parameters'].keys()[0]: resource})
         
         if isinstance(resp, dict) and "GatewayError" in resp:
@@ -658,6 +667,10 @@ class ServiceApi(object):
             resp2 = service_gateway_post('resource_registry', 'create_association', params={'subject':org_id,
                                                                                             'predicate': 'hasResource',
                                                                                             'object': resp})
+        # CHANGEME
+        resp2 = service_gateway_post('observatory_management','assign_asset_type_to_asset', params={'asset_type_id':'df0673a673a44be8b4b51b0b11f6f5fb','asset_id':resp})
+        app.logger.debug(resp)
+        app.logger.debug(resp2)
 
         return [resp, resp2]
 
