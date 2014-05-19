@@ -190,8 +190,8 @@ function AssetRender(read_write) {
     l.push(
       '<div class="' + 'edit' + ' block" style="margin-left:0px;">' + '<h3>' + 'Edit' + '</h3><div class="content-wrapper">' +
         '<div class="level-zero text_short_ooi">' + '<div class="row-fluid">' +
-          '<button id="save-asset" class="span2 btn-blue btn-save">Save</button>' +
           '<button id="cancel-asset" class="span2 btn-general btn-cancel">Cancel</button>' +
+          '<button id="save-asset" class="span2 btn-blue btn-save">Save</button>' +
         '</div></div>' +
       '</div></div>'
     );
