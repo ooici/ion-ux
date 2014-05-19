@@ -670,7 +670,8 @@ class ServiceApi(object):
         # CHANGEME
         resp2 = service_gateway_post('observatory_management',
                                      'assign_asset_type_to_asset', 
-                                     params={'asset_type_id':'df0673a673a44be8b4b51b0b11f6f5fb','asset_id':resp})
+                                     params={'asset_type_id':'df0673a673a44be8b4b51b0b11f6f5fb',
+                                     'asset_id':resp})
         app.logger.debug(resp)
         app.logger.debug(resp2)
 
