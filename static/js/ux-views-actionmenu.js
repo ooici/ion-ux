@@ -107,7 +107,11 @@ IONUX.Views.DashboardActions = IONUX.Views.ActionMenu.extend({
     },
         
     create_resource: function(){
-      new IONUX.Views.CreateResourceView().render();
+      var model = new IONUX.Models.CreateResource();
+      model.fetch()
+        .done(function(data) {
+          new IONUX.Views.CreateResourceView({model : model}).render();
+        });
     },
 
     upload_asset_tracking: function(){

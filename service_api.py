@@ -255,6 +255,30 @@ class ServiceApi(object):
         return search_json['data']
 
     @staticmethod
+    def get_creatable_resource_types():
+        # hard code the original list
+        d = [
+          {'type' : 'Data' ,'name' : 'DataProcessDefinition'       ,'nice_name' : 'Data Process Definition'},
+          {'type' : 'Data' ,'name' : 'DataProcess'                 ,'nice_name' : 'Data Process'},
+          {'type' : 'Data' ,'name' : 'DataProduct'                 ,'nice_name' : 'Data Product'},
+          {'type' : 'Agent','name' : 'ExternalDatasetAgent'        ,'nice_name' : 'Dataset Agent'},
+          {'type' : 'Agent','name' : 'ExternalDatasetAgentInstance','nice_name' : 'Dataset Agent Instance'},
+          {'type' : 'Agent','name' : 'InstrumentAgent'             ,'nice_name' : 'Instrument Agent'},
+          {'type' : 'Agent','name' : 'InstrumentAgentInstance'     ,'nice_name' : 'Instrument Agent Instance'},
+          {'type' : 'Event','name' : 'Deployment'                  ,'nice_name' : 'Deployment'},
+          {'type' : 'Other','name' : 'InstrumentDevice'            ,'nice_name' : 'Instrument Device'},
+          {'type' : 'Other','name' : 'PlatformDevice'              ,'nice_name' : 'Platform Device'}]
+
+        # go and pull the dynamic stuff from the backend
+        r = service_gateway_get('resource_registry', 'find_resources', params={'restype':  'AssetType',
+                                                                               'concrete': 'True'})
+        # only pass back what we really need
+        for i in r:
+          d.append({'type' : 'Asset','_id' : i['_id'],'name' : i['name'],'nice_name' : i['name']})
+
+        return d
+
+    @staticmethod
     def update_resource(resource_type, resource_obj, resource_assocs):
 
         # grab the schema again - if this is cached, this will be quick!
@@ -640,7 +664,7 @@ class ServiceApi(object):
         return extension
 
     @staticmethod
-    def create_resource(resource_type, org_id, resource_name=None):
+    def create_resource(resource_type, org_id, type_id=None, resource_name=None):
         prepare = ServiceApi.get_prepare(resource_type, None, None)
         if isinstance(prepare, dict) and "GatewayError" in prepare:
             return [prepare, None]
@@ -651,29 +675,33 @@ class ServiceApi(object):
         resource.update({'name': resource_name})
 
         # CHANGEME
-        create_op['service_name'] = 'observatory_management'
-        create_op['resource_identifier'] = 'asset_id';
-        create_op['type_'] = 'AssetServiceRequest';
-        create_op['resource_type'] = 'Asset';
-        create_op['request_parameters'] = {'asset' : '$(asset)'}
-        create_op['service_operation'] = 'create_asset';
-        app.logger.debug(create_op)
+        if type_id is not None:
+          create_op['service_name']        = 'observatory_management'
+          create_op['resource_identifier'] = 'asset_id';
+          create_op['type_']               = 'AssetServiceRequest';
+          create_op['resource_type']       = 'Asset';
+          create_op['request_parameters']  = {'asset' : '$(asset)'}
+          create_op['service_operation']   = 'create_asset';
 
-        resp = service_gateway_post(create_op['service_name'], create_op['service_operation'], params={create_op['request_parameters'].keys()[0]: resource})
+        resp = service_gateway_post(create_op['service_name'],
+                                    create_op['service_operation'],
+                                    params={create_op['request_parameters'].keys()[0]: resource})
         
         if isinstance(resp, dict) and "GatewayError" in resp:
             resp2 = None
         else:
-            resp2 = service_gateway_post('resource_registry', 'create_association', params={'subject':org_id,
-                                                                                            'predicate': 'hasResource',
-                                                                                            'object': resp})
+            resp2 = service_gateway_post('resource_registry',
+                                         'create_association', 
+                                         params={'subject':org_id,
+                                                 'predicate': 'hasResource',
+                                                 'object': resp})
+
         # CHANGEME
-        resp2 = service_gateway_post('observatory_management',
-                                     'assign_asset_type_to_asset', 
-                                     params={'asset_type_id':'df0673a673a44be8b4b51b0b11f6f5fb',
-                                     'asset_id':resp})
-        app.logger.debug(resp)
-        app.logger.debug(resp2)
+        if type_id is not None:
+          resp2 = service_gateway_post('observatory_management',
+                                       'assign_asset_type_to_asset', 
+                                       params={'asset_type_id' : type_id,
+                                       'asset_id':resp})
 
         return [resp, resp2]
 

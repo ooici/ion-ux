@@ -1367,8 +1367,10 @@ IONUX.Views.CreateResourceView = Backbone.View.extend({
       return _.contains(IONUX.createRoles(), o.org_governance_name);
     });
 
+    var types = _.sortBy(this.model.toJSON(),function(o){return o.type + ' : ' + o.nice_name});
+
     $('body').append(this.$el);
-    var modal_html = this.template({orgs:orgs});
+    var modal_html = this.template({orgs:orgs,types:types});
     this.$el.append(modal_html);
 
     var self = this;
@@ -1387,6 +1389,15 @@ IONUX.Views.CreateResourceView = Backbone.View.extend({
        self = this;
     
     self.modal.modal('hide');
+
+    // See if this is a complex type that needs an additional association when creating the resouce.
+    // Its resource_type ID should also be overwritten.
+    var r = _.find(this.model.attributes,function(o){return o.name == rtype});
+    if (r && !_.isUndefined(r._id)) {
+      vals.resource_type = r.type;
+      rtype = r.type;
+      vals.type_id = r._id;
+    }
 
     $('#dynamic-container').html('<div id="spinner"></div>').show();
     new Spinner(IONUX.Spinner.large).spin(document.getElementById('spinner'));

@@ -557,4 +557,13 @@ IONUX.Models.UserFacepageModel = Backbone.Model.extend({
   }
 });
 
+IONUX.Models.CreateResource = Backbone.Model.extend({
+  url: function() {
+    return "/get_creatable_resource_types/";
+  },
+  parse: function(resp) {
+    return resp.data;
+  }
+});
+
 IONUX.Models.ResourceType = Backbone.Model.extend({})

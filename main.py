@@ -212,7 +212,9 @@ def event_types():
 @app.route('/create/', methods=['POST'])
 @login_required
 def create_resource():
-    resp = ServiceApi.create_resource(request.form.get('resource_type', None), request.form.get('org_id', None))
+    resp = ServiceApi.create_resource(request.form.get('resource_type', None),
+                                      request.form.get('org_id', None),
+                                      request.form.get('type_id', None))
     return render_json_response(resp)
 
 @app.route('/<resource_type>/face/<resource_id>/subscribe/', methods=['GET'])
@@ -463,6 +465,12 @@ def suspend_persistence():
     data_product_id = request.form.get('data_product_id', None)
     pers = ServiceApi.suspend_persistence(data_product_id)
     return render_json_response(pers)
+
+@app.route('/get_creatable_resource_types/', methods=['GET'])
+@login_required
+def get_creatable_resource_types():
+    rt = ServiceApi.get_creatable_resource_types()
+    return render_json_response(rt)
 
 # -----------------------------------------------------------------------------
 # COMMAND RESOURCE PAGES

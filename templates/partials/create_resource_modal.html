@@ -19,18 +19,9 @@
                 <label class="control-label" for="resource-type">Resource Type</label>
                 <div class="controls">
                     <select name="resource-type" size="8">
-                        <!-- CHANGEME -->
-                        <option value="Asset">Instrument Asset</option>
-                        <option value="DataProcessDefinition">Data Process Definition</option>
-                        <option value="DataProcess">Data Process</option>
-                        <option value="DataProduct">Data Product</option>
-                        <option value="ExternalDatasetAgent">Dataset Agent</option> 
-                        <option value="ExternalDatasetAgentInstance">Dataset Agent Instance</option>
-                        <option value="Deployment">Deployment</option>
-                        <option value="InstrumentAgent">Instrument Agent</option>
-                        <option value="InstrumentAgentInstance">Instrument Agent Instance</option>
-                        <option value="InstrumentDevice">Instrument Device</option>
-                        <option value="PlatformDevice">Platform Device</option>
+                        <% _.each(types, function(t) { %>
+                            <option value="<%= t.name %>"><%= t.type + ' : ' + t.nice_name %></option>
+                        <% }) %>
                     </select>
                 </div>
             </div>
