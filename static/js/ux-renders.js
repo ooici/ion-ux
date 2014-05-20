@@ -206,24 +206,27 @@ function AssetRender(read_write) {
 
   console.dir(rows);
 
-  // Put this as the 1st panel, i.e. prepend to the 1st panel already on the page (or replace one if already exists).
+  // Create the group.
   var html = 
-    '<div id="asset_attrs_group" class="group">' +
-      '<ul class="nav nav-tabs">' + 
-        '<li class="Resource active" style="display: list-item;"><a data-toggle="tab" href="#0">Attributes</a></li>' +
-      '</ul>' +
-      '<div class="tab-content">' +
-        '<div class="tab-pane row-fluid active">' +
-          l.join('') +
-        '</div>' +
+    '<ul class="nav nav-tabs">' + 
+      '<li class="Resource active" style="display: list-item;"><a data-toggle="tab" href="#0">Attributes</a></li>' +
+    '</ul>' +
+    '<div class="tab-content">' +
+      '<div class="tab-pane row-fluid active">' +
+        l.join('') +
       '</div>' +
     '</div>';
 
+  // Put this as the 1st panel, i.e. prepend to the 1st panel already on the page (or replace one if already exists).
   if ($('#asset_attrs_group').length > 0) {
     $('#asset_attrs_group').html(html);
   }
   else {
+    html = '<div id="asset_attrs_group" class="group">' + html + '</div>';
     $('.v02,.span9').prepend(html);
+    // Get rid of the standard Information panel.  And expand this new Attributes panel to the full width.
+    $('.v01,.span3').remove();
+    $('.v02,.span9').toggleClass('v02').toggleClass('v01').toggleClass('span9').toggleClass('span12');
   }
 
   if (read_write == 'write') {
