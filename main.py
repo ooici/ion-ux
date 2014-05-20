@@ -167,6 +167,13 @@ def asset_tracking_resource_declaration():
     resp = ServiceApi.declare_asset_tracking_resources(request.files['resource_declaration'])
     return render_json_response(resp)
 
+@app.route('/asset_tracking_report/', methods=['GET'])
+def asset_tracking_report():
+    content = ServiceApi.asset_tracking_report()
+    return send_file(StringIO(content), 
+                     attachment_filename='asset_tracking_report.xls', 
+                     as_attachment=True)
+
 @app.route('/attachment/', methods=['POST'])
 def attachment_create():
     fd = request.files['attachment']

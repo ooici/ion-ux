@@ -438,6 +438,12 @@ class ServiceApi(object):
                                             'content'          : binascii.b2a_hex(content)})
 
     @staticmethod
+    def asset_tracking_report():
+        resp = service_gateway_get('observatory_management',
+                                   'asset_tracking_report')
+        return binascii.a2b_hex(resp)
+
+    @staticmethod
     def delete_resource_attachment(attachment_id):
         url = build_get_request(SERVICE_GATEWAY_BASE_URL, 'attachment', attachment_id)
         req = requests.delete(url)

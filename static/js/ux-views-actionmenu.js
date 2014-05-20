@@ -15,7 +15,7 @@ INTERACTIONS_OBJECT = {};
 INTERACTIONS_OBJECT.block_interactions = ['More Info'];
 INTERACTIONS_OBJECT.group_interactions = ['More Info', /*'Submenu', 'Edit'*/];
 INTERACTIONS_OBJECT.view_interactions = ['Subscribe', 'Lifecycle', 'Edit', /*'Submenu',*/ 'Command', 'Download', 'Report Issue', 'Refresh Page'];
-INTERACTIONS_OBJECT.dashboard_interactions = ['Create Resource','Asset Tracking Upload'];
+INTERACTIONS_OBJECT.dashboard_interactions = ['Create Resource','Asset Tracking Upload','Asset Tracking Download'];
 INTERACTIONS_OBJECT.event_interactions = ['Add Event'];
 INTERACTIONS_OBJECT.attachment_interactions = ['Upload Attachment'];
 INTERACTIONS_OBJECT.deployment_interactions = ['Activate as Primary Deployment', 'Deactivate as Primary Deployment'];
@@ -93,10 +93,11 @@ IONUX.Views.DashboardActions = IONUX.Views.ActionMenu.extend({
         _.bindAll(this);
         this.interaction_items = INTERACTIONS_OBJECT.dashboard_interactions.slice(0); // ensure clone
         
-        // Remove 'Create Resource' and 'Asset Tracking Upload' options if user is not signed-in.
+        // Remove 'Create Resource' and 'Asset Tracking *' options if user is not signed-in.
         if (!IONUX.is_logged_in() || _.isEmpty(IONUX.createRoles())) {
           this.interaction_items.splice(this.interaction_items.indexOf('Create Resource'), 1);
           this.interaction_items.splice(this.interaction_items.indexOf('Asset Tracking Upload'), 1);
+          this.interaction_items.splice(this.interaction_items.indexOf('Asset Tracking Download'), 1);
         }
         
         if (!IONUX.is_logged_in() || this.interaction_items.length == 0) this.interaction_items.push(INTERACTIONS_OBJECT.no_options);
@@ -104,6 +105,7 @@ IONUX.Views.DashboardActions = IONUX.Views.ActionMenu.extend({
         this.create_view_actionmenu();
         this.on("action__create_resource", this.create_resource);
         this.on("action__asset_tracking_upload", this.upload_asset_tracking);
+        this.on("action__asset_tracking_download", this.download_asset_tracking);
     },
         
     create_resource: function(){
@@ -116,7 +118,13 @@ IONUX.Views.DashboardActions = IONUX.Views.ActionMenu.extend({
 
     upload_asset_tracking: function(){
       new IONUX.Views.UploadAssetTrackingView().render().el;
+    },
+
+    download_asset_tracking: function(){
+      var url = "/asset_tracking_report/";
+      window.open(url);
     }
+
 });
 
 IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
