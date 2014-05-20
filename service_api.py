@@ -265,16 +265,19 @@ class ServiceApi(object):
           {'type' : 'Agent','name' : 'ExternalDatasetAgentInstance','nice_name' : 'Dataset Agent Instance'},
           {'type' : 'Agent','name' : 'InstrumentAgent'             ,'nice_name' : 'Instrument Agent'},
           {'type' : 'Agent','name' : 'InstrumentAgentInstance'     ,'nice_name' : 'Instrument Agent Instance'},
-          {'type' : 'Event','name' : 'Deployment'                  ,'nice_name' : 'Deployment'},
+          {'type' : 'Other','name' : 'Deployment'                  ,'nice_name' : 'Deployment'},
           {'type' : 'Other','name' : 'InstrumentDevice'            ,'nice_name' : 'Instrument Device'},
           {'type' : 'Other','name' : 'PlatformDevice'              ,'nice_name' : 'Platform Device'}]
 
-        # go and pull the dynamic stuff from the backend
-        r = service_gateway_get('resource_registry', 'find_resources', params={'restype':  'AssetType',
-                                                                               'concrete': 'True'})
+        # go and pull the dynamic stuff from the backend for assets
+        r = service_gateway_get('resource_registry', 'find_resources', params={'restype' : 'AssetType'})
         # only pass back what we really need
         for i in r:
-          d.append({'type' : 'Asset','_id' : i['_id'],'name' : i['name'],'nice_name' : i['name']})
+          if i['concrete'] is True:
+            d.append({'type'      : 'Asset',
+                      '_id'       : i['_id'],
+                      'name'      : i['name'],
+                      'nice_name' : i['name']})
 
         return d
 
