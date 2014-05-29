@@ -160,23 +160,34 @@ InformationResourceRender.prototype.header = function() {
  * AssetTracking Render
  */
 function AssetTrackingRender(read_write,resource_type) {
-  // Will need to get these group_labels from somewhere else.
-  var group_labels = ['Identification','Specification','Procurement','Location','Status'];
+  var assetTrackingType  = resource_type == 'Asset' ? 'asset_type' : 'event_duration_type';
+  var assetTrackingAttrs = resource_type == 'Asset' ? 'asset_attrs' : 'event_duration_attrs';
+
+  // CHANGEME.  Will need to get these group_labels from somewhere else.  These attempt to set the order.
+  // Empty groups will not be shown.
+  var group_labels = resource_type == 'Asset' ?
+    ['Identification','Specification','Procurement','Location','Status'] :
+    ['Identification','RTM','Deployment','Repair','Inoperability','Retirement','Integration','Test','Calibration'];
 
   // Create a structure that will work for the viz.
   var rows = {};
   _.each(group_labels,function(o){
     rows[o] = [];
   });
-  _.map(window.MODEL_DATA.asset_type.attribute_specifications,function(v,k) {
-    var value = (!_.isUndefined(window.MODEL_DATA.resource.asset_attrs[k]) && !_.isEmpty(window.MODEL_DATA.resource.asset_attrs[k]['value'])) ?
-      window.MODEL_DATA.resource.asset_attrs[k]['value'] :
+  _.map(window.MODEL_DATA[assetTrackingType].attribute_specifications,function(v,k) {
+    var value = (!_.isUndefined(window.MODEL_DATA.resource[assetTrackingAttrs][k]) && !_.isEmpty(window.MODEL_DATA.resource[assetTrackingAttrs][k]['value'])) ?
+      window.MODEL_DATA.resource[assetTrackingAttrs][k]['value'] :
       v['default_value'];
     // input vs. div
     var field = read_write == 'write' ? 
       '<input class="span8" name="' + k + '" type="text"' + (v['editable'] != 'TRUE' ? ' disabled="disabled"' : '') + ' value="' + value + '">' :
       '<div class="span8 text-short-value">' + value + '</div>';
     if (v['visibility'] == 'TRUE') {
+      // In case this group wasn't defined above, create it.
+      if (!rows[v['group_label']]) {
+        rows[v['group_label']] = [];
+        group_labels.push(v['group_label']);
+      }
       rows[v['group_label']][v['rank'] * 1000] = 
         '<div class="level-zero text_short_ooi">' + '<div class="row-fluid">' +
           '<div class="span4 text-short-label"><a class="void" href="javascript:void(0)" title="' + v['description'] + '">' + v['attr_label'] + '</a></div>' + 
@@ -197,14 +208,15 @@ function AssetTrackingRender(read_write,resource_type) {
     );
   }
   _.each(group_labels,function(o){
-    l.push('<div class="' + o + ' block" style="margin-left:0px;">' + '<h3>' + o + '</h3><div class="content-wrapper">');
-    _.each(rows[o].sort(),function(j){
-      l.push(j);
-    });
-    l.push('</div></div>');
+    // Don't show empty groups.
+    if (rows[o].length > 0) {
+      l.push('<div class="' + o + ' block" style="margin-left:0px;">' + '<h3>' + o + '</h3><div class="content-wrapper">');
+      _.each(rows[o].sort(),function(j){
+        l.push(j);
+      });
+      l.push('</div></div>');
+    }
   });
-
-  console.dir(rows);
 
   // Create the group.
   var html = 
@@ -231,15 +243,15 @@ function AssetTrackingRender(read_write,resource_type) {
 
   if (read_write == 'write') {
     $('#save-asset').click(function(){
-      j = JSON.parse(window.editResourceModel.get('asset_attrs'))
-      _.each(window.MODEL_DATA.asset_type.attribute_specifications,function(v,k){
+      j = JSON.parse(window.editResourceModel.get(assetTrackingAttrs));
+      _.each(window.MODEL_DATA[assetTrackingType].attribute_specifications,function(v,k){
         // If we just created an Asset through the UI, 'j' will be empty.  So build it as we go.
         if (!j[k]) {
           j[k] = {name : k,type_ : 'Attribute'};
         }
         j[k]['value'] = $('#asset_attrs_group input[name="' + k + '"]').val();
       });
-      window.editResourceModel.set('asset_attrs',JSON.stringify(j))
+      window.editResourceModel.set(assetTrackingAttrs,JSON.stringify(j))
       window.editResourceModel.save()
       IONUX.ROUTER.navigate(window.location.pathname.replace(/edit$/,''),{trigger:true})
     });
