@@ -250,7 +250,7 @@ dashboard_map_resource: function(resource_id) {
     });
 
     // Asset editing is unique.  Since we're not going to a separate /edit page, simply launch a writable renderer.
-    if (resource_type != 'Asset' || !window.MODEL_DATA) {
+    if (!/Asset|EventDuration/.test(resource_type) || !window.MODEL_DATA) {
       // Todo move into own view
       $('#dynamic-container > .row-fluid').html('<div id="spinner"></div>').show();
       new Spinner(IONUX.Spinner.large).spin(document.getElementById('spinner'));
@@ -262,7 +262,7 @@ dashboard_map_resource: function(resource_id) {
     
     m.fetch({
       success: function(resp) {
-        if (resource_type != 'Asset' || !window.MODEL_DATA) {
+        if (!/Asset|EventDuration/.test(resource_type) || !window.MODEL_DATA) {
           $('#dashboard-container').hide();
           $('#dynamic-container').show();
           $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS[view_type]).html());
@@ -273,8 +273,8 @@ dashboard_map_resource: function(resource_id) {
         else {
           window.editResourceModel.unset('resource_id');
           window.editResourceModel.unset('resource_type');
-          window.editResourceModel.resource_type = 'Asset';
-          new AssetRender('write');
+          window.editResourceModel.resource_type = 'EventDuration';
+          new AssetTrackingRender('write',resource_type);
         }
       }
     });
@@ -692,8 +692,8 @@ function render_page(resource_type, resource_id, model) {
   }
 
   // Deal w/ an Asset if necessary
-  if (orig_resource_type == 'Asset') {
-    var render = new AssetRender('read');
+  if (/Asset|EventDuration/.test(orig_resource_type)) {
+    var render = new AssetTrackingRender('read',orig_resource_type);
   }
   
   _.each($('.v02 .'+resource_type), function(el){

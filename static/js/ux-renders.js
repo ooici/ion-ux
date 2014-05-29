@@ -157,9 +157,9 @@ InformationResourceRender.prototype.header = function() {
 }
 
 /*
- * Asset Render
+ * AssetTracking Render
  */
-function AssetRender(read_write) {
+function AssetTrackingRender(read_write,resource_type) {
   // Will need to get these group_labels from somewhere else.
   var group_labels = ['Identification','Specification','Procurement','Location','Status'];
 

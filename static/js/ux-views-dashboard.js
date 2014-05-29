@@ -1371,13 +1371,14 @@ IONUX.Collections.ListResources = Backbone.Collection.extend({
 - - - - - - - - - - - - - - - - - 
 */
 
-IONUX.ListWhitelist = ['Asset','DataProduct', 'InstrumentDevice', 'PlatformDevice', 'StationSite', 'Observatory'];
+IONUX.ListWhitelist = ['Asset', 'DataProduct', 'EventDuration', 'InstrumentDevice', 'PlatformDevice', 'StationSite', 'Observatory'];
 IONUX.Views.ListFilter = Backbone.View.extend({
   el: '#list-filter',
   filter: {
     short: [
       {label: 'Asset', type: 'Asset', sprite: 'resource-option'},
       {label: 'Data Product', type: 'DataProduct', sprite: 'dataproduct-option'},
+      {label: 'Event Duration', type: 'EventDuration', sprite: 'resource-option'},
       {label: 'Instrument', type: 'InstrumentDevice', sprite: 'instrumentdevice-option'},
       {label: 'Platform', type: 'PlatformDevice', sprite: 'platformdevice-option'},
       {label: 'Station', type: 'StationSite', sprite: 'station-option'},
@@ -1387,6 +1388,7 @@ IONUX.Views.ListFilter = Backbone.View.extend({
       {label: 'Asset', type: 'Asset', sprite: 'resource-option'},
       {label: 'Attachment', type: 'Attachment', sprite: 'attachment-option'},
       {label: 'Data Process Definition', type: 'DataTransform', sprite: 'datatransform-option'},
+      {label: 'Event Duration', type: 'EventDuration', sprite: 'resource-option'},
       {label: 'Data Process', type: 'DataProcess', sprite: 'dataprocess-option'},
       {label: 'Data Product', type: 'DataProduct', sprite: 'dataproduct-option'},
       {label: 'Dataset Agent Instance',type:'ExternalDatasetAgentInstance', sprite: 'externaldataagentinstance-option'},
