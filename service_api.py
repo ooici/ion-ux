@@ -278,6 +278,14 @@ class ServiceApi(object):
                       '_id'       : i['_id'],
                       'name'      : i['name'],
                       'nice_name' : i['name']})
+        r = service_gateway_get('resource_registry', 'find_resources', params={'restype' : 'EventDurationType'})
+        # only pass back what we really need
+        for i in r:
+          if i['concrete'] is True:
+            d.append({'type'      : 'EventDuration',
+                      '_id'       : i['_id'],
+                      'name'      : i['name'],
+                      'nice_name' : i['name']})
 
         return d
 
@@ -656,6 +664,8 @@ class ServiceApi(object):
             extension = service_gateway_get('observatory_management', 'get_deployment_extension', params= {'deployment_id': resource_id, 'user_id': user_id,'ext_exclude': "['recent_events']"})
         elif resource_type == 'Asset':
             extension = service_gateway_get('observatory_management', 'get_asset_extension', params= {'asset_id': resource_id, 'user_id': user_id,'ext_exclude': "['recent_events']"})
+        elif resource_type == 'EventDuration':
+            extension = service_gateway_get('observatory_management', 'get_event_duration_extension', params= {'event_duration_id': resource_id, 'user_id': user_id,'ext_exclude': "['recent_events']"})
         elif resource_type == 'NotificationRequest':
             extension = service_gateway_get('resource_registry', 'get_resource_extension', params= {'resource_id': resource_id, 'resource_extension': 'NotificationRequestExtension', 'user_id': user_id,'ext_exclude': "['recent_events']"})
         elif resource_type == 'DataProcess':
