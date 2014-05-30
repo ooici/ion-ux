@@ -165,7 +165,7 @@ function AssetTrackingRender(read_write,resource_type) {
   // CHANGEME.  Hard coded ID!
   new IONUX.Models.ResourceExtension({
     resource_type : 'CodeSet',
-    resource_id   : 'c06a5544609e4e35a0fbb91ddee69e63'
+    resource_id   : 'ae5b2cc2f16344c69c2809adc828e36a'
   }).fetch({async : false}).success(function(model,resp){codesets = model.data.resource.codesets});
 
   var assetTrackingType  = resource_type == 'Asset' ? 'asset_type' : 'event_duration_type';
@@ -191,7 +191,7 @@ function AssetTrackingRender(read_write,resource_type) {
     var div   = '<div class="span8 text-short-value">' + value + '</div>';
 
     // is this a picklist?
-    if (v['value_type'] == 'CodeValue' && v['value_range'] != 'TBD') {
+    if (v['value_type'] == 'CodeValue') {
       console.log(k);
       console.dir(codesets[v['value_range']]);
       input = '<select class="span8" name="' + k + '" ' + (v['editable'] != 'TRUE' ? ' disabled="disabled"' : '') + '>';
