@@ -1104,6 +1104,9 @@ IONUX.Views.UploadAssetTrackingView = Backbone.View.extend({
         $('#add-resource_declaration-ok').hide();
         $('#add-resource_declaration-cancel').html('Close');
         var html = [];
+        if (data.result.data.err_msg) {
+          html.push(data.result.data.err_msg);
+        }
         _.map(data.result.data.res_modified,function(v,k) {
           if (v.length > 0) {
             html.push(k + ' : ' + v.length + ' record(s) modified');
