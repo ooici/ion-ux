@@ -160,6 +160,14 @@ InformationResourceRender.prototype.header = function() {
  * AssetTracking Render
  */
 function AssetTrackingRender(read_write,resource_type) {
+  var codesets = {};
+  // Picklists require the related codes and codesets.  Fetch them.
+  // CHANGEME.  Hard coded ID!
+  new IONUX.Models.ResourceExtension({
+    resource_type : 'CodeSet',
+    resource_id   : 'c06a5544609e4e35a0fbb91ddee69e63'
+  }).fetch({async : false}).success(function(model,resp){codesets = model.data.resource.codesets});
+
   var assetTrackingType  = resource_type == 'Asset' ? 'asset_type' : 'event_duration_type';
   var assetTrackingAttrs = resource_type == 'Asset' ? 'asset_attrs' : 'event_duration_attrs';
 
@@ -178,10 +186,23 @@ function AssetTrackingRender(read_write,resource_type) {
     var value = (!_.isUndefined(window.MODEL_DATA.resource[assetTrackingAttrs][k]) && !_.isEmpty(window.MODEL_DATA.resource[assetTrackingAttrs][k]['value'])) ?
       window.MODEL_DATA.resource[assetTrackingAttrs][k]['value'] :
       v['default_value'];
-    // input vs. div
-    var field = read_write == 'write' ? 
-      '<input class="span8" name="' + k + '" type="text"' + (v['editable'] != 'TRUE' ? ' disabled="disabled"' : '') + ' value="' + value + '">' :
-      '<div class="span8 text-short-value">' + value + '</div>';
+
+    var input = '<input class="span8" name="' + k + '" type="text"' + (v['editable'] != 'TRUE' ? ' disabled="disabled"' : '') + ' value="' + value + '">';
+    var div   = '<div class="span8 text-short-value">' + value + '</div>';
+
+    // is this a picklist?
+    if (v['value_type'] == 'CodeValue' && v['value_range'] != 'TBD') {
+      console.log(k);
+      console.dir(codesets[v['value_range']]);
+      input = '<select class="span8" name="' + k + '" ' + (v['editable'] != 'TRUE' ? ' disabled="disabled"' : '') + '>';
+      _.each(codesets[v['value_range']].enumeration,function(o) {
+        input += '<option value="' + o + '" ' + (o == value ? 'selected' : '') + '>' + o + '</option>';
+      });
+      input += '</select>';
+    } 
+
+    var field = read_write == 'write' ? input : div;
+
     if (v['visibility'] == 'TRUE') {
       // In case this group wasn't defined above, create it.
       if (!rows[v['group_label']]) {
@@ -249,7 +270,7 @@ function AssetTrackingRender(read_write,resource_type) {
         if (!j[k]) {
           j[k] = {name : k,type_ : 'Attribute'};
         }
-        j[k]['value'] = $('#asset_attrs_group input[name="' + k + '"]').val();
+        j[k]['value'] = $('#asset_attrs_group input[name="' + k + '"],select[name="' + k + '"]').val();
       });
       window.editResourceModel.set(assetTrackingAttrs,JSON.stringify(j))
       window.editResourceModel.save()
