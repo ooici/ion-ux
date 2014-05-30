@@ -479,6 +479,12 @@ def get_creatable_resource_types():
     rt = ServiceApi.get_creatable_resource_types()
     return render_json_response(rt)
 
+@app.route('/find_codespaces/', methods=['GET'])
+@login_required
+def find_codespaces():
+    r = ServiceApi.find_codespaces()
+    return render_json_response(r)
+
 # -----------------------------------------------------------------------------
 # COMMAND RESOURCE PAGES
 # -----------------------------------------------------------------------------

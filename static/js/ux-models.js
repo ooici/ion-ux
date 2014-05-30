@@ -566,4 +566,13 @@ IONUX.Models.CreateResource = Backbone.Model.extend({
   }
 });
 
+IONUX.Models.Codespaces = Backbone.Model.extend({
+  url: function() {
+    return "/find_codespaces/";
+  },
+  parse: function(resp) {
+    return resp.data;
+  }
+});
+
 IONUX.Models.ResourceType = Backbone.Model.extend({})

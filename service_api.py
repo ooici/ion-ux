@@ -290,6 +290,14 @@ class ServiceApi(object):
         return d
 
     @staticmethod
+    def find_codespaces():
+        r = service_gateway_get('resource_registry', 'find_resources', params={'restype' : 'CodeSpace'})
+        d = []
+        for i in r:
+          d.append(i['_id'])
+        return d
+
+    @staticmethod
     def update_resource(resource_type, resource_obj, resource_assocs):
 
         # grab the schema again - if this is cached, this will be quick!

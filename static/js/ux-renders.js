@@ -161,12 +161,24 @@ InformationResourceRender.prototype.header = function() {
  */
 function AssetTrackingRender(read_write,resource_type) {
   var codesets = {};
-  // Picklists require the related codes and codesets.  Fetch them.
-  // CHANGEME.  Hard coded ID!
-  new IONUX.Models.ResourceExtension({
-    resource_type : 'CodeSet',
-    resource_id   : 'ae5b2cc2f16344c69c2809adc828e36a'
-  }).fetch({async : false}).success(function(model,resp){codesets = model.data.resource.codesets});
+  // Picklists require the related codes and codesets.  Grab the 1st codespace (by
+  // convention there is only going to be one -- at least for now).
+  // And continue to grab that codeset's extension.
+  new IONUX.Models.Codespaces().fetch({async : false}).success(function(model,resp) {
+    if (!model || !model.data || model.data.length == 0) {
+      return;
+    }
+    var id = model.data[0];
+    new IONUX.Models.ResourceExtension({
+      resource_type : 'CodeSet',
+      resource_id   : id
+    }).fetch({async : false}).success(function(model,resp) {
+      codesets = model.data.resource.codesets
+    });
+  });
+  if (_.isEmpty(codesets)) {
+    return;
+  }
 
   var assetTrackingType  = resource_type == 'Asset' ? 'asset_type' : 'event_duration_type';
   var assetTrackingAttrs = resource_type == 'Asset' ? 'asset_attrs' : 'event_duration_attrs';
