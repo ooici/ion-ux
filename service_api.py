@@ -336,14 +336,17 @@ class ServiceApi(object):
             if variable['name'] == 'ui_theme_dark':
               session['ui_theme_dark'] = variable['value']
         
-        req = service_gateway_post('resource_management', 'update_resource', params={'resource': resource_obj})
+        # get prepare statement to build urls
+        prepare = ServiceApi.get_prepare(resource_type, resource_obj['_id'], None)
+        update_op = prepare['update_request']
+        req = service_gateway_post(update_op['service_name'], update_op['service_operation'], params={update_op['request_parameters'].keys()[0]: resource_obj})
+        # replaced following line with the above code from create_resource >> req = service_gateway_post('resource_management', 'update_resource', params={'resource': resource_obj})
         reqs = [req]
 
         # handle associations
         if len(resource_assocs):
 
             # get prepare statement to build urls
-            prepare = ServiceApi.get_prepare(resource_type, resource_obj['_id'], None)
             assocs = prepare['associations']
 
             def mod_assoc(assoc_mod, val):
@@ -701,15 +704,6 @@ class ServiceApi(object):
         resource_name = resource_name or 'New %s' % resource_type
         resource.update({'name': resource_name})
 
-        # CHANGEME
-        if type_id is not None:
-          create_op['service_name']        = 'observatory_management'
-          create_op['resource_identifier'] = 'asset_id';
-          create_op['type_']               = 'AssetServiceRequest';
-          create_op['resource_type']       = 'Asset';
-          create_op['request_parameters']  = {'asset' : '$(asset)'}
-          create_op['service_operation']   = 'create_asset';
-
         resp = service_gateway_post(create_op['service_name'],
                                     create_op['service_operation'],
                                     params={create_op['request_parameters'].keys()[0]: resource})
@@ -722,13 +716,6 @@ class ServiceApi(object):
                                          params={'subject':org_id,
                                                  'predicate': 'hasResource',
                                                  'object': resp})
-
-        # CHANGEME
-        if type_id is not None:
-          resp2 = service_gateway_post('observatory_management',
-                                       'assign_asset_type_to_asset', 
-                                       params={'asset_type_id' : type_id,
-                                       'asset_id':resp})
 
         return [resp, resp2]
 
@@ -801,6 +788,12 @@ class ServiceApi(object):
 
             prepare = service_gateway_get('identity_management', 'prepare_user_info_support', params=params)
 
+        elif resource_type == "Asset":
+            params = {}
+            if resource_id:
+                params['asset_id'] = resource_id
+
+            prepare = service_gateway_get('observatory_management', 'prepare_asset_support', params=params)
         
         else:
             # GENERIC VERSION
