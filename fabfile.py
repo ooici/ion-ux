@@ -207,6 +207,12 @@ def r3_alpha():
     gateway_host = 'sg.a3.oceanobservatories.org'
     my_proxy_client_id = 'myproxy:oa4mp,2012:/client/650abeac1a08cdc1ea3013bd155fede5'
 
+def r3_beta():
+    global host, gateway_host, my_proxy_client_id
+    host = 'r3-beta.oceanobservatories.org'
+    gateway_host = 'sg.b3.oceanobservatories.org'
+    my_proxy_client_id = 'myproxy:oa4mp,2012:/client/6481ddfdd1f66e58dc0664b6b81881fc'
+
 
 def ux_test():
     print 'Deprecated...Please use "fab ion-alpha deploy"'
