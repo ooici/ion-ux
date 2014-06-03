@@ -717,6 +717,13 @@ class ServiceApi(object):
                                                  'predicate': 'hasResource',
                                                  'object': resp})
 
+        # CHANGEME
+        if type_id is not None:
+          resp2 = service_gateway_post('observatory_management',
+                                       'assign_asset_type_to_asset', 
+                                       params={'asset_type_id':type_id,
+                                               'asset_id':resp})
+
         return [resp, resp2]
 
     @staticmethod
