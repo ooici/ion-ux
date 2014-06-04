@@ -202,9 +202,8 @@ function AssetTrackingRender(read_write,resource_type) {
     var input = '<input class="span8" name="' + k + '" type="text"' + (v['editable'] != 'TRUE' ? ' disabled="disabled"' : '') + ' value="' + value + '">';
     var div   = '<div class="span8 text-short-value">' + value + '</div>';
 
-    // is this a picklist?
-    if (v['value_type'] == 'CodeValue') {
-      console.log(k);
+    // Is this a picklist (don't show as picklist if not editable)?
+    if (v['value_type'] == 'CodeValue' && v['editable'] == 'TRUE') {
       console.dir(codesets[v['value_range']]);
       input = '<select class="span8" name="' + k + '" ' + (v['editable'] != 'TRUE' ? ' disabled="disabled"' : '') + '>';
       _.each(codesets[v['value_range']].enumeration,function(o) {
@@ -223,7 +222,9 @@ function AssetTrackingRender(read_write,resource_type) {
       }
       rows[v['group_label']][v['rank'] * 1000] = 
         '<div class="level-zero text_short_ooi">' + '<div class="row-fluid">' +
-          '<div class="span4 text-short-label"><a class="void" href="javascript:void(0)" title="' + v['description'] + '">' + v['attr_label'] + '</a></div>' + 
+          '<div class="span4 text-short-label"><a class="void" href="javascript:void(0)" title="' + v['description'] + '">' +
+            v['attr_label'] + (read_write == 'write' && /^1/.test(v['cardinality']) ? ' *' : '') +
+          '</a></div>' + 
           field +
         '</div>' + '</div>';
     }
