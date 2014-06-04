@@ -204,7 +204,6 @@ function AssetTrackingRender(read_write,resource_type) {
 
     // Is this a picklist (don't show as picklist if not editable)?
     if (v['value_type'] == 'CodeValue' && v['editable'] == 'TRUE') {
-      console.dir(codesets[v['value_range']]);
       input = '<select class="span8" name="' + k + '" ' + (v['editable'] != 'TRUE' ? ' disabled="disabled"' : '') + '>';
       _.each(codesets[v['value_range']].enumeration,function(o) {
         input += '<option value="' + o + '" ' + (o == value ? 'selected' : '') + '>' + o + '</option>';
@@ -235,6 +234,9 @@ function AssetTrackingRender(read_write,resource_type) {
     l.push(
       '<div class="' + 'edit' + ' block" style="margin-left:0px;">' + '<h3>' + 'Edit' + '</h3><div class="content-wrapper">' +
         '<div class="level-zero text_short_ooi">' + '<div class="row-fluid">' +
+          '<div class="span4 text-short-label">' + 
+            'An asterisk (*) indicates a required field.' +
+          '</div>' +
           '<button id="cancel-asset" class="span2 btn-general btn-cancel">Cancel</button>' +
           '<button id="save-asset" class="span2 btn-blue btn-save">Save</button>' +
         '</div></div>' +
