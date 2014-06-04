@@ -195,7 +195,7 @@ function AssetTrackingRender(read_write,resource_type) {
     rows[o] = [];
   });
   _.map(window.MODEL_DATA[assetTrackingType].attribute_specifications,function(v,k) {
-    var value = (!_.isUndefined(window.MODEL_DATA.resource[assetTrackingAttrs][k]) && !_.isEmpty(window.MODEL_DATA.resource[assetTrackingAttrs][k]['value'])) ?
+    var value = !_.isUndefined(window.MODEL_DATA.resource[assetTrackingAttrs][k]) ?
       window.MODEL_DATA.resource[assetTrackingAttrs][k]['value'] :
       v['default_value'];
 
