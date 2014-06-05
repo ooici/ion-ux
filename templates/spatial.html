@@ -1,0 +1,115 @@
+<div class="leftNaviSelectContainer">
+    <select class="latLongMenu" fieldName="spatial_dropdown">
+      <option value="1">Lat/Long - Rect</option>
+      <option value="2">Point/Radius</option>
+    </select>
+    <div class="leftNaviSelectArrow"></div>
+  </div>
+  <span class="labelThrough">From:</span>
+  <input class="spatialDuration latlong" type="text" placeholder="Lat" id="south" fieldName="from_latitude"/>
+  <div class="leftNaviNarrowSelectContainer">
+    <select class="from_ns" fieldName="from_ns" id="sw_ns"> 
+      <option value="1">N</option>
+      <option value="2">S</option>
+    </select>
+    <div class="leftNaviNarrowSelectArrow"></div>
+  </div>
+  <input class="spatialDuration latlong" type="text" placeholder="Long" id="west" fieldName="from_longitude"/>
+  <div class="leftNaviNarrowSelectContainer">
+    <select class="from_ew" fieldName="from_ew" id="sw_ew">
+      <option value="1">E</option>
+      <option value="2">W</option>
+    </select>
+    <div class="leftNaviNarrowSelectArrow"></div>
+  </div>
+  <span class="labelThrough top_search_to">To:</span>
+  <span class="accordionLabel topSearchRadius"><br />Radius:</span>
+  <input class="spatialDuration latlong placeholder_lat" type="text" placeholder="Lat" id="north" fieldName="to_latitude"/>
+  <input class="spatialDuration latlong noPlaceholderRadius" placeholder="0" type="text" id="radius" fieldName="radius"/>
+  <div class="leftNaviNarrowSelectContainer">
+    <select class="north_south_menu" fieldName="to_ns" id="ne_ns">
+        <option value="1">N</option>
+        <option value="2">S</option>
+      </select>
+    <select class="milesKilosMenu" fieldName="miles_kilos" id="miles_kilos">
+      <option value="1">Km</option>
+      <option value="2">Mi</option>
+    </select>
+    <div class="leftNaviNarrowSelectArrow"></div>
+  </div>
+  <input class="spatialDuration latlong show_hide_longitude" type="text" placeholder="Long" id="east" fieldName="to_longitude"/>
+  <div class="leftNaviNarrowSelectContainer show_hide_longitude">
+    <select class="to_ew" fieldName="to_ew" id="ne_ew">
+      <option value="1">E</option>
+      <option value="2">W</option>
+    </select>
+    <div class="leftNaviNarrowSelectArrow"></div>
+  </div>
+  <span class="vertical_extents">Vertical Extents (positive downward)</span>
+  <div class="accordion_detail_container">
+  <div class="accordionLabel">From:</div>
+    <input class="spatialDuration latlong" type="text" placeholder="0" data-verticalfrom="from" fieldName="vertical_from" id="upper"/>
+  <div class="accordionLabel">To:</div>
+    <input class="spatialDuration latlong" type="text" placeholder="Depth" data-verticalto="to" fieldName="vertical_to" id="lower"/>
+  <div class="leftNaviNarrowSelectContainer">
+      <select class="feet_miles" fieldName="feet_miles" id="feet_miles">
+        <option value="1">m</option>
+        <option value="2">ft</option>
+      </select>
+      <div class="leftNaviNarrowSelectArrow"> </div>
+    </div>
+  </div>
+<script>
+$(function(){
+
+  //Moved here for toggle between drop-down and drawing selector on Map
+  $('.latLongMenu').on('change', function(e) {
+    console.log('changed option ' + $(this).val());
+    var attribute = {};
+    attribute["spatial_dropdown"] = $(this).val();
+    IONUX2.Models.spatialModelInstance.updateAttributes(attribute);
+    
+    IONUX2.Dashboard.MapView.clear_inputs();
+
+    if ($(this).val() == "2") {
+      // $('.top_search_to, .placeholder_lat, .north_south_menu, .show_hide_longitude').hide();
+      // $('.topSearchRadius, .noPlaceholderRadius, .milesKilosMenu').show();
+      IONUX2.Dashboard.MapView.drawingManager.setDrawingMode(google.maps.drawing.OverlayType.CIRCLE);
+    } else {
+      // $('.topSearchRadius, .noPlaceholderRadius, .milesKilosMenu').hide();
+      // $('.top_search_to, .placeholder_lat, .north_south_menu, .show_hide_longitude').show();
+      IONUX2.Dashboard.MapView.drawingManager.setDrawingMode(google.maps.drawing.OverlayType.RECTANGLE);
+    }
+    
+  });
+  
+  //Controls the open of the Spatial accoridan block. Block -> Map and Map -> Block
+  $("#spatialElem").find('.accordionTitle').on("click", function(){
+    if(IONUX2.Dashboard.MapView.spatial_open){
+      IONUX2.Dashboard.MapView.spatial_open = false;
+    } else {
+      IONUX2.Dashboard.MapView.spatial_open = true;
+    }  
+  });
+
+
+//*  DONT WANT EVENTS FIRED ON EVERY CHANGE, NEEDS TO BE SPECIFIC OR ENTERS INFINITE LOOP BETWEEN MAP AND SPATIAL BLOCK
+
+    $('#spatial .spatialDuration, #spatial select:not(.latLongMenu)').on('change', function(e) {
+      e.preventDefault();
+      console.log('default attribute event.');
+      var attr = $(this).attr('fieldName');
+
+      // For some browsers, `attr` is undefined; for others,
+      // `attr` is false.  Check for both.
+      if (typeof attr !== 'undefined' && attr !== false) {
+        var attributeName = $(this).attr('fieldName');
+        var value = $(this).val();
+        var attribute = {};
+        attribute[attributeName] = value;
+        IONUX2.Models.spatialModelInstance.updateAttributes(attribute);
+      }
+    });
+
+});
+</script>

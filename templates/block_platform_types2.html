@@ -1,0 +1,33 @@
+<div class="select_all">
+    <input class="checkAllPlatformTypes" type="checkbox"/> Select All
+</div>
+<div class="listPlatformTypes">
+    <form action="">
+            <input class="resource_id" type="checkbox"/> AUV<br/>
+            <input class="resource_id" type="checkbox"/> Cable Infrastructure<br/>
+            <input class="resource_id" type="checkbox"/> Cable Node<br/>
+            <input class="resource_id" type="checkbox"/> Camera<br/>
+            <input class="resource_id" type="checkbox"/> Engineering<br/>
+            <input class="resource_id" type="checkbox"/> Glider<br/>
+            <input class="resource_id" type="checkbox"/> Mobile Asset Dock<br/>
+            <input class="resource_id" type="checkbox"/> Mooring<br/>
+            <input class="resource_id" type="checkbox"/> Profiler<br/>
+    </form>
+</div>
+
+<script>
+    $('.checkAllPlatformTypes').on('click', function(){
+        $('.listPlatformTypes').find('input').prop("checked", $('.checkAllPlatformTypes').prop("checked"));
+    });
+</script>
+<!-- Dont forget to modify the below to match platformTypes -->
+<!-- <script>
+    $(function(){
+        $(".list_sites .resourceLink").click(function(){
+            var resource_id = $(this).attr('data-id');
+            var url = "/Observatory/face/"+resource_id+"/";
+            IONUX.ROUTER.navigate(url, {trigger:true});
+            $('#mapButtonHidden').click();
+        });
+    });
+</script> -->

@@ -1,0 +1,34 @@
+<div id="createResourceTabContainer" class="mainTabContainer">
+	<div class="twoNavTabs">
+		<div id="createResourceTab" class="twoNavTab active" tabContent="#createResourceContent">Create Resource</div>
+		<div id="editResourceTab" class="twoNavTab" tabContent="#editResourceContent" style="display:none;">Edit Resource</div>
+	</div>
+</div>
+<div id="createResourceContainer" class="lowerMainContentContainer">
+	<div id="createResourceContent" style="height:100%;"> 
+	</div>
+	<div id="editResourceContent" style="display:none;">
+		<h5 style="color:#fff">EDIT STUFF!!!</h5>
+	</div>
+</div>
+
+<script type="text/javascript">
+
+	IONUX2.setResourceManagementTab = function(tab){
+		$("#"+tab).show();
+		$("#"+tab).click();
+	}
+
+	$(function() {
+		// $('#createResourceContent').html(IONUX2.getTemplate('templates/partials/create_resource_modal.html'));
+		new IONUX.Views.CreateResourceView().render();
+
+		$("#createResourceTabContainer .twoNavTab").click(function(e){
+			var target = $(e.target);
+			target.addClass('active').siblings().removeClass('active');
+			tab_content = target.attr("tabContent");
+			$(tab_content).siblings().hide();
+			$(tab_content).show();
+		});    
+	});
+</script>
