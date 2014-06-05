@@ -182,15 +182,22 @@ class ServiceApi(object):
         return search_json['data']
 
     @staticmethod
-    def adv_search(geospatial_bounds, vertical_bounds, temporal_bounds, temporal_field, search_criteria):
+    def adv_search(geospatial_bounds, vertical_bounds, temporal_bounds, temporal_field, radius, search_criteria):
         post_data = {'query': {},
                      'and': [],
                      'or': []}
         queries = []
         max_search_limit = config.MAX_SEARCH_RESULTS if hasattr(config, 'MAX_SEARCH_RESULTS') else 100
-        post_data['limit'] = max_search_limit
+        post_data['limit'] = 1000 #max_search_limit
 
-        if geospatial_bounds and all(geospatial_bounds.itervalues()):
+        if radius:
+            queries.append({'wkt': 'POINT(' + geospatial_bounds['west'] + ' ' + geospatial_bounds['south'] + ')',
+                            'field': 'geospatial_point_center',
+                            'index': 'data_products_index',
+                            'buffer': radius,
+                            'cmpop': 'within'})
+
+        elif geospatial_bounds and all(geospatial_bounds.itervalues()):
             queries.append({'bottom_right': [float(geospatial_bounds['east']),
                                              float(geospatial_bounds['south'])],
                             'top_left': [float(geospatial_bounds['west']),
@@ -244,6 +251,10 @@ class ServiceApi(object):
 
         post_data['query'] = queries[0]
         post_data['and'] = queries[1:]
+
+        # f = open('crap.txt', 'w');
+        # f.write(jsonify(post_data));
+        # f.close();
 
         # have to manually call because normal SG post turns a list into the first object?
         url, data = build_post_request('discovery', 'query', {'query': post_data, 'id_only': False})
@@ -630,8 +641,8 @@ class ServiceApi(object):
         return extension
 
     @staticmethod
-    def create_resource(resource_type, org_id, resource_name=None):
-        prepare = ServiceApi.get_prepare(resource_type, None, None)
+    def create_resource(resource_type, org_id, lcstate, resource_name=None):
+        prepare = ServiceApi.get_prepare(resource_type, None, None, None)
         if isinstance(prepare, dict) and "GatewayError" in prepare:
             return [prepare, None]
 
@@ -1051,6 +1062,10 @@ class ServiceApi(object):
                     ui_theme_dark = variable['value']
         
         session['ui_theme_dark'] = ui_theme_dark
+
+    @staticmethod
+    def get_user_identities():
+        return ServiceApi.find_by_resource_type("UserInfo")
         
     @staticmethod
     def signon_user_testmode(user_name):

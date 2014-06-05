@@ -1,0 +1,16 @@
+<span class="accordionTitle">
+  <div class="expandHide arrowRight"></div><div class="accordion_label">Facility</div>
+</span>
+<div id="facility_list" class="leftAccordionContents">
+    <!--<div class="select_all">
+        <input class="checkAllSites" type="checkbox"/> Select All
+    </div>-->
+    <div class="list_facilities">
+    	<form action="">
+        	<% _.each(this.collection.models, function(facility) { %>
+        		<input id="facility_item" data-facilities="<%= facility.attributes.name %>" type="checkbox"/> 
+        			<a class="facility_id" href="#" data-id="<%= facility.attributes._id %>">
+    			<%= facility.attributes.name %></a><br/>
+        	<% }) %>
+    	</form>
+    </div>

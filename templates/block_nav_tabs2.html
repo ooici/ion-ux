@@ -1,0 +1,16 @@
+<div id="twoNavTabs" class="twoNavTabs">
+	<div id="searchTab" class="twoNavTab active" href="#searchTabContent">Search</div>
+	<div id="mySearchesTab" class="twoNavTab" href="#mySearchesTabContent">My Searches</div>
+</div>
+
+<script>
+	$(function () {
+		$(".twoNavTab").click(function(e){
+			var target = $(e.target);
+			target.addClass('active').siblings().removeClass('active');
+			tab_content = target.attr("href");
+			$(tab_content).siblings().hide();
+			$(tab_content).show();
+		});
+	})
+</script>

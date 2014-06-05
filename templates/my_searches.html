@@ -1,0 +1,3 @@
+<% _.each(this.collection.models, function(search) { %>
+<li><a data-id="<%= search.attributes.searchName.time %>" href="#"><%= search.attributes.searchName.name %> <%= search.attributes.searchName.month %>/<%= search.attributes.searchName.day %>/<%= search.attributes.searchName.year %> <%= search.attributes.searchName.hour %>:<%= search.attributes.searchName.minute %></a></li>
+<% }); %>

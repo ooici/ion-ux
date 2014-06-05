@@ -1,5 +1,5 @@
 /*
-
+- last edited 2014-04-22
 - Need a way to create links, see items marked KEEPING FOR REFERENCE below.
 
 - Show/Hide 
@@ -435,8 +435,8 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
                 var resource_type_name = 'Resource';
         };
         
-        var html = "<div class='sprite "+type_css+"' title='"+resource_type+"'>&nbsp;</div>&nbsp;'"+resource_type_name;
-        return html;
+        var html = "<div><div style='display:inline-block;width:20px' class='sprite "+type_css+"' title='"+resource_type+"'>&nbsp</div><div style='display:inline-block'>"+resource_type+"</div></div>";
+		return html;
     },
 
     preproccesor: function(element_type, element_name){

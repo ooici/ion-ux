@@ -1,0 +1,66 @@
+<section id="searchBarContainer">
+  <h5>Spatial</h5>
+  <div class="top_navi_select_container">
+      <select class="latLongMenu">
+        <option>Lat/Long - Rect</option>
+        <option>Point/Rad</option>
+      </select>
+      <div class="top_navi_select_arrow"></div>
+    </div>
+  <div class="accordionLabel">From:</div>
+   <input class="latlong" type="text" placeholder="Lat" />
+  <div class="top_navi_narrow_select_container">
+      <select>
+        <option>N/S</option>
+      </select>
+      <div class="leftNaviNarrowSelectArrow"></div>
+    </div>
+    <input class="latlong" type="text" placeholder="Long" />
+    <div class="top_navi_narrow_select_container">
+      <select>
+        <option>E/W</option>
+      </select>
+      <div class="leftNaviNarrowSelectArrow"></div>
+    </div>
+    <div class="accordionLabel top_search_to">To:</div>
+    <span class="accordionLabel topSearchRadius">Radius:</span>
+     <input class="latlong placeholder_lat" type="text" placeholder="Lat" />
+     <input class="latlong noPlaceholderRadius" type="text" />
+    <div class="top_navi_narrow_select_container">
+      <select class="north_south_menu">
+        <option>N/S</option>
+      </select>
+      <select class="milesKilosMenu">
+        <option>Mi/Km</option>
+      </select>
+      <div class="leftNaviNarrowSelectArrow"></div>
+    </div>
+      <input class="latlong show_hide_longitude" type="text" placeholder="Long" />
+     <div class="top_navi_narrow_select_container show_hide_longitude">
+      <select>
+        <option>E/W</option>
+      </select>
+      <div class="leftNaviNarrowSelectArrow"></div>
+    </div>
+</section>
+<section id="searchBarContainer">
+  <h5>Vertical Position</h5>
+  <div class="accordionLabel">From:</div>
+  <input class="latlong" type="text" />
+  <div class="accordionLabel">To (Depth):</div>
+  <input class="latlong" type="text" />
+  <div class="top_navi_narrow_select_container">
+      <select>
+        <option>FS/M</option>
+      </select>
+      <div class="leftNaviNarrowSelectArrow"></div>
+    </div>
+</section>
+ <script>
+      $(function(){
+        $('.latLongMenu').on('change', function(e) {
+          $('.top_search_to, .placeholder_lat, .north_south_menu, .show_hide_longitude').hide();
+          $('.topSearchRadius, .noPlaceholderRadius, .milesKilosMenu').show();
+        });
+      });
+</script>
