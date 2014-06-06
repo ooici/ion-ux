@@ -20,6 +20,7 @@ IONUX.Router = Backbone.Router.extend({
     ":resource_type/list/": "collection",
     ":resource_type/command/:resource_id/": "command",
     ":resource_type/:view_type/:resource_id/" : "page",
+    ":resource_type/:view_type/:resource_id/page_to_edit" : "page_to_edit",
     ":resource_type/:view_type/:resource_id/edit" : "edit",
     "userprofile" : "user_profile",
     "create_account": "create_account",
@@ -346,6 +347,31 @@ dashboard_map_resource: function(resource_id) {
         render_page(resource_type, resource_id, model);
         // Pull back recent events as a 2nd request.
         fetch_events(window.MODEL_DATA['resource_type'], resource_id);
+      });
+  },
+
+  page_to_edit: function(resource_type, view_type, resource_id){
+    // This is probably way inefficient and it is duplicitave, but the idea is that Assets and Event Durations
+    // are special beasts.  We want a page rendered so that we can get window.MODEL_DATA outfitted correctly.
+    // Then we want to fire the edit page up.  So we end up w/ two renders, but that's the way it is for now.
+
+    $('#dashboard-container').hide();
+    // Todo move into own view
+    $('#dynamic-container').html('<div id="spinner"></div>').show();
+    new Spinner(IONUX.Spinner.large).spin(document.getElementById('spinner'));
+
+    var resource_extension = new IONUX.Models.ResourceExtension({resource_type: resource_type, resource_id: resource_id});
+    var self = this;
+    resource_extension.fetch()
+      .success(function(model, resp) {
+        $('#dynamic-container').show();
+        $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS[view_type]).html());
+        $('.span9 li,.span3 li').hide();
+        self._remove_dashboard_menu();
+        render_page(resource_type, resource_id, model);
+        // Pull back recent events as a 2nd request.
+        fetch_events(window.MODEL_DATA['resource_type'], resource_id);
+        IONUX.ROUTER.navigate(window.location.pathname.replace('/page_to_edit','/edit'), {trigger:true});
       });
   },
   

@@ -599,12 +599,13 @@ def get_realtime_visualization_data2(query_token):
 
 
 @app.route('/<resource_type>/face/<resource_id>/edit', methods=['GET'])
+@app.route('/<resource_type>/face/<resource_id>/page_to_edit', methods=['GET'])
 def edit(resource_type, resource_id):
     '''
     HTML requests should be redirected to the parent view
     for data, page preprocessing and Backbone initialization.
     '''
-    parent_url = re.sub(r'edit$', '', request.url)
+    parent_url = re.sub(r'page_to_edit|edit$', '', request.url)
     return redirect(parent_url)
 
 @app.route('/resource_type_edit/<resource_type>/<resource_id>/', methods=['GET', 'PUT'])
