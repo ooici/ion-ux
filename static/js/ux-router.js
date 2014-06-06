@@ -351,10 +351,8 @@ dashboard_map_resource: function(resource_id) {
   },
 
   page_to_edit: function(resource_type, view_type, resource_id){
-    // This is probably way inefficient and it is duplicitave, but the idea is that Assets and Event Durations
-    // are special beasts.  We want a page rendered so that we can get window.MODEL_DATA outfitted correctly.
-    // Then we want to fire the edit page up.  So we end up w/ two renders, but that's the way it is for now.
-
+    // Assets and Event Durations  are special beasts.  The attr editing blocks require that the resource face page
+    // be rendered so that the window.MODEL_DATA is complete and for the editing blocks know where to go.
     $('#dashboard-container').hide();
     // Todo move into own view
     $('#dynamic-container').html('<div id="spinner"></div>').show();
