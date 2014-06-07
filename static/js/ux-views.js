@@ -1411,6 +1411,7 @@ IONUX.Views.CreateResourceView = Backbone.View.extend({
 
         Backbone.history.fragment = null; // Clear history fragment to allow for page "refresh".
         if (vals.type_id) {
+          // Assets and Event Durations need a rendered face page before firing the edit.
           IONUX.ROUTER.navigate('/' + rtype + '/face/' + new_res_id + '/page_to_edit', {trigger: true});
         }
         else {
