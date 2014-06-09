@@ -1,5 +1,5 @@
 /*
-
+- last edited 2014-04-22
 - Need a way to create links, see items marked KEEPING FOR REFERENCE below.
 
 - Show/Hide 
@@ -336,82 +336,107 @@ IONUX.Views.DataTable = IONUX.Views.Base.extend({
         switch(resource_type){
             case "InstrumentDevice":
                 var type_css = 'instrumentdev_mini';
+                var resource_type_name = 'Instrument';
                 break;
             case "PlatformDevice":
                 var type_css = 'platform_mini';
+                var resource_type_name = 'Platform';
                 break;
             case "InstrumentModel":
                 var type_css = 'instrument_mini';
+                var resource_type_name = 'Instrument Model';
                 break;
             case "InstrumentAgent":
                 var type_css = 'instrumentagent_mini';
+                var resource_type_name = 'Instrument Agent';
                 break;
             case "InstrumentAgentInstance":
                 var type_css = 'instrumentagentinstance_mini';
+                var resource_type_name = 'Instr Agent Instance';
                 break;
             case "Org":
                 var type_css = 'org_mini';
+                var resource_type_name = 'Organization';
                 break;
             case "DataProduct":
                 var type_css = 'data_product_mini';
+                var resource_type_name = 'Data Product';
                 break;
             case "SensorDevice":
                 var type_css = 'sensor_mini';
+                var resource_type_name = 'Sensor Device';
                 break;
             case "Site":
                 var type_css = 'site_mini';
+                var resource_type_name = 'Site';
                 break;
             case "StationSite":
                 var type_css = 'station_mini';
+                var resource_type_name = 'Station Site';
                 break;
             case "Observatory":
                 var type_css = 'site_mini';
+                var resource_type_name = 'Observatory';
                 break;
             case "Subsite":
                 var type_css = 'site_mini';
+                var resource_type_name = 'Subsite';
                 break;
             case "PlatformSite":
                 var type_css = 'platformportal_mini';
+                var resource_type_name = 'Platform Site';
                 break;
             case "PlatformModel":
                 var type_css = 'platformmodel_mini';
+                var resource_type_name = 'Platform Model';
                 break;
             case "PlatformAgent":
                 var type_css = 'platformagent_mini';
+                var resource_type_name = 'Platform Agent';
                 break;
             case "PlatformAgentInstance":
                 var type_css = 'platformagentinstance_mini';
+                var resource_type_name = 'Platform Agent Instance';
                 break;
             case "UserRole":
                 var type_css = 'userrole_mini';
+                var resource_type_name = 'User Role';
                 break;
             case "InstrumentSite":
                 var type_css = 'instrumentportal_mini';
+                var resource_type_name = 'Instrument Portal';
                 break;
             case "Attachment":
                 var type_css = 'attachment_mini';
+                var resource_type_name = 'Attachment';
                 break;
             case "DataProducer":
                 var type_css = 'data_producer_mini';
+                var resource_type_name = 'Data Producer';
                 break;
             case "Dataset":
                 var type_css = 'data_set_mini';
+                var resource_type_name = 'Dataset';
                 break;
             case "Deployment":
                 var type_css = 'deployment_mini';
+                var resource_type_name = 'Deployment';
                 break;
             case "ExternalDatasetAgent":
                 var type_css = 'externaldatasetagent_mini';
+                var resource_type_name = 'Ext Dataset Agent';
                 break;
             case "ExternalDatasetAgentInstance":
                 var type_css = 'externaldatasetagentinstance_mini';
+                var resource_type_name = 'Ext Dataset Agent Instance';
                 break;
             default:
                 var type_css = 'resource_mini';
+                var resource_type_name = 'Resource';
         };
         
-        var html = "<div class='sprite "+type_css+"' title='"+resource_type+"'>&nbsp;</div>";
-        return html;
+        var html = "<div><div style='display:inline-block;width:20px' class='sprite "+type_css+"' title='"+resource_type+"'>&nbsp</div><div style='display:inline-block'>"+resource_type+"</div></div>";
+		return html;
     },
 
     preproccesor: function(element_type, element_name){
