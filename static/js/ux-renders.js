@@ -230,19 +230,6 @@ function AssetTrackingRender(read_write,resource_type) {
   });
 
   var l = [];
-  if (read_write == 'write') {
-    l.push(
-      '<div class="' + 'edit' + ' block" style="margin-left:0px;">' + '<h3>' + 'Edit' + '</h3><div class="content-wrapper">' +
-        '<div class="level-zero text_short_ooi">' + '<div class="row-fluid">' +
-          '<div class="span4 text-short-label">' + 
-            'An asterisk (*) indicates a required field.' +
-          '</div>' +
-          '<button id="cancel-asset" class="span2 btn-general btn-cancel">Cancel</button>' +
-          '<button id="save-asset" class="span2 btn-blue btn-save">Save</button>' +
-        '</div></div>' +
-      '</div></div>'
-    );
-  }
   _.each(group_labels,function(o){
     // Don't show empty groups.
     if (rows[o].length > 0) {
@@ -253,13 +240,28 @@ function AssetTrackingRender(read_write,resource_type) {
       l.push('</div></div>');
     }
   });
+  if (read_write == 'write') {
+    l.push(
+      '<div class="' + 'edit' + ' block" style="margin-left:0px;">' + '<h3>' + 'Edit' + '</h3><div class="content-wrapper">' +
+        '<div class="level-zero text_short_ooi">' + '<div class="row-fluid">' +
+          '<div class="span4" style="width:100%">' +
+          '<button id="save-asset" class="btn-blue btn-save">Save</button>' +
+          '&nbsp;&nbsp;&nbsp;' + 
+          '<button id="cancel-asset" class="btn-general btn-cancel">Cancel</button>' +
+          '</div>' +
+        '</div></div>' +
+      '</div></div>'
+    );
+  }
 
   // Create the group.
-  var html = 
-    '<ul class="nav nav-tabs">' + 
-      '<li class="Resource active" style="display: list-item;"><a data-toggle="tab" href="#0">Attributes</a></li>' +
-    '</ul>' +
-    '<div class="tab-content">' +
+  var html = '';
+  if (read_write == 'read') {
+    html = '<ul class="nav nav-tabs">' + 
+        '<li class="Resource active" style="display: list-item;"><a data-toggle="tab" href="#0">Attributes</a></li>' +
+      '</ul>';
+  }
+  html += '<div class="tab-content">' +
       '<div class="tab-pane row-fluid active">' +
         l.join('') +
       '</div>' +
@@ -271,10 +273,19 @@ function AssetTrackingRender(read_write,resource_type) {
   }
   else {
     html = '<div id="asset_attrs_group" class="group">' + html + '</div>';
-    $('.v02,.span9').prepend(html);
+    // Only show the editable attr window if in the edit mode (i.e. hide the default resource edit form).
+    // Otherwise add this block to the face page.
+    if (read_write == 'write') {
+      $('.v02,.span9').html(html);
+    }
+    else {
+      $('.v02,.span9').prepend(html);
+    }
+/*
     // Get rid of the standard Information panel.  And expand this new Attributes panel to the full width.
     $('.v01,.span3').remove();
     $('.v02,.span9').toggleClass('v02').toggleClass('v01').toggleClass('span9').toggleClass('span12');
+*/
   }
 
   if (read_write == 'write') {
@@ -287,13 +298,15 @@ function AssetTrackingRender(read_write,resource_type) {
         }
         j[k]['value'] = $('#asset_attrs_group input[name="' + k + '"],select[name="' + k + '"]').val();
       });
-      window.editResourceModel.set(assetTrackingAttrs,JSON.stringify(j))
-      window.editResourceModel.save()
-      IONUX.ROUTER.navigate(window.location.pathname.replace(/edit$/,''),{trigger:true})
+      window.editResourceModel.set(assetTrackingAttrs,JSON.stringify(j));
+      window.editResourceModel.save();
+      IONUX.ROUTER.navigate(window.location.pathname.replace(/page_to_edit$/,''),{trigger:true});
+      window.scrollTo(0,0);
     });
     $('#cancel-asset').click(function(){
       delete window.editResourceModel;
-      IONUX.ROUTER.navigate(window.location.pathname.replace(/edit$/,''),{trigger:true})
+      IONUX.ROUTER.navigate(window.location.pathname.replace(/page_to_edit$/,''),{trigger:true});
+      window.scrollTo(0,0);
     });
   }
 

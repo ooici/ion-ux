@@ -401,6 +401,10 @@ IONUX.Views.EditResource = Backbone.View.extend({
 
     // HACK HACK to fix up embedded object spacing
     this.$('.bbf-object').parent().prev('label').css({float:'none'});
+
+    if (/Asset|EventDuration/.test(this.model.resource_type)) {
+      $('#save-resource').text('Continue');
+    }
   },
   submit_form: function(e){
     var target = $(e.target);
@@ -441,12 +445,22 @@ IONUX.Views.EditResource = Backbone.View.extend({
     this.model.unset('resource_id');
     this.model.unset('resource_type');
 
-    this.model.save().done(function(){
-      IONUX.ROUTER.navigate(self.base_url, {trigger:true});
-      window.scrollTo(0,0); // scroll to top
-      target.prop('disabled', false);
-      target.text("Save");
-    });
+    if (/Asset|EventDuration/.test(this.model.resource_type)) {
+      this.model.save().done(function(){
+        IONUX.ROUTER.navigate(self.base_url + 'page_to_edit', {trigger:true});
+        window.scrollTo(0,0); // scroll to top
+        target.prop('disabled', false);
+        target.text("Continue");
+      });
+    }
+    else {
+      this.model.save().done(function(){
+        IONUX.ROUTER.navigate(self.base_url, {trigger:true});
+        window.scrollTo(0,0); // scroll to top
+        target.prop('disabled', false);
+        target.text("Save");
+      });
+    }
   },
   cancel: function(){
     IONUX.ROUTER.navigate(this.base_url,{trigger:true});

@@ -238,11 +238,11 @@ dashboard_map_resource: function(resource_id) {
     });
   },
 
-  edit: function(resource_type, view_type, resource_id) {
+  edit: function(resource_type, view_type, resource_id, asset_tracking) {
     var resource_extension = new IONUX.Models.ResourceExtension({resource_type: resource_type, resource_id: resource_id});
     resource_extension.fetch({async : false})
       .success(function(model, resp) {
-        console.dir(resp);
+        window.MODEL_DATA = model.data;
       })
 
     var m = new IONUX.Models.EditResourceModel({
@@ -251,7 +251,7 @@ dashboard_map_resource: function(resource_id) {
     });
 
     // Asset editing is unique.  Since we're not going to a separate /edit page, simply launch a writable renderer.
-    if (!/Asset|EventDuration/.test(resource_type) || !window.MODEL_DATA) {
+    if (!asset_tracking || !window.MODEL_DATA) {
       // Todo move into own view
       $('#dynamic-container > .row-fluid').html('<div id="spinner"></div>').show();
       new Spinner(IONUX.Spinner.large).spin(document.getElementById('spinner'));
@@ -263,7 +263,7 @@ dashboard_map_resource: function(resource_id) {
     
     m.fetch({
       success: function(resp) {
-        if (!/Asset|EventDuration/.test(resource_type) || !window.MODEL_DATA) {
+        if (!asset_tracking || !window.MODEL_DATA) {
           $('#dashboard-container').hide();
           $('#dynamic-container').show();
           $('#dynamic-container').html($('#' + AVAILABLE_LAYOUTS[view_type]).html());
@@ -330,7 +330,7 @@ dashboard_map_resource: function(resource_id) {
     new IONUX.Views.Footer({resource_id: null, resource_type: resource_type}).render().el;
   },
   
-  page: function(resource_type, view_type, resource_id, nav_to_edit){
+  page: function(resource_type, view_type, resource_id){
     $('#dashboard-container').hide();
     // Todo move into own view
     $('#dynamic-container').html('<div id="spinner"></div>').show();
@@ -347,16 +347,13 @@ dashboard_map_resource: function(resource_id) {
         render_page(resource_type, resource_id, model);
         // Pull back recent events as a 2nd request.
         fetch_events(window.MODEL_DATA['resource_type'], resource_id);
-        if (nav_to_edit) {
-          IONUX.ROUTER.navigate(window.location.pathname.replace('/page_to_edit','/edit'), {trigger:true});
-        }
       });
   },
 
   page_to_edit: function(resource_type, view_type, resource_id){
     // Assets and Event Durations are special beasts.  The attr editing blocks require that the resource face page
     // be rendered so that the window.MODEL_DATA is complete and for the editing blocks know where to go.
-    this.page(resource_type, view_type, resource_id, true);
+    this.edit(resource_type, view_type, resource_id, true);
   },
   
   command: function(resource_type, resource_id){
