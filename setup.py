@@ -16,7 +16,7 @@ setup(name='ion-ux',
       description='OOI ION UX',
       url='https://github.com/ooici/ion-ux',
       download_url='http://sddevrepo.oceanobservatories.org/releases/',
-      license='Apache 2.0',
+      license='BSD',
       packages=find_packages(),
       dependency_links=[
           'http://sddevrepo.oceanobservatories.org/releases/',
