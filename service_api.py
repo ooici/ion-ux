@@ -454,7 +454,8 @@ class ServiceApi(object):
         return service_gateway_post('observatory_management',
                                     'declare_asset_tracking_resources',
                                     params={'content_type'     : file_descriptor.mimetype,
-                                            'content'          : binascii.b2a_hex(content)})
+                                            'content'          : binascii.b2a_hex(content),
+                                            'content_encoding' : 'b2a_hex'})
 
     @staticmethod
     def asset_tracking_report():

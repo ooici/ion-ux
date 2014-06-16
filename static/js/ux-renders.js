@@ -196,7 +196,7 @@ function AssetTrackingRender(read_write,resource_type) {
   });
   _.map(window.MODEL_DATA[assetTrackingType].attribute_specifications,function(v,k) {
     var value = !_.isUndefined(window.MODEL_DATA.resource[assetTrackingAttrs][k]) ?
-      window.MODEL_DATA.resource[assetTrackingAttrs][k]['value'] :
+      window.MODEL_DATA.resource[assetTrackingAttrs][k]['value'][0]['value'] :
       v['default_value'];
 
     var input = '<input class="span8" name="' + k + '" type="text"' + (v['editable'] != 'TRUE' ? ' disabled="disabled"' : '') + ' value="' + value + '">';
@@ -296,7 +296,10 @@ function AssetTrackingRender(read_write,resource_type) {
         if (!j[k]) {
           j[k] = {name : k,type_ : 'Attribute'};
         }
-        j[k]['value'] = $('#asset_attrs_group input[name="' + k + '"],select[name="' + k + '"]').val();
+        j[k]['value'] = [{
+          type_ : v['value_type'],
+          value : $('#asset_attrs_group input[name="' + k + '"],select[name="' + k + '"]').val()
+        }];
       });
       window.editResourceModel.set(assetTrackingAttrs,JSON.stringify(j));
       window.editResourceModel.save();
