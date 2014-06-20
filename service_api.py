@@ -718,12 +718,18 @@ class ServiceApi(object):
                                                  'predicate': 'hasResource',
                                                  'object': resp})
 
-        # CHANGEME
+        # speical cases for assets and event_durations
         if type_id is not None:
-          resp2 = service_gateway_post('observatory_management',
-                                       'assign_asset_type_to_asset', 
-                                       params={'asset_type_id':type_id,
-                                               'asset_id':resp})
+            if resource_type == "Asset":
+                resp2 = service_gateway_post('observatory_management',
+                                             'assign_asset_type_to_asset', 
+                                             params={'asset_type_id':type_id,
+                                                     'asset_id':resp})
+            elif resource_type == "EventDuration":
+                resp2 = service_gateway_post('observatory_management',
+                                             'assign_event_duration_type_to_event_duration',
+                                             params={'event_duration_type_id':type_id,
+                                                     'event_duration_id':resp})
 
         return [resp, resp2]
 
@@ -802,7 +808,14 @@ class ServiceApi(object):
                 params['asset_id'] = resource_id
 
             prepare = service_gateway_get('observatory_management', 'prepare_asset_support', params=params)
-        
+       
+        elif resource_type == "EventDuration":
+            params = {}
+            if resource_id:
+                params['event_duration_id'] = resource_id
+
+            prepare = service_gateway_get('observatory_management', 'prepare_event_duration_support', params=params)
+ 
         else:
             # GENERIC VERSION
             params = {'resource_type':resource_type}
