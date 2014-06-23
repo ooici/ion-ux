@@ -20,7 +20,7 @@
                 <div class="controls">
                     <select name="resource-type" size="8">
                         <% _.each(types, function(t) { %>
-                            <option value="<%= t.name %>"><%= t.type + ' : ' + t.nice_name %></option>
+                            <option value="<%= t.name %>" data-type="<%= t.type %>"><%= t.type + ' : ' + t.nice_name %></option>
                         <% }) %>
                     </select>
                 </div>

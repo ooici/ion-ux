@@ -1386,6 +1386,7 @@ IONUX.Views.CreateResourceView = Backbone.View.extend({
   createResourceClicked: function() {
     var url = window.location.protocol + "//" + window.location.host + "/create/",
       rtype = this.$('select[name="resource-type"]').val(),
+        cat = this.$('select[name="resource-type"] option:selected').data('type'),
         org = this.$('select[name="org"]').val(),
        vals = {'resource_type': rtype,
                'org_id': org},
@@ -1395,7 +1396,7 @@ IONUX.Views.CreateResourceView = Backbone.View.extend({
 
     // See if this is a complex type that needs an additional association when creating the resouce.
     // Its resource_type ID should also be overwritten.
-    var r = _.find(this.model.attributes,function(o){return o.name == rtype});
+    var r = _.find(this.model.attributes,function(o){return o.name == rtype && o.type == cat});
     if (r && !_.isUndefined(r._id)) {
       vals.resource_type = r.type;
       rtype = r.type;
