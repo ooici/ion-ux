@@ -274,7 +274,7 @@ dashboard_map_resource: function(resource_id) {
         else {
           window.editResourceModel.unset('resource_id');
           window.editResourceModel.unset('resource_type');
-          window.editResourceModel.resource_type = 'EventDuration';
+          window.editResourceModel.resource_type = resource_type;
           new AssetTrackingRender('write',resource_type);
         }
       }
