@@ -473,6 +473,12 @@ def get_data_product_updates():
     data_product_info = ServiceApi.get_data_product_updates(data_product_id_list,  since_timestamp)
     return render_json_response(data_product_info)
 
+@app.route('/DataProduct/parameters/<data_product_id>/')
+def list_data_product_parameters(data_product_id):
+    service_response = ServiceApi.get_data_product_parameters(data_product_id)
+    return render_json_response(service_response)
+
+
 
 @app.route('/get_sites_status/', methods=['GET', 'POST'])
 def get_sites_status():
