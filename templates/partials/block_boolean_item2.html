@@ -1,7 +1,7 @@
 <div class="filter-item">
     <select class="booleanSelectContainer" name="filter_var">
         <% _.each(fields, function(e) { %>
-        <option value="<%= e.field %>"><%= e.label %></option>
+        <option value="<%= e.field %>" data-name="<%= e.name %>"><%= e.label %></option>
         <%});%>
     </select>
 

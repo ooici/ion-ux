@@ -1,28 +1,104 @@
 <div class="select_all">
-    <input class="checkAllSites" type="checkbox"/> Select All
+    <div class="expandBtn sitesExpandToggle">+</div> Show / Hide All</br>
+    <input class="checkAllSites selectAll" type="checkbox"/> Select All
 </div>
-<div class="list_sites">
+<div class="listSites">
     <form action="">
-        <% _.each(this.collection.models, function(site) { %>
-        	<input id="site_item" class="resource_id" data-id="<%= site.attributes._id %>" data-sites="<%= site.attributes.spatial_area_name %>" type="checkbox"/><div class="resourceLink" data-id="<%= site.attributes._id %>">
-        	<% if (site.attributes.local_name) { %>
-        		<%= site.attributes.local_name %><br/>
-            <% } else { %>
-    			<%= site.attributes.name %><br/>
-            <% }; %>
-            </div><br/>
-        <% }) %>
+
+        <% _.each(resources, function(nestedResources, san) { %>
+            <div>
+                <div class="expandHide expandBtn">+</div> <%= san %> Sites<br/>
+                <div class="nestedNavList showSites" style="display:none;">
+                <% _.each(nestedResources, function(r) { %>
+                    <input type="checkbox" observatoryId="<%= r._id %>">
+                        <div class="resourceLink leftNavListItem" data-id="<%= r._id %>">
+                            <% if (r.local_name) { %>
+                                <%= r.local_name %>
+                            <% } else { %>
+                                <%= r.name %>
+                            <% }; %>
+                        </div></br>
+                <% }); %>
+                </div>
+            </div>
+        <% }); %>
+       
     </form>
 </div>
 
 <script>
     $(function(){
-        $(".list_sites .resourceLink").click(function(){
+        // initialize a section for this accordion checkbox section.
+        IONUX2.Models.searchParametersInstance.attributes.checkbox_sections['Sites'] = {};
+        var siteParamSettings = IONUX2.Models.searchParametersInstance.attributes.checkbox_sections['Sites'];
+
+        // add click event handlers to update the model.
+        $(".listSites input[type=checkbox]").click(function(e){
+            var $checkbox = $(e.currentTarget);
+            var resource_id = $checkbox.attr('observatoryId');
+            if($checkbox.is(':checked')){
+                siteParamSettings[resource_id] = true;
+            } else {
+                delete siteParamSettings[resource_id];
+            }
+
+            console.log('--*.*-- Sites section changed...');
+            console.log(siteParamSettings);
+            console.log('--^.^-- Complete param settings:');
+            console.log(IONUX2.Models.searchParametersInstance);
+        });
+
+        $("input.checkAllSites").click(function(e){
+            var $checkbox_all = $(e.currentTarget);
+            select_all = $checkbox_all.is(':checked');
+            $('.listSites input[type=checkbox]').each(function(index){
+                var $checkbox = $(this);
+                var resource_id = $checkbox.attr('observatoryId');
+                if(select_all){
+                    $checkbox.prop('checked', true);
+                    siteParamSettings[resource_id] = true;
+                } else {
+                    $checkbox.prop('checked', false);
+                    delete siteParamSettings[resource_id];
+                }
+            });
+            console.log('--*.*-- Sites section changed...');
+            console.log(siteParamSettings);
+            console.log('--^.^-- Complete param settings:');
+            console.log(IONUX2.Models.searchParametersInstance);
+        });
+
+        $(".listSites .resourceLink").click(function(){
             var resource_id = $(this).attr('data-id');
             var url = "/Observatory/face/"+resource_id+"/";
             IONUX.ROUTER.navigate('');
             IONUX.ROUTER.navigate(url, {trigger:true});
-            $('#mapButtonHidden').click();
+        });
+
+        $('.listSites .expandHide').on('click', function(e) {
+            e.preventDefault();
+            var $link = $(e.currentTarget);
+            $link.parent().children('.showSites').slideToggle('fast', function() {
+                console.log($(this) + " and " + $link);
+                if ($(this).is(':visible')) {
+                    $link.removeClass('expandBtn').addClass('hideBtn').html('-');              
+                } else {
+                    $link.removeClass('hideBtn').addClass('expandBtn').html('+');
+                }        
+            });
+        });
+
+        $('.sitesExpandToggle').click(function(e) {
+            e.preventDefault();
+            if($(this).hasClass('expandBtn')) {
+                $('.listSites').find('.showSites').show();
+                $('.listSites').find('.expandHide').removeClass('expandBtn').addClass('hideBtn').html('-');
+                $(this).removeClass('expandBtn').addClass('hideBtn').html('-');
+            } else {
+                $('.listSites').find('.showSites').hide();
+                $('.listSites').find('.expandHide').removeClass('hideBtn').addClass('expandBtn').html('+');
+                $(this).removeClass('hideBtn').addClass('expandBtn').html('+');
+            }
         });
     });
 </script>

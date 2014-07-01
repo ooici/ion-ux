@@ -1,6 +1,10 @@
 IONUX.Router = Backbone.Router.extend({
   routes: {
     ":resource_type/:view_type/:resource_id/" : "page"
+    ":resource_type/:view_type/:resource_id/" : "page",
+    "dashboard": "showDashboard",
+    "assettracking": "assetTracking",
+    "resourcemgmt": "resource_management"
   },
   
   page: function(resource_type, view_type, resource_id){
@@ -24,5 +28,21 @@ IONUX.Router = Backbone.Router.extend({
       });
 
   },
+
+  showDashboard: function() {
+    IONUX2.setPageView("searchResults");
+      if(IONUX2.getMapState() == "mapHidden"){
+          IONUX2.setMapState('mapSplit');
+      }
+  },
+
+  assetTracking: function() {
+    IONUX2.setPageView("assetTracking");
+  },
+
+  resource_management: function() {
+    console.log("resource management route");
+    IONUX2.setPageView("createResource");
+  }
   
 });

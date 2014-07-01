@@ -1,7 +1,6 @@
 /*
-ooinet-04.css  proto=ooinetLayout04.css
+ooinetLayout04.css
 by Peter Rosti
-last edited 05-29 04-22 04-14 04-09 03-06 03-05 2014-03-03
 
 This layout uses calc() to set height and width values
 Note: calc must have spaces in the formula, to accomodate IE bug,
@@ -10,6 +9,8 @@ DIVS in their native state stretch in WIDTH but not in HEIGHT, so heights have t
 heights to work at all.
 height:100% on both HTML and BODY are REQUIRED because percentages cascade from ancestor to descendant. Even leaving it off html
 and just putting it on body only will cause the height calculations contained within the body to fail.
+
+MAKE SURE THIS FILE LOADS LAST! - JG
 */
 
 html, body {
@@ -25,7 +26,7 @@ body {
  padding:0px;
 }
 
-a:focus, object:focus {outline:none; -moz-outline-style:none}
+a:focus, object:focus, div:focus {outline:none; -moz-outline-style:none}
 
 #header2 {
  position:fixed;
@@ -61,9 +62,13 @@ a:focus, object:focus {outline:none; -moz-outline-style:none}
   'outline:1px solid #F00;
 }
 
+#adminMenu a:link, #adminMenu a:visited {
+  color: #fff;
+}
+
 .adminMenuTab {
   display:inline-block;
-    color:#fff;
+  color:#fff;
   height:19px;
   padding:0px 8px;
   max-width:120px;
@@ -165,26 +170,46 @@ a:focus, object:focus {outline:none; -moz-outline-style:none}
 
 /* legacy facepage */
 
-#legacyFacePage {
-  position: relative;
-  width: 100%;
-  background: #384d68;
+#legacyFacePageTab {
+position:absolute;
+bottom:0px;
+right:36px;
 }
 
-a.paginate_disabled_previous, a.paginate_disabled_next {
+#legacyFacePageContent {
+position: relative;
+background: #384d68;
+width:100%;
+overflow: auto;
+}
+
+a.paginate_enabled_previous,
+a.paginate_enabled_next {
+    margin-right: 3px;
+}
+
+a.paginate_disabled_previous,
+a.paginate_disabled_next {
     text-decoration: none;
     background: none repeat scroll 0% 0% #96A8BC;
     cursor: not-allowed;
     text-shadow: none;
-    margin-right: 3px;}
+    margin-right: 3px;
+}
 
-/* salt.css and bootstrap tabbed navigation overrides */
+/* salt.css and bootstrap tabbed navigation overrides - start */
+
 .nav-tabs li a:hover, .nav-tabs li.active a:link, .nav-tabs > li > a, 
 .nav-tabs li a, .nav-tabs > li, .nav-tabs, .nav, ul.nav, ul.nav {text-align: center}
+
 ul.nav {margin: 0;}
+
 ul.nav {margin-top: 15px;}
+
 .nav-tabs, .nav {border-bottom: none;}
+
 .nav-tabs > li {border: none;margin-bottom: 0;}
+
 .nav-tabs li a {
   background-color:#FFF;
   border: none;
@@ -200,7 +225,9 @@ ul.nav {margin-top: 15px;}
   margin-right:10px;
   margin-bottom: 0;
 }
+
 .nav-tabs > li > a {line-height: 16px; padding: 4px 14px;}
+
 .nav-tabs li.active a:link { 
   border: none;
   background: #384d68; /* Old browsers */
@@ -224,8 +251,10 @@ ul.nav {margin-top: 15px;}
   background-color: #bcc1ce;
   color: #000;
 }
+/* salt.css and bootstrap tabbed navigation overrides - end*/
 
 .row-fluid .span8 {width: 67%;}
+
 .v02 .block h3 {
 	padding: 5px 6px 5px 5px;
 	line-height: 11px;
@@ -238,6 +267,7 @@ ul.nav {margin-top: 15px;}
 	background: linear-gradient(135deg,  #7b99b5 58%,#607187 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#7b99b5', endColorstr='#607187',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
 	}
+	
 .v02 .block {
 	margin:0px;
 	background: #ffffff; /* Old browsers */
@@ -249,6 +279,7 @@ ul.nav {margin-top: 15px;}
 	background: linear-gradient(135deg,  #ffffff 0%,#f6f6f6 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f6f6f6',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
 	}
+	
 .tab-content {
     border-width: 2px 0px 0px 0px;
     border-style: solid;
@@ -276,6 +307,7 @@ ul.nav {margin-top: 15px;}
   /* background-color: #DBDEE5; */
   box-sizing:border-box;
   -moz-box-sizing:border-box; /* Firefox 28 and earlier*/
+  border:none;
 }
 
 #left2 {
@@ -285,7 +317,7 @@ ul.nav {margin-top: 15px;}
  left:0px;
  height:calc(100% - 104px);
  width:275px;
- overflow: auto;
+ overflow: hidden;
  z-index: 10;
 }
 
@@ -441,7 +473,6 @@ ul.nav {margin-top: 15px;}
  height: 20px;
  z-index: 8;
  line-height: 20px;
- 'outline:1px solid #000; /* temp */
 }
 
 .current-user {margin-right:6px}
@@ -462,10 +493,14 @@ ul.nav {margin-top: 15px;}
 }
 
 #login a.btn-navigation:hover {
-  text-decoration:underline;
+  color:#ABCEEA;
+  cursor:pointer;
+  cursor:hand;
+  /* text-decoration:underline; */
 }
 
 /* Add margin to Bootstrap span btn group */
+
 #login .dropdown {
  margin-left: 3px;
 }
@@ -510,7 +545,7 @@ a.btn-navigation-plain {
   background-position: -240px -180px;
 }
 
-/* EDIT RESOURCE - HAMBURGER ICON */
+/* Edit Resource - Hamburger Icon - Legacy Overide - start*/
 
 #searchResultsTabContainer a.btn {
 	display: inline-block;
@@ -569,11 +604,13 @@ searchResultsTabContainer .pull-right {
   background-position: -240px -176px;
 }
 
-
-
 .btn-group.open .hamburger:before {background-position: -240px -180px;}
 #searchResultsTabContainer .btn-group{height:28px}
 .btn-group{height:20px}
+
+/* Edit Resource - Hamburger Icon - Legacy Overide - end*/
+
+/* Legacy Overide - start */
 
 ul.dropdown-menu {
 	background: -moz-linear-gradient(left, #384d68 0%, #7b99b5 100%); /* FF3.6+ */
@@ -627,6 +664,17 @@ ul.dropdown-menu li:hover {
     line-height: 20px;
 }
 
+.edit-group select, select{
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    text-indent: 1px;
+    text-overflow: '';
+	line-height: 16px;
+}
+
+/* Legacy Overide - end */
+
+
 /* ---------------------------------------------------------------
  END TEMP USER-NAV
 --------------------------------------------------------------- */
@@ -644,6 +692,18 @@ ul.dropdown-menu li:hover {
   height:calc(100% - 28px);
   display:block;
   overflow: auto;
+}
+
+.nsf-ol {
+  height: 160px;
+  padding: 5px;
+  border-top: 1px solid #7B99B5;
+}
+
+.logos {
+  margin-left: auto;
+  margin-right: auto;
+  width: 151px;
 }
 
 .spatialDetails .accordionContainer {
@@ -671,18 +731,72 @@ ul.dropdown-menu li:hover {
   margin-left:0;
 }
 
-.list_regions, .list_sites, .list_facilities, .listDataTypes, .listPlatformTypes{
+.list_regions, 
+.list_facilities, 
+.listDataTypes, 
+.listPlatformTypes, 
+.listInstrumentTypes {
   margin-left: 13px;
 }
 
-.list_sites a, .list_facilities a {
+.list_facilities a,
+.select_all a {
   color: #fff;
+}
+
+.nestedNavList {
+  list-style: none;
+  margin: 0 0 10px 15px;
+}
+
+.expandBtn,
+.hideBtn {
+  cursor: pointer;
+  width: 11px;
+  height: 11px;
+  line-height: 10px;
+  text-align: center;
+  vertical-align: middle;
+  font-family: Courier;
+  padding: 0px;
+  margin: 0px;
+  margin-bottom: 4px;
+  background: #fff;
+  color: #384d68;
+  /* border: 1px solid #384d68; */
+  border: none;
+  display: inline-block;
+  box-sizing:border-box;
+  -moz-box-sizing:border-box;
+}
+
+.expandBtn:hover,
+.hideBtn:hover {
+  border: 1px solid #88A9CC;
 }
 
 #saveButtons {
   position: absolute;
   top: 0px;
   right: 17px;
+}
+
+#saveName, #cancelName {
+  height: 18px;
+  line-height: 12px;
+  margin: 5px 7px 5px auto;
+  background-color: #7b99b5;
+  color: #fff;
+  font-family: Arial;
+  font-size: 12px;
+  overflow: none;
+  border-radius: 5px;
+  border: 1px solid #9DDFF2;
+}
+
+#saveName {
+  /*position: relative;
+  top: -23px;*/
 }
 
 .navButton:hover {
@@ -718,29 +832,81 @@ background-color: #7B99B5;
 }
 
 #customSearchName {
-  position: absolute;
-  z-index: 8;
   display: none;
-  top: 0px;
-  left: 5px;
+  margin-left:5px;
 }
 
 #customSearchName .customName {
   height: 16px;
   line-height: 15px;
   padding: 0px 2px;
-  margin: 5px 5px 0 0;
+  margin: 0px 5px 0 0;
   font-family: Arial;
   font-size: 12px;
+  width: 145px;
 }
 
 #saveConfiguration {
-  margin-top: 2px;
   position: absolute;
+  display: none;
+  top:32px;
+  right: 12px;
 }
 
-#saveConfiguration {
-  display: none;
+#saveConfigBtn {
+  position: absolute;
+  top: 0px;
+  right: 84px;
+  height: 16px;
+  width: 84px;
+  z-index: 0;
+  line-height: 12px;
+  /* margin: 5px 7px 5px auto; */
+  padding: 0px;
+  margin: 0px;
+  color: #fff;
+  font-family: Arial;
+  font-size: 12px;
+  font-weight: 300;
+  text-align: right;
+  background-color:transparent;
+  /*
+  background-color: #7b99b5;
+  border-radius: 5px;
+  border: 1px solid #9DDFF2;
+  */
+}
+
+#resetConfigBtn {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  height: 16px;
+  width: 84px;
+  z-index: 0;
+  line-height: 12px;
+  /* margin: 5px 7px 5px auto; */
+  padding: 0px;
+  margin: 0px;
+  color: #fff;
+  font-family: Arial;
+  font-size: 12px;
+  font-weight: 300;
+  text-align: right;
+  background-color:transparent;
+  /*
+  background-color: #7b99b5;
+  border-radius: 5px;
+  border: 1px solid #9DDFF2;*/
+}
+
+#saveConfigBtn:hover,
+#resetConfigBtn:hover {
+  color:#ABCEEA;
+  cursor:pointer;
+  cursor:hand;
+  /* text-decoration:underline; */
+  /* border: 1px solid #fff; */
 }
 
 .leftAccordion {
@@ -749,9 +915,9 @@ background-color: #7B99B5;
   background: -webkit-linear-gradient(left, #5687AF, #3B5E7E);
   background: -moz-linear-gradient(left, #5687AF, #3B5E7E);
   background: -o-linear-gradient(left, #5687AF, #3B5E7E);
-  padding: 4px 5px 4px 4px;
-  /*width: 217px;*/
-  margin-bottom: 5px;
+  padding: 2px 5px 2px 4px;
+  /* width: 249px;  DONT MESS WITH THIS !! */
+  margin-bottom: 3px;
   margin-right: 3px;
   margin-left: 3px;
   border: 1px solid #5687AF;
@@ -817,16 +983,14 @@ input.latlong {
   line-height:12px;
 }
 
- input.keyword {
-  width: calc(100% - 58px);
+ input.keyword { /* related to '#keyword .accordionLabel' */
+  width: calc(100% - 64px);
   margin-left: 4px;
   margin-bottom: 2px;
 }
 
-input.booleanInput {
+.accordionContainer input.booleanInput {
   width: calc(100% - 58px);
-  margin-left: 4px;
-  margin-bottom: 2px;
 }
 
 #spatial input {
@@ -862,6 +1026,12 @@ select.dateMenu.hour {width:56px;}
   margin: 0px;
   font-family: Arial;
   font-size: 11px; 
+}
+select, select option {
+  /*height: 10px;*/
+  line-height: 10px;
+  padding: 0px;
+  margin: 0px;
 }
 
 .leftNaviSelectContainer {
@@ -901,6 +1071,18 @@ display: inline-block;
 
 .leftNaviNarrowSelectArrow {
   width: 40px;
+}
+
+.tempSelect {
+  width: 120px;
+}
+
+.tempSelect .temporalMenu {
+  width: 120px;
+}
+
+.tempSelect .leftNaviSelectArrow {
+  width: 120px;
 }
 
 .leftNaviSelectArrow {
@@ -974,7 +1156,12 @@ input.noPlaceholderRadius {
 }
 
 .leftAccordionContents select option {
-  background-color: #88A9CC;
+  background-color: #7b95b3;
+  color:#FFF;
+  line-height:16px;
+  height:16px;
+  margin:0px;
+  padding:0px;
 }
 
 .leftAccordionContents h5 {
@@ -984,7 +1171,8 @@ input.noPlaceholderRadius {
 
 .labelThrough {
   display: block;
-  margin:0px
+  line-height: 8px;
+  margin-top: 8px;
 }
 
 .arrowDown { /* not called in another file */
@@ -1059,10 +1247,51 @@ input.noPlaceholderRadius {
 
 /* instrument view */
 
-.instrument_list {
+#mySearchesTabContent h2 {
+  margin: 0 0 10px 24px;
+  padding: 0;
+  line-height: 16px;
+  font-size: 16px;
+  color: #fff;
+}
+
+.list_mysearches, .recent_searches {
+  list-style: none;
+}
+
+.list_mysearches a, .recent_searches a {
+  color: #fff;
+}
+
+.recent_searches {
+  margin-bottom: 18px;
+}
+
+.deleteSearch {
+  float: right;
+  margin-right: 10px;
+}
+
+/* instrument view */
+
+.instrument_list, .dataTypeList {
   list-style: none;
   margin-left: 0;
   margin-bottom: 0;
+}
+
+.itemName {
+  display: inline-block;
+  width: 90%;
+  padding-left: 3px;
+}
+
+.alignCheckbox {
+  display: inline-block;
+  vertical-align: top;
+  position: relative;
+  top: 4px;
+  padding-right: 2px;
 }
 
 .accordionDetailContainer {
@@ -1103,15 +1332,29 @@ input.noPlaceholderRadius {
   color: #fff;
 }
 
-.resourceLink {
-  cursor: pointer;
+.leftNavListItem {
   display:inline-block;
   margin-left: 3px;
+  max-width: 195px;
+}
+
+.resourceLink {
+  cursor: pointer;
   font-weight: normal;
 }
 
 .resourceLink:hover{
   font-weight: bold;
+}
+
+#mapToolbar {
+  height:32px;
+  line-height:32px;
+  text-align:right;
+}
+
+#mapResizeText {
+  display:none;
 }
 
 .mapButtonSplit {
@@ -1163,12 +1406,20 @@ input.noPlaceholderRadius {
   overflow:auto;
   background:#384d68;
 }
+
+/* jscroll overrides - start */
+
 #searchResultsContainer .jspVerticalBar {right: 4px;}
+.jspVerticalBar {right: 4px;}
 #searchResultsContainer .jspTrack {background: none;}
 #searchResultsContainer .jspDrag {background: #88A9CC;}
 .accordionContainer .jspVerticalBar {right: 4px;}
 .accordionContainer .jspTrack {background: none;}
 .accordionContainer .jspDrag {background: #88A9CC;}
+.jspPane {position: asolute; width:100%}
+
+/* jscroll overrides - end */
+
 .accordionContainerWhite {
   color: #000;
   position: relative;
@@ -1262,6 +1513,9 @@ input.noPlaceholderRadius {
 .softwareNested, .modelNested, .marineSiteNested, .physicalNested, #lifecycleSoftware, #lifecycleDataProduct, #lifecycleModel, #lifecycleMarineSite {
   display: none;
 }
+
+/* legacy overrides - start */
+
 .form-horizontal{padding: 20px 10px 10px;}
 .form-horizontal fieldset {
     margin-top: 0px;
@@ -1291,14 +1545,33 @@ input.noPlaceholderRadius {
   display: inline-block;
 }
 .controls {padding: 10px 0px 0px 0px}
+
 #form-container .form-horizontal .controls select {width: 91.1%;}
+
 #form-container .form-horizontal .controls input[type=checkbox] {width:42px}
+
 #form-container .form-horizontal .controls input[type=text] {width: 88.5%; margin-left:32px}
+
 #form-container .form-horizontal .controls input{width: 88.5%; margin-left:33px}
+
 #form-container .form-horizontal .controls textarea {width: 88.5%;}
 
 .form-horizontal .help-block {margin-bottom: 0;}
+
 .help-block {color: #595959; font-style:italic}
+
+.controls input, .controls textarea {
+    padding: 5px;
+    color: #555;
+    min-height: 15px;
+    background: none repeat scroll 0% 0% #FFF;
+    border: 1px solid #999;
+    box-shadow: none;
+    font-family: Helvetica,Arial,sans-serif Negative;
+    font-size: 14px;
+}
+
+/* legacy overrides - end*/
 
 .adminButtonGrey {
 	display: inline-block;
@@ -1347,12 +1620,6 @@ input.noPlaceholderRadius {
 #createResourceOverlay .btn-save {
   right: 50%;
   top: 5px;
-}
-
-#legacyFacePageTab {
-  position:absolute; 
-  bottom:0px; 
-  right:36px;
 }
 
 #createResourceOverlay {
@@ -1456,6 +1723,7 @@ input.noPlaceholderRadius {
   box-sizing:border-box;
   -moz-box-sizing:border-box; /* Firefox 28 and earlier*/
 }
+
 .editResourceFooter {
   position: relative;
   text-align:center;

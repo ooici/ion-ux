@@ -1,33 +1,59 @@
 <div class="select_all">
-    <input class="checkAllPlatformTypes" type="checkbox"/> Select All
+    <input class="checkAllPlatformTypes selectAll" type="checkbox"/> Select All
 </div>
 <div class="listPlatformTypes">
     <form action="">
-            <input class="resource_id" type="checkbox"/> AUV<br/>
-            <input class="resource_id" type="checkbox"/> Cable Infrastructure<br/>
-            <input class="resource_id" type="checkbox"/> Cable Node<br/>
-            <input class="resource_id" type="checkbox"/> Camera<br/>
-            <input class="resource_id" type="checkbox"/> Engineering<br/>
-            <input class="resource_id" type="checkbox"/> Glider<br/>
-            <input class="resource_id" type="checkbox"/> Mobile Asset Dock<br/>
-            <input class="resource_id" type="checkbox"/> Mooring<br/>
-            <input class="resource_id" type="checkbox"/> Profiler<br/>
+            <input class="resource_id" type="checkbox" platformType="AUV"/> AUV<br/>
+            <input class="resource_id" type="checkbox" platformType="Cable Infrastructure"/> Cable Infrastructure<br/>
+            <input class="resource_id" type="checkbox" platformType="Cable Node"/> Cable Node<br/>
+            <input class="resource_id" type="checkbox" platformType="Camera"/> Camera<br/>
+            <input class="resource_id" type="checkbox" platformType="Engineering"/> Engineering<br/>
+            <input class="resource_id" type="checkbox" platformType="Glider"/> Glider<br/>
+            <input class="resource_id" type="checkbox" platformType="Mobile Asset Dock"/> Mobile Asset Dock<br/>
+            <input class="resource_id" type="checkbox" platformType="Mooring"/> Mooring<br/>
+            <input class="resource_id" type="checkbox" platformType="Profiler"/> Profiler<br/>
     </form>
 </div>
 
 <script>
-    $('.checkAllPlatformTypes').on('click', function(){
-        $('.listPlatformTypes').find('input').prop("checked", $('.checkAllPlatformTypes').prop("checked"));
-    });
-</script>
-<!-- Dont forget to modify the below to match platformTypes -->
-<!-- <script>
     $(function(){
-        $(".list_sites .resourceLink").click(function(){
-            var resource_id = $(this).attr('data-id');
-            var url = "/Observatory/face/"+resource_id+"/";
-            IONUX.ROUTER.navigate(url, {trigger:true});
-            $('#mapButtonHidden').click();
+        // initialize a section for this accordion checkbox section.
+        IONUX2.Models.searchParametersInstance.attributes.checkbox_sections['platformTypes'] = {};
+        var platformTypeParamSettings = IONUX2.Models.searchParametersInstance.attributes.checkbox_sections['platformTypes'];
+
+        // add click event handlers to update the model.
+        $(".listPlatformTypes input[type=checkbox]").click(function(e){
+            var $checkbox = $(e.currentTarget);
+            var resource_id = $checkbox.attr('platformType');
+            if($checkbox.is(':checked')){
+                platformTypeParamSettings[resource_id] = true;
+            } else {
+                delete platformTypeParamSettings[resource_id];
+            }
+            console.log('--*.*-- Platform Types section changed...');
+            console.log(platformTypeParamSettings);
+            console.log('--^.^-- Complete param settings:');
+            console.log(IONUX2.Models.searchParametersInstance);
+        });
+
+        $("input.checkAllPlatformTypes").click(function(e){
+            var $checkbox_all = $(e.currentTarget);
+            select_all = $checkbox_all.is(':checked');
+            $('.listPlatformTypes input[type=checkbox]').each(function(index){
+                var $checkbox = $(this);
+                var resource_id = $checkbox.attr('platformType');
+                if(select_all){
+                    $checkbox.prop('checked', true);
+                    platformTypeParamSettings[resource_id] = true;
+                } else {
+                    $checkbox.prop('checked', false);
+                    delete platformTypeParamSettings[resource_id];
+                }
+            });
+            console.log('--*.*-- Sites section changed...');
+            console.log(platformTypeParamSettings);
+            console.log('--^.^-- Complete param settings:');
+            console.log(IONUX2.Models.searchParametersInstance);
         });
     });
-</script> -->
+</script>

@@ -1,8 +1,8 @@
-    <div class="leftNaviSelectContainer">
-      <select class="temporal_menu" id="tempSelect">
-        <option value="temporal_range">Temporal Range</option>
-        <option value="ts_created">Time Created</option>
-        <option value="ts_updated">Time Updated</option>
+    <div class="leftNaviSelectContainer tempSelect">
+      <select class="temporalMenu" id="tempSelect">
+        <option value="temporalRange">Temporal Range</option>
+        <option value="tsCreated">Time Created</option>
+        <option value="tsUpdated">Time Updated</option>
         <!--
         <option value="1">Data Collection</option>
         <option value="2">Planned Timestamps</option>
@@ -12,6 +12,7 @@
       </select>
       <div class="leftNaviSelectArrow"></div>
     </div>
+    <!-- <div style="display:inline-block; margin-bottom:4px; height:16px; position:relative;line-height: 20px;">all times UTC</div> -->
 		<div>From</div>
 		<div class='date-dropdown from_date_menu' >
 			<select class="dateMenu year" id="tempFromYear"></select>
@@ -63,10 +64,11 @@
     var currentMonth = currentDate.getMonth();
     var currentDay = currentDate.getDate();
     var numberOfDays = daysInMonth(currentYear, currentMonth);
+	var numberOfDays = 31;
     var numberofHours = 24;
     var currentHour = currentDate.getHours();
     
-    populateYearDropdown(1900, currentYear+10);
+    populateYearDropdown(2004, currentYear+10);
     populateMonthDropdown();
     populateDayDropdown(numberOfDays, '');
     populateHourDropdown(numberofHours);
@@ -95,8 +97,9 @@
   function populateMonthDropdown() {
     var monthOptions = [];
     monthOptions.push('<option value="">Month</option>');
-    var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    for (var m = 0; m < months.length; m++) {          
+    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    for (var m = 0; m < months.length; m++) {
       monthOptions.push('<option value="' + m + '">' + months[m] + '</option>');
     }
         

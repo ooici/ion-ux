@@ -1,0 +1,3 @@
+<% _.each(searches, function(search) { %>
+	<li><a class="savedSearch" data-id="<%= search.searchName.time %>" href="#"><%= search.searchName.name %> <%= search.searchName.month %>/<%= search.searchName.day %>/<%= search.searchName.year %> <%= search.searchName.hour %>:<%= search.searchName.minute %></a> <a class ="deleteSearch" href="#">delete</a></li>
+<% }); %> 

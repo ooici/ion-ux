@@ -58,7 +58,7 @@ IONUX = {
       async: false, // Don't allow anything to fire until this is done!  Without this, links straight to facepages weren't initting right.
       success: function(resp) {
         new IONUX.Views.Topbar({model: IONUX.SESSION_MODEL}).render().el;
-        new IONUX.Views.HelpMenu({model: IONUX.SESSION_MODEL}).render().el;
+        // new IONUX.Views.HelpMenu({model: IONUX.SESSION_MODEL}).render().el;
         new IONUX.Views.Search().render().el;
         
         // Check if on dashboard or facepage, render appropriate menu.
@@ -88,7 +88,6 @@ IONUX = {
 
    });
     
-
     console.log('**** STARTING HISTORY!!!');
     Backbone.history.start({pushState:true, hashChange: false});
     

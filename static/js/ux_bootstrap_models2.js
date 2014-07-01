@@ -188,6 +188,15 @@ IONUX2.Collections.Observatories = Backbone.Collection.extend({
   }
 });
 
+IONUX2.Models.ObservatoryList = Backbone.Model.extend({
+  url: '/observatories',
+  parse: function(resp) {
+    this.data = resp.data;
+    this.trigger('change:data');
+    return resp;
+  }
+});
+
 IONUX2.Models.DataTypeList = Backbone.Model.extend({
 	url: '/get_data_product_group_list/',
 	data: '',
@@ -252,19 +261,19 @@ IONUX2.Collections.instrumentGroup = new IONUX2.Collections.InstrumentGroup();
 IONUX2.Models.SpatialInit = Backbone.Model.extend({
   defaults: {
       spatial_dropdown: "1",
-      from_latitude: "0.00",
+      from_latitude: "",
       from_ns: "",
-      from_longitude: "0.00",
+      from_longitude: "",
       from_ew: "",
-      to_latitude: "0.00",
+      to_latitude: "",
       to_ns: "",
-      to_longitude: "0.00",
+      to_longitude: "",
       to_ew: "",
-      radius: "0.00",
+      radius: "",
       miles_kilos: "1",
       vertical_from: "",
       vertical_to: "",
-      feet_miles: "1"
+      feetMeters: "1",
   },
   updateAttributes: function(attributes) {
     console.log("attributes in spatial model");
@@ -298,19 +307,6 @@ IONUX2.Models.TemporalInit = Backbone.Model.extend({
 
 IONUX2.Models.temporalModelInstance = new IONUX2.Models.TemporalInit();
 
-IONUX2.Models.SaveCustomName = Backbone.Model.extend({
-  defaults: {
-    name: '',
-    month: '',
-    day: '',
-    year: '',
-    hour: '',
-    minute: ''
-  }
-});
-
-IONUX2.Models.saveCustomName = new IONUX2.Models.SaveCustomName();
-
 IONUX2.Models.SaveConfiguration = Backbone.Model.extend({
   defaults: {
     userId: '',
@@ -335,20 +331,47 @@ IONUX2.Models.SaveConfiguration = Backbone.Model.extend({
       accordionDataType: ''
     },
     sortable_order: '',
-    bottom_sortable: ''
+    bottom_sortable: '',
+    saved_searches: ''
   }
 });
 IONUX2.Models.saveConfiguration = new IONUX2.Models.SaveConfiguration();
 
-IONUX2.Collections.SaveNames = Backbone.Collection.extend({});
+IONUX2.Models.SaveLeftOrder = Backbone.Model.extend({});
+IONUX2.Models.saveLeftOrder = new IONUX2.Models.SaveLeftOrder();
 
+IONUX2.Models.SaveBottomOrder = Backbone.Model.extend({});
+IONUX2.Models.saveBottomOrder = new IONUX2.Models.SaveBottomOrder();
+
+IONUX2.Collections.UserProfile = Backbone.Collection.extend({});
+IONUX2.Collections.userProfileInstance = new IONUX2.Collections.UserProfile();
+
+IONUX2.Collections.UserConfiguration = Backbone.Collection.extend({});
+IONUX2.Collections.userConfiguration = new IONUX2.Collections.UserConfiguration();
+
+IONUX2.Models.SortOrder = Backbone.Model.extend({});
+IONUX2.Models.sortModelInstance = new IONUX2.Models.SortOrder();
+
+IONUX2.Models.SortBottomOrder = Backbone.Model.extend({});
+IONUX2.Models.sortBottomModelInstance = new IONUX2.Models.SortBottomOrder();
+
+IONUX2.Collections.SaveNames = Backbone.Collection.extend({});
 IONUX2.Collections.saveNames = new IONUX2.Collections.SaveNames();
 
 IONUX2.Collections.SaveFacilitySearch = Backbone.Collection.extend({});
 IONUX2.Collections.saveFacilitySearch = new IONUX2.Collections.SaveFacilitySearch();
 
+IONUX2.Collections.SaveObservatorySearch = Backbone.Collection.extend({});
+IONUX2.Collections.saveObservatorySearch = new IONUX2.Collections.SaveObservatorySearch();
+
 IONUX2.Collections.SaveRegionSearch = Backbone.Collection.extend({});
 IONUX2.Collections.saveRegionSearch = new IONUX2.Collections.SaveRegionSearch();
+
+IONUX2.Collections.SavePlatformSearch = Backbone.Collection.extend({});
+IONUX2.Collections.savePlatformSearch = new IONUX2.Collections.SavePlatformSearch();
+
+IONUX2.Collections.SaveInstrumentTypeSearch = Backbone.Collection.extend({});
+IONUX2.Collections.saveInstrumentTypeSearch = new IONUX2.Collections.SaveInstrumentTypeSearch();
 
 IONUX2.Collections.SaveSiteSearch = Backbone.Collection.extend({});
 IONUX2.Collections.saveSiteSearch = new IONUX2.Collections.SaveSiteSearch();
@@ -356,8 +379,49 @@ IONUX2.Collections.saveSiteSearch = new IONUX2.Collections.SaveSiteSearch();
 IONUX2.Collections.SaveDataTypeSearch = Backbone.Collection.extend({});
 IONUX2.Collections.saveDataTypeSearch = new IONUX2.Collections.SaveDataTypeSearch();
 
+IONUX2.Collections.SaveBooleanExpression = Backbone.Collection.extend({});
+IONUX2.Collections.saveBooleanExpression = new IONUX2.Collections.SaveBooleanExpression();
+
+IONUX2.Collections.SaveAccordionConfig = Backbone.Collection.extend({});
+IONUX2.Collections.saveAccordionConfig = new IONUX2.Collections.SaveAccordionConfig();
+
+IONUX2.Collections.RecentSearches = Backbone.Collection.extend({});
+IONUX2.Collections.recentSearches = new IONUX2.Collections.RecentSearches();
+
 IONUX2.Models.Facilities = Backbone.Model.extend({});
 IONUX2.Models.facilities = new IONUX2.Models.Facilities();
 
 IONUX2.siteData = [];
 IONUX2.siteDataObj = {};
+
+IONUX2.Collections.DeleteSearch = Backbone.Collection.extend({});
+IONUX2.Collections.deleteSearch = new IONUX2.Collections.DeleteSearch();
+
+IONUX2.Models.SearchParameters = Backbone.Model.extend({
+    defaults: {
+        keyword: null,
+        spatial: {},
+        temporal: {},
+        boolean: {},
+        checkbox_sections: {}
+    },
+    reset: function(){
+      console.log('************** RESETTING SEARCH PARAMS MODEL ********************');
+      var self = this;
+      self.attributes.keyword = null;
+      self.attributes.spatial = {};
+      self.attributes.temporal = {};
+      self.attributes.boolean = {};
+      console.log(self.attributes.checkbox_sections);
+      _.each(self.attributes.checkbox_sections, function(section, name){
+        console.log(name);
+        _.each(self.attributes.checkbox_sections[name], function(value, key){
+          delete self.attributes.checkbox_sections[name][key];
+        });
+      });
+      this.trigger('change:data');
+      console.log('************************ END RESET ****************************');
+    }
+});
+
+IONUX2.Models.searchParametersInstance = new IONUX2.Models.SearchParameters();
