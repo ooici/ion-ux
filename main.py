@@ -397,11 +397,23 @@ def page(resource_type, resource_id):
 # COLLECTION "FACE" PAGES
 # -----------------------------------------------------------------------------
 
+def is_json(request):
+    '''
+    Determines if the request object accepts (expects) JSON as a response
+    '''
+    if 'accept' in request.headers and 'json' in request.headers['accept'].lower():
+        return True
+    return False
+
 @app.route('/<resource_type>/list/', methods=['GET'])
 def collection(resource_type=None):
     if request.is_xhr:
         # Todo - Implement "My Resources" as a separate call when they are available (observatories, platforms, etc.)...
         # Todo - user_info_id set in a @login_required decorator
+        user_info_id = session.get('user_id') if session.has_key('user_id') else None
+        resources = ServiceApi.find_by_resource_type(resource_type, user_info_id)
+        return render_json_response(resources)
+    elif is_json(request):
         user_info_id = session.get('user_id') if session.has_key('user_id') else None
         resources = ServiceApi.find_by_resource_type(resource_type, user_info_id)
         return render_json_response(resources)
