@@ -113,7 +113,7 @@ def failed_login():
 
 @app.route('/search/', methods=['GET', 'POST'])
 def search(query=None):
-    if request.is_xhr:
+    if request.is_xhr or is_json(request):
         if request.method == "GET":
             search_query = request.args.get('query')
             search_results = ServiceApi.search(search_query)
@@ -683,10 +683,21 @@ def login(redir):
 
     url = urlparse(request.url)
     if url.scheme == 'http':
-        https_url = re.sub('http://','https://',request.url)
+        https_url = re.sub('http://','https://', request.url)
         return redirect(https_url)
     else:
         return "This page should redirect to a secure login page"
+
+@app.route('/setauthtoken/', methods=['GET', 'POST'])
+def set_authtoken():
+    authtoken = request.args.get('authtoken', None)
+    print "Set authtoken into session", authtoken
+    if authtoken:
+        session['authtoken'] = authtoken
+    else:
+        session.pop('authtoken', None)
+
+    return "OK"
 
 @app.route('/userprofile/', methods=['GET', 'POST', 'PUT'])
 def userprofile():

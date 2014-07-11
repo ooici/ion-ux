@@ -1400,8 +1400,12 @@ class DotDict(dict):
 def _build_param_str(params=None):
     param_string = '?'
     
-    requester = session['actor_id'] if session.has_key('actor_id') else 'None'
-    param_string += 'requester=%s' % requester
+    requester = session['actor_id'] if 'actor_id' in session else 'None'
+    authtoken = session['authtoken'] if 'authtoken' in session else None
+    if authtoken:
+        param_string += 'authtoken=%s' % authtoken
+    else:
+        param_string += 'requester=%s' % requester
 
     if params is not None:
         for k, v in params.iteritems():
@@ -1502,7 +1506,11 @@ def build_post_request(service_name, operation_name, params=None, web_requester_
     elif "actor_id" in session:
         post_data['serviceRequest']['requester'] = session['actor_id']
         post_data['serviceRequest']['expiry'] = session['valid_until']
-    data={'payload': json.dumps(post_data)}
+
+    if "authtoken" in session:
+        post_data['serviceRequest']['authtoken'] = session['authtoken']
+
+    data = {'payload': json.dumps(post_data)}
     return url, data
 
 def service_gateway_post(service_name, operation_name, params=None, raw_return=None, web_requester_id=None, base=SERVICE_GATEWAY_BASE_URL):
