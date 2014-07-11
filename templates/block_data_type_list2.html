@@ -1,10 +1,60 @@
 <div class="select_all">
-	<input class="checkAllTypes" type="checkbox"/> Select All
+	<input class="checkAllDataTypes selectAll" type="checkbox"/> Select All
 </div>
 <div class="listDataTypes">
 	<form action="">
         <% _.each(resources, function(name) { %>
-            <input type="checkbox" value="<%= name %>"/><span> <%= name %></span><br/>
-        <% }) %>
+            <input type="checkbox" dataTypeId="<%= name %>"/>
+            <div class="leftNavListItem" title="<%= name %>">
+                    <% if (!(name in IONUX2.dataTypeLabels)) { %>
+                        <%= name %>
+                    <% } else { %>
+                        <%= IONUX2.dataTypeLabels[name] %>
+                    <% } %>
+            </div><br/>
+        <% }); %>
     </form>
 </div>
+<script>
+    $(function(){
+        // initialize a section for this accordion checkbox section.
+        IONUX2.Models.searchParametersInstance.attributes.checkbox_sections['Data Types'] = {};
+        var dataTypeParamSettings = IONUX2.Models.searchParametersInstance.attributes.checkbox_sections['Data Types'];
+
+        // add click event handlers to update the model.
+        $(".listDataTypes input[type=checkbox]").click(function(e){
+            var $checkbox = $(e.currentTarget);
+            var resource_id = $checkbox.attr('dataTypeId');
+            if($checkbox.is(':checked')){
+                dataTypeParamSettings[resource_id] = true;
+            } else {
+                delete dataTypeParamSettings[resource_id];
+            }
+            console.log('--*.*-- Data Types section changed...');
+            console.log(dataTypeParamSettings);
+            console.log('--^.^-- Complete param settings:');
+            console.log(IONUX2.Models.searchParametersInstance);
+        });
+
+        $("input.checkAllDataTypes").click(function(e){
+            var $checkbox_all = $(e.currentTarget);
+            select_all = $checkbox_all.is(':checked');
+            $('.listDataTypes input[type=checkbox]').each(function(index){
+                var $checkbox = $(this);
+                var resource_id = $checkbox.attr('dataTypeId');
+                if(select_all){
+                    $checkbox.prop('checked', true);
+                    dataTypeParamSettings[resource_id] = true;
+                } else {
+                    $checkbox.prop('checked', false);
+                    delete dataTypeParamSettings[resource_id];
+                }
+            });
+            console.log('--*.*-- Data Types section changed...');
+            console.log(dataTypeParamSettings);
+            console.log('--^.^-- Complete param settings:');
+            console.log(IONUX2.Models.searchParametersInstance);
+        });
+
+    });
+</script>

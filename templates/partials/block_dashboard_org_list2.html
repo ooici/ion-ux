@@ -1,10 +1,18 @@
 <div class="select_all">
-	<input class="checkAllFacilities" type="checkbox"/> Select All
+	<input class="checkAllFacilities selectAll" type="checkbox"/> Select All
 </div>
 <div class="list_facilities">
 	<form action="">
 		<% _.each(resources, function(resource) { %>
-            <input type="checkbox" value="<%= resource._id %>"/><div class="resourceLink" data-id="<%= resource._id %>"> <%= resource.name %></div><br/>
+            <% if (resource.name !== 'ION') { %>
+                <input type="checkbox" value="<%= resource._id %>" style="display:inline-block;"/><div class="resourceLink leftNavListItem" data-id="<%= resource._id %>" style="display:inline-block;"> 
+                <% if (!(resource.name in IONUX2.facilityLabels)) { %>
+                    <%= resource.name %>
+                <% } else { %>
+                    <%= IONUX2.facilityLabels[resource.name] %>
+                <% } %>
+                </div><br/>
+            <% } %>
         <% }) %>
     </form>
 </div>
@@ -12,6 +20,48 @@
 
 <script>
     $(function(){
+        // initialize a section for this accordion checkbox section.
+        IONUX2.Models.searchParametersInstance.attributes.checkbox_sections['Facilities'] = {};
+        var facilityParamSettings = IONUX2.Models.searchParametersInstance.attributes.checkbox_sections['Facilities'];
+
+        // add click event handlers to update the model.
+        $(".list_facilities input[type=checkbox]").click(function(e){
+            var $checkbox = $(e.currentTarget);
+            var resource_id = $checkbox.attr('value');
+            if($checkbox.is(':checked')){
+                facilityParamSettings[resource_id] = true;
+            } else {
+                delete facilityParamSettings[resource_id];
+            }
+
+            console.log('--*.*-- Facilities section changed...');
+            console.log(facilityParamSettings);
+            console.log('--^.^-- Complete param settings:');
+            console.log(IONUX2.Models.searchParametersInstance);
+        });
+
+        // handle select all checkbox.
+        $("input.checkAllFacilities").click(function(e){
+            var $checkbox_all = $(e.currentTarget);
+            select_all = $checkbox_all.is(':checked');
+            $('.list_facilities input[type=checkbox]').each(function(index){
+                var $checkbox = $(this);
+                var resource_id = $checkbox.attr('value');
+                if(select_all){
+                    $checkbox.prop('checked', true);
+                    facilityParamSettings[resource_id] = true;
+                } else {
+                    $checkbox.prop('checked', false);
+                    delete facilityParamSettings[resource_id];
+                }
+            });
+
+            console.log('--*.*-- Facilities section changed...');
+            console.log(facilityParamSettings);
+            console.log('--^.^-- Complete param settings:');
+            console.log(IONUX2.Models.searchParametersInstance);
+        });
+
         $(".list_facilities .resourceLink").click(function(){
             var resource_id = $(this).attr('data-id');
             var url = "/Org/face/"+resource_id+"/";

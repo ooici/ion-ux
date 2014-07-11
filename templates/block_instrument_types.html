@@ -1,0 +1,62 @@
+<div class="select_all">
+    <input class="checkAllInstrumentTypes selectAll" type="checkbox"/> Select All
+</div>
+<div class="listInstrumentTypes">
+    <form action="">
+            <input class="resource_id" type="checkbox" instrumentType="CTD|Conductivity, Temperature, Depth" /> Conductivity, Temperature, Depth<br/>
+            <input class="resource_id" type="checkbox" instrumentType="Dissolved Oxygen" /> Dissolved Oxygen<br/>
+            <input class="resource_id" type="checkbox" instrumentType="Fluorometer" /> Fluorometer<br/>
+            <input class="resource_id" type="checkbox" instrumentType="Hydrophone" /> Hydrophone<br/>
+            <input class="resource_id" type="checkbox" instrumentType="Ocean Bottom Seismometer" /> Ocean Bottom Seismometer<br/>
+            <input class="resource_id" type="checkbox" instrumentType="Optical Properties" /> Optical Properties<br/>
+            <input class="resource_id" type="checkbox" instrumentType="pH" /> pH<br/>
+            <input class="resource_id" type="checkbox" instrumentType="Seafloor Pressure" /> Seafloor Pressure<br/>
+            <input class="resource_id" type="checkbox" instrumentType="Seafloor Properties" /> Seafloor Properties<br/>
+            <input class="resource_id" type="checkbox" instrumentType="Water Velocity" /> Water Velocity<br/>
+            <input class="resource_id" type="checkbox" instrumentType="Zooplankton Sonar" /> Zooplankton Sonar<br/>
+    </form>
+</div>
+
+<script>
+    $(function(){
+      // initialize a section for this accordion checkbox section.
+        IONUX2.Models.searchParametersInstance.attributes.checkbox_sections['instrumentTypes'] = {};
+        var instrumentTypeParamSettings = IONUX2.Models.searchParametersInstance.attributes.checkbox_sections['instrumentTypes'];
+
+        // add click event handlers to update the model.
+        $(".listInstrumentTypes input[type=checkbox]").click(function(e){
+            var $checkbox = $(e.currentTarget);
+            var resource_id = $checkbox.attr('instrumentType');
+            if($checkbox.is(':checked')){
+                instrumentTypeParamSettings[resource_id] = true;
+            } else {
+                delete instrumentTypeParamSettings[resource_id];
+            }
+            console.log('--*.*-- Instrument Types section changed...');
+            console.log(instrumentTypeParamSettings);
+            console.log('--^.^-- Complete param settings:');
+            console.log(IONUX2.Models.searchParametersInstance);
+        });
+
+        $("input.checkAllInstrumentTypes").click(function(e){
+            var $checkbox_all = $(e.currentTarget);
+            select_all = $checkbox_all.is(':checked');
+            $('.listInstrumentTypes input[type=checkbox]').each(function(index){
+                var $checkbox = $(this);
+                var resource_id = $checkbox.attr('instrumentType');
+                if(select_all){
+                    $checkbox.prop('checked', true);
+                    instrumentTypeParamSettings[resource_id] = true;
+                } else {
+                    $checkbox.prop('checked', false);
+                    delete instrumentTypeParamSettings[resource_id];
+                }
+            });
+            console.log('--*.*-- Instrument Types section changed...');
+            console.log(instrumentTypeParamSettings);
+            console.log('--^.^-- Complete param settings:');
+            console.log(IONUX2.Models.searchParametersInstance);
+        });
+
+    });
+</script>

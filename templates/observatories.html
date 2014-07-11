@@ -1,0 +1,112 @@
+<div class="select_all">
+    <div class="expandBtn observatoryExpandToggle">+</div> Show / Hide All</br>
+    <input class="checkAllObservatories selectAll" type="checkbox"/> Select All 
+</div>
+<div class="listObservatories">
+    <form action="">
+        <% _.each(resources, function(resource, name) { %>
+            <% if ( name !== 'ION') { %>
+                <div>
+                    <div class="expandHide expandBtn">+</div> 
+                    <% if (!(name in IONUX2.observatoryFacilityLabels)) { %>
+                        <%= name %>
+                    <% } else { %>
+                        <%= IONUX2.observatoryFacilityLabels[name] %> Facility
+                    <% } %>
+                    <br/>
+                    <div class="nestedNavList showObservatory" style="display:none;">
+                    <% _.each(resource, function(nestedResource) { %>
+                        <input type="checkbox" spatialAreaName="<%= nestedResource %>">
+                        <div class="leftNavListItem"> <%= nestedResource %>
+                        </div></br>
+                    <% }); %>
+                    <input type="checkbox" class="unassigned" facilityName="<%= name %>" spatialAreaName="<% _.each(resource, function(nestedResource) { %><%= nestedResource %>, <% }); %>">
+                        <div class="leftNavListItem"> Unassigned Assets
+                        </div></br>
+                    </div>
+                </div>
+            <% } %>
+        <% }); %>
+    </form>
+</div>
+
+<script>
+    $(function(){
+        // initialize a section for this accordion checkbox section.
+        IONUX2.Models.searchParametersInstance.attributes.checkbox_sections['Observatories'] = {};
+        var observatoryParamSettings = IONUX2.Models.searchParametersInstance.attributes.checkbox_sections['Observatories'];
+
+        // save settings based on checkbox attributes.
+        function saveObservatoryCheckbox(checkbox){
+            var name = checkbox.attr('spatialAreaName');
+            if(checkbox.hasClass('unassigned')){
+                name = checkbox.attr('facilityName');
+            }
+            if(checkbox.is(':checked')){
+                if(checkbox.hasClass('unassigned')) {
+                    observatoryParamSettings[name] = {'facility': name, 'excludingSpatialAreaNames': checkbox.attr('spatialAreaName')};
+                } else {
+                    observatoryParamSettings[name] = true;
+                }
+            } else {
+                delete observatoryParamSettings[name];
+            }
+        }
+
+        // add click event handlers to update the model.
+        $(".listObservatories input[type=checkbox]").click(function(e){
+            var $checkbox = $(e.currentTarget);
+
+            saveObservatoryCheckbox($checkbox);
+
+            console.log('--*.*-- Observatory section changed...');
+            console.log(observatoryParamSettings);
+            console.log('--^.^-- Complete param settings:');
+            console.log(IONUX2.Models.searchParametersInstance);
+        });
+
+        // handle select all checkbox.
+        $("input.checkAllObservatories").click(function(e){
+            var $checkbox_all = $(e.currentTarget);
+            select_all = $checkbox_all.is(':checked');
+            $('.listObservatories input[type=checkbox]').each(function(index){
+                var $checkbox = $(this);
+                $checkbox.prop('checked', select_all);
+
+                saveObservatoryCheckbox($checkbox);
+            });
+
+            console.log('--*.*-- Observatory section changed...');
+            console.log(observatoryParamSettings);
+            console.log('--^.^-- Complete param settings:');
+            console.log(IONUX2.Models.searchParametersInstance);
+        });
+
+        // handle expand or hide of individual groups within observatories.
+        $('.listObservatories .expandHide').on('click', function(e) {
+            e.preventDefault();
+            var $link = $(e.currentTarget);
+            $link.parent().children('.showObservatory').slideToggle('fast', function() {
+                console.log($(this) + " and " + $link);
+                if ($(this).is(':visible')) {
+                    $link.removeClass('expandBtn').addClass('hideBtn').html('-');              
+                } else {
+                    $link.removeClass('hideBtn').addClass('expandBtn').html('+');
+                }        
+            });
+        });
+
+        $('.observatoryExpandToggle').click(function(e) {
+            e.preventDefault();
+            if($(this).hasClass('expandBtn')) {
+                $('.listObservatories').find('.showObservatory').show();
+                $('.listObservatories').find('.expandHide').removeClass('expandBtn').addClass('hideBtn').html('-');
+                $(this).removeClass('expandBtn').addClass('hideBtn').html('-');
+            } else {
+                $('.listObservatories').find('.showObservatory').hide();
+                $('.listObservatories').find('.expandHide').removeClass('hideBtn').addClass('expandBtn').html('+');
+                $(this).removeClass('hideBtn').addClass('expandBtn').html('+');
+            }
+        });
+    });
+</script>

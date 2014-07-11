@@ -2,7 +2,7 @@
 INTERACTIONS_OBJECT.help_interactions = ["Help Contents", "Version Info"]
 
 IONUX.Views.HelpMenu = Backbone.View.extend({
-  el: "#topbar #help",
+  el: "#login #help",
   events: {
     "click #helpmenu-version": "version_clicked"
   },
@@ -14,7 +14,7 @@ IONUX.Views.HelpMenu = Backbone.View.extend({
     // Todo: investigate ion-ux.js timing issues.
     var self = this;
     this.model.on('change', function() {
-      self.setElement('#topbar #help');
+      self.setElement('#login #help');
     });
   },
   version_clicked: function() {

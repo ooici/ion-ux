@@ -86,11 +86,6 @@ IONUX2 = {
 	    var router = new IONUX.Router();
 	    IONUX2.ROUTER = router;
 
-		/*IONUX2.Models.saveCustomName.fetch({
-			async: false,
-			dataType: 'html'
-		});*/
-
 		IONUX2.Models.SearchTabContentInstance = new IONUX2.Models.SearchTabContent();
 		IONUX2.Views.SearchTabContentInstance = new IONUX2.Views.SearchTabContent({model: IONUX2.Models.SearchTabContentInstance});
 		IONUX2.Models.SearchTabContentInstance.fetch({
@@ -126,20 +121,14 @@ IONUX2 = {
 	    IONUX2.Models.LoginInstance.fetch();
 
 	    IONUX2.Models.SessionInstance.fetch({
-      		async: false
+      		async: false,
+			success: function(resp) {
+				new IONUX.Views.HelpMenu({model: IONUX2.Models.SessionInstance}).render().el;
+			    IONUX2.Models.SessionInstance.set_polling();
+			}
     	});
 
-	    IONUX2.Models.SessionInstance.set_polling();
 
-	    // check if user is logged in
-	    if (IONUX2.Models.SessionInstance.attributes.user_id != null) {
-	    	// show save config buttons
-	    	// $('#saveConfiguration').show();
-	    }
-	    
-        //new IONUX.Views.OrgSelector({collection: IONUX.Dashboard.Orgs, title: 'Facility'}).render().el;
-
-	    //IONUX2.Views.RegionObservatory = new IONUX.Views.ObservatorySelector({collection: IONUX2.Dashboard.Observatories});
       	this.dashboard_map();
 	},
 
@@ -209,6 +198,29 @@ IONUX2 = {
 			hits += !_.isEmpty(_.intersection(roles[o.org_governance_name],target_roles)) ? 1 : 0;
 		});
 		return hits > 0;
+    },
+
+    observatoryFacilityLabels: {
+    	'Bench Test Facility' : 'Bench Test',
+    	'CGSN Facility' : 'Coastal/Global Scale Nodes (CGSN)',
+    	'EA Facility' : 'Endurance Array (EA)',
+    	'RSN Facility' : 'Regional Scale Nodes (RSN)'
+    },
+
+    facilityLabels: {
+    	'Bench Test Facility' : 'Bench Test Facility',
+    	'CGSN Facility' : 'CGSN',
+    	'EA Facility' : 'Endurance Array (EA)',
+    	'RSN Facility' : 'Regional Scale Nodes (RSN)'
+    },
+
+    dataTypeLabels: {
+    	'Fluorometric CDOM Concentration' : 'Fluorometric CDOM Conc.',
+    	'Fluorometric Chlorophyll-a Concentration' : 'Fluorometric Chlorophyll-a Conc.',
+    	'Optical Absorbance Signal Intensity at 434nm' : 'Optical Absorbance at 434nm',
+    	'Optical Absorbance Signal Intensity at 578nm' : 'Optical Absorbance at 578nm',
+    	'Optical Backscatter (Red Wavelengths)' : 'Optical Backscatter (Red)',
+    	'Oxygen Concentration from Stable DO Instrument' : 'Oxygen Concentration, DO Instr.'
     }
 };
 

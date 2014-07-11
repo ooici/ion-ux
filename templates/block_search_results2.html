@@ -1,9 +1,9 @@
 <div id="searchResultsTabContainer" class="mainTabContainer">
 	<div class="twoNavTabs">
 		<div id="dataSearchResultsTab" class="twoNavTab active" tabContent="#dataSearchResultsAccordion">Data</div>
-		<div id="assetsSearchResultsTab" class="twoNavTab" tabContent="#assetsSearchResultsAccordion">Assets</div>
-		<div id="sitesSearchResultsTab" class="twoNavTab" tabContent="#siteSearchResultsAccordion">Sites</div>
-		<div id="legacyFacePageTab" class="twoNavTab" tabContent="#legacyFacePage" style="display:none;">Face Page</div>
+		<div id="assetsSearchResultsTab" class="twoNavTab" tabContent="#assetsSearchResultsAccordion">Platform &amp; Instrument</div>
+		<div id="sitesSearchResultsTab" class="twoNavTab" tabContent="#siteSearchResultsAccordion">All</div>
+		<div id="legacyFacePageTab" class="twoNavTab" tabContent="#legacyFacePageContent" style="display:none;">Face Page</div>
 	</div>
 </div>
 <div id="searchResultsContainer" class="lowerMainContentContainer">
@@ -19,7 +19,7 @@
 		<div class="accordionContainerWhite">
 		</div>	
 	</div>
-	<div id="legacyFacePage" style="display:none;">
+	<div id="legacyFacePageContent" style="display:none;">
 		<div id="dynamic-container" style="display:none;"> </div>
 	</div>
 </div>
@@ -36,33 +36,103 @@
 
 </script>
 
+<script id="TABLE_allSearchResults">
+
+	var TABLE_allSearchResults=[
+		["text_short_ooi", "Type", "type_", "T04", "0", "level-zero"],
+		["text_short_ooi", "Name", "name", "T05", "0", "level-zero"], 
+		["text_extended_ooi", "Description", "description", "T09", "0", "level-zero"], 
+		["text_short_ooi", "Created", "ts_created", "T10", "2", "level-two"], 
+		["text_short_ooi", "Modified", "ts_updated", "T11", "0", "level-zero"], 
+		["text_short_ooi", "Lifecycle State", "lcstate", "T13", "0", "level-zero"]
+	];
+
+</script>
+
+<script id="TABLE_allDataSearchResults">
+
+	var TABLE_allDataSearchResults=[
+		["text_short_ooi", "Type", "ooi_product_name", "T04", "0", "level-zero"],
+		["text_short_ooi", "Name", "name", "T05", "0", "level-zero"], 
+		["text_extended_ooi", "Description", "description", "T09", "0", "level-zero"], 
+		["text_short_ooi", "Created", "ts_created", "T10", "2", "level-two"], 
+		["text_short_ooi", "Modified", "ts_updated", "T11", "0", "level-zero"], 
+		["text_short_ooi", "Lifecycle State", "lcstate", "T13", "0", "level-zero"]
+	];
+
+</script>
+
 <script>
+	IONUX2.dataTypesList = [
+		{'name':"Conductivity", 'id':"CONDWAT", 'type':["CONDWAT"]},
+		{'name':"Density", 'id':"DENSITY", 'type':["DENSITY"]},
+		{'name':"Fluorometric CDOM Concentration", 'id':"CDOMFLO", 'type':["CDOMFLO"]},
+		{'name':"Fluorometric Chlorophyll-a Concentration", 'id':"CHLAFLO", 'type':["CHLAFLO"]},
+		{'name':"Optical Absorbance Signal Intensity at 434nm", 'id':"PH434SI", 'type':["PH434SI"]},
+		{'name':"Optical Absorbance Signal Intensity at 578nm", 'id':"PH578SI", 'type':["PH578SI"]},
+		{'name':"Optical Backscatter (Red Wavelengths)", 'id':"FLUBSCT", 'type':["FLUBSCT"]},
+		{'name':"Oxygen Concentration from Stable DO Instrument", 'id':"DOCONCS", 'type':["DOCONCS"]},
+		{'name':"PHSEN Thermistor Temperature", 'id':"ABSTHRM", 'type':["ABSTHRM"]},
+		{'name':"Practical Salinity", 'id':"PRACSAL", 'type':["PRACSAL"]},
+		{'name':"Pressure (Depth)", 'id':"PRESWAT", 'type':["PRESWAT"]},
+		{'name':"Temperature", 'id':"TEMPWAT", 'type':["TEMPWAT"]},
+		{'name':"Velocity Profile", 'id':"VELPROF", 'type':["VELPROF"]},
+		{'name':"pH",'id':"PHWATER", 'type':["PHWATER"]},
+		{'name':"All", 'id':"ALL_DATA", 'type':["ALL_DATA"]}
+	];
+
+	IONUX2.assetTypesList = [
+		{'name':"Platforms", 'id':"Platforms", 'type':["PlatformDevice"]},
+		{'name':"Instruments", 'id':"Instruments", 'type':["InstrumentDevice"]},
+		{'name':"All", 'id':"ALL_ASSETS", 'type':["ALL_ASSETS"]}
+	];
+
+	IONUX2.siteTypesList = [
+		{'name':"Facilities", 'id':"Facility", 'type':["Org"]},
+		{'name':"Sites", 'id':"Observatory", 'type':["Observatory"]},
+		{'name':"Stations", 'id':"AllSites", 'type':["StationSite","PlatformSite"]},
+		{'name':"Portals", 'id':"Portals", 'type':["InstrumentSite"]},
+		{'name':"Deployments", 'id':"Deployments", 'type':["Deployment"]},
+		{'name':"All", 'id':"ALL_RESULTS", 'type':["ALL_RESULTS"]}
+	];
+
+	IONUX2.statusDataReferenceList = [
+		{'resourceType' : 'InstrumentDevice', 'statusColumn':'computed.instrument_status.value.@index'},
+		{'resourceType' : 'PlatformDevice', 'statusColumn':'computed.platform_status.value.@index'},
+		{'resourceType' : 'StationSite', 'statusColumn':'computed.station_status.value.@index'},
+		{'resourceType' : 'Deployment', 'statusColumn':'deployment_info.@index.device_status'},
+		{'resourceType' : 'Negotiation', 'statusColumn':'computed.platform_status.value.@index'}
+	];
+
 	IONUX2.clearSearchResults = function() {
 		IONUX.ROUTER.navigate('');
 		$('.searchResultTable').html('');
 
-		_.each(dataTypesList, function(resourceType) {
+		_.each(IONUX2.dataTypesList, function(resourceType) {
 			var accordion_contents = "#accordion" + resourceType.id;
 			var accordion = $(accordion_contents).closest('.accordionWhite');
 			var accordionLabel = accordion.find('.accordionWhiteLabel');
 			accordionLabel.html(resourceType.name);
 			accordionLabel.append('<div class="expandHide arrowRight blue">');
+			$(accordion_contents).hide();
 		});
 
-		_.each(assetTypesList, function(resourceType) {
+		_.each(IONUX2.assetTypesList, function(resourceType) {
 			var accordion_contents = "#accordion" + resourceType.id;
 			var accordion = $(accordion_contents).closest('.accordionWhite');
 			var accordionLabel = accordion.find('.accordionWhiteLabel');
 			accordionLabel.html(resourceType.name);
 			accordionLabel.append('<div class="expandHide arrowRight blue">');
+			$(accordion_contents).hide();
 		});
 
-		_.each(siteTypesList, function(resourceType) {
+		_.each(IONUX2.siteTypesList, function(resourceType) {
 			var accordion_contents = "#accordion" + resourceType.id;
 			var accordion = $(accordion_contents).closest('.accordionWhite');
 			var accordionLabel = accordion.find('.accordionWhiteLabel');
 			accordionLabel.html(resourceType.name);
 			accordionLabel.append('<div class="expandHide arrowRight blue">');
+			$(accordion_contents).hide();
 		});
 
 	}
@@ -71,29 +141,33 @@
 		/* PROCESS DATA PRODUCT TYPES */
 
 		var dataList = {};
+		dataList['ALL_DATA'] = [];
 		_.each(response_data, function(resource) {
-			_.each(dataTypesList, function(resourceType) {
-				if (resource['ooi_short_name'] == resourceType.type){
-					if (!(resourceType.type in dataList)){
-						dataList[resourceType.type] = [];
+			_.each(IONUX2.dataTypesList, function(resourceType) {
+				key = resource['ooi_short_name'];
+				id = resourceType.id;
+				if (resourceType.type.indexOf(key) > -1){ // == resourceType.type){
+					if (!(id in dataList)){
+						dataList[id] = [];
 					}
-					dataList[resourceType.type].push(resource);
+					dataList[id].push(resource);
+					dataList['ALL_DATA'].push(resource);
 				}
 			});
 		});
 		console.log(response_data);
 		console.log('DATA PRODUCTS!!!!');
-		console.log(dataList);
+		// console.log(dataList);
 
 		var hasDataContent = false;
-		_.each(dataTypesList, function(resourceType) {
+		_.each(IONUX2.dataTypesList, function(resourceType) {
 			var accordion_contents = "#accordion" + resourceType.id;
 			var accordion = $(accordion_contents).closest('.accordionWhite');
 			var accordionLabel = accordion.find('.accordionWhiteLabel');
 			var table_elem = '#table' + resourceType.id;
 			var table_data = dataList[resourceType.type];
-			console.log(table_data);
-			if(resourceType.type in dataList){
+			// console.log(table_data);
+			if(resourceType.id in dataList){
 				hasDataContent = true;
 				new IONUX.Views.DataTable({el: table_elem, data: table_data, visibility_level:2});
 				accordionLabel.html(resourceType.name + ' (' + table_data.length + ')');
@@ -106,28 +180,32 @@
 		/* PROCESS ASSETS TYPES */
 		
 		var assetsList = {};
+		assetsList['ALL_ASSETS'] = [];
 		_.each(response_data, function(resource) {
-			_.each(assetTypesList, function(resourceType) {
-				if (resource['type_'] == resourceType.type){
-					if (!(resourceType.type in assetsList)){
-						assetsList[resourceType.type] = [];
+			_.each(IONUX2.assetTypesList, function(resourceType) {
+				key = resource['type_'];
+				id = resourceType.id;
+				if (resourceType.type.indexOf(key) > -1){ // == resourceType.type){
+					if (!(id in assetsList)){
+						assetsList[id] = [];
 					}
-					assetsList[resourceType.type].push(resource);
+					assetsList[id].push(resource);
+					assetsList['ALL_ASSETS'].push(resource);
 				}
 			});
 		});
 		console.log(response_data);
 		console.log('ASSETS!!!!');
-		console.log(assetsList);
+		//console.log(assetsList);
 		var hasAssetContent = false;
-		_.each(assetTypesList, function(resourceType) {
+		_.each(IONUX2.assetTypesList, function(resourceType) {
 			var accordion_contents = "#accordion" + resourceType.id;
 			var accordion = $(accordion_contents).closest('.accordionWhite');
 			var accordionLabel = accordion.find('.accordionWhiteLabel');
 			var table_elem = '#table' + resourceType.id;
-			var table_data = assetsList[resourceType.type];
-			console.log(table_data);
-			if(resourceType.type in assetsList){
+			var table_data = assetsList[resourceType.id];
+			//console.log(table_data);
+			if(resourceType.id in assetsList){
 				hasAssetContent = true;
 				new IONUX.Views.DataTable({el: table_elem, data: table_data, visibility_level:2});
 				accordionLabel.html(resourceType.name + ' (' + table_data.length + ')');
@@ -140,27 +218,32 @@
 		/* PROCESS SITES TYPES */
 
 		var sitesList = {};
+		sitesList['ALL_RESULTS'] = response_data;
 		_.each(response_data, function(resource) {
-			_.each(siteTypesList, function(resourceType) {
-				if (resource['type_'] == resourceType.type){
-					if (!(resourceType.type in sitesList)){
-						sitesList[resourceType.type] = [];
+			_.each(IONUX2.siteTypesList, function(resourceType) {
+				key = resource['type_'];
+				id = resourceType.id;
+				// console.log('Key => ' + key);
+				// console.log(resourceType.type.indexOf(key));
+				if (resourceType.type.indexOf(key) > -1){ // == resourceType.type){
+					if (!(id in sitesList)){
+						sitesList[id] = [];
 					}
-					sitesList[resourceType.type].push(resource);
+					sitesList[id].push(resource);
 				}
 			});
 		});
 		console.log('SITES!!!!');
-		console.log(sitesList);
+		// console.log(sitesList);
 		var hasSiteContent = false;
-		_.each(siteTypesList, function(resourceType) {
+		_.each(IONUX2.siteTypesList, function(resourceType) {
 			var accordion_contents = "#accordion" + resourceType.id;
 			var accordion = $(accordion_contents).closest('.accordionWhite');
 			var accordionLabel = accordion.find('.accordionWhiteLabel');
 			var table_elem = '#table' + resourceType.id;
-			var table_data = sitesList[resourceType.type];
-			console.log(table_data);
-			if(resourceType.type in sitesList){
+			var table_data = sitesList[resourceType.id];
+			// console.log(table_data);
+			if(resourceType.id in sitesList){
 				hasSiteContent = true;
 				new IONUX.Views.DataTable({el: table_elem, data: table_data, visibility_level:2});
 				accordionLabel.html(resourceType.name + ' (' + table_data.length + ')');
@@ -173,72 +256,56 @@
 
 	console.log('****  parseSearchResults instantiated!');
 
-	var dataTypesList = [
-		{'name':"Conductivity", 'id':"CONDWAT", 'type':"CONDWAT"},
-		{'name':"Density", 'id':"DENSITY", 'type':"DENSITY"},
-		{'name':"Fluorometric CDOM Concentration", 'id':"CDOMFLO", 'type':"CDOMFLO"},
-		{'name':"Fluorometric Chlorophyll-a Concentration", 'id':"CHLAFLO", 'type':"CHLAFLO"},
-		{'name':"Optical Absorbance Signal Intensity at 578nm", 'id':"PH578SI", 'type':"PH578SI"},
-		{'name':"Optical Backscatter (Red Wavelengths)", 'id':"FLUBSCT", 'type':"FLUBSCT"},
-		{'name':"Oxygen Concentration from Stable DO Instrument", 'id':"DOCONCS", 'type':"DOCONCS"},
-		{'name':"PHSEN Thermistor Temperature", 'id':"ABSTHRM", 'type':"ABSTHRM"},
-		{'name':"Practical Salinity", 'id':"PRACSAL", 'type':"PRACSAL"},
-		{'name':"Pressure (Depth)", 'id':"PRESWAT", 'type':"PRESWAT"},
-		{'name':"Temperature", 'id':"TEMPWAT", 'type':"TEMPWAT"},
-		{'name':"Velocity Profile", 'id':"VELPROF", 'type':"VELPROF"},
-		{'name':"pH",'id':"PHWATER", 'type':"PHWATER"}
-	];
-
-	var assetTypesList = [
-		{'name':"Platform", 'id':"Platform", 'type':"PlatformDevice"},
-		{'name':"Instrument", 'id':"Instrument", 'type':"InstrumentDevice"}
-	];
-
-	var siteTypesList = [
-		{'name':"Facility", 'id':"Facility", 'type':"Org"},
-		{'name':"Observatory", 'id':"Observatory", 'type':"Observatory"},
-		{'name':"Station", 'id':"StationSite", 'type':"StationSite"},
-		{'name':"Platform Site", 'id':"PlatformSite", 'type':"PlatformSite"},
-		{'name':"Instrument Site", 'id':"InstrumentSite", 'type':"InstrumentSite"}
-	];
-
 	$('#searchResultsContainer').jScrollPane({autoReinitialise: true});
 
 	var tableScriptTemplate = 'var TABLE_table<%= id %> = TABLE_searchResults;';
+	var tableAllScriptTemplate = 'var TABLE_table<%= id %> = TABLE_allSearchResults;';
+	var tableAllDataScriptTemplate = 'var TABLE_table<%= id %> = TABLE_allDataSearchResults;';
 
-	var accordionWhiteTemplate = '<div class="accordionWhite collapsed">\
+	var accordionWhiteTemplate = '<div class="accordionWhite collapsed" id="<%= id %>">\
 			<div class="accordionWhiteLabel">\
 				<%= name %>\
 				<div class="expandHide arrowRight blue"> </div>\
 			</div>\
-			<div class="accordionWhitePin"> </div>\
 			<div class="accordionContents" style="display:none;" id="accordion<%= id %>">\
 				<div class="searchResultTable" id="table<%= id %>"> </div>\
 			</div>\
 		</div>';
 
-	_.each(dataTypesList, function(type) {
+	_.each(IONUX2.dataTypesList, function(type) {
 		var script=document.createElement('script');
 		script.id='TABLE_table' + type.id;
-		script.text=_.template(tableScriptTemplate, type);
+		if(type.id == "ALL_DATA") {
+			script.text=_.template(tableAllDataScriptTemplate, type);
+		} else {
+			script.text=_.template(tableScriptTemplate, type);
+		}
 		$("#searchResultsTabContainer").parent().append(script);
 		var blah = $(_.template(accordionWhiteTemplate, type));
 	    $('#dataSearchResultsAccordion').children('.accordionContainerWhite').append(blah);
 	});
 
-	_.each(assetTypesList, function(type) {
+	_.each(IONUX2.assetTypesList, function(type) {
 		var script=document.createElement('script');
 		script.id='TABLE_table' + type.id;
-		script.text=_.template(tableScriptTemplate, type);
+		if(type.id == "ALL_ASSETS") {
+			script.text=_.template(tableAllScriptTemplate, type);
+		} else {
+			script.text=_.template(tableScriptTemplate, type);
+		}
 		$("#searchResultsTabContainer").parent().append(script);
 		var blah = $(_.template(accordionWhiteTemplate, type));
 	    $('#assetsSearchResultsAccordion').children('.accordionContainerWhite').append(blah);
 	});
 
-	_.each(siteTypesList, function(type) {
+	_.each(IONUX2.siteTypesList, function(type) {
 		var script=document.createElement('script');
 		script.id='TABLE_table' + type.id;
-		script.text=_.template(tableScriptTemplate, type);
+		if((type.id == "ALL_RESULTS") || (type.id == "AllSites")) {
+			script.text=_.template(tableAllScriptTemplate, type);
+		} else {
+			script.text=_.template(tableScriptTemplate, type);
+		}
 		$("#searchResultsTabContainer").parent().append(script);
 		var blah = $(_.template(accordionWhiteTemplate, type));
 	    $('#siteSearchResultsAccordion').children('.accordionContainerWhite').append(blah);
@@ -252,8 +319,15 @@
 		$(tab_content).show();
 	});
 
+	console.log("**** MAKING RESULTS ACCORDIONS ****");
     $('.accordionContainerWhite').sortable({
-    	items: ".accordionWhite:not(.pinned)"
+    	items: ".accordionWhite",
+    	update: function( event, ui ) {}
+    });
+
+    $('.accordionContainerWhite').on( "sortupdate", function( event, ui ) {
+          var sortable_order = $(this).sortable( "toArray" );
+          IONUX2.Models.sortBottomModelInstance.set({'sort_order': sortable_order});
     });
 
     function toggleAccordion(accordion_contents){
@@ -270,40 +344,11 @@
 		});
     }
 
-    $('.accordionWhitePin').click(function(e){
-    	e.preventDefault();
-    	var pin = $(e.currentTarget);
-    	var accordion = pin.closest('.accordionWhite');
-    	if(!accordion.hasClass('pinned')) {
-    		/*if(accordion.hasClass('collapsed')){
-    			toggleAccordion( accordion.find('.accordionContents'));
-    		}*/
-    		accordion.addClass('pinned');
-    	} else {
-    		/*if(!accordion.hasClass('collapsed')){
-    			toggleAccordion( accordion.find('.accordionContents'));
-    		}*/
-    		accordion.removeClass('pinned');
-    	}
-        $( ".accordionContainerWhite" ).sortable( "disable" );
-        $('.accordionContainerWhite').sortable({
-        	items: ".accordionWhite:not(.pinned)"
-        });
-        $( ".accordionContainerWhite" ).sortable( "enable" );
-    });
-
 	$('.accordionWhiteLabel').click(function(e){
 		e.preventDefault();
 		var link = $(e.currentTarget);
 		var accordion = link.closest('.accordionWhite');
-		if( !accordion.hasClass('pinned')){
-			// this code would collapse other non-pinned accordions
-			// when you open one, but we don't do that anymore.
-			/* if( accordion.hasClass('collapsed')){
-				toggleAccordion( accordion.siblings('.accordionWhite:not(.pinned)').find('.accordionContents:visible'));
-			} */
-			toggleAccordion( accordion.find('.accordionContents'));
-		}
+		toggleAccordion( accordion.find('.accordionContents'));
 	});
 
 </script>

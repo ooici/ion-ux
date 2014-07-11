@@ -39,7 +39,16 @@ def get_versions():
         except IOError:
             pass
 
-    return g.ion_ux_version
+    if not hasattr(g, "r3_ux_version"):
+        g.r3_ux_version = "unknown"
+
+        try:
+            with open(os.path.join(PORTAL_ROOT, "R3VERSION.txt")) as f:
+                g.r3_ux_version = f.readline().strip()
+        except IOError:
+            pass
+
+    return g
 
 def clean_session():
     session.clear()
@@ -138,12 +147,41 @@ def user_profiles(user_id):
 
         return render_json_response("{data:{status:'ok'}}")
 
-@app.route('/hmmm/', methods=['GET'])
-def goto_resource_management():
-    if request.is_xhr:
-        return
-    else:
-        return render_app_template(request.path)
+@app.route('/profile/<user_id>_ui/', methods=['GET', 'POST'])
+def user_configuration(user_id):
+    if request.method == "GET":
+        # return user configuration json here!
+        path = os.path.join('profiles', "{0}_ui.json".format(user_id))
+        if not os.path.exists(path):
+            return jsonify({'data':False})
+        else:
+            user_file = open(path, 'r')
+            profile = user_file.read()
+            user_file.close()
+            return render_json_response(profile)
+    elif request.method == "POST":
+        # store the user configuration json here!
+        path = os.path.join('profiles', "{0}_ui.json".format(user_id))
+        if not os.path.exists('profiles'):
+            os.makedirs('profiles')
+        user_file = open(path, 'w')
+        print request.form
+        profile = request.form['data']
+        print profile
+        user_file.write(profile)
+        user_file.close()
+
+        return render_json_response("{data:{status:'ok'}}")
+
+@app.route('/search_query/', methods=['POST'])
+def search_query_post_passthrough():
+    # ENABLE THESE LINES FOR WEB FORM POST.  DISABLE FOR UI POST
+    # query_string = request.form['payload']
+    # query = json.loads(query_string)
+    # ENABLE THIS LINE FOR UI POST.  DISABLE FOR WEB FORM POST.
+    query = request.json['payload']
+    results = ServiceApi.search_query_post_passthrough(query)
+    return render_json_response(results)
 
 
 # -----------------------------------------------------------------------------
@@ -447,6 +485,11 @@ def get_recent_events(resource_id):
 def related_sites(resource_id):
     related_sites = ServiceApi.find_related_sites(resource_id)
     return render_json_response(related_sites)
+
+@app.route('/observatories/', methods=['GET'])
+def observatories_tree():
+    observatories_tree = ServiceApi.find_facilities_observatories()
+    return render_json_response(observatories_tree)
 
 @app.route('/related_objects_has_resource/<resource_id>/', methods=['GET'])
 def related_objects_has_resource(resource_id):
@@ -810,10 +853,13 @@ def logout():
 def session_info():
     # get version info from service gateway
     remote_version = ServiceApi.get_version()
-    ion_ux_version = get_versions()
+    theG = get_versions()
+    ion_ux_version = g.ion_ux_version
+    r3_ux_version = g.r3_ux_version
 
     # ion ux must be first
     version = [{ 'lib': 'ux-release', 'version': ion_ux_version }]
+    version.append({ 'lib': 'r3-dev', 'version': r3_ux_version })
 
     # coi services should be second
     version.append({'lib':'coi-services-release', 'version': remote_version.pop('coi-services-release', 'unknown')})

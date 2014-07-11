@@ -1,14 +1,16 @@
+<!-- filename="accordion.html" -->
 <div id="saveButtons">
  <button id="searchBtn" class="navButton">Search</button>
  <button id="saveSearch" class="navButton">Save this Search</button>
  <button id="resetBtn" class="navButton">Reset</button>
 </div>
-<div id="customSearchName"><input class="customName" type="text" placeholder="Name" /><button id="saveName" class="textRight">Save</button></div>
+<div id="customSearchName"><input class="customName" type="text" placeholder="Name" maxlength="15" /> <button id="saveName">Save</button> <button id="cancelName">Cancel</button></div>
 <div class="accordionContainer">
   <article class="leftAccordion accordion_fixed" id="keyword">
     <div class="accordionLabel">Keyword</div>
-    <input id="keywordIn" class="keyword" type="text" placeholder="Keyword" style="display:inline-block;"/>
+    <input id="keywordIn" class="keyword" type="text" placeholder="Enter keyword" style="display:inline-block;"/>
   </article>
+  <!-- other accordions placed here dynamically -->
 </div>
 
 <form id="searchForm">
@@ -35,36 +37,15 @@
   <input type="hidden" name="radius" id="radiusFm2"/>
 </form>
 
-<script type="text/template" id="block_data_type_list_tmpl">{% include 'block_data_type_list2.html' %}</script>
+<!-- end filename="accordion.html" -->
+
 <script type="text/template" id="filter-item-tmpl">{% include 'block_boolean2.html' %}</script>
     
     <script>
-		IONUX2.Views.DataTypesList = Backbone.View.extend({
-			el: '#dataTypesList',
-			template: _.template($('#block_data_type_list_tmpl').html()),
-      events: {
-        'click .checkAllTypes': 'select_all_types'
-      },
-			initialize: function() {
-				this.model.on('change:data', this.render, this);
-			},
-      select_all_types: function(e) {
-        var $check = $(e.currentTarget);
-        if ($check.is(':checked')) {
-          $('.listDataTypes').find('input').prop('checked', true);
-        }
-        else {
-          $('.listDataTypes').find('input').prop('checked', false);
-        }
-      },
-			render: function() {
-				this.$el.html(this.template({resources: this.model.data}));
-				return this;
-			}
-		});	
-		
       $(function(){
         IONUX2.Views.leftAccordion = new IONUX2.Views.LeftAccordion(); /* CLEAN UP THIS NAMING !! */
+
+
 
         var accordions = {
           'spatial': {
@@ -76,8 +57,12 @@
             id: 'temporal'
           },
           'facility': {
-            title: 'Facility',
+            title: 'Facilities/Organizations',
             id: 'orgSelector'
+          },
+          'observatory': {
+            title: 'Observatories/Arrays',
+            id: 'observatoryList'
           },
           /*
            'region': {
@@ -90,19 +75,15 @@
             id: 'site'
           },
           'platform': {
-            title: 'Platform Type',
+            title: 'Platform Types',
             id: 'platformTypesList'
           },
-          /*
-          'instrument': {
-            title: 'Instrument Type',
-            id: 'instrument'
-          */
-            /* id: 'instrumentTypesList' */ /*SUBSTITUTE THIS */
-          /*}, */
-          
+          'instrumentType': {
+            title: 'Instrument Types',
+            id: 'instrumentTypesList'
+          },
           'dataType': {
-            title: 'Data Type',
+            title: 'Data Types',
             id: 'dataTypesList'
           },
           'booleanExpression': {
@@ -115,10 +96,24 @@
           IONUX2.Views.leftAccordion.addAccordion(accordions[accordion].title, accordions[accordion].id);
         }
 
+        $('#boolean_expressionElem').hide();
+
+        $('.accordionContainer').append('<div class="nsf-ol">\
+            <div class="logos">\
+              <div class="nsf"> </div>\
+              <div class="ol"> </div>\
+            </div>\
+            <div class="about">\
+              Funding for the <a href="http://www.oceanobservatories.org/" target="OOI">Ocean Observatories Initiative</a> is provided by the <a href="http://www.nsf.gov" target="NSF">National Science Foundation</a> through a Cooperative Agreement with the <a href="http://www.oceanleadership.org/" target="COL">Consortium for Ocean Leadership</a>.\
+            </div>\
+          </div>\
+        ');
+
         IONUX2.Views.spatial = new IONUX2.Views.Spatial({model: IONUX2.Models.spatialModelInstance});
         IONUX2.Views.temporal = new IONUX2.Views.Temporal({model: IONUX2.Models.temporalModelInstance});
         /* IONUX2.Views.RegionList = new IONUX2.Views.Region({collection: IONUX2.Dashboard.Observatories }); */ /*DELETE THIS */
         IONUX2.Views.SitesList = new IONUX2.Views.Sites({collection: IONUX2.Dashboard.Observatories });
+        IONUX2.Views.InstrumentTypesList = new IONUX2.Views.InstrumentTypesMenu();
         IONUX2.Views.boolean = new IONUX2.Views.BooleanSearch();
 		    IONUX2.Models.DataTypeListInstance = new IONUX2.Models.DataTypeList();
 		    IONUX2.Views.DataTypesListInstance = new IONUX2.Views.DataTypesList({model: IONUX2.Models.DataTypeListInstance });
@@ -126,8 +121,18 @@
 		    IONUX2.Collections.OrgsInstance = new IONUX2.Collections.Orgs();
 		    IONUX2.Views.OrgSelectorInstance = new IONUX2.Views.OrgSelector({collection: IONUX2.Collections.OrgsInstance});
 		    IONUX2.Collections.OrgsInstance.fetch();
+        IONUX2.Models.ObservatoryListInstance = new IONUX2.Models.ObservatoryList();
+        IONUX2.Views.ObservatoryListInstance = new IONUX2.Views.Observatories({model: IONUX2.Models.ObservatoryListInstance});
+        IONUX2.Models.ObservatoryListInstance.fetch();
 
         IONUX2.Views.boolean.render();
+
+        if (IONUX2.Models.SessionInstance.is_logged_in()) {
+            // show save config buttons
+            $('#saveConfiguration').show();
+            UINAV.getUserProfile();
+            UINAV.getUserConfiguration();
+        }
 
         $("#platformTypesList").html(IONUX2.getTemplate('templates/block_platform_types2.html'));
 
@@ -136,6 +141,12 @@
           distance: 5
         });
         $('.accordionContainer').jScrollPane({autoReinitialise: true});
+
+        $(".accordionContainer" ).on( "sortupdate", function( event, ui ) {
+          var sortable_order = $(this).sortable( "toArray" );
+          IONUX2.Models.sortModelInstance.set({'sort_order': sortable_order});
+        });
+
 
         $('#searchBtn').on('click', function(){
           search_clicked();
@@ -146,17 +157,34 @@
           if($('#legacyFacePageTab').hasClass('active')){
             $('#dataSearchResultsTab').click();
           }
-        });
 
-        $('#resetBtn').on('click', function(){
-          disableMapEventHandling = true;
+          //save recent searches
+          var name = "";
+          searchParams = UINAV.saveEntireSearch(name);
+          var maxLength = 5;
+          var parsed_collection = IONUX2.Collections.recentSearches.toJSON();
+
+          if (parsed_collection.length != 0) {
+            var collection_length = parsed_collection.length;
+            if (collection_length == maxLength) {
+               IONUX2.Collections.recentSearches.shift();
+            }
+          }
+
+          IONUX2.Collections.recentSearches.add(searchParams);
+
+        });
+        
+        IONUX2.resetSearch = function(){
+          UINAV.disableMapEventHandling = true;
           IONUX2.clearSearchResults();
+          IONUX2.Models.searchParametersInstance.reset();
 
           // clear keyword
           $('#keywordIn').val("");
 
           // clear temporal
-          $('#temporal select').val("0");
+          $('#temporal select').val("");
 
           // clear spatial
           var attribute = {};
@@ -172,21 +200,31 @@
           $("#northFm").val("");
           $("#eastFm").val("");
           $("#radiusFm").val("");
+          $('#radius').val("");
+          $('#lower').val("");
+          $('#upper').val("");
+          $('#tempFromFm').val("");
+          $('#tempToFm').val("");
+          $('#temporal-field-ctrlFm').val("");
 
           // clear all checkboxes
           $('#searchTabContent').find('input').prop("checked", false);
 
           // clear boolean
           IONUX2.Views.boolean.render();
-          disableMapEventHandling = false;
+          UINAV.disableMapEventHandling = false;       
+        }
+
+        $('#resetBtn').on('click', function(){
+          IONUX2.resetSearch();
         });
         
       });
 
-      var disableMapEventHandling = false;
+      UINAV.disableMapEventHandling = false;
 
       IONUX2.openSpatialAccordion = function() {
-        if(!disableMapEventHandling){
+        if(!UINAV.disableMapEventHandling){
           if($("#spatialElem").find('.leftAccordionContents').not(':visible')){
             $("#spatialElem").find('.accordionTitle').click();
           }
@@ -215,15 +253,35 @@
 
       }
 
+      function BD(criteria, depth) {
+        if(depth == 0){
+          return criteria;
+        }
+        depth--;
+        var criteria_json = ["assop:associated", [ null,null, ["hasSite", "hasDevice", "hasDeployment", "hasPrimaryDeployment", "withinDeployment", "hasNetworkParent", "hasDataProducer"], "O", BD(criteria, depth)]];
+
+        return criteria_json;
+      }
+
+      function BU(criteria, depth) {
+        if(depth == 0){
+          return criteria;
+        }
+        depth--;
+        var criteria_json = ["assop:associated", [ null,null, ["hasSite", "hasDevice", "hasDataProducer"], "S", BU(criteria, depth)]];
+
+        return criteria_json;
+      }
+
         function search_clicked() {
 
           IONUX2.clearSearchResults();
 
-          set_temporal_form();
-
           var form_values = $('#searchForm').serializeArray();
           form_values.splice(0, 0, {name:'adv', value:1});
-
+          if (form_values[form_values.length-1].value == 0) {
+            form_values[form_values.length - 1].value = "";
+          }
           var form_values_bool = $('#booleanForm').serializeArray();
 
           // switch into an object - much easier to access directly
@@ -231,6 +289,271 @@
             return [v.name, v.value];
           }));
           
+          var search_sections = 0;
+          var where_list = [];
+
+          // add geospatial query json
+          if(formObj['south'] != ''){
+            if(formObj['radius'] != ''){
+              // do point radius search
+              GC = ["gop:within_geom", ["geom", "POINT(" + formObj['west'] + " " + formObj['south'] + ")", formObj['radius']]];
+              // compensate for point radius not finding devices.  Also deployments associated.
+              GC = ["exp:or", [GC, BD(GC, 1)]];
+            } else {
+              // do bbox search
+              GC = ["gop:within", ["geom_loc", formObj['west'], formObj['north'], formObj['east'], formObj['south']]];
+            }
+            GJ = ["exp:or",[GC,["assop:associated",[null,null,"hasResource","S",GC]]]];
+            where_list.push(GJ);
+          }
+
+          // add vertical query json
+          var upper = $('#upper').val();
+          var lower = $('#lower').val();
+          if((upper != '') && (lower != '')){
+            if(lower > upper){
+              upper = $('#lower').val();
+              lower = $('#upper').val();
+            }
+            if($('#feetMeters').val() == 2){
+              // convert feet to meters if ft is selected next to vertical extents.
+              upper = upper * 0.3048;
+              lower = lower * 0.3048;
+            }
+            VJ = ["rop:within", ["vertical_range", lower, upper]];
+            where_list.push(VJ);
+          }
+
+          // add temporal query json
+          var tYear = $("#tempFromYear").val();
+          var tMonth = $("#tempFromMonth").val();
+          var tDay = $("#tempFromDay").val();
+          var tHour = $('#tempFromHour').val();
+
+          var tYear2 = $("#tempToYear").val();
+          var tMonth2 = $("#tempToMonth").val();
+          var tDay2 = $("#tempToDay").val();
+          var tHour2 = $('#tempToHour').val();
+
+          if((tYear.length > 0 && tMonth.length > 0 && tDay.length > 0 && tHour.length > 0) && 
+             (tYear2.length > 0 && tMonth2.length > 0 && tDay2.length > 0 && tHour2.length > 0)){
+            var temporalFromTime = Date.UTC(tYear, tMonth, tDay, tHour) / 1000;
+            var temporalToTime = Date.UTC(tYear2, tMonth2, tDay2, tHour2) / 1000;
+
+            console.log('*** From time: ' + temporalFromTime);
+            console.log('*** To time: ' + temporalToTime);
+            if(temporalFromTime > temporalToTime){
+              tempTime = temporalToTime;
+              temporalToTime = temporalFromTime;
+              temporalFromTime = tempTime;
+            }
+
+            if($('#tempSelect').val() == 'temporalRange'){
+              TJ = ["rop:overlaps", ["temporal_range", temporalFromTime, temporalToTime]];
+              where_list.push(TJ);
+            } else if ($('#tempSelect').val() == 'tsCreated'){
+              TJ = ["exp:and", [["op:gte",["ts_created", temporalFromTime.toString()]],["op:lte",["ts_created", temporalToTime.toString()]]]];
+              where_list.push(TJ);
+            } else if ($('#tempSelect').val() == 'tsUpdated'){
+              TJ = ["exp:and", [["op:gte",["ts_updated", temporalFromTime.toString()]],["op:lte",["ts_updated", temporalToTime.toString()]]]];
+              where_list.push(TJ);
+            }
+          }
+
+          // add facilities query json
+          var facilities = IONUX2.Models.searchParametersInstance.attributes.checkbox_sections['Facilities'];
+
+          if((facilities) && (Object.keys(facilities).length > 0)){
+            var FL = [];
+            _.each(facilities, function(bool, name){
+              FL.push(name);
+            });
+            if(FL.length > 0){
+              FJ = ["exp:or", [["assop:associated", [null, null, "hasResource", "O", ["xop:in", ["id", FL]]]], ["exp:and", [["op:eq", ["type_", "Org"]], ["xop:in", ["id", FL]]]]]];
+              where_list.push(FJ);
+            }
+          }
+
+          // add observatories query json
+          var observatories = IONUX2.Models.searchParametersInstance.attributes.checkbox_sections['Observatories'];
+
+          if((observatories) && (Object.keys(observatories).length > 0)){
+            var OL = [];
+            var ONL = [];
+            var FNL = [];
+            _.each(observatories, function(val, name){
+              if(typeof val === 'boolean'){
+                OL.push(name);
+              } else {
+                FNL.push(val.facility);
+                excludingSpatialAreaNames = val.excludingSpatialAreaNames.split(',');
+                _.each(excludingSpatialAreaNames, function(spatialAreaName){
+                  ONL.push(spatialAreaName.trim());
+                });
+              }
+            });
+
+            var OJ = [];
+
+            if(OL.length > 0){
+              var OC = ["xop:in", ["spatial_area_name", [OL]]];
+
+              OJ = ["exp:or", [["assop:associated", [null, null, "hasResource", "S", OC]], BD(OC, 1), BD(OC, 2), BD(OC, 3), BD(OC, 4), ["assop:associated", [null, null, "hasSource", "S", BD(OC, 1)]], ["assop:associated", [null, null, "hasSource", "S", BD(OC, 2)]], ["assop:associated", [null, null, "hasSource", "S", BD(OC, 3)]], ["assop:associated", [null, null, "hasSource", "S", BD(OC, 4)]], ["exp:and", [["op:eq", ["type_", "Observatory"]], OC]]]];
+            }
+
+            if(FNL.length > 0){
+              FNC = ["exp:and",[["op:eq",["type_", "Org"]], ["xop:in", ["name", [FNL]]]]];
+              ONC = ["xop:in", ["spatial_area_name", [ONL]]];
+              ONJ = ["exp:and", [["exp:or", [["assop:associated", [null, null, "hasResource", "O", FNC]], ["exp:and", [["op:eq", ["type_", "Org"]], FNC]]]], ["exp:not", [["exp:or", [ BD(ONC, 1), BD(ONC, 2), BD(ONC, 3), BD(ONC, 4), ["assop:associated", [null, null, ["hasSource"], "S", BD(ONC, 1)]], ["assop:associated", [null,null, ["hasSource"], "S", BD(ONC, 2)]], ["assop:associated", [null, null, ["hasSource"], "S", BD(ONC, 3)]], ["assop:associated", [null, null, ["hasSource"], "S", BD(ONC, 4)]], ["exp:and", [["op:eq", ["type_", "Observatory"]], ONC]]]]]]]];
+              
+              if(OL.length > 0){
+                OJ = ["exp:or",[ONJ, OJ]];
+              } else {
+                OJ = ONJ;
+              }
+
+            }
+
+            if(OJ.length > 0){
+              where_list.push(OJ);
+            }
+          }
+
+          // add sites query json
+          var sites = IONUX2.Models.searchParametersInstance.attributes.checkbox_sections['Sites'];
+
+          if((sites) && (Object.keys(sites).length > 0)){
+            var SL = [];
+            _.each(sites, function(val, name){
+              SL.push(name);
+            });
+
+            if(SL.length > 0){
+              var SC = ["xop:in", ["id", [SL]]];
+
+              SJ = ["exp:or", [["assop:associated", [null, null, "hasResource", "S", SC]], BD(SC, 1), BD(SC, 2), BD(SC, 3), BD(SC, 4), ["assop:associated", [null, null, "hasSource", "S", BD(SC, 1)]], ["assop:associated", [null, null, "hasSource", "S", BD(SC, 2)]], ["assop:associated", [null, null, "hasSource", "S", BD(SC, 3)]], ["assop:associated", [null, null, "hasSource", "S", BD(SC, 4)]], ["exp:and", [["op:eq", ["type_", "Observatory"]], SC]]]];
+              where_list.push(SJ);
+            }
+          }
+
+          // add platform types query json
+          var platformTypes = IONUX2.Models.searchParametersInstance.attributes.checkbox_sections['platformTypes'];
+
+          if((platformTypes) && (Object.keys(platformTypes).length > 0)){
+            var PL = [];
+            _.each(platformTypes, function(val, name){
+              PL.push(name);
+            });
+
+            var PJ = [];
+
+            if(PL.length > 0){
+              var PC = ["assop:associated",[null,null,"hasModel","S",["xop:in",["platform_type",PL]]]];
+              PJ = ["exp:or",[PC,["assop:associated",[null,null,"hasResource","S",PC]],["exp:or",[BU(PC,1),BU(PC,2),BU(PC,3),BD(PC,1),BD(PC,2)]],["assop:associated",[null,null,"hasSource","S",["exp:or",[BU(PC,1),BU(PC,2),BU(PC,3),BD(PC,1),BD(PC,2)]]]],["assop:associated",[null,null,["hasDeployment", "hasPrimaryDeployment", "withinDeployment"],"O",["exp:or",[BU(PC,1),BU(PC,2),BU(PC,3),BD(PC,1),BD(PC,2)]]]]]];
+              where_list.push(PJ);
+            }
+          }
+
+          // add instrument types query json
+          var instrumentTypes = IONUX2.Models.searchParametersInstance.attributes.checkbox_sections['instrumentTypes'];
+
+          if((instrumentTypes) && (Object.keys(instrumentTypes).length > 0)){
+            var IL = [];
+            _.each(instrumentTypes, function(val, name){
+              subList = name.split('|');
+              IL = IL.concat(subList);
+            });
+
+            var IJ = [];
+
+            if(IL.length > 0){
+              var IC = ["assop:associated",[null,null,"hasModel","S",["xop:in",["instrument_family",IL]]]];
+              IJ = ["exp:or",[IC,["assop:associated",[null,null,"hasResource","S",IC]],["exp:or",[BU(IC,1),BU(IC,2),BU(IC,3),BU(IC,4)]],["assop:associated",[null,null,"hasSource","S",["exp:or",[BU(IC,1),BU(IC,2),BU(IC,3),BU(IC,4)]]]],["assop:associated",[null,null,["hasDeployment", "hasPrimaryDeployment", "withinDeployment"],"O",["exp:or",[BU(IC,1),BU(IC,2),BU(IC,3),BU(IC,4)]]]]]];
+              where_list.push(IJ);
+            }
+          }
+
+          // add data types query json
+          var dataTypes = IONUX2.Models.searchParametersInstance.attributes.checkbox_sections['Data Types'];
+
+          if((dataTypes) && (Object.keys(dataTypes).length > 0)){
+            var DL = [];
+            _.each(dataTypes, function(val, name){
+              DL.push(name);
+            });
+
+            if(DL.length > 0){
+              var DC = ["exp:and",[["op:eq", ["type_", "DataProduct"]],["xop:in", ["ooi_product_name", DL]]]];
+              var DCS = ["assop:associated",[null,null,["hasSite", "hasDevice", "hasDeployment", "hasPrimaryDeployment", "withinDeployment", "hasNetworkParent", "hasDataProducer", "hasSource"],"O",DC]];
+              
+              DJ = ["exp:or",[DC,["assop:associated",[null,null,"hasResource","S",DC]],["exp:or",[DCS, BU(DCS, 1), BU(DCS, 2), BU(DCS, 3),["assop:associated",[null,null,["hasDeployment", "hasPrimaryDeployment", "withinDeployment"],"O",DCS]]]]]];
+              where_list.push(DJ);
+            }            
+          }
+
+          // add query json for keyword if no other search has been applied.
+          if(where_list.length == 0){
+            var keyword = $('#keywordIn').val();
+            if(keyword != ''){
+              KJ = ["xop:in",["type_", ["Org", "Observatory", "PlatformComponentSite", "PlatformSite", "StationSite", "InstrumentSite", "Deployment", "PlatformDevice", "InstrumentDevice", "PlatformModel", "InstrumentModel", "DataProduct"]]];
+              where_list.push(KJ);
+            }
+          }
+
+          // combine accordions query json
+          var query_json = {};
+
+          if(where_list.length > 1){
+            query_json = {"QUERYEXP": "qexp_v1.0", "query_args":{"datastore": "resources", "id_only": false, "limit": 0, "profile": "RESOURCES", "skip": 0}, "where":["exp:and",where_list], "order_by": {}};
+          } else {
+            query_json = {"QUERYEXP": "qexp_v1.0", "query_args":{"datastore": "resources", "id_only": false, "limit": 0, "profile": "RESOURCES", "skip": 0}, "where":where_list[0], "order_by": {}};
+          }
+
+          // execute query
+          $.ajax({
+              type: 'POST',
+              contentType: 'application/json',
+              data: JSON.stringify({payload: query_json}),
+              dataType: 'json',
+              url: '/search_query/',
+              global: false,
+              success: function(response) {
+                  make_iso_timestamps(response);
+                  results = [];
+                  // add keyword post process
+                  var keyword = $('#keywordIn').val();
+                  if(keyword != ''){
+                    var found = false;
+                    function checkRow(obj, val, row) {
+                        _.each(obj, function(property, key){
+                            if (typeof property == 'object') {
+                                return checkRow(property, val, row);
+                            } else if ((typeof property == 'string') && (property.toLowerCase().indexOf(val) >= 0)) {
+                                if(found == false){
+                                  results.push(row);
+                                  found = true;
+                                }
+                                return true;
+                            }
+                        });
+                        return found;
+                    }
+                    _.each(response.data, function(row){
+                      found = false;
+                      checkRow(row, keyword.toLowerCase(), row);
+                    });
+                  } else {
+                    results = response.data;
+                  }
+
+                  IONUX2.parseSearchResults(results);
+              }
+          });
+
+          return;
+
+          // ************* OLD SEARCH CODE HERE! ******************
+
           // normalize into "down" facing vertical if switched to up
           if (this.$('.vertical-bounds-positive').hasClass('toggle_sealevel_passive')) {
             if (formObj['vertical-lower-bound']) {
@@ -317,14 +640,14 @@
           }
 
           var search_term = $.param(form_values);
+
           var search_term2 = $.param(form_values_bool);
 
           search_term = search_term + '&' + search_term2;
 
-          console.log('SEARCH CLICKED...' + search_term);
-
           IONUX.ROUTER.navigate('/search/?'+ search_term, {trigger:true});
 
+          // ************* END OLD SEARCH CODE ******************
         }
 
     </script>

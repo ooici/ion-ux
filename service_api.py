@@ -69,6 +69,23 @@ class ServiceApi(object):
         return related_sites
 
     @staticmethod
+    def find_facilities_observatories():
+        observatories_tree = {}
+        req = service_gateway_get('resource_registry', 'find_resources', params={'restype': 'Org'})
+        if req:
+            for org in req:
+                org_id = org['_id']
+                observatories_tree[org['name']] = []
+                observatories = service_gateway_get('observatory_management', 'find_related_sites', params={'parent_resource_id': org_id, 'exclude_site_types':['Org', 'PlatformSite','InstrumentSite'], 'include_parents': False, 'include_devices': False})
+                if observatories:
+                    for site_id, site in observatories.iteritems():
+                        if ((site['spatial_area_name'] != '') and not (site['spatial_area_name'] in observatories_tree[org['name']])):
+                            name = site['spatial_area_name']
+                            observatories_tree[org['name']].append(name)
+                            observatories_tree[org['name']].sort()        
+        return observatories_tree
+
+    @staticmethod
     def get_recent_events(resource_id, user_id):
         return service_gateway_get('user_notification', 'get_recent_events', raw_return = True, params = {'resource_id': resource_id, 'user_id': user_id})
 
@@ -272,6 +289,16 @@ class ServiceApi(object):
             return search_json['data']['GatewayResponse']
 
         return search_json['data']
+
+    @staticmethod
+    def search_query_post_passthrough(query):
+        query_json = query
+        url, data = build_post_request('discovery', 'query', {'query': query_json})
+        resp = requests.post(url, data)
+        resp_json = json.loads(resp.content)
+        if resp_json['data'].has_key('GatewayResponse'):
+            return resp_json['data']['GatewayResponse']
+        return resp_json['data']
 
     @staticmethod
     def update_resource(resource_type, resource_obj, resource_assocs):
