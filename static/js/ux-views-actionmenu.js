@@ -50,24 +50,18 @@ IONUX.Views.ActionMenu = Backbone.View.extend({
     },
 
     create_actionmenu: function(){
-      var html = _.template(this.dropdown_button_tmpl, {"dropdown_items":this.interaction_items});
-      console.log('Create actionmenu called.');
-      console.log($(this.el));
-      $(this.el).prepend(html);
+        var html = _.template(this.dropdown_button_tmpl, {"dropdown_items":this.interaction_items});
+        $(this.el).prepend(html);
     },
     
     // Prepends menu at the view level
     create_view_actionmenu: function() {
       var html = _.template(this.dropdown_button_tmpl, {"dropdown_items":this.interaction_items});
-      console.log('Create view actionmenu called.');
-      console.log($(this.el));
-      // $(this.el).find('.action-menu').empty();
-      // $(this.el).append(html);
-      $('#searchResultsTabContainer .action-menu').remove();
-      $('#searchResultsTabContainer').append(html);
+      this.$el.prepend(html);
+      $('#search-production').prepend(html);
       // Better way to bind? Issue is removing element to unbind events
       // depending on context (dashboard vs. face page, etc.)
-      this.setElement('#searchResultsTabContainer .action-menu');
+      this.setElement('#search-production .action-menu');
     },
 
     action_control_click: function(evt) {
@@ -282,10 +276,6 @@ IONUX.Views.ViewActions = IONUX.Views.ActionMenu.extend({
         this.on("action__refresh_page", this.action__refresh_page);
     },
         
-    create_resource: function(){
-      new IONUX.Views.CreateResourceView().render();
-    },
-    
     action__subscribe:function(){
         var subscribe_template = '<div id="action-modal" class="modal hide fade modal-ooi">\
                                     <div class="modal-header"><h1>Send Notification On:</h1></div>\

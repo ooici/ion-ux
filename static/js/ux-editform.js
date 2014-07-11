@@ -366,7 +366,7 @@ Backbone.Form.editors.MultiSelect = Backbone.Form.editors.Select.extend({
 });
 
 IONUX.Views.EditResource = Backbone.View.extend({
-  el: '#editResourceContent',
+  tagName: 'div',
   template: _.template($('#edit-resource-tmpl').html()),
   events: {
     'click #save-resource': 'submit_form',
@@ -396,16 +396,13 @@ IONUX.Views.EditResource = Backbone.View.extend({
   },
   render: function(){
     // Insert form but leave page header
-    // $('#dynamic-container > .row-fluid').html(this.$el.html(this.template));
-    this.$el.html(this.template);
+    $('#dynamic-container > .row-fluid').html(this.$el.html(this.template));
     $('#form-container').html(this.form.el);
 
     // HACK HACK to fix up embedded object spacing
     this.$('.bbf-object').parent().prev('label').css({float:'none'});
   },
   submit_form: function(e){
-    $("#editResourceTab").first().click();
-    $("#editResourceTab").hide();
     var target = $(e.target);
     target.prop("disabled", true);
     target.text(" Saving... ");
@@ -450,15 +447,9 @@ IONUX.Views.EditResource = Backbone.View.extend({
       target.prop('disabled', false);
       target.text("Save");
     });
-    self.undelegateEvents();
-    self.$el.empty();
   },
   cancel: function(){
-    $("#editResourceTab").first().click();
-    $("#editResourceTab").hide();
     IONUX.ROUTER.navigate(this.base_url,{trigger:true});
-    self.undelegateEvents();
-    self.$el.empty();
   },
 });
 
@@ -489,21 +480,18 @@ IONUX.Views.EditUserRegistration = IONUX.Views.EditResource.extend({
   render: function() {
     var modal_html = this.template();
 
-    // $('body').append(this.$el);
-    // this.$el.append(modal_html);
-    this.$el.html(modal_html);
+    $('body').append(this.$el);
+    this.$el.append(modal_html);
     var el = $('#user-profile-overlay');
 
     $('.form-container', el).append(this.form.el);
 
     var self = this;  // @TODO: i know there is a better way of doing this
 
-    /*
     el.modal({show:true, keyboard:false, backdrop:'static'})
       .on('hidden', function() {
         self.$el.remove();
       })
-    */
   },
 
   submit_form: function() {
@@ -536,8 +524,6 @@ IONUX.Views.EditUserRegistration = IONUX.Views.EditResource.extend({
           new IONUX.Views.Topbar({model: IONUX.SESSION_MODEL}).render().el
         });
     });
-    self.undelegateEvents();
-    self.$el.empty();
   },
 
 });
