@@ -1265,56 +1265,47 @@ IONUX.Views.NoConfiguredAgentInstance = Backbone.View.extend({
 });
 
 IONUX.Views.CreateResourceView = Backbone.View.extend({
-  el: "#createResourceContent",
+  tagName: "div",
   template: _.template($("#create-resource-modal-tmpl").html()),
   events: {
     'click #create-resource': 'createResourceClicked'
   },
   render: function() {
-    /*
     var orgs = _.filter(_.pluck(IONUX.Dashboard.Orgs.models, 'attributes'), function(o) {
       return _.contains(IONUX.createRoles(), o.org_governance_name);
     });
-    */
-    var orgs = IONUX2.Models.PermittedFacilitiesInstance.attributes.orgs;
 
-    // $('body').append(this.$el);
+    $('body').append(this.$el);
     var modal_html = this.template({orgs:orgs});
     this.$el.append(modal_html);
 
     var self = this;
-    /*
     this.modal = $('#create-resource-overlay').modal()
       .on('hidden', function() {
         self.$el.remove();
       });
-    */
     return this;
   },
   createResourceClicked: function() {
     var url = window.location.protocol + "//" + window.location.host + "/create/",
-      rtype = this.$('select[name="nested-resource-types"]').val(),
+      rtype = this.$('select[name="resource-type"]').val(),
         org = this.$('select[name="org"]').val(),
-        lcstate = this.$('select[name="lifecycle-state"]').val(),
        vals = {'resource_type': rtype,
-               'org_id': org,
-                'lcstate': lcstate},
+               'org_id': org},
        self = this;
     
-    // self.modal.modal('hide');
+    self.modal.modal('hide');
 
-    // $('#dynamic-container').html('<div id="spinner"></div>').show();
-    // new Spinner(IONUX.Spinner.large).spin(document.getElementById('spinner'));
+    $('#dynamic-container').html('<div id="spinner"></div>').show();
+    new Spinner(IONUX.Spinner.large).spin(document.getElementById('spinner'));
 
     $.post(url, vals)
       .success(function(resp) {
         var new_res_id = resp.data[0];
 
         Backbone.history.fragment = null; // Clear history fragment to allow for page "refresh".
-        //if ((rtype != null) && (lcstate != null)) {
-          IONUX.ROUTER.navigate('/' + rtype + '/face/' + new_res_id + '/edit', {trigger: true});
-        //}
-    });
+        IONUX.ROUTER.navigate('/' + rtype + '/face/' + new_res_id + '/edit', {trigger: true});
+      });
   }
 });
 

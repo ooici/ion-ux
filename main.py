@@ -101,50 +101,11 @@ def login_required(f):
 
 @app.route('/')
 def index():
-    # return render_template('ion_ux3.html')
     return render_app_template(request.path)
 
 @app.route('/failed')
 def failed_login():
      return redirect(url_for('index', cl="cf"))
-
-@app.route('/templates/<path:filename>')
-def serve_template(filename):
-    return render_template(filename)
-
-@app.route('/profile/<user_id>/', methods=['GET', 'POST'])
-def user_profiles(user_id):
-    if request.method == "GET":
-        # return user profile json here!
-        path = os.path.join('profiles', "{0}.json".format(user_id))
-        if not os.path.exists(path):
-            return jsonify({'data':False})
-        else:
-            user_file = open(path, 'r')
-            profile = user_file.read()
-            user_file.close()
-            return render_json_response(profile)
-    elif request.method == "POST":
-        # store the user profile json here!
-        path = os.path.join('profiles', "{0}.json".format(user_id))
-        if not os.path.exists('profiles'):
-            os.makedirs('profiles')
-        user_file = open(path, 'w')
-        print request.form
-        profile = request.form['data']
-        print profile
-        user_file.write(profile)
-        user_file.close()
-
-        return render_json_response("{data:{status:'ok'}}")
-
-@app.route('/hmmm/', methods=['GET'])
-def goto_resource_management():
-    if request.is_xhr:
-        return
-    else:
-        return render_app_template(request.path)
-
 
 # -----------------------------------------------------------------------------
 # SEARCH & ATTACHMENTS
@@ -174,8 +135,6 @@ def search(query=None):
 
             temporal_field    = adv_query_chunks.get('temporal-field-ctrl', [''])[0];
 
-            radius            = adv_query_chunks.get('radius', [''])[0];
-
             search_criteria   = zip(adv_query_chunks.get('filter_var', []),
                                     adv_query_chunks.get('filter_operator', []),
                                     adv_query_chunks.get('filter_arg', []))
@@ -184,7 +143,6 @@ def search(query=None):
                                                       vertical_bounds,
                                                       temporal_bounds,
                                                       temporal_field,
-                                                      radius,
                                                       search_criteria)
 
         return render_json_response(search_results)
@@ -249,7 +207,7 @@ def event_types():
 @app.route('/create/', methods=['POST'])
 @login_required
 def create_resource():
-    resp = ServiceApi.create_resource(request.form.get('resource_type', None), request.form.get('org_id', None), request.form.get('lcstate', None))
+    resp = ServiceApi.create_resource(request.form.get('resource_type', None), request.form.get('org_id', None))
     return render_json_response(resp)
 
 @app.route('/<resource_type>/face/<resource_id>/subscribe/', methods=['GET'])
@@ -419,11 +377,6 @@ def collection(resource_type=None):
         return render_json_response(resources)
     else:
         return render_app_template(request.path)
-
-@app.route('/orgs/list/', methods=['GET'])
-def org_list():
-    orgs = ServiceApi.find_by_resource_type('Org')
-    return jsonify(data={'orgs': orgs})
 
 # -----------------------------------------------------------------------------
 # RESOURCE EXTENSION & RELATED SITES API
@@ -847,52 +800,53 @@ def session_info():
 # DEVELOPMENT ROUTES
 # -----------------------------------------------------------------------------
 
-# @app.route('/dev/thumbnail', methods=['GET'])
-# def thumbnail():
-#     return render_template('overview_thumbnails.html')
+@app.route('/dev/thumbnail', methods=['GET'])
+def thumbnail():
+    return render_template('overview_thumbnails.html')
 
-# @app.route('/dev/assetmap', methods=['GET'])
-# def asset_map():
-#     return render_template('dashboard_assets_map.html')
+@app.route('/dev/assetmap', methods=['GET'])
+def asset_map():
+    return render_template('dashboard_assets_map.html')
 
-# @app.route('/dev/dashboard', methods=['GET'])
-# @app.route('/dev/dashboard/map/<resource_id>', methods=['GET'])
-# def dev_dashboard(resource_id=None):
-#     return render_app_template(request.path)
+@app.route('/dev/dashboard', methods=['GET'])
+@app.route('/dev/dashboard/map/<resource_id>', methods=['GET'])
+def dev_dashboard(resource_id=None):
+    return render_app_template(request.path)
 
-# @app.route('/dev/map', methods=['GET'])
-# def dev_map(resource_id=None):
-#     return render_template('dev_map.html')
+@app.route('/dev/map', methods=['GET'])
+def dev_map(resource_id=None):
+    return render_template('dev_map.html')
 
 
-# @app.route('/dev/datatable', methods=['GET'])
-# def dev_datatable(resource_id=None):
-#     return render_template('dev_datatable.html')
+@app.route('/dev/datatable', methods=['GET'])
+def dev_datatable(resource_id=None):
+    return render_template('dev_datatable.html')
 
-# @app.route('/dev/actionmenus', methods=['GET'])
-# def dev_actionmenus(resource_id=None):
-#     return render_template('dev_actionmenus.html')
+@app.route('/dev/actionmenus', methods=['GET'])
+def dev_actionmenus(resource_id=None):
+    return render_template('dev_actionmenus.html')
 
-# @app.route('/dev/editform', methods=['GET'])
-# def dev_editform(resource_id=None):
-#     return render_template('dev_editform.html')
+@app.route('/dev/editform', methods=['GET'])
+def dev_editform(resource_id=None):
+    return render_template('dev_editform.html')
 
-# @app.route('/dev/subscribe', methods=['GET'])
-# def dev_subscribe():
-#     time.sleep(2)
-#     return "ok"
+@app.route('/dev/subscribe', methods=['GET'])
+def dev_subscribe():
+    time.sleep(2)
+    return "ok"
     
-# @app.route('/dev/geospatial', methods=['GET'])
-# def geospatial(resource_id=None):
-#     return render_template('dev_geospatial.html')
+@app.route('/dev/geospatial', methods=['GET'])
+def geospatial(resource_id=None):
+    return render_template('dev_geospatial.html')
     
-# @app.route('/dev/chart', methods=['GET'])
-# def chart(resource_id=None):
-#     return render_template('dev_chart.html')
+@app.route('/dev/chart', methods=['GET'])
+def chart(resource_id=None):
+    return render_template('dev_chart.html')
 
-# @app.route('/dev/image', methods=['GET'])
-# def dev_image(resource_id=None):
-#     return render_template('dev_image.html')
+@app.route('/dev/image', methods=['GET'])
+def dev_image(resource_id=None):
+    return render_template('dev_image.html')
+
 
 # -----------------------------------------------------------------------------
 # CATCH ANY UNMATCHED ROUTES

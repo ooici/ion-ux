@@ -47,9 +47,8 @@ IONUX = {
       complete: function(resp){
         // Wrapper initially hidden to prevent unformed content from appearing while
         // API calls being made to draw the dashboard;
-        // $('.wrapper').show();
-        // console.log('**** STARTING HISTORY!!!');
-        // Backbone.history.start({pushState:true, hashChange: false});
+        $('.wrapper').show();
+        Backbone.history.start({pushState:true, hashChange: false});
       },
     });
     
@@ -85,13 +84,9 @@ IONUX = {
         IONUX.set_ui_theme();
         
       }
-
-   });
+    });
     
 
-    console.log('**** STARTING HISTORY!!!');
-    Backbone.history.start({pushState:true, hashChange: false});
-    
     router.handle_navigation();
 
     return router;
@@ -123,14 +118,9 @@ IONUX = {
   },
   // Returns Org names with create privileges. Otherwise, it returns empty list
   createRoles: function(){
-    if(this.is_logged_in())
-    {
-      return _.filter(_.keys(IONUX.SESSION_MODEL.get('roles')), function(r){
-        return _.size(IONUX.SESSION_MODEL.get('roles')[r]) > 1;
-      });
-    } else {
-      return [];
-    }
+    return _.filter(_.keys(IONUX.SESSION_MODEL.get('roles')), function(r){
+             return _.size(IONUX.SESSION_MODEL.get('roles')[r]) > 1;
+    });
   },
   is_logged_in: function(){
     return IONUX.SESSION_MODEL.get('is_logged_in');

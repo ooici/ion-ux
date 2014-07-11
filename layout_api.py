@@ -39,7 +39,7 @@ class LayoutApi(object):
         # Load template and find 'body' for template appendation
         env = Environment()
         env.loader = FileSystemLoader(PORTAL_ROOT+'/templates')
-        tmpl_unparsed = env.get_template('ion_ux4.html').render(static_assets=STATIC_ASSETS)
+        tmpl_unparsed = env.get_template('ion_ux.html').render(static_assets=STATIC_ASSETS)
         tmpl = ET.fromstring(tmpl_unparsed.encode('utf-8'))
         body_elmt = tmpl.find('body')
 
@@ -190,7 +190,7 @@ class LayoutApi(object):
                     if group_position == 'V00':
                         block_container_elmt = block_elmt
                         left_elmt = _make_element(block_container_elmt, 'div', css='span6 heading-left')
-                        right_elmt = _make_element(block_container_elmt, 'div', css='span6 heading-right', style="display:none;")
+                        right_elmt = _make_element(block_container_elmt, 'div', css='span6 heading-right')
                     else:
                         block_container_elmt = _make_element(block_elmt, 'div')
                     

@@ -1,5 +1,9 @@
-<div id="createResourceOverlay">
-    <div class="createResourceBody">
+<div id="create-resource-overlay" class="modal-ooi modal hide">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h1>Create Resource</h1>
+    </div>
+    <div class="modal-body">
         <form class="form-horizontal">
             <div class="control-group">
                 <label class="control-label" for="org">Facility</label>
@@ -12,192 +16,27 @@
                 </div>
             </div>
             <div class="control-group">
-                <label class="control-label" for="resource-type">Group</label>
+                <label class="control-label" for="resource-type">Resource Type</label>
                 <div class="controls">
-                    <select id="resourceType" name="resource-type" size="5">
+                    <select name="resource-type" size="8">
+                        <option value="DataProcessDefinition">Data Process Definition</option>
+                        <option value="DataProcess">Data Process</option>
                         <option value="DataProduct">Data Product</option>
-                        <option value="MarineSite">Marine Site</option>
-                        <option value="Model">Model</option>
-                        <option value="Physical">Physical</option>
-                        <option value="Software">Software</option>
+                        <option value="ExternalDatasetAgent">Dataset Agent</option> 
+                        <option value="ExternalDatasetAgentInstance">Dataset Agent Instance</option>
+                        <option value="Deployment">Deployment</option>
+                        <option value="InstrumentAgent">Instrument Agent</option>
+                        <option value="InstrumentAgentInstance">Instrument Agent Instance</option>
+                        <option value="InstrumentDevice">Instrument Device</option>
+                        <option value="PlatformDevice">Platform Device</option>
                     </select>
                 </div>
             </div>
-            <div class="control-group">
-                <label class="control-label" for="resource-type">Resource Type</label>
-                <div class="resourceNested controls" id="ResourceTypes"></div>
-            </div>
-            <div class="control-group">
-                <div class="control-group" id="lifeCycle">
-                    <label class="control-label" for="lifecycle-state">Lifecycle State</label>
-                    <div class="controls" id="lifecycleState">
-                    </div>
-                </div>
-            </div>
         </form>
-        <div class="createResourceFooter">
-            <button id="create-resource" class="adminButtonBlue btn-save">Create Resource</button>
-        </div>
+    </div>
+    <div class="modal-footer">
+        <button id="create-account-cancel" data-dismiss="modal" class="btn-general btn-cancel">Cancel</button>
+        <button id="create-resource" class="btn-blue btn-save">Create Resource</button>
     </div>
 </div>
-
-                    
-<script type="text/javascript">
-var softwareNested = [
-        {'value':'DataProcessDefinition', 'name':'Data Product Algorithm'},
-        {'value': 'ExternalDatasetAgentInstance', 'name': 'Dataset Agent Driver Instance'},
-        {'value': 'ExternalDatasetAgent', 'name': 'Dataset Agent Driver'},
-        {'value': 'InstrumentAgentInstance', 'name': 'Instrument Agent Driver Instance'},
-        {'value': 'InstrumentAgent', 'name': 'Instrument Agent Driver'},
-        {'value': 'PlatformAgentInstance', 'name': 'Platform Agent Driver Instance'},
-        {'value': 'PlatformAgent', 'name': 'Platform Agent Driver'}];
-                                
-    var dataProductNested = [
-        {'value':'DataProcessDefinition', 'name':'Data Process Definition'},
-        {'value': 'DataProcess', 'name': 'Data Process'},
-        {'value': 'ExternalDatasetAgent', 'name': 'Dataset Agent'},
-        {'value': 'ExternalDatasetAgentInstance', 'name': 'Dataset Agent Instance'},
-        {'value': 'Deployment', 'name': 'Deployment'},
-        {'value': 'InstrumentAgent', 'name': 'Instrument Agent'},
-        {'value': 'InstrumentAgentInstance', 'name': 'Instrument Agent Instance'},
-        {'value': 'InstrumentDevice', 'name': 'Instrument Device'},
-        {'value': 'PlatformDevice', 'name': 'Platform Device'}];
-
-    var modelNested = [
-        {'value':'InstrumentModel', 'name':'Instrument Model'},
-        {'value': 'PlatformModel', 'name': 'Platform Model'}];
-
-    var physicalNested = [
-        {'value':'InstrumentDevice', 'name':'Instrument Device'},
-        {'value': 'PlatformDevice', 'name': 'Platform Devcie'}];
-
-    var marineSiteNested = [
-        {'value':'InstrumentSite', 'name':'Instrument Site'},
-        {'value': 'PlatformSite', 'name': 'Platform Site'},
-        {'value': 'Observatory', 'name': 'Array Site'}];
-
-    var softwareLifeCycle = [
-        {'value': 'PLANNED', 'name': 'Planned'},
-        {'value': 'OPERATIONAL', 'name': 'Operational'},
-        {'value': 'RETIRED', 'name': 'Retired'},
-        {'value': 'DELETED', 'name': 'Deleted'}];
-
-    var dataProductLifeCycle = [
-        {'value': 'ACTIVE', 'name': 'Active' },
-        {'value': 'RETIRED', 'name': 'Retired'},
-        {'value': 'DELETED', 'name': 'Deleted'}];
-
-
-    var modelLifeCycle = [
-        {'value': 'PLANNED', 'name': 'Planned'},
-        {'value': 'ACTIVE', 'name': 'Active' },
-        {'value': 'RETIRED', 'name': 'Retired'},
-        {'value': 'DELETED', 'name': 'Deleted'}];
-
-    var marineLifeCycle = [
-        {'value': 'PLANNED', 'name': 'Planned'},
-        {'value': 'ACTIVE', 'name': 'Active' },
-        {'value': 'INACTIVE', 'name': 'Inactive' },
-        {'value': 'RETIRED', 'name': 'Retired'},
-        {'value': 'DELETED', 'name': 'Deleted'}];
-
-    var physicalLifeCycle = [
-        {'value': 'ACTIVE', 'name': 'Active' },
-        {'value': 'RETIRED', 'name': 'Retired'},
-        {'value': 'DELETED', 'name': 'Deleted'}];
-    
-    
-    IONUX2.Collections.SoftwareNested = Backbone.Collection.extend({});
-    IONUX2.Collections.softwareNested = new IONUX2.Collections.SoftwareNested();
-    IONUX2.Collections.softwareNested.set(softwareNested);
-
-    IONUX2.Collections.SoftwareLifeCycle = Backbone.Collection.extend({});
-    IONUX2.Collections.softwareLifeCycle = new IONUX2.Collections.SoftwareLifeCycle();
-    IONUX2.Collections.softwareLifeCycle.set(softwareLifeCycle);
-
-    IONUX2.Collections.DataProductNested = Backbone.Collection.extend({});
-    IONUX2.Collections.dataProductNested = new IONUX2.Collections.DataProductNested();
-    IONUX2.Collections.dataProductNested.set(dataProductNested);
-
-    IONUX2.Collections.DataProductLifeCycle = Backbone.Collection.extend({});
-    IONUX2.Collections.dataProductLifeCycle = new IONUX2.Collections.DataProductLifeCycle();
-    IONUX2.Collections.dataProductLifeCycle.set(dataProductLifeCycle);
-
-    IONUX2.Collections.ModelNested = Backbone.Collection.extend({});
-    IONUX2.Collections.modelNested = new IONUX2.Collections.ModelNested();
-    IONUX2.Collections.modelNested.set(modelNested);
-
-    IONUX2.Collections.ModelLifeCycle = Backbone.Collection.extend({});
-    IONUX2.Collections.modelLifeCycle = new IONUX2.Collections.ModelLifeCycle();
-    IONUX2.Collections.modelLifeCycle.set(modelLifeCycle);
-
-    IONUX2.Collections.PhysicalNested = Backbone.Collection.extend({});
-    IONUX2.Collections.physicalNested = new IONUX2.Collections.PhysicalNested();
-    IONUX2.Collections.physicalNested.set(physicalNested);
-
-    IONUX2.Collections.PhysicalLifeCycle = Backbone.Collection.extend({});
-    IONUX2.Collections.physicalLifeCycle = new IONUX2.Collections.PhysicalLifeCycle();
-    IONUX2.Collections.physicalLifeCycle.set(physicalLifeCycle);
-
-    IONUX2.Collections.MarineSiteNested = Backbone.Collection.extend({});
-    IONUX2.Collections.marineSiteNested = new IONUX2.Collections.MarineSiteNested();
-    IONUX2.Collections.marineSiteNested.set(marineSiteNested);
-
-    IONUX2.Collections.MarineSiteLifeCycle = Backbone.Collection.extend({});
-    IONUX2.Collections.marineSiteLifeCycle = new IONUX2.Collections.MarineSiteLifeCycle();
-    IONUX2.Collections.marineSiteLifeCycle.set(marineLifeCycle);
-
-
-$(function() {
-    
-    // initial state
-    IONUX2.Views.dataProductMenu = new IONUX2.Views.ResourceTypeMenu({collection: IONUX2.Collections.dataProductNested});
-    IONUX2.Views.dataProductLifeCycle = new IONUX2.Views.LifeCycleMenu({collection: IONUX2.Collections.dataProductLifeCycle});
-    $('#resourceType option[value="DataProduct"]').attr('selected', 'selected');
-    $('.resourceNested option[value="DataProcessDefinition"]').attr('selected', 'selected');
-    $('#lifecycleState option[value="Active"]').attr('selected', 'selected');
-
-    // click handlers
-    $('#resourceType option[value="Software"]').on('click', function(e) {
-        e.preventDefault();
-        IONUX2.Views.softwareMenu = new IONUX2.Views.ResourceTypeMenu({collection: IONUX2.Collections.softwareNested});
-        IONUX2.Views.softwareLifeCycle = new IONUX2.Views.LifeCycleMenu({collection: IONUX2.Collections.softwareLifeCycle});
-        $('.resourceNested option[value="DataProcessDefinition"]').attr('selected', 'selected');
-        $('#lifecycleState option[value="Planned"]').attr('selected', 'selected');
-    });
-
-    $('#resourceType option[value="Model"]').on('click', function(e) {
-        e.preventDefault();
-        IONUX2.Views.modelMenu = new IONUX2.Views.ResourceTypeMenu({collection: IONUX2.Collections.modelNested});
-        IONUX2.Views.modelLifeCycle = new IONUX2.Views.LifeCycleMenu({collection: IONUX2.Collections.modelLifeCycle});
-        $('.resourceNested option[value="InstrumentModel"]').attr('selected', 'selected');
-        $('#lifecycleState option[value="Planned"]').attr('selected', 'selected');
-    });
-
-    $('#resourceType option[value="MarineSite"]').on('click', function(e) {
-        e.preventDefault();
-        IONUX2.Views.marineSiteMenu = new IONUX2.Views.ResourceTypeMenu({collection: IONUX2.Collections.marineSiteNested});
-        IONUX2.Views.marineLifeCycle = new IONUX2.Views.LifeCycleMenu({collection: IONUX2.Collections.marineSiteLifeCycle});
-        $('.resourceNested option[value="InstrumentSite"]').attr('selected', 'selected');
-        $('#lifecycleState option[value="Planned"]').attr('selected', 'selected');
-    });
-
-    $('#resourceType option[value="DataProduct"]').on('click', function(e) {
-        e.preventDefault();
-        IONUX2.Views.dataProductMenu = new IONUX2.Views.ResourceTypeMenu({collection: IONUX2.Collections.dataProductNested});
-        IONUX2.Views.dataProductLifeCycle = new IONUX2.Views.LifeCycleMenu({collection: IONUX2.Collections.dataProductLifeCycle});
-        $('.resourceNested option[value="DataProcessDefinition"]').attr('selected', 'selected');
-        $('#lifecycleState option[value="Active"]').attr('selected', 'selected');
-    });
-
-    $('#resourceType option[value="Physical"]').on('click', function(e) {
-        e.preventDefault();
-        IONUX2.Views.physicalMenu = new IONUX2.Views.ResourceTypeMenu({collection: IONUX2.Collections.physicalNested});
-        IONUX2.Views.physicalLifeCycle = new IONUX2.Views.LifeCycleMenu({collection: IONUX2.Collections.physicalLifeCycle});
-        $('.resourceNested option[value="InstrumentDevice"]').attr('selected', 'selected');
-        $('#lifecycleState option[value="Active"]').attr('selected', 'selected');
-    });
-    
-});
-</script>
 
